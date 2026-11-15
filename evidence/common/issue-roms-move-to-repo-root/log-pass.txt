@@ -55,3 +55,26 @@ $ curl /api/manifest/overview
 {"stats":{"deviceCount":32,"configCount":36,"versionCount":40,
   "builtCount":17,"romCount":42,"hardwareCount":45}...}
 ```
+
+## 5. agent 侧旧布局引用对齐（2026-11-15）
+
+```
+$ grep -rn "engine/vendor\|engine/roms\|engine/manifest\|agent/out" agent
+（仅剩 09_build_vendor/README.md 两处标注「该目录已删除」的历史说明）
+
+$ node --check agent/web/app.js
+APP_JS_OK
+
+$ cd agent && go build ./... && go vet ./...
+BUILD_OK / VET_DONE
+
+$ cd agent && go test ./...
+ok  .../internal/device  ok  .../internal/fsimg  ok  .../stages/01_unpack
+ok  .../stages/03_build_kernel  ok  .../stages/06_build_vendor_boot
+ok  .../stages/13_pack_vda  （其余 cached / no test files）
+
+$ python3 -c 'json.load(out/agent/config/nodes.json)'（local 节点）
+{"engineRoot":"/Volumes/work/cloud-phone-hub/engine",
+ "romsDir":"/Volumes/work/cloud-phone-hub/roms",
+ "deployDir":"/Volumes/work/cloud-phone-hub/out/agent/dist", ...}
+```

@@ -72,3 +72,22 @@ roms 最初作为 engine 的输入目录与构建系统一起放置，`RomsRoot(
 - 历史 `log-*.txt` / `agent/out/harness` 中的旧路径不改写；
 - 远端构建节点需把 roms 放在仓库根（或显式配置节点 `romsDir`）；
 - `engine/out` 仍按本次范围保留在 engine 下。
+
+## 七、追加对齐（2026-11-15）
+
+迁移后 `agent/` 里还留着若干旧布局的展示文案与注释（不影响构建，但会误导排障与新建节点）：
+
+- Web 控制台：`engine/roms/devices` → `roms/devices`（固件列表、加载态、空态），
+  `engine/vendor` → `devices/hardware`（HAL 模块库提示与空态），
+  `engine/manifest` → `devices/manifest`；
+- 新建节点向导：engine 目录场景下 roms 猜成 `<engine>/../roms`（原 `<engine>/roms`），
+  仓库根场景下猜成 `<仓库根>/roms`（原 `<仓库根>/engine/roms`）；
+- Go 注释：`manifestview` 改为 `devices/hardware`；`08/09` 阶段的模块目录改为
+  `agent/modules/pipeline/stages/08_build_hardware/modules`；`device/hardware.go`、
+  `db_bridge.go`（缺省 DB = `devices/manifest`）；`engine/root.go` 的引擎根判据说明；
+- 文档：`agent/README.md`、pipeline README 的 engine 布局说明，
+  `13_pack_vda/README.md` 的证据目录改为 `devices/evidence/`。
+
+验证：`go build ./... && go vet ./... && go test ./...` 全绿，`node --check web/app.js`
+通过；核对 `out/agent/config/nodes.json`，`local.romsDir` 已是
+`/Volumes/work/cloud-phone-hub/roms`、`deployDir` 为 `/Volumes/work/cloud-phone-hub/out/agent/dist`。
