@@ -1,0 +1,34 @@
+{
+  "id": 25,
+  "official": "OPPO",
+  "brand": "realme",
+  "model": "realme GT7",
+  "device": "RMX6688",
+  "platform": "mtk",
+  "resolution": "1280x2800",
+  "inch": "72x157",
+  "density": 560,
+  "smp": 8,
+  "memory": [
+    8192
+  ],
+  "storage": [
+    128000,
+    256000
+  ],
+  "extra": {
+    "board": "mt6991",
+    "hostHvc": {
+      "host-hvc-adbkey": "hvc2",
+      "host-hvc-bluetooth": "hvc5",
+      "host-hvc-daemon": "hvc7",
+      "host-hvc-haptic": "hvc6",
+      "host-hvc-keymint": "hvc3",
+      "host-hvc-radio": "hvc4",
+      "host-hvc-wifi": "hvc9",
+      "host-hvc-wifi-data": "hvc10"
+    },
+    "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
+  },
+  "updatedAt": "2026-11-11T13:45:00Z"
+}

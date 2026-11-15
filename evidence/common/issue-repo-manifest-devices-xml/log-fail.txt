@@ -1,0 +1,38 @@
+# repo manifest 为 devices/ 建立 devices.xml #241 —— 改动前记录（2026-11-15）
+
+## 1. default.xml 现状
+
+```
+$ grep -n "include\|<project" manifest/default.xml
+15:  <project path="skills"
+19:  <project path="build"
+33:  <include name="qemu.xml" />
+34:  <include name="cuttlefish.xml" />
+35:  <include name="kernel.xml" />
+```
+
+`devices/` 主体（manifest / hardware / modules / evidence）没有任何项目声明。
+
+## 2. manifest 目录现状
+
+```
+$ ls manifest
+cuttlefish.xml  default.xml  kernel.xml  qemu.xml
+```
+
+无 `devices.xml`。
+
+## 3. 父项目若整体检出会吞掉嵌套内容
+
+```
+$ ls devices
+evidence  hardware  kernels  manifest  modules
+$ ls devices/.gitignore
+ls: devices/.gitignore: No such file or directory
+$ find devices -maxdepth 3 -name .git
+devices/modules/kernelsu/source/.git
+```
+
+- `devices/kernels/`（17 GB 内核树 + 补丁集）与 `devices/modules/kernelsu/source/`（上游检出）
+  都是 `devices/` 下的独立 repo 项目，但父目录没有 `.gitignore`；
+- 若直接声明 `path="devices"`，父仓库会把这两个目录当成自己的未跟踪内容。

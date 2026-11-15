@@ -1,0 +1,42 @@
+# 失败侧：/odm 逐条遮蔽（实例 10，改前）
+# 取数：adb -s 127.0.0.1:5911 shell ...  与 out/core/daemon/runtime/15r_16.0.10.500_EX01/10/qemu.log
+# 说明：下列为摘录，保留能直接支撑结论的行；完整 qemu.log 见对应实例目录（体积 100 MB+，未入库）
+
+== 1. 规则表形态：23 条 /odm/** 单文件规则（节选；现全部注释保留在规则表内）==
+file /odm/etc/vintf/manifest.xml                /mnt/vendorpatch/absent/vintf-manifest.xml
+file /odm/etc/vintf/manifest/manifest_oplus_fusion.xml  /mnt/vendorpatch/absent/x.xml
+file /odm/etc/init/init.oplus.rc                /mnt/vendorpatch/absent/init.oplus.rc
+file /odm/etc/init/vendor.oplus.hardware.nfc@1.0-service.rc  /mnt/vendorpatch/absent/nfc.rc
+...
+（每条都是遇到一个卡点后追加的；官方改一次布局就要重枚举一遍）
+
+== 2. 官方 odm 的实际体量：23 条规则只覆盖 23 个点，其余照旧可达 ==
+$ adb shell 'cd /odm && du -sm * | sort -rn | head -5'
+1200    lib64
+627     etc
+35      firmware
+11      lib
+7       bin
+$ adb shell 'ls -d /odm/lib64 /odm/firmware /odm/etc/camera /odm/etc/audio'
+/odm/lib64 /odm/firmware /odm/etc/camera /odm/etc/audio      # 全部存在
+$ adb shell 'cd /odm && find . | wc -l'
+3855
+
+== 3. 「官方 rc 仍被解析、配套实现却拿不到」的连带计数（实例 10）==
+$ adb shell "dmesg | grep -c \"property file '/odm/etc/build.prop'\""
+64                                   # 属性 set 被 SELinux 拒（first/second stage 各一遍）
+$ adb shell getprop sys.init.updatable_crashing
+116                                  # 被点亮
+$ adb shell 'getprop init.svc.vendor.secure_element' 周边：进程退出 129 次
+$ adb shell 'getprop init.svc.vendor.oplus.vibrator'  周边：进程退出 127 次
+
+== 4. 挂载时序：odm 先挂、载体后挂，相差 19 ms（这是自映射护栏存在的理由）==
+[    0.244563][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-5,target=/odm,type=erofs)=0: Success
+[    0.263692][    T1] init: [libfs_mgr] __mount(source=/dev/block/vdc,target=/mnt/vendorpatch,type=ext4)=0: Success
+# 若把精确的 /odm 也改写到 /mnt/vendorpatch/odm：此刻载体未挂 → 目标 ENOENT → 首阶段 FATAL
+
+== 5. mount 目标也会过 getname_flags（源码依据，非实测）==
+engine/kernels/lineage-23-6.12/fs/namespace.c
+  do_mount() -> user_path_at(AT_FDCWD, dir_name, LOOKUP_FOLLOW, &path)
+              -> getname_flags()            # 与 open() 同一条被 kretprobe 挂钩的路径
+# 所以「dir /odm」必须配「file /odm /odm」自映射，且自映射排在前面（首条命中生效）

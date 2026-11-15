@@ -1,0 +1,53 @@
+# 采集时间：2026-10-27 11:5x（三方策略规则落地源码 → 07/09 重建 → dist 发布 → 实例重启后）
+# 实例：gold_OS3.0.10.0.VNQCNXM/3（engine 新镜像 vnd_gold，adb 5911）
+# patch.img sha256：9e4a80ce700e417e6da78de39c6ff8ca20fc9cd5490a97fb4b4cdd0be91efd8a
+# 全程无任何手工 debugfs 注入，全部来自构建产物。
+
+========================================
+1. guest 启动：adbkey 握手 + adbd 拉起
+========================================
+[   15.736780][  T450] daemon: 版本探针 adbkey-handshake v2（ADB_SECURE=1）
+[   15.751010][  T455] adbkey: 公钥已写入 adb_keys，OK
+[   15.752993][  T455] adbd: 子进程 pid=456 已拉起（/apex/com.android.adbd/bin/adbd）
+
+========================================
+2. 宿主 adb 状态
+========================================
+$ adb devices
+List of devices attached
+fmvwkrheonugvgjb        device
+127.0.0.1:5911  device
+
+$ adb devices -l | grep 5911
+127.0.0.1:5911         device product:vnd_gold model:gold device:gold transport_id:6
+
+$ lsof -nP -iTCP:5911 -sTCP:LISTEN
+qemu-syst 41847 cuimingqiang  39u  IPv4 ... TCP *:5911 (LISTEN)
+
+========================================
+3. adb shell 功能验证
+========================================
+$ adb -s 127.0.0.1:5911 shell 'getprop ro.build.fingerprint; getprop ro.adb.secure; ip addr show mgmt0 | grep inet'
+Redmi/vnd_gold/gold:15/AP3A.240905.015.A2/OS3.0.10.0.VNQCNXM:user/release-keys
+1
+    inet 10.0.2.15/24 scope global mgmt0
+    inet6 fec0::5054:ff:fe12:3456/64 scope site dynamic mngtmpaddr
+    inet6 fe80::5054:ff:fe12:3456/64 scope link
+
+========================================
+4. guest 内网络栈连通（修复前此两项均失败：EMSGSIZE）
+========================================
+$ adb -s 127.0.0.1:5911 shell 'ping -c 1 -W 2 127.0.0.1 ...; echo | nc -w 2 127.0.0.1 5555 ...'
+ping_rc=0
+nc_rc=0
+
+========================================
+5. SELinux avc 归零
+========================================
+$ grep -ac "avc.*pioneer.*permissive=0" qemu.log
+0
+
+$ grep -ac "control message was truncated" qemu.log
+0
+
+（修复前：pioneer permissive=0 共 2845 条、tclass=fd 1344 条）

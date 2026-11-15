@@ -1,0 +1,32 @@
+# 失败证据 1：init SELinux 拒载 gsm 两键（r2 首版镜像，qemu-20261113-013212.log:928-931）
+# 现象：/vendor/build.prop 里有值，guest getprop 为空——init 加载时被 SELinux 拒绝后跳过
+[    1.840953][    T1] init: Do not have permissions to set 'persist.vendor.ril.support_nr_ds' to '0' in property file '/vendor/build.prop': SELinux permission check failed
+[    1.842442][    T1] init: Do not have permissions to set 'persist.vendor.ril.ecc.use.xml' to '1' in property file '/vendor/build.prop': SELinux permission check failed
+[    1.843929][    T1] init: Do not have permissions to set 'gsm.version.baseband' to 'g5123b-135085-240517-B-11857288' in property file '/vendor/build.prop': SELinux permission check failed
+[    1.845334][    T1] init: Do not have permissions to set 'gsm.version.ril-impl' to 'Samsung S.LSI Vendor RIL 5300 V2.3 Build 2024-08-06 14:04:21' in property file '/vendor/build.prop': SELinux permission check failed
+
+# 失败证据 2：第一版修复用 direct mmap 直写 gsm → init SIGSEGV 崩溃循环（r2b 镜像，qemu-20261113-014852.log）
+# daemon 直写成功（:3044/:3047）：
+[    8.964148][  T473] gsm.version.baseband=g5123b-135085-240517-B-11857288（direct mmap）
+[    8.964169][  T473] gsm.version.ril-impl=Samsung S.LSI Vendor RIL 5300 V2.3 Build 2024-08-06 14:04:21（direct mmap）
+
+# 约 10 秒后 boot_completed 即崩（:4749 起，首次 panic 上下文）：
+ denied  { ptrace } for  comm="crash_dump64" scontext=u:r:crash_dump:s0 tcontext=u:r:init:s0 tclass=process permissive=0
+[   18.355517][  T124] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+[   18.355640][    T1] ------------[ cut here ]------------
+[   18.355641][    T1] kernel BUG at include/linux/pid_namespace.h:78!
+[   18.355642][    T1] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+[   18.355643][    T1] Modules linked in: zram(E) zsmalloc(E) virtio_console(E) virt_wifi(E) mac80211_hwsim(E) mac80211(E) libarc4(E) cfg80211(E) rfkill(E) cdh_media(OE) cdh_input_identity(OE) cdh_device_info(OE) cdh_redirect(OE)
+[   18.355653][    T1] CPU: 6 PID: 1 Comm: init Tainted: G           OE     5.10.198-android13-4-00050-g12f3388846c3-ab11920634 #1
+
+# 该日志 Kernel panic 总次数: 32（每次重启后约 18~20 s 再崩，无限循环）
+4749:[   18.355517][  T124] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+9806:[   20.404662][  T127] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+14795:[   19.299983][  T126] Kernel panic - not synciqemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.8 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+19719:[   18.823077][  T127] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+24770:[   19.504086][  T127] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+29658:[   19.121100][  T125] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+
+# 失败证据 3：mali 5 键对 checker（app 身份）不可见（run-00003-merged，sepolicy 修复前）
+# properties.getprop 结果中 vendor.mali.* 键数：真机 b8f75582353b320a = 5，云机 02f9d9f965732349-cloud = 0
+# 同期 shell getprop 可见 5 键 → 落 default_prop，untrusted_app 无读权限

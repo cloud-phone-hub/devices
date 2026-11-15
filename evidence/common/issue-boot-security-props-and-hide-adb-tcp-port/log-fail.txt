@@ -1,0 +1,43 @@
+# P0-1 (A4) 修复前失败证据 (log-fail.txt)
+# 采样时间: 2026-11-10
+# 设备: Xiaomi Redmi Note 13 5G (gold / 2312DRAABC, OS3.0.10.0.VNQCNXM)
+# 云机实例: gold_15-OS3.0.10.0.VNQCNXM/1 (86213baaa20d964b-cloud, 127.0.0.1:5911)
+# 测试批次: run-00173 / run-00174 / run-00175
+
+=== 1. aligner_xiaomi_gold.all (run-00173) ===
+A4_bootSecurityAndVerityPropsComplete: false
+
+=== 2. aligner_xiaomi_gold.build_props (run-00174) ===
+bootSecurity:
+  ro.adb.secure             = "1"
+  ro.boot.flash.locked      = "1"
+  ro.boot.hardware          = "mt6833"
+  ro.boot.mode              = ""          <-- 缺失（真机为 "normal"）
+  ro.boot.vbmeta.avb_version= ""          <-- 缺失（真机为 "1.2"）
+  ro.boot.vbmeta.device_state= "locked"
+  ro.boot.vbmeta.digest     = "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
+  ro.boot.vbmeta.hash_alg   = ""          <-- 缺失（真机为 "sha256"）
+  ro.boot.vbmeta.size       = ""          <-- 缺失（真机为 "11904"）
+  ro.boot.verifiedbootstate = "green"
+  ro.boot.veritymode        = ""          <-- 缺失（真机为 "enforcing"，触发 U-BOOT-PROPS 与 A4 失败）
+  ro.debuggable             = ""          <-- Enforcing 下 userdebug_or_eng_prop 受 neverallow 隔离
+  ro.secure                 = ""          <-- Enforcing 下 userdebug_or_eng_prop 受 neverallow 隔离
+
+usbRadioRuntime:
+  service.adb.tcp.port      = "5555"      <-- 常驻暴露（adbd_config_prop 对所有 appdomain 公开可读，真机为 ""）
+
+=== 3. ultimate.boot_unlock (run-00175) ===
+U-BOOT-PROPS:
+  real : {"buildTags": "release-keys", "buildType": "user", "debuggable": "0", "flashLocked": "0", "secure": "1", "vbmetaDeviceState": "unlocked", "verifiedbootstate": "orange", "veritymode": "enforcing"}
+  cloud: {"buildTags": "release-keys", "buildType": "user", "debuggable": "", "flashLocked": "1", "secure": "", "vbmetaDeviceState": "locked", "verifiedbootstate": "green", "veritymode": ""}
+
+=== 4. Cloud shell getprop 实测对照 ===
+ro.secure                        = 1
+ro.debuggable                    = 0
+ro.boot.veritymode               =
+ro.boot.mode                     =
+ro.boot.vbmeta.avb_version       =
+ro.boot.vbmeta.hash_alg          =
+ro.boot.vbmeta.size              =
+ro.boot.vbmeta.digest            = fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f
+service.adb.tcp.port             = 5555

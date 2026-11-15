@@ -1,0 +1,58 @@
+# 失败现场（2026-10-31，gold 云机 实例 2）
+# 说明：三段都在同一个实例上取得；②③来自 /data/local/tmp/cph-storage-align.log（脚本自落盘）。
+
+## ① 对齐前：device-checker run-00034（17:09）云机 files.storage 大面积 stat 失败
+$ python3 - <<'EOF'   # 摘取 run-00034 的 files.storage 结果
+云机 succeeded ok= True failed= None statFailed= 17 pathCount= 20
+    /storage/emulated                 ok= None ...
+    /storage/emulated/0               ok= None ...
+    /data/system/users/0              ok= None ...
+    /storage/emulated/0/Alarms        ok= None ...
+（同批次真机 statFailed=0；云机 20 条里 17 条 stat 拿不到，根因是 emulated;0 没挂载）
+
+## ② 第一版脚本：挂载成功了，但目录全部是 770（缺 setgid）
+$ cat /data/local/tmp/cph-storage-align.log
+[10-31 17:50:21] 启动（boot_completed=1）
+[10-31 17:50:21] boot_completed 就绪（等待 0 轮）
+[10-31 17:50:21] emulated;0 已挂载（第 1 次尝试）
+[10-31 17:50:22] stat Alarms: 10224:1023 770
+[10-31 17:50:22] stat DCIM: 10224:1023 770
+[10-31 17:50:22] stat Pictures: 10224:1023 770
+[10-31 17:50:22] stat Android/data: 1023:1078 771
+[10-31 17:50:22] stat Android/obb: 1023:1079 771
+[10-31 17:50:22] fuse 侧: total 68|drwxrwx--- 2 10224 1023 4096 … Alarms|drwxrws--- …
+[10-31 17:50:22] 完成（失败 0 项）
+（脚本每条 chown/chmod 都返回 0，"失败 0 项"，但回读恒为 770——日志与结果自相矛盾）
+
+## ③ 第二版脚本：加重试后仍 14 项不一致，证明不是 MediaProvider 回改
+[10-31 17:55:14] 启动（boot_completed=1）
+[10-31 17:55:14] boot_completed 就绪（等待 0 轮）
+[10-31 17:55:15] emulated;0 已挂载（第 1 次尝试）
+[10-31 17:55:16] 第 1 轮：不一致 14 项
+[10-31 17:55:26] 第 2 轮：不一致 14 项
+[10-31 17:55:36] 第 3 轮：不一致 14 项
+[10-31 17:55:46] 第 4 轮：不一致 14 项
+[10-31 17:55:56] 第 5 轮：不一致 14 项
+[10-31 17:56:06] stat Alarms: 10224:1023 770
+[10-31 17:56:06] stat DCIM: 10224:1023 770
+[10-31 17:56:06] stat Pictures: 10224:1023 770
+[10-31 17:56:06] stat Android/data: 1023:1078 771
+[10-31 17:56:07] stat Android/obb: 1023:1079 771
+[10-31 17:56:07] 完成（失败 0 项）
+
+## ④ 定位实验：全权限通道 vs init 服务（capabilities 少了 FSETID）
+# 走 root 全权限的 js 通道（cmd.run），setgid 能站住：
+mkdir -p /data/media/0/SetgidProbe; chown 10224:1023 /data/media/0/SetgidProbe; chmod 2770 /data/media/0/SetgidProbe
+→ 回读 5 s: drwxrws--- 2 10224 1023 … SetgidProbe
+→ 回读 15 s: drwxrws--- 2 10224 1023 … SetgidProbe
+→ 回读 40 s: drwxrws--- 2 10224 1023 … SetgidProbe
+# 同一段逻辑放进 init 服务（当时 capabilities CHOWN DAC_OVERRIDE FOWNER），chmod 退出码 0、回读：
+→ drwxrwx--- 2 10224 1023 … Alarms     # 2770 → 770，setgid 位被内核静默丢弃
+
+## ⑤ 第一版 rc（无 disabled）：main 阶段抢跑，boot_completed 触发被吞
+[   17.86] init: starting service 'cph_storage_align'...            # class main，vold 还没挂 emulated
+[   35.70] init: Service 'cph_storage_align' (pid …) exited with status 0 oneshot service took 17.862000 seconds
+（脚本 40 轮重试后放弃；日志里挂载一直失败）
+[   31.6] init: processing action (sys.boot_completed=1) from (/vendor/etc/init/cph_storage_align.rc)
+[   31.6] init: requested start of service 'cph_storage_align', but it is already running (flags: 6)
+         # oneshot 已退出/正在跑，boot_completed 这次 start 直接无效 —— 整个 boot 什么都没对齐

@@ -1,0 +1,83 @@
+== 修复后：sets 命中的同名多行收敛成一行，清单值成为产物里该键的唯一答案（2026-11-04）==
+
+改动: engine/build/internal/proplines/proplines.go -> Apply()
+      先按 unsets 删行；再按 sets 覆盖/追加，命中键若出现多次：第一处写基线值、
+      其余重复行删除，改动说明记「覆盖 <k>=<v>（并删除 N 行重复）」。
+
+
+## 1. 单测
+
+$ cd engine/build && go test ./internal/proplines/... -v
+=== RUN   TestApplyUnsetsBeforeSets
+--- PASS: TestApplyUnsetsBeforeSets (0.00s)
+=== RUN   TestApplyCollapsesDuplicateKeys
+--- PASS: TestApplyCollapsesDuplicateKeys (0.00s)
+=== RUN   TestApplyNoChange
+--- PASS: TestApplyNoChange (0.00s)
+=== RUN   TestReadSection
+--- PASS: TestReadSection (0.00s)
+=== RUN   TestReadRejectsArrayForm
+--- PASS: TestReadRejectsArrayForm (0.00s)
+=== RUN   TestAbi
+--- PASS: TestAbi (0.00s)
+PASS
+ok  	cloud-phone-hub/engine/build/internal/proplines	0.288s
+
+（TestApplyCollapsesDuplicateKeys 替掉了原来的 TestApplyOverwritesFirstOccurrence：
+ 后者断言的是「只改第一处、第二处不动」的旧语义。）
+
+$ cd engine/build && go test ./...  -> 24 个包含 ok、0 个 FAIL
+（原始输出 engine/out/tmp/cph2797-gotest-all.txt）
+
+
+## 2. 真实构建里的收口留痕
+
+$ grep -n '\[prop\]' engine/out/tmp/cph2797-build3.log | sed -n '/^4[0-9][0-9]:/p'
+424:    [prop] 覆盖 ro.hardware.egl=mesa
+425:    [prop] 覆盖 ro.hardware.hwcomposer=drm
+426:    [prop] 覆盖 ro.hwui.use_vulkan=false（并删除 1 行重复）
+427:    [prop] 覆盖 ro.opengles.version=196608
+428:    [prop] 追加 ro.soc.model=vsoc_arm64
+429:    [prop] 追加 ro.vendor.boot_security_patch=2026-06-01
+430:    [prop] 覆盖 ro.vendor.build.security_patch=2026-06-01（并删除 1 行重复）
+431:    [prop] 追加 vendor.oplus.dalvik.vm.done=1
+
+$ grep -nE '^(ro.hardware.egl|ro.hwui.use_vulkan|ro.hardware.hwcomposer|ro.opengles.version)=' \
+    out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/build.prop
+45:ro.hwui.use_vulkan=false
+76:ro.hardware.hwcomposer=drm
+373:ro.opengles.version=196608
+375:ro.hardware.egl=mesa
+（每键只剩一行；`grep -c '^ro.hardware.egl=' 同份文件` = 1）
+
+
+## 3. 运行时实测（实例 3 = 修复后盘集）
+
+VM 内（engine/out/tmp/cph2797-getprop-pass.txt）：
+[ro.hardware.egl]: [mesa]        [ro.hwui.use_vulkan]: [false]
+[ro.hardware.hwcomposer]: [drm]  [ro.opengles.version]: [196608]
+[ro.soc.model]: [vsoc_arm64]     [ro.vendor.build.security_patch]: [2026-06-01]
+[sys.boot_completed]: [1]        [vendor.oplus.dalvik.vm.done]: [1]
+
+$ grep -c "Overriding previous property 'ro.hwui.use_vulkan'" \
+    engine/out/tmp/cph2797-pass-qemu.log
+0        （run1 是 1）
+
+判定：
+$ python3 core/host/daemon/tools/boot_check.py cph2797_16.0.8.301_EX01 --timeout 600 \
+    --png engine/out/tmp/cph2797-desktop3.png
+[shot] engine/out/tmp/cph2797-desktop3.png 1264x2760 bpp=32 平均亮度=4.3 峰值=255
+[pass] 引导完成（日志 17248 行）+ 截图非黑（平均亮度=4.3 峰值=255）
+qemu.log: [  110.993517] init: processing action (sys.boot_completed=1)
+
+
+## 4. 适用范围与外溢检查
+
+改动在 06/07 共用包内，只对「sets 命中的键在同一份 build.prop 里出现多次」这一形态
+生效，其余分支（追加 / 覆盖单行 / 无改动）行为不变，由单测逐条覆盖。
+本轮实测：
+- cph2797：`ro.hwui.use_vulkan`、`ro.vendor.build.security_patch` 两键各删 1 行重复；
+- 15r：三轮构建日志（out/tmp/15r-build{,2,3}.log）里「并删除 N 行重复」计数均为 0，
+  即该机基线命中的键本来就是单行，收口路径未触发；
+- gold / m22 / oriole 本轮没有再跑构建（它们的构建在本改动之前），外溢风险只由
+  `go test ./...` 全绿覆盖，尚未取得各自的构建留痕。

@@ -1,0 +1,74 @@
+# 修复后：gold_15-OS3.0.11.0.VNQCNXM 实例 2（7d10bffa4bc09406-cloud）ARM64 单测与实机对拍
+# 1) guest 内执行交叉编译 ARM64 单测：test result: ok. 11 passed; 0 failed
+
+# 2) 实机运行态检查：
+=== 2. hwservicemanager & bluetooth ===
+init.svc.hwservicemanager=stopped
+hwservicemanager.disabled=true
+hwservicemanager.ready=
+settings.secure.bluetooth_name=Redmi Note 13 5G
+settings.global.device_name=Redmi Note 13 5G
+Bluetooth Status
+  enabled: false
+  state: OFF
+  address: 00:00:00:DE:17:00
+  isSupportBluetoothHalfOn: true
+  BluetoothHalfOnState: false
+  name: Redmi Note 13 5G
+
+Enable log:
+  09-24 10:43:09.399  Enabled  due to APPLICATION_REQUEST by android
+  11-14 15:20:49.652 Disabled  due to APPLICATION_REQUEST by android
+
+Bluetooth crashed 0 times
+
+0 BLE apps registered
+
+BluetoothManagerService:
+  mEnable:false
+  mQuietEnable:false
+  mEnableExternal:false
+  mQuietEnableExternal:false
+
+🚩Flag dump:
+	[■]: a2dpConcurrentSourceSink                               a2dp_concurrent_source_sink
+	[■]: a2dpOffloadCodecExtensibility                          a2dp_offload_codec_extensibility
+	[ ]: airplaneRessourcesInApp                                airplane_ressources_in_app
+	[■]: allowSwitchingHidAndHogp                               allow_switching_hid_and_hogp
+	[ ]: apiGetConnectionStateSyncOnMain                        api_get_connection_state_sync_on_main
+	[■]: apiGetConnectionStateUsingIdentityAddress              api_get_connection_state_using_identity_address
+	[■]: ashaAsrc                                               asha_asrc
+Failed to write while dumping service bluetooth_manager: Broken pipe
+--- crash logcat (bluetooth) ---
+/system/bin/sh: su: inaccessible or not found
+<none>
+--- bt_config.conf ---
+/system/bin/sh: su: inaccessible or not found
+
+===ROOT_CHECK_START===
+---DMESG_MGMT---
+[   10.471246] virtio_net virtio6 mgmt0: renamed from eth0
+[   15.474933] mgmt_bridge: mgmt0 (10.0.2.15/24) 已隔离并监听 0.0.0.0:5555 -> 127.0.0.1:5555
+---CRASH_BT---
+NONE
+---BT_CFG---
+[Info]
+FileSource = Empty
+TimeCreated = 2026-09-24 10:43:12
+
+[Metrics]
+Salt256Bit = a5df0a624baaa2fec65b96ef957d61a8c00f3fc20a1b07698e8d7dc92d470929
+
+[Adapter]
+LE_LOCAL_KEY_IRK = 2660dd2f915c396d241a3bf1c2816901
+LE_LOCAL_KEY_IR = 686f68bb5fbd45224efa18235092eb22
+LE_LOCAL_KEY_DHK = d4c530c6fefe523dfc24bed5e2bec527
+LE_LOCAL_KEY_ER = 9a45e67ae7d182738ec0357905d86105
+Address = da:4c:10:de:17:00
+ScanMode = 0
+DiscoveryTimeout = 120
+Name = Redmi Note 13 5G
+
+# 3) aligner.network_full 重采对拍结果（diff/network.json）：
+   bluetooth.name in diffs: null
+   summary(new): {"identity": 0, "capability": 2, "state": 34, "availability": 0, "fatal": 2}

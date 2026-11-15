@@ -1,0 +1,23 @@
+# vendor.meizu.hardware.meizu_charging（MEIZU 充电 HAL）的服务定义。
+#
+# 来源：原厂 flyme-m22 vendor.img 的 etc/init/vendor.meizu.hardware.meizu_charging-service.rc。
+# 只搬 service 段，另加 interface/seclabel 两行：
+#   interface aidl …  按 AIDL 实例名登记；
+#   seclabel …        显式换域，可执行标签由 07 步骤 6b 按本行派生
+#                     /(vendor|system/vendor)/bin/hw/vendor.meizu.hardware.meizu_charging-service
+#                     → u:object_r:hal_meizu_charging_default_exec:s0（与原厂一致）。
+#
+# 刻意丢弃原厂的三个触发器段（on property:sys.run.charger_file_perms / on boot /
+# on charger）：它们全是 chmod/chown 本机 Meizu 充电 sysfs
+# （/sys/class/meizu/charger/**、/sys/class/qcom-battery/charge_control_en…）并带
+# `wait <路径>`。云机 virtio 底座没有这些节点：
+#   * chmod 只会刷 avc/ENOENT 噪音；
+#   * `wait` 会卡住该 trigger 队列，延后其它 on-property 动作。
+# 这些动作属板级事实（路径绑本机 PMIC/i2c），若将来真接硬件，应放机型层而不是模块层。
+
+service vendor.default.meizu_charging-service /vendor/bin/hw/vendor.meizu.hardware.meizu_charging-service
+    class late_start
+    user system
+    group system
+    interface aidl vendor.meizu.hardware.meizu_charging.IMeizuCharging/default
+    seclabel u:r:hal_meizu_charging_default:s0

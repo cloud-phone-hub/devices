@@ -1,0 +1,15 @@
+# GET http://101.33.73.101/api/runs/run-00054  (aligner.media_full；07cf5fc1784783d5=gold 真机 OS3.0.11.0.VNQCNXM/Android 15，b8f75582353b320a=oriole 真机 Android 14)
+07cf5fc1784783d5 status=succeeded error=MediaCodecList_unavailable decoderCount=0 encoderCount=0 codecListKind=None regularCodecCount=None availability={"hardwareDecoders": 0, "mediaCodecList": false} elapsedMs=35
+  log: media_full: decoders=0 encoders=0 elapsedMs=35
+  decoders(前5): []
+  encoders(前5): []
+b8f75582353b320a status=succeeded error=MediaCodecList_unavailable decoderCount=0 encoderCount=0 codecListKind=None regularCodecCount=None availability={"hardwareDecoders": 0, "mediaCodecList": false} elapsedMs=4
+  log: media_full: decoders=0 encoders=0 elapsedMs=4
+  decoders(前5): []
+  encoders(前5): []
+
+
+# 定位用调试脚本（dbg.media，oriole，run 内 setResult 原文）
+err1  = java.lang.IllegalArgumentException: method android.media.MediaCodecList.<init> argument 1 has type int, got java.lang.Double   ← newInstance([0])
+err1b = java.lang.RuntimeException: android.media.MediaCodecList 无匹配构造器                                                      ← newInstance(0)
+# 修正后验证（dbg.media，oriole）：newInstance([jInt(0)]) → 68 个（REGULAR）；newInstance([jInt(1)]) → 72 个（ALL）；getCodecCount()=68

@@ -1,0 +1,22 @@
+=== 改造前：07_build_vendor/elfcompat.go 对预编译 allocator-service.minigbm 原地修补 AArch64 机器码与 .rodata 字符串 ===
+
+[engine/build/stages/07_build_vendor/elfcompat.go]
+// encodeAArch64MapperSuffixBlock 生成 Allocator::getIMapperLibrarySuffix 中构造
+// libc++ SSO std::string 的 4 条 AArch64 指令字节序列（16 字节，小端）：
+//   mov w8, #(len * 2)      ; SSO 短串头字节（LSB=0，高 7 位为长度）
+//   mov x9, x1              ; _aidl_return (std::string*)
+//   strb w8, [x9], #1       ; 写 SSO 头并将 x9 前移到字符载荷起始处
+//   stur x8, [x1, #1]       ; 当 len <= 8 时直接内联写短串载荷
+func encodeAArch64MapperSuffixBlock(suffix string) []byte { ... }
+
+// patchAllocatorMapperSuffix 原地修补 bin/hw/android.hardware.graphics.allocator-service.minigbm：
+//   1. 若 suffix <= 8 字节（如 "mediatek" / "qti" / "gs101"），直接搜索硬编码 4 条指令序列
+//      encodeAArch64MapperSuffixBlock("minigbm") 并在 .text 段覆盖改写机器码立即数，
+//      同时把紧随其后的 `ldur x8, ...` 替换为 `movz x8, ...` / `movk x8, ...` 拼装 64 位字符立即数；
+//   2. 另在 .rodata 段扫描 NUL 结尾字面量 "minigbm\x00" 并就地覆盖（长度超过 7 字节时无法直接放进原字面量槽位）。
+func patchAllocatorMapperSuffix(path, suffix string) (bool, error) { ... }
+
+存在问题：
+1. 强耦合特定编译器与 libc++ SSO 内存布局生成的 4+2 条 AArch64 机器码指令序列，底包重编或寄存器分配变化即失配；
+2. 内联立即数仅支持 <= 8 字节后缀（如 "mediatek" 恰好卡在 8 字节上限），更长后缀（如 >= 9 字节）直接回退或越界失败；
+3. 违反「engine/vendor 负责源码自编虚拟 HAL、07_build_vendor 仅装配消费产物」的架构边界，是全仓最后一处 ELF .text/.rodata 二进制修补逻辑。

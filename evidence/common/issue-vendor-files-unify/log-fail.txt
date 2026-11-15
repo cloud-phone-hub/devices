@@ -1,0 +1,33 @@
+# issue-vendor-files-unify 负路径实测（2026-11-02，本机 macOS）
+# 命令姿势：cd engine/build && go run . build-vendor --dry-run --vendor google --brand oriole --version AP2A.240905.003.F1 --manifest <清单>
+# 四份清单是 oriole 真实基线（13 条 vendor.files）的改造副本，只动目标校验点，其余原样；
+# 期望行为：在「步骤 0 计划期」就报错退出，不进步骤 4/5，不写任何产物。
+
+===== [案例] legacy-replaces =====
+$ build-vendor --dry-run --manifest /tmp/cdh-files-demo/legacy-replaces.json
+==> vendor 基底: out/roms/lineage/lineage-21.0/super/vendor_a.img（清单 lineage 推导）
+[err] 清单 vendor.replaces / vendor.lifts 已废弃：合并成 vendor.files（每条用 mode: add / replace / delete 表示落盘方式）
+exit status 1
+exit=1（非 0 = 计划期拒绝）
+
+===== [案例] legacy-lifts =====
+$ build-vendor --dry-run --manifest /tmp/cdh-files-demo/legacy-lifts.json
+==> vendor 基底: out/roms/lineage/lineage-21.0/super/vendor_a.img（清单 lineage 推导）
+[err] 清单 vendor.replaces / vendor.lifts 已废弃：合并成 vendor.files（每条用 mode: add / replace / delete 表示落盘方式）
+exit status 1
+exit=1（非 0 = 计划期拒绝）
+
+===== [案例] cross-partition =====
+$ build-vendor --dry-run --manifest /tmp/cdh-files-demo/cross-partition.json
+==> 文件操作集合: 基线清单 vendor.files（13 项）
+[err] 文件操作来源 "lineage:system" 非法：只允许 official（官方固件）或 lineage/base（本机底包，同版本、vendor 分区）；不允许跨版本借件（如 lineage:22.2）或跨分区借件（如 lineage:system）
+exit status 1
+exit=1（非 0 = 计划期拒绝）
+
+===== [案例] cross-version =====
+$ build-vendor --dry-run --manifest /tmp/cdh-files-demo/cross-version.json
+==> 文件操作集合: 基线清单 vendor.files（13 项）
+[err] 文件操作来源 "lineage:22.2" 非法：只允许 official（官方固件）或 lineage/base（本机底包，同版本、vendor 分区）；不允许跨版本借件（如 lineage:22.2）或跨分区借件（如 lineage:system）
+exit status 1
+exit=1（非 0 = 计划期拒绝）
+

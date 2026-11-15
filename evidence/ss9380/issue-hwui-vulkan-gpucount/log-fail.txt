@@ -1,0 +1,84 @@
+# 失败态取证：所有 UI 进程 `Assertion failed: !gpuCount`
+
+# 机型：samsung/pa3qzcx/pa3q:16/BP4A.251205.006/S9380ZCSDCZH1
+# 盘集：build9（vendor.build-prop-sets 里还没有 debug.hwui.renderer）
+# 实例：index 2，adb 127.0.0.1:5911
+# 时间：2026-10-30
+
+# ---- 1) crash buffer：同一个原生断言打死所有 UI 进程 ----
+$ adb shell logcat -b crash -d
+F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE)
+F native  : Assertion failed: !gpuCount
+# 出现该断言的有：com.android.systemui / com.android.settings /
+#                 com.sec.android.app.SecSetupWizard …
+
+# ---- 2) 反查断言来源：libhwui.so 的 VulkanManager::initialize ----
+# 从 system 分区取出 libhwui.so 后：
+# $ strings libhwui.so | grep -n "gpuCount"
+#   ...Assertion failed: !gpuCount...
+# $ strings libhwui.so | grep -n "RoVkContext\|VulkanManager"
+#   RenderThread::requireVkContext
+#   VulkanManager::initialize
+# 即：hwui 默认按 Vulkan 渲染 → 建 VkContext → 枚举物理设备失败 → 断言自杀。
+
+# ---- 3) 为什么枚举不到设备 ----
+$ adb shell 'ls /vendor/lib64/hw/ | grep vulkan'
+vulkan.virtio.so
+vulkan.pastel.so
+vulkan.lvp_mesa3d.so
+$ adb shell 'ls /vendor/etc/vulkan/icd.d'          # 目录不存在
+ls: /vendor/etc/vulkan/icd.d: No such file or directory
+$ adb shell 'getprop ro.hardware.vulkan'
+adreno                                              # 指向的 adreno 驱动也没有
+# → vkEnumeratePhysicalDevices 返回 0 个物理设备。
+
+# ---- 4) m22 的老办法在 OneUI 上无效 ----
+$ adb shell getprop ro.hwui.use_vulkan
+false                                               # 已经是 false，仍然崩
+# OneUI 的 libhwui.so 里已无 ro.hwui.use_vulkan 字符串：
+# $ strings libhwui.so | grep -c use_vulkan
+# 0
+# 只剩 debug.hwui.renderer 的两个合法值 skiavk / skiagl：
+# $ strings libhwui.so | grep -E "^(skiavk|skiagl|opengl)$"
+# skiagl
+# skiavk
+
+# ---- 5) 写 opengl 也不行（非法取值，静默忽略）----
+$ adb shell setprop debug.hwui.renderer opengl
+$ adb shell am force-stop com.android.settings; adb shell am start -n com.android.settings/.Settings
+# 依然 Assertion failed: !gpuCount
+
+# ---- 6) 复测：在“已修复”的盘集上把 renderer 切回 skiavk，现场复现同一断言 ----
+# 目的：build9 那台实例的 qemu.log 已被 daemon 轮转覆盖，为免“结论无原始日志可查”，
+#       在当前通过盘集上做一次可复现的反证：不改镜像，只临时改运行时属性，几秒内还原。
+# 盘集：patch.img sha256 53e483856316…（/vendor/build.prop 里 debug.hwui.renderer=skiagl）
+# 实例：index 5，adb 127.0.0.1:5911，guest 时间 2026-08-12 17:20:41
+$ adb shell setprop debug.hwui.renderer skiavk
+$ adb shell getprop debug.hwui.renderer
+skiavk
+$ adb shell am start -a android.settings.SETTINGS
+Starting: Intent { act=android.settings.SETTINGS }
+
+# 5 秒内 Settings 的 RenderThread 自杀：
+08-12 17:20:41.899 12122 15900 F HWUI    : Assertion failed: !gpuCount
+08-12 17:20:42.209 15932 15932 F DEBUG   : Abort message: 'Assertion failed: !gpuCount'
+08-12 17:20:42.209 15932 15932 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+08-12 17:20:42.209 15932 15932 F DEBUG   : Cmdline: com.android.settings
+08-12 17:20:42.209 15932 15932 F DEBUG   : pid: 12122, tid: 15900, name: RenderThread  >>> com.android.settings <<<
+$ adb shell pidof com.android.settings
+# 空：进程已死，窗口起不来（launcher 仍是 topResumedActivity）
+
+# 断言与“没有 Vulkan ICD”一一对应（同机复核）：
+$ adb shell 'ls /vendor/etc/vulkan'
+ls: /vendor/etc/vulkan: No such file or directory
+$ adb shell 'ls /vendor/lib64/hw/ | grep vulkan'
+vulkan.lvp_mesa3d.so
+vulkan.pastel.so
+vulkan.virtio.so
+$ adb shell getprop ro.hardware.vulkan
+adreno
+
+# 还原（build.prop 的值不受影响，重启后自动回到 skiagl）：
+$ adb shell setprop debug.hwui.renderer skiagl
+$ adb shell getprop debug.hwui.renderer
+skiagl

@@ -1,0 +1,6 @@
+=== diff/native_env.json summary (post) ===
+{"identity": 235, "capability": 2, "state": 2, "availability": 0, "fatal": 237}
+vendorTree/vendorReadable diffs for /vendor/lib/: []
+=== 64-bit App (uid > 10000) /vendor/lib/libdrm.so raw snapshot comparison ===
+real  vendorTree.readableCount=354, libdrm.so=[{'md5': '504e7332b6d389a850383966c1e76e8a', 'path': '/vendor/lib/libdrm.so', 'size': 59096}]
+cloud vendorTree.readableCount=354, libdrm.so=[{'md5': '504e7332b6d389a850383966c1e76e8a', 'path': '/vendor/lib/libdrm.so', 'size': 59096}]

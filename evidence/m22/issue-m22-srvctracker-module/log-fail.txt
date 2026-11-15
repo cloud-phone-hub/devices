@@ -1,0 +1,73 @@
+# log-fail：把原厂 HAL 收成 prebuilt 模块时被推翻的判断与踩到的坑（2026-10-29）
+
+目的：下次收第二个（aw_light / meizu_charging / realitytap / diaghal）时少走这几步。
+
+## 1. 主 CLI 没重建 → 误判「prebuiltFiles 没生效」
+
+改完 `build/07_build_vendor/hal.go` 后我只重建了 `cdh-vendor`（vendor/build），
+07 主体 `out/bin/cdh` 还是旧二进制。第一次实跑日志报：
+
+```
+HAL 模块: vendor.qti.hardware.servicetrackeraidl（…，产物清单无法判定 -> 重编）
+```
+
+当时以为是 `moduleTargets` 的 prebuilt 分支写错，其实旧代码里根本没有那个分支。
+`go build -o out/bin/cdh .` 之后立刻变成「8 项齐全（编译产物 3 + vendor 静态树 5）」。
+
+**教训**：这轮同时改了 `engine/build` 与 `engine/vendor/build` 两个 Go module，两边
+都要重建；`cdh` 的 `ensureCompiler` 只校验 `cdh-vendor` 存在与身份，不会因为 `cdh`
+自己源码变了而重建。
+
+## 2. debugfs 查错路径 → 误判「镜像里没有标签」
+
+第一轮查 xattr 用的是 `/vendor/bin/hw/...`，`ea_get` 全部返回
+`File not found by ext2_lookup`；连对照的健康 HAL 也一样。原因：`vendor.img` 是
+vendor **分区**镜像，根目录就是分区根，正确路径是 `/bin/hw/...`。
+
+**教训**：debugfs 报 File not found 时先 `stat /` 或用对照文件确认路径口径，别急着
+下「标签丢了」的结论。
+
+## 3. 拿镜像 sha 当「重建一致」的判据
+
+清空产物根重建后得到 `3e5d8e86…`，紧接着一次无改动构建得到 `b592f0be…`，尺寸都是
+206,069,760 B。mke2fs 全量生成 + 元数据回写，inode/时间戳非确定，sha 必然漂移。
+
+**教训**：一致性判据用「装配树条目数 + 逐文件内容 sha + 镜像内 xattr」；shasum 只能
+标识「这一次的产物」。
+
+## 4. 原厂 rc 没有 seclabel
+
+原厂 4 个私有 HAL 的 rc 都只有 `class/user/group/interface`，域转换靠 file_contexts。
+收进模块时如果照抄 rc 不补 seclabel：
+
+- 07 步骤 6b 扫不到域 → 不会派生 `vendor_hal_srvctracker_default_exec`；
+- 二进制回落 `vendor_file`，init 在定义服务阶段就报「has incorrect label or no
+  domain transition」（#55 已记录）。
+
+本次按 health 的顺序做：**先给 rc 补 seclabel，再删机型层对应条目**。
+
+## 5. 原厂策略不能照抄：202404 与 attribute 编排
+
+原厂 cil 里是 `init_202404` / `system_server_202404`，且域挂进
+`protected_service_202404` / `protected_hwservice_202404` / `halserverdomain`。
+本云底座是 `202504`，直接搬会 `Failed to resolve allow statement`（#58 的教训）。
+模块片段里统一用 `{{vers}}`，并且不搬那 4 个 attribute 行（它们属于 Flyme 全量策略）。
+
+## 6. 原厂的「服务类型名」与「exec/域类型名」不是同一套前缀
+
+- exec / 域：`vendor_hal_srvctracker_default` / `vendor_hal_srvctracker_default_exec`；
+- attribute：`vendor_hal_srvctracker_{client,server}`；
+- 服务类型：`vendor_hal_servicetrackeraidl_service`。
+
+我第一次在 solution.md 里写成「服务类型名沿用原厂 `vendor_hal_srvctracker_service`」，
+是错的——`vendor_hal_srvctracker_service` 是我们自己起的（与 exec 同前缀）。类型名
+不影响功能，但文档不能声称「沿用原厂」。
+
+## 7. 刻意没做
+
+- 没搬 `vendor_hal_srvctracker_hwservice` 与 hwservice 相关授权：AIDL（binder
+  ndk）走 service_manager，不经过 hwservicemanager。
+- 没给服务加 `oneshot`：保持原厂 rc 的 `class hal` 常驻语义；若实机发现服务反复
+  重启，再评估。
+- 没改模块 VINTF 的 `version="8.0"`：`alignVintfSchema` 只降不升，8.0 合法。
+- 没动另外 4 个 HAL、没重跑 09/11。

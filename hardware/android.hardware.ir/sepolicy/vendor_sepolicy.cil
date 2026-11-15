@@ -1,0 +1,5 @@
+;; cdh：android.hardware.ir 模块 SELinux 片段（由 07_build_vendor 追加到
+;; /vendor/etc/selinux/vendor_sepolicy.cil 末尾）。
+;; 允许 platform_app（如 /product/app/IFAAService/IFAAService.apk，org.ifaa.aidl.manager）
+;; 与 system_app 作为 hal_ir_client 查询并调用 hal_ir_service。
+(typeattributeset hal_ir_client (platform_app_{{vers}} system_app_{{vers}}))

@@ -1,0 +1,45 @@
+# issue-m22-abi-deps-regenerate · 失败现场
+# 采集时间: 2026-10-30 10:56
+# 命令: cd engine && ./out/bin/cdh device build m22
+# 日志: out/tmp/m22-rebuild-full.log
+# 结果: 前 6 阶段通过，第 7 阶段 build_vendor 在「步骤 3 编译 HAL 模块」的首个模块失败
+
+== 前六阶段（通过）==
+[ok] 已导出 16 个分区 -> out/roms/lineage/lineage-23.2
+[ok] 解包完成: 2 个任务 -> out/roms
+[ok] boot.img 打包完成: out/devices/flyme/m22/12.5.0.0A/img/boot.img（83886080 字节）
+[ok] vendor_boot.img 打包完成: out/devices/flyme/m22/12.5.0.0A/img/vendor_boot.img（22395141 字节）
+[ok] odm.img 构建完成: out/devices/flyme/m22/12.5.0.0A/img/odm.img（8388608 字节，4 条目）
+[ok] 06 完成：out/devices/flyme/m22/12.5.0.0A/odm/etc/build.prop + out/devices/flyme/m22/12.5.0.0A/img/odm.img
+
+== 第七阶段（失败）==
+==> [7/11] build_vendor  (07_build_vendor)
+==> [步骤 0] 解析计划
+    编译产物:   out/vendor/android16（... 36 项 ...）
+    平台覆盖层: qcom（产物根下暂无该目录，跳过）
+    目标树:     out/devices/flyme/m22/12.5.0.0A/vendor（已有 428 个文件（仅保留白名单顶层））
+==> [步骤 1] 解包 lineage vendor 镜像 ... ok
+==> [步骤 2] 按白名单复制到装配树 ... ok（复制 446 条目）
+==> [步骤 2b] 摊平 vendor APEX（模式 graphics）... ok（新增 10 / 覆盖 38 / 跳过 4）
+==> [步骤 3] 编译 HAL 模块
+    输入: manifest/flyme/m22/device.json（hardware 36 项）
+==> 编译 HAL 模块 android.hardware.audio（变体 default，待落盘 bin/hw/android.hardware.audio.service, bin/hw/android.hardware.audio.effect.service, etc/init/android.hardware.audio.service.rc 等 4 项）
+  + out/bin/cdh-vendor hal build android.hardware.audio --android 16 --out-dir /Volumes/work/cloud-phone-hub/engine/out/vendor/android16
+[err] ABI 依赖库未就绪: /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/abi/system/lib64（先跑 cdh-vendor deps --android 16 --abi）
+[err] 阶段 build_vendor 失败: HAL 模块 android.hardware.audio 编译失败: cdh-vendor hal build android.hardware.audio --android 16 --out-dir /Volumes/work/cloud-phone-hub/engine/out/vendor/android16 退出码非零（exit status 1）
+EXIT=1
+
+== 失败时产物根的实际状态 ==
+$ ls out/vendor/
+ls: out/vendor/: No such file or directory          # 整个 ABI 产物根不存在，不只是 abi/ 子目录
+
+== 独立复现（只检查，不下载）==
+$ ./out/bin/cdh-vendor deps --android 16 --abi --check
+[err] ABI 依赖不完整: libc++.so（缺失）, libbinder_ndk.so（缺失）, liblog.so（缺失）, libnativewindow.so（缺失）（先跑 cdh-vendor deps --android 16 --abi）
+
+== 对照：依赖根是另一处，且完好 ==
+$ ls -ld vendor/out/android16 && du -sh vendor/out/android16
+drwxr-xr-x@ 4 cuimingqiang  staff  136 10 23 09:57 vendor/out/android16
+1.2G    vendor/out/android16
+$ ./out/bin/cdh-vendor deps --android 16 --platform --check
+[ok] platform-source 齐全（8 仓）

@@ -1,0 +1,120 @@
+# issue-m22-nfc-watchdog-loop —— 失败侧日志（修复前）
+
+盘集（round6）：`/tmp/m22-round6.log`（2026-10-29 14:52，EXIT=0）
+  vendor.img 206,651,392 B / sha256 `ecd46cc4eb3f7c017d6b0733b36ffbbf26148db4feb40369c9e5e6bd595196aa`
+  patch.img  402,653,184 B / sha256 `10d6575746476ba8f30a7855b0409d7df60db3efff376ffb714410a818c1684b`
+实例：`m22_12.5.0.0A/36`（guest 时钟 20:52:35 起；宿主张 14:52 停）
+宿主持久日志：`out/core/daemon/runtime/m22_12.5.0.0A/36/qemu.log`（14,301,710 B，串口全量）
+guest tombstone：`/data/tombstones/tombstone_08`（pid 9414）
+
+> 串口日志每行重复两次（serial mux 双写），下文计数均为**去重后**的真实次数。
+
+## A. 现象：`com.android.nfc` 每 90 s 被 Watchdog abort 一次
+
+窗口 20:54:06.530 → 21:07:38.935（13 min 32 s）：
+
+| 标记 | 去重次数 |
+| :--- | ---: |
+| `NfcService: Enabling NFC` | 10 |
+| `libnfc_nci: HalOpenInternal: Open Error=OK` | 10 |
+| `NfcService: run: Watchdog triggered, aborting` | 10 |
+| `libnfc_nci: JNI FatalError called: enableInternal` | 10 |
+| `F DEBUG : Abort message: 'JNI FatalError called: enableInternal'` | 10 |
+| `ActivityManager: Start proc … for restart com.android.nfc` | 10 |
+
+间隔严格 90 s（`20:54:06` / `20:55:36` / `20:57:06` / `20:58:37` / `21:00:07` / `21:01:37`
+/ `21:03:07` / `21:04:38` / `21:06:08` / `21:07:38`）。
+
+首轮（开机后第一次 enable，pid 2283，没有 `Enabling NFC` 行，直接从 HAL 侧报错）：
+
+```
+06-25 20:52:35.585   816   857 I ActivityManager: Start proc 2283:com.android.nfc/1027 for added application com.android.nfc
+06-25 20:54:06.182  2283  2693 E NfcService: run: Watchdog triggered, release lock before aborting
+06-25 20:54:06.184  2283  2693 E NfcService: run: Watchdog triggered, aborting
+06-25 20:54:06.188  2283  2693 F libnfc_nci: jni_internal.cc:826] JNI FatalError called: enableInternal
+06-25 20:54:06.188  2283  2693 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 2693 (enableInternal), pid 2283 (com.android.nfc)
+06-25 20:54:06.418  8520  8520 F DEBUG   : pid: 2283, tid: 2693, name: enableInternal  >>> com.android.nfc <<<
+06-25 20:54:06.418  8520  8520 F DEBUG   : Abort message: 'JNI FatalError called: enableInternal'
+06-25 20:54:06.418  8520  8520 F DEBUG   :       #05 pc 000000000013cc5c  /system/lib64/libnfc_nci_jni.so (android::nfcManager_doAbort(_JNIEnv*, _jobject*, _jstring*)+68)
+06-25 20:54:06.460   816   857 I ActivityManager: Start proc 8539:com.android.nfc/1027 for restart com.android.nfc
+```
+
+## B. 关键时序：`open()` 4~5 ms 就返回，"Open Error=OK"
+
+重启后的进程（pid 8539）：
+
+```
+06-25 20:54:06.530  8539  8579 I NfcService: Enabling NFC
+06-25 20:54:06.535  8539  8584 E libnfc_nci: HalOpenInternal: Open Error=OK
+06-25 20:54:06.535  8539  8584 ... (此后 90 s 无线程推进)
+06-25 20:55:36.532  8539  8580 E NfcService: run: Watchdog triggered, release lock before aborting
+06-25 20:55:36.533  8539  8580 E NfcService: run: Watchdog triggered, aborting
+06-25 20:55:36.534  8539  8580 F libnfc_nci: jni_internal.cc:826] JNI FatalError called: enableInternal
+```
+
+`Open Error=OK` 是本条的**核心误导点**：HAL 明明返回的是
+`EX_UNSUPPORTED_OPERATION`，栈却打印 `OK`，因为
+`NfcAdaptation::HalOpen()` 只根据「是否收到 `OPEN_CPLT` 事件」判定成败，
+binder 返回异常被它丢弃了。
+
+## C. tombstone 全线程栈：真正卡住的是 `AsyncTask #1`，不是崩溃线程
+
+崩溃线程 tid 2693 名叫 `enableInternal`，实际跑的是 Watchdog（
+`NfcService$WatchDogThread.run → nfcManager_doAbort → JNI FatalError`）。
+用 python 按 `Cmdline:` 分块扫 tombstone，找到阻塞在 `CondVar::wait` 的线程
+（`tombstone_08`，pid 9414 / tid 9433）：
+
+```
+pid: 9414, tid: 9433, name: AsyncTask #1  >>> com.android.nfc <<<
+backtrace:
+      #02 pc 0000000000081894  /apex/com.android.runtime/lib64/bionic/libc.so (pthread_cond_wait+76)
+      #03 pc 0000000000134e50  /system/lib64/libnfc_nci_jni.so (CondVar::wait(Mutex&)+48)
+      #04 pc 000000000013a1f8  /system/lib64/libnfc_nci_jni.so (android::nfcManager_doInitialize(_JNIEnv*, _jobject*)+820)
+      #07 pc 000000000011fcc0  /system/priv-app/NfcNci/NfcNci.apk (com.android.nfc.dhimpl.NativeNfcManager.initialize+0)
+      #09 pc 00000000000f98b2  /system/priv-app/NfcNci/NfcNci.apk (com.android.nfc.NfcService$EnableDisableTask.enableInternal+410)
+      #11 pc 00000000000f9d00  /system/priv-app/NfcNci/NfcNci.apk (com.android.nfc.NfcService$EnableDisableTask.doInBackground+284)
+```
+
+→ `enableInternal` 在 `nfcManager_doInitialize` 里等 `OPEN_CPLT`，等到 90 s
+被 Watchdog 打断。这不是「open 慢」，是「事件永远不来」。
+
+## D. AIDL 快照：失败只能靠事件表达（v1 没有 onOpenStatus）
+
+`engine/vendor/out/android16/aosp/aidl/nfc/android.hardware.nfc/1/`：
+
+- `INfcClientCallback.aidl` 只有 `sendData` 与 `sendEvent(NfcEvent, NfcStatus)`，
+  **没有** HIDL 时代的 `onOpenStatus`。
+- `NfcEvent.aidl`：`OPEN_CPLT=0` / `CLOSE_CPLT=1` / `POST_INIT_CPLT=2` /
+  `PRE_DISCOVER_CPLT=3` / `HCI_NETWORK_RESET=4` / `ERROR=5`。
+- `NfcStatus.aidl`：`OK=0` / `FAILED=1` / `ERR_TRANSPORT=2` / `ERR_CMD_TIMEOUT=3` / `REFUSED=4`。
+
+旧桩 `nfc_service.cpp` 的实现是 `open()` 直接
+`return ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION)`，
+其余方法一律异常 —— 一个 CPLT 事件都没回过。
+
+## E. 07 复用判据看不见源码：改完仍出旧二进制（同一轮暴露的第二个 bug）
+
+round6 的 07 日志（31 个模块**全部**走 `[skip]`）：
+
+```
+    HAL 模块:  android.hardware.nfc（变体 default，变体产物根 out/vendor/android16，
+               3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+[skip] android.hardware.nfc 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+```
+
+当时盘上二进制的真身（旧桩）：
+
+```
+154584 bytes Oct 29 13:23:01 2026  out/vendor/android16/bin/hw/android.hardware.nfc-service
+MD5 (android.hardware.nfc-service) = 493cdcf63a920566fe6f104075afc2f6
+```
+
+同一天单模块编译出的新桩（异步回 `OPEN_CPLT(FAILED)`）：
+
+```
+186624 bytes Oct 29 14:52  /tmp/nfctest/bin/hw/android.hardware.nfc-service
+```
+
+→ vendor.img / patch.img 里带的是 154,584 B 的旧件。`needsBuild` 当时只判
+「产物存在 + vendor 静态树内容一致」，**完全不看模块源码**，所以「改了 .cpp
+但 07 说已编译」会把验证变成对旧二进制的验证。

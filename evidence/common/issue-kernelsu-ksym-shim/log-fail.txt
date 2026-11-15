@@ -1,0 +1,167 @@
+# 失败现场：kernelsu.ko 走 first-stage modules.load，init 直接 insmod 时 61 个未导出符号解析失败
+# 取样：gold / xiaomi gold / OS3.0.10.0.VNQCNXM / lineage-22.2 / 内核 6.6.127-4k-cdh
+# 来源：daemon 实例 gold_cn_OS3.0.10.0.VNQCNXM/1 的 qemu.log（首轮 init，共 854 行 Unknown symbol 含重启循环）
+
+456:[    0.135840][    T1] init: Loading module /lib/modules/6.6.127-4k-cdh/kernelsu.ko with args ''
+457:[    0.136289][    T1] kernelsu: Unknown symbol path_umount (err -2)
+458:[    0.136438][    T1] kernelsu: Unknown symbol strncpy_from_user_nofault (err -2)
+459:[    0.136616][    T1] kernelsu: Unknown symbol __arm64_sys_close (err -2)
+460:[    0.136779][    T1] kernelsu: Unknown symbol kallsyms_lookup_size_offset (err -2)
+461:[    0.136972][    T1] kernelsu: Unknown symbol __tracepoint_sys_enter (err -2)
+462:[    0.137156][    T1] kernelsu: Unknown symbol init_mm (err -2)
+463:[    0.137313][    T1] kernelsu: Unknown symbol __set_fixmap (err -2)
+464:[    0.137456][    T1] kernelsu: Unknown symbol copy_to_kernel_nofault (err -2)
+465:[    0.137620][    T1] kernelsu: Unknown symbol dcache_clean_inval_poc (err -2)
+466:[    0.137783][    T1] kernelsu: Unknown symbol anon_inode_getfile_secure (err -2)
+467:[    0.137953][    T1] kernelsu: Unknown symbol selinux_blob_sizes (err -2)
+468:[    0.138123][    T1] kernelsu: Unknown symbol mntns_operations (err -2)
+469:[    0.138276][    T1] kernelsu: Unknown symbol ns_get_path (err -2)
+470:[    0.138417][    T1] kernelsu: Unknown symbol ksys_unshare (err -2)
+471:[    0.138560][    T1] kernelsu: Unknown symbol path_mount (err -2)
+472:[    0.138699][    T1] kernelsu: Unknown symbol __arm64_sys_setns (err -2)
+473:[    0.138852][    T1] kernelsu: Unknown symbol set_fs_pwd (err -2)
+474:[    0.138991][    T1] kernelsu: Unknown symbol kallsyms_lookup_name (err -2)
+475:[    0.139150][    T1] kernelsu: Unknown symbol kallsyms_lookup (err -2)
+476:[    0.139299][    T1] kernelsu: Unknown symbol kallsyms_on_each_symbol (err -2)
+477:[    0.139474][    T1] kernelsu: Unknown symbol task_work_add (err -2)
+478:[    0.139631][    T1] kernelsu: Unknown symbol alloc_uid (err -2)
+479:[    0.139840][    T1] kernelsu: Unknown symbol set_cred_ucounts (err -2)
+480:[    0.140002][    T1] kernelsu: Unknown symbol seccomp_filter_release (err -2)
+481:[    0.140167][    T1] kernelsu: Unknown symbol ext4_unregister_sysfs (err -2)
+482:[    0.140331][    T1] kernelsu: Unknown symbol selinux_state (err -2)
+483:[    0.140478][    T1] kernelsu: Unknown symbol policydb_load_isids (err -2)
+484:[    0.140635][    T1] kernelsu: Unknown symbol avc_ss_reset (err -2)
+485:[    0.140779][    T1] kernelsu: Unknown symbol selnl_notify_policyload (err -2)
+486:[    0.140953][    T1] kernelsu: Unknown symbol selinux_status_update_policyload (err -2)
+487:[    0.141148][    T1] kernelsu: Unknown symbol symtab_search (err -2)
+488:[    0.141322][    T1] kernelsu: Unknown symbol symtab_insert (err -2)
+489:[    0.141478][    T1] kernelsu: Unknown symbol ebitmap_set_bit (err -2)
+490:[    0.141637][    T1] kernelsu: Unknown symbol ebitmap_get_bit (err -2)
+491:[    0.141795][    T1] kernelsu: Unknown symbol policydb_filenametr_search (err -2)
+492:[    0.141977][    T1] kernelsu: Unknown symbol __hashtab_insert (err -2)
+493:[    0.142137][    T1] kernelsu: Unknown symbol policydb_destroy (err -2)
+494:[    0.142298][    T1] kernelsu: Unknown symbol policydb_write (err -2)
+495:[    0.142452][    T1] kernelsu: Unknown symbol policydb_read (err -2)
+496:[    0.142605][    T1] kernelsu: Unknown symbol avtab_search_node (err -2)
+497:[    0.142839][    T1] kernelsu: Unknown symbol avtab_alloc (err -2)
+498:[    0.142989][    T1] kernelsu: Unknown symbol avtab_destroy (err -2)
+499:[    0.143141][    T1] kernelsu: Unknown symbol avtab_search_node_next (err -2)
+500:[    0.143312][    T1] kernelsu: Unknown symbol avtab_insert_nonunique (err -2)
+501:[    0.143488][    T1] kernelsu: Unknown symbol change_pid (err -2)
+502:[    0.143652][    T1] kernelsu: Unknown symbol avc_has_perm (err -2)
+503:[    0.143802][    T1] kernelsu: Unknown symbol current_is_single_threaded (err -2)
+504:[    0.143981][    T1] kernelsu: Unknown symbol security_bounded_transition (err -2)
+505:[    0.144164][    T1] kernelsu: Unknown symbol sidtab_destroy (err -2)
+506:[    0.144340][    T1] kernelsu: Unknown symbol ebitmap_destroy (err -2)
+507:[    0.144491][    T1] kernelsu: Unknown symbol sidtab_context_to_sid (err -2)
+508:[    0.144661][    T1] kernelsu: Unknown symbol mls_context_to_sid (err -2)
+509:[    0.144823][    T1] kernelsu: Unknown symbol policydb_context_isvalid (err -2)
+510:[    0.144999][    T1] kernelsu: Unknown symbol sidtab_search_entry (err -2)
+511:[    0.145165][    T1] kernelsu: Unknown symbol sidtab_sid2str_get (err -2)
+512:[    0.145362][    T1] kernelsu: Unknown symbol mls_compute_context_len (err -2)
+513:[    0.145536][    T1] kernelsu: Unknown symbol mls_sid_to_context (err -2)
+514:[    0.145705][    T1] kernelsu: Unknown symbol sidtab_sid2str_put (err -2)
+515:[    0.145878][    T1] kernelsu: Unknown symbol cond_compute_av (err -2)
+516:[    0.146035][    T1] kernelsu: Unknown symbol ebitmap_cmp (err -2)
+517:[    0.146183][    T1] kernelsu: Unknown symbol ebitmap_contains (err -2)
+518:[    0.146352][    T1] init: Failed to insmod '/lib/modules/6.6.127-4k-cdh/kernelsu.ko' with args '': No such file or directory
+521:[    0.147021][    T1] init: Failed to load kernel modules
+522:[    0.147220][    T1] init: InitFatalReboot: signal 6
+524:[    0.150162][    T1] init:   #01 pc 00000000003c89b0  /init (android::init::InitFatalReboot(int)+208) (BuildId: 80963f77e1e86584ca77b539532cdc3a)
+984:[    0.131563][    T1] init: Loading module /lib/modules/6.6.127-4k-cdh/kernelsu.ko with args ''
+985:[    0.132050][    T1] kernelsu: Unknown symbol path_umount (err -2)
+986:[    0.132197][    T1] kernelsu: Unknown symbol strncpy_from_user_nofault (err -2)
+987:[    0.132368][    T1] kernelsu: Unknown symbol __arm64_sys_close (err -2)
+988:[    0.132522][    T1] kernelsu: Unknown symbol kallsyms_lookup_size_offset (err -2)
+989:[    0.132696][    T1] kernelsu: Unknown symbol __tracepoint_sys_enter (err -2)
+990:[    0.132874][    T1] kernelsu: Unknown symbol init_mm (err -2)
+991:[    0.133009][    T1] kernelsu: Unknown symbol __set_fixmap (err -2)
+992:[    0.133151][    T1] kernelsu: Unknown symbol copy_to_kernel_nofault (err -2)
+993:[    0.133315][    T1] kernelsu: Unknown symbol dcache_clean_inval_poc (err -2)
+994:[    0.133495][    T1] kernelsu: Unknown symbol anon_inode_getfile_secure (err -2)
+995:[    0.133664][    T1] kernelsu: Unknown symbol selinux_blob_sizes (err -2)
+996:[    0.133828][    T1] kernelsu: Unknown symbol mntns_operations (err -2)
+997:[    0.133979][    T1] kernelsu: Unknown symbol ns_get_path (err -2)
+998:[    0.134140][    T1] kernelsu: Unknown symbol ksys_unshare (err -2)
+999:[    0.134293][    T1] kernelsu: Unknown symbol path_mount (err -2)
+1000:[    0.134437][    T1] kernelsu: Unknown symbol __arm64_sys_setns (err -2)
+1001:[    0.134588][    T1] kernelsu: Unknown symbol set_fs_pwd (err -2)
+1002:[    0.134735][    T1] kernelsu: Unknown symbol kallsyms_lookup_name (err -2)
+1003:[    0.134892][    T1] kernelsu: Unknown symbol kallsyms_lookup (err -2)
+1004:[    0.135039][    T1] kernelsu: Unknown symbol kallsyms_on_each_symbol (err -2)
+1005:[    0.135212][    T1] kernelsu: Unknown symbol task_work_add (err -2)
+1006:[    0.135362][    T1] kernelsu: Unknown symbol alloc_uid (err -2)
+1007:[    0.135498][    T1] kernelsu: Unknown symbol set_cred_ucounts (err -2)
+1008:[    0.135648][    T1] kernelsu: Unknown symbol seccomp_filter_release (err -2)
+1009:[    0.135827][    T1] kernelsu: Unknown symbol ext4_unregister_sysfs (err -2)
+1010:[    0.135991][    T1] kernelsu: Unknown symbol selinux_state (err -2)
+1011:[    0.136135][    T1] kernelsu: Unknown symbol policydb_load_isids (err -2)
+1012:[    0.136291][    T1] kernelsu: Unknown symbol avc_ss_reset (err -2)
+1013:[    0.136432][    T1] kernelsu: Unknown symbol selnl_notify_policyload (err -2)
+1014:[    0.136595][    T1] kernelsu: Unknown symbol selinux_status_update_policyload (err -2)
+1015:[    0.136776][    T1] kernelsu: Unknown symbol symtab_search (err -2)
+1016:[    0.137013][    T1] kernelsu: Unknown symbol symtab_insert (err -2)
+1017:[    0.137162][    T1] kernelsu: Unknown symbol ebitmap_set_bit (err -2)
+
+# —— 61 个未导出符号（去重）——
+__arm64_sys_close
+__arm64_sys_setns
+__hashtab_insert
+__set_fixmap
+__tracepoint_sys_enter
+alloc_uid
+anon_inode_getfile_secure
+avc_has_perm
+avc_ss_reset
+avtab_alloc
+avtab_destroy
+avtab_insert_nonunique
+avtab_search_node
+avtab_search_node_next
+change_pid
+cond_compute_av
+copy_to_kernel_nofault
+current_is_single_threaded
+dcache_clean_inval_poc
+ebitmap_cmp
+ebitmap_contains
+ebitmap_destroy
+ebitmap_get_bit
+ebitmap_set_bit
+ext4_unregister_sysfs
+init_mm
+kallsyms_lookup
+kallsyms_lookup_name
+kallsyms_lookup_size_offset
+kallsyms_on_each_symbol
+ksys_unshare
+mls_compute_context_len
+mls_context_to_sid
+mls_sid_to_context
+mntns_operations
+ns_get_path
+path_mount
+path_umount
+policydb_context_isvalid
+policydb_destroy
+policydb_filenametr_search
+policydb_load_isids
+policydb_read
+policydb_write
+seccomp_filter_release
+security_bounded_transition
+selinux_blob_sizes
+selinux_state
+selinux_status_update_policyload
+selnl_notify_policyload
+set_cred_ucounts
+set_fs_pwd
+sidtab_context_to_sid
+sidtab_destroy
+sidtab_search_entry
+sidtab_sid2str_get
+sidtab_sid2str_put
+strncpy_from_user_nofault
+symtab_insert
+symtab_search
+task_work_add

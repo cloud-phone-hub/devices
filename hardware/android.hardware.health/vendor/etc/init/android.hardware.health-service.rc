@@ -1,0 +1,11 @@
+service vendor.health-default /vendor/bin/hw/android.hardware.health-service
+    class hal
+    user system
+    group system
+    # 显式域：07 步骤 6b 按本行反推可执行标签 hal_health_default_exec，不再需要
+    # 机型层手写 file_contexts 规则（换机型/换底座都跟着模块走）。
+    seclabel u:r:hal_health_default:s0
+    capabilities WAKE_ALARM BLOCK_SUSPEND
+    file /dev/kmsg w
+
+# 云机无充电模式（charger mode），真机 rc 里的 vendor.charger 服务不启用。

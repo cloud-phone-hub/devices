@@ -1,0 +1,36 @@
+# 网络初始化：/mnt/run/adb_net 指向 init 主 netns（使 adbd 与 adb shell 处于主 netns，
+# 可见 wlan0/ccmni*）；configure 阶段仅将管理网卡改名为 mgmt0 并保持 DOWN，随后由
+# vendor.service-daemon (mgmt_bridge) 移入独立管理 netns 配置 10.0.2.15/24 并转发 TCP 5555。
+# 各服务以 u:r:pioneer:s0 运行；capabilities NET_ADMIN SYS_ADMIN 供 ip link/addr 使用。
+service vendor.netmgr_setup /vendor/bin/cph-netmgr-setup setup
+    class core
+    user root
+    group root shell
+    seclabel u:r:pioneer:s0
+    capabilities NET_ADMIN SYS_ADMIN
+    disabled
+    oneshot
+
+service vendor.netmgr_configure /vendor/bin/cph-netmgr-setup configure
+    class core
+    user root
+    group root shell
+    seclabel u:r:pioneer:s0
+    capabilities NET_ADMIN SYS_ADMIN
+    disabled
+    oneshot
+
+# 网络指纹对齐（真机 gold）：net2 网卡改名 ccmni2、建 dummy0 / dummy ccmni0(240e:: IPv6)。
+service vendor.netmgr_fingerprint /vendor/bin/cph-netmgr-setup fingerprint
+    class core
+    user root
+    group root shell
+    seclabel u:r:pioneer:s0
+    capabilities NET_ADMIN SYS_ADMIN
+    disabled
+    oneshot
+
+on post-fs
+    exec_start vendor.netmgr_setup
+    exec_start vendor.netmgr_configure
+    exec_start vendor.netmgr_fingerprint

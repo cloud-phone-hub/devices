@@ -1,0 +1,66 @@
+# #133 通过侧日志：恢复 NfcNci 屏蔽、保留自研 AOSP NFC HAL（实例 18）
+#
+# 取样：out/core/daemon/runtime/15r_16.0.10.500_EX01/18/qemu.log（实例 18，pid 58397，12:25:04 起）
+# adb 口径：adb connect 127.0.0.1:5911 后所有查询带 -s 127.0.0.1:5911
+# 处置：cdh_redirect.rules 的 dir 规则恢复生效 + 05（规则 23502 B，配方 vboot-9b27edade3c8）+ 11
+#
+# 这一条目要证两件事：
+#   甲、屏蔽恢复后 com.android.nfc 彻底消失、崩溃归零（#131 结论未回退）；
+#   乙、上一条消息要求的「集成 android.hardware.nfc」本身没被撤掉——服务仍在跑、
+#      AIDL 实例仍在册，只是它救不了 ColorOS 的 NfcNci。
+
+## 1. 甲：包消失、崩溃归零
+
+    [up=83.89]   boot=1  nfcCrash=0  crashAll=17
+    [up=239.85]  boot=1  nfcCrash=0  crashAll=18  nfcProc=0  avcIOplusNfc=0
+                 load=5.81 6.48 2.92（首启峰尚未退）
+    [up=470.24]  boot=1  nfcCrash=0  crashAll=9（events 缓冲区已滚动，不是增长）
+                 nfcProc=0  avcIOplusNfc=0  load=0.36 3.56 2.57
+    [up=691.60]  boot=1  nfcCrash=0  crashAll=7（同样在滚动）
+                 hal=running  load=1.33 2.20 2.20
+
+    up=83.89:
+        nfcDir=ls: /system/priv-app/NfcNci: No such file or directory
+        nfcPkg=package:com.oplus.nfcengineertest package:com.google.android.apps.walletnfcrel
+
+    up=470.24:
+        nfcDir=ls: /system/priv-app/NfcNci: No such file or directory
+        nfcPkg=package:com.oplus.nfcengineertest package:com.google.android.apps.walletnfcrel
+
+对照实例 17（屏蔽解除）：
+
+    am_crash 中 com.android.nfc       829 条   →  实例 18：0 条
+    am_proc_start 中 com.android.nfc  829 条   →  实例 18：0 条
+    avc denied { find } .../IOplusNfc/default  1888 条  →  实例 18：0 条（dmesg 同名 0）
+    ps -A | grep -c com.android.nfc   持续新增 →  实例 18：0
+    1 分钟 load                       14.02   →  实例 18：0.36（up=470）
+
+## 2. 乙：自研 HAL 仍在跑，AIDL 实例仍在册
+
+    init.svc.vendor.nfc-default = running
+    service check android.hardware.nfc.INfc/default = Service android.hardware.nfc.INfc/default: found
+    up=83.89 / 239.85 / 470.24 三次采样均一致（服务未重启、未被摘名）
+
+启动行（qemu.log 侧）：
+
+    [    0.764883][    T1] init: Parsing file /vendor/etc/init/android.hardware.nfc-service.rc...
+    [   10.***]     init: starting service 'vendor.nfc-default'...
+                    init: ... started service 'vendor.nfc-default' has pid ...
+
+## 3. 系统其余部分未受影响
+
+    sys.boot_completed=1（三次采样均为 1）
+    dumpsys window 正常返回：mCurrentFocus=Window{27ced0c u0 com.oplus.battery}
+      （能读出前台窗口，说明 WindowManager / SurfaceFlinger 的查询链路是通的；
+       这是 #132 遗留的 screencap/getLuts 问题之外的正常路径）
+    load 1 分钟 0.36（up=470），与 #131 实例 13 的 4.92 同一量级、远低于实例 17 的 14.02
+
+## 4. 判据
+
+    pm list packages | grep -i nfc        只有 com.oplus.nfcengineertest + wallet，无 com.android.nfc
+    ls -d /system/priv-app/NfcNci         ENOENT
+    logcat -b events | grep -c 'am_crash.*com.android.nfc'   0
+    ps -A | grep -c com.android.nfc       0
+    dmesg | grep -c IOplusNfc             0
+    init.svc.vendor.nfc-default           running（保留项）
+    service check android.hardware.nfc.INfc/default          found（保留项）

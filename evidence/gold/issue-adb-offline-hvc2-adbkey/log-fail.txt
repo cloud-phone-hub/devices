@@ -1,0 +1,8 @@
+# 失败现场：daemon HEAD（945dbac 之后）hvc2 恒 null，guest adbkey 停在 READY
+# 来源：实例 1（gold_cn_OS3.0.10.0.VNQCNXM/1）qemu-20261027-104329.log
+
+[    7.287427][  T459] adbkey: raw 模式已设置
+[    7.287486][  T459] adbkey: 已发 READY，等待宿主公钥
+
+# 宿主侧：adb devices 只有 offline（从未出现 device）
+127.0.0.1:5919	offline

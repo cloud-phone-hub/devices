@@ -1,0 +1,59 @@
+=== run-00231: aligner_xiaomi_gold.battery_power_thermal (df809591a4e085ae-cloud) ===
+{
+  "coolingDeviceCount": 8,
+  "hasHardwareThermalZones": true,
+  "isDeviceIdleMode": false,
+  "isInteractive": true,
+  "isPowerSaveMode": false,
+  "isSustainedPerformanceModeSupported": false,
+  "thermalStatus": 0,
+  "thermalStatusNormal": true,
+  "thermalZoneCount": 31,
+  "thermalZonesSample": [
+    { "node": "thermal_zone0", "type": "sc-cp-standalone" },
+    { "node": "thermal_zone1", "type": "mtk-master-charger" },
+    { "node": "thermal_zone10", "type": "mtktspmic" },
+    { "node": "thermal_zone11", "type": "mtktsbattery" },
+    { "node": "thermal_zone12", "type": "mtktsAP" },
+    { "node": "thermal_zone13", "type": "mtktsbtsmdpa" },
+    { "node": "thermal_zone14", "type": "mtktspa" },
+    { "node": "thermal_zone15", "type": "mtktscharger" },
+    { "node": "thermal_zone16", "type": "tzimgs0" },
+    { "node": "thermal_zone17", "type": "tzimgs1" },
+    { "node": "thermal_zone18", "type": "tzimgs2" },
+    { "node": "thermal_zone19", "type": "tzimgs3" },
+    { "node": "thermal_zone2", "type": "mtk-slave-charger" },
+    { "node": "thermal_zone20", "type": "tzimgs4" },
+    { "node": "thermal_zone21", "type": "tzimgs5" }
+  ]
+}
+
+=== run-00231: aligner_xiaomi_gold.all (df809591a4e085ae-cloud) ===
+scoreSummary: {
+  "passed": 27,
+  "total": 32,
+  "failedItems": [
+    "B5_mapsHasRealMaliAndNoMesaMinigbm",
+    "C2_displaySupports120HzAndWideColorGamut",
+    "C4_glesGlsl320AndArmExtsNoDesktopLeak",
+    "C5_webViewWebGlReadyAndMatchesMali",
+    "H1_criticalSystemServicesAndIfaaReady"
+  ]
+}
+F_battery_power_thermal: {
+  "F1_battery5000MahLiPolyAndNotConstant": true,
+  "F2_thermalZonesPresentInSysfs": true
+}
+
+=== run-00231: ultimate.cloud_emulator (df809591a4e085ae-cloud) ===
+{"evidence": {"marks": [], "noThermal": false, "tempFiles": "(无)", "thermalZones": "31"}, "hit": false, "id": "H-115b", "name": "模拟器环境/挂载/温度文件三路", "risk": "warn"}
+{"evidence": ["overlay 根文件系统 x24"], "hit": true, "id": "H-56", "name": "云手机/虚拟化特征聚合", "risk": "warn"}
+
+=== 云机实测 /sys/class/thermal 与 SELinux 标签 ===
+drwxr-xr-x  2 root root u:object_r:sysfs_thermal:s0  0 2026-11-10 15:48 /sys/class/thermal
+drwxr-xr-x 41 root root u:object_r:sysfs_thermal:s0  0 1970-01-01 08:00 /sys/devices/virtual/thermal
+/sys/class/thermal/thermal_zone0: type=sc-cp-standalone temp=2792
+/sys/class/thermal/thermal_zone9: type=mtktscpu temp=33374
+/sys/class/thermal/thermal_zone10: type=mtktspmic temp=29224
+/sys/class/thermal/thermal_zone12: type=mtktsAP temp=30479
+/sys/class/thermal/thermal_zone30: type=mtkcsCPU temp=29755

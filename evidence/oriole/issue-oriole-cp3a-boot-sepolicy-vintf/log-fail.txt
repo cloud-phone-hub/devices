@@ -1,0 +1,35 @@
+# 第一层卡点：平台 SELinux 策略版本 202704 vs 202604 不匹配导致 InitFatalReboot (selinux_setup)
+[    0.290761][    T1] init: Loading SELinux policy
+[    0.296696][    T1] secilc: SELinux: Could not open file: /system/etc/selinux/mapping/202704.cil: No such file or directory
+[    0.297434][    T1] init: Failed to compile SELinux policy: '/system/bin/secilc' exited with status 1
+[    0.297719][    T1] init: InitFatalReboot: signal 6
+[    0.305535][    T1] init: #00 pc 00000000000d9bf8  /system/bin/init (android::init::InitFatalReboot(int)+216)
+[    0.306077][    T1] init: #01 pc 00000000000da094  /system/bin/init (android::init::InstallRebootSignalHandlers()::$_0::__invoke(int)+36)
+[    0.306765][    T1] init: Rebooting into bootloader
+
+# 第二层卡点：VINTF 冲突（lineage-24.0 audio.effect legacy + /vendor/apex wifi/camera）导致 NULL VINTF MANIFEST 与 /data 挂载阻塞
+[    0.962811][  T248] servicemanager: getDeviceHalManifest: Reading VINTF information.
+[    0.963142][  T248] vintf_object: parse error: Cannot add manifest fragment /vendor/etc/vintf/manifest/android.hardware.audio.effect.service-aidl.legacy.xml: HAL "android.hardware.audio.effect" has a conflict: Conflicting FqInstance: IFactory/default (@2 vs @4)
+[    0.964015][  T248] servicemanager: NULL VINTF MANIFEST!: device
+[    1.391042][  T248] servicemanager: Caller(pid=262,uid=0,sid=u:r:vold:s0) Could not find android.hardware.security.keymint.IKeyMintDevice/default in the VINTF manifest. No alternative instances declared in VINTF.
+[    1.392118][  T329] keystore2: system/security/keystore2/src/globals.rs:230 - Failed to get keymint instance.
+# 且 apexd 激活 /vendor/apex 后，com.google.pixel.wifi.ext.apex (IWifi/default @4) 与 com.google.pixel.camera.hal.apex (ICameraProvider/internal/0 @4) 同样与 /vendor/etc/vintf/manifest/ 下的 wifi/camera 片段冲突。
+
+# 第三层卡点：202604 平台策略移除全体 domain 打开 ashmem_libcutils_device 授权，导致 system_server 与 audioserver 循环崩溃
+01-01 00:09:57.528 10007 10007 E ashmem  : Unable to open ashmem device: Permission denied
+01-01 00:09:57.528 10007 10007 E libbinder.MemoryHeapBase: MemoryHeapBase: error creating ashmem region: Permission denied
+01-01 00:09:57.528 10007 10007 W audioserver: type=1400 audit(0.0:2469): avc:  denied  { open } for  path="/dev/ashmem4f66fa41-90cb-4e02-a23a-5a17e8e1cbc4" dev="tmpfs" ino=528 scontext=u:r:audioserver:s0 tcontext=u:object_r:ashmem_libcutils_device:s0 tclass=chr_file permissive=0
+01-01 00:09:57.840 10042 10042 W system_server: type=1400 audit(0.0:2470): avc:  denied  { open } for  path="/dev/ashmem4f66fa41-90cb-4e02-a23a-5a17e8e1cbc4" dev="tmpfs" ino=528 scontext=u:r:system_server:s0 tcontext=u:object_r:ashmem_libcutils_device:s0 tclass=chr_file permissive=0
+01-01 00:09:57.842 10042 10042 E ashmem  : Unable to open ashmem device: Permission denied
+01-01 00:09:57.842 10042 10042 E Zygote  : java.lang.RuntimeException: Failed to create ashmem: Permission denied
+01-01 00:09:57.842 10042 10042 E Zygote  : 	at com.android.internal.os.ApplicationSharedMemory.nativeCreate(Native Method)
+01-01 00:09:57.842 10042 10042 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+01-01 00:09:57.842 10042 10042 E AndroidRuntime: java.lang.RuntimeException: Failed to create ashmem: Permission denied
+01-01 00:09:57.842 10042 10042 E AndroidRuntime: 	at com.android.internal.os.ApplicationSharedMemory.nativeCreate(Native Method)
+01-01 00:09:57.842 10042 10042 E AndroidRuntime: 	at com.android.internal.os.ApplicationSharedMemory.create(ApplicationSharedMemory.java:108)
+01-01 00:09:57.842 10042 10042 E AndroidRuntime: 	at com.android.server.SystemServer.run(SystemServer.java:989)
+01-01 00:09:57.842 10042 10042 E AndroidRuntime: 	at com.android.server.SystemServer.main(SystemServer.java:729)
+01-01 00:09:57.842 10042 10042 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+01-01 00:09:57.842 10042 10042 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:575)
+01-01 00:09:57.842 10042 10042 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:896)
+

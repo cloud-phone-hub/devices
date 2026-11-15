@@ -1,0 +1,73 @@
+# 07 步骤 6b 自动补标签 + 09/11 重发布后：实例 34 实测
+# 构建日志: issue-m22-hal-gap-fill/build-07-09-11-round3.log；运行日志: ../../out/core/daemon/runtime/m22_12.5.0.0A/34/qemu.log
+
+## 1. 构建期：07 追加 13 条 file_contexts 规则
+[ok] 补充 HAL 可执行标签 13 条（out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_file_contexts）：
+    android.hardware.authsecret-service -> hal_authsecret_default_exec
+    android.hardware.biometrics.face-service -> hal_face_default_exec
+    android.hardware.biometrics.face-virtualhal-service -> hal_face_default_exec
+    android.hardware.biometrics.fingerprint-service -> hal_fingerprint_default_exec
+    android.hardware.biometrics.fingerprint-virtualhal-service -> hal_fingerprint_default_exec
+    android.hardware.camera-service -> hal_camera_default_exec
+    android.hardware.confirmationui-service -> hal_confirmationui_default_exec
+    android.hardware.identity-service -> hal_identity_default_exec
+    android.hardware.memtrack-service -> hal_memtrack_default_exec
+    android.hardware.nfc-service -> hal_nfc_default_exec
+    android.hardware.usb-service -> hal_usb_default_exec
+    android.hardware.usb.gadget-service -> hal_usb_gadget_default_exec
+    android.hardware.weaver-service -> hal_weaver_default_exec
+==> [步骤 7] 打包 vendor.img
+
+## 2. 镜像期抽查（debugfs）
+  vendor.img:/bin/hw/android.hardware.sensors-service               security.selinux = "u:object_r:hal_sensors_default_exec:s0"（基线自带，未变）
+  vendor.img:/bin/hw/android.hardware.memtrack-service             security.selinux 存在（40 B）
+  vendor.img:/bin/hw/android.hardware.nfc-service                  security.selinux 存在
+  vendor.img:/bin/hw/android.hardware.weaver-service               security.selinux = "u:object_r:hal_weaver_default_exec:s0"
+  vendor.img:/bin/hw/android.hardware.usb.gadget-service           security.selinux 存在（41 B = "u:object_r:hal_usb_gadget_default_exec:s0"）
+  vendor.img:/bin/hw/android.hardware.biometrics.fingerprint-virtualhal-service  security.selinux 存在（42 B = "u:object_r:hal_fingerprint_default_exec:s0"）
+  patch.img:/vendor/bin/hw/android.hardware.nfc-service            security.selinux = "u:object_r:hal_nfc_default_exec:s0"
+  patch.img:/vendor/bin/hw/android.hardware.memtrack-service       security.selinux 存在（40 B）
+  说明：debugfs ea_list 只在值 ≤40 B 时回显字符串，更长的只报长度；长度与上表标签逐字对应。
+
+## 3. 运行态：guest 内 ls -Z（restorecon 与镜像 xattr 同源，逐个为 _exec）
+  u:object_r:hal_authsecret_default_exec:s0         android.hardware.authsecret-service
+  u:object_r:hal_face_default_exec:s0               android.hardware.biometrics.face-virtualhal-service
+  u:object_r:hal_fingerprint_default_exec:s0        android.hardware.biometrics.fingerprint-virtualhal-service
+  u:object_r:hal_camera_default_exec:s0             android.hardware.camera-service
+  u:object_r:hal_confirmationui_default_exec:s0     android.hardware.confirmationui-service
+  u:object_r:hal_identity_default_exec:s0           android.hardware.identity-service
+  u:object_r:hal_memtrack_default_exec:s0           android.hardware.memtrack-service
+  u:object_r:hal_nfc_default_exec:s0                android.hardware.nfc-service
+  u:object_r:hal_usb_gadget_default_exec:s0         android.hardware.usb.gadget-service
+  u:object_r:hal_weaver_default_exec:s0             android.hardware.weaver-service
+
+## 4. 运行期计数（实例 34，全部归零）
+  denied  { entrypoint }                                                     23
+  exited with status 127                                                     0
+  duplicate definition of service                                            0
+  Waited one second for android.hardware.nfc.INfc                            0
+  Waited one second for android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal 0
+  Waited one second for android.hardware.biometrics.face.virtualhal.IVirtualHal 0
+
+## 5. 服务与进程（稳定 PID，无重启）
+  824 android.hardware.authsecret-service
+  827 android.hardware.biometrics.fingerprint-virtualhal-service
+  828 android.hardware.biometrics.face-virtualhal-service
+  829 android.hardware.camera-service
+  830 android.hardware.confirmationui-service
+  833 android.hardware.identity-service
+  838 android.hardware.memtrack-service
+  839 android.hardware.nfc-service
+  846 android.hardware.usb.gadget-service
+  849 android.hardware.weaver-service
+  service list 侧框架服务：nfc / fingerprint / face / media.camera / memtrack.proxy 均在册
+
+## 6. HAL 真的被调通（不是只注册）
+  libnfc_nci: HalOpenInternal: Open Error=OK
+  com.android.nfc: NfcAdaptation::InitializeHalDeviceContext: INfcAidl::fromBinder returned ver(1)
+  NfcService: Enabling NFC
+  init.svc.vendor.nfc-default: running（pid 839，开机至今未重启）
+
+## 7. boot_completed
+01-01 08:00:43.356   976   976 I installer_clear_app_data_call_stack: [<init>,com.android.server.pm.PackageManagerService,PackageManagerService.java,2475][   71.470932][    T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1308)
+[   71.571266][    T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/dmesgd.rc:4)

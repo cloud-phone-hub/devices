@@ -1,0 +1,146 @@
+# 修复前：cmd / input / notification 全线失败（2026-10-27，实例 index 3，adb 5911）
+
+## 1. 现象：四条命令，同一个错误码
+
+$ adb -s 127.0.0.1:5911 shell "cmd audio get-surround-format-supported; echo rc=$?"
+cmd: Failure calling service audio: Failed transaction (2147483646)
+rc=2
+
+$ adb -s 127.0.0.1:5911 shell "input keyevent 3; echo rc=$?"
+cmd: Failure calling service input: Failed transaction (2147483646)
+rc=2
+
+$ adb -s 127.0.0.1:5911 shell "cmd notification post -S bigtext -t t cdhtest hello; echo rc=$?"
+cmd: Failure calling service notification: Failed transaction (2147483646)
+rc=2
+
+$ adb -s 127.0.0.1:5911 shell "settings get system screen_brightness; echo rc=$?"
+cmd: Failure calling service settings: Failed transaction (2147483646)
+rc=2
+
+$ adb -s 127.0.0.1:5911 shell "am get-current-user; echo rc=$?"
+cmd: Failure calling service activity: Failed transaction (2147483646)
+rc=2
+
+# 对照：非 cmd 通道同一时刻完全正常
+$ adb -s 127.0.0.1:5911 shell "dumpsys audio | head -2; echo rc=$?"
+Events log: audio services lifecycle
+rc=0
+
+$ adb -s 127.0.0.1:5911 shell "service list | head -3; echo rc=$?"
+Found 384 services:
+0	BpfService: [android.net.wifi.IBpfManager]
+rc=0
+
+## 2. 常量换算（三个都对得上，确认是内核 BR_FAILED_REPLY）
+
+29201           = 0x7211 = _IO('r', 17)                            = BR_FAILED_REPLY
+1598246212      = 0x5F434D44 = '_'<<24 | 'C'<<16 | 'M'<<8 | 'D'    = SHELL_COMMAND_TRANSACTION
+2147483646      = -(-2147483646) = -(UNKNOWN_ERROR + 2)            = -FAILED_TRANSACTION
+error: -1       = -EPERM
+
+（kernel: include/uapi/linux/android/binder.h；utils/Errors.h）
+
+## 3. libbinder 原始日志（BINDER_GET_EXTENDED_ERROR）
+
+E/IPCThreadState(31912): Binder transaction failure. id: 625689, BR_*: 29201, error: -1 (Operation not permitted)
+W/BpBinder(31912): Large or Failed outgoing transaction of 164 bytes, interface descriptor , code 1598246212
+W/cmd     (31912): Failure calling service input: Failed transaction (2147483646)
+E/IPCThreadState(31917): Binder transaction failure. id: 625711, BR_*: 29201, error: -1 (Operation not permitted)
+W/cmd     (31917): Failure calling service notification: Failed transaction (2147483646)
+E/IPCThreadState(31922): Binder transaction failure. id: 625719, BR_*: 29201, error: -1 (Operation not permitted)
+W/cmd     (31922): Failure calling service audio: Failed transaction (2147483646)
+E/IPCThreadState(31928): Binder transaction failure. id: 625727, BR_*: 29201, error: -1 (Operation not permitted)
+W/cmd     (31928): Failure calling service settings: Failed transaction (2147483646)
+
+## 4. 重定向矩阵：socket 是触发点
+
+$ adb shell "cmd audio ...; echo rc=$?"                                   -> rc=2  (0/1/2 全 socket)
+$ adb shell "cmd audio ... 0</dev/null; echo rc=$?"                       -> rc=2
+$ adb shell "cmd audio ... 1>/dev/null; echo rc=$?"                       -> rc=2
+$ adb shell "cmd audio ... 2>/dev/null; echo rc=$?"                       -> rc=2
+$ adb shell "cmd audio ... 0</dev/null 1>/dev/null 2>/dev/null; echo rc=$?" -> rc=0   <== 全换掉就成功
+$ adb shell -t "cmd audio ...; echo rc=$?"                                -> rc=0   <== pty 也成功
+$ adb shell "dumpsys audio >/dev/null; echo rc=$?"                        -> rc=0   <== pipe 不受影响
+
+# adb shell 下 0/1/2 的真实指向
+$ adb shell 'ls -l /proc/self/fd/0 /proc/self/fd/1 /proc/self/fd/2'
+lrwx------ 1 shell shell 64 /proc/self/fd/0 -> socket:[351357]
+lrwx------ 1 shell shell 64 /proc/self/fd/1 -> socket:[351357]
+lrwx------ 1 shell shell 64 /proc/self/fd/2 -> socket:[351359]
+
+# 带 -t 时 0 是 pty
+$ adb shell -t 'ls -l /proc/self/fd/0'
+lrwx------ 1 shell shell 64 /proc/self/fd/0 -> /dev/pts/1
+
+## 5. 对照实例（gold-15 原厂 ROM，adb 5919）
+
+$ adb -s 127.0.0.1:5919 shell "cmd audio get-surround-format-supported; echo rc=$?"
+rc=0
+
+$ adb -s 127.0.0.1:5919 shell "cmd audio get-surround-format-supported 2>&1; echo rc=$?"
+rc=0
+
+## 6. 两个实例的域与 fd label 完全一致（排除域/uid 差异）
+
+实例 3（engine）：
+  adbd       u:r:pioneer:s0
+  system_server u:r:system_server:s0
+实例 1（gold-15）：
+  adbd       u:r:pioneer:s0
+  system_server u:r:system_server:s0
+（两者的 /proc/self/fd 0/1/2 指向也一致）
+
+## 7. plat_sepolicy.cil 完全相同，差异在 vendor
+
+$ md5sum /system/etc/selinux/plat_sepolicy.cil
+实例 1: bdabda33dd34df9f0cacf47a05e78b2f
+实例 3: bdabda33dd34df9f0cacf47a05e78b2f     <== 相同
+
+$ md5sum /vendor/etc/selinux/vendor_sepolicy.cil
+实例 1: 9582a1a2f232af05388593762bc039ce     (371366 B)
+实例 3: 2302b8edfb34d41ea4bacb640159406d     (222494 B)
+
+## 8. pioneer 相关 allow 规则 diff（< 实例1独有 / > 实例3独有）
+
+$ diff p1.txt p3.txt
+< (allow audioserver_202404 pioneer (binder (call transfer)))
+< (allow audioserver_202404 pioneer (fd (use)))
+< ...
+< (allow system_server_202404 pioneer (unix_stream_socket (getattr getopt ioctl read setopt shutdown write)))
+                                                   ^^^^^^^^^^^^^^^^^ 决定性的这一条
+> (allow pioneer pioneer (unix_stream_socket (create bind connect listen accept getopt setopt shutdown read write ioctl getattr setattr append lock map)))
+
+# 修复前实例 3 的 system_server→pioneer 只有三条：
+(allow system_server_202404 pioneer (fd (use)))
+(allow system_server_202404 pioneer (fifo_file (write)))
+(allow system_server_202404 pioneer (binder (call transfer)))
+# 缺 unix_stream_socket 这一段
+
+## 9. 内核侧链路（security/selinux/hooks.c + drivers/android/binder.c）
+
+# hooks.c:2071-2091
+if (sid != fsec->sid) {
+        rc = avc_has_perm(sid, fsec->sid, SECCLASS_FD, FD__USE, &ad);   // 第一段（已授权）
+        if (rc) return rc;
+}
+...
+isec = backing_inode_security(dentry);
+return avc_has_perm(sid, isec->sid, isec->sclass, file_to_av(file), &ad);
+//                                                     ^^^^^^^^^^^^ unix socket => unix_stream_socket
+
+# binder.c:2563-2567
+ret = security_binder_transfer_file(proc->cred, target_proc->cred, file);
+if (ret < 0) {
+        ret = -EPERM;
+        goto err_security;
+}
+
+## 10. dmesg 为什么没有 avc（重要陷阱）
+
+$ adb shell "dmesg | grep -E 'does not allow fds|transaction credentials failed'"
+[   17.206188] binder: 655:655 transaction credentials failed
+[   17.215693] binder: 655:655 transaction credentials failed
+# 之后 900+ 秒里的所有 binder 用户态错误都不再打印 —— binder_user_error()
+# 触发一次后会把 binder_stop_on_user_error 置 2 并自我抑制。
+# 因此"dmesg 无 avc"不能反证"不是 SELinux"。

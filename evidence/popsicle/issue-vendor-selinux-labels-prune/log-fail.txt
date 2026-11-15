@@ -1,0 +1,113 @@
+== popsicle 基线 vendor.selinux-labels 清理：清理前取证 ==
+取证时间: 2026-11-03
+基线: engine/manifest/xiaomi/popsicle/baselines/
+      popsicle_images_OS3.0.319.0.WPBCNXM_20260824.0000.00_16.0_cn_9d8daa8b5b.json
+清理前 vendor.selinux-labels: 69 条
+备份: engine/out/tmp/baselines-backup-20261103-133454/（17 份基线全量）
+清理前元数据表: engine/out/tmp/popsicle-meta-before/vendor-meta-rules.txt
+
+-- 1. 清理前 07 元数据表里 selinux_source=baseline 的行（12 行）----------------
+etc/init/android.hardware.security.keymint-service.rc        vendor_configs_file   baseline
+etc/init/cph_disable_provision.rc                            vendor_file           baseline
+etc/init/cph_logcat_dump.rc                                  vendor_file           baseline
+etc/init/cph_start_adbd.rc                                   vendor_file           baseline
+etc/init/dlkm_loader_mainline.rc                             vendor_configs_file   baseline
+etc/init/hw/init.virt.rc                                     vendor_configs_file   baseline
+etc/init/tablet2multitouch.rc                                vendor_configs_file   baseline
+etc/primary_audio_policy_configuration.xml                   vendor_configs_file   baseline
+etc/vintf/manifest/android.hardware.security.keymint-service.xml  vendor_configs_file  baseline
+etc/vintf/manifest/android.hardware.vibrator-service.xml     vendor_configs_file   baseline
+etc/vintf/manifest/mapper.minigbm_upstream.xml               vendor_configs_file   baseline
+lib64/libtablet2multitouch.so                                vendor_file           baseline
+
+  69 条配置里只有 12 条真正参与决策，其余 57 条连「来源」都不是 baseline。
+
+-- 2. 分类 A：装配树里没有这个路径（54 条）----------------
+bin/daemon
+bin/logcat-dump
+bin/setup_display.sh
+bin/netmgr_setup
+etc/fstab.qcom
+etc/init/cph_daemon.rc
+etc/init/cph_mi_display_props.rc
+etc/init/netmgr.rc
+etc/init/hw/init.qcom.rc
+etc/permissions/android.hardware.telephony.xml
+etc/permissions/privapp-permissions-miuihome.xml
+usr/idc/QEMU Virtio MultiTouch.idc
+usr/idc/QEMU Virtio Tablet.idc
+usr/idc/virt_tablet2multitouch.idc
+bin/hw/android.hardware.vibrator-service.cdh-popsicle
+etc/init/android.hardware.vibrator-service.cdh-popsicle.rc
+bin/hw/android.hardware.ir-service.example
+lib64/android.hardware.ir-V1-ndk.so
+etc/init/android.hardware.ir-service.example.rc
+etc/vintf/manifest/android.hardware.ir-service.example.xml
+etc/init/cph_frp_symlink.rc
+bin/hw/vendor.qti.hardware.perf2-hal-service
+lib64/vendor.qti.snapdragonServices-V1-ndk.so
+lib64/vendor.qti.snapdragonServices.qape-V1-ndk.so
+lib64/libq-perflog.so
+lib64/vendor.qti.hardware.perf2-V1-ndk.so
+lib64/libqti-scenariod.so
+lib64/libperfconfig.so
+lib64/libqti-perfd.so
+etc/init/vendor.qti.hardware.perf2-hal-service.rc
+etc/vintf/manifest/vendor.qti.hardware.perf2.xml
+lib64/libqti-util.so
+lib64/libqti-utils.so
+lib64/libqti-perfd-client.so
+lib64/libqti-qape-engine.so
+lib64/libqti-engine-loader.so
+lib64/libqti-lllite.so
+lib64/libqti-sslite.so
+lib64/libqti-s3tf.so
+lib64/libqti-qesdk-secure.so
+lib64/libqti-perfextn-intf.so
+lib64/libqti-jankrescue.so
+lib64/libqti-appclassifier.so
+bin/hw/android.hardware.audio.service-aidl.example
+bin/hw/android.hardware.audio.effect.service-aidl.example
+etc/init/android.hardware.audio.service-aidl.example.rc
+etc/vintf/manifest/android.hardware.audio.service-aidl.xml
+etc/audio_policy_engine_configuration.xml
+etc/audio_policy_engine_product_strategies.xml
+etc/audio_policy_engine_stream_volumes.xml
+etc/audio_policy_engine_default_stream_volumes.xml
+etc/init/cph_camera_data_dir.rc
+etc/init/cph_tcp_mem_tuning.rc
+etc/init/cph_disable_preread.rc
+
+  成因：整段从 gold / 旧工作区模板复制。perf（vendor.qti.hardware.perf2）、ir-service、
+  audio *.example、daemon/netmgr 这些模块 popsicle 的 device.json 里没启用
+  （modules.external 只有 ["cdh_redirect"]），注入树里自然没有对应文件；
+  cph_ 前缀（OPPO）的 rc 更是与 Xiaomi 机型无关。
+
+-- 3. 分类 B：被 vendor_file_contexts 规则整条盖掉（3 条）----------------
+bin/dlkm_loader_mainline          基线 pioneer_exec -> 实际 dlkm_loader_exec（rule）
+bin/tablet2multitouch             基线 pioneer_exec -> 实际 tablet2multitouch_exec（rule）
+bin/hw/android.hardware.security.keymint-service
+                                  基线 hal_keymint_default_exec -> 实际 hal_keymint_default_exec（rule）
+  前两条：基线写的域跟实际跑起来的域不是一个，照着基线读会以为 daemon 类进程在
+  pioneer_exec 域里。第三条：值恰好相同，基线属重复声明——同值也不留，否则读表的人
+  会误以为这个标签由基线决定。
+
+-- 4. 分类 C：删掉后落到兜底且值相同（9 条）----------------
+etc/init/dlkm_loader_mainline.rc                             vendor_configs_file（= etc/ 兜底）
+etc/init/hw/init.virt.rc                                     vendor_configs_file
+etc/init/tablet2multitouch.rc                                vendor_configs_file
+etc/primary_audio_policy_configuration.xml                   vendor_configs_file
+etc/init/android.hardware.security.keymint-service.rc        vendor_configs_file
+etc/vintf/manifest/android.hardware.security.keymint-service.xml  vendor_configs_file
+etc/vintf/manifest/android.hardware.vibrator-service.xml     vendor_configs_file
+etc/vintf/manifest/mapper.minigbm_upstream.xml               vendor_configs_file
+lib64/libtablet2multitouch.so                                vendor_file（= lib64/ 兜底）
+
+-- 5. 第一轮误判（教训）----------------
+第一版判据只看「装配树有没有这个路径」，把分类 B/C 的 12 条都算成「需要保留」，
+得出「应保留 13 条」；后来又只按「元数据表里当前值 == 基线值」判定，把 cph_*.rc
+也当成同位、算出「应保留 0 条」。两次都错在同一处：判据必须是
+「去掉基线后会落到什么（规则值或 defaultLabelFor），与之相同才删」——
+ctx == 基线值 可能正是基线自己生效的结果，不能当前提。
+
+最终结果：69 = 54（无路径）+ 3（规则覆盖）+ 9（兜底同位）+ 3（真正需要，保留）。

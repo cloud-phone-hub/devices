@@ -1,0 +1,41 @@
+=== 1. 初版占位显示规格错配与原厂 netdiag 循环退出（qemu.log） ===
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=2.4 flush=0.0 update=0.0 end=0.0 总=2.5 ms
+[   57.605733][    T1] init: Service 'netdiag' (pid 6610) exited with status 1
+[   62.605451][    T1] init: Service 'netdiag' (pid 6827) exited with status 1
+[   67.590562][    T1] init: Service 'netdiag' (pid 6921) exited with status 1
+[   67.594177][    T1] init: Sending signal 9 to service 'netdiag' (pid 6921) process group...
+[   67.597371][    T1] init: process with updatable components 'netdiag' exited 4 times in 4 minutes
+[   77.606382][    T1] init: Service 'netdiag' (pid 7142) exited with status 1
+[   77.608992][    T1] init: Sending signal 9 to service 'netdiag' (pid 7142) process group...
+[   77.613065][    T1] init: process with updatable components 'netdiag' exited 4 times in 4 minutes
+
+=== 2. 引入原厂单体 /vendor/lib64/egl/libGLES_meow.so 触发 surfaceflinger 空指针 SIGSEGV ===
+12-31 19:06:58.942 11401 11414 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 11414 (surfaceflinger), pid 11401 (surfaceflinger)
+12-31 19:06:58.972 11417 11417 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+12-31 19:06:58.973 11417 11417 F DEBUG   : Build fingerprint: 'BLU/G75/G1170:15/AP3A.240905.015.A2/1770610308:user/release-keys'
+12-31 19:06:58.973 11417 11417 F DEBUG   : ABI: 'arm64'
+12-31 19:06:58.973 11417 11417 F DEBUG   : Cmdline: /system/bin/surfaceflinger
+12-31 19:06:58.973 11417 11417 F DEBUG   : pid: 11401, tid: 11414, name: surfaceflinger  >>> /system/bin/surfaceflinger <<<
+12-31 19:06:58.973 11417 11417 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000
+12-31 19:06:58.973 11417 11417 F DEBUG   : Cause: null pointer dereference
+12-31 19:06:58.973 11417 11417 F DEBUG   : backtrace:
+12-31 19:06:58.973 11417 11417 F DEBUG   :       #00 pc 0000000000000000  <unknown>
+12-31 19:06:58.973 11417 11417 F DEBUG   :       #01 pc 00000000000ab27c  /vendor/lib64/egl/libGLES_meow.so (MEOW::Loader::load_driver(char const*, MEOW::Hook*, unsigned int)+2108) (BuildId: 48d7e0510f917f9da09748cfd1d80ef7)
+12-31 19:06:58.973 11417 11417 F DEBUG   :       #02 pc 00000000000ab414  /vendor/lib64/egl/libGLES_meow.so (MEOW::Loader::initDDKHook(MEOW::Hook*)+36) (BuildId: 48d7e0510f917f9da09748cfd1d80ef7)
+12-31 19:06:58.973 11417 11417 F DEBUG   :       #03 pc 00000000000947ec  /vendor/lib64/egl/libGLES_meow.so (MEOW::DDKHook::load()+76) (BuildId: 48d7e0510f917f9da09748cfd1d80ef7)
+12-31 19:06:58.973 11417 11417 F DEBUG   :       #04 pc 0000000000070494  /vendor/lib64/egl/libGLES_meow.so (load_file()+148) (BuildId: 48d7e0510f917f9da09748cfd1d80ef7)
+12-31 19:06:58.973 11417 11417 F DEBUG   :       #05 pc 00000000000ec2e0  /apex/com.android.runtime/bin/linker64 (__dl__ZN6soinfo17call_constructorsEv+704)
+12-31 19:06:58.973 11417 11417 F DEBUG   :       #06 pc 00000000000d10d8  /apex/com.android.runtime/bin/linker64 (__dl__Z9do_dlopenPKciPK17android_dlextinfoPKv+760)
+12-31 19:06:58.973 11417 11417 F DEBUG   :       #09 pc 00000000000040d4  /system/lib64/libvndksupport.so (android_load_sphal_library+100)
+
+=== 3. 修复前启动 com.mediatek.camera 因 Coosea 像素插值抹掉 YUV 输入流抛 IllegalArgumentException ===
+11-11 12:43:01.096   632  1386 I am_crash: [5017,0,com.mediatek.camera,551074893,java.lang.IllegalArgumentException,sizes was empty,MandatoryStreamCombination.java,2202,0]
+11-11 12:43:01.096  5017  8067 E AndroidRuntime: FATAL EXCEPTION: FeatureSetting-Handler Thread
+11-11 12:43:01.096  5017  8067 E AndroidRuntime: Process: com.mediatek.camera, PID: 5017
+11-11 12:43:01.096  5017  8067 E AndroidRuntime: java.lang.IllegalArgumentException: sizes was empty
+11-11 12:43:01.096  5017  8067 E AndroidRuntime: 	at android.hardware.camera2.params.MandatoryStreamCombination$Builder.getMaxSize(MandatoryStreamCombination.java:2202)
+11-11 12:43:01.096  5017  8067 E AndroidRuntime: 	at android.hardware.camera2.params.MandatoryStreamCombination$Builder.generateAvailableCombinations(MandatoryStreamCombination.java:2009)
+11-11 12:43:01.096  5017  8067 E AndroidRuntime: 	at android.hardware.camera2.params.MandatoryStreamCombination$Builder.getAvailableMandatoryStreamCombinations(MandatoryStreamCombination.java:1968)
+11-11 12:43:01.096  5017  8067 E AndroidRuntime: 	at android.hardware.camera2.impl.CameraMetadataNative.getMandatoryStreamCombinationsHelper(CameraMetadataNative.java:1544)
+11-11 12:43:01.096  5017  8067 E AndroidRuntime: 	at android.hardware.camera2.impl.CameraMetadataNative.getMandatoryStreamCombinations(CameraMetadataNative.java:1573)
+11-11 12:43:01.096  5017  8067 E AndroidRuntime: 	at android.hardware.camera2.impl.CameraMetadataNative.-$$Nest$mgetMandatoryStreamCombinations(Unknown Source:0)

@@ -1,0 +1,97 @@
+# log-fail：cust.img 没有落地的三种形态（改前）
+
+- 时间：2026-11-02 ~ 2026-11-03（本条动手之前）
+- 说明：第 1、2 节转录上一轮 `--only unpack` 与 guest 探查的输出（**逐字保留的部分已标出，
+  缺逐字回显的地方只写结论**，不补造输出格式），第 3 节是 `internal/f2fs` 全量抽取的报错原文，
+  第 4 节是因此走过的两段弯路。逐字节对账与修复后的对照见同目录 `log-pass.txt`。
+
+---
+
+## 第 1 节：01 只把 userdata.img 抽出来，cust.img 一个字节都没落地
+
+`rom.vendor.images` 当时是 `["super.img","vendor_boot.img","userdata.img"]`：
+
+```
+==> 清单保留镜像: super.img、vendor_boot.img、userdata.img（manifest/xiaomi/popsicle/baselines/…json）
+[ok] 已解出 super.img（12.50 GiB）+ 8 个逻辑分区 + vendor_boot.img（96.00 MiB） -> out/roms/xiaomi/popsicle/OS3.0.319.0.WPBCNXM
+```
+
+（这两行是上一轮回显的逐字保留；中间的 `+ 成员（大小）` 进度行与末尾清单省略。）
+
+解包根只剩三样：`super.img`（12.50 GiB）、`vendor_boot.img`、`userdata.img`（**展开后 45 GiB**
+常驻盘上），**没有 cust.img**。01 的代码路径从不解析分区镜像里的文件系统，`userdata.img`
+只是一个「原样抽出来的成员」。
+
+（出处：上一轮会话 2026-11-03 的 `cdh unpack-vendor` 输出，转录自 `sessions/90bbf8a0.jsonl`。）
+
+---
+
+## 第 2 节：guest 里 `/cust` 是空目录，预装应用一个都装不上
+
+实例 20 内（盘集还没有 cust 分区、fstab 也没有 `/cust` 行）：
+
+```
+1|canoe:/ # ls -la /cust
+（仅 . 与 ..，mtime 2009-01-01 00:00）
+```
+
+（当时记的是结论行「只有 `.`/`..`、mtime 2009-01-01」，未留存逐字回显。）
+`/cust` 目录在、但**空**——是 init 建的空挂点，没有任何后备存储。
+`mount` 里与 cust 有关的只有 `mi_ext` 的两条 overlay：
+
+```
+overlay on /product/opcust type overlay (ro,…,lowerdir=/mnt/vendor/mi_ext/product/opcust/:/product/opcust,…)
+overlay on /product/etc/precust_theme type overlay (ro,…,lowerdir=/mnt/vendor/mi_ext/product/etc/precust_theme:…)
+```
+
+`pm list packages` 查 34 个预装应装入的包名，**全空**：
+
+```
+1|canoe:/ # pm list packages | grep -E 'com.xiaomi.mipicks|com.miui.video|com.miui.player|com.duokan.reader|com.xiaomi.youpin|com.mipay.wallet|com.mi.health|com.cmcc.cmvideo'
+（无输出：这 8 个包名一个都没命中）
+```
+
+（还有 `com.xiaomi.gamecenter.sdk.service` 这类 SDK 包在，但它不是 data-app 里的预装本体。）
+即：首次开机的 preinstall 流程「从 `/preinstall/cust.img`（挂 `/cust`）装进 `/data/app`」
+整段没有来源。
+
+（出处：上一轮会话对实例 20 的探查记录，`sessions/90bbf8a0.jsonl`。）
+
+---
+
+## 第 3 节：`internal/f2fs` 全量抽取时读出一个荒谬块号
+
+修 `addrsPerInode()` 之前，对 `userdata.img` 里那块 2.53 GiB 的 cust 做全量抽取：
+
+```bash
+cd engine/build
+CDH_F2FS_FULL_EXTRACT=1 go test ./internal/f2fs/ -run TestRealExtractFull -v -timeout 20m
+```
+
+```
+块 4076150801 起 1 块只读到 0 B
+```
+
+（只保留了报错行本身；`--- FAIL:` 头与其他用例输出当时未留存。）
+
+`4076150801 = 0xF2F52011`，正是 **`F2FS_XATTR_MAGIC`**——不是块号，是 inode 尾部的
+inline xattr 区被当成 `i_addr[]` 的一项用了。镜像块总数只有 11,796,480，这个「块号」
+比盘大 300 多倍，读出来自然是 0 B。
+
+原始判读记录（同轮会话）：
+
+> 块地址 `4076150801 = 0xF2F52011`（正是 f2fs 魔数 +1），说明某处把不像 node 的块当 node 读了。
+
+---
+
+## 第 4 节：因此走过的两段弯路
+
+1. **把 `i_inline` 的 `0x20` 当成 inline dentry**。实际定义是
+   `0x01 INLINE_XATTR / 0x02 INLINE_DATA / 0x04 INLINE_DENTRY / 0x08 DATA_EXIST / 0x20 EXTRA_ATTR`，
+   cust.img 的 `i_inline=0x21` 是「inline xattr + extra attr」，跟 dentry 无关。按错的定义去
+   算 inline dentry 偏移，读到的是噪声。
+2. **把「有 inline xattr」理解成「inline 区起点要后移」**。内核是
+   `inline_data_addr = &i_addr[extra_isize/4 + DEF_INLINE_RESERVED_SIZE]`，即起点恒为
+   `addrBase + 4`；inline xattr 占的是**尾部**槽位，只通过
+   `ADDRS_PER_INODE = 923 - extra_isize/4 - inline_xattr_addrs` 缩短可用槽数。旧实现既后移了
+   起点、又没减槽数，两头都错，于是 `i_addr` 的最后 50 项（xattr 区）被当成块地址遍历。

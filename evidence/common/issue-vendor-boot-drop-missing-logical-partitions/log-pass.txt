@@ -1,0 +1,77 @@
+=== 1. 05_build_vendor_boot 单元测试通过 ===
+=== RUN   TestMergeCloudFstab
+--- PASS: TestMergeCloudFstab (0.00s)
+=== RUN   TestMergeCloudFstabSoCByName
+--- PASS: TestMergeCloudFstabSoCByName (0.00s)
+=== RUN   TestMergeCloudFstabVDAExtras
+--- PASS: TestMergeCloudFstabVDAExtras (0.00s)
+=== RUN   TestMergeCloudFstabMissingLogicalPartitions
+--- PASS: TestMergeCloudFstabMissingLogicalPartitions (0.00s)
+PASS
+ok  	cloud-phone-hub/engine/build/stages/05_build_vendor_boot	2.485s
+
+=== 2. 修复后 05_build_vendor_boot 阶段日志（merge-v10 剔除缺失逻辑分区 my_company / my_preload 及其悬空 bind） ===
+==> 板级名: mt6991
+==> fstab: out/devices/realme/RMX6688/15-AP3A.240617.008-20250825/vendor_boot/fstab.mt6991（vendor_boot 提取合并）
+    来源记录: out/devices/realme/RMX6688/15-AP3A.240617.008-20250825/vendor_boot/.fstab.mt6991.src
+    生成: 2026-11-11 21:47，算法 fstab-rev: merge-v10
+    厂商 fstab: first_stage_ramdisk/fstab.mt6991（out/roms/realme/RMX6688/15-AP3A.240617.008-20250825/vendor_boot.img）
+    lineage fstab: first_stage_ramdisk/system/etc/fstab.virtio（out/roms/lineage/lineage-22.2/vendor_boot_a.img）
+    合并: 厂商 112 行、lineage 28 行；保留 40、覆盖 12、追加 14、丢弃 60、跳过逻辑分区 14
+    云机分区集: 9 个（BIOS, EFI, boot_a, firmware, metadata, misc, persist, super, vendor_boot_a）
+    super 逻辑分区集: 16 个（my_bigball, my_carrier, my_engineering, my_heytap, my_manifest, my_product, my_region, my_stock, odm, odm_dlkm, product, system, system_dlkm, system_ext, vendor, vendor_dlkm）
+    云机不存在的分区已剔除: apusys1, apusys2, audio_dsp, boot_para, bootloader2, ccu, connsys_bt, connsys_wifi, dpm1, dpm2, dtbo, expdb, frp, gpueb, gz1, gz2, init_boot, lk1, logo, mcf_ota, mcupm1, mcupm2, md1arm7, md1dsp, md3img, md_sec, modem, mvpu_algo1, mvpu_algo2, my_company, my_preload, nvcfg, nvdata, nvram, odmdtbo, oplusreserve2, otp, para, pi_img, proinfo, protect1, protect2, scp1, scp2, seccfg, spmfw, sspm1, sspm2, tee1, tee2, userdata, vbmeta, vbmeta_system, vbmeta_vendor, vcp
+[ok] vendor_boot.img 打包完成: out/devices/realme/RMX6688/15-AP3A.240617.008-20250825/img/vendor_boot.img（21725460 字节）
+    板级名: mt6991，缓存配方 vboot-829750f081f3
+
+=== 3. 修复后 fstab.mt6991 仅保留真实存在的 16 个逻辑分区与 8 条 my_* bind 行 ===
+# fstab-rev: merge-v10
+my_product /mnt/vendor/my_product ext4 ro,barrier=1 wait,slotselect,logical,first_stage_mount
+my_product /mnt/vendor/my_product erofs ro wait,slotselect,logical,first_stage_mount
+my_engineering /mnt/vendor/my_engineering ext4 ro,barrier=1 wait,slotselect,logical,first_stage_mount
+my_engineering /mnt/vendor/my_engineering erofs ro wait,slotselect,logical,first_stage_mount
+my_carrier /mnt/vendor/my_carrier ext4 ro,barrier=1 wait,slotselect,logical,first_stage_mount
+my_carrier /mnt/vendor/my_carrier erofs ro wait,slotselect,logical,first_stage_mount
+my_region /mnt/vendor/my_region ext4 ro,barrier=1 wait,slotselect,logical,first_stage_mount
+my_region /mnt/vendor/my_region erofs ro wait,slotselect,logical,first_stage_mount
+my_heytap /mnt/vendor/my_heytap ext4 ro,barrier=1 wait,slotselect,logical,first_stage_mount
+my_heytap /mnt/vendor/my_heytap erofs ro wait,slotselect,logical,first_stage_mount
+my_stock /mnt/vendor/my_stock ext4 ro,barrier=1 wait,slotselect,logical,first_stage_mount
+my_stock /mnt/vendor/my_stock erofs ro wait,slotselect,logical,first_stage_mount
+my_bigball /mnt/vendor/my_bigball ext4 ro,barrier=1 wait,slotselect,logical,first_stage_mount
+my_bigball /mnt/vendor/my_bigball erofs ro wait,slotselect,logical,first_stage_mount
+my_manifest /mnt/vendor/my_manifest ext4 ro,barrier=1 wait,slotselect,logical,first_stage_mount
+my_manifest /mnt/vendor/my_manifest erofs ro wait,slotselect,logical,first_stage_mount
+/mnt/vendor/my_product /my_product none ro,bind wait,nofail
+/mnt/vendor/my_engineering /my_engineering none ro,bind wait,nofail
+/mnt/vendor/my_carrier /my_carrier none ro,bind wait,nofail
+/mnt/vendor/my_region /my_region none ro,bind wait,nofail
+/mnt/vendor/my_heytap /my_heytap none ro,bind wait,nofail
+/mnt/vendor/my_stock /my_stock none ro,bind wait,nofail
+/mnt/vendor/my_bigball /my_bigball none ro,bind wait,nofail
+/mnt/vendor/my_manifest /my_manifest none ro,bind wait,nofail
+
+=== 4. 修复后 RMX6688 干净盘实例 1 冷启动 qemu.log（dm-0..dm-15 一次挂齐直入二阶段，0 InitFatalReboot） ===
+[    0.877811][    T1] init: Switching root to '/first_stage_ramdisk'
+[    0.903978][    T1] init: [libfs_mgr] Created logical partition system_dlkm_a on device /dev/block/dm-0
+[    0.905799][    T1] init: [libfs_mgr] Created logical partition vendor_dlkm_a on device /dev/block/dm-1
+[    0.935581][    T1] init: [libfs_mgr] Created logical partition product_a on device /dev/block/dm-2
+[    0.950597][    T1] init: [libfs_mgr] Created logical partition system_a on device /dev/block/dm-3
+[    0.978280][    T1] init: [libfs_mgr] Created logical partition system_ext_a on device /dev/block/dm-4
+[    0.994392][    T1] init: [libfs_mgr] Created logical partition odm_a on device /dev/block/dm-5
+[    1.017279][    T1] init: [libfs_mgr] Created logical partition vendor_a on device /dev/block/dm-6
+[    1.027368][    T1] init: [libfs_mgr] Created logical partition odm_dlkm_a on device /dev/block/dm-7
+[    1.056580][    T1] init: [libfs_mgr] Created logical partition my_product_a on device /dev/block/dm-8
+[    1.074082][    T1] init: [libfs_mgr] Created logical partition my_engineering_a on device /dev/block/dm-9
+[    1.101426][    T1] init: [libfs_mgr] Created logical partition my_stock_a on device /dev/block/dm-10
+[    1.117427][    T1] init: [libfs_mgr] Created logical partition my_heytap_a on device /dev/block/dm-11
+[    1.126925][    T1] init: [libfs_mgr] Created logical partition my_carrier_a on device /dev/block/dm-12
+[    1.150231][    T1] init: [libfs_mgr] Created logical partition my_region_a on device /dev/block/dm-13
+[    1.166828][    T1] init: [libfs_mgr] Created logical partition my_bigball_a on device /dev/block/dm-14
+[    1.182410][    T1] init: [libfs_mgr] Created logical partition my_manifest_a on device /dev/block/dm-15
+[    1.232321][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-3,target=/system,type=erofs)=0: Success
+[    1.241451][    T1] init: Switching root to '/system'
+[    1.711941][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-15,target=/mnt/vendor/my_manifest,type=erofs)=0: Success
+[    1.773021][    T1] init: [libfs_mgr] __mount(source=/dev/block/vdc,target=/mnt/vendorpatch,type=ext4)=0: Success
+[    8.528476][    T1] init: [libfs_mgr] __mount(source=/mnt/vendor/my_product,target=/my_product,type=none)=0: Success
+[    8.533823][    T1] init: [libfs_mgr] __mount(source=/mnt/vendor/my_region,target=/my_region,type=none)=0: Success

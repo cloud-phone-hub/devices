@@ -1,0 +1,40 @@
+# 失败现场：实例 10（旧镜像，vendor 侧无 soundtrigger 实现、也无 VINTF 声明）
+# 日志全量落到 /tmp/cph10.log（163,765 行 / 25.7 MB），以下为取证时实际执行过的命令与输出。
+#
+# 计数（命令 -> 值）：
+#   grep -c "Could not find android.hardware.soundtrigger3"  /tmp/cph10.log   -> 52900
+#   grep -c "SoundTriggerMiddlewareDefaultHalFactory"        /tmp/cph10.log   -> 41129
+#   grep -c "sysrq: Resetting"                               /tmp/cph10.log   -> 1
+
+# 1）system_server 卡在启动 HAL 服务这一步，之后再无任何 SystemServerTiming
+12-31 19:00:37.157   860   860 D SystemServerTiming: StartAudioService
+12-31 19:00:37.221   860   860 D SystemServerTiming: StartSoundTriggerMiddlewareService
+#   ^ 52.36 s，全日志最后一条 SystemServerTiming（此后 150 s 内 system_server 无任何启动进度）
+
+# 2）servicemanager 明确回答「没有这个 fqname」——注意不是 waitForService 找不到实现，
+#    而是 VINTF 里就没有这条声明，framework 于是退回 HIDL 路径
+servicemanager: Caller(pid=860,uid=1000,sid=u:r:system_server:s0) Could not find
+  android.hardware.soundtrigger3.ISoundTriggerHw/default in the VINTF manifest.
+  No alternative instances declared in VINTF.
+
+# 3）HIDL 回退也拿不到：默认实例不存在，每次 getService() 都返回 null，主线程紧循环重试
+SoundTriggerMiddlewareDefaultHalFactory: Connecting to default soundtrigger-V2.x.ISoundTriggerHw
+#   41129 次，间隔 2~5 ms（即 52900 条 servicemanager 记录的主要来源）
+
+# 4）150 s 后 watchdog 用 sysrq 把整机硬重启，这是「卡启动动画」的直接机制
+[  151.422893][  T910] sysrq: Resetting
+
+# 5）镜像侧取证：我们的 vendor.img 里 bin/hw 只有 audio 两个服务，没有任何 soundtrigger 实现
+#    （debugfs 回读 out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor.img）
+/vendor/bin/hw/android.hardware.audio.service-aidl.mediatek
+/vendor/bin/hw/android.hardware.audio.effect.service-aidl.mediatek
+#    VINTF 片段目录里也无 android.hardware.soundtrigger3.xml
+
+# 6）对照：官方 ColorOS vendor 是有实现的（说明这不是「平台不支持」而是我们镜像缺件）
+#   /vendor/lib64/hw/android.hardware.soundtrigger3-impl.so        85,400 B
+#   /vendor/lib64/hw/sound_trigger.primary.default.so            101,888 B
+#   /vendor/etc/vintf/manifest/manifest_oplus_fingerprint_aidl_v3.xml 同目录下
+#   /vendor/etc/vintf/manifest.xml: <hal format="aidl"><name>android.hardware.soundtrigger3</name>
+#     <version>3</version><fqname>ISoundTriggerHw/default</fqname></hal>
+#   但官方没有独立进程：真机上 soundtrigger 由 MTK audio HAL 进程内注册
+#   （vendor.audio-hal-aidl 的 /vendor/bin/hw/android.hardware.audio.service-aidl.mediatek）

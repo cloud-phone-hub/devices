@@ -1,0 +1,96 @@
+# 通过侧证据：实例 10（2026-11-03 09:43 启动）
+# 取样：out/core/daemon/runtime/15r_16.0.10.500_EX01/10/qemu.log
+# 环境：patch.img sha256 d293eb0594bd（新增 manifest/oneplus/15r/vendor/etc/media_config.xml）
+
+## 1. 两个 store 服务起来且不重启
+$ adb -s 127.0.0.1:5911 shell getprop init.svc.android-hardware-media-c2-hal
+running
+$ adb -s 127.0.0.1:5911 shell getprop init.svc.vendor-dolby-media-c2-hal
+running
+
+$ adb -s 127.0.0.1:5911 shell ps -A -o PID,USER,ELAPSED,NAME | grep media.c2
+   624 mediacodec  04:50 android.hardware.media.c2-mediatek
+   625 media       04:50 android.hardware.media.c2@1.2-service-v4l2-64
+   629 mediacodec  04:50 vendor.dolby.media.c2-default-service-dax
+# ELAPSED 与开机时长（04:50）等长 = 一次启动、零重启（修前每 5 s 换一次 pid）
+
+## 2. 四个 store 实例齐（修前只有 default / software）
+$ adb -s 127.0.0.1:5911 shell service list | grep media.c2.IComponentStore
+41      android.hardware.media.c2.IComponentStore/default: [android.hardware.media.c2.IComponentStore]
+42      android.hardware.media.c2.IComponentStore/default1: [android.hardware.media.c2.IComponentStore]
+43      android.hardware.media.c2.IComponentStore/default9: [android.hardware.media.c2.IComponentStore]
+44      android.hardware.media.c2.IComponentStore/software: [android.hardware.media.c2.IComponentStore]
+
+## 3. 配置文件就位
+$ adb -s 127.0.0.1:5911 shell ls -l /vendor/etc/media_config.xml
+-rw-r--r-- 1 root root 3592 2008-12-31 19:00 /vendor/etc/media_config.xml
+$ adb -s 127.0.0.1:5911 shell md5sum /vendor/etc/media_config.xml
+73641234cea20deee65a57c22cf72461  /vendor/etc/media_config.xml
+# 与 engine/manifest/oneplus/15r/vendor/etc/media_config.xml（3592 B）一致
+
+## 4. 失败串归零
+$ grep -c 'media_config.xml' 10/qemu.log
+0
+$ grep -o "Service '[^']*' (pid [0-9]*) exited with status 1" 10/qemu.log | sort | uniq -c | sort -rn | head -3
+ 108 Service 'vendor.secure_element'          # 下一卡点
+ 106 Service 'vendor.oplus.vibrator'          # 下一卡点
+   1 Service 'vendor.setup_sound_card'        # oneshot，正常
+# media c2 两个服务已不在 name 单里（修前 352 / 74）
+
+$ grep -c "starting service 'android-hardware-media-c2-hal'" 10/qemu.log
+2        # 1 次开机 + 1 次我手工 ctl.restart 复验（见第 6 节）
+$ grep -c "starting service 'vendor-dolby-media-c2-hal'" 10/qemu.log
+1
+
+## 5. updatable 崩溃标不再指向 media c2
+$ adb -s 127.0.0.1:5911 shell getprop sys.init.updatable_crashing_process_name
+vendor.oplus.vibrator
+$ grep -c "sys.init.updatable_crashing" 10/qemu.log
+46      # 修前 503；剩余触发者是 vibrator/secure_element 的 5 s 循环
+
+## 6. 单实例独占注册的调试陷阱（手工复跑会抢名字）
+# 手工执行一次同一个二进制后 default1 消失（servicemanager 二次注册语义）：
+$ adb -s 127.0.0.1:5911 shell service list | grep media.c2.IComponentStore
+41      .../default
+43      .../default9
+44      .../software         # default1 被手工进程抢走
+$ adb -s 127.0.0.1:5911 shell setprop ctl.restart android-hardware-media-c2-hal
+$ adb -s 127.0.0.1:5911 shell service list | grep media.c2.IComponentStore
+41      .../default
+42      .../default1          # 重启后恢复，且进程不再重启循环
+43      .../default9
+44      .../software
+
+## 7. 回归：#128 未回退
+$ adb -s 127.0.0.1:5911 shell getprop init.svc.vendor.power.stats
+                       # 空 = 没有这个服务（官方 rc 仍被覆盖件顶掉）
+$ adb -s 127.0.0.1:5911 shell service check android.hardware.power.stats.IPowerStats/default
+Service android.hardware.power.stats.IPowerStats/default: found
+$ grep -c 'power.stats-impl.oplus' 10/qemu.log
+0
+$ grep -c 'Check failed: s ==' 10/qemu.log
+0
+
+## 8. 整机状态
+$ adb -s 127.0.0.1:5911 shell getprop sys.boot_completed
+1
+$ adb -s 127.0.0.1:5911 shell dumpsys activity activities | grep topResumedActivity
+ topResumedActivity=ActivityRecord{... com.android.launcher/.Launcher t7}
+$ adb -s 127.0.0.1:5911 shell ps -A -o PID,ELAPSED,NAME | grep -E "system_server|zygote64"
+ 954 08:47 system_server
+ 813 08:48 zygote64
+$ grep -c 'FATAL EXCEPTION IN SYSTEM PROCESS' 10/qemu.log
+0
+$ grep -c 'WATCHDOG KILLING' 10/qemu.log
+0
+
+## 9. 与失败侧的唯一共同残留：surfaceflinger 首启 abort（与 media c2 无关）
+[   11.465297][    T1] init: Service 'surfaceflinger' (pid 647) received signal 6
+[   11.476292][    T1] init: Service 'zygote' (pid 579) received signal 9
+# 实例 9 同样的配对（SF 12.587 → zygote 12.596），所以 zygote 被杀不是 c2 循环连坐
+
+## 10. 本次新增的待查症状（约 647 s 起）
+#    binder 事务 ENOSPC + adb offline，发生在 vendor.secure_element 由 5 s 提速到 1 s 循环之后：
+11-02 21:05:59.569   628  1067 E IPCThreadState: Binder transaction failure. id: 2424165, BR_*: 29201, error: -28 (No space left on device)
+[  647.192457][    T1] init: starting service 'vendor.secure_element'...
+# 未在本条目处理，记入遗留（先修 secure_element / vibrator 的循环再复盘）

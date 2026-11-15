@@ -1,0 +1,19 @@
+=== 1. 设置 ro.hardware.vulkan=mali + ro.kernel.qemu.vulkan.base=pastel 后，cdh-gpu 自动将 SPIR-V Float16 提升为 Float32 并交 vulkan.pastel.so 渲染 ===
+$ adb -s 127.0.0.1:5911 shell "getprop ro.hardware.vulkan; getprop ro.kernel.qemu.vulkan.base; mount | grep /cust"
+mali
+pastel
+/dev/block/vda12 on /cust type erofs (ro,seclabel,relatime,user_xattr,acl,cache_strategy=readaround)
+
+$ adb -s 127.0.0.1:5911 shell "logcat -d | grep cdh-gpu"
+11-06 16:02:50.705   683   695 I cdh-gpu : vulkan: 已接管，基座 vulkan.pastel.so
+11-06 16:04:00.733  4456  4456 I cdh-gpu : vulkan: 已接管，基座 vulkan.pastel.so
+11-06 16:04:01.075  4456  4456 I cdh-gpu : vulkan: SPIR-V Float16->Float32 已改写 (size=16700, fp16_types=1, consts=3, fconverts=18) -> 0
+11-06 16:04:01.075  4456  4456 I cdh-gpu : vulkan: SPIR-V Float16->Float32 已改写 (size=22816, fp16_types=1, consts=25, fconverts=35) -> 0
+11-06 16:04:01.075  4456  4456 I cdh-gpu : vulkan: SPIR-V Float16->Float32 已改写 (size=25400, fp16_types=1, consts=32, fconverts=48) -> 0
+
+=== 2. 裁掉孤立 VINTF 片段 + GNSS HAL 异步回调改造后，桌面与 system_server 零崩溃、零 Watchdog 重启 ===
+$ adb -s 127.0.0.1:5911 shell "dumpsys window | grep -E 'mCurrentFocus|mFocusedApp'; logcat -d -b crash | grep -cE 'Fatal signal|miui.home|pastel'"
+  mCurrentFocus=Window{376a6e8 u0 com.miui.home/com.miui.home.launcher.Launcher}
+  mFocusedApp=ActivityRecord{192889287 u0 com.miui.home/.launcher.Launcher t10}
+0
+

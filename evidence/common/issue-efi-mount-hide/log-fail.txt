@@ -1,0 +1,8 @@
+# 修复前：gold 15-OS3.0.11.0.VNQCNXM 云机（4503ac70a1c898f3-cloud）proc & native_env 对比
+# 提取来源：engine/out/tmp/p0_fail_extract.txt
+
+=== P0-4 fail (proc mountinfo & mounts EFI) ===
+  mountinfo: {"dev": "254:1", "fsType": "vfat", "mountId": "3720", "mountPoint": "/mnt/vendor/EFI", "options": "rw,relatime", "parentId": "3713", "root": "/", "source": "/dev/block/vda1", "superOptions": "rw,context=u:object_r:efi_file:s0,fmask=0117,dmask=0007,allow_utime=0020,codepage=437,iocharset=iso8859-1,shortname=lower,errors=remount-ro,discard"}
+
+=== P0-4 fail (native_env blockMounts EFI) ===
+  blockMounts: {"fstype": "vfat", "majMin": "254:1", "mountpoint": "/mnt/vendor/EFI", "ro": false, "source": "/dev/block/vda1"}

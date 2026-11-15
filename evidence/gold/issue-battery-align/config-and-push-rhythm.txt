@@ -1,0 +1,34 @@
+== PowerCheckerService 收 ACTION_BATTERY_CHANGED 节奏 ==
+--------- beginning of main
+07-15 21:26:28.099  3097  5072 D PowerCheckerService: onBatteryChanged, mBatteryLevel = 100, status = 5, level = 100, plug = 1, scale = 100
+07-15 21:26:58.099  3097  5072 D PowerCheckerService: onBatteryChanged, mBatteryLevel = 100, status = 5, level = 100, plug = 1, scale = 100
+
+== /vendor/etc/cdh_battery.conf ==
+# gold（Redmi Note 13 5G）电池口径 —— 取值来自真机取证，供健康 HAL
+# /vendor/bin/hw/android.hardware.health-service 启动时读取。
+#
+# 真机挂充时在两种相位间交替：
+#   满电静置：status=FULL(5)、voltage≈4384mV、temperature≈31.0°C、
+#             charge_counter≈4962（区间上沿 4972，缓降）
+#   补电：    status=CHARGING(2)、voltage≈4450mV、temperature≈38.0°C、
+#             charge_counter≈4947
+# HAL 按开机时钟在这两个区间内做连续模拟，并每 30s 向 BatteryService 推送。
+
+# 身份类（与真机一致）
+technology=Li-poly
+cycle_count=753
+
+# 动态模拟区间（charge_counter 与真机 intent extra 同口径，真机上报即 49xx 量级）
+charge_counter_min=4947
+charge_counter_max=4972
+voltage_full_mv=4384
+voltage_charge_mv=4450
+temperature_full_decic=310
+temperature_charge_decic=380
+
+# 一个挂充周期的秒数（前 25% 补电，其余满电静置）
+cycle_seconds=600
+
+== 二进制哈希（宿主产物 vs 设备）==
+84229d30640a09e3283f5187eb2036b4553ebcd30b44ffe196d0036edbc651db  engine/out/vendor/android15/bin/hw/android.hardware.health-service
+84229d30640a09e3283f5187eb2036b4553ebcd30b44ffe196d0036edbc651db  /vendor/bin/hw/android.hardware.health-service

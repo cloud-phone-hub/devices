@@ -1,0 +1,47 @@
+# 1. 实例 1（PID 40059）冷启动完成，属性、进程 PID、Telephony、Wi-Fi、Launcher 焦点全绿
+boot_completed=1
+updatable_crashing=
+sim_state=LOADED,ABSENT
+operator=中国联通,
+net_type=LTE,Unknown
+applist=0
+magt=0
+pids=655 877 3431
+  mCurrentFocus=Window{838294a u0 com.android.launcher/com.android.launcher.Launcher}
+  mFocusedApp=ActivityRecord{52773807 u0 com.android.launcher/.Launcher t4}
+Physical size: 1256x2760
+
+# 2. early-init bind mount 与常驻服务停用验证
+/dev/block/vdc /odm/etc/vintf/manifest/manifest_module_virtual_audio_v3.xml ext4 ro,seclabel,relatime 0 0
+/dev/block/vdc /odm/etc/vintf/manifest/manifest_oplus_virtualdevice_audio_aidl.xml ext4 ro,seclabel,relatime 0 0
+/dev/block/vdc /odm/etc/vintf/manifest/android.hardware.contexthub-service.tinysys.xml ext4 ro,seclabel,relatime 0 0
+/dev/block/vdc /odm/etc/vintf/manifest/android.hardware.ir-service.xml ext4 ro,seclabel,relatime 0 0
+/dev/block/vdc /odm/etc/vintf/telephony_manifest_dsds.xml ext4 ro,seclabel,relatime 0 0
+/dev/block/vdc /odm/etc/vintf/telephony_manifest_ssss.xml ext4 ro,seclabel,relatime 0 0
+/dev/block/vdc /odm/etc/permissions/android.hardware.consumerir.xml ext4 ro,seclabel,relatime 0 0
+[init.svc.magt]: [stopped]
+[init.svc.netdiag]: [stopped]
+[init.svc.oplus_esepower_hal_service]: [stopped]
+[init.svc.secure_element-1-0]: [stopped]
+[init.svc.vendor.ir-default]: [stopped]
+[init.svc.vendor.nfc_hal_service]: [stopped]
+[init.svc.vendor.power.stats]: [stopped]
+[init.svc.vendor.power.stats-default]: [running]
+
+# 3. 网络接口与 Telephony ServiceState
+16: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    inet 192.168.60.100/24 brd 192.168.60.255 scope global dynamic wlan0
+       valid_lft 3558sec preferred_lft 3558sec
+40: vgate0: <POINTOPOINT,MULTICAST,NOARP,ALLMULTI,PROMISC,DEBUG,DYNAMIC,AUTOMEDIA,PORTSEL,UP,LOWER_UP> mtu 65500 qdisc mq state UNKNOWN group default qlen 500
+    inet 172.30.255.48/32 scope global vgate0
+       valid_lft forever preferred_lft forever
+    mServiceState={mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE), mChannelNumber=1650, duplexMode()=1, mCellBandwidths=[20000], mOperatorAlphaLong=中国联通, mOperatorAlphaShort=中国联通, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=14(LTE), getRilDataRadioTechnology=14(LTE)}
+
+# 4. InputReader 触控设备 touchpanel 识别
+    8: touchpanel
+      Classes: KEYBOARD | TOUCH | TOUCH_MT
+      Path: /dev/input/event1
+      Enabled: true
+      Identifier: bus=0x0000, vendor=0x0000, product=0x0000, version=0x0000, bluetoothAddress=<not set>
+      AbsState: ABS_MT_SLOT=0, ABS_MT_POSITION_X=0, ABS_MT_POSITION_Y=0, ABS_MT_TRACKING_ID=0, ABS_MT_PRESSURE=0
+

@@ -1,0 +1,45 @@
+# 修复后取证：m22_12.5.0.0A / 实例 29（同槽位 vnc 5920、adb 5919），2026-10-29 10:05 创建
+# 改动：engine/manifest/flyme/m22/device.json 增加 input 段（touch.abs-to-mt=true、tablet=false）
+#       engine/out/dist/flyme/m22/12.5.0.0A/device.json 同步该段（与 pack-vda 生成口径一致）
+
+## 1. daemon 下发的 QEMU 输入设备：tablet 不再创建，multitouch 直出 ABS_MT
+# $ ps -p <qemu pid> -o command= | tr ' ' '\n' | grep virtio-.*pci
+virtio-multitouch-pci,abs-to-mt=on
+virtio-keyboard-pci
+# （修复前同一位置是 virtio-multitouch-pci / virtio-tablet-pci / virtio-keyboard-pci）
+
+## 2. guest InputReader：只剩一台键盘 + 一台多点触控，Tablet 彻底消失
+# $ adb -s 127.0.0.1:5919 shell dumpsys input > input-m22-after.txt
+92:    6: QEMU Virtio Keyboard
+107:    7: QEMU Virtio MultiTouch
+153:    Sources: KEYBOARD
+216:  Device 3: QEMU Virtio Keyboard
+226:    Sources: KEYBOARD
+258:  Device 2: QEMU Virtio MultiTouch
+268:    Sources: KEYBOARD | TOUCHSCREEN
+272:      X: source=TOUCHSCREEN, min=0.000, max=1079.967
+273:      Y: source=TOUCHSCREEN, min=0.000, max=2399.927
+283:    Touch Input Mapper (mode - DIRECT):
+286:        DeviceType: TOUCH_SCREEN
+
+# grep -c "QEMU Virtio Tablet" input-m22-after.txt  ->  0
+
+## 3. RFB 点击落点（.tmp/vnc_tap.py 模拟 noVNC 的 PointerEvent，含 SetPixelFormat/SetEncodings）
+$ python3 .tmp/vnc_tap.py 127.0.0.1 5920 917 1461 120
+server 1088x2400 name='QEMU'
+sent pointer tap (917,1461) hold=120ms
+# framebuffer 坐标 (917,1461) 就是桌面"设置"图标中心（tap-0-home.png 里 540x1191 缩略图的 (455,725)）
+# 抓帧结果 tap-1-settings.png：精确打开 com.android.settings 的隐私政策弹窗（首次启动）
+
+$ python3 .tmp/vnc_tap.py 127.0.0.1 5920 755 2158 120
+server 1088x2400 name='QEMU'
+sent pointer tap (755,2158) hold=120ms
+# 弹窗底部"同意"按钮（缩略图 (375,1071)）被精确命中
+# 抓帧结果 tap-2-consent.png：进入设置主页（简单设置/登录 Flyme 账号/运营商网络/无线网络…）
+
+## 4. 键盘未受影响
+# dumpsys input 仍有 Device 3: QEMU Virtio Keyboard，Sources: KEYBOARD
+
+## 5. 与 gold 的口径一致性
+# gold（xiaomi/gold/OS3.0.10.0.VNQCNXM）本来就是 input.tablet=false + touch.abs-to-mt=on，
+# 本次把 m22 对齐到同一套输入模型；gold 侧行为无变化（实例 5/6 均在跑）。

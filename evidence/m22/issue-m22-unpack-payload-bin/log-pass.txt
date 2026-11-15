@@ -1,0 +1,39 @@
+$ cd engine && ./out/bin/cdh device build m22 --only 01_unpack
+==> [1/1] unpack  (01_unpack)
+==> 固件包: roms/devices/flyme/m22/12.5.0.0A.zip
+==> 包类型: zip（signed by SignApk）
+  payload: v2 block=4096 43 个分区 数据段 7.68 GiB
+  [group] qti_dynamic_partitions size=12.00 GiB -> odm, product, system, system_dlkm, system_ext, vendor, vendor_dlkm
+  + system_dlkm_a     3.32 MiB  -> super/system_dlkm_a.img
+  + vendor_dlkm_a    55.02 MiB  -> super/vendor_dlkm_a.img
+  + product_a         1.78 GiB  -> super/product_a.img
+  + system_a          4.87 GiB  -> super/system_a.img
+  + system_ext_a    691.98 MiB  -> super/system_ext_a.img
+  + odm_a           764.00 KiB  -> super/odm_a.img
+  + vendor_a          2.01 GiB  -> super/vendor_a.img
+  + vendor_boot       96.00 MiB  -> vendor_boot.img
+  … 其余 32 个物理分区 -> firmware/<name>.img
+[ok] 解包完成：7 个逻辑分区 + 33 个物理分区（9.90 GiB）+ vendor_boot.img（96.00 MiB）
+
+$ ls -la engine/out/roms/flyme/m22/12.5.0.0A/
+drwxr-xr-x@  -  firmware
+-rw-r--r--@  100663296  vendor_boot.img
+-rw-r--r--@  .unpacked.json
+drwxr-xr-x@  -  super
+
+$ cat engine/out/roms/flyme/m22/12.5.0.0A/.unpacked.json | head -20
+{
+  "package": "/Volumes/work/cloud-phone-hub/engine/roms/devices/flyme/m22/12.5.0.0A.zip",
+  "size": 8244669808,
+  "kind": "zip",
+  "split": true,
+  "payload": true,
+  "files": [ ... "super/vendor_a.img", "firmware/boot.img", "vendor_boot.img" ... ]
+}
+
+# 与官方分区逐字节比对（dump.erofs 直接读出厂包同一分区）
+$ md5 -q <(dump.erofs --path=/build.prop --cat .../super/vendor_a.img)
+4a012482c114a2f5694453f895716ed1
+$ md5 -q <(dump.erofs --path=/etc/build.prop --cat .../super/odm_a.img)
+40415616a73d1ec1439dc6e50ec229fc
+# 两项与厂商基线登记值一致（见 manifest/flyme/m22/baselines/12.5.0.0A.json）

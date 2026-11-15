@@ -1,0 +1,2 @@
+# cdh：小米 IFAA TEE (IMlipayService) AIDL 服务名映射（随 android.hardware.ir-service 托管）
+vendor.xiaomi.hardware.mlipay.IMlipayService/default    u:object_r:hal_ir_service:s0

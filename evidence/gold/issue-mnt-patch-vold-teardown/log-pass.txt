@@ -1,0 +1,79 @@
+# 通过态取证：内核拒绝卸载 /mnt/patch，vold 的 MNT_DETACH 清理空转，整机正常开机
+#
+# 设备/清单：xiaomi/gold  OS3.0.10.0.VNQCNXM（Redmi Note 13 5G）
+# 宿主：macOS (darwin, QEMU + hvf)，8 GiB / 8 vCPU
+# 实例：gold_OS3.0.10.0.VNQCNXM/34（2026-10-26 12:20 创建）
+# 日志：out/core/daemon/runtime/gold_OS3.0.10.0.VNQCNXM/34/qemu.log（抓取时 160786 行且仍在增长）
+# 说明：行首 `NNNN:` 为抓取时刻的 qemu.log 行号；时间戳为 guest 内核时间。
+#       logcat 行若与内核输出粘在同一行，此处只保留 vold 部分（尾部截断）。
+#
+# 本轮修复（相对 log-fail.txt 的失败态）：
+#   内核 fs/namespace.c 在 ksys_umount() 里对 /mnt/patch 裸挂载点返回 -EBUSY
+#   （提交 ccb0313347194，CONFIG_CDH_PATH_REDIRECT）。vold 把 EBUSY 当作
+#   「没有需要卸载的挂载」静默跳过，fixture 全程保留。
+#   镜像与失败态同源：patch.img sha256 0ba51fd5a321dddd5a7593ac1e45bbae829a277f502aaa5c1ed71d37db0fb93a
+#   唯一变量是内核（boot.img）；vda.img sha256 500b95f7f98e3b81cbaa34711fc65906234f4bb6c13afd21e92c814dcf7cb3be
+
+## 1. vold 撕不掉（内核返回 EBUSY，vold 仍在，但挂载保留）
+
+ 1166:[    4.703906][  T202] vold: ForceUnmount failed. Trying MNT_DETACH /mnt/patch: Device or resource busy
+ 1167:[    4.704429][  T202] vold: Failed to unmount /mnt/patch: Device or resource busy
+
+# 之后 vold 读 fstab 用的是重定向后的真实路径（挂载还在，文件可读）：
+ 1191:[   14.719960][  T202] vold: [libfstab] Using Android DT directory /proc/device-tree/firmware/android/
+ 1193:[   14.720593][  T202] cdh_redirect: /mnt/patch/vendor/etc/fstab.mt6833
+ 1195:[   14.722675][  T202] vold: Not pre-creating userdata encryption device; device already exists
+
+# logcat 侧同一事件的完整轨迹（vold 确实尝试清理，但每次都 EBUSY）：
+ 3187:01-01 08:00:00.686   202   202 D vold    : Tearing down stale mount /mnt/patch
+ 3252:01-01 08:00:04.697   202   202 E vold    : ForceUnmount failed. Trying MNT_DETACH /mnt/patch: Device or resource busy
+ 3257:01-01 08:00:04.698   202   202 E vold    : Failed to unmount /mnt/patch: Device or resource busy
+ 3264:01-01 08:00:14.711   202   202 I vold    : ForceUnmount failed: /mnt/patch: Device or resource busy
+
+## 2. keymint 秒起（对比失败态 30s 超时）
+
+ 1317:[   14.831743][  T120] init: wait for '/dev/hvc3' took 54ms
+ 1318:[   14.831968][    T1] init: Command 'wait /dev/hvc3 30' action=post-fs (/vendor/etc/init/android.hardware.security.keymint-service.rc:27) took 54ms and succeeded
+
+## 3. keymint 4 个实例全部注册
+
+ 1335:[   14.841888][  T250] android.hardware.security.keymint-service.remote: adding keymint service instance: android.hardware.security.keymint.IKeyMintDevice/default
+ 1339:[   14.843805][  T250] android.hardware.security.keymint-service.remote: adding keymint service instance: android.hardware.security.secureclock.ISecureClock/default
+ 1344:[   14.845219][  T250] android.hardware.security.keymint-service.remote: adding keymint service instance: android.hardware.security.sharedsecret.ISharedSecret/default
+ 1350:[   14.847170][  T250] android.hardware.security.keymint-service.remote: adding keymint service instance: android.hardware.security.keymint.IRemotelyProvisionedComponent/default
+
+## 4. /data 正常挂载，mount_all --late 成功
+
+ 1479:[   15.548139][  T202] vold: [libfs_mgr] __mount(source=/dev/block/mapper/userdata,target=/data,type=ext4)=0: Success
+ 1482:[   15.550547][    T1] init: Userdata mounted using (default fstab) result : 7
+ 1484:[   15.551108][    T1] init: Command 'mount_all --late' action=late-fs (/vendor/etc/init/hw/init.mt6833.rc:34) took 611ms and succeeded
+
+## 5. 纯 64 位 zygote（只解析 zygote64 的 rc）
+
+  663:[    0.444165][    T1] init: Parsing file /system/etc/init/hw/init.zygote64.rc...
+
+# 统计：
+#   $ grep -c 'init.zygote32' 34/qemu.log
+#   0
+
+## 6. 开机完成并稳定运行
+
+59748:[   98.451302][    T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:113)
+59755:[   98.480245][    T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1390)
+
+# 日志持续增长到 160786 行（抓取时刻），SystemServer 仍在运行；
+# 全文只有 1 次 signal 6（既有 oneshot，与本次改动无关）：
+ 2557:[   16.725271][    T1] init: Service 'vendor.setup_sound_card' (pid 509) received signal 6 from uid 1041 pid 509 oneshot service took 0.036000 seconds in background
+
+# 统计：
+#   $ grep -c 'received signal 6' 34/qemu.log
+#   1
+#   对比实例 32 的 454 次。
+
+## 7. 结论
+
+# 内核在 ksys_umount() 对 /mnt/patch 返回 EBUSY 后：
+#   - vold 的 /mnt 白名单清理空转（不打 tearing-down 失败错误，仅一条 EBUSY）；
+#   - /vendor、/vendor_dlkm、/odm 三棵子树的挂载全程保留；
+#   - vold 后续用真实路径读到默认 fstab，/data 正常挂载；
+#   - keymint 秒起、zygote 纯 64 位、boot_completed=1、无重启。

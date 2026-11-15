@@ -1,0 +1,95 @@
+gold 云机 Wi-Fi 关闭 —— 失败态取证
+=================================
+实例：gold_cn_OS3.0.10.0.VNQCNXM / index 2；adb 127.0.0.1:5911
+patch.img（旧）：sha256 304f3a9c9bd2（cph-wifi-bootstrap 之前的版本）
+复现手段：`cmd wifi set-wifi-enabled disabled` + `cmd wifi forget-network 0` +
+          `settings put global wifi_on 0`，模拟「全新 data 镜像第一次开机」的 Wi-Fi 状态。
+
+--------------------------------------------------------------------
+① device-checker 视角：真机 WIFI/wlan0，云机 ETHERNET/eth0
+   来源：out/tmp/gold-diff-run-00039 归并（真机 run-00034 + 云机 run-00039）
+   run-00040 复跑后同一段仍是 5 项（只差 IP/网段值）
+--------------------------------------------------------------------
+--- network.connectivity: 差异 13 项 / 共 21 键
+    connectivity.capabilities[1]
+      真机: NET_CAPABILITY_VALIDATED=true
+      云机: NET_CAPABILITY_VALIDATED=false
+    connectivity.link.dns[0]
+      真机: /192.168.31.1
+      云机: <无>
+    connectivity.link.iface
+      真机: wlan0
+      云机: eth0
+    connectivity.link.links[1]
+      真机: 192.168.31.159/24
+      云机: 10.0.2.15/24
+    connectivity.link.routes[1]
+      真机: 192.168.31.0/24 -> 0.0.0.0 wlan0 mtu 0
+      云机: ::/0 -> fe80::2 eth0 mtu 0
+    connectivity.link.routes[2]
+      真机: 0.0.0.0/0 -> 192.168.31.1 wlan0 mtu 0
+      云机: fec0::/64 -> :: eth0 mtu 0
+    connectivity.none
+      真机: [type: WIFI[], state: CONNECTED/CONNECTED, reason: (unspecified), extra: , failover: false, available: true, roaming: false]
+      云机: [type: Ethernet[], state: CONNECTED/CONNECTED, reason: (unspecified), extra: 52:54:00:12:34:56, failover: false, available: true, roaming: false]
+    connectivity.transports[0]
+      真机: WIFI
+      云机: ETHERNET
+（同一次对拍里 network.cell 另有 65 项差异 —— 云机的数据面只能退到 emulated RIL）
+
+--- network.ifaces: 差异 36 项 / 共 66 键
+    count
+      真机: 3
+      云机: 5
+    interfaces[1].addresses[0].host
+      真机: fe80::64ac:e8ff:fea7:3d08%wlan0
+      云机: fe80::a4e4:f288:61c7:af9b%eth0
+    interfaces[1].addresses[1].host
+      真机: 192.168.31.159
+      云机: fec0::9485:8461:3ba9:7ac6
+
+--------------------------------------------------------------------
+② 全新 data 镜像（wifi_on=0、无保存网络）的 Wi-Fi 状态
+   来源：18:37:04 / 18:37:38，root js 通道
+--------------------------------------------------------------------
+$ settings get global wifi_on
+0
+$ cmd wifi list-networks
+No networks
+$ cmd wifi status
+Wifi is disabled
+Wifi scanning is always available
+$ ip -br addr show wlan0
+wlan0            DOWN
+$ iw dev wlan0 link
+Not connected.
+$ ip route get 101.33.73.101
+RTNETLINK answers: Network is unreachable
+$ dumpsys connectivity | grep 'Active default network'
+Active default network: none
+
+--------------------------------------------------------------------
+③ 关键反证：HAL 与 AP 都在，不是「Wi-Fi 栈不通」，只是「开关没开」
+   来源：同一时刻 18:37:04
+--------------------------------------------------------------------
+$ getprop init.svc.vendor.wifi-vhal   → running
+$ getprop init.svc.wificond           → running
+$ cat /sys/module/mac80211_hwsim/parameters/scan_profile
+5669727457696669,02:00:00:00:00:01,5240,-50,open;4344482d41,02:00:00:00:00:11,2437,-41,open;4344482d42,02:00:00:00:00:12,2437,-62,open;4344482d43,02:00:00:00:00:13,2437,-62,open
+   （VirtWifi / CDH-A / CDH-B / CDH-C —— 宿主 wifi-host-service 每 30 s 下发一次）
+$ iw dev wlan0 scan
+    VirtWifi  -50 dBm @5240
+    CDH-A     -40 dBm @2437
+$ logcat -d | grep setWifiEnabled
+I WifiService: setWifiEnabled package=com.android.shell uid=0 enable=false isPrivileged=true
+
+--------------------------------------------------------------------
+④ 后果：agent 只能走 emulated RIL，检查服务连不上
+   来源：run-00039 时间段（17:5x）就诊断过，同一台实例
+--------------------------------------------------------------------
+$ logcat -s RILJ | grep SETUP_DATA_CALL
+（ccmni2 反复 SETUP_DATA_CALL → INSUFFICIENT_RESOURCES）
+$ logcat -s checker-ws
+I checker-ws: start(): 目标 101.33.73.101:80/ws
+I checker-ws: 正在连接
+（此后无「WebSocket 握手成功」；/api/devices 只有真机一侧）

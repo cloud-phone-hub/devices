@@ -1,0 +1,83 @@
+# 改造后现场（2026-11-15）
+
+## 1. 目录结构
+
+    $ ls engine/build/stages
+    01_unpack  02_prepare  03_build_kernel  04_build_modules  05_build_boot  06_build_vendor_boot
+    07_build_odm  08_build_hardware  09_build_vendor  10_build_vendor_dlkm  11_build_patch
+    12_pack_super  13_pack_vda
+
+    $ ls engine/
+    build  hardware  manifest  ...        # hardware 已从 vendor/ 上移（522 MB / 46 模块）
+    $ ls engine/vendor/
+    build  out                            # 旧构建器与中间产物目录（本次未动）
+
+## 2. 编译与测试
+
+    $ cd engine/build && go build ./... && go vet ./...
+    （通过，无输出）
+    $ go test ./...
+    ok ... 28 个包全部 ok，无 FAIL
+
+    $ cd agent && go build ./... && go test ./...
+    50 个包全部 ok
+
+## 3. CLI 13 步
+
+    $ cd engine && out/bin/cdh help
+      cdh prepare [选项]                         02_prepare：固化构建身份、建产物目录、探测工具链
+      cdh build-kernel [选项]                    03_build_kernel：编译内核 Image
+      cdh build-modules [选项]                   04_build_modules：在 03 的构建卷里编译模块
+      cdh build-boot [选项]                      05_build_boot：替换 kernel 并打包 boot.img
+      cdh build-vendor-boot [选项]               06_build_vendor_boot：改写 cmdline、合并厂商/lineage fstab 并注入
+      cdh build-odm                              07_build_odm：生成 odm 覆盖件并打包 img/odm.img
+      cdh build-hardware [选项]                  08_build_hardware：按 android 版本编译统一 HAL 源码树（engine/hardware）
+      cdh build-vendor [选项]                    09_build_vendor：叠加 HAL 产物并装配 vendor 目录树
+      cdh build-vendor-dlkm [选项]               10_build_vendor_dlkm：注入内核模块并重打 vendor_dlkm.img
+      cdh build-patch [选项]                     11_build_patch：合成 patch.img（vendor + vendor_dlkm + odm）
+      cdh pack-super [选项]                      12_pack_super：官方 super.img 复制到 img/，否则按动态分区镜像合成
+      cdh pack-vda [选项]                        13_pack_vda：合成 vda.img 盘集（super/boot/vendor_boot/patch + device.json）
+
+## 4. 流水线 dry-run（gold / 15-OS3.0.11.0.VNQCNXM）
+
+    $ cdh device build gold --manifest 15-OS3.0.11.0.VNQCNXM --dry-run
+    ==> 设备: Redmi Note 13 5G（redmi/gold）
+    ==> 阶段(13): unpack, prepare, build_kernel, build_modules, build_boot, build_vendor_boot,
+                  build_odm, build_hardware, build_vendor, build_vendor_dlkm, build_patch,
+                  pack_super, pack_vda
+    ==> [1/13] unpack  (01_unpack)   + 进程内调用 unpack
+    ==> [2/13] prepare  (02_prepare) + 进程内调用 prepare
+    ...
+    ==> [8/13] build_hardware  (08_build_hardware) + 进程内调用 build_hardware
+    ...
+    ==> [13/13] pack_vda  (13_pack_vda) + 进程内调用 pack_vda
+    [dry-run] 未执行
+
+## 5. 02_prepare dry-run
+
+    $ cdh prepare --manifest out/tmp/db-manifest/redmi/gold/baselines/15-OS3.0.11.0.VNQCNXM.json \
+        --out out/tmp/prepare-check --dry-run
+    ==> 准备构建: 15-OS3.0.11.0.VNQCNXM（redmi/gold · 15-OS3.0.11.0.VNQCNXM）
+    ==> lineage 版本: lineage-22.2
+    ==> 厂商解包根: .../engine/out/roms/redmi/gold/15-OS3.0.11.0.VNQCNXM
+    ==> lineage 解包根: .../engine/out/roms/lineage/lineage-22.2
+    [dry-run] mkdir -p .../devices/redmi/gold/15-OS3.0.11.0.VNQCNXM/img
+    [dry-run] mkdir -p .../kernel
+    [dry-run] mkdir -p .../dist/redmi/gold/15-OS3.0.11.0.VNQCNXM
+    [dry-run] 未写入 prepare.json / prepare-log.txt
+
+## 6. 08_build_hardware 定位 engine/hardware
+
+    $ cdh build-hardware --android 15 --dry-run
+    ==> HAL 构建: android15，45 个模块
+    ==> 源码树: /Volumes/work/cloud-phone-hub/engine/hardware
+    ==> 产物根: /Volumes/work/cloud-phone-hub/engine/out/vendor/android15
+    （clang/aidl 命令行中的 -I、源文件、--version-script 均为 engine/hardware/**）
+
+## 7. 阶段视图 13 步
+
+    $ go test ./web -run TestWebServerEndpoints
+    ok  cloud-phone-hub/engine/build/web   （断言 /api/pipeline 返回 13 个阶段）
+
+    agent/internal/manifestview: Index 1..13，02_prepare（预处理）与 08_build_hardware（编译硬件 HAL）
+    按序插入，测试 ok。

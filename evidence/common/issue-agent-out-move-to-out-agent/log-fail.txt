@@ -1,0 +1,52 @@
+# agent 产物根迁移 #242 —— 改动前记录（2026-11-15）
+
+## 1. 产物根单点
+
+```
+$ grep -n 'agentRoot, "out"' agent/cmd/cdha/main.go agent/internal/dshsdk/runtime.go
+agent/cmd/cdha/main.go:136:	agentOutDir := filepath.Join(agentRoot, "out")
+agent/internal/dshsdk/runtime.go:50:	home := filepath.Join(agentRoot, "out", "harness", "dsh")
+
+$ grep -n 'agent", "out"' agent/internal/server/roms.go
+129:	bin := filepath.Join(engineRoot, "..", "agent", "out", "dist", "cdh-engine")
+```
+
+## 2. 旧管理台启动输出
+
+```
+==> cdha 云机一体化工程与诊断平台已启动
+    Agent 根目录:  /Volumes/work/cloud-phone-hub/agent
+    Engine 根目录: /Volumes/work/cloud-phone-hub/engine
+    产物与发布根:  /Volumes/work/cloud-phone-hub/agent/out/dist
+```
+
+## 3. 目录现状
+
+```
+$ du -sh agent/out
+352M	agent/out
+$ ls out
+cuttlefish  modem-data-gateway  modem-host-controller  qemu  sources  wifi-host-service
+```
+
+## 4. 禁写根冲突
+
+`agent/cmd/cdha/main.go` 把 `<仓库根>/out` 整棵放进 `fsx.DenyWriteRoots`：
+
+```go
+topOutDir := filepath.Join(workspaceRoot, "out")
+if filepath.Clean(topOutDir) != filepath.Clean(agentOutDir) {
+    denyWriteRoots = append(denyWriteRoots, topOutDir)
+}
+```
+
+产物根若改成 `out/agent`，写 store 时会命中这条禁写规则（`ErrForbiddenTarget`），
+必须先给禁写根加例外子目录。
+
+## 5. 运行态配置里的旧路径
+
+```
+$ grep -rn "agent/out" out/agent/config
+out/agent/config/dsh-tools.patch.yml:7:        command: "/Volumes/work/cloud-phone-hub/agent/out/dist/cdha"
+out/agent/config/nodes.json:17:    "deployDir": "/Volumes/work/cloud-phone-hub/agent/out/dist"
+```

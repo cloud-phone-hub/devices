@@ -1,0 +1,133 @@
+# log-fail：m22 perf2 服务名缺跨域 find 授权（迁移前，实例 37）
+
+## A. 采集环境
+
+- 设备/实例：MEIZU 22（`m22_12.5.0.0A`），实例 **37**（已停机，日志冻结）。
+- 来源：`out/core/daemon/runtime/m22_12.5.0.0A/37/qemu.log`，213606 行 / 29377845 B，sha256 `62e9ab4aad3cd84b…`——QEMU `-serial chardev:charconsole` 的全量串口流水，
+  含 kernel 的 `SELinux: avc:` audit 行与 logd 的 `auditd` 行（比 logcat ring buffer 完整，
+  不会被翻转冲掉）。
+- 该实例用的是**迁移前**的镜像：perf2 的类型与 `find` 授权只在机型层
+  `engine/manifest/flyme/m22/sepolicy/vendor_sepolicy.cil` 里，且只授了
+  `system_server` 与 `lmkd`；服务名标签同样在机型层 `vendor_service_contexts`。
+  因此 `tcontext` 已经是 `u:object_r:cdh_perf2_service:s0`（打标生效），
+  失败的是**其他域没有 find**。
+
+## B. 汇总（记录级口径，口径定义见 D 段）
+
+| 指标 | 数值 |
+| :--- | :--- |
+| 行级：含 `denied  { find }` 且提到 `perf2.IPerf` 的行 | 1620 |
+| 记录级：**结构完整**的 perf2 find 拒绝记录 | **1554** |
+| ├ kernel console（`SELinux: avc:`） | 454 |
+| └ logd `auditd`（同一次拒绝的另一条上报通道） | 1100 |
+| 串口截断、只剩片段（无法归属域） | 66 |
+| 涉及域数 | 19 |
+| 记录首末（kernel tsc） | 28.096 s → 1007.108 s（16.3 min） |
+| 整个日志的 kernel tsc 跨度 | 0.000 s → 3162.535 s（52.7 min） |
+| `Could not find … in the VINTF manifest` 提示 | 830（宽松同行匹配 837，差 7 行是提示被串口截断、缺 `in the VINTF manifest` 尾段） |
+
+域分布（19 个域，按记录数降序）：
+
+| 次数 | scontext |
+| ---: | :--- |
+| 804 | `u:r:mediaserver:s0` |
+| 468 | `u:r:platform_app:s0` |
+| 62 | `u:r:priv_app:s0` |
+| 51 | `u:r:vendor_perfservice:s0` |
+| 26 | `u:r:radio:s0` |
+| 25 | `u:r:mediaprovider:s0` |
+| 16 | `u:r:vendor_qtelephony:s0` |
+| 12 | `u:r:nfc:s0` |
+| 9 | `u:r:permissioncontroller_app:s0` |
+| 9 | `u:r:secure_element:s0` |
+| 9 | `u:r:mediaprovider_app:s0` |
+| 9 | `u:r:rkpdapp:s0` |
+| 9 | `u:r:vendor_voiceui_app:s0` |
+| 8 | `u:r:network_stack:s0` |
+| 8 | `u:r:vendor_dataservice_app:s0` |
+| 8 | `u:r:vendor_xpanprovider_app:s0` |
+| 8 | `u:r:vendor_systemhelper_app:s0` |
+| 7 | `u:r:vendor_qcc_app:s0` |
+| 6 | `u:r:vendor_qesdk_app:s0` |
+
+## C. 样本行（每域首条**结构完整**记录，原文照抄）
+
+抽取规则：整条记录必须同时满足
+
+1. 有上报前缀——kernel 的 `[<ts>][  T260] SELinux: ` 或 logd 的 `MM-DD HH:MM:SS.mmm <pid> <tid> I auditd  : `；
+2. 从 `avc: denied { find } for pid=… uid=…` 到 `tclass=service_manager permissive=0` 一字不缺；
+3. `name=vendor.qti.hardware.perf2.IPerf/default`、`tcontext=u:object_r:cdh_perf2_service:s0`。
+
+这样 19 个域各有一条可逐字段核对的原始记录；不满足 1–3 的 66 行只在片段里出现，
+不参与域统计（其中有 5 个「域」是拼接杂音带来的假域，见 D 段）。
+
+```
+# u:r:permissioncontroller_app:s0
+[   67.373060][  T260] SELinux: avc:  denied  { find } for pid=2032 uid=10187 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:permissioncontroller_app:s0:c187,c256,c512,c768 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:network_stack:s0
+[   67.595429][  T260] SELinux: avc:  denied  { find } for pid=2107 uid=1073 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:network_stack:s0 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:vendor_dataservice_app:s0
+[   67.694735][  T260] SELinux: avc:  denied  { find } for pid=2162 uid=1001 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:vendor_dataservice_app:s0 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:platform_app:s0
+[   67.723912][  T260] SELinux: avc:  denied  { find } for pid=2185 uid=10129 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:vendor_xpanprovider_app:s0
+[   67.870436][  T260] SELinux: avc:  denied  { find } for pid=2196 uid=10168 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:vendor_xpanprovider_app:s0:c168,c256,c512,c768 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:secure_element:s0
+[   67.976085][  T260] SELinux: avc:  denied  { find } for pid=2193 uid=1068 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:secure_element:s0:c44,c260,c512,c768 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:vendor_qtelephony:s0
+[   67.983702][  T260] SELinux: avc:  denied  { find } for pid=2190 uid=10144 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:vendor_qtelephony:s0:c144,c256,c512,c768 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:nfc:s0
+[   68.160687][  T260] SELinux: avc:  denied  { find } for pid=2191 uid=1027 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:nfc:s0 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:radio:s0
+[   68.496020][  T260] SELinux: avc:  denied  { find } for pid=2620 uid=1001 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:radio:s0 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:priv_app:s0
+[   71.708689][  T260] SELinux: avc:  denied  { find } for pid=3155 uid=10193 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:priv_app:s0:c512,c768 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:mediaprovider_app:s0
+[   75.107452][  T260] SELinux: avc:  denied  { find } for pid=4101 uid=10210 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:mediaprovider_app:s0:c210,c256,c512,c768 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:vendor_perfservice:s0
+[   75.250712][  T260] SELinux: avc:  denied  { find } for pid=679 uid=1000 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:vendor_perfservice:s0 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:mediaserver:s0
+[   75.894880][  T260] SELinux: avc:  denied  { find } for pid=665 uid=1013 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:mediaserver:s0 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:mediaprovider:s0
+[   76.795363][  T260] SELinux: avc:  denied  { find } for pid=5016 uid=10209 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:mediaprovider:s0:c512,c768 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:rkpdapp:s0
+[   80.440819][  T260] SELinux: avc:  denied  { find } for pid=6094 uid=10207 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:rkpdapp:s0:c207,c256,c512,c768 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:vendor_voiceui_app:s0
+[   84.193894][  T260] SELinux: avc:  denied  { find } for pid=7327 uid=10183 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:vendor_voiceui_app:s0:c183,c256,c512,c768 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:vendor_qesdk_app:s0
+06-25 20:52:37.123   260   260 I auditd  : avc:  denied  { find } for pid=2194 uid=1000 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:vendor_qesdk_app:s0 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:vendor_systemhelper_app:s0
+06-25 20:52:43.948   260   260 I auditd  : avc:  denied  { find } for pid=4145 uid=1000 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:vendor_systemhelper_app:s0 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+# u:r:vendor_qcc_app:s0
+06-25 20:52:44.990   260   260 I auditd  : avc:  denied  { find } for pid=4390 uid=10176 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:vendor_qcc_app:s0:c176,c256,c512,c768 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+```
+
+## D. 口径说明
+
+- **两条上报通道**：SELinux 拒绝会由 kernel 直接打到串口（`SELinux: avc:`），也会被
+  logd 以 `auditd` tag 再打一遍；本实例上两路覆盖不均（kernel 454 / auditd 1100）。
+  所以本文件只报「能逐字段核对的上报**条数**」（合计 1554），不声称它是「唯一拒绝事件数」；
+  关键是两个实例用**同一口径**，因此 1554 → 0 的对比成立（见 `log-pass.txt` E 段）。
+- **为什么不能按行统计域**：串口是字节流 + 多路复用，QEMU 的 `cgl-headless 大帧`
+  统计会把上一条 guest 输出插进 avc 行前面，于是一行里可能有两条不同的 avc。
+  若用「行内第一个 `scontext`」归属域，就会把前面那条 avc 的域算到 perf2 头上。
+  本轮实测就踩到了：按行首 `scontext` 统计会得到 24 个域，其中
+  `pioneer` / `hal_face_default` / `hal_drm_clearkey_aidl` / `traceur_app` / `audioserver`
+  这 5 个是假的——它们来自 `denied { find } for … name=window` 之类的别的 avc，被
+  `perf2.IPerf` 字样拼进同一行而误命中。剔除后真实的 perf2 客户端是 19 个域。
+- **片段**：66 行里 perf2 的字段被截断（`tclass=` 或 `tcontext=` 缺段），无法确认域，
+  因此只计行数、不进域表；它们不改变结论（迁移后记录数为 0）。
+- 迁移前 `logcat -b all` 曾统计到 90 行同类 avc（实例 37 缓冲内）；本文件用完整的
+  串口流水重取，数字更大，两者窗口不同，不冲突。
+- **更正**：本轮此前记过「`grep` 不带 `-a` 会把串口日志当 binary 而漏计（434 vs 1217）」，
+  复测**未能复现**——本机对 `qemu.log` 用 `grep -c` 与 `grep -a -c` 计数一致
+  （`grep -c perf2` = 3035 / 3035）。带 `-a` 仍是稳妥写法（日志含控制字节），但
+  计数差异不成立，故本文件只保留实测数字。
+
+可复现的一行命令（记录级统计的交叉校验）：
+
+```sh
+grep -a -c 'denied  { find }.*perf2\.IPerf' <qemu.log>   # 本文件：1620
+grep -a -c 'Could not find.*perf2'            <qemu.log>   # 本文件：837
+```
+

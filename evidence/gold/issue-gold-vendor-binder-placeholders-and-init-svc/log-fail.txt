@@ -1,0 +1,99 @@
+# 1. 修复前实例运行时状态（/Volumes/work/cloud-phone-hub/engine/out/tmp/batch4-pre-runtime.txt）
+=== OLD VM 2 SERVICE LIST COUNT ===
+420
+=== OLD VM 2 IDevice/mtk-neuron_shim & 44 PLACEHOLDERS ===
+52	android.hardware.neuralnetworks.IDevice/mtk-neuron_shim: [android.hardware.neuralnetworks.IDevice]
+=== OLD VM 2 6x init.svc.* ===
+init.svc.vndservicemanager=
+init.svc.connsyslogger=
+init.svc.aee_aed=
+init.svc.aee_aed64=
+init.svc.aee-reinit=
+init.svc.update_verifier=
+=== OLD VM 2 vendor_service_contexts nn lines ===
+vendor.mediatek.hardware.gnss.batching.IMtkGnssBatching/default u:object_r:mtk_hal_batching_service:s0
+# cdh-patch-begin: vendor_service_contexts@android.hardware.neuralnetworks
+# cdh：neuralnetworks AIDL HAL 按接口前缀映射到 hal_neuralnetworks_service，
+# 使 default 与 mtk-neuron_shim 等机型实例均可按 hal_neuralnetworks_service 注册与查询。
+android.hardware.neuralnetworks.IDevice        u:object_r:hal_neuralnetworks_service:s0
+# cdh-patch-end: vendor_service_contexts@android.hardware.neuralnetworks
+
+# 2. 修复前 services 与 build_props(init.svc.*) 差异列表（batch4-pre-diffs）
+services summary = {"identity": 0, "capability": 59, "state": 1, "availability": 0, "fatal": 59}
+  serviceList.count | base=471 | target=419
+  serviceList.names | base={'missing': ['android.hardware.media.c2.IComponentStore/default1', 'vendor.xiaomi.hardware.mlipay.IMlipayService/default'], 'count': 471} | target={'extra': ['android.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default', 'android.hardware.gatekeeper.IGatekeeper/default', 'gsiservice', 'miui.powerkeeper.PowerMillet', 'mtkIms', 'mwis', 'vendor.dolby.dms.IDms/default', 'vendor.mediatek.hardware.apuware.utils.IApuwareUtils/default', 'vendor.mediatek.hardware.audio.IMtkAudio/default', 'vendor.mediatek.hardware.camera.atms.IATMs/default', 'vendor.mediatek.hardware.camera.bgservice.IBGService/default', 'vendor.mediatek.hardware.camera.isphal.IISPModule/internal/1', 'vendor.mediatek.hardware.composer_ext.IComposerExt/default', 'vendor.mediatek.hardware.gnss.IMtkGnss/default', 'vendor.mediatek.hardware.lbs.ILbs/AgpsDebugInterface', 'vendor.mediatek.hardware.lbs.ILbs/AgpsInterface', 'vendor.mediatek.hardware.lbs.ILbs/mtk_agps2framework', 'vendor.mediatek.hardware.lbs.ILbs/mtk_agps2gnssAidl', 'vendor.mediatek.hardware.lbs.ILbs/mtk_agpsd2debugService', 'vendor.mediatek.hardware.lbs.ILbs/mtk_debugService2agpsd', 'vendor.mediatek.hardware.lbs.ILbs/mtk_debugService2mnld', 'vendor.mediatek.hardware.lbs.ILbs/mtk_framework2agps', 'vendor.mediatek.hardware.lbs.ILbs/mtk_gnssAidl2agps', 'vendor.mediatek.hardware.lbs.ILbs/mtk_jam2mnl', 'vendor.mediatek.hardware.lbs.ILbs/mtk_lbs_log_v2s', 'vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_agps', 'vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_bt', 'vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_ipaddr', 'vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_lbs', 'vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_network', 'vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_sensor', 'vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_wlan', 'vendor.mediatek.hardware.lbs.ILbs/mtk_meta2mnld', 'vendor.mediatek.hardware.lbs.ILbs/mtk_mnl2jam', 'vendor.mediatek.hardware.lbs.ILbs/mtk_mnld2debugService', 'vendor.mediatek.hardware.lbs.ILbs/mtk_mnld2mtklogger', 'vendor.mediatek.hardware.lbs.ILbs/mtk_mnld2nlputils', 'vendor.mediatek.hardware.lbs.ILbs/mtk_mtklogger2mnld', 'vendor.mediatek.hardware.mmagent.IMMAgent/default', 'vendor.mediatek.hardware.mtkpower.IMtkPowerService/default', 'vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist/default', 'vendor.mediatek.hardware.netdagent.INetdagents/default', 'vendor.mediatek.hardware.nps.nos.fastswitch.INativeFastSwitch/default', 'vendor.mediatek.hardware.nvram.INvram/default', 'vendor.mediatek.hardware.nwk_opt_new.INwkOptNew/default', 'vendor.mediatek.hardware.pq_aidl.IPictureQuality_AIDL/default', 'vendor.mediatek.hardware.videotelephony.IVideoTelephony/default', 'vendor.xiaomi.hardware.micharge.IMiCharge/default', 'vendor.xiaomi.hardware.mikeybag.IMiKeyBagService/default', 'vendor.xiaomi.hardware.misauth.IMiSharedAuth/default', 'vendor.xiaomi.hardware.mrm.IMiCertificate/default', 'vendor.xiaomi.hardware.mrm.IMrm/default', 'vendor.xiaomi.hardware.mrm.IMrmRemoteAuth/default', 'vow_bridge'], 'count': 419}
+  serviceList.services.android.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default | base=[] | target=<缺>
+  serviceList.services.android.hardware.gatekeeper.IGatekeeper/default | base=[] | target=<缺>
+  serviceList.services.android.hardware.media.c2.IComponentStore/default1 | base=<缺> | target=[android.hardware.media.c2.IComponentStore]
+  serviceList.services.android.hardware.neuralnetworks.IDevice/mtk-neuron_shim | base=[android.hardware.neuralnetworks.IDevice] | target=[]
+  serviceList.services.gsiservice | base=[] | target=<缺>
+  serviceList.services.miui.powerkeeper.PowerMillet | base=[] | target=<缺>
+  serviceList.services.mtkIms | base=[com.mediatek.ims.internal.IMtkImsService] | target=<缺>
+  serviceList.services.mwis | base=[com.mediatek.wfo.IMwiService] | target=<缺>
+  serviceList.services.vendor.dolby.dms.IDms/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.apuware.utils.IApuwareUtils/default | base=[vendor.mediatek.hardware.apuware.utils.IApuwareUtils] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.audio.IMtkAudio/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.camera.atms.IATMs/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.camera.bgservice.IBGService/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.camera.isphal.IISPModule/internal/1 | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.composer_ext.IComposerExt/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.gnss.IMtkGnss/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/AgpsDebugInterface | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/AgpsInterface | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_agps2framework | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_agps2gnssAidl | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_agpsd2debugService | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_debugService2agpsd | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_debugService2mnld | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_framework2agps | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_gnssAidl2agps | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_jam2mnl | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_lbs_log_v2s | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_agps | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_bt | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_ipaddr | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_lbs | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_network | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_sensor | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_wlan | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_meta2mnld | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_mnl2jam | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_mnld2debugService | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_mnld2mtklogger | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_mnld2nlputils | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.lbs.ILbs/mtk_mtklogger2mnld | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.mmagent.IMMAgent/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.mtkpower.IMtkPowerService/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.netdagent.INetdagents/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.nps.nos.fastswitch.INativeFastSwitch/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.nvram.INvram/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.nwk_opt_new.INwkOptNew/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.pq_aidl.IPictureQuality_AIDL/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.videotelephony.IVideoTelephony/default | base=[] | target=<缺>
+  serviceList.services.vendor.xiaomi.hardware.micharge.IMiCharge/default | base=[] | target=<缺>
+  serviceList.services.vendor.xiaomi.hardware.mikeybag.IMiKeyBagService/default | base=[] | target=<缺>
+  serviceList.services.vendor.xiaomi.hardware.misauth.IMiSharedAuth/default | base=[] | target=<缺>
+  serviceList.services.vendor.xiaomi.hardware.mlipay.IMlipayService/default | base=<缺> | target=[]
+  serviceList.services.vendor.xiaomi.hardware.mrm.IMiCertificate/default | base=[] | target=<缺>
+  serviceList.services.vendor.xiaomi.hardware.mrm.IMrm/default | base=[] | target=<缺>
+  serviceList.services.vendor.xiaomi.hardware.mrm.IMrmRemoteAuth/default | base=[] | target=<缺>
+  serviceList.services.vow_bridge | base=[com.mediatek.vow.IVoiceWakeupBridge] | target=<缺>
+
+build_props init.svc.* diffs:
+  [state] props.init.svc.adbd | base=running | target=stopped
+  [state] props.init.svc.aee-reinit | base=stopped | target=<缺>
+  [state] props.init.svc.aee_aed | base=running | target=<缺>
+  [state] props.init.svc.aee_aed64 | base=running | target=<缺>
+  [state] props.init.svc.boringssl_self_test32 | base=stopped | target=<缺>
+  [state] props.init.svc.boringssl_self_test32_vendor | base=stopped | target=<缺>
+  [state] props.init.svc.boringssl_self_test_apex32 | base=stopped | target=<缺>
+  [state] props.init.svc.connsyslogger | base=running | target=<缺>
+  [state] props.init.svc.gsid | base=running | target=<缺>
+  [state] props.init.svc.hidl_memory | base=running | target=stopped
+  [state] props.init.svc.hwservicemanager | base=running | target=stopped
+  [state] props.init.svc.snapuserd | base=stopped | target=<缺>
+  [state] props.init.svc.snapuserd_proxy | base=stopped | target=<缺>
+  [state] props.init.svc.update_verifier | base=stopped | target=<缺>
+  [state] props.init.svc.vndservicemanager | base=running | target=<缺>
+  [state] props.init.svc.zygote_secondary | base=running | target=<缺>

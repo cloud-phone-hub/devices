@@ -1,0 +1,63 @@
+# 为什么不能直接回答「VNC 流畅了」——A/B 之前的失败态与干扰项
+
+## 1. 目测无法区分三种「卡」
+
+# 用户问题：「engine 里的云机对齐 gold-15 了吗，vnc 流畅了吗」
+# 当时的直接观察：
+#   - noVNC 画面里通知栏下拉、设置滚动「看起来」不顺
+#   - 但 gold-15 原厂实例（A 臂）同样负载下也「看起来」不顺
+#   - 两边的主观差异不足以支撑「流畅/不流畅」的结论
+
+# 三种可能的来源，肉眼无法区分：
+#   (a) guest 渲染掉帧（SurfaceFlinger / HWC）
+#   (b) 宿主 readback / VNC 编码传输丢帧
+#   (c) noVNC 客户端解码与浏览器合成
+# 只有 (a)(b) 可以由本次 A/B 覆盖，(c) 本次测不到。
+
+## 2. 只用 guest 侧 gfxinfo 会误判
+
+# dumpsys gfxinfo 只说明 App/RenderThread 产出了多少帧，
+# 不说明这些帧是否真的被宿主取走并编码。
+# 反例：guest 侧 60 fps、宿主侧每帧 readback 30 ms → 实际只送出 33 fps，
+#       而 gfxinfo 依然漂亮。
+
+$ adb shell "dumpsys gfxinfo com.android.systemui | grep -E 'Total frames rendered|Janky frames'"
+Total frames rendered: 195
+Janky frames: 3 (1.54%)
+# 这组数字单独存在时，无法回答「VNC 有没有掉帧」。
+
+## 3. 只用宿主侧帧计数会误判
+
+# 反过来，宿主帧数低也可能是「guest 本来就没产出」：
+# 通知栏动画自身节奏就是 ~17 fps，此时宿主 17 fps 是**正确**的，
+# 不代表 VNC 丢帧。必须先知道负载的量级。
+
+## 4. 第一版手势脚本（run-arm.sh）引入的干扰
+
+# 首版命令（回桌面 → 进设置 → 滑动）：
+$ cat .tmp/ab/run-arm.sh
+  'echo AB_START; input keyevent KEYCODE_HOME; sleep 3;
+   am start -a android.settings.SETTINGS >/dev/null 2>&1; sleep 5;
+   dumpsys gfxinfo com.android.settings reset >/dev/null 2>&1;
+   for i in 1 2 3 4 5; do input swipe 540 1900 540 500 250; sleep 0.3; done;
+   sleep 3; dumpsys gfxinfo ...'
+
+# 问题：
+#   - KEYCODE_HOME 之后桌面可能弹出搜索浮层，后续 am start 的落点不稳定；
+#   - Settings 首页的滚动容器状态在两臂之间不一致（一边停在顶部、一边已滚动）；
+#   - 计时段被导航耗时污染，窗口长度不可控。
+
+## 5. 第二版（run-arm2.sh）仍然依赖前置状态
+
+# 改为「假定设置页已在前台」，去掉导航，但引入了新的假设：
+#   - 必须由人工先在两臂上都把 Settings 打开到同一位置；
+#   - 一旦某臂的 Settings 没在前台，整轮数据作废且**看不出来**。
+
+## 6. 结论：需要一套「无导航风险」的固定负载
+
+# 最终采用通知栏展开/收起（run-arm3.sh）：
+#   - 进入路径固定（KEYCODE_HOME 后直接 cmd statusbar）；
+#   - 动画时长固定（expand 1.2s + collapse 1.2s）× 5；
+#   - 不依赖任何 App 的内部滚动状态；
+#   - 两臂负载等价，可跨镜像比较。
+# 这一步之前的所有数据都不能用于「等速」结论。

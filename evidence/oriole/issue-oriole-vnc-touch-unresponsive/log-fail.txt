@@ -1,0 +1,95 @@
+=== 1. 修复前 dist/google/oriole/CP1A.260405.005-20260310/device.json（缺 input 段） ===
+{
+  "id": "oriole_CP1A.260405.005-20260310",
+  "verified-boot-hash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f",
+  "name": "Pixel 6",
+  "brand": "oriole",
+  "width": 1080,
+  "height": 2400,
+  "density": 420,
+  "width-mm": 67,
+  "height-mm": 149,
+  "memory-mb": [8192],
+  "min-memory-mb": 8192,
+  "smp": 8,
+  "host-hvc-adbkey": "hvc2",
+  "host-hvc-bluetooth": "hvc5",
+  "host-hvc-daemon": "hvc7",
+  "host-hvc-keymint": "hvc3",
+  "host-hvc-radio": "hvc4",
+  "host-hvc-wifi": "hvc9",
+  "host-hvc-wifi-data": "hvc10"
+}
+
+=== 2. 修复前 QEMU 命令行（回退默认三件套，无 abs-to-mt=on） ===
+-device virtio-multitouch-pci -device virtio-tablet-pci -device virtio-keyboard-pci
+
+=== 3. Guest /vendor/etc/excluded-input-devices.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<devices>
+    <device name="QEMU QEMU USB Tablet"/>
+    <device name="QEMU Virtio Tablet"/>
+</devices>
+
+=== 4. Guest /proc/bus/input/devices ===
+I: Bus=0006 Vendor=0627 Product=0003 Version=0001
+N: Name="QEMU Virtio MultiTouch"
+P: Phys=virtio8/input0
+S: Sysfs=/devices/pci0000:00/0000:00:09.0/virtio8/input/input1
+U: Uniq=
+H: Handlers=event1 
+B: PROP=2
+B: EV=b
+B: KEY=30400 1f0000 0 0 0 0
+B: ABS=660800000000000
+
+I: Bus=0006 Vendor=0627 Product=0003 Version=0002
+N: Name="QEMU Virtio Tablet"
+P: Phys=virtio9/input0
+S: Sysfs=/devices/pci0000:00/0000:00:0a.0/virtio9/input/input2
+U: Uniq=
+H: Handlers=event2 
+B: PROP=0
+B: EV=f
+B: KEY=30400 1f0000 0 0 0 0
+B: REL=100
+B: ABS=3
+
+=== 5. Guest dumpsys input（ExcludedDeviceNames 排除 Tablet，MultiTouch Last Raw Touch 恒为空） ===
+    7: QEMU Virtio MultiTouch
+      Classes: KEYBOARD | TOUCH | TOUCH_MT
+      Path: /dev/input/event1
+      Enabled: true
+      Descriptor: 2e9b7bc1fac2daf412c6597a1aa5fa9961a50490
+      Location: virtio8/input0
+      Identifier: bus=0x0006, vendor=0x0627, product=0x0003, version=0x0001, bluetoothAddress=<not set>
+      AbsState: ABS_MT_SLOT=0, ABS_MT_POSITION_X=0, ABS_MT_POSITION_Y=0, ABS_MT_TRACKING_ID=0, ABS_MT_PRESSURE=0
+...
+    ExcludedDeviceNames: [QEMU QEMU USB Tablet, QEMU Virtio Tablet]
+...
+  Device 3: QEMU Virtio MultiTouch
+    EventHub Devices: [ 7 ] 
+    Sources: KEYBOARD | TOUCHSCREEN
+    Motion Ranges:
+      X: source=TOUCHSCREEN, min=0.000, max=1079.967, flat=0.000, fuzz=0.000, resolution=0.000
+      Y: source=TOUCHSCREEN, min=0.000, max=2399.927, flat=0.000, fuzz=0.000, resolution=0.000
+      PRESSURE: source=TOUCHSCREEN, min=0.000, max=1.000, flat=0.000, fuzz=0.000, resolution=0.000
+    Touch Input Mapper (mode - DIRECT):
+      DisplayBounds: 1080x2400
+      Last Raw Button State: 0x00000000
+      Last Raw Touch:
+        When: -9223372036854775808
+        Read time: 0
+
+=== 6. 官方固件 vendor_dlkm_a.img:/lib/modules/sec_touch.ko 反汇编取证 ===
+sec_ts_fw_init:
+    8568: adrp x8, 0x8000 (.rodata+0x198b -> "sec_touchscreen")
+    8570: str  x8, [x9]   (input_dev->name = "sec_touchscreen")
+    8574: adrp x9, 0x8000 (.rodata+0x47ed -> "google_touchscreen")
+    8580: str  x9, [x8, #0x10] (input_dev->uniq = "google_touchscreen")
+
+sec_ts_set_input_prop:
+    8fa8: mov  w8, #0x1c  // = 28 (BUS_SPI)
+    8fac: str  x22, [x19, #0x8]
+    8fb0: strh w8, [x19, #0x18] // input_dev->id.bustype = 28, vendor/product/version 保持 0
+

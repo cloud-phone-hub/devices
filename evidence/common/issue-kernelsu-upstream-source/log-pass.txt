@@ -1,0 +1,66 @@
+# kernelsu v3.3.1 在 6.6.127 上编译通过（lineage-22-6.6 + droid-ddk:android15-6.6，2026-11-02）
+
+模块树放到容器 `/out/modtest`（= `engine/modules/kernelsu`，排除 `.git`，模拟 03 的导入），
+内核源码挂 `/src`，输出目录 `/out`。
+
+    $ make O=/out ARCH=arm64 LLVM=1 -j12 M=/out/modtest modules 2>&1 | grep -vE "^  CC \[M\]"
+    make[1]: Entering directory '/out'
+    kernelsu: 应用 0001-shell-profile.patch
+    kernelsu: 应用 0002-kernel-6.9-tracepoint-prio.patch
+    -- KernelSU version: 32680
+    -- KSU_NEW_DCACHE_FLUSH: 1
+    -- KernelSU Manager package name: me.weishu.kernelsu
+    -- KernelSU Manager signature size: 0x033b
+    -- KernelSU Manager signature hash: c371061b19d8c7d7d6133c6a9bafe198fa944e50c1b31c9d8daa8d7f1fc2d2d6
+    -- KernelSU is PR Build: 0
+      LD [M]  /out/modtest/source/kernel/kernelsu.o
+      MODPOST /out/modtest/Module.symvers
+    WARNING: Module.symvers is missing.
+             Modules may not have dependencies or modversions.
+             You may get many unresolved symbol errors.
+             You can set KBUILD_MODPOST_WARN=1 to turn errors into warning
+             if you want to proceed at your own risk.
+    WARNING: modpost: "_printk" [/out/modtest/source/kernel/kernelsu.ko] undefined!
+    WARNING: modpost: "prepare_creds" [/out/modtest/source/kernel/kernelsu.ko] undefined!
+    ...
+    WARNING: modpost: suppressed 217 unresolved symbol warnings because there were too many)
+      LD [M]  /out/modtest/source/kernel/kernelsu.ko
+    make[1]: Leaving directory '/out'
+
+    $ find /out/modtest -name "*.ko"
+    /out/modtest/source/kernel/kernelsu.ko
+
+    $ modinfo /out/modtest/source/kernel/kernelsu.ko
+    filename:       /out/modtest/source/kernel/kernelsu.ko
+    license:        GPL
+    author:         weishu
+    description:    Android KernelSU
+    import_ns:      VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver
+    vermagic:       6.6.127-4k-g4d42ee3d41c6 SMP preempt mod_unload modversions aarch64
+    name:           kernelsu
+    depends:
+
+要看的四行：
+
+1. `kernelsu: 应用 0001-shell-profile.patch` / `0002-…`：补丁在模块 Kbuild 解析阶段应用，
+   `source/kernel/policy/shell_profile.c` 等由补丁生成后才参与编译；
+2. `-- KernelSU version: 32680`：`KSU_GIT_VERSION=2680`（v3.3.1 提交数）+ 30000，说明
+   `export` 的变量穿过递归子 make 生效；
+3. `LD [M] …/source/kernel/kernelsu.ko`：`obj-$(CONFIG_KSU) += source/kernel/` 递归编译，
+   产物在子目录，03 按整棵模块树查找唯一命中；
+4. `vermagic: 6.6.127-4k-g4d42ee3d41c6`：与 `lineage-22-6.6` 内核对得上。
+
+`Module.symvers is missing` 与 217 条 undefined 告警是「实验环境只 `modules_prepare`、
+没编 vmlinux」造成的；真实构建用 02 的 `Module.symvers`，`KBUILD_MODPOST_WARN=1` 只需
+覆盖 KernelSU 那几个运行时自解析的符号。
+
+补丁链等价性另有两次校验：
+
+    # ① git archive v3.3.1 → 应用 0001、0002 → 与 cdh 分支工作树逐文件比对
+    $ git apply --check 0001-shell-profile.patch && git apply 0001-shell-profile.patch
+    $ git apply --check 0002-kernel-6.9-tracepoint-prio.patch && git apply 0002-kernel-6.9-tracepoint-prio.patch
+    $ diff -r patchcheck/source ref/source && echo '✓ 补丁链与 cdh 分支一致'
+    ✓ 补丁链与 cdh 分支一致
+
+    # ② 同一份无 .git 的工作树上重复解析（模拟 modpost 阶段）不再重复应用
+    （第二次 make 时 /tmp/kernelsu-patches-applied 已存在，补丁段整段跳过，无报错）

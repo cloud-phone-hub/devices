@@ -1,0 +1,27 @@
+# gold：guest 值守进程（事件通道 hvc7 / 属性修整 / 启动身份）。
+#
+# 与服务端 ChannelManager 对应：宿主把 <实例>/channels/event.sock 接成
+# QEMU chardev（server=on,wait=off）并挂到 hvc7；本进程连 /dev/hvc7 收
+# keyevent/text/js/shell 帧，回 status/ack/shell_output。
+#
+# pioneer 域由内核补丁 forced permissive（SELinux: cdh: pioneer forced
+# permissive），启动链所需的反向授权（init_{vers} -> pioneer_exec、
+# init_{vers} -> pioneer transition）由基底 vendor_sepolicy.cil 提供；
+# 另需给 /vendor/bin/service_daemon 打 pioneer_exec 标签，见本模块
+# sepolicy/vendor_file_contexts。
+#
+# 本文件由 android.service.daemon 模块自带（随模块 vendor 静态树进
+# /vendor/etc/init/）。服务名取 AOSP 风格的 vendor.service-daemon（二进制叫
+# service_daemon），不带项目缩写：`getprop` 里只会有 init.svc.vendor.service-daemon。
+# 同名 service 只能有一份定义，否则 init 报
+# `ignored duplicate definition of service 'vendor.service-daemon'`，且谁生效取决于 rc
+# 的解析顺序（目录 readdir 不保证字母序）。
+service vendor.service-daemon /vendor/bin/service_daemon run --event /dev/hvc7
+    class main
+    seclabel u:r:pioneer:s0
+    user root
+    group root
+    oneshot
+
+on post-fs-data
+    start vendor.service-daemon

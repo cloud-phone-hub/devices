@@ -1,0 +1,11 @@
+;; cdh：camera AIDL HAL 的 FMQ 共享内存授权（由 07_build_vendor 并入装配树
+;; 的 etc/selinux/vendor_sepolicy.cil）。
+;;
+;; Note13CameraSession 创建 request / result 两条 AidlMessageQueue 时需要打开
+;; /dev/ashmem 并把 fd 传给 cameraserver 映射。
+;; 基底策略中 hal_camera_default 未授予 ashmem_device 访问权，导致 open(/dev/ashmem)
+;; 返回 EACCES(13)，Note13CameraDevice::open 报 INTERNAL_ERROR，Camera1/Camera2
+;; 连接会话失败（Camera.open(0) 抛 RuntimeException: Fail to connect to camera service）。
+(allow hal_camera_default ashmem_device_{{vers}} (chr_file (ioctl read write getattr map open)))
+(allow cameraserver_{{vers}} hal_camera_default (fd (use)))
+(allow hal_camera_default cameraserver_{{vers}} (fd (use)))

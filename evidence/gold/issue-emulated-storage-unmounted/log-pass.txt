@@ -1,0 +1,60 @@
+# 通过现场（2026-10-31，gold 云机 实例 2，重启后 boots）
+
+## ① dmesg：服务只在 boot_completed 后跑一次，0.58 s 结束
+$ dmesg | grep -i cph_storage_align
+[    0.509528] init: Parsing file /vendor/etc/init/cph_storage_align.rc...
+[   31.559108] init: processing action (sys.boot_completed=1) from (/vendor/etc/init/cph_storage_align.rc:27)
+[   31.559128] init: starting service 'cph_storage_align'...
+[   31.584093] init: ... started service 'cph_storage_align' has pid 2584
+[   32.166080] init: Service 'cph_storage_align' (pid 2584) exited with status 0 oneshot service took 0.582000 seconds in background
+[   32.171630] init: Sending signal 9 to service 'cph_storage_align' (pid 2584) process group...
+
+## ② 脚本自落盘日志（本轮 17:58:11 段）
+$ cat /data/local/tmp/cph-storage-align.log   # 尾段
+[10-31 17:58:11] 启动（boot_completed=1）
+[10-31 17:58:11] boot_completed 就绪（等待 0 轮）
+[10-31 17:58:11] emulated;0 已挂载（第 1 次尝试）
+[10-31 17:58:12] 对齐后不一致 0 项
+[10-31 17:58:12] stat Alarms: 10224:1023 2770
+[10-31 17:58:12] stat DCIM: 10224:1023 2770
+[10-31 17:58:12] stat Pictures: 10224:1023 2770
+[10-31 17:58:12] stat Android/data: 1023:1078 2771
+[10-31 17:58:12] stat Android/obb: 1023:1079 2771
+[10-31 17:58:12] fuse 侧: total 72|drwxrws--- 2 10224 1023 … Alarms|drwxrws--- 2 10224 1023 … DCIM|…
+[10-31 17:58:12] 完成（失败 0 项）
+
+## ③ 两小时后（18:15，同一实例、已重启一次）重新抓取，仍在位
+$ python3 out/tmp/jsf.py out/tmp/capture-align.js
+### date      {"code":0,"out":"Sat Oct 31 10:15:51 UTC 2026\n"}
+### boot      {"code":0,"out":"1\n"}
+### vol       {"code":0,"out":"emulated;0 mounted null\n"}
+### media     {"code":0,"out":"total 64\ndrwxrws--- 2 10224 1023 4096 2026-10-31 17:38 Alarms\ndrwxrws--x 5 1023  1023 4096 2026-10-31 17:24 Android\ndrwxrws--- 2 10224 1023 4096 2026-10-31 17:38 Audiobooks\ndrwxrws--- 2 10224 1023 4096 2026-10-31 17:38 DCIM\ndrwxrws--- 2 10224 1023 4096 2026-10-31 17:38 Documents\ndrwxrws--- 2 10224 1023 4096 2026-10-31 17:38 Download\ndrwxrws--x 2 1023  1023 4096 2026-10-31 17:24 HyperOS_Sandbox\ndrwxrws--- 4 10211 1023 4096 2026-10-31 17:44 MIUI\ndrwxrws--- 3 10224 1023 4096 2026-10-31 17:44 Movies\ndrwxrws--- 3 10224 1023 4096 2026-10-31 17:44 Music\ndrwxrws--- 2 10224 1023 4096 2026-10-31 17:38 Notifications\ndrwxrws--- 2 1023  1023 4096 2026-10-31 17:38 Pic2\ndrwxrws--- 4 10224 1023 4096 2026-10-31 17:44 Pictures\ndrwxrws--- 2 10224 1023 4096 2026-10-31 17:38 Podcasts\ndrwxrws--- 2 10224 1023 4096 2026-10-31 17:38 Recordings\ndrwxrws--- 2 10224 1023 4096 2026-10-31 17:38 Ringtones\n"}
+### fuse      （同 ② 的 fuse 侧，内容与 /data/media/0 一致：drwxrws--- 2 10224 1023 … Alarms …）
+### android   {"code":0,"out":"/data/media/0/Android:\ntotal 12\ndrwxrws--x 19 1023 1078 4096 2026-10-31 17:44 data\ndrwxrws--x  2 1023 1023 4096 2026-10-31 17:24 media\ndrwxrws--x  2 1023 1079 4096 2026-10-31 17:38 obb\n…\n/data/media/0/Android/data:\ntotal 68\ndrwxrws--- 3 10131 1078 … com.android.camera\ndrwxrws--- 3 10071 1078 … com.android.providers.calendar\n…\n"}
+
+## ④ 对照真机（同一时刻，USB adb 直连 07cf5fc1784783d5）
+$ adb -s 4lmbvom7gifm5lbu shell "ls -ln /storage/emulated/0"
+drwxrws--- 2 10224 1023    3452 2026-05-14 15:07 Alarms
+drwxrws--x 5 1023  1023    3452 2026-05-14 15:07 Android
+drwxrws--- 2 10224 1023    3452 2026-05-14 15:07 Audiobooks
+drwxrws--- 2 10224 1023    3452 2026-05-14 15:07 DCIM
+drwxrws--- 2 10224 1023    3452 2026-05-14 15:07 Documents
+drwxrws--- 3 10224 1023    3452 2026-10-11 09:18 Download
+drwxrws--x 2 1023  1023    3452 2026-05-14 15:07 HyperOS_Sandbox
+drwxrws--- 4 10224 1023    3452 2026-05-14 15:07 MIUI
+drwxrws--- 3 10224 1023    3452 2026-05-14 15:07 Movies
+drwxrws--- 3 10224 1023    3452 2026-05-14 15:07 Music
+drwxrws--- 2 10224 1023    3452 2026-05-14 15:07 Notifications
+drwxrws--- 4 10224 1023    3452 2026-05-14 15:07 Pictures
+drwxrws--- 2 10224 1023    3452 2026-05-14 15:07 Podcasts
+drwxrws--- 2 10224 1023    3452 2026-05-14 15:07 Recordings
+drwxrws--- 2 10224 1023    3452 2026-05-14 15:07 Ringtones
+$ adb -s 4lmbvom7gifm5lbu shell "ls -ln /storage/emulated/0/Android"
+drwxrws--x 37 1023 1078 3452 2026-10-12 00:49 data
+drwxrws--x  2 1023 1023 3452 2026-05-14 15:07 media
+drwxrws--x  2 1023 1079 3452 2026-05-14 15:07 obb
+（云机与真机的属主/权限逐项一致；真机多几条用户文件，属数据内容差异）
+
+## ⑤ device-checker run-00039（18:10，云机侧）
+云机 files.storage: ok=true, statFailed=0, pathCount=20
+逐项 uid:gid:mode 与真机对照 → 不一致 0 项（详表见 stat-table.txt）

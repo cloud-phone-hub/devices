@@ -1,0 +1,243 @@
+# log-pass：servicetracker 逆向切源码（2026-10-29 23:06~23:25，m22）
+
+目标：把 `vendor.qti.hardware.servicetrackeraidl` 从 `kind=prebuilt` 换成
+`kind=aidl`（逆向 AIDL + 自写 C++），并验证「能编译、能进镜像、wire 与原厂对齐」。
+
+---
+
+## 1. 清模块内原厂 ELF（先备份）
+
+```
+$ cd engine/vendor/hardware/vendor.qti.hardware.servicetrackeraidl
+$ mkdir -p /tmp/st-prebuilt-bak && cp -p vendor/bin/hw/…-service vendor/lib64/hw/…-impl.so vendor/lib64/…-V1-ndk.so /tmp/st-prebuilt-bak/
+$ ls -l /tmp/st-prebuilt-bak/
+-rw-r--r--  102544  vendor.qti.hardware.servicetrackeraidl-V1-ndk.so
+-rw-r--r--   85584  vendor.qti.hardware.servicetrackeraidl-impl.so
+-rwxr-xr-x   52080  vendor.qti.hardware.servicetrackeraidl-service
+$ shasum -a 256 /tmp/st-prebuilt-bak/*
+64b07cd5…  …-V1-ndk.so
+2745ff2d…  …-impl.so
+eec0ceb7…  …-service            ← 原厂二进制
+$ rm -f <3 个> && rmdir vendor/bin/hw vendor/bin vendor/lib64/hw vendor/lib64
+$ find vendor -type f
+vendor/etc/init/vendor.qti.hardware.servicetrackeraidl-service.rc
+vendor/etc/vintf/manifest/vendor.qti.hardware.servicetrackeraidl-service.xml
+```
+
+模块最终结构：
+
+```
+aidl/vendor.qti.hardware.servicetrackeraidl/1/.hash
+aidl/…/1/vendor/qti/hardware/servicetrackeraidl/{IServicetracker,ClientData,ClientConnection,
+        ServiceConnection,ServiceData,ClientRecord,ServiceRecord}.aidl
+sepolicy/vendor_sepolicy.cil
+sepolicy/vendor_service_contexts
+src/servicetracker_service.cpp
+vendor/etc/init/vendor.qti.hardware.servicetrackeraidl-service.rc
+vendor/etc/vintf/manifest/vendor.qti.hardware.servicetrackeraidl-service.xml
+```
+
+`vendor/etc/init/…rc` 与 `vendor/etc/vintf/manifest/…xml` 未改（域/exec/服务名沿用 #65）。
+
+---
+
+## 2. 逆向事务表（`out/tmp/rev-st/rev_st.py`，输入 `/tmp/st-ndk.dis`）
+
+```
+$ cd /tmp && python3 engine/out/tmp/rev-st/rev_st.py
+bindService            code=1    flags=0x10000001   prepare Int32@plt write<ServiceData> Int32@plt write<ClientData>
+destroyService         code=2    flags=0x10000001   prepare Int32@plt write<ServiceData>
+getClientConnections   code=3    flags=0x10000000   prepare String@plt String@plt
+getPid                 code=4    flags=0x10000000   prepare String@plt String@plt
+getPids                code=5    flags=0x10000000   prepare StringArray@plt
+getRunningServicePid   code=6    flags=0x10000000   prepare
+getServiceBCount       code=7    flags=0x10000000   prepare Int32@plt
+getServiceConnections  code=8    flags=0x10000000   prepare String@plt String@plt
+getclientInfo          code=9    flags=0x10000000   prepare String@plt String@plt
+getserviceInfo         code=10   flags=0x10000000   prepare String@plt String@plt
+isServiceB             code=11   flags=0x10000000   prepare String@plt String@plt
+killProcess            code=12   flags=0x10000001   prepare Int32@plt
+startService           code=13   flags=0x10000001   prepare Int32@plt write<ServiceData>
+unbindService          code=14   flags=0x10000001   prepare Int32@plt write<ServiceData> Int32@plt write<ClientData>
+```
+
+- oneway（`flags=0x10000001`）：1 / 2 / 12 / 13 / 14；
+- 同步（`0x10000000`）：3~11；
+- code 7 那一行的 `Int32@plt` 是**回包读取**（见 log-fail 4），不是入参。
+
+数组元素类型（`.rela.dyn` GLOB_DAT）：
+
+```
+0x14748 -> AParcel_writeStdVectorParcelableElement<ClientConnection>
+0x14758 -> AParcel_writeStdVectorParcelableElement<ServiceConnection>
+```
+
+parcelable 字段序见各 `.aidl` 头注释（`writeToParcel` 反解，`std::string` 步长 24）。
+
+---
+
+## 3. 构建（dry-run → 实跑）
+
+```
+$ cd engine && ./out/bin/cdh-vendor hal list | grep servicetracker
+  vendor.qti.hardware.servicetrackeraidl aidl -> vendor.qti.hardware.servicetrackeraidl-service
+
+$ ./out/bin/cdh-vendor hal build vendor.qti.hardware.servicetrackeraidl --dry-run
+==> AIDL 代码生成
+[..] (dry) …/build-tools/36.1.0/aidl --lang=ndk --structured --stability=vintf \
+     --min_sdk_version=35 --version=1 --hash=fd4771abe6e1c694687c871ee5d888b6e9cbf7b0 \
+     -I …/servicetrackeraidl/aidl -I…/aidl/vendor.qti.hardware.servicetrackeraidl/1 \
+     --out=…/tmp/srvctracker-ndk-work/gen/src --header_out=…/gen/hdr <7 个 .aidl>
+    vendor.qti.hardware.servicetrackeraidl (v1, hash fd4771abe6e1)
+==> 编译 0+1 个源文件到 .o
+==> 链接服务二进制
+[..] (dry) 合并 vendor/etc/init/…rc
+[..] (dry) 合并 vendor/etc/vintf/manifest/…xml
+
+$ ./out/bin/cdh-vendor hal build vendor.qti.hardware.servicetrackeraidl
+==> AIDL 代码生成
+    vendor.qti.hardware.servicetrackeraidl (v1, hash fd4771abe6e1)
+==> 编译 7+1 个源文件到 .o
+==> 链接服务二进制
+    写 bin/hw/vendor.qti.hardware.servicetrackeraidl-service
+[ok] vendor.qti.hardware.servicetrackeraidl 构建完成：codegen + 编译 + 链接 -> …/out/vendor/android15/bin/hw
+    写 etc/init/…rc（0644）
+    写 etc/vintf/manifest/…xml（0644）
+[ok] 合并 vendor 静态树：新增 2，已存在同内容 0
+```
+
+`.hash` 生效：`--version=1 --hash=fd4771abe6e1…` 直接来自
+`aidl/…/1/.hash`。
+
+---
+
+## 4. 产物属性
+
+```
+$ ls -l out/vendor/android16/bin/hw/vendor.qti.hardware.servicetrackeraidl-service
+-rwxr-xr-x  250176  …-service
+$ shasum -a 256 …（android16 变体，07 用）
+91ff07dc2c89fca274c9400aa5f5f041d8bf4097a45c6136380adcd84248f9c6
+$ shasum -a 256 /tmp/st-prebuilt-bak/…-service
+eec0ceb76dca42692f890bb81412784bdf7a4fe89de23aaea3ad04de77cb2f02   ← 原厂，不同即预期
+
+$ strings -a …-service | grep -x 'vendor\.qti\.hardware\.servicetrackeraidl\.[A-Za-z]*' | sort -u
+vendor.qti.hardware.servicetrackeraidl.ClientConnection
+vendor.qti.hardware.servicetrackeraidl.ClientData
+vendor.qti.hardware.servicetrackeraidl.ClientRecord
+vendor.qti.hardware.servicetrackeraidl.IServicetracker
+vendor.qti.hardware.servicetrackeraidl.ServiceConnection
+vendor.qti.hardware.servicetrackeraidl.ServiceData
+vendor.qti.hardware.servicetrackeraidl.ServiceRecord
+$ strings -a …-service | grep -o fd4771abe6e1c694687c871ee5d888b6e9cbf7b0
+fd4771abe6e1c694687c871ee5d888b6e9cbf7b0           ← 与原厂同 hash
+
+$ llvm-readelf -d …-service | grep NEEDED
+libc++.so  libbinder_ndk.so  liblog.so  libdl.so  libm.so  libc.so
+```
+
+不再 NEEDED 任何 servicetracker 库（接口代码编进二进制）。
+
+---
+
+## 5. 生成代码与原厂 wire 对齐
+
+```
+$ grep 'case (FIRST_CALL_TRANSACTION' …/gen/src/…/IServicetracker.cpp
++0 bindService   +1 destroyService   +2 getClientConnections  +3 getPid
++4 getPids       +5 getRunningServicePid  +6 getServiceBCount +7 getServiceConnections
++8 getclientInfo +9 getserviceInfo   +10 isServiceB           +11 killProcess
++12 startService +13 unbindService
+```
+
+与原厂 Bp 事务表逐条同序。code 7 的写侧：
+
+```
+  ::ndk::ScopedAStatus _aidl_status = _aidl_impl->getServiceBCount(&out_services, &_aidl_return);
+  AParcel_writeStatusHeader(_aidl_out, _aidl_status.get());
+  ::ndk::AParcel_writeData(_aidl_out, _aidl_return);     ← 先 count
+  ::ndk::AParcel_writeData(_aidl_out, out_services);     ← 后 services
+```
+
+与原厂读侧 `AParcel_readInt32` → `AParcel_readParcelableArray` 顺序一致（log-fail 4）。
+
+---
+
+## 6. 07 实跑（exit=0）
+
+```
+$ cd engine && ./out/bin/cdh build-vendor --manifest manifest/flyme/m22/baselines/12.5.0.0A.json \
+    --manifest-dir manifest/flyme/m22 --vendor flyme --brand m22 --version 12.5.0.0A
+…
+    HAL 模块:  vendor.qti.hardware.servicetrackeraidl（变体 default，变体产物根 out/vendor/android16，
+               3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/vendor.qti.hardware.servicetrackeraidl-service
+        期望静态树 out/vendor/android16/etc/init/vendor.qti.hardware.servicetrackeraidl-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/vendor.qti.hardware.servicetrackeraidl-service.xml
+…
+    编译产物 vendor.qti.hardware.servicetrackeraidl@default: 写入 3，已存在同内容 0     （首次）
+…
+[ok] 补充 HAL 可执行标签 27 条（…/etc/selinux/vendor_file_contexts）：
+    vendor.qti.hardware.servicetrackeraidl-service -> vendor_hal_srvctracker_default_exec
+…
+==> 官方镜像标签真值: 4594 条（含 297 个符号链接自身）
+==> debugfs 写入 658 个条目的元数据（权限 / 归属 / 时间 / SELinux）
+==> resize2fs -M 最小化收紧 vendor.img
+[ok] vendor.img 构建完成: out/devices/flyme/m22/12.5.0.0A/img/vendor.img（206147584 字节）
+[ok] vendor 目录树装配与 vendor.img 打包完成
+```
+
+- 装配树 **658 条目**（文件 427 / 链接 199 / 目录 32）= #65 的 660 −2（删掉的两个 so）；
+- 6b 仍 **27 条**，映射行不变；
+- 二次运行「源码指纹一致 -> 复用」「[skip] … 已编译」。
+
+---
+
+## 7. 镜像内回读（`/opt/homebrew/opt/e2fsprogs/sbin/debugfs`）
+
+```
+$ IMG=out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+$ shasum -a 256 $IMG
+111db9ce3c1878afe45c720a6c3a5697b50d91a39591f76ce8954e84875e41c1   （206,147,584 B）
+$ debugfs -R "dump /bin/hw/vendor.qti.hardware.servicetrackeraidl-service /tmp/st-read3/svc" $IMG
+$ shasum -a 256 /tmp/st-read3/svc
+91ff07dc…                                   == out/vendor/android16/bin/hw/…-service
+
+$ debugfs -R "dump /etc/init/…-service.rc /tmp/st-read3/svc.rc" $IMG
+$ shasum -a 256 /tmp/st-read3/svc.rc
+ea747dbd…                                   == 模块 vendor/etc/init/…rc
+
+$ debugfs -R "dump /etc/vintf/manifest/…-service.xml /tmp/st-read3/svc.xml" $IMG
+$ shasum -a 256 /tmp/st-read3/svc.xml
+d897c1f4…                                   == 模块 vendor/etc/vintf/manifest/…xml
+
+$ debugfs -R "ls -l /lib64" $IMG | grep -i servicetracker     # 无输出
+$ debugfs -R "ls -l /lib64/hw" $IMG | grep -i servicetracker  # 无输出
+$ debugfs -R "ea_get -V /bin/hw/…-service security.selinux" $IMG
+u:object_r:vendor_hal_srvctracker_default_exec:s0
+$ debugfs -R "ea_get -V /etc/init/…-service.rc security.selinux" $IMG
+u:object_r:vendor_configs_file:s0
+$ debugfs -R "ls -l /bin/hw" $IMG | grep servicetracker
+    126  100755 (1)  0  2000  250176  1-Jan-2009 08:00  vendor.qti.hardware.servicetrackeraidl-service
+```
+
+**sha 不作一致性判据**：本轮多次构建得到 `59bb12c3…` → `111db9ce…`（尺寸相同），
+是 `mke2fs -d` 非确定性；判据固定为「装配树条目数 + 逐文件 sha + 镜像 xattr」，
+本轮三项全对（658 / 3 文件 sha 全等 / 2 条 xattr 正确）。
+
+---
+
+## 8. 兼容面
+
+```
+$ grep -rl 'vendor.qti.hardware.servicetrackeraidl' out/tmp/unpack-vendor_a
+…/bin/hw/…-service
+…/etc/init/…-service.rc
+…/etc/selinux/vendor_service_contexts
+…/etc/vintf/manifest/…-service.xml
+…/lib64/hw/…-impl.so
+…/lib64/…-V1-ndk.so
+```
+
+只有这个 HAL 自己（不含任何外部客户端 ELF）；客户端在 system 侧 Java，只认
+descriptor + hash，两者都保持原厂值。

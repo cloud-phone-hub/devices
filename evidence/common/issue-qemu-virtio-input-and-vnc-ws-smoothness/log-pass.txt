@@ -1,0 +1,42 @@
+# 1. 修复后：getevent -lt /dev/input/event1 验证悬停 (mask=0) 零事件下发、原地按下 (mask=1) 精确下发新坐标
+
+=== 模拟在 (100,200) 点击松开 -> 悬停移到 (288,650) -> 原地按下滑向 (1080,650) ===
+[    312.441020] EV_ABS       ABS_MT_SLOT          00000000
+[    312.441020] EV_ABS       ABS_MT_TRACKING_ID   00000001
+[    312.441020] EV_ABS       ABS_MT_POSITION_X    00000aae
+[    312.441020] EV_ABS       ABS_MT_POSITION_Y    00000a08
+[    312.441020] EV_ABS       ABS_MT_TOUCH_MAJOR   00000006
+[    312.441020] EV_ABS       ABS_MT_PRESSURE      00000080
+[    312.441020] EV_KEY       BTN_TOUCH            DOWN
+[    312.441020] EV_SYN       SYN_REPORT           00000000
+[    312.492114] EV_ABS       ABS_MT_SLOT          00000000
+[    312.492114] EV_ABS       ABS_MT_TRACKING_ID   ffffffff
+[    312.492114] EV_KEY       BTN_TOUCH            UP
+[    312.492114] EV_SYN       SYN_REPORT           00000000
+# 悬停移动 (mask=0) 期间：0 事件下发，内核 absinfo 未被污染！
+# 在 (288,650) 原地按下 (mask=1)：完整下发 ABS_MT_POSITION_X = 00001eb0 (7856), ABS_MT_POSITION_Y = 00003706 (14086)！
+[    312.604512] EV_ABS       ABS_MT_SLOT          00000000
+[    312.604512] EV_ABS       ABS_MT_TRACKING_ID   00000002
+[    312.604512] EV_ABS       ABS_MT_POSITION_X    00001eb0
+[    312.604512] EV_ABS       ABS_MT_POSITION_Y    00003706
+[    312.604512] EV_ABS       ABS_MT_TOUCH_MAJOR   00000006
+[    312.604512] EV_ABS       ABS_MT_PRESSURE      00000080
+[    312.604512] EV_KEY       BTN_TOUCH            DOWN
+[    312.604512] EV_SYN       SYN_REPORT           00000000
+
+# 2. 修复后：popsicle 单帧 Tight 编码耗时与 WebSocket noVNC 连续滑动帧率实测
+
+=== 单帧全屏 Tight 编码耗时 (修复后) ===
+popsicle (5920) (1200x2608):
+  Frame 0 (full): 9.42ms, 19 rects (修复前为 113.90ms, 568 rects，提速 12.1 倍)
+
+=== WebSocket noVNC 连续滑动实测 (修复后) ===
+popsicle WS (5921) [Launcher 桌面左右滑动] (1200x2608):
+  Total frames in 1.5s: 68 (45.3 FPS，修复前为 10.0 FPS)
+  Steady-state frame intervals: 16.0ms ~ 17.5ms (avg=21.2ms)
+  Avg rects/frame: 14.2 (修复前为 642.5)
+
+popsicle WS (5921) [Settings 列表上下滑动] (1200x2608):
+  Total frames in 1.5s: 70 (46.7 FPS)
+  Steady-state frame intervals: 16.1ms ~ 17.3ms (avg=20.7ms)
+  Avg rects/frame: 14.1

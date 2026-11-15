@@ -1,0 +1,86 @@
+# oriole AP2A 起机失败：init 按 vendor 的 ro.zygote=zygote64_32 起 32 位 zygote，primary 连坐死满 4 次 → InitFatalReboot 无限重启
+# 取证时间 2026-11-04，实例 runtime/oriole_AP2A.240905.003.F1/1（pid 69583，06:22:56 起，06:29 停）
+# 完整日志留档 engine/out/tmp/oriole-fail-qemu.log（   49230 行）
+
+==== 1) 判定：观察 6 分钟（06:22:56 起 / 06:29 停机取证）始终没有 boot_completed，抓帧近乎全黑 ====
+$ python3 core/host/daemon/tools/vnc_grab.py 5913 engine/out/tmp/oriole-bootloop.png 20
+engine/out/tmp/oriole-bootloop.png 1088x2400 bpp=32 平均亮度=0.6 峰值=255
+$ grep -c 'sys.boot_completed=1' engine/out/tmp/oriole-fail-qemu.log
+0
+
+==== 2) 属性装载：system 的 zygote64 被 vendor 的 64_32 覆盖（0.394 s）====
+569:[    0.394710][    T1] init: Overriding previous property 'ro.zygote':'zygote64' with new value 'zygote64_32'
+8032:[    0.415134][    T1] init: Overriding previous property 'ro.zygote':'zygote64' with new value 'zygote64_32'
+15432:[    0.381457][    T1] init: Overriding previous property 'ro.zygote':'zygote64' with new value 'zygote64_32'
+
+==== 3) init 起 zygote_secondary → 32 位件不可执行 → 127 ====
+2030:[   11.086510][  T697] init: cannot execv('/system/bin/app_process32'). See the 'Debugging init' section of init's README.md for tips: Exec format error
+2050:[   11.108595][  T704] init: cannot execv('/system/bin/mediaserver'). See the 'Debugging init' section of init's README.md for tips: Exec format error
+2233:[   11.336945][  T764] init: cannot execv('/system/bin/drmserver'). See the 'Debugging init' section of init's README.md for tips: Exec format error
+（同类 Exec format error 共 239 行，只涉及这三件）
+2032:[   11.087678][    T1] init: Service 'zygote_secondary' (pid 697) exited with status 127
+2323:[   11.463580][    T1] init: Service 'zygote_secondary' (pid 775) exited with status 127
+2723:[   16.411274][    T1] init: Service 'zygote_secondary' (pid 904) exited with status 127
+
+==== 4) 连坐：secondary 退出 2 ms 后 init 对 primary 发 SIGKILL（第一轮完整时序）====
+[   11.081870][    T1] init: starting service 'zygote'...
+[   11.082086][    T1] init: Created socket '/dev/socket/zygote', mode 660, user 0, group 1000
+[   11.082446][    T1] init: Created socket '/dev/socket/usap_pool_primary', mode 660, user 0, group 1000
+[   11.083621][    T1] init: ... started service 'zygote' has pid 693
+[   11.084061][    T1] init: starting service 'zygote_secondary'...
+[   11.084418][    T1] init: Created socket '/dev/socket/zygote_secondary', mode 660, user 0, group 1000
+[   11.084986][    T1] init: Created socket '/dev/socket/usap_pool_secondary', mode 660, user 0, group 1000
+[   11.086510][  T697] init: cannot execv('/system/bin/app_process32'). See the 'Debugging init' section of init's README.md for tips: Exec format error
+[   11.086624][    T1] init: ... started service 'zygote_secondary' has pid 697
+[   11.087678][    T1] init: Service 'zygote_secondary' (pid 697) exited with status 127
+[   11.087891][    T1] init: Sending signal 9 to service 'zygote_secondary' (pid 697) process group...
+[   11.088332][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_0/pid_697
+[   11.088594][    T1] init: Sending signal 9 to service 'zygote' (pid 693) process group...
+[   11.098585][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_0/pid_693
+[   11.099049][    T1] init: Service 'zygote' (pid 693) received signal 9
+[   11.099308][    T1] init: Sending signal 9 to service 'zygote' (pid 693) process group...
+[   11.099595][    T1] libprocessgroup: Failed to write 1 to /sys/fs/cgroup/uid_0/pid_693/cgroup.kill: No such file or directory
+[   11.099920][    T1] libprocessgroup: Failed to open /sys/fs/cgroup/uid_0/pid_693/cgroup.procs: No such file or directory
+[   11.100385][    T1] init: starting service 'exec 12 (/system/bin/vdc volume abort_fuse)'...
+[   11.101239][    T1] init: ... started service 'exec 12 (/system/bin/vdc volume abort_fuse)' has pid 701
+[   11.101737][    T1] init: Command 'write /sys/power/state on' action=onrestart (<Service 'zygote' onrestart>:2) took 0ms and failed: Unable to write to file '/sys/power/state': Unable to write file contents: Invalid argument
+
+==== 5) 死满 4 次触发 fatal reboot，10 分钟内 3 轮 ====
+7396:[   63.381882][    T1] init: critical process 'zygote' exited 4 times before boot completed
+7397:[   63.382734][    T1] init: InitFatalReboot: signal 6
+7445:[   64.015757][    T1] reboot: Restarting system with command 'zygote-fatal'
+14795:[   55.185165][    T1] init: critical process 'zygote' exited 4 times before boot completed
+14796:[   55.186402][    T1] init: InitFatalReboot: signal 6
+14846:[   55.826845][    T1] reboot: Restarting system with command 'zygote-fatal'
+23358:[   64.755779][    T1] init: critical process 'zygote' exited 4 times before boot completed
+23359:[   64.756668][    T1] init: InitFatalReboot: signal 6
+23406:[   65.391756][    T1] reboot: Restarting system with command 'zygote-fatal'
+33758:[   85.116550][    T1] reboot: Restarting system with command 'RescueParty'
+41723:[   59.686871][    T1] init: critical process 'zygote' exited 4 times before boot completed
+41725:[   59.692040][    T1] init: InitFatalReboot: signal 6
+41773:[   60.321883][    T1] reboot: Restarting system with command 'zygote-fatal'
+
+==== 6) 六键缺失的对照：官方 vendor build.prop（07 步骤 6 的基料）====
+10:ro.vendor.product.cpu.abilist=arm64-v8a,armeabi-v7a,armeabi
+11:ro.vendor.product.cpu.abilist32=armeabi-v7a,armeabi
+12:ro.vendor.product.cpu.abilist64=arm64-v8a
+33:ro.bionic.2nd_arch=arm
+34:ro.bionic.2nd_cpu_variant=cortex-a53
+83:ro.zygote=zygote64_32
+
+==== 7) 修复前装配树 vendor/build.prop 原样带出这六行（07 步骤 6 以官方件为基料）====
+# 文件 engine/out/devices/google/oriole/AP2A.240905.003.F1/vendor/build.prop（重跑 07 前实测）
+10:ro.vendor.product.cpu.abilist=arm64-v8a,armeabi-v7a,armeabi
+11:ro.vendor.product.cpu.abilist32=armeabi-v7a,armeabi
+12:ro.vendor.product.cpu.abilist64=arm64-v8a
+33:ro.bionic.2nd_arch=arm
+34:ro.bionic.2nd_cpu_variant=cortex-a53
+38:dalvik.vm.isa.arm.variant=cortex-a53
+83:ro.zygote=zygote64_32
+101:# Removed by post_process_props.py because overridden by ro.zygote=zygote64_32
+
+==== 8) 同机型新基线 cp1a 已有锁，AP2A 基线没有（迁移顺序造成）====
+$ python3 - 比较两基线 vendor.build-prop-sets
+  cp1a: ro.zygote=zygote64 / ro.bionic.2nd_arch='' / ro.bionic.2nd_cpu_variant='' /
+        ro.vendor.product.cpu.abilist=arm64-v8a / abilist32='' / abilist64=arm64-v8a
+  AP2A(修复前): 六键全部缺席（20 项 sets 里只有身份/GPU/HAL/密度键）

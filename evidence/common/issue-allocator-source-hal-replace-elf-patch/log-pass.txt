@@ -1,0 +1,78 @@
+=== 1. 纯 C++ 源码编译 android.hardware.graphics.allocator（Android 15 & Android 14）及 .text/.rodata 段零篡改核对 ===
+$ cdh-vendor hal build android.hardware.graphics.allocator --android 15
+==> 构建 android.hardware.graphics.allocator（HIDL 头 hidl-gen，0 个共享库 + 1 个服务）
+==> 编译服务共享单元（2 个源文件：@platform/external/minigbm/cros_gralloc/aidl/Allocator.cpp、@platform/hardware/interfaces/common/support/NativeHandle.cpp）
+==> 编译服务 android.hardware.graphics.allocator-service.minigbm（main: vendor/hardware/android.hardware.graphics.allocator/src/service.cpp）
+    写 bin/hw/android.hardware.graphics.allocator-service.minigbm
+[ok] android.hardware.graphics.allocator 构建完成 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android15
+
+$ cdh-vendor hal build android.hardware.graphics.allocator --android 14
+    写 bin/hw/android.hardware.graphics.allocator-service.minigbm
+[ok] android.hardware.graphics.allocator 构建完成 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android14
+
+ELF 段逐字节 SHA-256 校验（src = out/vendor/android15/bin/hw/..., dst = out/devices/redmi/gold/15-OS3.0.10.0.VNQCNXM/vendor/bin/hw/...）：
+.text    src=(15696, '4707ce26b740ffb3e5e43d8519fb8f63090181d6e5c0d45913685c8e70ec1f84') dst=(15696, '4707ce26b740ffb3e5e43d8519fb8f63090181d6e5c0d45913685c8e70ec1f84') equal=True
+.rodata  src=(2248, 'c2a90236a0d1b6ddd21c549239151dffb7dd5fc3cfdf04e70c7693abfaf3c733') dst=(2248, 'c2a90236a0d1b6ddd21c549239151dffb7dd5fc3cfdf04e70c7693abfaf3c733') equal=True
+.dynstr  src=(3896, '9156a58f3e547ba38e96f138657fbc27a072fa7b9cae76fb31edcb80b8baed0b') dst=(3896, 'c0ad59409c7b06d514d83fb73734976d00f63c46f2ca66d85ba3b3c93086f569') equal=False
+
+07_build_vendor 日志（仅动态链接库名重映射与 vendor/build.prop 属性对齐，无任何 .text/.rodata 机器码修补）：
+[fix] vendor/bin/hw/android.hardware.graphics.allocator-service.minigbm: .dynstr 替换 libminigbm_gralloc* -> libgralloc_extra.so
+[fix] vendor/build.prop: ro.hardware.gralloc=mediatek
+vendor.img -> sha256 b49d20283c69
+patch.img  -> out/dist/redmi/gold/15-OS3.0.10.0.VNQCNXM/patch.img（384.0 MiB，sha256 352cd0b74fa2）
+vda 配方   -> vda-9679a721d0e2
+
+=== 2. 全新干净盘冷启动 boot_check.py ===
+实例: /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/gold_15-OS3.0.10.0.VNQCNXM/1  adb=5919 vnc=5920 ws=5921
+[shot] /Volumes/work/cloud-phone-hub/engine/out/tmp/gold-allocator-boot.png 1088x2400 bpp=32 平均亮度=209.3 峰值=255
+[pass] 引导完成（日志 10643 行）+ 截图非黑（平均亮度=209.3 峰值=255）-> /Volumes/work/cloud-phone-hub/engine/out/tmp/gold-allocator-boot.png
+
+=== 3. 系统态进程与 SurfaceFlinger /proc/<pid>/maps 核验 ===
+ro.hardware.gralloc = mediatek
+allocator_pid=557 (system 557 1 android.hardware.graphics.allocator-service.minigbm)
+7a92a16541e55bf084960c8a6073b84f6b5af4b0dbce01b9510c91f4ec95df91  /vendor/bin/hw/android.hardware.graphics.allocator-service.minigbm
+avc: denied (allocator) = 0 条
+sf_maps:
+/vendor/lib64/hw/gralloc.mediatek.so
+/vendor/lib64/hw/mapper.mediatek.so
+/vendor/lib64/libgralloc_extra.so
+/vendor/lib64/libgralloctypes.so
+
+=== 4. 普通 App device-checker 终验（ab1a805b0d43ec3a-cloud，run-00283）===
+Started run-00283 on ab1a805b0d43ec3a-cloud (6 checks: proc.maps, screen.display, screen.resource, hardware.gles, aligner_xiaomi_gold.display_gpu_webview, aligner_xiaomi_gold.all)...
+Finished run-00283 in 21.8s: 6/6 succeeded
+aligner_xiaomi_gold.all goldScorecard (32/32 passed):
+{
+  "A1_modelIsGold2312DRAABC": true,
+  "A2_socAndAbiIsMt6833Arm64": true,
+  "A3_crossPartitionIdentityConsistent": true,
+  "A4_bootSecurityAndVerityPropsComplete": true,
+  "B1_cpu8CoreBigLittle6xA55Plus2xA76": true,
+  "B2_cpufreqPoliciesVisibleToApp": true,
+  "B3_memoryAndSwapConsistent": true,
+  "B4_storageStandardDirsAllReady": true,
+  "B5_mapsHasRealMaliAndNoMesaMinigbm": true,
+  "B6_vendorDlkmNoCdhModuleNameLeak": true,
+  "B7_mountinfoNoPeerHolesAndLogSocketsExist": true,
+  "C1_displayIs1080x2400Dpi440": true,
+  "C2_displaySupports120HzAndWideColorGamut": true,
+  "C3_glesRendererIsMaliG57Mc2": true,
+  "C4_glesGlsl320AndArmExtsNoDesktopLeak": true,
+  "C5_webViewWebGlReadyAndMatchesMali": true,
+  "D1_sensorsCountIs29AndMagnetometerValid": true,
+  "D2_sensorsDynamic50HzStreamsActive": true,
+  "D3_sensorsAdcQuantizationAndGyroDriftReal": true,
+  "D4_inputsValidAndNoRiskyControlIme": true,
+  "E1_camera2AndCamera1Connectable": true,
+  "E2_mediaCodecsHasMtkAndDolbyNoV4l2Leak": true,
+  "E3_widevineVendorAndPropertiesAuthentic": true,
+  "E4_vibratorAndIrReady": true,
+  "F1_battery5000MahLiPolyAndNotConstant": true,
+  "F2_thermalZonesPresentInSysfs": true,
+  "G1_networkActiveAndNoSuspiciousIfaces": true,
+  "G2_wifiNoVirtWifiOrHwsimBssidLeak": true,
+  "G3_telephonyTacMatchesGold86717107": true,
+  "G4_bluetoothAdapterHasDeviceName": true,
+  "H1_criticalSystemServicesAndIfaaReady": true,
+  "H2_keystoreHwSignAndSepolicyClean": true
+}

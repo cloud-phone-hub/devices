@@ -1,0 +1,57 @@
+# roms 迁到仓库根 #239 —— 迁移后验证记录（2026-11-15）
+
+## 1. 目录迁移
+
+```
+$ mv engine/roms roms
+$ ls engine
+out
+$ ls roms
+devices  lineage
+$ du -sh roms
+293G	roms
+```
+
+说明：仓库根 `roms/` 此前已存在但为空，mv 后需把 `roms/roms/{devices,lineage}`
+上提一层（本机已执行并清理 .DS_Store 残留）。
+
+## 2. 代码改动
+
+- `engine.RomsRoot()` = `<仓库根>/roms`；
+- `engine.Init()` 的 `isEngineRoot` 不再要求 `roms/`，改为 `out/` + 父目录是
+  `<仓库根>`（engine/ + devices/manifest）；
+- `cluster` 的节点 RomsDir、`server/roms.go` 的固件扫描根、
+  `manifestview` 的输入 roms 根、SSH 目录探测同步；
+- `official.go` 的 `readMarker` 增加旧绝对路径兜底（同名 + 同大小 + kind），
+  避免迁移触发全量重解包；
+- `.gitignore`：根目录新增 `roms/`，engine/.gitignore 移除 `roms/`。
+
+## 3. 构建 / 测试
+
+```
+$ cd agent && go build ./... && go vet ./... && go test ./...
+...
+ROMS_MOVE_GREEN
+```
+
+## 4. 运行时冒烟
+
+```
+$ cd agent && go run ./cmd/cdh-engine device build gold --manifest 15-OS3.0.11.0.VNQCNXM --dry-run | head -4
+==> 设备: Redmi Note 13 5G（redmi/gold）
+==> 清单: out/tmp/db-manifest/redmi/gold/baselines/15-OS3.0.11.0.VNQCNXM.json
+    厂商固件: /Volumes/work/cloud-phone-hub/roms/devices/xiaomi/gold/gold_images_...tgz
+    lineage 底包: /Volumes/work/cloud-phone-hub/roms/lineage/UTM-VM-lineage-22.2-....
+
+$ cd /Volumes/work/cloud-phone-hub/roms && /Volumes/work/cloud-phone-hub/engine/out/bin/cdh device list | head -2
+序号  厂商       型号           名称                      设备参数  版本
+   1  google     oriole         Pixel 6                   就位      14-AP2A.240905.003.F1-20240815
+
+$ curl /api/roms（cdha serve 冒烟）
+{"items":[{"path":"/Volumes/work/cloud-phone-hub/roms/devices/Ulefone/...
+  ... "sizeHuman":"4.11 GB" ...}]}
+
+$ curl /api/manifest/overview
+{"stats":{"deviceCount":32,"configCount":36,"versionCount":40,
+  "builtCount":17,"romCount":42,"hardwareCount":45}...}
+```

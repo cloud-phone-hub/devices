@@ -1,0 +1,4 @@
+version=android14-6.1
+mode=docker
+source=github
+slim=true

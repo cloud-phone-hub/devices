@@ -1,0 +1,16 @@
+<!--
+    engine 自研 power HAL：声明 IPower/default（AIDL v6）。
+    VINTF 声明是必须的——framework 走 ServiceManager.waitForDeclaredService()
+    时只认已声明的实例；未声明会立即返回 null，system_server 侧同样出现
+    SupportInfo 空引用。
+    版本取 6：SupportInfo / HeadroomSupportInfo 是 v6 才冻结进 aidl_api 的类型，
+    Flyme/MTK 的 HintManagerService 直接读 supportInfo.headroom，v5 快照里没有这些
+    类型，也就无法提供非 null 的出参。
+-->
+<manifest version="1.0" type="device">
+  <hal format="aidl">
+    <name>android.hardware.power</name>
+    <version>6</version>
+    <fqname>IPower/default</fqname>
+  </hal>
+</manifest>

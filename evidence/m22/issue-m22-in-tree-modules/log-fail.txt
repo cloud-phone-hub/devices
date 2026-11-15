@@ -1,0 +1,38 @@
+# 失败证据：in-tree 名单里带着 6.6 才有的 cdh_virt_wifi.ko
+# 采集时间 2026-10-28，原始日志 out/tmp/modules-build.log（`make modules` 全部成功，卡在取名单阶段）
+
+$ ./out/bin/cdh device build m22 --only 03_build_modules
+==> [步骤 0] 解析计划
+    内核产物:   out/kernel/lineage-23-6.12（release 6.12.81-4k-cdh）
+    内核配方:   lineage-23-6.12-cdh-eef9316b0b57
+    源码:       kernels/lineage-23-6.12（HEAD bccd296879a5）
+    配置片段:   build/02_build_kernel/lineage-kernel.config
+    外部模块:   device_info, goodix_fingerprint, input_identity, virtio_media
+    in-tree:    virtio_console.ko, rfkill.ko, cfg80211.ko, mac80211.ko, mac80211_hwsim.ko, libarc4.ko, cdh_virt_wifi.ko
+    构建镜像:   ghcr.io/feicong/droid-ddk:android16-6.12
+    并行度:     10
+    LOCALVERSION: -4k-cdh
+    缓存配方:   lineage-23-6.12-cdh-201adb120001
+    构建卷:     cdh-kernel-lineage-23-6.12-cdh-eef9316b0b57
+...
+  BTF [M] net/ieee802154/ieee802154_socket.ko
+  BTF [M] net/mac80211/mac80211.ko
+  BTF [M] net/mac802154/mac802154.ko
+  BTF [M] net/ieee802154/ieee802154.ko
+  BTF [M] net/nfc/nfc.ko
+make[1]: Leaving directory '/src/out'
+内核模块数量异常:cdh_virt_wifi.ko count=0
+[err] 阶段 build_modules 失败: 模块编译失败（exit status 9）
+EXIT=1
+
+# 注：编译段 791 行，无一条 error/warning；失败点是「按名单 find out -name <模块>.ko」，
+#     6.12 树根本没有 cdh_virt_wifi 这个构建目标：
+
+$ ls kernels/lineage-23-6.12/drivers/net/wireless/virtual/
+Kconfig  Makefile  mac80211_hwsim.c  mac80211_hwsim.h  virt_wifi.c
+
+$ grep -n "cdh_virt_wifi" kernels/lineage-22-6.6/drivers/net/wireless/virtual/Makefile
+3:obj-$(CONFIG_VIRT_WIFI) += cdh_virt_wifi.o
+4:cdh_virt_wifi-y := virt_wifi.o
+
+# 名单来源：build/internal/kbuild/kbuild.go 的 InTreeModules 默认表（6.6/gold 口径）

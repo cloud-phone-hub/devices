@@ -1,0 +1,17 @@
+{
+  "id": 33,
+  "buildId": "15-AP3A.240905.015.A2-20250416",
+  "deviceId": 27,
+  "configId": 27,
+  "osVersion": "15-AP3A.240905.015.A2-20250416",
+  "buildDate": "20250416",
+  "securityPatch": "2025-03-01",
+  "factoryTgz": "（X200 Ultra）PD2454_MA_15.0.10.24.W10.V000L1.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 （X200 Ultra）PD2454_MA_15.0.10.24.W10.V000L1.zip (vendor/build.prop) 自动生成。",
+    "osVersion": "15-AP3A.240905.015.A2-20250416"
+  },
+  "updatedAt": "2026-11-06 02:47:41"
+}

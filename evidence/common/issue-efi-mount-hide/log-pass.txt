@@ -1,0 +1,24 @@
+# 修复后：Go 单元测试 + 实例 gold_15-OS3.0.11.0.VNQCNXM/2（4d5128bd8ca07462-cloud）复采验证
+
+# 1) Go 单元测试
+$ cd /Volumes/work/cloud-phone-hub/engine/build && TMPDIR=/Volumes/work/cloud-phone-hub/engine/out/tmp go test -v -run 'TestMergeCloudFstabDropsEFIMount|TestSanitizeCloudInitRCDropsEFIAndPrefixesServices' ./stages/05_build_vendor_boot ./stages/07_build_vendor
+=== RUN   TestMergeCloudFstabDropsEFIMount
+--- PASS: TestMergeCloudFstabDropsEFIMount (0.00s)
+PASS
+ok  	cloud-phone-hub/engine/build/stages/05_build_vendor_boot	2.027s
+=== RUN   TestSanitizeCloudInitRCDropsEFIAndPrefixesServices
+--- PASS: TestSanitizeCloudInitRCDropsEFIAndPrefixesServices (0.00s)
+PASS
+ok  	cloud-phone-hub/engine/build/stages/07_build_vendor	2.333s
+
+# 2) 实机 shell 校验（engine/out/tmp/p0_smoke_pass.txt）
+=== P0-4 EFI mount check ===
+ls: /mnt/vendor/EFI: No such file or directory
+ls: /dev/block/by-name/EFI*: No such file or directory
+
+# 3) aligner proc_full & native_env_full 重采对拍（engine/out/tmp/p0_aligner_pass_extract.txt）
+=== P0-4: /mnt/vendor/EFI & vda1 ===
+  EFI in cloud proc: False
+  EFI in cloud native_env: False
+  native_env blockMounts EFI=[]
+  (vda1 子串扫描仅命中 254:12 /cust: {"fstype": "erofs", "majMin": "254:12", "mountpoint": "/cust", "ro": true, "source": "/dev/block/vda12"})

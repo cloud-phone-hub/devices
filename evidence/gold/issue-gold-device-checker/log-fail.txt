@@ -1,0 +1,88 @@
+# 修复前（guest 时钟滞后 108 天）（gold-compare-run-00031.json）
+# 抓取时间：2026-10-31 17:09:38
+
+## 执行状态
+android.feature            真机 succeeded  
+android.feature            云机 succeeded  
+camera.camera_new          真机 succeeded  
+camera.camera_new          云机 succeeded  
+dev.test_vendor            真机 succeeded  
+dev.test_vendor            云机 succeeded  
+files.storage              真机 succeeded  
+files.storage              云机 succeeded  
+hardware.battery           真机 succeeded  
+hardware.battery           云机 succeeded  
+hardware.cpu               真机 succeeded  
+hardware.cpu               云机 succeeded  
+hardware.gles              真机 succeeded  
+hardware.gles              云机 succeeded  
+hardware.inputs            真机 succeeded  
+hardware.inputs            云机 succeeded  
+hardware.meminfo           真机 succeeded  
+hardware.meminfo           云机 succeeded  
+hardware.sensor            真机 failed     执行超时
+hardware.sensor            云机 succeeded  
+hardware.uname             真机 succeeded  
+hardware.uname             云机 succeeded  
+media.mediacodec           真机 succeeded  
+media.mediacodec           云机 succeeded  
+network.cell               真机 succeeded  
+network.cell               云机 succeeded  
+network.connectivity       真机 succeeded  
+network.connectivity       云机 succeeded  
+network.ifaces             真机 succeeded  
+network.ifaces             云机 succeeded  
+properties.build           真机 succeeded  
+properties.build           云机 succeeded  
+screen.display             真机 succeeded  
+screen.display             云机 succeeded  
+ultimate.cloud_emulator    真机 succeeded  
+ultimate.cloud_emulator    云机 succeeded  
+ultimate.debug_integrity   真机 failed     "Wrapped java.lang.RuntimeException: 字段不存在: android.content.Context.ge
+ultimate.debug_integrity   云机 failed     "Wrapped java.lang.RuntimeException: 字段不存在: android.content.Context.ge
+ultimate.hook_inject       真机 succeeded  
+ultimate.hook_inject       云机 succeeded  
+ultimate.probe_runtime     真机 succeeded  
+ultimate.probe_runtime     云机 succeeded  
+ultimate.root_selinux      真机 succeeded  
+ultimate.root_selinux      云机 succeeded  
+
+## ultimate.* 命中项对比
+ultimate.cloud_emulator  真机 hit=5 deadly=0 warn=3 info=2 :: ['H-115b', 'H-122', 'H-56', 'H-58', 'U-FS-TYPE']
+ultimate.cloud_emulator  云机 hit=6 deadly=0 warn=4 info=2 :: ['H-115b', 'H-122', 'H-56', 'H-58', 'U-DATA-ATIME', 'U-FS-TYPE']
+
+ultimate.hook_inject     真机 hit=2 deadly=1 warn=1 info=0 :: ['H-113', 'H-21']
+ultimate.hook_inject     云机 hit=1 deadly=0 warn=1 info=0 :: ['H-21']
+
+ultimate.root_selinux    真机 hit=4 deadly=2 warn=0 info=2 :: ['H-01', 'H-40', 'U-DIRTY-POLICY', 'U-MNT-TMPFS-OPEN']
+ultimate.root_selinux    云机 hit=6 deadly=3 warn=1 info=2 :: ['H-01', 'H-40', 'U-CUSTOM-ROM', 'U-DIRTY-POLICY', 'U-MNT-TMPFS-OPEN', 'U-PEERGROUP-HOLE']
+
+ultimate.probe_runtime   真机 hit=1 deadly=0 warn=1 info=0 :: ['U-STATUS-SANDBOX']
+ultimate.probe_runtime   云机 hit=1 deadly=0 warn=1 info=0 :: ['U-STATUS-SANDBOX']
+
+## 证据 1：adb install 被 MIUI 拦（out/tmp/dc-install.log）
+07-15 21:12:27.771 I/ActivityTaskManager(  749): START u0 {act=android.intent.action.VIEW flg=0x18040000 cmp=com.miui.securitycenter/com.miui.permcenter.install.AdbInstallActivity ...}
+    callers: ... com.android.server.pm.PmInjector.installVerify:65 com.android.server.pm.PackageManagerServiceImpl.verifyInstallFromShell:1354  result code=0
+07-15 21:12:27.978 E/Pm      (  749): install msg : Failure [INSTALL_CANCELED_BY_USER]
+07-15 21:12:27.978 E/PKMSImpl(  749): MIUILOG- assertCallerAndPackage: uid=2000, installerPkg=null, packageName: dev.checker, msg=Install canceled by user
+07-15 21:12:27.978 D/PackageInstallerSession(  749): Marking session 2104837531 as failed: INSTALL_FAILED_USER_RESTRICTED: Install canceled by user
+（同一份 logcat 行首时间戳全为 07-15，而当时宿主为 10-31 —— 见证据 2；且全程无弹窗可见：6 张连拍截图逐字节相同）
+
+## 证据 2：guest 时钟停在镜像构建时刻（无 RTC）
+$ date -u                      -> Wed Jul 15 13:09:17 UTC 2026     # 宿主 2026-10-31 09:0x UTC，差 108 天
+$ getprop ro.build.date.utc    -> 1784120585                       # = Wed Jul 15 21:03:05 CST 2026
+$ ls /dev/rtc*                 -> No such file or directory         # guest 根本没有 RTC 设备
+$ ls /data; stat /data         -> mtime 2026-07-15 21:03:11         # = 开机时刻，镜像被"冻结"的瞬间
+$ settings get global auto_time / ntp_server -> 1 / pool.ntp.org    # 配置是开的，但拿不到 NTP
+$ cmd network_time_update_service force_refresh -> false            # 刷新失败
+
+## 证据 3：设备检测脚本据此误报（run-00031，时钟未修）
+ultimate.cloud_emulator 云机 hit=6 warn=4  :: 多出 U-DATA-ATIME
+   U-DATA-ATIME {"ageDays": 0, "earliestAtime": "2026-07-15T13:03:31.000Z", "probed": 24}
+   （真机同项 ageDays=170、不命中；云机 ageDays=0 —— 因为 guest 认为"现在"就是 07-15）
+
+## 证据 4：数据面初始不通（无法取 NTP / 无法连检测服务端）
+$ ip -4 addr   -> 只有 lo 与 mgmt0 10.0.2.15/24，无默认路由
+$ ip route add default via 100.64.155.2 dev ccmni2
+  RTNETLINK answers: Network is unreachable
+$ ping -c 1 101.33.73.101 -> connect: Network is unreachable

@@ -1,0 +1,104 @@
+# 改造前的取证（gold，2026-11-03）
+
+```bash
+cd /Volumes/work/cloud-phone-hub/engine
+# 迁移前的一次 07 实跑（#141 收尾那轮）；md5 快照另存为 out/tmp/gold-media-before.txt
+ls out/tmp/gold-07-label-fix.log        # 46661 B
+cat out/tmp/gold-media-before.txt       # 8 个文件的迁移前 md5 + 装配树 801 条目
+```
+
+## 1. 引擎里那份内置表（`files.go:84-148`，本次删除）
+
+`builtinFileOps` = MTK 口径 10 条，机型基线未声明 `vendor.files` 时整表套用：
+
+```text
+lib64/egl/libGLES_mali.so       lib64/egl/libMEOW_data.so   lib64/egl/libMEOW_gift.so
+lib64/egl/libMEOW_qt.so         lib64/egl/libMEOW_trace.so  lib64/libOpenCL.so
+lib64/libpng.so                 etc/permissions(replace)    etc/security(replace)
+etc/md(replace)
+```
+
+## 2. 谁在吃这份兜底：13 台机 17 份基线，7 份声明、9 份没声明
+
+```text
+$ python3 - <<'PY'   # 逐份基线读 vendor.files 的条数
+flyme/m22            2 条
+google/oriole        13 条
+google/oriole        未声明
+google/oriole        未声明
+google/oriole        未声明
+nothing/3a           未声明
+nothing/3a           未声明
+oneplus/15r          3 条
+oneplus/ace3         未声明
+oppo/cph2797         4 条
+oppo/pme110          未声明
+realme/rmx3823       未声明
+realme/rmx5112       未声明
+realme/rmx6688       未声明
+samsung/ss9380       7 条
+xiaomi/gold          16 条      ← 本次迁移后（改造前是 10 条）
+xiaomi/popsicle      4 条
+```
+
+对照 `out/devices/*/*/*/vendor` 里跑过 07 的机型：**声明了的那 7 台**正是跑过 07 的
+（gold / m22 / oriole AP2A / 15r / cph2797 / ss9380 / popsicle）；没声明的 6 台
+（3a / ace3 / pme110 / rmx3823 / rmx5112 / rmx6688）从没跑过 07。
+
+→ 兜底一次也没生效过；而它一旦生效，非 MTK 机型必然硬失败（没有 Mali/MEOW，也没有
+`etc/security` / `etc/md`；m22 官方 `/etc` 只有 `permissions` 与 `selinux`，照搬 gold
+集合实测报 `厂商 vendor 缺少该路径: etc/security`，见 #116）。
+
+## 3. 静态树里的 7 个 media_codecs*.xml 是官方件抄件
+
+改造前 `cmp` 逐个比对 `super/unpack_vendor/etc/` 与 `manifest/xiaomi/gold/vendor/etc/`：
+
+```text
+SAME  media_codecs.xml
+SAME  media_codecs_dolby_audio.xml
+SAME  media_codecs_google_audio.xml
+SAME  media_codecs_google_video_le.xml
+SAME  media_codecs_performance.xml
+SAME  media_codecs_system_default.xml
+DIFF  media_codecs_c2.xml            28387 B  vs  29400 B
+（primary_audio_policy_configuration.xml：官方分区无此路径，lineage 有）
+```
+
+6 个 SAME 的副本还有一个更硬的问题：步骤 5 的 `replace` 本来就会把它们盖掉，
+所以仓库里那 6 份既不是真值、也不参与产物，只会在换版时留下"忘了同步"的假象。
+
+## 4. c2 的增量就是三条 v4l2 声明——直接 `from: official` 会静默丢掉
+
+```text
+$ diff -u <官方解包树>/etc/media_codecs_c2.xml <装配树>/etc/media_codecs_c2.xml
+@@ -350,10 +350,30 @@
+             <Limit name="bitrate" range="1-20000000" />
++            <Feature name="adaptive-playback" />
++        </MediaCodec>
++    </Decoders>
++    <!-- cdh: v4l2_codec2 的三条 codec 声明（与 vendor/etc/init 的 rc、vendor/etc/vintf
++         的 manifest 一体）。走 virtio-video 硬件通道，与 c2.mtk.* 并存 … -->
++    <Decoders>
++        <MediaCodec name="c2.v4l2.avc.decoder" type="video/avc">
++        <MediaCodec name="c2.v4l2.hevc.decoder" type="video/hevc">
+     </Decoders>
+     <Encoders>
++        <MediaCodec name="c2.v4l2.avc.encoder" type="video/avc">
++            <Limit name="size" min="32x32" max="1920x1088" />
++            <Limit name="alignment" value="2x2" />
++            <Limit name="block-size" value="16x16" />
++            <Limit name="bitrate" range="1-40000000" />
++            <Feature name="bitrate-modes" value="VBR,CBR" />
++        </MediaCodec>
++    </Encoders>
++    <Encoders>
+
+$ wc -lc <官方件> <装配树件>
+     519   28387 …/super/unpack_vendor/etc/media_codecs_c2.xml
+     539   29400 …/OS3.0.10.0.VNQCNXM/vendor/etc/media_codecs_c2.xml
+```
+
+→ 带增量的件必须有一个承载位置。先试过 `mode: patch`（官方原件 + `patches/` 下的
+unified diff，已实现并实跑通过），但同路径出现两处真值、评审要同时读 diff 与原件，
+评估后否决；最终口径是**改过的件整份留在机型静态树 `vendor/etc/`**，基线里不再为该
+路径写条目（详见 `solution.md` 3.4 与 4.2）。

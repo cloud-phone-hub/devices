@@ -1,0 +1,22 @@
+# 修复后：daemon 单测 + 实例 gold_15-OS3.0.11.0.VNQCNXM/2（4d5128bd8ca07462-cloud）实测与 aligner.network_full 验证
+
+# 1) Go 单元测试
+$ cd /Volumes/work/cloud-phone-hub/core/host/daemon && TMPDIR=/Volumes/work/cloud-phone-hub/engine/out/tmp go test -v -run 'TestCellularNetworkNonQEMUMAC' ./config
+=== RUN   TestCellularNetworkNonQEMUMAC
+--- PASS: TestCellularNetworkNonQEMUMAC (0.00s)
+PASS
+ok  	cloud-phone-hub/core/daemon/config	0.275s
+
+# 2) 实机 shell ip addr（engine/out/tmp/p0_smoke_pass.txt）
+=== P0-5 ccmni2 MAC & IPv6/IPv4 ===
+6: ccmni2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether c2:36:b4:12:34:58 brd ff:ff:ff:ff:ff:ff
+    inet6 fec0::c036:b4ff:fe12:3458/64 scope site dynamic mngtmpaddr 
+       valid_lft 86255sec preferred_lft 14255sec
+    inet6 fe80::c036:b4ff:fe12:3458/64 scope link 
+       valid_lft forever preferred_lft forever
+
+# 3) App 侧 aligner.network_full 重采对拍（engine/out/tmp/p0_aligner_pass_extract.txt）
+=== P0-5: network ccmni2 & bluetooth.name ===
+  5054:ff or 52:54:00 in cloud network: False
+  cloud ccmni2: {"addresses": [{"host": "fe80::c036:b4ff:fe12:3458%ccmni2", "loopback": false}, {"host": "fec0::c036:b4ff:fe12:3458", "loopback": false}], "displayName": "ccmni2", "loopback": false, "mac": null, "mtu": 1400, "name": "ccmni2", "pointToPoint": false, "up": true, "virtual": false}

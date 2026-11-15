@@ -1,0 +1,43 @@
+# 输入目录迁移 #238 —— 迁移前事实记录（2026-11-15）
+
+## 1. engine/ 同时承载输入与产物
+
+```
+$ ls engine
+hardware  kernels  manifest  modules  out  roms
+
+$ du -sh engine/hardware engine/kernels engine/manifest engine/modules
+522M	engine/hardware
+ 17G	engine/kernels
+1.3M	engine/manifest
+ 16M	engine/modules
+```
+
+这四类都是**设备侧输入**（HAL 源码、内核源码、机型三表、外部内核模块），
+却与运行期产物 `engine/out`、`engine/roms` 混在同一层；#237 已把证据迁到
+`devices/evidence`，`devices/` 自然成为设备侧资产的根。
+
+## 2. 代码把 engine 根当成唯一基准
+
+```
+$ cd agent/modules/pipeline && grep -rn 'engine.Root(), "kernels"\|engine.Root(), "modules"\|engine.Root(), "hardware"' --include="*.go" stages
+stages/03_build_kernel/plan.go:332:  kernelsRoot := filepath.Join(engine.Root(), "kernels")
+stages/03_build_kernel/plan.go:407:  modulesRoot := filepath.Join(engine.Root(), "modules")
+stages/04_build_modules/plan.go:321:  candidate := filepath.Join(engine.Root(), "kernels", tag)
+stages/04_build_modules/plan.go:393:  modulesRoot := filepath.Join(engine.Root(), "modules")
+stages/06_build_vendor_boot/modules.go:226: modulesRoot := filepath.Join(engine.Root(), "modules")
+stages/09_build_vendor/plan.go:282: HardwareDir: filepath.Join(engine.Root(), "hardware")
+stages/10_build_vendor_dlkm/modules.go:88: kmod.Resolve(filepath.Join(engine.Root(), "modules"), declared)
+```
+
+同样，`engine.ManifestRoot()` / `DevicesRoot()` 直接指 `engine/manifest`、
+`engine/devices`；`profile.findRoot` 用 `engine/hardware` 作仓库根标记；
+cdha / daemon / tools / manifestview 也各自拼 `engineRoot + "manifest"|"hardware"`。
+只搬目录不改访问器，会全线「找不到清单 / 源码树 / 模块」。
+
+## 3. 根目录标记同时失效
+
+`engine.Init()` 原来以 `<dir>/manifest` + `<dir>/hardware` 识别 engine 根，
+daemon 的 `ProjectRoot` 用 `engine/manifest`，cdha 的 `detectEngineRoot` 用
+`engine/manifest`；迁走后这些标记都不再存在，必须改判
+`<仓库根>/engine` + `<仓库根>/devices/manifest`。

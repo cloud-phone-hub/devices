@@ -1,0 +1,38 @@
+=== [修复前：2026-11-14 P1 Batch-4 基线 9f0cf68f69184fc9-cloud] ===
+# 1) vm-shell-baseline.txt：dev.mnt.* 属性暴露 VirtIO vda*（15/24 项直接含 vda*）
+[dev.mnt.blk.mnt.rescue]: [vda18]
+[dev.mnt.blk.mnt.vendor.nvcfg]: [vda17]
+[dev.mnt.blk.mnt.vendor.nvdata]: [vda16]
+[dev.mnt.blk.mnt.vendor.protect_f]: [vda14]
+[dev.mnt.blk.mnt.vendor.protect_s]: [vda15]
+[dev.mnt.dev.mnt.rescue]: [vda18]
+[dev.mnt.dev.mnt.vendor.nvcfg]: [vda17]
+[dev.mnt.dev.mnt.vendor.nvdata]: [vda16]
+[dev.mnt.dev.mnt.vendor.protect_f]: [vda14]
+[dev.mnt.dev.mnt.vendor.protect_s]: [vda15]
+[dev.mnt.rootdisk.mnt.rescue]: [vda]
+[dev.mnt.rootdisk.mnt.vendor.nvcfg]: [vda]
+[dev.mnt.rootdisk.mnt.vendor.nvdata]: [vda]
+[dev.mnt.rootdisk.mnt.vendor.protect_f]: [vda]
+[dev.mnt.rootdisk.mnt.vendor.protect_s]: [vda]
+
+# 2) batch4-risk-summary.txt §4：7 个不可 stat 分区在 proc.mountinfo 中的 dev (maj:min) 偏差及 dm-* f2fs 缺 inlinecrypt
+--- 真机 (07cf5fc1784783d5) ---
+  {"dev": "259:2",  "mountPoint": "/mnt/vendor/protect_f", "source": "/dev/block/sdc18"}
+  {"dev": "259:3",  "mountPoint": "/mnt/vendor/protect_s", "source": "/dev/block/sdc19"}
+  {"dev": "8:39",   "mountPoint": "/mnt/vendor/nvdata",    "source": "/dev/block/sdc7"}
+  {"dev": "8:38",   "mountPoint": "/mnt/vendor/nvcfg",     "source": "/dev/block/sdc6"}
+  {"dev": "8:47",   "mountPoint": "/mnt/vendor/persist",   "source": "/dev/block/sdc15"}
+  {"dev": "259:41", "mountPoint": "/mnt/rescue",           "source": "/dev/block/by-name/rescue"}
+  {"dev": "8:46",   "mountPoint": "/metadata",             "source": "/dev/block/sdc14"}
+  {"dev": "254:81", "fsType": "f2fs", "mountPoint": "/data", "source": "/dev/block/dm-81", "superOptions": "rw,lazytime,seclabel,background_gc=on,...,inlinecrypt,alloc_mode=..."}
+
+--- 云机修复前 (9f0cf68f69184fc9-cloud) ---
+  {"dev": "254:13", "mountPoint": "/mnt/vendor/persist",   "source": "/dev/block/sdc15"}
+  {"dev": "254:14", "mountPoint": "/mnt/vendor/protect_f", "source": "/dev/block/sdc18"}
+  {"dev": "254:15", "mountPoint": "/mnt/vendor/protect_s", "source": "/dev/block/sdc19"}
+  {"dev": "259:0",  "mountPoint": "/mnt/vendor/nvdata",    "source": "/dev/block/sdc7"}
+  {"dev": "259:1",  "mountPoint": "/mnt/vendor/nvcfg",     "source": "/dev/block/sdc6"}
+  {"dev": "259:2",  "mountPoint": "/mnt/rescue",           "source": "/dev/block/by-name/rescue"}
+  {"dev": "254:5",  "mountPoint": "/metadata",             "source": "/dev/block/sdc14"}
+  {"dev": "253:48", "fsType": "f2fs", "mountPoint": "/data", "source": "/dev/block/dm-48", "superOptions": "rw,lazytime,seclabel,background_gc=on,... (缺 inlinecrypt)"}

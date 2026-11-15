@@ -1,0 +1,224 @@
+# popsicle 外部模块补齐 —— 通过侧取证（#136）
+
+取样时间：2026-11-03
+改动：`baselines/popsicle_images_OS3.0.319.0.WPBCNXM_*.json` 的 `modules.external`
+由 `["cdh_redirect"]` 改为 5 项（加 `device_info` / `goodix_fingerprint` /
+`input_identity` / `virtio_media`），其余字段不动。
+重跑命令（AGENTS 第 6 条：改了模块配方必须 03 → 08 → 09 → 11）：
+
+```console
+$ ./out/bin/cdh device build popsicle --only 03_build_modules      # 重编内核模块
+$ ./out/bin/cdh device build popsicle --from build_vendor          # 07 → 11
+```
+
+两条均 exit=0。
+
+## 第 1 节：03 产物 9 → 13 个 .ko
+
+```console
+$ ls -l out/kernel/lineage-23-6.12/modules/*.ko
+-rw-r--r--  66672  cdh_device_info.ko
+-rw-r--r--  12648  cdh_goodix_fingerprint.ko
+-rw-r--r--  15608  cdh_input_identity.ko
+-rw-r--r--  88728  cdh_media.ko
+-rw-r--r--  42808  cdh_redirect.ko
+-rw-r--r-- 2044320  cfg80211.ko
+-rw-r--r--  11408  libarc4.ko
+-rw-r--r-- 1973648  mac80211.ko
+-rw-r--r-- 275208  mac80211_hwsim.ko
+-rw-r--r--  63656  rfkill.ko
+-rw-r--r--  74080  virtio_console.ko
+-rw-r--r-- 148992  zram.ko
+-rw-r--r--  56328  zsmalloc.ko
+（13 个；`modules.builtin`、`Module.symvers`、`SHA256SUMS` 另计）
+```
+
+新编出的 4 个外部模块（此前完全不存在）：
+
+| .ko | 大小 | `__versions` CRC 条目 | vermagic（08 实读） |
+| :--- | ---: | ---: | :--- |
+| `cdh_device_info.ko` | 66,672 B | 39 | `6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64` |
+| `cdh_goodix_fingerprint.ko` | 12,648 B | 4 | 同上 |
+| `cdh_input_identity.ko` | 15,608 B | 8 | 同上 |
+| `cdh_media.ko` | 88,728 B | 75 | 同上 |
+
+`cdh_redirect.ko` 仍 32 条 CRC、vermagic 同上——四个新件与它在同一颗内核口子上。
+
+## 第 2 节：符号版本逐个对账（modversions CRC 全匹配）
+
+口径：解析每个 `.ko` 的 `__versions` 段（`struct modversion_info {u64 crc; char name[56]}`，
+每项 64 B），与同目录 `Module.symvers`（`0xCRC<TAB>symbol<TAB>module<TAB>export`）逐名比对。
+
+```console
+$ python3 <校验脚本>   # 解析 __versions + Module.symvers 逐名比对
+cdh_device_info.ko               crc条目=39 匹配=39 不一致=0 不在Module.symvers=0
+cdh_goodix_fingerprint.ko        crc条目=4  匹配=4  不一致=0 不在Module.symvers=0
+cdh_input_identity.ko            crc条目=8  匹配=8  不一致=0 不在Module.symvers=0
+cdh_media.ko                     crc条目=75 匹配=75 不一致=0 不在Module.symvers=0
+cdh_redirect.ko                  crc条目=32 匹配=32 不一致=0 不在Module.symvers=0
+```
+
+`不一致=0` 是「03 编出来的模块能被 6.12.81 内核加载」的硬证据：任何一条 CRC 对不上，
+内核 `load_module` 阶段就会 `disagrees about version of symbol` 直接拒载。
+
+## 第 3 节：08 八步日志（vendor_dlkm 全自建）
+
+来源：`out/devices/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/img/vendor_dlkm-log.txt`
+
+```text
+==> [步骤 1] 准备基底镜像
+    输入: out/roms/lineage/lineage-23.2/super/vendor_dlkm_a.img（15831040 B，lineage 虚机 vendor_dlkm）
+[ok] 工作镜像就绪: …/vendor_dlkm.work.img（15831040 B）
+==> [步骤 2] 清空基座内核模块
+[ok] 清空 106 个基座模块（6lowpan.ko 8021q.ko 9pnet_fd.ko aes-neon-blk.ko aqc111.ko asix.ko …）
+[ok] 回读复核: /lib/modules 已无 .ko
+==> [步骤 3] 收集内核模块产物
+    输出: 12 个 .ko（合计 4831296 B）注入 /lib/modules
+    cdh_device_info.ko: vermagic=6.12.81-4k-cdh … 依赖 无，alias 0 条
+    cdh_goodix_fingerprint.ko: … 依赖 无，alias 0 条
+    cdh_input_identity.ko: … 依赖 无，alias 0 条
+    cdh_media.ko: … 依赖 无，alias 1 条
+    cfg80211.ko: … 依赖 rfkill，alias 1 条
+    libarc4.ko: … 依赖 无，alias 0 条
+    mac80211.ko: … 依赖 cfg80211,libarc4，alias 0 条
+    mac80211_hwsim.ko: … 依赖 cfg80211,mac80211，alias 1 条
+    rfkill.ko: … 依赖 无，alias 2 条
+    virtio_console.ko: … 依赖 无，alias 2 条
+    zram.ko: … 依赖 zsmalloc，alias 0 条
+    zsmalloc.ko: … 依赖 无，alias 0 条
+[ok] 依赖闭包成立: 12 个模块的 depends/softdep 均由注入集或内核内建（677 项）提供
+==> [步骤 4] 生成模块索引
+    modules.load: 12 行 / modules.dep: 12 行 / modules.alias: 7 行 / modules.options: 1 行 / modules.softdep: 0 行
+[ok] 索引已生成: load 12 项，dep 12 项，alias 7 行，options 1 行，softdep 0 行
+==> [步骤 5] 覆盖 /etc/build.prop
+[ok] 基线件已就位: /etc/build.prop（1266 B / 9ae24862e229，标签 u:object_r:vendor_configs_file:s0）
+==> [步骤 6] debugfs 写入并回读校验
+    输入: 18 个文件（模块 12 + 索引 5 + build.prop /etc/build.prop）
+[ok] 写入 18 个文件，回读 18/18 内容一致
+==> [步骤 7] e2fsck 修复一致性
+[ok] e2fsck 通过（退出码 0 = 无需修复）
+==> [步骤 8] 发布镜像并写清单与校验和
+[ok] vendor_dlkm.img 构建完成: …/img/vendor_dlkm.img（15831040 字节，sha256 92f9fd14d1ac）
+    注入 18 个文件，回读校验 18 个一致，回收 106 个基座模块
+```
+
+三处关键点：
+
+1. **步骤 2 清 106 个基座 `.ko` 且回读复核为 0**——`cdh_media` 等新件不是「叠加」在
+   基座的 6.12.23 模块上，基座模块一个不剩（AGENTS 第 6 条）；
+2. **步骤 3 依赖闭包成立**：12 个注入模块的 `depends` / `softdep` 全部落在
+   「本次注入集」或「内核内建（`modules.builtin` 677 项）」内，没有一条指向被删的基座件；
+3. **`cdh_redirect.ko` 不在 12 项里**：它是 `inject=first-stage`，进度 vendor_boot 的
+   ramdisk，与 gold/m22 口径一致。
+
+## 第 4 节：镜像内实读索引（不看生成侧，直接读成品）
+
+```console
+$ DBG=/opt/homebrew/opt/e2fsprogs/sbin/debugfs
+$ IMG=out/devices/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/img/vendor_dlkm.img
+$ $DBG -R "cat /lib/modules/modules.load" $IMG
+cdh_device_info
+cdh_goodix_fingerprint
+cdh_input_identity
+cdh_media
+cfg80211
+libarc4
+mac80211
+mac80211_hwsim
+rfkill
+virtio_console
+zram
+zsmalloc
+
+$ $DBG -R "cat /lib/modules/modules.options" $IMG
+options cdh_media allow_userptr=1
+
+$ $DBG -R "cat /lib/modules/modules.dep" $IMG
+/vendor_dlkm/lib/modules/cdh_device_info.ko:
+/vendor_dlkm/lib/modules/cdh_goodix_fingerprint.ko:
+/vendor_dlkm/lib/modules/cdh_input_identity.ko:
+/vendor_dlkm/lib/modules/cdh_media.ko:
+/vendor_dlkm/lib/modules/cfg80211.ko: /vendor_dlkm/lib/modules/rfkill.ko
+/vendor_dlkm/lib/modules/libarc4.ko:
+/vendor_dlkm/lib/modules/mac80211.ko: /vendor_dlkm/lib/modules/cfg80211.ko /vendor_dlkm/lib/modules/libarc4.ko
+/vendor_dlkm/lib/modules/mac80211_hwsim.ko: /vendor_dlkm/lib/modules/cfg80211.ko /vendor_dlkm/lib/modules/mac80211.ko
+/vendor_dlkm/lib/modules/rfkill.ko:
+/vendor_dlkm/lib/modules/virtio_console.ko:
+/vendor_dlkm/lib/modules/zram.ko: /vendor_dlkm/lib/modules/zsmalloc.ko
+/vendor_dlkm/lib/modules/zsmalloc.ko:
+
+$ $DBG -R "cat /lib/modules/modules.alias" $IMG
+alias virtio:d00000030v* cdh_media
+alias net-pf-16-proto-16-family-nl80211 cfg80211
+alias virtio:d0000001Dv* mac80211_hwsim
+alias char-major-10-242 rfkill
+alias devname:rfkill rfkill
+alias virtio:d00000003v* virtio_console
+alias virtio:d0000000Bv* virtio_console
+
+$ $DBG -R "cat /lib/modules/modules.softdep" $IMG
+（空）
+```
+
+要点：
+
+- `options cdh_media allow_userptr=1` 是 `virtio_media/module.json` 声明的那条，
+  也是 v4l2_codec2 能用 USERPTR 的前提（没有它 V4L2 会清掉 USERPTR 能力位、
+  DMABUF 又恒被拒 → codec2 拒绝启动）；
+- `modules.dep` 里 `cdh_media.ko:` 后面为空——它不依赖任何其它模块；
+- `alias virtio:d00000030v* cdh_media` 是 virtio-video 的 device id（0x30），
+  说明 `.modinfo` 里的 alias 被原样写进索引，**不靠 udev 热插拔也能按 id 自动加载**；
+- 五份索引全部来自本次注入的 12 个模块的 `.modinfo`：`alias` 只有 7 行，基座镜像里原有的
+  alias 一条不剩（`modules.load` / `dep` / `alias` / `options` / `softdep` 全量重建，
+  AGENTS 第 6 条的「全量重建」）。
+
+## 第 5 节：下游 patch 层与盘集
+
+```console
+$ shasum -a 256 …/img/vendor_dlkm.img
+92f9fd14d1ac8d4ad52b646df62bb4a710e75c9ab82e3ab72ce8cb5f5eb880f3
+
+$ grep -E "dlkm-(sha256|size)" …/img/patch-info.txt
+dlkm-sha256: 92f9fd14d1ac8d4ad52b646df62bb4a710e75c9ab82e3ab72ce8cb5f5eb880f3
+dlkm-size: 15831040
+
+$ shasum -a 256 …/img/patch.img
+a241df03630fa24456ad04e5728bc8da0800e9d998d29bc06f61dc426c84dd15
+$ ls -l …/img/patch.img
+-rw-r--r--  402653184  patch.img        # 384.0 MiB
+```
+
+`patch-info.txt` 里的 `dlkm-sha256` 与磁盘上的 `vendor_dlkm.img` 一致，说明
+`patch.img` 的 `/vendor_dlkm` 子树用的就是本次注入的镜像（不是旧件），
+384 MiB 的 patch 层随盘集一并刷新。同一次重打包里三棵子树各自的记账：
+
+```console
+$ grep -E "^(vendor-sha256|vendor-size|odm-sha256|odm-size|size-mib|layout|tree|entries|label-files|readback|fsck):" …/img/patch-info.txt
+vendor-sha256: fff2364136cd67d842d96daa6d910836006e670b38411409cabc351035250616
+vendor-size: 200048640
+odm-sha256: 400b954861cde912c841ebda9083e1bf145358c8159b722bb08a02d14089f2c8
+odm-size: 8388608
+size-mib: 384
+layout: root=container;vendor=subtree;vendor_dlkm=subtree;odm=subtree;lib-modules=real-dir;odm-selinux=none
+tree: 文件 371 / 链接 198 / 目录 42
+entries: 612（源 610 + 固定 2）
+label-files: 38
+readback: 612/612
+fsck: true
+```
+
+## 第 6 节：07 侧未受牵连（同轮 #135 的清理也在这次重跑里）
+
+同一次 `--from build_vendor` 里 07 也重跑了，可以交叉证明「加模块没有扰动 vendor 树」：
+
+```text
+vendor 属性: 基线 build-prop-sets 288 项 / unsets 1 项 -> vendor/build.prop
+装配树条目 556（文件 328 / 链接 199 / 目录 29），初始 58739 块（229 MB），inode 768
+==> debugfs 写入 556 个条目的元数据（权限 / 归属 / 时间 / SELinux）
+```
+
+`vendor-meta-summary.txt` 里 `条目: 556（dir 29 / file 328 / symlink 199）`，
+与加模块前一致——四个模块全在 `vendor_dlkm`，不进 `vendor`。
+SELinux 侧只剩 3 条 `cph_*.rc` 从 `vendor_file` 落回 `vendor_configs_file`
+（#135 的整表清空），与本条无关，详见
+[../issue-vendor-selinux-labels-prune/log-pass.txt](../issue-vendor-selinux-labels-prune/log-pass.txt)。

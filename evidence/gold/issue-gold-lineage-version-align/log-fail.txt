@@ -1,0 +1,34 @@
+# 改名前：清单声明 22.0，实际底包 22.2（引擎打 warn，靠退级匹配兜住）
+# 采集时间：2026-10-30，engine/
+$ ./out/bin/cdh env manifest/xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.json
+[warn] 清单声明 lineage-22.0，实际底包为 UTM-VM-lineage-22.2-20261010-UNOFFICIAL-virtio_arm64only.zip
+项目                            路径                                                                                                    状态
+清单                            manifest/xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.json  存在
+ROM 输出根                      out/roms                                                                                                存在
+厂商固件                        roms/devices/xiaomi/gold/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.tgz         存在
+厂商解包根                      out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM                                                                 存在
+厂商镜像 super.img              out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super.img                                                       存在
+lineage 底包                    roms/lineage/UTM-VM-lineage-22.2-20261010-UNOFFICIAL-virtio_arm64only.zip                               存在
+lineage 解包根                  out/roms/lineage/lineage-22.0                                                                           存在
+lineage super 目录              out/roms/lineage/lineage-22.0/super                                                                     存在
+lineage 镜像 vendor_a.img       out/roms/lineage/lineage-22.0/super/vendor_a.img                                                        存在
+lineage 镜像 vendor_dlkm_a.img  out/roms/lineage/lineage-22.0/super/vendor_dlkm_a.img                                                   存在
+
+# 清单字段（旧值）
+$ sed -n '26,28p' manifest/xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.json
+    "lineage":{
+      "version": "lineage-22.0",
+      "images": [
+
+# 兜底链：完整版 0 命中 -> 退主版本 lineage-22 -> 命中 22.2
+$ ls engine/roms/lineage/*.zip
+roms/lineage/UTM-VM-lineage-21.0-20260804-UNOFFICIAL-virtio_arm64only.zip
+roms/lineage/UTM-VM-lineage-22.2-20261010-UNOFFICIAL-virtio_arm64only.zip
+roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip
+roms/lineage/UTM-VM-lineage-24.0-20261010-UNOFFICIAL-virtio_arm64.zip
+# （无 lineage-22.0 的 zip；仓库根的 lineage-rom/ 不参与解析）
+
+# 产物侧留在旧路径上的快照
+$ grep -h "base:" out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/boot-info.txt out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor-info.txt
+base: out/roms/lineage/lineage-22.0/boot_a.img
+base: out/roms/lineage/lineage-22.0/super/vendor_a.img

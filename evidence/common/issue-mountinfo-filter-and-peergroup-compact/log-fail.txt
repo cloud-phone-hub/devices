@@ -1,0 +1,27 @@
+# P0-2 (B7) 修复前失败证据 (log-fail.txt)
+# 采样时间: 2026-11-10
+# 设备: Xiaomi Redmi Note 13 5G (gold / 2312DRAABC, OS3.0.10.0.VNQCNXM)
+# 真机 ID: ec519c7d513a3ad3 (USB: fmvwkrheonugvgjb)
+# 云机实例: gold_15-OS3.0.10.0.VNQCNXM/1 (df809591a4e085ae-cloud, ADB: 127.0.0.1:5911)
+# 测试批次: run-00173 / run-00174 / run-00175 / run-00219
+
+=== 1. aligner_xiaomi_gold.all (run-00219) ===
+B7_mountinfoNoPeerHolesAndLogSocketsExist: false
+passed: 16/32
+
+=== 2. aligner_xiaomi_gold.cpu_memory_storage ===
+REAL  mountinfoAudit:
+  {"highMntIdCount": 188, "overlayMountCount": 24, "peerGroupCount": 73, "peerGroupHoles": 0, "suspiciousMountMarks": [], "totalMounts": 188}
+CLOUD mountinfoAudit:
+  {"highMntIdCount": 179, "overlayMountCount": 24, "peerGroupCount": 66, "peerGroupHoles": 1, "suspiciousMountMarks": ["16293 16291 254:32 / /mnt/vendorpatch ro,relatime master:9 - ext4 /dev/block/vdc ro,seclabel"], "totalMounts": 179}
+
+=== 3. ultimate.root_selinux ===
+CLOUD U-PEERGROUP-HOLE (risk=deadly, hit=true):
+  {"allowCount": 0, "groups": 68, "has_sdcardfs": 0, "holes": 2, "no_storage": 0, "reuse_umounted": 0}
+  (missing peer_group IDs: [60, 61])
+CLOUD U-MNT-TMPFS-OPEN:
+  ["/mnt 可列 20 项 ctx=u:object_r:tmpfs:s0", "/mnt/obb 可打开(空目录) ctx=u:object_r:tmpfs:s0"]
+  (对比真机为 "/mnt 可列 19 项"，云机多出 "vendorpatch" 目录项)
+
+=== 4. proc.mountinfo 暴露行 ===
+10068 10066 254:32 / /mnt/vendorpatch ro,relatime master:9 - ext4 /dev/block/vdc ro,seclabel

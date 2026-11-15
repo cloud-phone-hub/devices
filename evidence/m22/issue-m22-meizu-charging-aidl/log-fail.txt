@@ -1,0 +1,71 @@
+# #68 meizu_charging 逆向 + 落地过程中的坑（只记踩过的，失败原文与修法）
+# 环境：m22 / flyme 12.5.0.0A / android 16；NDK 29.0.14206865；host macOS
+# 全部命令在 /Volumes/work/cloud-phone-hub/engine 下执行。
+# 接续 #67（同一套模板），此处只记与 #67 不同或本轮再次踩到的。
+
+## 坑 1：这批 so 的符号 c++filt 拒解，批量 demangle 还错位
+
+现象：llvm-nm -D 出来是
+    _ZN...15BpMeizuCharging9getBattery...
+即 mangled 名里的长度前缀与实际类名长度不符（`15` 标注的是
+`BpMeizuCharging`，实际 16 个字符）。c++filt / llvm-cxxfilt 校验前缀后
+直接放弃，原样返回 mangled 名；把「demangle 前 / 后」两列按行拼在一起时
+行数对不上（110 vs 109），因为个别行原样回显时被当成两段。
+
+修法：不依赖 demangle。用正则从 mangled 名里切方法名：
+    (BpMeizuCharging|BnMeizuCharging)(\d+)([a-zA-Z_]\w*?)E
+并**以 llvm-nm -D 的原表逐个核对**。charging 的 11 个方法名都不含大写 E
+（`getWirelessTxModel` / `setWirelessTxFanMode` …），所以 `(\w*?)E` 的
+非贪婪切分在这里可靠；#67 的 aw_light 有 `switchEffect` 这种带大写 E 的名字，
+就切错过（见 #67 坑 1）。判据是「同一个 code 在 Bp 侧只有一处
+AIBinder_transact」，方法名对不上就回原表看。
+
+## 坑 2：cdh 没有 build 子命令（#67 坑 2/3 本轮又踩一次）
+
+    $ ./out/bin/cdh build 07
+    [err] 未知子命令: build
+    $ ./out/bin/cdh build-vendor -device flyme/m22 -dry-run
+    flag provided but not defined: -device
+
+修法（最终形态）：
+    eval "$(./out/bin/cdh env manifest/flyme/m22/baselines/12.5.0.0A.json --env)"
+    ./out/bin/cdh build-vendor --android 16 --manifest "$CDH_MANIFEST" \
+        --vendor flyme --brand m22 --version 12.5.0.0A
+CDH_* 环境变量只补一部分回退项，--android 与 --vendor/--brand/--version
+必须显式给（设备名是 `m22`，不是 `flyme/m22`）。
+
+## 坑 3：原厂 rc 里三段 chmod/chown 带 wait，不能逐字搬
+
+原厂 etc/init/vendor.meizu.hardware.meizu_charging-service.rc 除 service 段外还有：
+    on property:sys.run.charger_file_perms
+        chmod 0660 /sys/class/meizu/charger/xxx
+        wait /sys/class/meizu/charger/xxx
+    on boot     … chown system system /sys/class/qcom-battery/charge_control_en
+    on charger  … 同上
+云机 virtio 底座没有这些节点：chmod 只会刷 `avc denied`/`No such file`，
+`wait <路径>` 更会把 trigger 队列卡住（init 等不到该文件就一直挂在该队列）。
+
+修法：只搬 `service` 段并补 `interface aidl` + `seclabel`，三段触发器全部丢弃，
+在 rc 注释与 solution.md 第 4 节写明理由；sysfs 授权属板级事实，接硬件时放机型层。
+
+## 坑 4：debugfs ea_list 不给 xattr 值
+
+    debugfs -R "ea_list /bin/hw/vendor.meizu.hardware.meizu_charging-service" vendor.img
+    … security.selinux (45)
+只给长度，看不到标签内容（45 = 值长度，不是标签）。
+
+修法：用 ea_get 读全值：
+    debugfs -R "ea_get <path> security.selinux" vendor.img
+    → security.selinux (45) = "u:object_r:hal_meizu_charging_default_exec:s0"
+
+## 坑 5：07 会把模块片段正文里「像 marker 的行」改写，镜像块比源文件大
+
+镜像内 marker 块 2,854 B，模块源文件 sepolicy/vendor_sepolicy.cil 是 2,718 B：
+07 步骤 6 对正文里出现的 `;; cdh-patch-begin: …` 原文做了保护性改写
+（变成 `;;（;; cdh-patch-begin: … ）`），并会在长中文注释里注入一个空格
+（`同名` → `同 名`）。这是幂等保护（避免下一次执行把正文误认成新块），
+secilc 不受影响。
+
+修法/口径：比对时用「镜像内 marker 块」而不是源文件字节数；
+校验片段是否落位用 `grep -n '@vendor.meizu.hardware.meizu_charging'` +
+`awk '/begin/{f=1} f{print} /end/{exit}'`，别拿 07 日志里的字节数当判据。

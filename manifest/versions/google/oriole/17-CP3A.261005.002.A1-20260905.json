@@ -1,0 +1,17 @@
+{
+  "id": 4,
+  "buildId": "17-CP3A.261005.002.A1-20260905",
+  "deviceId": 1,
+  "configId": 4,
+  "osVersion": "17-CP3A.261005.002.A1-20260905",
+  "buildDate": "20260905",
+  "securityPatch": "2026-10-05",
+  "factoryTgz": "oriole-cp3a.261005.002.a1-factory-1257b58e.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 oriole-cp3a.261005.002.a1-factory-1257b58e.zip (vendor/build.prop) 自动生成。",
+    "osVersion": "17-CP3A.261005.002.A1-20260905"
+  },
+  "updatedAt": "2026-11-05T07:30:07Z"
+}

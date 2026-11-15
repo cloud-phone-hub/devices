@@ -1,0 +1,61 @@
+# 卡死现场：m22 实例 31（cloud-phone-hub 内核 6.12.81-4k-cdh，DMIID 已关）
+# 采集时间：2026-10-29 10:59–11:02（宿主）；guest 时钟取镜像 RTC，显示 06-25 20:5x–21:0x
+# 原始材料：dmesg-31.txt（17,338 行）、logcat-31.txt（28,920 行）、screen-stuck-31.png
+
+== 现象 ==
+VNC 画面冻在「设置 → 我的手机」，点击无响应；截图见 screen-stuck-31.png。
+adb 仍可进（uid=2000 shell），但：
+  $ adb shell dumpsys SurfaceFlinger
+  Error with service 'SurfaceFlinger' while dumping: FAILED_TRANSACTION
+  $ adb shell dumpsys activity activities      # AMS 还能答，但 top task 反复在 launcher 重建
+  * Task{26c9fe5 #550 type=home ... com.meizu.flyme.launcher/...QuickstepLauncher}
+宿主侧 QEMU 进程 412% CPU（8 vCPU）。
+
+== 内核时间线（dmesg-31.txt，方括号为首列 uptime 秒）==
+[ 322.9] servicemanager: Caller(pid=972,uid=1000,sid=u:r:system_server:s0) Could not find
+         vendor.qti.hardware.perf2.IPerf/default；同一窗口还有 nfc / fingerprint / face 的
+         IVirtualHal 起服务失败（云机没有这些 vendor HAL）
+[ 323.3] binder_alloc: 972: pid 861 spamming oneway? 1486 buffers allocated for a total size
+         of 416080                                             [dmesg-31.txt:8770]
+[ 366.1] binder: cannot allocate buffer: no space left        [dmesg-31.txt:9455 起，共 134 条]
+[ 456.4] binder: 861:986 transaction async to 972:0 failed 856391/29201/-28, code 1 size 92-0
+         line 3612                                             [error -28 = ENOSPC]
+[ 456.4] audit: audit_lost=6884 audit_rate_limit=5 audit_backlog_limit=64
+[ 491.7] binder_alloc: 972: pid 861 spamming oneway? 1868 buffers allocated for a total size
+         of 520096                                             [峰值，≈ async 512 KiB 上限]
+
+pid 861 = surfaceflinger，pid 972 = system_server。也就是说：
+SurfaceFlinger 往 system_server 灌 oneway，system_server 的 **async 缓冲池（512 KiB）**被填满，
+之后所有 async binder 事务一律 -28，客户端据此把 system_server 判成 dead。
+
+== logcat 时间线（logcat-31.txt，buffer crash）==
+[ 1:  3] 20:52:40.360  3609  3880 E AndroidRuntime: FATAL EXCEPTION: main
+          Process: .qtidataservices, PID: 3609
+          java.lang.UnsatisfiedLinkError: No implementation found for
+          void vendor.qti.iwlan.JniHelper.getAllQualifiedNetworks(...)
+          at vendor.qti.iwlan.QualifiedNetworksServiceImpl$NetworkAvailabilityProviderImpl.<init>
+          （该进程共崩 16 次，每次 <2 s 一轮）
+[39: 44] 20:52:44.019  5486  5619 E AndroidRuntime: FATAL EXCEPTION: GLThread 51
+          Process: com.flyme.alivewallpaper:wallpaper, PID: 5486
+          y1.d: compileShader failed:
+          Vertex shader 0:1(10): error: GLSL ES 3.20 is not supported.
+          Supported versions are: 1.00 ES, and 3.00 ES
+          at android.opengl.GLSurfaceView$GLThread.guardedRun
+          （魅族 Aicy 动态壁纸，共崩 13 次；进程号 5486 → 6102 → … 不断递增）
+[403] 20:57:35.243  9261  9261 E AndroidRuntime: DeadSystemException: The system died;
+          earlier logs will point to the root cause
+          Process: com.android.settings, PID: 9261        ← 从这一刻开始全线级联
+[406] 20:57:35.281  com.meizu.flyme.update
+[409] 20:57:35.342  com.android.systemui
+[412] 20:57:35.496  com.meizu.flyme.launcher
+…     直到 21:01:07 仍在刷（android.process.acore / com.meizu.cloud / com.flyme.secureservice）
+        DeadSystemException 共 475 条
+
+== 为什么不是「内存不足」==
+MemTotal 7,760,724 kB / MemAvailable 4,848,492 kB（cached 5.0 GB），并没有在回收压力下打转。
+`top` 里那行 “Swap: 6291452K total, 6291452K used” 是假的（显示 hook 的产物）：
+
+  $ adb shell cat /proc/swaps        -> 只有表头，没有任何 swap 设备
+  $ adb shell free -m               -> Swap: 0 0 0
+
+真瓶颈是 binder async 池（见上面的 spamming oneway / no space left），不是内存。

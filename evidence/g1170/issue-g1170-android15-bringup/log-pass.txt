@@ -1,0 +1,66 @@
+=== 1. 构建流水线产物与 vendor_dlkm 注入校验 ===
+==> 镜像产物: out/devices/blu/G1170/15-AP3A.240905.015.A2-20260209/img/vendor_dlkm.img
+    模块产物:   out/kernel/6.6/modules（12 个 .ko，vermagic=6.6.127-4k-cdh SMP preempt mod_unload modversions aarch64）
+    伴随文件:   /lib/modules/cdh_device_info.uts <- rom.official.kernel.uname-version（180 B）
+    伴随文件:   /lib/modules/cdh_device_info.cpufreq <- modules.cpufreq（982 B）
+    伴随文件:   /lib/modules/cdh_device_info.thermal <- modules.thermal（279 B）
+    发布盘集:   out/dist/blu/G1170/15-AP3A.240905.015.A2-20260209/{vda.img, patch.img (2376740596cd), data.qcow2, device.json}
+
+=== 2. 冷启动与 VNC 抓帧验收（boot_check.py） ===
+实例: /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/G1170_15-AP3A.240905.015.A2-20260209/1  adb=5919 vnc=5920 ws=5921
+日志: /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/G1170_15-AP3A.240905.015.A2-20260209/1/qemu.log
+[shot] /Volumes/work/cloud-phone-hub/engine/out/tmp/g1170-final-boot.png 720x1640 bpp=32 平均亮度=181.0 峰值=255
+[pass] 引导完成（日志 7130 行）+ 截图非黑（平均亮度=181.0 峰值=255）-> /Volumes/work/cloud-phone-hub/engine/out/tmp/g1170-final-boot.png
+
+=== 3. 系统相机 com.mediatek.camera 启动验收（零崩溃） ===
+Starting: Intent { act=android.media.action.STILL_IMAGE_CAMERA }
+Status: ok
+LaunchState: WARM
+Activity: com.mediatek.camera/.CameraActivity
+TotalTime: 368
+WaitTime: 403
+Complete
+  mCurrentFocus=Window{14a3f86 u0 com.mediatek.camera/com.mediatek.camera.CameraActivity}
+  mFocusedApp=ActivityRecord{a6e88ab u0 com.mediatek.camera/.CameraActivity t9}
+(logcat -b crash -d 为空，零崩溃)
+
+=== 4. 全子系统实测校验输出 ===
+[sys.boot_completed]: 1
+[init.svc.bootanim]: stopped
+[init.svc.netdiag]: stopped
+[ro.product.brand]: BLU
+[ro.product.model]: G75
+[ro.product.device]: G1170
+[ro.build.fingerprint]: BLU/G75/G1170:15/AP3A.240905.015.A2/1770610308:user/release-keys
+[ro.board.platform]: mt6768
+[ro.hardware.egl]: meow
+[ro.hardware.vulkan]: mali
+[ro.hardware.hwcomposer]: drm
+[ro.frp.pst]: /dev/block/by-name/frp
+[bluetooth.device.default_name]: BLU G75
+[uname -r]: 6.6.66-android15-8-g1a5efa12ec93-ab13070261-4k
+
+Physical size: 720x1640
+Physical density: 320
+GLES: ARM, Mali-G52 MC2, OpenGL ES 3.2 v1.r32p1-01eac0.19498e0ae1d5dac223383c39a2e58f04
+peak-refresh-rate: 120.00 Hz (modes: 60Hz / 90Hz / 120Hz)
+
+[gsm.sim.state]: LOADED,ABSENT
+[gsm.version.baseband]: MOLY.NR15.R3.MP.V120.3.P82,MOLY.NR15.R3.MP.V120.3.P82
+wlan0: inet 192.168.60.100/24 brd 192.168.60.255 scope global wlan0
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data: 2 packets transmitted, 2 received, 0% packet loss, rtt min/avg/max = 0.326/1.655/2.985 ms
+
+Audio STREAM_MUSIC Devices: speaker(2)
+SensorService: Total 17 h/w sensors, 17 running 0 disabled clients (mc34x9, mmc5603, stk6a7x_l, stk6a7x_p, ORIENTATION, GRAVITY, LINEARACCEL, ROTATION_VECTOR, UNCALI_MAG, SIGNIFICANT_MOTION, STEP_DETECTOR, STEP_COUNTER, GEOMAGNETIC_ROTATION_VECTOR, TILT_DETECTOR, DEVICE_ORIENTATION, UNCALI_ACC)
+
+cpu0 scaling_available_frequencies: 1800000 1625000 1500000 1450000 1375000 1325000 1275000 1175000 1100000 1050000 999000 950000 900000 850000 774000 500000
+cpu6 scaling_available_frequencies: 2000000 1950000 1900000 1850000 1800000 1710000 1621000 1532000 1443000 1354000 1295000 1176000 1087000 998000 909000 850000
+lrwxrwxrwx 1 root root 15 1970-01-01 08:00 /dev/block/by-name/frp -> /dev/block/vda3
+thermal_zone0..12: battery(28100) mtk-master-charger(24960) tz6358buck1(28900) tz6358buck2(28850) tz6358buck3(28450) mtk-slave-charger(0) mtktscpu(33267) mtktspmic(29260) mtktsbattery(27900) mtktsAP(30400) mtktsbtsmdpa(29560) mtktspa(30934) mtktscharger(28800)
+
+=== Widevine Check ===
+vendor=com.google.android.widevine version=19.0.1@AV1A.240725.002 securityLevel=L3 systemId=33098 oemCryptoApiVersion=18 algorithms=AES/CBC/NoPadding,HmacSHA256
+=== Camera Check ===
+cameraIds=[0, 1]
+cam 0 caps=[0, 1, 2, 5, 3, 6, 7, 9] inputFormats=[35] inputSizes(35)=[4000x3000] outputFormats=[32, 256, 34, 35, 842094169] highSpeedSizes=[1280x720, 640x480] keys.size=130
+cam 1 caps=[0, 1, 2, 5, 3, 6, 7] inputFormats=[35] inputSizes(35)=[2304x1728] outputFormats=[32, 256, 34, 35, 842094169] highSpeedSizes=[] keys.size=125

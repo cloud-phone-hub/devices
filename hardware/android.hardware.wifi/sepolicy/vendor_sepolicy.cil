@@ -1,0 +1,53 @@
+;; 自研 wifi HAL（虚拟 HAL，接管 IWifi/default）的 SELinux 授权（由
+;; 07_build_vendor 并入装配树的 etc/selinux/vendor_sepolicy.cil）。
+;;
+;; 服务见本模块 vendor/etc/init/android.hardware.wifi-service.rc：落基座自带的
+;; hal_wifi_default 域，宿主通道 /dev/hvc9 与 host 侧 wifi provider 收发以太帧。
+;;
+;; 平台 type 在 vendor CIL 中必须引用版本化影子名（plat_sepolicy_vers.txt=202404），
+;; 故用 {{vers}} 占位，由构建阶段替换。
+
+;; 宿主通道：/dev/hvc9 的运行时标签是 console_device（基座 vendor_file_contexts 的
+;; /dev/hvc[0-9]+ 正则），授权按类型给、不写路径：hvc 编号是板级布局，换板不吃这条。
+;; 注意这条对 console_device 是整类型授权，会让该域同时可达其它 hvc 节点。
+(allow hal_wifi_default console_device_{{vers}} (chr_file (ioctl read write getattr lock append map open watch watch_reads)))
+
+;; 假 AP 档位：宿主经 hvc9 下发 scan_profile 串，HAL 校验后写内核模块参数
+;; /sys/module/mac80211_hwsim/parameters/scan_profile（mac80211_hwsim 据此注入
+;; 假 beacon 并伪响应 auth/assoc）。该节点由内核按 sysfs 默认类型创建，需单独
+;; 打标签再授权，否则 HAL（wifi 用户 + hal_wifi_default 域）写入被 SELinux 拒
+;; （avc: denied { write } ... tcontext=u:object_r:sysfs:s0）。
+;; 类型名用 wifi_scan_param / wifi_hvc_data：不带项目缩写，镜像里的标签与 avc
+;; 日志都看不出改造来源（同批服务类型见 perf2 与机型层片段的 hal_*_service 命名）。
+(type wifi_scan_param)
+(roletype object_r wifi_scan_param)
+(typeattributeset file_type (wifi_scan_param))
+(typeattributeset sysfs_type (wifi_scan_param))
+(genfscon sysfs "/module/mac80211_hwsim/parameters/scan_profile" (u object_r wifi_scan_param ((s0) (s0))))
+(allow hal_wifi_default wifi_scan_param (file (getattr open read write)))
+;; shell 只给读取，供 adb 侧核对档位内容（写入仅 HAL）。
+(allow shell wifi_scan_param (file (getattr open read)))
+
+;; 数据面通道 /dev/hvc10：mac80211_hwsim 内核态直桥（cdh-wifi-tx/rx 线程）以
+;; filp_open/kernel_read/kernel_write 收发以太帧，打开者落在 kernel 域。基座
+;; vendor_file_contexts 的 /dev/hvc[0-9]+ 正则把 hvc10 也标成 console_device，
+;; 而 kernel 域没有该类型的 open 授权（dontaudit 掩盖，表现为 filp_open 返回
+;; -EACCES、数据面 rx/tx 恒为 0，档位能下发但 DHCP 拿不到地址）。
+;; 按 /dev/hvc3 的既有范式用字面量路径单独打标签（file_contexts 字面量优先于
+;; 正则），只把 hvc10 划给本类型，不给 kernel 放通整个 console_device。
+;; 类型名 wifi_hvc_data 取自「hvc10 数据面」；沿用设备脚手架/issue-wifi-connection-unstable
+;; 的语义与授权面，只去掉项目缩写。
+(type wifi_hvc_data)
+(roletype object_r wifi_hvc_data)
+(typeattributeset file_type (wifi_hvc_data))
+;; ueventd 用 dev_type 的既有 create/setattr 授权在 tmpfs /dev 下建设备节点；
+;; 类型不进 dev_type 时 ueventd 建不出 /dev/hvc10（avc denied { create }），
+;; 内核侧看到的是 ENOENT（-2）而非 EACCES。
+(typeattributeset dev_type (wifi_hvc_data))
+(allow kernel_{{vers}} wifi_hvc_data (chr_file (ioctl read write getattr open)))
+
+;; Wi-Fi Direct (p2p0)：允许 hal_wifi_default 通过 SIOCGIFFLAGS/SIOCSIFFLAGS/SIOCSIFNAME
+;; 将闲置的 phy#1 网卡 wlan1 重命名为 p2p0，与 phy#0 (wlan0) 物理隔离。
+(allow hal_wifi_default hal_wifi_default (capability (net_admin net_raw)))
+(allow hal_wifi_default hal_wifi_default (udp_socket (create ioctl read write getattr setopt getopt)))
+

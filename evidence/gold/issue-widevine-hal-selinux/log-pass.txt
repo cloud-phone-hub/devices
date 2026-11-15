@@ -1,0 +1,152 @@
+# 通过态证据：Widevine HAL 启动并注册成功
+
+设备/清单：xiaomi/gold  OS3.0.10.0.VNQCNXM（Redmi Note 13 5G）
+实例：`gold_cn_OS3.0.10.0.VNQCNXM/5`（2026-10-28 04:03 重启）
+产物：`engine/out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/`
+
+## 1. 最终产物
+
+```
+patch.img sha256 027fb407645096fc1ad54b172f407f0e55bc631e3786a007916ad5816ba80a1e
+vda.img   sha256 7c1fb83b52f1cc5882b19a42060302e715a37ad7c2957b60f121f809f54d269b
+device.json id  gold_cn_OS3.0.10.0.VNQCNXM
+```
+
+构建链（engine/build，全部 rc=0）：
+
+```
+cdh build-vendor --manifest ../manifest/xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.json \
+  --manifest-dir ../manifest/xiaomi/gold --vendor xiaomi --brand gold --version OS3.0.10.0.VNQCNXM
+cdh build-patch --vendor xiaomi --brand gold --version OS3.0.10.0.VNQCNXM
+cdh pack-vda --vendor xiaomi --brand gold --version OS3.0.10.0.VNQCNXM \
+  --lineage-zip ../roms/lineage/UTM-VM-lineage-22.2-20261010-UNOFFICIAL-virtio_arm64only.zip \
+  --build-id gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694
+```
+
+## 2. 产物抽件比对（patch.img 内策略 == 装配树）
+
+```
+$ debugfs -R "dump /vendor/etc/selinux/vendor_sepolicy.cil /tmp/wv-final-cil.txt" \
+    engine/out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch.img
+$ shasum -a 256 /tmp/wv-final-cil.txt \
+    engine/out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil
+8d165887df8fc430e8b9d907d495d472da7b4b1bcca6d43401b9e53a0034c206  /tmp/wv-final-cil.txt
+8d165887df8fc430e8b9d907d495d472da7b4b1bcca6d43401b9e53a0034c206  engine/out/devices/.../vendor_sepolicy.cil
+```
+
+片段规模：19 条 allow、11 条类型/属性声明（`engine/manifest/xiaomi/gold/sepolicy/vendor_sepolicy.cil`）。
+
+## 3. 开机：init 正常拉起，无崩溃重启
+
+`out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/5/qemu-20261028-040955.log:2806-2809`
+（该次开机的串口日志，实例停机后已轮转为带时间戳的文件；`qemu.log` 为 04:11
+重启后的新日志）
+
+```
+[   16.314356][    T1] init: starting service 'vendor.drm-widevine-hal'...
+[   16.317953][    T1] init: ... started service 'vendor.drm-widevine-hal' has pid 554
+[   16.318595][    T1] init: Command 'class_start hal' action=boot (/system/etc/init/hw/init.rc:1376) took 68ms and succeeded
+```
+
+崩溃/重启计数（本次开机日志）：
+
+```
+$ grep -c "Service 'vendor.drm-widevine-hal'.*signal\|Sending signal 9 to service 'vendor.drm-widevine-hal'" qemu.log
+0
+$ grep "avc:  denied.*hal_drm_widevine" qemu.log | grep -v ShellService        # 无输出
+```
+
+残留的 avc 都是既有的 MTK/小米 vendor 服务（`vendor.mediatek.hardware.*`、
+`vendor.xiaomi.hardware.aidl.mtdservice`）find 拒绝，与本卡点无关。
+
+## 4. 运行态（2026-10-28 04:05–04:06，guest Enforcing）
+
+```console
+$ adb shell getenforce
+Enforcing
+$ adb shell getprop init.svc.vendor.drm-widevine-hal
+running
+$ adb shell service list | grep -i drm
+38	android.hardware.drm.IDrmFactory/widevine: [android.hardware.drm.IDrmFactory]
+143	drm.drmManager: [drm.IDrmManagerService]
+$ adb shell ps -A | grep widevine
+media          554     1   10939128   7976 0 0 S android.hardware.drm-service.widevine
+$ adb shell ls -Z /apex/com.google.android.widevine/bin/hw/
+u:object_r:hal_drm_widevine_exec:s0 android.hardware.drm-service.widevine
+$ adb shell ls -Zd /data/vendor/mediadrm
+u:object_r:vendor_data_file:s0 /data/vendor/mediadrm
+```
+
+pid 554 自开机起未变化（无重启）；04:06 复查仍在。
+
+`dumpsys android.hardware.drm.IDrmFactory/widevine` 返回
+`FAILED_TRANSACTION`——该 HAL 没实现 dump 接口，属预期，不影响服务。
+
+## 5. 策略生成（设备 Python 流水线同步）
+
+```console
+$ cd devices/xiaomi/gold-15/build
+$ PYTHONPATH=scripts:vendor/build python3 -    # 导入 vendor/build/sepolicy.py，调用 widevine_hal_cil("202404")
+allow_lines= 19
+servicemanager_rule= True
+service_manager_rule= True
+marker= ;; cdh gold-15: widevine-hal
+```
+
+两条注册规则与引擎侧片段逐字一致。
+
+## 6. 框架层端到端：MediaDrm 能枚举到 Widevine 工厂
+
+用 app_process 跑探针（`out/tmp/wv/probe/DrmProbe.java`，d8 出 dex）：
+
+```console
+$ adb shell 'CLASSPATH=/data/local/tmp/drmprobe.dex app_process /system/bin DrmProbe'
+widevine_supported=true
+clearkey_supported=false
+drm_failed=java.lang.IllegalArgumentException: application package name cannot be null
+```
+
+`isCryptoSchemeSupported` 由 framework → mediadrmserver → DrmHal 向
+`IDrmFactory/widevine` 询问，返回 true 即证明「框架确实看到了该 HAL 工厂」。
+最后一条是 shell 进程没有包名、`MediaDrm` 构造被拒（app_process 拿不到包名，
+hidden API 也不允许反射带包名的构造器），与 HAL 无关；`clearkey=false`
+是因为云机没有 clearkey HAL，本卡点未涉及。
+
+## 7. 实例重启后复验（2026-10-28 04:11 起）
+
+为清掉宿主双重网关遗留的僵死 TCP 流（见 `../issue-daemon-backend-reap/`），
+实例 5 停机后用修复版 daemon 重启（PID 15106），开机完成后复验：
+
+```console
+$ adb shell 'su 0 sh -c "getprop init.svc.vendor.drm-widevine-hal"'
+running
+$ adb shell "service list | grep IDrmFactory/widevine"
+42	android.hardware.drm.IDrmFactory/widevine: [android.hardware.drm.IDrmFactory]
+$ adb shell "ps -A | grep android.hardware.drm-service.widevine"
+media          946     1   10884172   7032 0                   0 S android.hardware.drm-service.widevine
+$ adb shell 'dalvikvm -cp /data/local/tmp/wvprobe.dex DrmProbe'
+widevine_supported=true
+clearkey_supported=true
+drm_failed=java.lang.IllegalArgumentException: application package name cannot be null
+$ grep -c 'scontext=u:r:hal_drm_widevine' out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/5/qemu.log
+0
+```
+
+说明：
+
+- `init.svc.*` 属性以 shell uid（2000）读不到（本镜像的属性读策略），
+  用 `su 0` 读取为 `running`；
+- 本次开机的串口日志（`qemu.log`）同样记录到 init 启动该服务与 servicemanager
+  的域判定：
+  `qemu.log:2819 init: starting service 'vendor.drm-widevine-hal'...`、
+  `qemu.log:2850 servicemanager: Caller(pid=551,uid=1013,sid=u:r:hal_drm_widevine:s0)
+  Found android.hardware.drm.IDrmFactory/widevine in device VINTF manifest.`
+  （串口行里的 pid 是 init 启动瞬间的编号；当前 `ps` 显示的是同一 APEX 二进制的
+  现存活进程 946，`/proc/946/cmdline` 指向
+  `/apex/com.google.android.widevine/bin/hw/android.hardware.drm-service.widevine`）；
+- 本次 `clearkey_supported=true`（clearkey HAL 进程 859 已起），与 §6 当时
+  未起来的状态不同，不影响 Widevine 结论；
+- `drm_failed` 仍是 shell 无包名，属探针限制。
+
+产物未变：patch sha256 `027fb407645096fc1ad54b172f407f0e55bc631e3786a007916ad5816ba80a1e`，
+vda sha256 `7c1fb83b52f1cc5882b19a42060302e715a37ad7c2957b60f121f809f54d269b`。

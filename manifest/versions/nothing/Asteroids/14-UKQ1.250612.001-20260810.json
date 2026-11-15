@@ -1,0 +1,21 @@
+{
+  "id": 24,
+  "buildId": "14-UKQ1.250612.001-20260810",
+  "deviceId": 18,
+  "configId": 29,
+  "osVersion": "14-UKQ1.250612.001-20260810",
+  "buildDate": "20260810",
+  "securityPatch": "2026-04-05",
+  "factoryTgz": "Asteroids_B4.1-260810-1153.zip",
+  "factoryDir": "",
+  "overrides": {
+    "buildKernel": {
+      "uname": "Linux localhost 6.1.157-android14-11-g82d681c9b06b-ab14634535 #1 SMP PREEMPT Mon Dec 22 19:22:33 UTC 2025 aarch64 Toybox"
+    }
+  },
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 Asteroids_B4.1-260810-1153.zip (vendor/build.prop) 自动生成。",
+    "osVersion": "14-UKQ1.250612.001-20260810"
+  },
+  "updatedAt": "2026-11-06 02:47:41"
+}

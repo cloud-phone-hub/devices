@@ -1,0 +1,46 @@
+# 改造前现场（2026-11-15）
+
+## 1. engine/build 只有 11 步
+
+    $ ls engine/build/stages
+    01_unpack  02_build_kernel  03_build_modules  04_build_boot  05_build_vendor_boot
+    06_build_odm  07_build_vendor  08_build_vendor_dlkm  09_build_patch  10_pack_super  11_pack_vda
+
+    $ cd engine && out/bin/cdh help | grep -E "prepare|build-hardware"
+    （无输出：两个子命令都不存在）
+
+## 2. 13 步草案与现役代码的差距（谁更新）
+
+    $ diff -rq engine/build/stages/02_build_kernel agent/modules/enginebuild/stages/03_build_kernel
+    （剔除 import 路径后 0 差异 → 副本是同源拷贝）
+
+    $ diff engine/build/stages/07_build_vendor/props.go agent/modules/enginebuild/stages/09_build_vendor/props.go
+    < 	// 纵深防御：先剔除可能已存在的 mapper/<suffix>（如官方同步残余不同标签），再统一重命名 mapper/minigbm，
+    < 	cleaned, removed := dropDuplicateServiceContexts(data, "mapper/"+suffix+" u:object_r:hal_graphics_mapper_service:s0\n")
+
+    $ diff engine/build/stages/07_build_vendor/sepolicy_cil.go agent/modules/enginebuild/stages/09_build_vendor/sepolicy_cil.go
+    < 	baseVenTypes := collectCILTypesAndAttrs(baseVenCil)
+    < 	updatedSvcCtx := mergeOfficialVendorServiceContexts(...)
+    → engine/build 侧更新，副本落后
+
+## 3. 副本 08 的路径是错的（未完成的搬迁）
+
+    agent/modules/enginebuild/stages/08_build_hardware/core/profile/profile.go:
+    func BuildDir() string {
+        return filepath.Join(Root(), "agent-plugin", "modules", "pipeline", "stages", "08_build_hardware")
+    }
+    → 该目录不存在；实际模块 JSON 在 stages/08_build_hardware/modules
+
+## 4. HAL 源码树位置
+
+    $ du -sh engine/vendor/hardware
+    522M	engine/vendor/hardware
+    $ ls engine/vendor/
+    build  hardware  out
+    → 与旧构建器 vendor/build、中间产物 vendor/out 混放
+
+## 5. 阶段视图硬编码 11
+
+    agent/internal/manifestview/inspector.go:  Index 1..11（Dir 已 13 步编号）
+    engine/build/web/pipeline.go:              stages 容量 11、TotalStages: 11
+    engine/build/web/web_test.go:              断言 len(stages) == 11

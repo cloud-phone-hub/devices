@@ -1,0 +1,72 @@
+# 修复后日志（15R / CPH2769，实例 9，2026-11-03 09:35 启动）
+#
+# vda：patch.img 里 /odm/etc/init/android.hardware.power.stats-service.oplus.rc 换成注释版
+#      （0 条有效行），官方 vendor.power.stats 从 init 里彻底不存在。
+# 取样：out/core/daemon/runtime/15r_16.0.10.500_EX01/9/qemu.log
+#       adb -s 127.0.0.1:5911
+
+## 1) 覆盖件生效：init 解析到的是我们的注释版，service 定义不存在
+$ grep -n 'Parsing file /odm/etc/init/android.hardware.power.stats' qemu.log
+[    0.876669][    T1] init: Parsing file /odm/etc/init/android.hardware.power.stats-service.oplus.rc...
+
+$ grep -c "starting service 'vendor.power.stats'" qemu.log
+0
+$ grep -c "vendor.power.stats'" qemu.log
+0
+$ debugfs -R "dump /odm/etc/init/android.hardware.power.stats-service.oplus.rc /tmp/ps.rc" patch.img
+$ grep -v -E "^\s*#|^\s*$" /tmp/ps.rc | wc -l
+0
+$ getprop init.svc.vendor.power.stats
+（空——该名字在 init 里不存在）
+
+## 2) 我们的空实现独占注册，class_start hal 之后再没被挤掉
+$ grep -n 'vendor.power.stats-default' qemu.log | head -3
+[   11.181595][    T1] init: starting service 'vendor.power.stats-default'...
+[   11.183623][    T1] init: ... started service 'vendor.power.stats-default' has pid 541
+[   11.969946][    T1] init: service 'vendor.power.stats-default' requested start, but it is already running (flags: 132)
+# ↑ 第三行是 class_start hal 的懒启动请求（ctl.interface_start）落到我们服务上，
+#   因为已经 running，直接幂等返回
+[   12.140425][    T1] init: Command 'class_start hal' action=boot (/system/etc/init/hw/init.rc:2186) took 253ms and succeeded
+[   13.998566][  T248] servicemanager: Caller(pid=949,uid=1000,sid=u:r:system_server:s0) Found android.hardware.power.stats.IPowerStats/default in device VINTF manifest.
+
+## 3) 崩溃与抢注全部归零
+$ for p in "power.stats-impl.oplus" "Check failed: s == STATUS_OK" \
+           "starting service 'vendor.power.stats'" \
+           "IPowerStats/default' could not be found" \
+           "Waited one second for android.hardware.power.stats" \
+           "FATAL EXCEPTION IN SYSTEM PROCESS" "WATCHDOG KILLING SYSTEM PROCESS"; do
+      printf "%-55s %s\n" "$p" "$(grep -c "$p" qemu.log)"; done
+power.stats-impl.oplus                                 0
+Check failed: s == STATUS_OK                           0
+starting service 'vendor.power.stats'                  0
+IPowerStats/default' could not be found                 0
+Waited one second for android.hardware.power.stats      0
+FATAL EXCEPTION IN SYSTEM PROCESS                      0
+WATCHDOG KILLING SYSTEM PROCESS                        0
+
+## 4) 运行态判据（adb -s 127.0.0.1:5911）
+$ adb shell "service check android.hardware.power.stats.IPowerStats/default"
+Service android.hardware.power.stats.IPowerStats/default: found        ← 修复前 not found
+$ adb shell "service check vendor.oplus.hardware.handlefactory.IHandleFactory/default"
+Service vendor.oplus.hardware.handlefactory.IHandleFactory/default: not found   ← 声明已遮，符合预期
+$ adb shell "getprop sys.boot_completed; getprop init.svc.vendor.power.stats-default"
+1
+running
+$ adb shell "ps -A | grep -i power"
+system         541     1 ... S android.hardware.power.stats-service     ← 只剩我们的实现
+system         626     1 ... S android.hardware.power-service
+$ adb shell "dumpsys activity activities | grep -m1 topResumedActivity"
+      topResumedActivity=ActivityRecord{181967130 u0 com.android.launcher/.Launcher t7}
+$ adb shell uptime
+ 20:39:00 up 2 min,  0 users,  load average: 13.98, 5.41, 2.00
+
+## 5) 与实例 8 的对照（同一 vda 底盘，仅 odm 覆盖件不同）
+| 判据 | 实例 8（修复前，12 min） | 实例 9（修复后，2 min） |
+| :--- | :--- | :--- |
+| power.stats-impl.oplus 日志行 | 1036 | 0 |
+| Check failed: s == STATUS_OK | 193 | 0 |
+| signal 6（含其他进程） | 469 | 9 |
+| IPowerStats lazy 失败 | 3131 | 0 |
+| service check IPowerStats | not found | found |
+| init.svc.vendor.power.stats | restarting | （无此服务） |
+| FATAL EXCEPTION IN SYSTEM PROCESS | 0 | 0 |

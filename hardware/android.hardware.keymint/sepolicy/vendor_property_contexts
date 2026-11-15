@@ -1,0 +1,8 @@
+# Remote KeyMint 属性上下文（模块自带片段，由 07_build_vendor 追加到装配树）：
+# 初始化读取 ro.vendor.boot_security_patch，缺失会让 guest HAL 用 std::stoi("")
+# 抛异常 abort。lineage 基底没有该键的 exact 规则，vendor_init 无 set 权限 ->
+# 属性不生效；类型由 plat 定义，hal_keymint_default 的 read 授权见同目录
+# vendor_sepolicy.cil。
+# 注意：ro.vendor.build.security_patch 在基底已有规则，重复 exact 会让 init 报
+# Duplicate match 并重启，这里只补 boot 一条。
+ro.vendor.boot_security_patch u:object_r:vendor_security_patch_level_prop:s0 exact string

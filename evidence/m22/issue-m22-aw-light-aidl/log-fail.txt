@@ -1,0 +1,62 @@
+# #67 aw_light 逆向 + 落地过程中的坑（只记踩过的，失败原文与修法）
+# 环境：m22 / flyme 12.5.0.0A / android 16；NDK 29.0.14206865；host macOS
+# 全部命令在 /Volumes/work/cloud-phone-hub/engine 下执行。
+
+## 坑 1：通用反汇编脚本把方法名从内部大写 E 处截断
+
+现象（rev_any.py 用 (\w+?)E 收方法名）：
+    AwLight  aw_light_switch   code=6 …
+    AwLight  aw_music_phaseERKNSt3__16vectorIiNS5_9allocatorIiEEEE code=7 …
+    MeizuCharging  setBatteryUPSModeENS3_14BatteryUPSMode code=7 …
+
+原因：mangled 名里方法名自己也带大写 E（switchEffect / EffectStrength…），非贪婪的
+      (\w+?)E 会先在方法名内部的 E 处断掉，把后面的类型编码当成方法名。
+修法：方法名以 `llvm-nm -D <so> | c++filt` 的原表为准（c++filt 已把
+      BpAwLight::aw_light_switchEffect(int, bool*) 还原干净），脚本只用来对 code 与
+      写/读调用序列；脚本输出里的方法名一律回原表核对，不直接采信。
+      另：函数名不带参数（如 aw_light_initEPb）说明该次匹配停在 `init` 后的 E，
+      看到 `…E` 后面还粘着 `P…`/`RKN…` 就说明名字被截断了。
+
+## 坑 2：cdh 没有 build 子命令
+
+    $ ./out/bin/cdh build 07 --device flyme/m22 --dry-run
+    [err] 未知子命令: build（cdh help 查看用法）
+
+修法：整条流水线用 `cdh device build m22 --only 07_build_vendor`（设备名是 m22，
+      不是 flyme/m22）；只想看/跑 07 的详细计划时直接调阶段入口 `cdh build-vendor …`。
+
+## 坑 3：build-vendor 的必需参数不来自环境变量
+
+    $ ./out/bin/cdh build-vendor -device flyme/m22
+    flag provided but not defined: -device
+    $ ./out/bin/cdh build-vendor -dry-run
+    [err] 缺少 android 主版本：请用 --android（或 --manifest 指向基线清单）
+    $ ./out/bin/cdh build-vendor --android 16 --manifest "$CDH_MANIFEST" -dry-run
+    [err] 缺少产物路径段：请用 --vendor/--brand/--version（或 --out 直接指定版本目录）
+
+原因：`cdh env <清单> --env` 导出的 CDH_* 只覆盖一部分回退项；--android 与
+      --vendor/--brand/--version 必须显式给（或 --out 一次给全）。
+修法：
+    eval "$(./out/bin/cdh env manifest/flyme/m22/baselines/12.5.0.0A.json --env)"
+    ./out/bin/cdh build-vendor --android 16 --manifest "$CDH_MANIFEST" \
+        --vendor flyme --brand m22 --version 12.5.0.0A [-dry-run]
+
+## 坑 4：原厂 rc 没有 interface/seclabel 行，不能逐字照搬
+
+原厂 etc/init/vendor.meizu.hardware.aw_light-service.rc 只有：
+    service vendor.default.aw_light /vendor/bin/hw/vendor.meizu.hardware.aw_light-service
+        class late_start
+        user system
+        group system
+它靠独立 vendor_file_contexts 里的 hal_aw_light_default_exec 完成域转换，且没写
+`interface aidl`。若逐字搬：init 不换域（跑在 init 域）+ servicemanager 不按 AIDL
+实例名登记 → 6b 也派生不出 *_exec。
+修法：补两行——`interface aidl vendor.meizu.hardware.aw_light.IAwLight/default` 与
+      `seclabel u:r:hal_aw_light_default:s0`（与 #65/#66 的 servicetracker rc 同款）。
+
+## 坑 5：VINTF 片段版本号不要自己抬
+
+原厂片段是 <manifest version="1.0">（Android 16 上 Flyme 就这么发的）。本引擎的
+alignVintfSchema 只降不升，07 日志会出现「把 0 个 VINTF 片段 schema 对齐到 9.0」，
+属预期；不要为了「对齐」手改成 9.0——原厂能跑说明 libvintf 接受该写法，改了反而
+偏离原厂事实。

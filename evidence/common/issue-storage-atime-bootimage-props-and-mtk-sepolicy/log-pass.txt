@@ -1,0 +1,1414 @@
+=== [修复后] #186 存储时间戳、bootimage 属性、MTK 公开属性 SELinux 与 vendor 文件标签 ===
+
+1. ultimate.cloud_emulator 云机 U-DATA-ATIME 清零 (ageDays=120, hit=false):
+CLOUD (0b7cd3333759d674-cloud):
+{
+  "runId": "run-00016",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "build": {
+      "board": "gold",
+      "device": "gold",
+      "hardware": "mt6833",
+      "product": "gold"
+    },
+    "category": "cloud_emulator",
+    "checks": [
+      {
+        "evidence": [],
+        "hit": false,
+        "id": "H-115",
+        "name": "模拟器检测(Build 危险值)",
+        "risk": "deadly"
+      },
+      {
+        "evidence": {
+          "scanned": 60
+        },
+        "hit": false,
+        "id": "H-64",
+        "name": "模拟器/QEMU 特征文件(easydetect+secsdk 全量 60 条)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "model": "2312DRAABC"
+        },
+        "hit": false,
+        "id": "U-EMU-MODEL",
+        "name": "模拟器机型名/fingerprint 关键字",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "baseappfullPkg": false,
+          "modDevice": "gold"
+        },
+        "hit": true,
+        "id": "H-58",
+        "name": "云固件包/mod_device 改写",
+        "risk": "info"
+      },
+      {
+        "evidence": {
+          "marks": [],
+          "noThermal": false,
+          "tempFiles": "(无)",
+          "thermalZones": "31"
+        },
+        "hit": false,
+        "id": "H-115b",
+        "name": "模拟器环境/挂载/温度文件三路",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "scanned": 15
+        },
+        "hit": false,
+        "id": "U-DOCKER",
+        "name": "Docker/容器环境标记(属性+13 路径)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "initMntId": null,
+          "nsDiff": "(同一 ns)",
+          "selfMntId": null
+        },
+        "hit": false,
+        "id": "U-MNT-NS",
+        "name": "挂载命名空间隔离(与 init/zygote 不同)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "overlayMounts": 24,
+          "rootFs": "erofs",
+          "systemFs": "(未知)"
+        },
+        "hit": true,
+        "id": "U-FS-TYPE",
+        "name": "根/system 为 overlay 型文件系统",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "note": "原文仅判 vmmsf，本侧扩三类"
+        },
+        "hit": false,
+        "id": "U-VM-FS",
+        "name": "/proc/filesystems 含虚拟化驱动(vmmsf/vboxsf/9p)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "ageDays": 120,
+          "earliestAtime": "2026-07-14T09:51:26.000Z",
+          "earliestAtimeSec": 1784022686,
+          "note": "真机多年使用后 atime 通常在月/年级；本侧阈值 7 天为暂定，需真机对拍校准",
+          "probed": 24
+        },
+        "hit": false,
+        "id": "U-DATA-ATIME",
+        "name": "/data 目录 atime 取证(镜像新鲜度)",
+        "risk": "info"
+      },
+      {
+        "evidence": {
+          "note": "5 条路径均未命中（App 无权限时可能误阴，shell 身份可读）"
+        },
+        "hit": false,
+        "id": "U-USER-999",
+        "name": "user-999 目录存在(云机/群控投放位)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "count": 0,
+          "idmapFields": [],
+          "note": "基线 NO_RISK：secsdk 将其作为 x7 设备指纹上报，非风险判据；本侧同口径只取证"
+        },
+        "hit": false,
+        "id": "U-IDMAP-FINGER",
+        "name": "resource-cache idmap 指纹(取证)",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "connectOk": false,
+          "err": "java.lang.RuntimeException: Connection refused",
+          "socketList": "(无)"
+        },
+        "hit": false,
+        "id": "U-LOCALSOCKET",
+        "name": "群控 LocalSocket 'scrcpy' 可连",
+        "risk": "deadly"
+      },
+      {
+        "evidence": [
+          "overlay 根文件系统 x24"
+        ],
+        "hit": true,
+        "id": "H-56",
+        "name": "云手机/虚拟化特征聚合",
+        "risk": "warn"
+      },
+      {
+        "evidence": [],
+        "hit": false,
+        "id": "H-59",
+        "name": "Scene 调度框架内核节点",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "glRenderer": "(无)"
+        },
+        "hit": false,
+        "id": "H-60",
+        "name": "软件渲染检测(SW GL)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "refreshSample": [
+            ""
+          ]
+        },
+        "hit": false,
+        "id": "H-61",
+        "name": "显示配置取证",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "error": "java.lang.IllegalArgumentException: method android.content.IntentFilter.<init> argument 1 has type android.content.IntentFilter, got java.lang.String"
+        },
+        "hit": false,
+        "id": "H-57",
+        "name": "充电功率异常(>300W 云机伪造)",
+        "risk": "deadly"
+      },
+      {
+        "evidence": {
+          "byType": {
+            "type1": 1,
+            "type10": 1,
+            "type11": 1,
+            "type14": 1,
+            "type15": 1,
+            "type16": 1,
+            "type17": 1,
+            "type18": 2,
+            "type19": 1,
+            "type2": 1,
+            "type20": 1,
+            "type22": 1,
+            "type27": 1,
+            "type3": 1,
+            "type33171005": 1,
+            "type33171007": 1,
+            "type33171028": 1,
+            "type33171029": 1,
+            "type33171031": 1,
+            "type33171036": 1,
+            "type33171059": 1,
+            "type33171089": 1,
+            "type33171109": 1,
+            "type35": 1,
+            "type4": 1,
+            "type5": 1,
+            "type8": 1,
+            "type9": 1
+          },
+          "total": 29
+        },
+        "hit": false,
+        "id": "H-63",
+        "name": "传感器缺失(云手机硬证据)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "err": "java.lang.RuntimeException: Array has incompatible type: class [I",
+          "reached": false
+        },
+        "hit": false,
+        "id": "U-GPU-GL-RENDERER",
+        "name": "GL 渲染器字符串(EGL/GLES 实取)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "err": "java.lang.RuntimeException: Array has incompatible type: class [I",
+          "reached": false
+        },
+        "hit": false,
+        "id": "U-SOC-GPU-ALIGN",
+        "name": "SoC 厂商与 GL 渲染器矛盾",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "boardPlatform": "mt6833",
+          "glReal": null,
+          "glRenderer": "",
+          "note": "完整 Vulkan 设备属性（VkPhysicalDeviceProperties.deviceName/apiVersion）需 native",
+          "vulkanDeviceProps": [
+            ""
+          ],
+          "vulkanProp": "mali"
+        },
+        "hit": true,
+        "id": "H-122",
+        "name": "GPU/Vulkan 指纹取证",
+        "risk": "info"
+      },
+      {
+        "evidence": {
+          "note": "需 native vkCreateInstance/vkEnumeratePhysicalDevices/vkGetPhysicalDeviceProperties；Java 无 Vulkan API",
+          "requiresNative": true
+        },
+        "hit": false,
+        "id": "U-VULKAN-DEVICE",
+        "name": "Vulkan deviceName 实取",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "note": "cpuid/内联 asm 需 native",
+          "requiresNative": true
+        },
+        "hit": false,
+        "id": "U-X86-PROBE",
+        "name": "x86 指令执行探针",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "note": "基线 NO_RISK：悬浮球/三挡手势状态采集，部分分支未还原，不报险",
+          "system_navigation": "(无)"
+        },
+        "hit": false,
+        "id": "H-62",
+        "name": "系统侧滑/悬浮球特性(取证)",
+        "risk": "none"
+      }
+    ],
+    "deadly": 0,
+    "hit": 4,
+    "info": 2,
+    "ok": true,
+    "total": 25,
+    "warn": 2
+  }
+}
+
+REAL (ec519c7d513a3ad3):
+{
+  "runId": "run-00016",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "build": {
+      "board": "gold",
+      "device": "gold",
+      "hardware": "mt6833",
+      "product": "gold"
+    },
+    "category": "cloud_emulator",
+    "checks": [
+      {
+        "evidence": [],
+        "hit": false,
+        "id": "H-115",
+        "name": "模拟器检测(Build 危险值)",
+        "risk": "deadly"
+      },
+      {
+        "evidence": {
+          "scanned": 60
+        },
+        "hit": false,
+        "id": "H-64",
+        "name": "模拟器/QEMU 特征文件(easydetect+secsdk 全量 60 条)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "model": "2312DRAABC"
+        },
+        "hit": false,
+        "id": "U-EMU-MODEL",
+        "name": "模拟器机型名/fingerprint 关键字",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "baseappfullPkg": false,
+          "modDevice": "gold"
+        },
+        "hit": true,
+        "id": "H-58",
+        "name": "云固件包/mod_device 改写",
+        "risk": "info"
+      },
+      {
+        "evidence": {
+          "marks": [],
+          "noThermal": false,
+          "tempFiles": "(无)",
+          "thermalZones": "31"
+        },
+        "hit": false,
+        "id": "H-115b",
+        "name": "模拟器环境/挂载/温度文件三路",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "scanned": 15
+        },
+        "hit": false,
+        "id": "U-DOCKER",
+        "name": "Docker/容器环境标记(属性+13 路径)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "initMntId": null,
+          "nsDiff": "(同一 ns)",
+          "selfMntId": null
+        },
+        "hit": false,
+        "id": "U-MNT-NS",
+        "name": "挂载命名空间隔离(与 init/zygote 不同)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "overlayMounts": 24,
+          "rootFs": "erofs",
+          "systemFs": "(未知)"
+        },
+        "hit": true,
+        "id": "U-FS-TYPE",
+        "name": "根/system 为 overlay 型文件系统",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "note": "原文仅判 vmmsf，本侧扩三类"
+        },
+        "hit": false,
+        "id": "U-VM-FS",
+        "name": "/proc/filesystems 含虚拟化驱动(vmmsf/vboxsf/9p)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "ageDays": 181,
+          "earliestAtime": "2026-05-14T08:38:01.000Z",
+          "earliestAtimeSec": 1778747881,
+          "note": "真机多年使用后 atime 通常在月/年级；本侧阈值 7 天为暂定，需真机对拍校准",
+          "probed": 24
+        },
+        "hit": false,
+        "id": "U-DATA-ATIME",
+        "name": "/data 目录 atime 取证(镜像新鲜度)",
+        "risk": "info"
+      },
+      {
+        "evidence": {
+          "note": "5 条路径均未命中（App 无权限时可能误阴，shell 身份可读）"
+        },
+        "hit": false,
+        "id": "U-USER-999",
+        "name": "user-999 目录存在(云机/群控投放位)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "count": 0,
+          "idmapFields": [],
+          "note": "基线 NO_RISK：secsdk 将其作为 x7 设备指纹上报，非风险判据；本侧同口径只取证"
+        },
+        "hit": false,
+        "id": "U-IDMAP-FINGER",
+        "name": "resource-cache idmap 指纹(取证)",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "connectOk": false,
+          "err": "java.lang.RuntimeException: Connection refused",
+          "socketList": "(无)"
+        },
+        "hit": false,
+        "id": "U-LOCALSOCKET",
+        "name": "群控 LocalSocket 'scrcpy' 可连",
+        "risk": "deadly"
+      },
+      {
+        "evidence": [
+          "overlay 根文件系统 x24"
+        ],
+        "hit": true,
+        "id": "H-56",
+        "name": "云手机/虚拟化特征聚合",
+        "risk": "warn"
+      },
+      {
+        "evidence": [],
+        "hit": false,
+        "id": "H-59",
+        "name": "Scene 调度框架内核节点",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "glRenderer": "(无)"
+        },
+        "hit": false,
+        "id": "H-60",
+        "name": "软件渲染检测(SW GL)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "refreshSample": [
+            ""
+          ]
+        },
+        "hit": false,
+        "id": "H-61",
+        "name": "显示配置取证",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "error": "java.lang.IllegalArgumentException: method android.content.IntentFilter.<init> argument 1 has type android.content.IntentFilter, got java.lang.String"
+        },
+        "hit": false,
+        "id": "H-57",
+        "name": "充电功率异常(>300W 云机伪造)",
+        "risk": "deadly"
+      },
+      {
+        "evidence": {
+          "byType": {
+            "type1": 1,
+            "type10": 1,
+            "type11": 1,
+            "type14": 1,
+            "type15": 1,
+            "type16": 1,
+            "type17": 1,
+            "type18": 2,
+            "type19": 1,
+            "type2": 1,
+            "type20": 1,
+            "type22": 1,
+            "type27": 1,
+            "type3": 1,
+            "type33171005": 1,
+            "type33171007": 1,
+            "type33171028": 1,
+            "type33171029": 1,
+            "type33171031": 1,
+            "type33171036": 1,
+            "type33171059": 1,
+            "type33171089": 1,
+            "type33171109": 1,
+            "type35": 1,
+            "type4": 1,
+            "type5": 1,
+            "type8": 1,
+            "type9": 1
+          },
+          "total": 29
+        },
+        "hit": false,
+        "id": "H-63",
+        "name": "传感器缺失(云手机硬证据)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "err": "java.lang.RuntimeException: Array has incompatible type: class [I",
+          "reached": false
+        },
+        "hit": false,
+        "id": "U-GPU-GL-RENDERER",
+        "name": "GL 渲染器字符串(EGL/GLES 实取)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "err": "java.lang.RuntimeException: Array has incompatible type: class [I",
+          "reached": false
+        },
+        "hit": false,
+        "id": "U-SOC-GPU-ALIGN",
+        "name": "SoC 厂商与 GL 渲染器矛盾",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "boardPlatform": "mt6833",
+          "glReal": null,
+          "glRenderer": "",
+          "note": "完整 Vulkan 设备属性（VkPhysicalDeviceProperties.deviceName/apiVersion）需 native",
+          "vulkanDeviceProps": [
+            "Permission Denial: can't dump gpu from pid=4343, uid=10299"
+          ],
+          "vulkanProp": "mali"
+        },
+        "hit": true,
+        "id": "H-122",
+        "name": "GPU/Vulkan 指纹取证",
+        "risk": "info"
+      },
+      {
+        "evidence": {
+          "note": "需 native vkCreateInstance/vkEnumeratePhysicalDevices/vkGetPhysicalDeviceProperties；Java 无 Vulkan API",
+          "requiresNative": true
+        },
+        "hit": false,
+        "id": "U-VULKAN-DEVICE",
+        "name": "Vulkan deviceName 实取",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "note": "cpuid/内联 asm 需 native",
+          "requiresNative": true
+        },
+        "hit": false,
+        "id": "U-X86-PROBE",
+        "name": "x86 指令执行探针",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "note": "基线 NO_RISK：悬浮球/三挡手势状态采集，部分分支未还原，不报险",
+          "system_navigation": "(无)"
+        },
+        "hit": false,
+        "id": "H-62",
+        "name": "系统侧滑/悬浮球特性(取证)",
+        "risk": "none"
+      }
+    ],
+    "deadly": 0,
+    "hit": 4,
+    "info": 2,
+    "ok": true,
+    "total": 25,
+    "warn": 2
+  }
+}
+
+2. files.storage 双机对比 (云机 vs 真机, 20 路径全齐且 atime 回拨 ~120 天):
+CLOUD (0b7cd3333759d674-cloud):
+{
+  "runId": "run-00018",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "ok": true,
+    "pathCount": 20,
+    "paths": [
+      {
+        "path": "/storage/emulated",
+        "stat": {
+          "atime": "1970-01-01 08:00:11.216000",
+          "ctime": "2026-11-11 16:21:54.020000",
+          "mtime": "2026-11-11 16:21:54.020000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 144,
+          "st_gid": 1023,
+          "st_ino": 1769473,
+          "st_mode": 16744,
+          "st_nlink": 4,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 1023
+        }
+      },
+      {
+        "path": "/storage/emulated/0",
+        "stat": {
+          "atime": "2026-07-14 19:16:46.000000",
+          "ctime": "2026-11-11 16:21:58.372000",
+          "mtime": "2026-11-11 16:21:58.372000",
+          "st_blksize": 4096,
+          "st_blocks": 16,
+          "st_dev": 144,
+          "st_gid": 1023,
+          "st_ino": 1769475,
+          "st_mode": 17912,
+          "st_nlink": 19,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 1023
+        }
+      },
+      {
+        "path": "/data/system/users/0",
+        "stat": {
+          "atime": "1970-01-01 08:00:11.948000",
+          "ctime": "2026-11-11 16:34:51.029000",
+          "mtime": "2026-11-11 16:34:51.029000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 64816,
+          "st_gid": 1000,
+          "st_ino": 6479879,
+          "st_mode": 16893,
+          "st_nlink": 3,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 1000
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Alarms",
+        "stat": {
+          "atime": "2026-07-14 16:21:57.000000",
+          "ctime": "2026-11-11 16:21:57.780000",
+          "mtime": "2026-07-14 16:21:57.000000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 144,
+          "st_gid": 1023,
+          "st_ino": 1769515,
+          "st_mode": 17912,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 10224
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Android",
+        "stat": {
+          "atime": "2026-07-14 17:44:33.000000",
+          "ctime": "2026-11-11 16:21:58.084000",
+          "mtime": "2026-11-11 16:21:54.220000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 144,
+          "st_gid": 1023,
+          "st_ino": 1769476,
+          "st_mode": 17913,
+          "st_nlink": 5,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 1023
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Audiobooks",
+        "stat": {
+          "atime": "2026-07-14 16:28:50.000000",
+          "ctime": "2026-11-11 16:21:57.804000",
+          "mtime": "2026-07-14 16:28:50.000000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 144,
+          "st_gid": 1023,
+          "st_ino": 1769522,
+          "st_mode": 17912,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 10224
+        }
+      },
+      {
+        "path": "/storage/emulated/0/DCIM",
+        "stat": {
+          "atime": "2026-07-14 16:35:43.000000",
+          "ctime": "2026-11-11 16:21:57.824000",
+          "mtime": "2026-07-14 16:35:43.000000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 144,
+          "st_gid": 1023,
+          "st_ino": 1769520,
+          "st_mode": 17912,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 10224
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Documents",
+        "stat": {
+          "atime": "2026-07-14 16:42:36.000000",
+          "ctime": "2026-11-11 16:21:57.844000",
+          "mtime": "2026-07-14 16:42:36.000000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 144,
+          "st_gid": 1023,
+          "st_ino": 1769521,
+          "st_mode": 17912,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 10224
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Download",
+        "stat": {
+          "atime": "2026-07-14 16:49:29.000000",
+          "ctime": "2026-11-11 16:21:57.868000",
+          "mtime": "2026-07-14 16:49:29.000000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 144,
+          "st_gid": 1023,
+          "st_ino": 1769519,
+          "st_mode": 17912,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 10224
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Movies",
+        "stat": {
+          "atime": "2026-07-14 16:56:22.000000",
+          "ctime": "2026-11-11 16:21:57.904000",
+          "mtime": "2026-11-11 16:21:56.560000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 144,
+          "st_gid": 1023,
+          "st_ino": 1769518,
+          "st_mode": 17912,
+          "st_nlink": 3,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 10224
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Music",
+        "stat": {
+          "atime": "2026-07-14 17:03:15.000000",
+          "ctime": "2026-11-11 16:21:57.928000",
+          "mtime": "2026-11-11 16:21:56.560000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 144,
+          "st_gid": 1023,
+          "st_ino": 1769512,
+          "st_mode": 17912,
+          "st_nlink": 3,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 10224
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Notifications",
+        "stat": {
+          "atime": "2026-07-14 17:10:08.000000",
+          "ctime": "2026-11-11 16:21:57.948000",
+          "mtime": "2026-07-14 17:10:08.000000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 144,
+          "st_gid": 1023,
+          "st_ino": 1769516,
+          "st_mode": 17912,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 10224
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Pictures",
+        "stat": {
+          "atime": "2026-07-14 17:17:01.000000",
+          "ctime": "2026-11-11 16:21:57.980000",
+          "mtime": "2026-11-11 16:21:56.560000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 144,
+          "st_gid": 1023,
+          "st_ino": 1769517,
+          "st_mode": 17912,
+          "st_nlink": 3,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 10224
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Podcasts",
+        "stat": {
+          "atime": "2026-07-14 17:23:54.000000",
+          "ctime": "2026-11-11 16:21:58.016000",
+          "mtime": "2026-07-14 17:23:54.000000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 144,
+          "st_gid": 1023,
+          "st_ino": 1769513,
+          "st_mode": 17912,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 10224
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Recordings",
+        "stat": {
+          "atime": "2026-07-14 17:30:47.000000",
+          "ctime": "2026-11-11 16:21:58.036000",
+          "mtime": "2026-07-14 17:30:47.000000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 144,
+          "st_gid": 1023,
+          "st_ino": 1769523,
+          "st_mode": 17912,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 10224
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Ringtones",
+        "stat": {
+          "atime": "2026-07-14 17:37:40.000000",
+          "ctime": "2026-11-11 16:21:58.060000",
+          "mtime": "2026-07-14 17:37:40.000000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 144,
+          "st_gid": 1023,
+          "st_ino": 1769514,
+          "st_mode": 17912,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 10224
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Android/data",
+        "stat": {
+          "atime": "2026-07-14 17:51:26.000000",
+          "ctime": "2026-11-11 16:22:16.493000",
+          "mtime": "2026-11-11 16:22:16.493000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 144,
+          "st_gid": 1078,
+          "st_ino": 1769478,
+          "st_mode": 17913,
+          "st_nlink": 23,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 1023
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Android/obb",
+        "stat": {
+          "atime": "2026-07-14 17:58:19.000000",
+          "ctime": "2026-11-11 16:21:58.136000",
+          "mtime": "2026-07-14 17:58:19.000000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 144,
+          "st_gid": 1079,
+          "st_ino": 1769479,
+          "st_mode": 17913,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 1023
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Android/data/.nomedia",
+        "stat": {
+          "atime": "2026-07-14 17:51:26.000000",
+          "ctime": "2026-11-11 16:21:58.116000",
+          "mtime": "2026-07-14 17:51:26.000000",
+          "st_blksize": 4096,
+          "st_blocks": 0,
+          "st_dev": 144,
+          "st_gid": 1078,
+          "st_ino": 1769580,
+          "st_mode": 33200,
+          "st_nlink": 1,
+          "st_rdev": 0,
+          "st_size": 0,
+          "st_uid": 10224
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Android/obb/.nomedia",
+        "stat": {
+          "atime": "2026-07-14 17:58:19.000000",
+          "ctime": "2026-11-11 16:21:58.144000",
+          "mtime": "2026-07-14 17:58:19.000000",
+          "st_blksize": 4096,
+          "st_blocks": 0,
+          "st_dev": 144,
+          "st_gid": 1079,
+          "st_ino": 1769581,
+          "st_mode": 33200,
+          "st_nlink": 1,
+          "st_rdev": 0,
+          "st_size": 0,
+          "st_uid": 10224
+        }
+      }
+    ],
+    "statFailed": 0
+  }
+}
+
+REAL (ec519c7d513a3ad3):
+{
+  "runId": "run-00018",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "ok": true,
+    "pathCount": 20,
+    "paths": [
+      {
+        "path": "/storage/emulated",
+        "stat": {
+          "atime": "2026-07-28 16:29:36.652000",
+          "ctime": "2026-07-28 16:32:59.900000",
+          "mtime": "2026-07-28 16:32:59.900000",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 139,
+          "st_mode": 16744,
+          "st_nlink": 4,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 1023
+        }
+      },
+      {
+        "path": "/storage/emulated/0",
+        "stat": {
+          "atime": "2026-07-28 16:32:59.900000",
+          "ctime": "2026-11-05 15:37:09.636015",
+          "mtime": "2026-11-03 19:47:44.368006",
+          "st_blksize": 4096,
+          "st_blocks": 16,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 10810,
+          "st_mode": 17912,
+          "st_nlink": 22,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 1023
+        }
+      },
+      {
+        "path": "/data/system/users/0",
+        "stat": {
+          "atime": "2026-07-28 16:29:37.000000",
+          "ctime": "2026-11-11 16:34:46.482735",
+          "mtime": "2026-11-11 16:34:46.482735",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 65082,
+          "st_gid": 1000,
+          "st_ino": 222,
+          "st_mode": 16893,
+          "st_nlink": 3,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 1000
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Alarms",
+        "stat": {
+          "atime": "2026-07-28 16:33:04.116000",
+          "ctime": "2026-07-28 16:33:04.116000",
+          "mtime": "2026-07-28 16:33:04.116000",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 12140,
+          "st_mode": 17912,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 10227
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Android",
+        "stat": {
+          "atime": "2026-07-28 16:33:00.984000",
+          "ctime": "2026-11-03 16:04:50.332005",
+          "mtime": "2026-11-03 16:04:50.332005",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 11561,
+          "st_mode": 17913,
+          "st_nlink": 5,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 1023
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Audiobooks",
+        "stat": {
+          "atime": "2026-07-28 16:33:04.132000",
+          "ctime": "2026-07-28 16:33:04.132000",
+          "mtime": "2026-07-28 16:33:04.132000",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 12147,
+          "st_mode": 17912,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 10227
+        }
+      },
+      {
+        "path": "/storage/emulated/0/DCIM",
+        "stat": {
+          "atime": "2026-07-28 16:33:04.132000",
+          "ctime": "2026-09-03 16:55:34.007600",
+          "mtime": "2026-09-03 16:55:34.007600",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 12145,
+          "st_mode": 17912,
+          "st_nlink": 3,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 10227
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Documents",
+        "stat": {
+          "atime": "2026-07-28 16:33:04.132000",
+          "ctime": "2026-07-28 16:33:04.132000",
+          "mtime": "2026-07-28 16:33:04.132000",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 12146,
+          "st_mode": 17912,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 10227
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Download",
+        "stat": {
+          "atime": "2026-07-28 16:33:04.132000",
+          "ctime": "2026-10-29 10:55:27.704010",
+          "mtime": "2026-10-29 10:55:27.704010",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 12144,
+          "st_mode": 17912,
+          "st_nlink": 4,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 10227
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Movies",
+        "stat": {
+          "atime": "2026-07-28 16:33:04.124000",
+          "ctime": "2026-07-28 16:33:04.140000",
+          "mtime": "2026-07-28 16:33:04.140000",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 12143,
+          "st_mode": 17912,
+          "st_nlink": 3,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 10227
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Music",
+        "stat": {
+          "atime": "2026-07-28 16:33:04.104000",
+          "ctime": "2026-10-21 11:15:17.984003",
+          "mtime": "2026-10-21 11:15:17.984003",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 12137,
+          "st_mode": 17912,
+          "st_nlink": 4,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 10227
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Notifications",
+        "stat": {
+          "atime": "2026-07-28 16:33:04.120000",
+          "ctime": "2026-07-28 16:33:04.120000",
+          "mtime": "2026-07-28 16:33:04.120000",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 12141,
+          "st_mode": 17912,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 10227
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Pictures",
+        "stat": {
+          "atime": "2026-07-28 16:33:04.124000",
+          "ctime": "2026-07-28 16:33:16.212000",
+          "mtime": "2026-07-28 16:33:16.212000",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 12142,
+          "st_mode": 17912,
+          "st_nlink": 4,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 10227
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Podcasts",
+        "stat": {
+          "atime": "2026-07-28 16:33:04.112000",
+          "ctime": "2026-07-28 16:33:04.112000",
+          "mtime": "2026-07-28 16:33:04.112000",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 12138,
+          "st_mode": 17912,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 10227
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Recordings",
+        "stat": {
+          "atime": "2026-07-28 16:33:04.132000",
+          "ctime": "2026-07-28 16:33:04.132000",
+          "mtime": "2026-07-28 16:33:04.132000",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 12149,
+          "st_mode": 17912,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 10227
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Ringtones",
+        "stat": {
+          "atime": "2026-07-28 16:33:04.112000",
+          "ctime": "2026-07-28 16:33:04.112000",
+          "mtime": "2026-07-28 16:33:04.112000",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 12139,
+          "st_mode": 17912,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 10227
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Android/data",
+        "stat": {
+          "atime": "2026-07-28 16:33:00.984000",
+          "ctime": "2026-11-06 15:41:52.290709",
+          "mtime": "2026-11-06 15:41:52.290709",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1078,
+          "st_ino": 11563,
+          "st_mode": 17913,
+          "st_nlink": 51,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 1023
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Android/obb",
+        "stat": {
+          "atime": "2026-07-28 16:33:00.984000",
+          "ctime": "2026-11-11 11:32:43.250734",
+          "mtime": "2026-07-28 16:33:34.904000",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1079,
+          "st_ino": 11564,
+          "st_mode": 17913,
+          "st_nlink": 2,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 1023
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Android/data/.nomedia",
+        "stat": {
+          "atime": "2026-07-28 16:33:34.904000",
+          "ctime": "2026-07-28 16:33:34.904000",
+          "mtime": "2026-07-28 16:33:34.904000",
+          "st_blksize": 4096,
+          "st_blocks": 0,
+          "st_dev": 187,
+          "st_gid": 1078,
+          "st_ino": 14967,
+          "st_mode": 33200,
+          "st_nlink": 1,
+          "st_rdev": 0,
+          "st_size": 0,
+          "st_uid": 10227
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Android/obb/.nomedia",
+        "stat": {
+          "atime": "2026-07-28 16:33:34.904000",
+          "ctime": "2026-07-28 16:33:34.904000",
+          "mtime": "2026-07-28 16:33:34.904000",
+          "st_blksize": 4096,
+          "st_blocks": 0,
+          "st_dev": 187,
+          "st_gid": 1079,
+          "st_ino": 14968,
+          "st_mode": 33200,
+          "st_nlink": 1,
+          "st_rdev": 0,
+          "st_size": 0,
+          "st_uid": 10227
+        }
+      }
+    ],
+    "statFailed": 0
+  }
+}
+
+3. 普通 App (untrusted_app) properties.getprop 实读关键属性与 files.vendor_content:
+CLOUD untrusted_app properties.getprop 关键键值:
+{
+  "ro.bootimage.build.fingerprint": null,
+  "ro.bootimage.build.date.utc": null,
+  "ro.bootimage.build.id": null,
+  "ro.bootimage.build.version.incremental": null,
+  "ro.vendor.mediatek.rsc_name": "gold_cn_pa",
+  "ro.vendor.soc.model": "MT6833",
+  "ro.vendor.mediatek.platform": "MT6833",
+  "ro.vendor.mtk_camera_app_version": "3",
+  "ro.vendor.have_aeev_feature": "1",
+  "persist.sys.locale": "zh-CN",
+  "gsm.version.ril-impl": "android reference-ril 1.0"
+}
+
+CLOUD files.vendor_content (public.libraries.txt 21 行与真机逐字节一致):
+{
+  "count": 294,
+  "failed": 0,
+  "ok": true
+}
+
+4. adb shell 实测属性、SELinux 标签与 /data atime (127.0.0.1:5911):
+--- bootimage props ---
+[ro.bootimage.build.date]: [Wed Jul 15 12:57:32 UTC 2026]
+[ro.bootimage.build.date.utc]: [1784120252]
+[ro.bootimage.build.fingerprint]: [Redmi/gold/gold:15/AP3A.240905.015.A2/OS3.0.10.0.VNQCNXM:user/release-keys]
+[ro.bootimage.build.id]: [AP3A.240905.015.A2]
+[ro.bootimage.build.tags]: [release-keys]
+[ro.bootimage.build.type]: [user]
+[ro.bootimage.build.version.incremental]: [OS3.0.10.0.VNQCNXM]
+[ro.bootimage.build.version.release]: [15]
+[ro.bootimage.build.version.release_or_codename]: [15]
+[ro.bootimage.build.version.sdk]: [35]
+--- mtk & locale & ril props ---
+ro.vendor.mediatek.rsc_name=gold_cn_pa
+ro.vendor.soc.model=MT6833
+ro.vendor.mediatek.platform=MT6833
+ro.vendor.mtk_camera_app_version=3
+ro.vendor.have_aeev_feature=1
+persist.sys.locale=zh-CN
+gsm.version.ril-impl=android reference-ril 1.0
+--- /vendor/etc/md & public.libraries.txt ---
+u:object_r:vendor_etc_md_file:s0 /vendor/etc/md
+21 /vendor/etc/public.libraries.txt
+--- /storage/emulated/0 & /data stat ---
+/data atime=2026-07-14 18:56:12.000000000 +0800 mtime=2026-11-11 16:21:54.012000040 +0800
+/storage/emulated/0 atime=2026-07-14 19:16:46.000000000 +0800 mtime=2026-11-11 16:21:58.372000042 +0800
+/storage/emulated/0/Documents atime=2026-07-14 16:42:36.000000000 +0800 mtime=2026-07-14 16:42:36.000000000 +0800
+/storage/emulated/0/Audiobooks atime=2026-07-14 16:28:50.000000000 +0800 mtime=2026-07-14 16:28:50.000000000 +0800
+/storage/emulated/0/Recordings atime=2026-07-14 17:30:47.000000000 +0800 mtime=2026-07-14 17:30:47.000000000 +0800

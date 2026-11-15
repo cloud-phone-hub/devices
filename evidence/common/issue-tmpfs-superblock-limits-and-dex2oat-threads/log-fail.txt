@@ -1,0 +1,112 @@
+=== 实机 shell /proc/mounts & getprop (batch2-pre.log) ===
+tmpfs /dev tmpfs rw,seclabel,nosuid,relatime,mode=755 0 0
+tmpfs /mnt tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755,gid=1000 0 0
+tmpfs /mnt/installer tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755,gid=1000 0 0
+tmpfs /mnt/androidwritable tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755,gid=1000 0 0
+tmpfs /apex tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755 0 0
+tmpfs /bootstrap-apex tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755 0 0
+tmpfs /linkerconfig tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755 0 0
+tmpfs /bootstrap-apex/apex-info-list.xml tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755 0 0
+tmpfs /tmp tmpfs rw,seclabel,relatime 0 0
+/dev/block/vda5 /metadata ext4 rw,seclabel,nosuid,nodev,noatime,nodioread_nolock,discard,nodelalloc,commit=1,data=journal 0 0
+tmpfs /storage tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755,gid=1000 0 0
+/dev/block/dm-48 /data ext4 rw,seclabel,nosuid,nodev,noatime,discard 0 0
+tmpfs /linkerconfig tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755 0 0
+tmpfs /data_mirror tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=700,gid=1000 0 0
+tmpfs /apex/apex-info-list.xml tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755 0 0
+=== getprop ===
+1
+8
+
+=== diff/proc.json summary (pre) ===
+{"identity": 129, "capability": 43, "state": 148, "availability": 0, "fatal": 172}
+=== tmpfs superOptions diffs (pre proc) ===
+[
+ {
+  "level": "capability",
+  "path": "mountinfo.entries[mountPoint=/apex].superOptions",
+  "base": "rw,seclabel,size=3863628k,nr_inodes=965907,mode=755",
+  "target": "rw,seclabel,mode=755"
+ },
+ {
+  "level": "capability",
+  "path": "mountinfo.entries[mountPoint=/apex/apex-info-list.xml].superOptions",
+  "base": "rw,seclabel,size=3863628k,nr_inodes=965907,mode=755",
+  "target": "rw,seclabel,mode=755"
+ },
+ {
+  "level": "capability",
+  "path": "mountinfo.entries[mountPoint=/bootstrap-apex].superOptions",
+  "base": "rw,seclabel,size=3863628k,nr_inodes=965907,mode=755",
+  "target": "rw,seclabel,mode=755"
+ },
+ {
+  "level": "capability",
+  "path": "mountinfo.entries[mountPoint=/bootstrap-apex/apex-info-list.xml].superOptions",
+  "base": "rw,seclabel,size=3863628k,nr_inodes=965907,mode=755",
+  "target": "rw,seclabel,mode=755"
+ },
+ {
+  "level": "capability",
+  "path": "mountinfo.entries[mountPoint=/data_mirror].superOptions",
+  "base": "rw,seclabel,size=3863628k,nr_inodes=965907,mode=700,gid=1000",
+  "target": "rw,seclabel,mode=700,gid=1000"
+ },
+ {
+  "level": "capability",
+  "path": "mountinfo.entries[mountPoint=/dev].superOptions",
+  "base": "rw,seclabel,size=3863628k,nr_inodes=965907,mode=755",
+  "target": "rw,seclabel,mode=755"
+ },
+ {
+  "level": "capability",
+  "path": "mountinfo.entries[mountPoint=/linkerconfig].superOptions",
+  "base": "rw,seclabel,size=3863628k,nr_inodes=965907,mode=755",
+  "target": "rw,seclabel,mode=755"
+ },
+ {
+  "level": "capability",
+  "path": "mountinfo.entries[mountPoint=/linkerconfig,#2].superOptions",
+  "base": "rw,seclabel,size=3863628k,nr_inodes=965907,mode=755",
+  "target": "rw,seclabel,mode=755"
+ },
+ {
+  "level": "capability",
+  "path": "mountinfo.entries[mountPoint=/mnt].superOptions",
+  "base": "rw,seclabel,size=3863628k,nr_inodes=965907,mode=755,gid=1000",
+  "target": "rw,seclabel,mode=755,gid=1000"
+ },
+ {
+  "level": "capability",
+  "path": "mountinfo.entries[mountPoint=/mnt/androidwritable].superOptions",
+  "base": "rw,seclabel,size=3863628k,nr_inodes=965907,mode=755,gid=1000",
+  "target": "rw,seclabel,mode=755,gid=1000"
+ },
+ {
+  "level": "capability",
+  "path": "mountinfo.entries[mountPoint=/mnt/installer].superOptions",
+  "base": "rw,seclabel,size=3863628k,nr_inodes=965907,mode=755,gid=1000",
+  "target": "rw,seclabel,mode=755,gid=1000"
+ },
+ {
+  "level": "capability",
+  "path": "mountinfo.entries[mountPoint=/storage].superOptions",
+  "base": "rw,seclabel,size=3863628k,nr_inodes=965907,mode=755,gid=1000",
+  "target": "rw,seclabel,mode=755,gid=1000"
+ },
+ {
+  "level": "capability",
+  "path": "mountinfo.entries[mountPoint=/tmp].superOptions",
+  "base": "rw,seclabel,size=3863628k,nr_inodes=965907",
+  "target": "rw,seclabel"
+ }
+]
+=== background-dex2oat-threads (pre build_props) ===
+[
+ {
+  "level": "state",
+  "path": "props.dalvik.vm.background-dex2oat-threads",
+  "base": "4",
+  "target": "8"
+ }
+]

@@ -1,0 +1,59 @@
+<!--
+    eSE 服务（com.android.se）的 AIDL 服务声明。
+
+    归属：android.service.daemon 模块的 vendor 静态树（vendor/etc/vintf/manifest/），
+    由 cdh-vendor 的 hal build 在 publishVendor 阶段并入产物根，再由 07 步骤 4 上树。
+    本文件与 cph_* 脚本、cph_*.rc 同源——都是「system 侧服务在 vendor 侧的落点」，
+    换机型只要声明了 android.service.daemon 就自动带上，不再需要机型静态树各抄一份。
+
+    为什么不再是引擎级独立目录（原 engine/vendor/vintf/common + 07 步骤 2c）：
+    那条特例流水线只为这一份片段存在，等于给一个文件开了一条「引擎级只补缺」通道；
+    把片段收进模块 vendor 树后，07 回到「只有 1-8 步」的形状，片段的生命周期与模块
+    一致（模块没声明 → 片段不进镜像，语义明确，不再有「全局隐式赠品」）。
+
+    **代价（重要）**：覆盖范围从「全部机型自动继承」收窄为「device.json 声明了
+    android.service.daemon 的机型」。目前 m22 / gold 声明了它；新机型只要跑
+    com.android.se（AOSP 默认都在跑）就必须声明该模块，否则重演下面的崩溃链。
+
+    为什么不放 android.hardware.secure_element：模块提供的是另一个接口
+    （android.hardware.secure_element.ISecureElement/eSE1），与本声明
+    （android.se.omapi.ISecureElementService/default，由 system 侧的 com.android.se
+    在 SecureElementService.java 里 addService）不同包、不同进程；塞进那个 HAL 会让
+    「system 侧服务的声明」跟着 vendor HAL 一起生死。
+
+    背景：Android 14+ 的 servicemanager 会对 AIDL 命名的服务（<包名>.<接口>/<实例>）
+    做 VINTF 强校验，未声明的 addService 一律拒绝并回 EX_ILLEGAL_ARGUMENT。
+    实测（m22 实例 27）：
+
+        servicemanager: Caller(pid=...,uid=1068,sid=u:r:secure_element:s0)
+          Could not find android.se.omapi.ISecureElementService/default
+          in the VINTF manifest.
+        SecureElementService: No HAL implementation for SIM1
+        AndroidRuntime: java.lang.IllegalArgumentException: VINTF declaration error.
+            at android.os.ServiceManager.addService(ServiceManager.java:218)
+            at com.android.se.SecureElementService.onCreate(SecureElementService.java:298)
+
+    SecureElementService 是 persistent 服务，onCreate 抛异常即进程崩溃，AMS 立刻
+    重启，实测每 50 至 70 毫秒 fork 一个新进程；fork 风暴最终打爆 binder 事务缓冲
+
+        E IPCThreadState: Binder transaction failure. error: -28 (No space left on device)
+        E JavaBinder: FAILED BINDER TRANSACTION
+        AndroidRuntime: com.android.phone: DeadSystemException
+
+    并连带 com.android.phone 反复被杀、上报「通讯诊断无响应」ANR。
+
+    本机没有 eSE / SIM 安全元件，服务起来后仍会打 "No HAL implementation for
+    SIM1 / eSE1" 并降级为空实现，这是预期行为，不影响开机、桌面与设置。
+
+    注意：根元素只写 version="1.0"，07 的 VINTF 收口（vintf.go）只降不升，会原样保留；
+    不要写成第三方原厂那份 9.0。另外模块 vendor 树是「按相对路径发布」，不与基底做
+    只补缺比对：基底若已有同名片段，本文件会覆盖它（同名不同文件则两份声明共存 →
+    Conflicting FqInstance），换基底时先确认基底 etc/vintf/manifest/ 下没有同名件。
+-->
+<manifest version="1.0" type="device">
+    <hal format="aidl">
+        <name>android.se.omapi</name>
+        <version>1</version>
+        <fqname>ISecureElementService/default</fqname>
+    </hal>
+</manifest>

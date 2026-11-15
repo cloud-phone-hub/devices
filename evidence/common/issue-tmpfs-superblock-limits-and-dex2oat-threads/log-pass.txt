@@ -1,0 +1,25 @@
+=== 实机 shell /proc/mounts & getprop (batch2-post.log) ===
+tmpfs /dev tmpfs rw,seclabel,nosuid,relatime,size=3863628k,nr_inodes=965907,mode=755 0 0
+tmpfs /mnt tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755,gid=1000 0 0
+tmpfs /mnt/installer tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755,gid=1000 0 0
+tmpfs /mnt/androidwritable tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755,gid=1000 0 0
+tmpfs /apex tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755 0 0
+tmpfs /bootstrap-apex tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755 0 0
+tmpfs /linkerconfig tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755 0 0
+tmpfs /bootstrap-apex/apex-info-list.xml tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755 0 0
+tmpfs /tmp tmpfs rw,seclabel,relatime,size=3863628k,nr_inodes=965907 0 0
+/dev/block/vda5 /metadata ext4 rw,seclabel,nosuid,nodev,noatime,discard 0 0
+tmpfs /storage tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755,gid=1000 0 0
+/dev/block/dm-48 /data f2fs rw,lazytime,seclabel,nosuid,nodev,noatime,background_gc=on,gc_merge,discard,discard_unit=block,user_xattr,inline_xattr,acl,inline_data,inline_dentry,noflush_merge,barrier,extent_cache,mode=adaptive,active_logs=6,reserve_root=134217,reserve_node=0,resuid=0,resgid=1065,alloc_mode=default,checkpoint_merge,fsync_mode=nobarrier,memory=normal,errors=continue,lookup_mode=perf 0 0
+tmpfs /linkerconfig tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755 0 0
+tmpfs /data_mirror tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=700,gid=1000 0 0
+tmpfs /apex/apex-info-list.xml tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755 0 0
+=== props ===
+vold.has_compress=[0]
+dalvik.vm.background-dex2oat-threads=[4]
+init.svc.cppreopts=[]
+
+=== diff/proc.json summary (post) ===
+{"identity": 108, "capability": 29, "state": 144, "availability": 0, "fatal": 137}
+remaining tmpfs nr_inodes superOptions diffs: []
+remaining background-dex2oat-threads diffs: []

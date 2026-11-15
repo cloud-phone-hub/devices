@@ -1,0 +1,113 @@
+# modules.redirect 注释外移 —— 失败侧取证（#137）
+
+取样时间：2026-11-03
+取样环境：`engine/`，改动前快照 `out/tmp/devicejson-backup-20261103/`（13 份原样 device.json）。
+本文记录**改造前的状态**、**被否掉的做法**与**本轮自己踩的坑**，正向结果见 `log-pass.txt`。
+
+## 第 1 节：改造前 12 份 device.json 混着 770 条字符串
+
+统计口径：`modules.redirect` 数组里 `isinstance(x, str)` 的元素（注释与空串）。
+
+```console
+$ python3 - <<'EOF'
+import json,glob
+tot=emp=n=ru=0
+for p in sorted(glob.glob('out/tmp/devicejson-backup-20261103/*.json')):
+    d=json.load(open(p)); red=(d.get('modules') or {}).get('redirect') or []
+    s=[x for x in red if isinstance(x,str)]
+    if not s: continue
+    n+=1; tot+=len(s); emp+=sum(1 for x in s if not x.strip()); ru+=sum(1 for x in red if isinstance(x,dict))
+print('机型数',n,'字符串元素',tot,'其中空串',emp,'规则',ru)
+EOF
+机型数 12 字符串元素 770 其中空串 82 规则 135
+```
+
+逐机型（左起：字符串元素 / 空串 / 规则）：
+
+| 机型 | 字符串 | 空串 | 规则 |
+| :--- | ---: | ---: | ---: |
+| `flyme/m22` | 51 | 7 | 12 |
+| `google/oriole` | 34 | 5 | 10 |
+| `nothing/3a` | 47 | 5 | 10 |
+| `oneplus/15r` | 274 | 17 | 13 |
+| `oneplus/ace3` | 39 | 5 | 10 |
+| `oppo/cph2797` | 51 | 7 | 12 |
+| `realme/rmx3823` | 39 | 5 | 10 |
+| `realme/rmx5112` | 39 | 5 | 10 |
+| `realme/rmx6688` | 39 | 5 | 10 |
+| `samsung/ss9380` | 51 | 7 | 12 |
+| `xiaomi/gold` | 39 | 5 | 10 |
+| `xiaomi/popsicle` | 67 | 9 | 16 |
+
+`oneplus/15r` 一份就 274 条 / 15454 字符（含 `/odm` 整树屏蔽、NFC 与 KeyMint 死声明
+屏蔽的逐条实测理由），是规则数的 20 倍；`popsicle` 67 条 / 2694 字符。真实规则被淹掉：
+
+```console
+$ python3 -c "import json;d=json.load(open('manifest/xiaomi/popsicle/device.json'));print(len(d['modules']['redirect']))"
+83          # 改造前：83 项，其中只有 16 项是规则
+```
+
+## 第 2 节：为什么不能「直接删」——注释是产物的一部分
+
+`05_build_vendor_boot` 的 `readAsset` 在 `from-device: redirect` 时调
+`ModuleSection.RenderRedirect()`，而 `RedirectEntry` 是二选一结构：
+
+```go
+// internal/device/modules.go
+type RedirectEntry struct {
+    Comment *string      // 非 nil：一行注释/空行，原样输出
+    Rule    *RedirectRule // 非 nil：一条规则，输出 "<type>  <from>  <to>"
+}
+```
+
+所以数组里的字符串会被**原样写进** ramdisk 的 `lib/modules/cdh_redirect.rules`。
+单测 `TestReadAssetRedirectFromDevice` 就是按这个断言写的：
+
+```go
+comment := "# ---- /vendor ----"
+want := "# ---- /vendor ----\ndir  /vendor/etc  /mnt/vendorpatch/vendor/etc\n"
+```
+
+也就是说：这次改动会改变产物字节（配方号必然变化），不能当纯格式化提交。
+被否掉的两个做法：
+
+1. **只删注释、不留说明**：`.rules` 里的「为什么这么改」直接丢失。规则表本来就是
+   「规则 + 理由」一起才可维护，删掉等于把知识扔了。改由机型 README 承接。
+2. **给注释换字段名（如 `"comment": "..."`）**：仍是 JSON 数组里的非规则元素，
+   遍历脚本照样要过滤，只是把字符串变成对象，可读性没改善。否。
+
+## 第 3 节：本轮踩的四个坑
+
+1. **`json.dump` 重写会造出整文件 diff**：第一版脚本打算 `json.load` → 删 → `json.dump`，
+   会把 4 空格缩进、空行分布、`hardware` 数组的紧凑写法全部重排，13 份清单产生
+   几千行无效 diff，评审无法确认「只删了注释」。改成**文本级按行删除**：定位
+   `"redirect": [` 到匹配 `]` 的行区间，区间内只删 `^\s*"#`、`^\s*""` 与空行，
+   其余字节原样保留。
+2. **新建 README 第 3 行出现空代码块**：头部模板写的是
+   `%s（`%s` / `%s`）` = `name（`device` / `board`）`，而 `oneplus/15r` 与
+   `oneplus/ace3` 的 `device` 字段为空，生成出 `` （`` / `canoe`） `` 这种残句。
+   已统一改成只保留有值的那一个（`（`canoe`）`）。
+3. **`oriole` / `3a` 的 dry-run 直接 exit=1**：一度以为是我改坏了 JSON，实际是这两台
+   各有多份清单（`baselines/` 下 4 份 / 2 份），`cdh device build` 要求 `--manifest`
+   指定。加参数后正常——校验脚本要按设备实际清单数判断，不能只看返回码。
+4. **`oppo/pme110` 没有 `modules` 段**：校验脚本第一版直接 `bd['modules']['redirect']`，
+   在 pme110 上报 `KeyError: 'modules'`。它本来就没有 redirect 段（0 条规则），
+   跳过即可；脚本改成 `.get('modules') or {}`。
+
+## 第 4 节：改造前后对照（popsicle）
+
+```console
+$ wc -l manifest/xiaomi/popsicle/device.json
+     221  改造前
+     154  改造后
+
+$ sed -n '14,20p' manifest/xiaomi/popsicle/device.json
+    "modules": {
+        "redirect": [
+            {"type": "dir", "from": "/vendor/etc", "to": "/mnt/vendorpatch/vendor/etc"},
+            {"type": "dir", "from": "/vendor/bin", "to": "/mnt/vendorpatch/vendor/bin"},
+            ...
+```
+
+注释原文没丢：`manifest/xiaomi/popsicle/README.md` 的「原说明（含分段，按原数组顺序）」
+一节就是它（见 `log-pass.txt` 第 6 节）。

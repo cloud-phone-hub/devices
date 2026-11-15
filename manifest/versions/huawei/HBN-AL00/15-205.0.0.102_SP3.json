@@ -1,0 +1,17 @@
+{
+  "id": 19,
+  "buildId": "15-205.0.0.102_SP3",
+  "deviceId": 14,
+  "configId": 14,
+  "osVersion": "15-205.0.0.102_SP3",
+  "buildDate": "20241017",
+  "securityPatch": "",
+  "factoryTgz": "Huawei-Pura-70-PRO.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 Huawei-Pura-70-PRO.zip (vendor/build.prop) 自动生成。",
+    "osVersion": "15-205.0.0.102_SP3"
+  },
+  "updatedAt": "2026-11-06 02:47:41"
+}

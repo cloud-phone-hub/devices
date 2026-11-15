@@ -1,0 +1,116 @@
+# #69 踩坑记录（realitytap + diaghal）
+
+本文件只记「会让人走错方向」的坑，按发现顺序。
+
+## 1. Bp 方法末位的 `int*` 是**返回值**，不是 AIDL `out` 参数
+
+反解出的 `BpRealityTap::performTap(…, int*)` / `BpIdiag::ioctl(…, int*)` 一开始被判成
+「一个 out 参数」，写进 `.aidl` 后 aidl 直接拒绝：
+
+```
+test/IIdiag.aidl:6: 'result' can't be an out parameter because int can only be an in parameter
+```
+
+AIDL 从 34 版起就不允许基本类型做 `out`（只能用 parcelable/数组/可空包装）。`int*`
+是生成代码里 `_aidl_return` 的落地位置。结论：方法签名末位不写参数，回包读序是
+「`StatusHeader` → 返回值」。
+
+## 2. 同包引用也必须显式 `import`
+
+`IIdiag.aidl` 里用同包的 `ParcelableMemory` 时不写 `import`，aidl 报
+`Can't resolve PM`。AIDL 的可见性是「包内同名 + 显式 import」，同包不做隐式解析：
+
+```aidl
+import vendor.qti.diaghal.ParcelableMemory;
+```
+
+## 3. 结构化 parcelable 前面的 `Int32(1)` 不是字段
+
+原厂 `ParcelableMemory::writeToParcel` / `MappableFile::writeToParcel` 前都有
+`mov w1, #1; bl AParcel_writeInt32`。这是 `AParcel_writeParcelable<T>` 写的
+**非空标记**（nullability tag），不是 parcelable 的第一个字段。实验复现方式：
+写一个只含 `int` 字段的最小 parcelable，用 aidl 生成 `.so` 后反汇编，可见同样的
+`mov w1,#1` → `writeInt32` → `writeToParcel` 三连。丢掉它会让所有结构化 parcelable
+反序列化错位（读者按 `>=0` 判非空）。
+
+## 4. `clang -c` 的 `.o` 里 `bl` 未重定位，抽不到调用
+
+`llvm-objdump -d x.o` 里的 `bl 0x0 <func+0x58>` 目标未解析，`rev_any.py` 一条调用都
+抽不出来。必须链成 so 再反汇编：
+
+```
+clang++ --target=aarch64-linux-android30 -shared -fuse-ld=lld -o x.so x.o
+```
+
+另外编译 aidl 生成的代码要补 `-I ~/Library/Android/sdk/platforms/android-36/optional/libbinder_ndk_cpp`
+（缺 `android/binder_interface_utils.h`）。
+
+## 5. macOS 自带 `c++filt` 不解 mangled 名
+
+`/usr/bin/c++filt _ZN4aidl…cancelEv` 原样输出，导致 `codes.py` 的 `Bp\w+::` 匹配全空
+（看起来像「一个事务都没抽到」）。用 NDK 的 `llvm-cxxfilt`：
+
+```
+TC=~/Library/Android/sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/bin
+$TC/llvm-cxxfilt '_ZN4aidl6vendor3awa7reality12BpRealityTap6cancelEv'
+```
+
+## 6. `.so` 里有两个 40 位 hash，别抓错
+
+`vendor.awa.reality-V3-ndk.so` 里同时有：
+
+```
+054e790771427edda2465b91648721f3d1033d4b   # vendor.awa.reality.IRealityTap  ← 本模块
+ea8742d6993e1a82917da38b9938e537aa7fcb54   # android.hardware.vibrator V2    ← 跨包依赖
+```
+
+后者本该属于 vibrator 模块的 `.hash`。它同时也是「我们引用的 vibrator 快照与原厂同版」
+的证据（`deps vibrator` 打印的正是 `ea8742d6993e`），但不能写进 reality 的 `.hash`。
+
+## 7. 引擎原本一个模块只能有一个 AIDL 根
+
+`cdh-vendor` 的 `AIDLRoot()` 是二选一（模块自带 `aidl/` 或 `depsHal` 快照），
+而 `IRealityTap` 两个都要。第一版尝试「把 vibrator 的两个类型复制进模块 aidl/」——
+能编过但会引入**同包双份定义**风险（模块里一份 `android.hardware.vibrator`
++ deps 里一份）。最终按包存在性自动择根（`aidlRoots()` + `aidlDir()`），不新增 spec 字段。
+
+## 8. `android.hardware.common` 快照不存在，deps 又下不动
+
+`cdh-vendor deps common -check` 报未就绪，gitiles 请求返回 000（本机无外网）。
+从已就绪的 `aosp/aidl/media/` 里把 `android.hardware.common/{1,2,current}` 复制过去，
+再补 marker：
+
+```
+printf 'android-16.0.0_r2' > engine/vendor/out/android16/aosp/aidl/common/.aidl-complete
+```
+
+`AIDLReady` 只校验 `<hal>/<pkg>/<ver>/.hash` 非空，`.aidl-complete` 只用于让 `PrepareAIDL`
+跳过下载。
+
+## 9. 机型层 `hal_realitytap_service` 与模块层同名
+
+机型层把 Flyme 的框架服务 `realitytap` 标成了 `hal_realitytap_service`，而这正是原厂
+**HAL 实例**的类型名（原厂 `vendor_service_contexts` 139 行）。模块一落地就会
+`(type hal_realitytap_service)` 两份 → secilc `Failed to resolve` → init 致命重启。
+改法是「向原厂对齐」而不是发明新名：框架服务用原厂的 `realitytap_service`（138 行）。
+
+## 10. `allow vendor_dpmd …` 不能原样留着
+
+机型层原本有 `(allow vendor_dpmd hal_idiag_service (find))`，`hal_idiag_service` 删掉后
+这条会变成悬空引用（secilc 直接 `Failed to resolve allow statement`）。
+处理顺序必须是：先确认模块层已有等价授权
+（`(allow domain vendor_hal_diaghal_service (find))`），再连同 `(type vendor_dpmd)` 一起删。
+
+## 11. 读函数体时 `sed -n "${L},+40p"` 会炸
+
+zsh 下若 `L` 取空（上一条 `grep -n` 没命中），`sed` 报
+`invalid command code ,`，看起来像是「文件坏了」。改用固定的小工具按符号前缀切函数体
+（本轮落 `out/tmp/rev2/body.py`）。
+
+## 12. `(allow domain <type> …)` 用 typeattribute 作源是合法的
+
+本轮一度怀疑 `(allow domain hal_realitytap_service (service_manager (find)))`
+里 `domain` 是 typeattribute、secilc 不认。核对现成出厂策略可消疑：
+`devices/google/oriole-15/.../vendor_sepolicy.cil:4557` 就是
+`(allow domain vendor_arm_runtime_option_prop (file (read getattr map open)))`，
+小米 gold / oneplus 15R 的厂商 cil 里也有同款写法——这些是能开机的镜像。

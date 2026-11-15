@@ -1,0 +1,9 @@
+# cdh：自研 soundtrigger3 空 HAL 的 servicemanager 服务名映射
+# （由 07_build_vendor 并入装配树的 etc/selinux/vendor_service_contexts）。
+#
+# 复用 hal_audio_service 而非新造 hal_soundtrigger_service：基底 plat 策略里没有
+# 后者，自造标签运行态等于 unlabeled，AServiceManager_addService 会因查不到
+# service_manager 权限返回 -EPERM。hal_audio_service + hal_audio_default 的组合
+# 已有现成授权（见 android.hardware.audio 的 vendor_sepolicy.cil：add 与 find 都有），
+# 且真机上 soundtrigger 本就跑在 audio HAL 进程里，语义一致。
+android.hardware.soundtrigger3.ISoundTriggerHw/default      u:object_r:hal_audio_service:s0

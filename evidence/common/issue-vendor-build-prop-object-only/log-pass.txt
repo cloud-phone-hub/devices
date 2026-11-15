@@ -1,0 +1,79 @@
+== 1. 17 份基线迁移后的语义等价校验（旧读法折叠 vs 新对象）==
+# 旧读法：对象直接用；数组逐对覆盖（同键取最后一次）。新读法：只认对象。
+
+OK  flyme/m22/baselines/12.5.0.0A.json                                           sets 5->5     unsets 0->0
+OK  google/oriole/baselines/oriole-ap2a.240905.003.f1-factory-655c44e7.json      sets 20->20   unsets None->None
+OK  google/oriole/baselines/oriole-bp1a.250505.005-factory-9fc37bcc.json         sets 61->61   unsets 38->38
+OK  google/oriole/baselines/oriole-cp1a.260405.005-factory-8081a8ba.json         sets 186->186 unsets 0->0
+OK  google/oriole/baselines/oriole-cp3a.261005.002.a1-factory-1257b58e.json      sets None->None unsets None->None
+OK  nothing/3a/baselines/Asteroids_B4.1-260810-1153.json                         sets 361->361 unsets 0->0
+OK  nothing/3a/baselines/Asteroids_V3.2-251013-1406.json                         sets 342->342 unsets 0->0
+OK  oneplus/15r/baselines/CPH2769_16.0.10.500_EX01_A51_full.json                 sets 2->2     unsets 0->0
+OK  oneplus/ace3/baselines/OP_ACE_3_PJE110_15.0.0.870_CN01.json                  sets None->None unsets None->None
+OK  oppo/cph2797/baselines/CPH2797_16.0.8.301_EX01_A11_full.json                 sets 8->8     unsets 0->0
+OK  oppo/pme110/baselines/OPPO_FIND_X9s_PRO_PME110_17.0.0.102_CN01.json          sets 770->770 unsets 0->0
+OK  realme/rmx3823/baselines/1862_sign_RMX3823_11_F_OTA_2160_all_Mfq9LH_100101   sets None->None unsets None->None
+OK  realme/rmx5112/baselines/851_sign_RMX5112_11_A_OTA_0520_all_0Q8VwS_1001011   sets None->None unsets None->None
+OK  realme/rmx6688/baselines/811_sign_RMX6688_11_A_OTA_0380_all_Qt92xR_1001011   sets None->None unsets None->None
+OK  samsung/ss9380/baselines/SM-S9380_3_20260813083211_652iw49crl_fac.json       sets 6->6     unsets 0->0
+OK  xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0   sets 15->15   unsets 1->1
+OK  xiaomi/popsicle/baselines/popsicle_images_OS3.0.319.0.WPBCNXM_20260824.000   sets 288->288 unsets 1->1
+
+全部语义等价: True
+# 同时校验了非 vendor 段完全未变（version-description / rom / modules / auto-sync 等）。
+
+
+== 2. 迁移脚本实际输出 ==
+google/oriole/baselines/oriole-bp1a.250505.005-factory-9fc37bcc.json           build-prop-sets 数组 61 对 -> 对象 61 键；build-prop-unsets 数组 38 项 -> 对象 38 键
+google/oriole/baselines/oriole-cp1a.260405.005-factory-8081a8ba.json           build-prop-sets 数组 186 对 -> 对象 186 键；build-prop-unsets 数组 0 项 -> 对象 0 键
+nothing/3a/baselines/Asteroids_B4.1-260810-1153.json                           build-prop-sets 数组 361 对 -> 对象 361 键；build-prop-unsets 数组 0 项 -> 对象 0 键
+nothing/3a/baselines/Asteroids_V3.2-251013-1406.json                           build-prop-sets 数组 342 对 -> 对象 342 键；build-prop-unsets 数组 0 项 -> 对象 0 键
+oneplus/15r/baselines/CPH2769_16.0.10.500_EX01_A51_full.json                   build-prop-sets 数组 2 对 -> 对象 2 键；build-prop-unsets 数组 0 项 -> 对象 0 键
+oppo/pme110/baselines/OPPO_FIND_X9s_PRO_PME110_17.0.0.102_CN01.json            build-prop-sets 数组 770 对 -> 对象 770 键；build-prop-unsets 数组 0 项 -> 对象 0 键
+xiaomi/popsicle/baselines/popsicle_images_OS3.0.319.0.WPBCNXM_20260824.0000.00_16.0_cn_9d8daa8b5b.json build-prop-sets 数组 328 对 -> 对象 288 键；build-prop-unsets 数组 1 项 -> 对象 1 键
+# 已是对象的 5 份原样写回（字节未变），无 vendor 段的 5 份 skip。
+
+# 迁移后 M 段样例（popsicle）：
+#     "build-prop-sets": {
+#       "ro.product.vendor.brand": "Xiaomi",
+#       "ro.product.vendor.device": "mivendor",
+#       ...
+#     },
+#     "build-prop-unsets": {
+#       "ro.vendor.audio.soundfx.type": ""
+#     },
+
+
+== 3. 编译与用例 ==
+$ cd engine/build && go build ./... && go vet ./07_build_vendor && go test ./07_build_vendor
+ok      cloud-phone-hub/engine/build/07_build_vendor    38.243s
+
+$ go test ./07_build_vendor -run 'TestReadVendorBuildProps' -v
+=== RUN   TestReadVendorBuildPropsRejectsLegacyArray
+--- PASS: TestReadVendorBuildPropsRejectsLegacyArray (0.00s)
+PASS
+ok      cloud-phone-hub/engine/build/07_build_vendor    0.220s
+# 该用例现在断言 sets / unsets 两种数组都报错，且错误信息含「已停用」。
+
+
+== 4. popsicle 实跑 07（2026-11-03）==
+$ cd engine/build && ../out/bin/cdh device build popsicle --only 07_build_vendor
+    vendor 属性: 基线 build-prop-sets 288 项 / unsets 1 项 -> vendor/build.prop
+==> [步骤 6] 应用基线 vendor 属性 -> out/devices/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/vendor/build.prop
+    [prop] 追加 aaudio.hw_burst_min_usec=2000
+    [prop] 追加 aaudio.mmap_exclusive_policy=2
+    [prop] 追加 aaudio.mmap_policy=2
+    [prop] 追加 bluetooth.core.le_audio.codec_extension_aidl.enabled=false
+    [prop] 覆盖 bluetooth.profile.bap.broadcast.assist.enabled=true
+    [prop] 追加 bluetooth.profile.bap.broadcast.source.enabled=true
+    ...
+[ok] 已完成
+
+
+== 5. 产物 build.prop 逐键核对 ==
+build.prop 行数: 369 | 键数: 318
+sets 未落对: [] (共 0)
+产物中重复键: 无
+unsets 仍存在: 无
+# 288 项 sets 全部落对（值与基线对象逐键相同），unsets 的
+# ro.vendor.audio.soundfx.type 已从产物删除，产物内没有同键多行。

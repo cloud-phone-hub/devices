@@ -1,0 +1,34 @@
+;; Remote KeyMint 策略补丁（模块自带片段，由 07_build_vendor 追加到装配树的
+;; /vendor/etc/selinux/vendor_sepolicy.cil）。
+;;
+;; 放在模块层而不是机型层：通道访问、kmsg 崩溃日志、序列号属性、以及模块 rc 里
+;; `wait <通道> 30` 需要的 getattr，都是这个 HAL 自身的契约，换机型不必重写。
+;; 机型层（manifest/<vendor>/<brand>/sepolicy/）保留两类机型事实：该机型独有的
+;; 启动链（如 pioneer），以及设备节点标签——标签必须写死具体路径，而 hvc 编号是
+;; 板级布局事实（gold：hvc0/hvc1 固件 console、hvc2 预留、keymint = hvc3），
+;; 见 manifest/xiaomi/gold/sepolicy/vendor_file_contexts。
+;;
+;; 运行态标签指向 keymaster_device（由机型层 file_contexts 写成）；本文件只声明
+;; 类型与授权，不含任何具体路径。
+;; 平台类型在 vendor CIL 中必须引用版本化影子名（见 plat_sepolicy_vers.txt），
+;; 故用 {{vers}} 占位，由构建阶段按装好的 vendor/etc/selinux/plat_sepolicy_vers.txt
+;; 替换；版本号变化时无需改本文件。
+;;
+;; 三组授权：
+;;   1) keymint 进程 open /dev/hvc3 + termios ioctl + read/write 帧收发；
+;;   2) init 的 `wait /dev/hvc3 30` 对设备节点 stat（getattr）；
+;;   3) 日志：KernelLogger 写 /dev/kmsg（kmsg_device），LOG 走 /dev/kmsg_debug
+;;      （实际标签是 tmpfs，故补 tmpfs chr_file write）；attestation 取序列号读
+;;      serialno 属性。
+;;
+;; keymaster_device 不在平台策略里（plat_sepolicy.cil 只有 keymaster / keymaster_client
+;; / keymaster_exec / keymaster_server / keymaster_hwservice），基底 vendor 策略也没有，
+;; 所以下面三行 type 声明是必需的，不是重复声明；dev_type 是平台属性，按裸名挂成员。
+(type keymaster_device)
+(roletype object_r keymaster_device)
+(typeattributeset dev_type (keymaster_device))
+(allow hal_keymint_default keymaster_device (chr_file (getattr ioctl open read write)))
+(allow vendor_init_{{vers}} keymaster_device (chr_file (getattr)))
+(allow hal_keymint_default serialno_prop_{{vers}} (file (read getattr map open)))
+(allow hal_keymint_default kmsg_device_{{vers}} (chr_file (write)))
+(allow hal_keymint_default tmpfs_{{vers}} (chr_file (write)))

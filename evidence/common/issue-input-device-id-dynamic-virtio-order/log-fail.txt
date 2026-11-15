@@ -1,0 +1,34 @@
+# log-fail：hardware.inputs 按 id 逐行对齐时的「对不上」表象（run-00028）
+# 服务端 http://101.33.73.101（SKILL.md 记载真实地址）；云机 4503ac70a1c898f3-cloud / 真机 ec519c7d513a3ad3
+# 说明：这不是真失败——name/descriptor/sources 全对齐，只是 id 这一动态序号列错位。
+#       按 id 逐行对齐会把不同设备摆到同一行，造成「身份没对齐」的错觉。
+
+===== 按 id 逐行对齐（错位 illusion）=====
+id   真机 name                     云机 name                     ← 同一 id 指向不同设备
+-1   Virtual                       Virtual                       （一致）
+ 0   uinput-fpc                    uinput-fpc                    （一致）
+ 2   mtk-kpd                       goodix_ts                     ← 错位
+ 3   fpc_irq@fingerprint           mtk-kpd                       ← 错位
+ 4   mtk-pmic-keys                 fpc_irq@fingerprint           ← 错位
+ 5   mt6833-mt6359 Headset Jack    mt6833-mt6359 Headset Jack    （一致）
+ 6   goodix_ts                     mtk-pmic-keys                 ← 错位
+
+===== 真机：内核 inputN 注册序 ≠ InputManager getId() 序 =====
+# 坐实 id 由 InputManagerService 异步 uevent 处理序分配，而非内核注册序。
+内核 inputN 序（/sys/class/input）:
+  input0  mtk-pmic-keys
+  input1  mtk-kpd
+  input2  uinput-fpc
+  ...
+InputManager getId() 序（hardware.inputs）:
+  id=0  uinput-fpc        ← 内核 input2，却拿到 id=0
+  id=2  mtk-kpd           ← 内核 input1
+  id=4  mtk-pmic-keys     ← 内核 input0
+# 内核序与 id 序不一致 → id 不是内核注册序，是异步处理时序的动态产物。
+
+===== 云机驱动归属（/sys/class/input/inputN/device/driver）=====
+  goodix_ts   -> virtio_input (virtio8)   ← QEMU virtio 早探针，input_identity 只对齐不注册
+  mtk-kpd     -> virtio_input (virtio9)   ← QEMU virtio 早探针
+  uinput-fpc / fpc_irq@fingerprint / swtp / Headset Jack / mtk-pmic-keys
+              -> 无驱动 symlink          ← input_identity 按 .devices 顺序同步注册
+# virtio 早探针使 goodix_ts 抢 id=2、mtk-kpd id=3，把自有设备往后挤 → 结构性错位。

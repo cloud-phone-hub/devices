@@ -1,0 +1,111 @@
+# 失败态取证：gold launcher RenderThread SIGABRT（hwui Vulkan）
+#
+# 对应通过态：log-pass.txt（实例 28，2026-10-26 01:12 起）
+# 两段失败先后出现，第二段在修好宿主 Vulkan 后暴露：
+#   A/B 宿主 venus 无可用 Vulkan ICD → guest vkCreateInstance err<0 → abort
+#   C   宿主修好后，venus/MoltenVK 单队列不满足 hwui 的 queueCount>=2 硬断言
+#
+# 说明：guest RTC 随底包时钟从 07-15 起走，重启后回拨，故 A/B 与 C 的
+#       guest 时间先后不代表宿主真实顺序；宿主真实顺序见每段的采集时间。
+
+## A. 宿主 venus 无法加载 Vulkan ICD（实例 26 qemu.log，2026-10-26 00:27:50）
+
+$ grep -a "failed to open libvulkan" \
+    out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/26/qemu.log | head -1
+Oct 26 00:27:50  virgl_render_server[77886] <Debug>: vkr: failed to open libvulkan: dlopen(libvulkan.1.dylib, 0x0006): tried: 'libvulkan.1.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibvulkan.1.dylib' (no such file), '/usr/lib/libvulkan.1.dylib' (no such file, not in dyld cache), 'libvulkan.1.dylib' (no such file)
+
+$ grep -a "failed to dispatch context op" .../26/qemu.log | head -2
+Oct 26 00:27:50  virgl_render_server[77886] <Debug>: failed to dispatch context op 1
+Oct 26 00:27:50  virgl_render_server[77886] <Debug>: failed to dispatch context op 1
+
+$ grep -a "virtio_gpu_virgl_process_cmd: ctrl" .../26/qemu.log | head -3
+virtio_gpu_virgl_process_cmd: ctrl 0x10c, error 0x1200
+virtio_gpu_virgl_process_cmd: ctrl 0x208, error 0x1203
+virtio_gpu_virgl_process_cmd: ctrl 0x209, error 0x1203
+
+即 render server 以裸名 dlopen，dyld 搜索路径里没有 dist/lib；
+补上 DYLD_LIBRARY_PATH 后 dlopen 成功，但 vkCreateInstance 仍被 loader 拒绝
+（见 D 段：ICD 声明 is_portability_driver=true，而 venus 未启用 portability 位）。
+
+## B. guest tombstone：Assertion failed: err < 0（实例 26 crash buffer）
+
+07-15 21:10:11.921 ... F DEBUG   : Cmdline: com.miui.home
+07-15 21:10:11.922 ... F DEBUG   : pid: 12447, tid: 12840, name: RenderThread  >>> com.miui.home <<<
+07-15 21:10:11.922 ... F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE)
+07-15 21:10:11.922 ... F DEBUG   : Abort message: 'Assertion failed: err < 0'
+07-15 21:10:11.922 ... F DEBUG   :       #03 ... /system/lib64/liblog.so (__android_log_assert+288)
+07-15 21:10:11.922 ... F DEBUG   :       #04 ... /system/lib64/libhwui.so (android::uirenderer::VulkanManager::initialize()::$_0::operator()()+292)
+07-15 21:10:11.922 ... F DEBUG   :       #06 ... /system/lib64/libhwui.so (android::uirenderer::renderthread::RenderThread::requireVkContext()+...)
+07-15 21:10:11.922 ... F DEBUG   :       #07 ... /system/lib64/libhwui.so (android::uirenderer::renderthread::RenderProxy::preload()+...)
+
+同一时段 system_server 的 RenderThread 也以同一条断言 abort
+（07-15 21:07:27.937 com.miui.home / 21:07:28.564 system_server，
+Abort message 均为 'Assertion failed: err < 0'）。
+对照：`setenforce 0` 后仍以同一断言崩溃，排除 SELinux。
+
+## C. 宿主修好后暴露：queueCount 断言（实例 27 channels/event.sock.log）
+
+$ tr -d '\000\r' < out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/27/channels/event.sock.log \
+    | strings | grep -o "Abort message: '[^']*'" | sort | uniq -c
+   2 Abort message: 'Assertion failed: queueProps[i].queueCount < kRequestedQueueCount'
+   1 Abort message: 'terminating due to uncaught exception of type St16invalid_argument: stoi: no conversion'
+
+对应的进程：
+  name: RenderThread  >>> com.miui.home
+  name: RenderThread  >>> system_server
+
+实例 27 复用了旧 data，163.8s 时 system_server 触发 RescueParty 重启
+（旧故障的 rescue_boot_count 残留），因此不复用它做通过态：
+
+[  163.874895][  T115]  Received sys.powerctl='reboot,RescueParty' from pid: 8613 (system_server)
+
+## D. 宿主 Vulkan 探针（out/tmp/vkprobe.py，2026-10-26）
+
+同一 ICD 内容，仅 is_portability_driver 不同：
+
+$ VK_ICD_FILENAMES=out/tmp/MoltenVK_icd_port.json python3 out/tmp/vkprobe.py
+vkCreateInstance -> -9        # VK_ERROR_INCOMPATIBLE_DRIVER
+
+$ python3 out/tmp/vkprobe.py  # dist/lib/MoltenVK_icd.json（is_portability_driver=false）
+vkCreateInstance -> 0
+vkEnumeratePhysicalDevices -> 0 count = 1
+device0: Apple M4 api=1.1.357
+
+说明：Vulkan loader 的 portability 规则——ICD 声明 is_portability_driver=true 时，
+未在 vkCreateInstance 启用 VK_KHR_portability_enumeration 的实例会被拒绝；
+venus worker 不启用该位，故必须在 ICD 侧声明为普通驱动。
+
+## E. 队列族枚举（out/tmp/vkqueues.py，同一 dist libvulkan/MoltenVK）
+
+$ python3 out/tmp/vkqueues.py
+vkCreateInstance -> 0
+queueFamilies = 4
+family[0] flags=TRANSFER|GRAPHICS|COMPUTE(0x7) queueCount=1
+family[1] flags=TRANSFER|GRAPHICS|COMPUTE(0x7) queueCount=1
+family[2] flags=TRANSFER|GRAPHICS|COMPUTE(0x7) queueCount=1
+family[3] flags=TRANSFER|GRAPHICS|COMPUTE(0x7) queueCount=1
+
+Metal/MoltenVK 不提供多队列，任何 family 都只有 1 个队列。
+
+## F. hwui 源码断言位置（AOSP android15-release，本地副本）
+
+engine/out/tmp/vulkanmanager.cpp（libs/hwui/renderthread/VulkanManager.cpp，871 行）：
+  199:    LOG_ALWAYS_FATAL_IF(err < 0);
+  234:    constexpr auto kRequestedQueueCount = 2;
+  238:    for (uint32_t i = 0; i < queueCount; i++) {
+  239:        if (queueProps[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+  240:            mGraphicsQueueIndex = i;
+  241:            LOG_ALWAYS_FATAL_IF(queueProps[i].queueCount < kRequestedQueueCount);
+  242:            break;
+  243:        }
+  244:    }
+
+即：修复宿主 ICD 后，venus 必须给出 >=2 队列的 GRAPHICS family，否则 hwui 必然
+abort；宿主渲染栈无法满足时，只能在 guest 侧关闭 hwui Vulkan 后端（本次做法，
+GLES/virgl 正常），或修改系统 libhwui（侵入路线，未采用）。
+
+## 复现材料（同目录）
+
+- vkprobe.py：ctypes 调用 dist/lib/libvulkan.1.dylib，打印 vkCreateInstance 结果与设备数
+- vkqueues.py：枚举 queue family 的 flags 与 queueCount
+- MoltenVK_icd_portability.json：is_portability_driver=true 的 ICD（复现 -9 用）

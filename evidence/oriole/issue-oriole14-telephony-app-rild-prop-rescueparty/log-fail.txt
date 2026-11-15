@@ -1,0 +1,62 @@
+# oriole_14-AP2A.240905.003.F1-20240815 实例 2（slot 0，ADB 127.0.0.1:5911），2026-11-12
+# 修复前：boot_completed=1 后约 1.5 min 被 RescueParty 重启，循环
+
+## 第 1 轮（旧盘集，11-09 产物）
+$ adb shell 'uptime; getprop sys.boot.reason'
+ 20:14:18 up 0 min,  0 users,  load average: 4.00, 0.87, 0.28
+reboot,rescueparty
+
+$ adb shell 'logcat -b crash -d' （节选）
+11-12 20:15:11.604  1462  1462 E AndroidRuntime: Process: com.samsung.slsi.telephony.oemril, PID: 1462
+11-12 20:15:11.604  1462  1462 E AndroidRuntime: java.lang.RuntimeException: failed to set system property (check logcat for reason)
+11-12 20:15:11.604  1462  1462 E AndroidRuntime: 	at android.os.SystemProperties.native_set(Native Method)
+11-12 20:15:11.604  1462  1462 E AndroidRuntime: 	at android.os.SystemProperties.set(SystemProperties.java:267)
+11-12 20:15:11.604  1462  1462 E AndroidRuntime: 	at com.samsung.slsi.telephony.oemril.multisim.PhoneConfig.setAllowedNetworkTypesLoaded(PhoneConfig.java:471)
+11-12 20:15:11.604  1462  1462 E AndroidRuntime: 	at com.samsung.slsi.telephony.oemril.multisim.PhoneConfig.onAllowedNetworkTypesChanged(PhoneConfig.java:493)
+
+$ adb shell dumpsys package com.samsung.slsi.telephony.oemril
+    codePath=/system_ext/priv-app/OemRilService
+    flags=[ SYSTEM HAS_CODE PERSISTENT ]
+
+$ strings OemRilService.apk:classes*.dex | grep allowed
+!vendor.radio.allowed_types_loaded
+
+$ adb shell 'getprop -Z vendor.radio.allowed_types_loaded; ps -AZ | grep oemril'
+u:object_r:vendor_default_prop:s0
+u:r:priv_app:s0:c512,c768      u0_a224       5829   486 ... S com.samsung.slsi.telephony.oemril
+
+## 官方 vendor_a.img:/etc/selinux（AP2A.240905.003.F1）
+vendor_seapp_contexts:9:  user=_app isPrivApp=true name=com.samsung.slsi.telephony.oemril domain=oemrilservice_app levelFrom=all
+vendor_seapp_contexts:11: user=_app isPrivApp=true name=com.shannon.imsservice domain=vendor_ims_app levelFrom=all
+vendor_property_contexts:138-144:
+persist.vendor.debug_level       u:object_r:vendor_rild_prop:s0
+persist.vendor.ril.              u:object_r:vendor_rild_prop:s0
+persist.vendor.radio.            u:object_r:vendor_rild_prop:s0
+vendor.radio.ril.                u:object_r:vendor_rild_prop:s0
+vendor.sys.rild_reset            u:object_r:vendor_rild_prop:s0
+vendor.ril.                      u:object_r:vendor_rild_prop:s0
+vendor.radio.                    u:object_r:vendor_rild_prop:s0
+vendor_sepolicy.cil:
+(allow oemrilservice_app vendor_rild_prop (property_service (set)))
+(allow vendor_ims_app radio_prop_202404 (property_service (set)))
+(allow vendor_ims_app vendor_rild_prop (property_service (set)))
+(allow vendor_rcs_app radio_prop_202404 (property_service (set)))
+(allow vendor_rcs_app vendor_rild_prop (property_service (set)))
+(allow ril_config_service_app vendor_rild_prop (property_service (set)))
+
+## 第 2 轮（只补 vendor.radio. / vendor.radio.ril. 两行后，干净实例）
+$ adb shell 'getprop -Z vendor.radio.allowed_types_loaded; getprop | grep boot.reason'
+u:object_r:vendor_rild_prop:s0
+[persist.sys.boot.reason.history]: [recovery,3
+reboot,rescueparty,3
+[sys.boot.reason]: [recovery]
+
+$ adb shell 'dumpsys dropbox --print system_app_crash' （汇总）
+     12 Process: com.shannon.imsservice
+     12 java.lang.RuntimeException: failed to set system property (check logcat for reason)
+	at android.os.SystemProperties.set(SystemProperties.java:267)
+	at com.shannon.imsservice.ut.ImsUt.setCallWaitingSyncProperty(ImsUt.java:1409)
+	at com.shannon.imsservice.ut.ImsUt.lambda$refreshCallWaiting$30(ImsUt.java:1203)
+
+$ strings ShannonIms.apk:classes*.dex | grep call_waiting
++persist.vendor.radio.call_waiting_for_sync_

@@ -1,0 +1,90 @@
+# 通过证据：清单内核事实指向底包侧 + 6.12 源码就位 + CDH 三补丁生效
+# 采集时间 2026-10-28
+
+## 1) 计划口径（改后）：目录名/镜像标签/源码 HEAD 全部对上底包
+$ CDH_MANIFEST=manifest/flyme/m22/baselines/12.5.0.0A.json CDH_LINEAGE_VERSION=lineage-23.2 \
+      ./out/bin/cdh build-kernel --dry-run
+==> 内核源码: kernels/lineage-23-6.12（清单推导 lineage-23-6.12）
+==> 配置片段: build/02_build_kernel/lineage-kernel.config（本阶段默认）
+==> 产物目录: out/kernel/lineage-23-6.12（out/kernel/lineage-23-6.12）
+==> 构建镜像: ghcr.io/feicong/droid-ddk:android16-6.12（清单推导 android16-6.12 ）
+    输入: 缓存配方 lineage-23-6.12-cdh-eef9316b0b57（输入哈希）
+==> [步骤 0] 解析计划
+    内核:       lineage-23-6.12（release 6.12.81-4k-cdh）
+    源码:       kernels/lineage-23-6.12（HEAD bccd296879a5）
+    配置片段:   build/02_build_kernel/lineage-kernel.config
+    构建镜像:   ghcr.io/feicong/droid-ddk:android16-6.12
+    并行度:     10
+    LOCALVERSION: -4k-cdh
+    缓存配方:   lineage-23-6.12-cdh-eef9316b0b57
+    构建卷:     cdh-kernel-lineage-23-6.12-cdh-eef9316b0b57（保留，供 03_build_modules 复用）
+    产物目录:   out/kernel/lineage-23-6.12
+    缓存状态:   可复用
+
+## 2) 源码：基底 + 3 个 CDH 提交（无 v1 元数据文件）
+$ git -C kernels/lineage-23-6.12 log --oneline -4
+bccd29687 (HEAD -> lineage-23.2) 15R-16: wifi: cdh 模拟 wifi——hwsim 假扫描/假连接 + 数据面直桥 hvc10
+80b261c96 15R-16: selinux: cdh pioneer 域内核强制 permissive
+b8d3e5f81 15R-16: virtgpu_vram host-visible blob 16 KiB 对齐（移植自 pixel6-15 内核）
+4f6bf4720 (grafted, origin/lineage-23.2) Merge remote-tracking branch 'origin/android16-6.12' into virtio/android16-6.12
+
+$ git -C kernels/lineage-23-6.12 diff --stat 4f6bf47200d9 HEAD | tail -6
+ drivers/gpu/drm/virtio/virtgpu_vram.c         |   12 +-
+ drivers/net/wireless/virtual/mac80211_hwsim.c | 1057 +++++++++++++++++++++++++
+ security/selinux/Kconfig                      |   15 +
+ security/selinux/ss/services.c                |   40 +
+ 4 files changed, 1122 insertions(+), 2 deletions(-)
+
+$ ls kernels/lineage-23-6.12/CDH.md kernels/lineage-23-6.12/cdh
+（无 v1 元数据文件，已跳过）
+
+## 3) 02 产物：Image / config / kernelrelease（带补丁重编后）
+$ cat out/kernel/lineage-23-6.12/kernelrelease.txt
+6.12.81-4k-cdh
+
+$ ls -la out/kernel/lineage-23-6.12/Image out/kernel/lineage-23-6.12/config | awk '{print $5, $9}'
+43969024 out/kernel/lineage-23-6.12/Image
+228676 out/kernel/lineage-23-6.12/config
+
+$ grep -E "^CONFIG_(CDH_PIONEER_PERMISSIVE|VIRTIO_CONSOLE)=" out/kernel/lineage-23-6.12/config
+CONFIG_VIRTIO_CONSOLE=m
+CONFIG_CDH_PIONEER_PERMISSIVE=y          ← 补丁生效（首编时该行整条不存在）
+
+$ cat out/kernel/lineage-23-6.12/build-recipe.txt
+lineage-23-6.12-cdh-eef9316b0b57
+
+## 4) 03 产物：10 个 .ko，vermagic 与内核逐字一致
+$ ls out/kernel/lineage-23-6.12/modules
+SHA256SUMS  cfg80211.ko  device_info.ko  goodix_fingerprint.ko  input_identity.ko  libarc4.ko
+mac80211.ko mac80211_hwsim.ko  modules-log.txt  rfkill.ko  virtio_console.ko  virtio_media.ko
+
+$ strings -a out/kernel/lineage-23-6.12/modules/mac80211_hwsim.ko | grep -m1 "^vermagic="
+vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64
+
+## 5) 04 / 05：boot / vendor_boot 首次为自研产物
+$ ./out/bin/cdh device build m22 --only 04_build_boot
+==> [步骤 1] 解包 boot 基底
+    输入: out/roms/lineage/lineage-23.2/boot_a.img（页 4096，kernel 44780032 B，ramdisk 1707747 B）
+==> [步骤 3] 重打 boot.img
+    输入: kernel 43969024 B（out/kernel/lineage-23-6.12/Image）、ramdisk 1707747 B
+    输出: out/devices/flyme/m22/12.5.0.0A/img/boot.img（83886080 字节，上限 268435456 字节）
+[ok] boot.img 打包完成（83886080 字节）；缓存配方 boot-92a7fcbe3d57
+
+$ ./out/bin/cdh device build m22 --only 05_build_vendor_boot
+==> [步骤 1] 拆解 vendor_boot 基底
+    输入: out/roms/lineage/lineage-23.2/vendor_boot_a.img（version 4，页 2048 B，vendor_ramdisk 22387457 B）
+    输出: fragment 2 个（fragment0 platform 4794800 B，fragment1 recovery 17592657 B）
+==> [步骤 2] 重建 vendor_ramdisk fragment
+    fragment0 platform: 4794800 B -> 4795428 B（删 fstab 3 项，注入 first_stage_ramdisk/system/etc/fstab.sun）
+
+$ ./out/bin/cdh device build m22 --only 11_pack_vda
+==> [步骤 4] 替换 boot / vendor_boot 分区（A/B 双槽）
+    [ok] boot_a          80.0 MiB @ 12.49 GiB（容量 80.0 MiB，余量 0 B），回读一致
+    [ok] boot_b          80.0 MiB @ 12.57 GiB（容量 80.0 MiB，余量 0 B），回读一致
+    [ok] vendor_boot_a   21.4 MiB @ 12.30 GiB（容量 100.0 MiB，余量 78.6 MiB），回读一致
+    [ok] vendor_boot_b   21.4 MiB @ 12.40 GiB（容量 100.0 MiB，余量 78.6 MiB），回读一致
+# 对照：11 阶段此前对这四个槽位打 [warn]「缺 boot.img / vendor_boot.img，沿用底盘原版」
+
+## 6) 单测
+$ cd build && go test ./internal/kbuild/
+ok  	cloud-phone-hub/engine/build/internal/kbuild

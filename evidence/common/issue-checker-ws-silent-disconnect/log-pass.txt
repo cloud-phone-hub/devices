@@ -1,0 +1,35 @@
+# 修复验证（2026-11-12 22:35~22:40，oriole 云机实例 2，ADB 127.0.0.1:5911）
+
+## 1. 即时恢复：重启旧版 App 即重新注册（证明是客户端挂死）
+$ adb shell am force-stop dev.checker && adb logcat -c && adb shell am start -n dev.checker/.MainActivity
+$ adb logcat -d -s checker-ws   # 12 s 后
+11-12 22:35:24.683 I checker-ws: start(): 目标 101.33.73.101:80/ws
+11-12 22:35:24.686 I checker-ws: 正在连接 101.33.73.101:80 ...
+11-12 22:35:24.783 I checker-ws: WebSocket 握手成功
+11-12 22:35:24.928 I checker-ws: 注册 device='oriole' info={... android_id=02f9d9f965732349-cloud}
+
+## 2. 新版 APK（soTimeout=65s + 30s ping 心跳）编译安装
+$ ./app/gradlew -p app assembleCloudDebug
+app/build/outputs/apk/cloud/debug/device-checker-agent-cloud-debug.apk (5291399 B)
+$ adb -s 127.0.0.1:5911 install -r device-checker-agent-cloud-debug.apk
+Performing Streamed Install
+Success
+$ cd server && cargo check
+Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.53s
+
+## 3. 新版启动即注册
+$ adb shell am force-stop dev.checker && adb logcat -c && adb shell am start -n dev.checker/.MainActivity
+$ adb logcat -d -s checker-ws   # 10 s 后
+11-12 22:38:09.514 I checker-ws: start(): 目标 101.33.73.101:80/ws
+11-12 22:38:09.515 I checker-ws: 正在连接 101.33.73.101:80 ...
+11-12 22:38:09.595 I checker-ws: WebSocket 握手成功
+11-12 22:38:09.712 I checker-ws: 注册 device='oriole' info={... android_id=02f9d9f965732349-cloud}
+
+## 4. 心跳周期验证：静置 75 s（> 65 s 读超时）连接不掉
+$ sleep 75 && adb logcat -d -s checker-ws | tail
+（仍只有 22:38:09 的注册段，无「连接失败/正在连接」重连痕迹——
+ 30 s ping 收到 pong、读超时未误判，链路保活成立）
+
+## 5. 两端同时在线
+$ curl -s http://101.33.73.101/api/devices | python3 -c "...print androidId..."
+['02f9d9f965732349-cloud', 'b8f75582353b320a']

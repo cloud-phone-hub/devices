@@ -1,0 +1,44 @@
+=== 1. cdh-vendor hal build android.hardware.wifi --android 16 ===
+==> AIDL 代码生成
+==> 平台 parcelable（framework-ndk.aidl：android.os.PersistableBundle）
+    写 framework-ndk.aidl
+    android.hardware.wifi.common (v1, hash 6a467a628209)
+    android.hardware.wifi (v3, hash 3b3e31a62743)
+==> 编译 141+2 个源文件到 .o
+==> 链接服务二进制
+==> 编译静态库 libxml2（38 个 C 源，静态编入服务）
+    写 bin/hw/android.hardware.wifi-service
+[ok] android.hardware.wifi 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+
+=== 2. 07_build_vendor 步骤 6c 裁剪重复 VINTF 片段 ===
+==> [步骤 6c] 按清单裁掉 VINTF 片段（1 个）：android.hardware.wifi-service.xml
+[vintf] 裁掉 out/devices/google/oriole/CP1A.260405.005-20260310/vendor/etc/vintf/manifest/android.hardware.wifi-service.xml（官方同名声明保留，避免 fqname 冲突）
+
+=== 3. 实例 1 启动与 VINTF / APEX / Wi-Fi 实测 ===
+[    0.129614][    T1] cdh_redirect: 规则来自 /lib/modules/cdh_redirect.rules：10 条
+[    0.131572][    T1] cdh_redirect: 已加载：10 条规则（/lib/modules/cdh_redirect.rules），内核未打补丁
+
+$ grep -c "NULL VINTF MANIFEST" out/core/daemon/runtime/oriole_CP1A.260405.005-20260310/1/qemu.log
+0
+$ grep -c "Conflicting FqInstance" out/core/daemon/runtime/oriole_CP1A.260405.005-20260310/1/qemu.log
+0
+
+$ adb -s 127.0.0.1:5911 shell "getprop sys.boot_completed; getprop init.svc.bootanim; ls -la /apex/com.google.pixel.wifi.ext/etc/vintf/; dumpsys wifi | grep -E 'Wi-Fi is|mWifiInfo|curState=' | head -n 10; logcat -d -s CdhWifiHal:*"
+1
+stopped
+total 12
+drwxr-xr-x 2 root   shell  4096 1970-01-01 00:00 .
+drwxr-xr-x 3 root   shell  4096 1970-01-01 00:00 ..
+-rw-r--r-- 1 system system  449 1970-01-01 00:00 manifest_wifi_ext_aidl.xml
+Wi-Fi is enabled
+curState=EnabledState
+curState=ConnectModeState
+curState=L3ConnectedState
+curState=CompletedState
+mWifiInfo SSID: "CDH-A", BSSID: 02:00:00:00:00:11, MAC: <none>, IP: /192.168.60.100, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -41, Link speed: 18Mbps, Tx Link speed: 18Mbps, Max Supported Tx Link speed: 54Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: 54Mbps, Frequency: 2437MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true
+--------- beginning of main
+01-01 00:00:15.961   556   559 I CdhWifiHal: host channel connected: /dev/hvc9
+01-01 00:00:15.961   556   559 I CdhWifiHal: host channel hello version=1
+01-01 00:00:15.962   556   559 I CdhWifiHal: host scan profile applied: 4 APs first=VirtWifi
+11-05 21:24:55.103   556   560 I CdhWifiHal: getStaIfaceNames created=1,0
+11-05 21:24:57.549   556   560 I CdhWifiHal: getStaIfaceNames created=1,0

@@ -1,0 +1,17 @@
+{
+  "id": 12,
+  "buildId": "15-AP3A.240905.015.A2-20251126",
+  "deviceId": 8,
+  "configId": 8,
+  "osVersion": "15-AP3A.240905.015.A2-20251126",
+  "buildDate": "20251126",
+  "securityPatch": "2025-11-05",
+  "factoryTgz": "R3-Blackview-Xplore-1.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 R3-Blackview-Xplore-1.zip (vendor/build.prop) 自动生成。",
+    "osVersion": "15-AP3A.240905.015.A2-20251126"
+  },
+  "updatedAt": "2026-11-06 02:47:41"
+}

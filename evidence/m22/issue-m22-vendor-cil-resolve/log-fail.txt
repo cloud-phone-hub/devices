@@ -1,0 +1,33 @@
+# 失败：init 现场合并策略编不出来（三轮连续）
+# 来源: out/core/daemon/runtime/m22_12.5.0.0A/{5,6,7}/qemu.log
+# 时间: 2026-10-28 19:2x~19:4x
+# 背景: /odm 预编译策略已屏蔽，init 走 Compiling SELinux policy（现场 secilc 合并）
+
+## 第一轮（实例 5）：netlink_route_socket 的 nlmsg 权限 + permissionx nlmsg kind
+[    0.433175][    T1] init: /system/bin/secilc: Failed to resolve permission nlmsg
+[    0.433430][    T1] init: /system/bin/secilc: Failed to resolve allow statement at /vendor/etc/selinux/vendor_sepolicy.cil:2423 from system/sepolicy/vendor/ot_rcp.te:21 from out/soong/.intermediates/system/sepolicy/vendor_sepolicy.cil.raw/android_common/virtio_arm64only/vendor_sepolicy.cil.raw:1913
+[    0.434433][    T1] init: /system/bin/secilc: Failed to resolve AST
+[    0.434653][    T1] init: /system/bin/secilc: Failed to compile cildb: -2
+[    0.434913][    T1] init: /system/bin/secilc exited with status 254
+[    0.435329][    T1] init: Unable to open SELinux policy
+[    0.435716][    T1] init: InitFatalReboot: signal 6
+[    0.444580][    T1] init: Reboot ending, jumping to kernel
+[    1.052187][    T1] reboot: Restarting system with command 'recovery'
+
+## 第二轮（实例 6）：system class 的 firmware_load（6.13+ 权限位）
+[    0.400851][    T1] init: /system/bin/secilc: Failed to resolve permission firmware_load
+[    0.401207][    T1] init: /system/bin/secilc: Failed to resolve allow statement at /vendor/etc/selinux/vendor_sepolicy.cil:3231 from device/mainline/common/sepolicy/vendor/kernel.te:2 from out/soong/.intermediates/system/sepolicy/vendor_sepolicy.cil.raw/android_common/virtio_arm64only/vendor_sepolicy.cil.raw:2443
+[    0.402670][    T1] init: /system/bin/secilc: Failed to compile cildb: -2
+
+## 第三轮（实例 7）：pioneer_exec 只有 allow、没有 (type pioneer_exec)
+[    0.390479][    T1] init: /system/bin/secilc: Failed to resolve allow statement at /vendor/etc/selinux/vendor_sepolicy.cil:4425
+[    0.391093][    T1] init: /system/bin/secilc: Failed to compile cildb: -2
+[    0.391610][    T1] init: Unable to open SELinux policy
+
+## 现场定位（vendor_sepolicy.cil 从 patch.img 取出）
+# 2423: (allow ot_rcp self (netlink_route_socket (nlmsg)))
+# 2426/2429: (allowx ot_rcp self (nlmsg netlink_route_socket (...)))
+# 3231: (allow kernel_202504 vendor_firmware_file (system (firmware_load)))
+# 4425: (allow init_202504 pioneer_exec (file (...)))
+# plat cil 的 (class netlink_route_socket (nlmsg_read nlmsg_write nlmsg_readpriv nlmsg_getneigh))
+# 与内核 classmap.h 均无 nlmsg / firmware_load；vendor 全表也没有 (type pioneer_exec)

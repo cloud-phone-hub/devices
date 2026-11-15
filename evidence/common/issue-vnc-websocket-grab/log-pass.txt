@@ -1,0 +1,84 @@
+# log-pass：修好的抓帧链路在 gold 实例上出帧（2026-11-04）
+
+实例：`spec=gold_cn_OS3.0.10.0.VNQCNXM` `index=1`（`out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/1`），
+端口 console 5910 / adb 5911 / vnc 5912 / **websocket 5913**。
+
+--------------------------------------------------------------------------
+## 1. 引导判据（qemu.log）
+
+    $ grep -n "sys.boot_completed=1" out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/1/qemu.log | head -1
+    6102:[   89.294903][    T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:113)
+
+（原文行号 6102，guest 时间 89.29 s；日志总长 15755 行。）
+
+QEMU 侧同时有真实出帧记录，说明 scanout 一直在动，卡点确实只在客户端协议：
+
+    6785:qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+    6786:qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=2.8 flush=0.0 update=0.0 end=0.0 总=3.0 ms
+
+--------------------------------------------------------------------------
+## 2. 抓帧判据（websocket + 修正后的 RFB 客户端）
+
+    $ cd engine/out/tmp && python3 ws_shot.py 5913 gold-probe.png 40
+    gold-probe.png 1088x2400 bpp=32 平均亮度=121.1 峰值=255
+    （real 1.08 s）
+
+ServerInit 修正后的字段（同一份 hex，`04 40 | 09 60 | 20 | 18 | 00 | 01 | 00ff 00ff 00ff | 10 08 00 | pad | 00000004`）：
+
+    width=1088 height=2400 bpp=32 depth=24 bigEndian=0 trueColour=1
+    redMax=255 greenMax=255 blueMax=255 redShift=16 greenShift=8 blueShift=0 nameLength=4
+
+--------------------------------------------------------------------------
+## 3. 正式判定（boot + 截图一次过）
+
+    $ python3 engine/out/tmp/boot_wait.py gold_cn_OS3.0.10.0.VNQCNXM --timeout 60 \
+        --png engine/out/tmp/gold-desktop.png
+    实例: /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/1  adb=5911 vnc=5912 ws=5913
+    日志: /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/1/qemu.log
+    [shot] /Volumes/work/cloud-phone-hub/engine/out/tmp/gold-desktop.png 1088x2400 bpp=32 平均亮度=121.1 峰值=255
+    [pass] 引导完成（日志 15711 行）+ 截图已落 /Volumes/work/cloud-phone-hub/engine/out/tmp/gold-desktop.png
+    exit=0
+
+    $ ls -l engine/out/tmp/gold-desktop.png
+    -rw-r--r--@ 1 cuimingqiang  staff  3442376 Nov  4 05:36 engine/out/tmp/gold-desktop.png
+
+画面是完整 MIUI launcher（状态栏 5:27 / 4G / WiFi / 100%、天气-日历-相册-设置-米家-笔记-
+手机管家-计算器-小米商城-超级小爱-应用商店-游戏中心 十二个图标 + dock 四个），
+颜色正常——`redShift=16/greenShift=8/blueShift=0` 的通道映射对了。
+截图同目录留档 `gold-probe.png`、`gold-desktop.png`。
+
+--------------------------------------------------------------------------
+## 4. 固化后的工具（不再只活在 out/tmp）
+
+    $ cd core/host/daemon/tools && python3 -m py_compile vnc_grab.py boot_check.py && echo 编译通过
+    编译通过
+
+    $ python3 boot_check.py no_such_spec ; echo exit=$?
+    [err] /api/state 里没有 spec=no_such_spec index=None 的在跑实例；当前在跑：[]
+    exit=2
+
+    $ python3 vnc_grab.py            # 无参 -> 打印用法（含四条协议要点）
+    用法: python3 vnc_grab.py <websocket_port> <out.png> [最多等多少秒, 默认 20]
+
+`vnc_grab.py` 与本轮跑通的 `engine/out/tmp/ws_shot.py` 同源，另加 `SetEncodings`、
+`setColourMapEntries`/`Cursor` 跳过分支与 32bpp/trueColour 守卫；`boot_check.py`
+把「boot_completed + 平均亮度 >= `--min-bright`（默认 2）」做成一条命令的 pass/fail。
+
+--------------------------------------------------------------------------
+## 5. 固化件在活实例上复验（第 2 台 m22，2026-11-04 06:02）
+
+    $ cd /Volumes/work/cloud-phone-hub && python3 core/host/daemon/tools/boot_check.py \
+        m22_12.5.0.0A --timeout 600 --png engine/out/tmp/m22-desktop.png
+    实例: /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/m22_12.5.0.0A/1  adb=5911 vnc=5912 ws=5913
+    日志: /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/m22_12.5.0.0A/1/qemu.log
+    [shot] /Volumes/work/cloud-phone-hub/engine/out/tmp/m22-desktop.png 1088x2400 bpp=32 平均亮度=147.9 峰值=252
+    [pass] 引导完成（日志 7869 行）+ 截图非黑（平均亮度=147.9 峰值=252）-> engine/out/tmp/m22-desktop.png
+    exit=0
+
+同一份 qemu.log 的引导标记：
+
+    7517:[   52.118007][    T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1308)
+
+画面是 Flyme 锁屏（顶部打孔摄像头、手电筒/相机两个快捷、右侧「左滑进入精彩世界」），
+非黑判据成立；与 gold 的差别只在 m22 停在 keyguard、gold 已进 launcher——
+两者都满足本轮定档的判据，锁屏与否另计（见 solution §六）。

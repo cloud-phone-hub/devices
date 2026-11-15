@@ -1,0 +1,75 @@
+=== Cold boot & >105s runtime check (ASUS_AI2205 instance 3, 440dpi phone mode) ===
+Enforcing
+1
+stopped
+440
+Physical size: 1080x2400
+Physical density: 440
+520 529 659 1261 1608 1807
+Service vicewifi: found
+Service wifi_extended_service: found
+WINDOW MANAGER DISPLAY CONTENTS (dumpsys window displays)
+  Display: mDisplayId=0 (organized)
+    init=1080x2400 440dpi mMinSizeOfResizeableTaskDp=220 cur=1080x2400 app=1080x2268 rng=1080x1014-2268x2202
+    deferred=false mLayoutNeeded=false mTouchExcludeRegion=SkRegion((0,0,1080,2400))
+
+  mLastOrientationSource=WindowedMagnification:0:31@75327000
+  deepestLastOrientationSource=ActivityRecord{6615cdd u0 com.asus.launcher/com.android.launcher3.uioverrides.QuickstepLauncher t7}
+  overrideConfig={0 1.0 460mcc1mnc [en_US] ldltr sw393dp w393dp h801dp 440dpi nrml long widecg port night finger qwerty/v/v -nav/hfalse1.0 winConfig={ mBounds=Rect(0, 0 - 1080, 2400) mAppBounds=Rect(0, 0 - 1080, 2268) mMaxBounds=Rect(0, 0 - 1080, 2400) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} as.2 s.221 fontWeightAdjustment=0}
+  mLayoutSeq=296
+  mCurrentFocus=Window{dc0cbb7 u0 com.asus.launcher/com.android.launcher3.uioverrides.QuickstepLauncher}
+  mFocusedApp=ActivityRecord{6615cdd u0 com.asus.launcher/com.android.launcher3.uioverrides.QuickstepLauncher t7}
+
+  mHoldScreenWindow=null
+  mObscuringWindow=Window{17c67c6 u0 com.android.systemui.wallpapers.ImageWallpaper}
+  mLastWakeLockHoldingWindow=null
+实例: /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/ASUS_AI2205_13-TKQ1.220928.001-20240229/3  adb=5911 vnc=5912 ws=5913
+日志: /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/ASUS_AI2205_13-TKQ1.220928.001-20240229/3/qemu.log
+[shot] /Volumes/work/cloud-phone-hub/core/host/daemon/tools/shot-ASUS_AI2205_13-TKQ1.220928.001-20240229.png 1088x2400 bpp=32 平均亮度=10.8 峰值=255
+[pass] 引导完成（日志 12024 行）+ 截图非黑（平均亮度=10.8 峰值=255）-> /Volumes/work/cloud-phone-hub/core/host/daemon/tools/shot-ASUS_AI2205_13-TKQ1.220928.001-20240229.png
+
+=== 6. Phone 识别、竖屏显示与 Settings 启动验证 ===
+$ adb -s 127.0.0.1:5911 shell "getprop sys.boot_completed; getprop ro.sf.lcd_density; getprop init.svc.AsusPingMonitor; getprop init.svc.AsusRouteMonitor"
+1
+440
+running
+running
+
+$ adb -s 127.0.0.1:5911 shell "ls /vendor/etc/permissions/ | grep -E 'handheld|tablet|fingerprint|hinge|nfc'; pm list features | grep -E 'handheld|tablet|fingerprint|hinge|nfc'"
+android.hardware.fingerprint.xml
+handheld_core_hardware.xml
+feature:android.hardware.fingerprint
+feature:asus.hardware.fingerprint_earlywakeup
+feature:asus.hardware.fingerprint_on_display
+
+$ adb -s 127.0.0.1:5911 shell "dumpsys hardware_properties"
+****** Dump of HardwarePropertiesManagerService ******
+CPU temperatures: [29.1]
+CPU throttling temperatures: [85.0]
+CPU shutdown temperatures: [117.0]
+CPU vr throttling temperatures: [-3.4028235E38]
+GPU temperatures: [28.5]
+GPU throttling temperatures: [85.0]
+GPU shutdown temperatures: [117.0]
+GPU vr throttling temperatures: [-3.4028235E38]
+Battery temperatures: [26.0]
+Battery throttling temperatures: [50.0]
+Battery shutdown temperatures: [60.0]
+Battery vr throttling temperatures: [-3.4028235E38]
+Skin temperatures: [41.747665]
+Skin throttling temperatures: [50.0]
+Skin shutdown temperatures: [90.0]
+Skin vr throttling temperatures: [-3.4028235E38]
+Fan speed: []
+****** End of HardwarePropertiesManagerService dump ******
+
+$ adb -s 127.0.0.1:5911 shell "am start -W -n com.android.settings/.Settings && dumpsys window | grep -E 'mCurrentFocus|mFocusedApp|mCurrentRotation'"
+Starting: Intent { cmp=com.android.settings/.Settings }
+Status: ok
+LaunchState: WARM
+Activity: com.android.settings/.homepage.SettingsHomepageActivity
+TotalTime: 859
+WaitTime: 861
+Complete
+  mFocusedApp=ActivityRecord{58c96be u0 com.android.settings/.Settings t8}
+      mCurrentRotation=ROTATION_0

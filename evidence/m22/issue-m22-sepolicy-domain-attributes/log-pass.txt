@@ -1,0 +1,83 @@
+# issue-m22-sepolicy-domain-attributes · 通过现场
+# 采集时间: 2026-10-30 11:31（实例 44，修复后重跑 07 的新盘集）
+# 现场: out/core/daemon/runtime/m22_12.5.0.0A/44/qemu.log（52,843 行）
+# 对照: 同目录 43/qemu.log 为修复前的失败现场（见 log-fail.txt）
+
+== 1) 构建侧：5 个 sepolicy 片段补上 domain 属性后重跑 07 ==
+$ cdh device build m22 --from build_vendor        # out/tmp/m22-rebuild-fix1.log
+[ok] 装配树条目 669（文件 438 / 链接 199 / 目录 32），初始 60635 块（236 MB），inode 768
+[ok] vendor.img 构建完成: out/devices/flyme/m22/12.5.0.0A/img/vendor.img（206700544 字节）
+EXIT=0
+
+  顺带补齐了失败现场里的第二个缺陷（v412 运行期闭包）：
+    android.hardware.media.v412@default 20 项齐全（编译产物 17 + vendor 静态树 3）
+    编译产物 android.hardware.media.v412@default: 写入 20，已存在同内容 0
+  装配树 654 → 669（+15 个运行库）与 vendor.img 206,700,544 B 与 #71 记录逐字一致，
+  即 #73 遗留的「654 vs 669 无法定论」在此闭环（缺的就是 v412 的 15 个运行期库）。
+
+== 2) 镜像侧：vendor_sepolicy.cil 里 5 个域已归入 domain 属性 ==
+$ debugfs -R "dump /etc/selinux/vendor_sepolicy.cil …" out/…/img/vendor.img
+348,423 B → 349,844 B（+1,421 B：5 条属性 + 注释）
+
+域名                             (type …)  domain-set  新增属性所在行
+hal_realitytap_default              1          1        4635
+hal_aw_light_default                1          1        4690
+hal_meizu_charging_default          1          1        4739
+vendor_hal_diaghal_default          1          1        4818
+vendor_hal_srvctracker_default      1          1        4903
+pioneer                             1          1        既有（未改，写法的参照）
+
+== 3) 运行侧：失败现场的每一类错误计数全部归零 ==
+计数（实例 44 全程，对照实例 43）：
+
+  类别                                        实例 43    实例 44
+  init: cannot setexeccon(…) … Invalid argument   1,636 次     0
+  Service '…' received signal 6                     1,648 次     0
+  linker: CANNOT LINK EXECUTABLE … libchrome.so       479 次     0
+  Entered the Android system server                    3 次     1 次（不再循环）
+  zygote / surfaceflinger starting                     各 3 次   各 1 次
+
+  （实例 43 的 1,636 = aw_light 472 + diaghal 880 + meizu_charging 95 + realitytap 94 + srvctracker 95，
+    signal 6 的 1,648 = diaghal 873 + aw_light 475 + meizu_charging 95 + realitytap 95 + srvctracker 92 + audioserver 18。）
+
+== 4) 启动里程碑一次走完（不再 72 秒一轮）==
+01-01 00:00:28.604  boot_progress_start: 28604
+01-01 00:00:28.694  boot_progress_preload_start: 28694
+01-01 00:00:29.241  boot_progress_preload_end: 29241
+01-01 00:00:29.552  boot_progress_system_run: 29552
+06-25 20:52:33.532  boot_progress_ams_ready: 64693
+06-25 20:52:35.432  boot_progress_enable_screen: 66593      ← 亮屏
+[   69.388288][ T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1308)
+
+  失败现场里 Watchdog 的触发点（LightsService$IAwLightWrapper.connectToHal 等
+  IAwLight 66 s）在本实例不再出现：aw_light 在 30.03 s 就已 start 成功，system_server
+  29.55 s 起来后直接拿到服务。
+
+== 5) 5 个自研 HAL 各自 start 一次，无 abort ==
+[ 28.70] init: starting service 'vendor.awa.realitytap'...            → pid 862
+[ 28.71] init: starting service 'vendor.default.diaghal'...           → pid 864
+[ 28.71] init: starting service 'vendor.servicetrackeraidl'...        → pid 865
+[ 28.61] init: starting service 'android-hardware-media-c2-v4l2-hal-1-2'... → pid 843
+[ 30.03] init: starting service 'vendor.default.aw_light'...          → pid 1039
+[ 30.05] init: starting service 'vendor.default.meizu_charging-service'... → pid 1042
+
+  每个服务「starting」1 次、「started … has pid」1 次，全程无第二次 starting
+  （失败现场是每秒一次的死循环重试）。
+
+== 6) 域归属实证：进程真的跑在自己的域里 ==
+修复前这 5 个进程都落在 u:r:init:s0（setexeccon 失败后沿用父域），修复后 pioneer
+的 pidof 跨域读 /proc/<pid>/cmdline 被拒，日志里的 tcontext 直接暴露对端域：
+
+  tcontext=u:r:hal_realitytap_default         (pid 862)
+  tcontext=u:r:vendor_hal_diaghal_default     (pid 864)
+  tcontext=u:r:vendor_hal_srvctracker_default (pid 865)
+  tcontext=u:r:hal_aw_light_default           (pid 1039)
+  tcontext=u:r:hal_meizu_charging_default     (pid 1042)
+
+  5 个域全部出现 → setexeccon 成功、domain 属性生效。这些 denied 是 pioneer 侧
+  的历史既有权限（permissive 下不阻塞），不影响结论。
+
+== 7) 画面 ==
+.tmp/m22-run-44-ok.png     Flyme 桌面（20:54，状态栏信号/电量/图标正常）
+.tmp/m22-run-44-late.png   用户点进「设置 → 无线网络」（20:55），页面层级正常、触摸生效
+                           说明不是"只画了一帧的假桌面"，UI 线程与输入通路都在工作

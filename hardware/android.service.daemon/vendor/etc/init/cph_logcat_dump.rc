@@ -1,0 +1,40 @@
+# CDH 取证通道：把 logcat 持续转出到串口 console（宿主 qemu.log / serial.log）。
+#
+# 三个触发点覆盖三类故障：
+#   * early-boot —— zygote / SurfaceFlinger / SystemServer 起不来时，
+#     sys.boot_progress.systemserver 与 sys.boot_completed 永远不会置位，只能尽早起；
+#   * sys.boot_progress.systemserver=1 —— system_server 反复重启；
+#   * sys.boot_completed=1 —— 开机完成后的稳态（watchdog / ANR 取证）。
+#
+# 三个触发只会真正拉起一次：`logcat` 是长跑进程，服务虽 oneshot 但启动后
+# 一直不退出；后两次 start 命中「已在运行」被 init 忽略，天然幂等，
+# 不需要额外状态位。
+#
+# 输出落点 /dev/ttyAMA0：m22 的 vendor_boot cmdline 只有 console=tty0，但 GRUB
+# 引导的实际 cmdline 含 console=ttyAMA0（见
+# evidence/m22/issue-m22-instance31-binder-stall/dmesg-31.txt:52）；gold 的
+# vendor_boot cmdline 自带 console=tty0 console=ttyAMA0。该节点由 pl011 驱动
+# probe 创建、标签 console_device；pioneer 是内核补丁的 forced permissive 域，
+# 写它虽会产生 avc denied 但实际可写（permissive=1）。
+#
+# 2026-10-30：early-boot 这一档原本只存在于 m22 机型静态树
+# （manifest/flyme/m22/vendor/etc/init/cph_logcat_dump_early.rc，独立 service
+# logcat_dump_early），与本文件同脚本、同 seclabel、只差触发时机，属同一能力
+# 散在两处，已并入本文件并删除机型层那份。
+service vendor.logcat_dump /system/bin/sh /vendor/bin/cph-logcat-dump
+    class main
+    user root
+    group root
+    oneshot
+    seclabel u:r:pioneer:s0
+
+# 最早的一档：zygote / SystemServer 起不来时，只有它能取证
+on early-boot
+    start vendor.logcat_dump
+
+# 提前到 systemserver 阶段就抓 logcat，覆盖开机循环 / SystemServer 反复重启场景
+on property:sys.boot_progress.systemserver=1
+    start vendor.logcat_dump
+
+on property:sys.boot_completed=1
+    start vendor.logcat_dump

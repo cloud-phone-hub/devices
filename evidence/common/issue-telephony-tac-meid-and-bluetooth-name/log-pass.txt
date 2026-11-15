@@ -1,0 +1,63 @@
+# G3 & G4 修复后验证证据 (log-pass.txt)
+# 采样时间: 2026-11-10
+# 设备: Xiaomi Redmi Note 13 5G (gold / 2312DRAABC, OS3.0.10.0.VNQCNXM)
+# 真机 ID: ec519c7d513a3ad3 (USB: fmvwkrheonugvgjb)
+# 云机实例: gold_15-OS3.0.10.0.VNQCNXM/1 (df809591a4e085ae-cloud, ADB: 127.0.0.1:5911)
+# 镜像产物: patch.img (sha256 59062137ad00), vda.img (vda-5af788d1edad)
+# 测试批次: run-00223
+
+=== 1. boot_check.py 启动亮屏验收 ===
+[shot] /Volumes/work/cloud-phone-hub/engine/out/tmp/gold_boot_177.png 1088x2400 bpp=32 平均亮度=121.6 峰值=255
+[pass] 引导完成（日志 5773 行）+ 截图非黑（平均亮度=121.6 峰值=255）
+
+=== 2. 云机运行态 OEM/RIL 属性、ImeiMeidSource 与蓝牙服务状态 ===
+getprop:
+[bluetooth.device.default_name]: [Redmi Note 13 5G]
+[ro.ril.miui.imei0]: [867171079399961]
+[ro.ril.miui.imei1]: [867171079399979]
+[ro.ril.oem.imei]: [867171079399961]
+[ro.ril.oem.imei1]: [867171079399961]
+[ro.ril.oem.imei2]: [867171079399979]
+[ro.ril.oem.meid]: [99002082939996]
+[ro.vendor.oem.imei]: [867171079399961]
+[ro.vendor.oem.imei2]: [867171079399979]
+[ro.vendor.oem.meid]: [99002082939996]
+[ro.vendor.oem.serialno]: [jhkpt81z5p0t2xpk]
+
+dumpsys bluetooth_manager:
+Bluetooth Status
+  enabled: false
+  state: OFF
+  address: 00:00:00:DE:17:00
+  isSupportBluetoothHalfOn: true
+  BluetoothHalfOnState: false
+  name: Redmi Note 13 5G
+
+logcat -b radio:
+11-10 14:04:11.354  1389  1389 D ImeiMeidSource: slot=0 imei=xxxxxxxxxxxx648 meid=xxxxxxxxxxx064
+11-10 14:04:11.359  1389  1389 D ImeiMeidSource: slot=1 imei=xxxxxxxxxxxx378 meid=xxxxxxxxxxx136
+
+=== 3. device-checker 双机对比批次 run-00223 ===
+[REAL ] aligner_xiaomi_gold.all: passed=32/32 G1=True G2=True G3=True G4=True
+[CLOUD] aligner_xiaomi_gold.all: passed=22/32 G1=True G2=True G3=True G4=True
+
+[CLOUD] aligner_xiaomi_gold.network_telephony_bt_gnss:
+  telephony={
+    "phoneCount": 2,
+    "activeModemCount": 2,
+    "typeAllocationCodeSlot0": "86717107",
+    "typeAllocationCodeSlot1": "86717107",
+    "tacMatchesGold86717107": true,
+    "manufacturerCodeSlot0": "99002082",
+    "manufacturerCodeSlot1": "99002082",
+    "deviceSoftwareVersionSlot0": "78",
+    "deviceSoftwareVersionSlot1": "78"
+  }
+  bluetooth={
+    "address": "02:00:00:00:00:00",
+    "hasAdapter": true,
+    "hasValidDeviceName": true,
+    "isEnabled": false,
+    "name": "Redmi Note 13 5G",
+    "state": 10
+  }

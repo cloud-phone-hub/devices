@@ -1,0 +1,71 @@
+# agent 产物根迁移 #242 —— 改动后记录（2026-11-15）
+
+## 1. 目录迁移
+
+```
+$ ps -p 36335,36347 >/dev/null 2>&1 && echo "still running" || echo "stopped"
+stopped
+$ mv /Volumes/work/cloud-phone-hub/agent/out /Volumes/work/cloud-phone-hub/out/agent
+moved
+$ ls out/agent
+config  dist  harness  releases  tmp  web
+$ ls -d agent/out
+ls: agent/out: No such file or directory
+```
+
+旧管理台（`./out/dist/cdha serve`）与 `cdha mcp-tools` 先停；迁移后 `agent/out` 不再存在。
+
+## 2. 重编发布二进制
+
+```
+$ cd agent && export TMPDIR=/Volumes/work/cloud-phone-hub/out/agent/tmp
+$ go build -o ../out/agent/dist/cdha ./cmd/cdha
+$ go build -o ../out/agent/dist/cdh-engine ./cmd/cdh-engine
+$ go build -o ../out/agent/dist/host-daemon ./cmd/host-daemon
+$ ls -l ../out/agent/dist/{cdha,cdh-engine,host-daemon}
+-rwxr-xr-x  14367986  ../out/agent/dist/cdh-engine
+-rwxr-xr-x  14073330  ../out/agent/dist/cdha
+-rwxr-xr-x  10321314  ../out/agent/dist/host-daemon
+```
+
+## 3. 回归
+
+```
+$ go build ./... && go vet ./...
+BUILD+VET OK
+$ go test ./...
+（全部 ok，含 internal/fsx / cmd/cdha / modules/pipeline 13 阶段）
+$ go test ./internal/fsx/ ./cmd/cdha/
+ok  	cloud-phone-hub/agent/internal/fsx	0.247s
+ok  	cloud-phone-hub/agent/cmd/cdha	1.229s
+```
+
+`internal/fsx` 新增用例：禁写 `<仓库根>/out` + 例外 `<仓库根>/out/agent` 时，
+`out/agent/ok.txt` 可写、`out/qemu/dirty.txt` 仍返回 `ErrForbiddenTarget`。
+
+## 4. 新管理台启动
+
+```
+==> cdha 云机一体化工程与诊断平台已启动
+    Agent 根目录:  /Volumes/work/cloud-phone-hub/agent
+    Engine 根目录: /Volumes/work/cloud-phone-hub/engine
+    产物与发布根:  /Volumes/work/cloud-phone-hub/out/agent/dist
+    管理台地址:    http://127.0.0.1:17890/?token=…
+    手机校验 WS:   ws://[::]:17891/ws (仅开放设备握手通道)
+
+$ curl -s -o /dev/null -w "HTTP %{http_code}\n" "http://127.0.0.1:17890/?token=…"
+HTTP 200
+$ ps aux | grep "out/agent/dist/cdha serve"
+51703 ./../out/agent/dist/cdha serve --engine-root ...
+```
+
+## 5. 运行态配置修正
+
+```
+$ grep -rn "agent/out" out/agent/config out/agent/releases
+（无匹配）
+```
+
+- `config/nodes.json`：`local.deployDir` → `/Volumes/work/cloud-phone-hub/out/agent/dist`；
+- `config/dsh-tools.patch.yml`：mcp-cdha-tools 的 `command` → `out/agent/dist/cdha`；
+- `releases/rel_*.json`：`dirPath` / `archivePath` 同步到新根（4 份）。

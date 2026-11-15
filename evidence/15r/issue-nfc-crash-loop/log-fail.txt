@@ -1,0 +1,62 @@
+# 失败侧：com.android.nfc 崩溃风暴（实例 11，/odm 整棵重定向之后）
+# 取数：adb -s 127.0.0.1:5911 shell ...  与 out/core/daemon/runtime/15r_16.0.10.500_EX01/11/qemu.log
+# 说明：qemu.log 里 logcat 与内核 console 混流（行内可能拼 [ 1020.579082] 内核时间戳）
+
+== 1. 崩的是谁：com.android.nfc，抛 NoSuchElementException ==
+$ adb shell 'logcat -d | grep -A6 "FATAL EXCEPTION: main" | head -14'
+FATAL EXCEPTION: main
+Process: com.android.nfc, PID: 12xxx
+java.util.NoSuchElementException
+        at android.os.HwBinder.getService(HwBinder.java:150)
+        at vendor.oplus.hardware.nfc.V1_0.IOplusNfc.getService(IOplusNfc.java:34)
+        at NfcChipManager.getChipVersion(NfcChipManager.java:200)
+        at NfcChipManager.<clinit>(NfcChipManager.java)
+        at NfcService.<init>(NfcService.java)
+        at NfcApplication.onCreate(NfcApplication.java)
+
+# 该 HIDL 实现的 rc 与二进制都在 /odm —— #130 整棵重定向后一律 ENOENT
+#   /odm/etc/init/vendor.oplus.hardware.nfc@1.0-service.rc
+#   /odm/bin/hw/vendor.oplus.hardware.nfc@1.0-service
+
+== 2. 风暴强度：uptime 840–900 s 的 60 秒窗口 ==
+$ adb shell 'logcat -d -b events | grep -c am_proc_start'        # 该窗口切片
+555
+$ adb shell 'logcat -d -b events | grep -c am_crash'             # 该窗口切片
+555
+#   ≈ 9 次/秒；进程名全部是 com.android.nfc
+$ adb shell 'dmesg | grep -c "avc: denied"'                      # 该窗口切片
+3663
+$ adb shell 'logcat -d | grep -c "Waited one second for"'         # 该窗口切片
+75
+
+== 3. AMS 被拖死 → Watchdog → sysrq 复位 ==
+[ 1013.xxx] Watchdog: *** WATCHDOG KILLING SYSTEM PROCESS: Blocked in monitor ActivityManagerService on monitor thread ... for 75s
+[ 1013.xxx] Watchdog: Blocked in handler on main thread (main) for 75s
+[ 1013.xxx] Watchdog: Blocked in handler on ui thread (android.ui) for 75s
+[ 1013.xxx] Watchdog: Blocked in handler on display thread (android.display) for 75s
+[ 1013.xxx] Watchdog: Blocked in handler on animation thread (android.anim) for 75s
+[ 1019.xxx] sysrq: Resetting
+# 随后 UEFI 重新引导（无 Kernel panic）：
+#   qemu.log 第 939935 行  EFI stub: Booting Linux Kernel...
+
+== 4. 次生现象（不是主因）==
+# 4.1 8 核 soft lockup，栈首全在 TCP 锁
+[  900.xxx] watchdog: BUG: soft lockup - CPU#3 stuck for 49s!  [OwmBaseUtils]
+[  900.xxx] watchdog: BUG: soft lockup - CPU#4 stuck for 26s!  [netd]
+[  900.xxx] watchdog: BUG: soft lockup - CPU#7 stuck for 26s!  [Okio Watchdog]
+   queued_spin_lock_slowpath <- _raw_spin_lock_bh <- lock_sock_nested <- tcp_recvmsg <- inet6_recvmsg
+# 4.2 RCU/percpu work 停摆
+INFO: task khugepaged:83 blocked for more than 61 seconds.
+  ... lru_add_drain_all <- khugepaged
+INFO: task OomAdjuster:1113 blocked for more than 61 seconds.
+  ... percpu_down_write <- cgroup1_procs_write  (等 synchronize_rcu)
+# 4.3 composer HAL 的 oneway 洪水
+binder_alloc: 1012: pid 626 spamming oneway? 5559->6471 buffers
+EventThread: Faking VSYNC due to driver stall for thread app
+
+== 5. runtime 禁用无效 ==
+$ adb shell 'pm disable-user --user 0 com.android.nfc'
+Package com.android.nfc new state: default        # persistent 应用被系统立刻恢复
+
+== 6. 长期存在（非本轮引入）==
+NFC 进程重启计数：实例 9 = 4133、实例 10 = 7973、实例 11 = 4107

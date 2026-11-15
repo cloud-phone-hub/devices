@@ -1,0 +1,36 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+new file mode 100644
+index 0000000..6655711
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,13 @@
++add_library(systemproperties STATIC
++    context_node.cpp
++    contexts_serialized.cpp
++    contexts_split.cpp
++    prop_area.cpp
++    prop_info.cpp
++    system_properties.cpp
++    system_property_api.cpp
++    system_property_set.cpp
++    property_info_parser.cpp
++)
++target_include_directories(systemproperties PUBLIC include)
++target_compile_options(systemproperties PRIVATE -Wno-unused-function)
+diff --git a/include/system_properties/prop_area.h b/include/system_properties/prop_area.h
+index a4189d9..7d21356 100644
+--- a/include/system_properties/prop_area.h
++++ b/include/system_properties/prop_area.h
+@@ -139,6 +139,12 @@ class prop_area {
+   }
+   char* dirty_backup_area() { return data_ + sizeof(prop_trie_node); }
+ 
++  void reset() {
++    memset(data_, 0, bytes_used_);
++    bytes_used_ = sizeof(prop_trie_node);
++    bytes_used_ +=  __BIONIC_ALIGN(PROP_VALUE_MAX, sizeof(uint_least32_t));
++  }
++
+  private:
+   static prop_area* map_fd_ro(const int fd, bool rw);
+ 

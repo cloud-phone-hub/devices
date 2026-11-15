@@ -1,0 +1,15 @@
+# 修复后：02→11 全链重建（mac80211_hwsim.o 重新编译），干净盘重建实例，2026-11-12 20:52 起机
+$ cat /proc/uptime; getprop sys.boot_completed
+182.22 834.88
+1
+$ cmd wifi status
+==== Primary ClientModeManager instance ====
+Wifi is connected to "TP-LINK_2464"
+$ ip -br addr show wlan0; ip route
+wlan0            UP             192.168.60.100/24 fe80::d081:bbff:fec2:6ea1/64 
+192.168.60.0/24 dev wlan0 proto kernel scope link src 192.168.60.100 
+$ ping -c2 -W3 101.33.73.101
+2 packets transmitted, 2 received, 0% packet loss, time 1021ms
+rtt min/avg/max/mdev = 0.648/19.519/38.391/18.872 ms
+build-from02.log:5163:  CC [M]  drivers/net/wireless/mac80211_hwsim.o
+build-from02.log:5351:[ok] mac80211_hwsim.ko: 186 个符号版本一致

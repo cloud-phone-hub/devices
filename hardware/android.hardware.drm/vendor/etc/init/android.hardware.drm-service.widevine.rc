@@ -1,0 +1,30 @@
+# engine/vendor 自研 DRM HAL（widevine 检测模拟）：与同模块 clearkey 桩并存，独立注册
+# android.hardware.drm.IDrmFactory/widevine。只做检测与会话模拟（属性/安全级别/会话计数/
+# HDCP 信息/持久 deviceUniqueId），不做供证、许可、加解密与签名。
+#
+# 身份来源三级：Profile（/vendor/etc/mediadrm-model-id，制作者显式提供）优先，否则本实例
+# userdata 下的持久随机身份（/data/vendor/mediadrm/model/device-id）。post-fs-data 阶段先建
+# 父目录再建模型目录（固定 init 的目录创建不递归）。原始身份不落日志、不入仓。
+#
+# SELinux：hal_drm_widevine(_exec) 类型、init 域转换与 servicemanager 注册授权按机型层策略
+# 提供（见 engine/evidence/gold/issue-widevine-hal-selinux）。本模块保持设备无关，不内置机型策略。
+
+on post-fs-data
+    mkdir /data/vendor/mediadrm 0770 media mediadrm
+    mkdir /data/vendor/mediadrm/model 0700 media mediadrm
+    restorecon_recursive /data/vendor/mediadrm/model
+
+service vendor.drm-widevine-hal /vendor/bin/hw/android.hardware.drm-service.widevine
+    class hal
+    user media
+    group mediadrm drmrpc
+    seclabel u:r:hal_drm_widevine:s0
+    interface aidl android.hardware.drm.IDrmFactory/widevine
+
+# Android 16/17 部分固件的 Widevine APEX 同时定义了 vendor.drm-widevine-hal-rikers，
+# 在此预先声明同名 disabled 占位，使 init 解析 APEX rc 时按 duplicate definition 忽略。
+service vendor.drm-widevine-hal-rikers /vendor/bin/hw/android.hardware.drm-service.widevine
+    class hal
+    disabled
+    oneshot
+    seclabel u:r:hal_drm_widevine:s0

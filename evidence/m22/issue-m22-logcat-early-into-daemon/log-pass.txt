@@ -1,0 +1,43 @@
+# #71 log-pass —— 改动后：early-boot 并入模块，机型层那份删除
+# 采集：2026-10-30 flyme/m22（07 run4 产物）
+
+--- hal build android.service.daemon ---
+[ok] android.service.daemon 构建完成 -> out/vendor/android16/bin/service_daemon
+    更新 etc/init/cph_logcat_dump.rc（0644）
+[ok] android.service.daemon 合并 vendor 静态树：新增 0，更新 1，已存在同内容 8
+
+--- 07 步骤 4 只写一件 ---
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/cph_logcat_dump.rc（0644）
+
+--- 条目 / 镜像 ---
+==> debugfs 写入 669 个条目的元数据（权限 / 归属 / 时间 / SELinux）
+[ok] vendor.img 构建完成: out/devices/flyme/m22/12.5.0.0A/img/vendor.img（206700544 字节）
+
+--- 装配树只剩一份，内容与模块源一致 ---
+-rw-r--r--@ 1 cuimingqiang  staff  1981 10 30 10:24 cph_logcat_dump.rc
+-rw-r--r--@ 1 cuimingqiang  staff   694 10 30 10:24 init.logcat-to-serial.rc
+3659d617b1670b7042b51469ca68d6ec59c32512ccb94a7f2c998b029191f34a  out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/cph_logcat_dump.rc
+3659d617b1670b7042b51469ca68d6ec59c32512ccb94a7f2c998b029191f34a  vendor/hardware/android.service.daemon/vendor/etc/init/cph_logcat_dump.rc
+
+--- 三个触发点 ---
+24:service logcat_dump /system/bin/sh /vendor/bin/cph-logcat-dump
+32:on early-boot
+36:on property:sys.boot_progress.systemserver=1
+39:on property:sys.boot_completed=1
+
+--- 镜像回读（debugfs）---
+$ debugfs -R "ls -l /etc/init" vendor.img | grep logcat
+    345  100644 (1)      0      0    1981  1-Jan-2009 08:00 cph_logcat_dump.rc
+    356  100644 (1)      0      0     694  1-Jan-2009 08:00 init.logcat-to-serial.rc
+
+$ dump /etc/init/cph_logcat_dump.rc && sha256sum
+3659d617b1670b7042b51469ca68d6ec59c32512ccb94a7f2c998b029191f34a  out/tmp/chk-logcat.rc
+$ debugfs -R "stat …" / "ea_list …"
+Inode: 345   Type: regular    Mode:  0644   Flags: 0x80000
+Generation: 0    Version: 0x00000000:00000000
+User:     0   Group:     0   Project:     0   Size: 1981
+  security.selinux (33) = "u:object_r:vendor_configs_file:s0"
+
+结论：镜像内 /etc/init 只剩 1981 B 的 cph_logcat_dump.rc（模块版，含 on early-boot）
+      与 694 B 的 init.logcat-to-serial.rc（基底 seriallogging，写 hvc1 crash buffer）；
+      机型层 cph_logcat_dump_early.rc 与 logcat_dump_early 服务定义均已不存在。

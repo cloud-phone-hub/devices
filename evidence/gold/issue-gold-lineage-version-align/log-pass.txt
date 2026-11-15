@@ -1,0 +1,53 @@
+# 改名后：清单 / 目录名 / 底包三者一致，warn 消失
+# 采集时间：2026-10-30，engine/
+
+# 1) 目录改名（同盘 rename，字节不动）
+$ cd engine/out/roms/lineage && mv lineage-22.0 lineage-22.2 && ls -ld lineage-*
+drwxr-xr-x@ 3 cuimingqiang  staff  442 10 27 10:11 lineage-22.2
+drwxr-xr-x@ 3 cuimingqiang  staff  408 10 28 18:35 lineage-23.2
+
+# 2) 清单新值
+$ sed -n '26,29p' manifest/xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.json
+    "lineage":{
+      "version": "lineage-22.2",
+      "measured-from": "out/roms/lineage/lineage-22.2/super/system_a.img 的 /system/build.prop：ro.lineage.version=22.2-20261010-UNOFFICIAL-virtio_arm64only、ro.build.version.release=15；底包 roms/lineage/UTM-VM-lineage-22.2-20261010-UNOFFICIAL-virtio_arm64only.zip。2026-10-30 由 lineage-22.0 对齐而来（gold 早期解包时显式传了 CDH_LINEAGE_VERSION=lineage-22.0，目录名沿用到今天，内容一直是 22.2）。",
+      "images": [
+
+# 3) cdh env：无 [warn]
+$ ./out/bin/cdh env manifest/xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.json
+项目                            路径                                                                                                    状态
+清单                            manifest/xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.json  存在
+ROM 输出根                      out/roms                                                                                                存在
+厂商固件                        roms/devices/xiaomi/gold/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.tgz         存在
+厂商解包根                      out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM                                                                 存在
+厂商镜像 super.img              out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super.img                                                       存在
+lineage 底包                    roms/lineage/UTM-VM-lineage-22.2-20261010-UNOFFICIAL-virtio_arm64only.zip                               存在
+lineage 解包根                  out/roms/lineage/lineage-22.2                                                                           存在
+lineage super 目录              out/roms/lineage/lineage-22.2/super                                                                     存在
+lineage 镜像 vendor_a.img       out/roms/lineage/lineage-22.2/super/vendor_a.img                                                        存在
+lineage 镜像 vendor_dlkm_a.img  out/roms/lineage/lineage-22.2/super/vendor_dlkm_a.img                                                   存在
+
+# 4) 07 dry-run：基底由清单推导向 22.2，解包产物完整跟过来
+$ ./out/bin/cdh build-vendor --manifest manifest/xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.json \
+    --vendor xiaomi --brand gold --version OS3.0.10.0.VNQCNXM --dry-run
+==> vendor 基底: out/roms/lineage/lineage-22.2/super/vendor_a.img（清单 lineage 推导）
+    基底镜像:   out/roms/lineage/lineage-22.2/super/vendor_a.img（已存在，作为打包 vendor.img 基底）
+    解包目录:   out/roms/lineage/lineage-22.2/super/unpack_vendor（已有 453 个文件，步骤 1 会清空重解）
+    计划命令 [步骤 1]: debugfs -R "rdump / <输出>" 解包 out/roms/lineage/lineage-22.2/super/vendor_a.img -> out/roms/lineage/lineage-22.2/super/unpack_vendor
+    计划命令 [步骤 2]: 白名单复制 out/roms/lineage/lineage-22.2/super/unpack_vendor/{bin,build.prop,etc,firmware_mnt,lib,lib64,pci.ids} -> out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor（其余顶层丢弃）
+
+# 5) 读真实产物的两处测试（改路径后不再 skip）
+$ cd engine/build && go test ./test/ -run "TestSuperMetadataReal|TestBuildBootDryRun" -count=1
+ok      cloud-phone-hub/engine/build/test       0.299s
+
+# 6) 镜像内自述：与改名前逐字一致（mv 不动内容）
+$ debugfs -R "cat /system/build.prop" out/roms/lineage/lineage-22.2/super/system_a.img | grep -E "lineage.version|release=|incremental"
+ro.build.version.incremental=1791608345
+ro.build.version.release=15
+ro.lineage.version=22.2-20261010-UNOFFICIAL-virtio_arm64only
+
+# 7) 目录完整性：10 个整盘/启动镜像 + super 逻辑分区，271 个文件
+$ ls out/roms/lineage/lineage-22.2/
+BIOS.img  EFI.img  boot_a.img  firmware.img  metadata.img  misc.img  persist.img  super  super.img  vendor_boot_a.img
+$ find out/roms/lineage/lineage-22.2 -type f | wc -l
+     271

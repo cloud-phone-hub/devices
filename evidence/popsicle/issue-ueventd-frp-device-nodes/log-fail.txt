@@ -1,0 +1,33 @@
+# popsicle 失败态取证（第二段：ueventd 板级入口 + FRP 设备节点）
+#
+# 一、Remote KeyMint 打不开 /dev/hvc3（实例 5）
+# 取样：out/core/daemon/runtime/popsicle_cn_OS3.0.319.0.WPBCNXM/5/qemu.log
+#
+# [    1.291343][  T273] android.hardware.security.keymint-service.remote: Could not connect to keymaster: Permission denied
+# [    1.456678][  T242] servicemanager: Caller(pid=252,uid=0,sid=u:r:vold:s0) Since 'android.system.keystore2.IKeystoreService/default' could not be found trying to start it as a lazy AIDL service. (if it's not configured
+# [    2.458368][  T252] ServiceManagerCppClient: Waited one second for android.system.keystore2.IKeystoreService/default (is service started? Number of threads started in the threadpool: 17. Are binder threads started and
+#
+# 关键判别：整份日志里没有一条针对 /dev/hvc3 的 chr_file avc denied —— 不是 SELinux，
+# 是 DAC。原因在 init/ueventd 的板级入口：
+#   * 日志：init: Parsing file /vendor/etc/ueventd.canoe.rc（ro.hardware=canoe，05 按清单 board 改写 cmdline）
+#   * 基底 /vendor/etc/ueventd.rc 只 import ueventd.${ro.board.platform}.rc 与 ueventd.${ro.hardware}.rc
+#   * /dev/hvc* 0666 system system 写在 lineage 基底的 ueventd.virt.rc 里，名字不匹配 → 不解析
+#   * /dev/hvc3 回落内核默认 0600 root:root，user nobody 的 keymint 服务 open(O_RDWR) 即 EACCES
+#
+# 二、PersistentDataBlockService 在 phase 500 抛异常（实例 7）
+# 取样：同目录 7/qemu.log（该实例在下一轮重建前已 delete，此处为当次 grep 原文）
+#
+# 08-24 10:19:50.195   774   862 E PersistentDataBlockService: partition not available?
+# 08-24 10:19:50.195   774   862 E PersistentDataBlockService: java.io.FileNotFoundException: /dev/block/bootdevice/by-name/frp: open failed: ENOENT (No such file or directory)
+# 08-24 10:19:50.195   774   862 E PersistentDataBlockService:      at libcore.io.IoBridge.open(IoBridge.java:574)
+#   at com.android.server.pdb.PersistentDataBlockService.computeDigestLocked(PersistentDataBlockService.java:558)
+#   at com.android.server.pdb.PersistentDataBlockService.enforceChecksumValidity(PersistentDataBlockService.java:516)
+#   at com.android.server.pdb.PersistentDataBlockService.lambda$onStart$0(PersistentDataBlockService.java:299)
+# E AndroidRuntime: java.lang.RuntimeException: Failed to boot service com.android.server.pdb.PersistentDataBlockService: onBootPhase threw an exception during phase 500
+# 计数：grep -c 'FATAL EXCEPTION IN SYSTEM PROCESS' 15（全部是 PDB 这一条）；PDB 服务自身栈 1 条。
+#
+# 现场（同一实例 adb）：
+# $ ls /dev/block/by-name
+# BIOS_a BIOS_b EFI EFI_a EFI_b boot_a boot_b firmware grub_boot_a grub_boot_b metadata misc persist super vdc
+# $ ls /dev/block/bootdevice/by-name        → No such file or directory
+# misc -> /dev/block/vda3，标签 u:object_r:misc_block_device:s0，权限 brw-------（0600 root root）

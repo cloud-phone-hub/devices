@@ -1,0 +1,106 @@
+# 1. 修复前 batch4 初版镜像开机 qemu.log 崩溃现场（/Volumes/work/cloud-phone-hub/engine/out/tmp/batch4-mapper-dup-fail.txt）
+=== First servicemanager abort (t=3.76s..3.90s) ===
+[    3.815857][  T211] SELinux: Multiple same specifications for android.hardware.soundtrigger3.ISoundTriggerHw/default.
+[    3.816290][  T211] SELinux: initialize_backend: Error getting service handle (Invalid argument)
+[    3.817609][  T211] servicemanager: Check failed: gSehandle != nullptr 
+[    3.865348][    T1] init: Service 'servicemanager' (pid 211) received signal 6 from uid 1000 pid 211
+[    4.530784][    T1] init: Service 'mediaextractor' (pid 231) received signal 6 from uid 1040 pid 231
+[   11.812389][    T1] init: Service 'mediaextractor' (pid 411) received signal 6 from uid 1040 pid 411
+[   11.826382][  T414] SELinux: initialize_backend: Error getting service handle (Invalid argument)
+[   11.841321][  T414] servicemanager: Check failed: gSehandle != nullptr 
+e 'servicemanager' (pid 414) received signal 6 from uid 1000 pid 414
+[   16.831486][  T580] SELinux: initialize_backend: Error getting service handle (Invalid argument)
+[   16.838064][  T580] servicemanager: Check failed: gSehandle != nullptr 
+[   16.971719][    T1] init: Service 'mediaextractor' (pid 571) received signal 6 from uid 1040 pid 571
+[   17.034498][    T1] init: Service 'servicemanager' (pid 580) received signal 6 from uid 1000 pid 580
+[   21.874567][  T735] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   21.875309][  T735] SELinux: initialize_backend: Error getting service handle (Invalid argument)
+[   21.875645][  T735] servicemanager: Check failed: gSehandle != nullptr 
+[   21.987133][    T1] init: Service 'mediaextractor' (pid 729) received signal 6 from uid 1040 pid 729
+[   21.989216][    T1] init: Service 'servicemanager' (pid 735) received signal 6 from uid 1000 pid 735
+[   26.920363][  T895] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   26.921093][  T895] SELinux: initialize_backend: Error getting service handle (Invalid argument)
+[   26.921110][  T895] servicemanager: Check failed: gSehandle != nullptr 
+[   26.921974][    T1] init: Service 'servicemanager' (pid 895) received signal 6 from uid 1000 pid 895
+[   29.872210][    T1] init: Service 'mediaextractor' (pid 891) received signal 6 from uid 1040 pid 891
+[   31.915446][ T1055] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   31.916170][ T1055] SELinux: initialize_backend: Error getting service handle (Invalid argument)
+[   31.921883][ T1055] servicemanager: Check failed: gSehandle != nullptr 
+[   31.941528][    T1] init: Service 'servicemanager' (pid 1055) received signal 6 from uid 1000 pid 1055
+[   34.787195][    T1] init: Service 'mediaextractor' (pid 1052) received signal 6 from uid 1040 pid 1052
+[   36.991006][ T1214] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   36.991721][ T1214] SELinux: initialize_backend: Error getting service handle (Invalid argument)
+[   36.999805][ T1214] servicemanager: Check failed: gSehandle != nullptr 
+[   37.002033][    T1] init: Service 'servicemanager' (pid 1214) received signal 6 from uid 1000 pid 1214
+[   40.132607][    T1] init: Service 'mediaextractor' (pid 1211) received signal 6 from uid 1040 pid 1211
+[   42.009331][ T1373] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   42.019556][ T1373] SELinux: initialize_backend: Error getting service handle (Invalid argument)
+[   42.031257][ T1373] servicemanager: Check failed: gSehandle != nullptr 
+[   42.143763][    T1] init: Service 'mediaextractor' (pid 1371) received signal 6 from uid 1040 pid 1371
+[   42.150563][    T1] init: Service 'servicemanager' (pid 1373) received signal 6 from uid 1000 pid 1373
+[   47.021540][ T1534] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   47.022185][ T1534] SELinux: initialize_backend: Error getting service handle (Invalid argument)
+[   47.022191][ T1534] servicemanager: Check failed: gSehandle != nullptr 
+[   47.032629][    T1] init: Service 'servicemanager' (pid 1534) received signal 6 from uid 1000 pid 1534
+[   50.282010][    T1] init: Service 'mediaextractor' (pid 1532) received signal 6 from uid 1040 pid 1532
+[   52.042636][ T1695] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   52.050445][    T1] init: Service 'mediaextractor' (pid 1690) received signal 6 from uid 1040 pid 1690
+[   52.316475][ T1695] SELinux: initialize_backend: Error getting service handle (Invalid argument)
+[   52.322323][ T1695] servicemanager: Check failed: gSehandle != nullptr 
+[   52.328535][    T1] init: Service 'servicemanager' (pid 1695) received signal 6 from uid 1000 pid 1695
+[   57.114171][    T1] init: Service 'mediaextractor' (pid 1848) received signal 6 from uid 1040 pid 1848
+[   57.115146][ T1853] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   57.441423][ T1853] SELinux: initialize_backend: Error getting service handle (Invalid argument)
+[   57.442156][ T1853] servicemanager: Check failed: gSehandle != nullptr 
+[   57.448218][    T1] init: Service 'servicemanager' (pid 1853) received signal 6 from uid 1000 pid 1853
+[   62.193520][ T2010] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   62.194284][ T2010] SELinux: initialize_backend: Error getting service handle (Invalid argument)
+[   62.202865][ T2010] servicemanager: Check failed: gSehandle != nullptr 
+[   62.294792][    T1] init: Service 'mediaextractor' (pid 2008) received signal 6 from uid 1040 pid 2008
+[   67.312962][ T2169] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   67.313959][ T2169] SELinux: initialize_backend: Error getting service handle (Invalid argument)
+[   67.313978][ T2169] servicemanager: Check failed: gSehandle != nullptr 
+
+=== Clean unwrapped mapper/mediatek fatal lines ===
+[   21.874176][  T735] servicemanager: Starting sm instance on /dev/binder
+[   21.874410][    T1] init: Sending signal 9 to service 'installd' (pid 728) process group...
+[   21.874567][  T735] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   26.919591][    T1] init: Have been waiting SVC_EXEC service 'exec 3 (/system/bin/vdc checkpoint markBootAttempt)' for 10744ms. pid 562 (uid 1000 gid 1000+0 context default)
+[   26.920252][  T210] type=1400 audit(26.908:799): avc:  denied  { read } for  comm="servicemanager" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=529 scontext=u:r:servicemanager:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+[   26.920363][  T895] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   31.914989][ T1055] servicemanager: Starting sm instance on /dev/binder
+[   31.915308][    T1] init: failed write pid 1060 to memcg
+[   31.915446][ T1055] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+file permissive=1
+.radio.sim.IRadioSim/se2.
+[   36.990196][  T210] type=1400 audit(36.972:1139): avc:  denied  { read } for  comm="mediaextractor" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=529 scontext=u:r:mediaextractor:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+[   36.990773][  T210] type=1400 audit(36.980:1140): avc:  denied  { read } for  comm="servicemanager" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=529 scontext=u:r:servicemanager:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+[   36.991006][ T1214] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   42.007615][  T210] type=1400 audit(41.996:1313): avc:  denied  { open } for  comm="crash_dump64" path="/dev/__properties__/u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=529 scontext=u:r:crash_dump:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=1
+[   42.008920][ T1373] servicemanager: Starting sm instance on /dev/binder
+[   42.009331][ T1373] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   47.021070][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_1013/pid_1533
+[   47.021349][    T1] init: Have been waiting SVC_EXEC service 'exec 3 (/system/bin/vdc checkpoint markBootAttempt)' for 30846ms. pid 562 (uid 1000 gid 1000+0 context default)
+[   47.021540][ T1534] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   52.037204][    T1] init: starting service 'hidl_memory'...
+[   52.042410][  T210] type=1400 audit(52.032:1665): avc:  denied  { read } for  comm="servicemanager" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=529 scontext=u:r:servicemanager:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+[   52.042636][ T1695] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   52.042997][    T1] init: failed write pid 1699 to memcg
+[   52.044881][ T1699] KernelSU: hook_manager: unmark 1699 exec /system/system_ext/bin/hw/android.hidl.allocator@1.0-service
+[   52.045065][    T1] init: ... started service 'hidl_memory' has pid 1699
+[   52.045074][    T1] init: Have been waiting SVC_EXEC service 'exec 3 (/system/bin/vdc checkpoint markBootAttempt)' for 35869ms. pid 562 (uid 1000 gid 1000+0 context default)
+[   52.045093][    T1] init: Service 'gatekeeperd' (pid 1686) exited with status 1
+[   52.045096][    T1] init: Sending signal 9 to service 'gatekeeperd' (pid 1686) process group...
+[   52.045134][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_1000/pid_1686
+[   52.045259][    T1] init: Service 'installd' (pid 1689) exited with status 1
+[   52.045260][    T1] init: Sending signal 9 to service 'installd' (pid 1689) process group...
+[   52.045284][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_0/pid_1689
+[   57.114593][  T210] type=1400 audit(57.104:1840): avc:  denied  { read } for  comm="wificond" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=529 scontext=u:r:wificond:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+[   57.114658][    T1] init: Have been waiting SVC_EXEC service 'exec 3 (/system/bin/vdc checkpoint markBootAttempt)' for 40939ms. pid 562 (uid 1000 gid 1000+0 context default)
+[   57.115146][ T1853] SELinux: Multiple different specifications for mapper/mediatek  (u:object_r:hal_graphics_allocator_service:s0 and u:object_r:hal_graphics_mapper_service:s0).
+[   57.115217][  T210] type=1400 audit(57.104:1841): avc:  denied  { read } for  comm="servicemanager" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=529 scontext=u:r:servicemanager:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+[   57.199497][  T219] ServiceManagerCppClient: Waited for servicemanager.ready for a second, waiting another...
+
+# 2. 修复前对比快照（batch4-pre-diffs/diff/services.json）
+services summary = {"identity": 0, "capability": 59, "state": 1, "availability": 0, "fatal": 59}
+  serviceList.services.android.hardware.neuralnetworks.IDevice/mtk-neuron_shim | base=[android.hardware.neuralnetworks.IDevice] | target=[]

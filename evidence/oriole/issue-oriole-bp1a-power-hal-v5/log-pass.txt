@@ -1,0 +1,39 @@
+# oriole_BP1A.250505.005-20250326（Android 15 / lineage-22.2）修复验证日志
+
+## 1. cdh-vendor 按 Android 版本分层编译 android.hardware.power（14/15 为 v5，16/17 为 v6）
+
+```
+==> AIDL 代码生成
+    android.hardware.common (v2, hash c32ddfdeb69c)
+    android.hardware.common.fmq (v1, hash 6a780550f6e6)
+    android.hardware.power (v5, hash d111735ed2b8)
+==> 编译 19+1 个源文件到 .o
+==> 链接服务二进制
+    写 bin/hw/android.hardware.power-service
+[ok] android.hardware.power 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android15/bin/hw
+
+==> AIDL 代码生成
+    android.hardware.common (v2, hash c32ddfdeb69c)
+    android.hardware.common.fmq (v1, hash 6a780550f6e6)
+    android.hardware.power (v6, hash 13171cf98a48)
+==> 编译 29+1 个源文件到 .o
+==> 链接服务二进制
+    写 bin/hw/android.hardware.power-service
+[ok] android.hardware.power 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+```
+
+## 2. 实例冷启动与运行态验证（127.0.0.1:5919）
+
+```
+$ adb -s 127.0.0.1:5919 shell "getprop sys.boot_completed; getprop init.svc.bootanim; ps -ef | grep -E 'system_server|power-service'"
+1
+stopped
+system         515     1 0 22:57:07 ?     00:00:00 android.hardware.power-service
+system         643   471 0 22:57:08 ?     00:00:12 system_server
+
+$ adb -s 127.0.0.1:5919 shell "dumpsys window | grep -E 'mCurrentFocus|mFocusedApp'; service check android.hardware.power.IPower/default"
+  mCurrentFocus=Window{117b8b4 u0 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}
+  mFocusedApp=ActivityRecord{96884856 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t7}
+Service android.hardware.power.IPower/default: found
+```
+

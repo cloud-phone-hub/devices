@@ -1,0 +1,39 @@
+# 通过现场：实例 11（镜像已含自研 soundtrigger3 空 HAL + VINTF 声明 + rc + service_contexts）
+# 日志 out/core/daemon/runtime/cph2797_16.0.8.301_EX01/11/qemu.log（取证时 659,517 行）
+#
+# 计数（命令 -> 值，对照 log-fail.txt 同一组指标）：
+#   grep -c "Could not find android.hardware.soundtrigger3"  -> 0     （失败现场 52,900）
+#   grep -c "soundtrigger-V2.x"                              -> 0     （失败现场 41,129 的 HIDL 回退不见了）
+#   grep -c "sysrq: Resetting"                               -> 0     （失败现场 1）
+#   grep -c "soundtrigger"                                   -> 150   （失败现场约 9.4 万，含两族循环日志）
+#   其中 "Found ... in device VINTF manifest" 34 次、"Connecting to default soundtrigger3" 36 次
+#   —— 与「每一轮 boot 各 1 次」等量，不再是每 2~5 ms 一次。
+
+# 1）VINTF 声明生效：servicemanager 从「找不到」变成「找到」
+servicemanager: Caller(pid=3178,uid=1000,sid=u:r:system_server:s0) Found
+  android.hardware.soundtrigger3.ISoundTriggerHw/default in device VINTF manifest.
+
+# 2）framework 走 AIDL 而不是 HIDL 回退，且连上之后立刻继续往下启动
+12-31 19:01:08.478  3178  3178 D SystemServerTiming: StartSoundTriggerMiddlewareService
+12-31 19:01:08.481  3178  3178 I SoundTriggerMiddlewareDefaultHalFactory: Connecting to default soundtrigger3.ISoundTriggerHw
+12-31 19:01:08.483  3178  3178 D SoundTriggerModule: attachToHal end.
+12-31 19:01:08.633  3178  3178 D SystemServerTiming: StartSoundTrigger
+#   ^ 155 ms 就交棒给下一个服务（失败现场是在这里停住、之后再无 SystemServerTiming）
+
+# 3）HAL 进程实际在跑（guest 内 ps -A | grep soundtrigger）
+audioserver    640     1   2233260   6524 binder_thread_read  0 S android.hardware.soundtrigger3-service.example
+#   uid=audioserver、状态 S（joinThreadPool 阻塞等待），不是崩溃重启
+
+# 4）HAL 自己的日志：0 module 的空实现语义生效
+getProperties: 0 modules (stub HAL)     # 27 次，与 Connecting 同量级（每轮 boot 一次）
+
+# 5）镜像侧回读（07 装配树 + vendor.img）
+#   vendor/bin/hw/android.hardware.soundtrigger3-service.example       1,538,264 B（0755）
+#   vendor/etc/init/android.hardware.soundtrigger3-service.rc          0644
+#   vendor/etc/vintf/manifest/android.hardware.soundtrigger3.xml       998 B（<manifest version="1.0" type="device">）
+#   vendor/etc/selinux/vendor_service_contexts  追加 marker # vendor_service_contexts@android.hardware.soundtrigger3
+#   vendor/etc/selinux/vendor_file_contexts     补充 25 条（新增 soundtrigger3-service.example -> hal_audio_default_exec）
+#
+# 6）本轮仍未 boot_completed，但原因已不是 soundtrigger（见 issue-cph2797-biometrics-empty-sensor）：
+#    每一轮 system_server 死在 FingerprintServiceProviderExtImpl 对空 SensorList 的 valueAt(0)，
+#    zygote 约 15 s 一轮重启 —— soundtrigger 侧本轮 0 次 sysrq、0 次紧循环。

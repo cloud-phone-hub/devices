@@ -1,0 +1,40 @@
+== 取样: 2026-10-31 15:36:39 ==
+== 实例: ss9380 index 4（全新 /data），adb 127.0.0.1:5911 ==
+== 盘集: patch.img sha256 5f81a5ecf385…（log-align-build.txt，机型静态树 写入 12）==
+
+== [1] 起机 ==
+1
+running
+0
+
+== [2] 设备侧 etc 四份 config ==
+-rw-r--r-- 1 root root 2331 2009-01-01 08:00 /vendor/etc/audio_effects_config.xml
+-rw-r--r-- 1 root root 2216 2022-01-01 08:00 /vendor/etc/excluded-input-devices.xml
+-rw-r--r-- 1 root root 3327 2009-01-01 08:00 /vendor/etc/media_config.xml
+-rw-r--r-- 1 root root 1985 2009-01-01 08:00 /vendor/etc/ueventd.qcom.rc
+325cb3252e59fd72cebbc74af7365738  /vendor/etc/excluded-input-devices.xml
+
+== [3] 输入设备（排除表换成官方后 sec_touchscreen 仍在）==
+
+== [4] /dev/hvc* 权限（ueventd.qcom.rc 仍生效）==
+crw-rw-rw- 1 system system 229,   0 1970-01-01 08:00 /dev/hvc0
+crw-rw---- 1 system logd   229,   1 2026-08-12 17:08 /dev/hvc1
+crw-rw-rw- 1 system system 229,   3 2026-08-12 17:08 /dev/hvc3
+
+== [3] InputReader 设备表（换成官方排除表后 sec_touchscreen 正常；注意 Power Button 现在会露出来）==
+  Device 9: mtk-pmic-keys
+  Device 7: swtp
+  Device 6: fpc_irq@fingerprint
+  Device 2: sec_touchscreen
+  Device 5: uinput-fpc
+  Device 4: Power Button
+  Device 8: mt6833-mt6359 Headset Jack
+  Device 3: QEMU Virtio Keyboard
+Failed to write while dumping service input: Broken pipe
+
+== [4] audio effects / 媒体 c2 store 侧无异常 ==
+01-01 08:01:36.103   988   988 I HidlServiceManagement: Trying to get transport of android.hardware.media.c2@1.1::IComponentStore/software without hwservicemanager
+01-01 08:01:36.103   988   988 I HidlServiceManagement: Trying to get transport of android.hardware.media.c2@1.0::IComponentStore/software without hwservicemanager
+01-01 08:01:36.955   276  1002 W libc    : Unable to set property "ctl.interface_start" to "aidl/android.hardware.media.c2.IComponentStore/software": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+01-01 08:01:36.978   276  1002 W libc    : Unable to set property "ctl.interface_start" to "aidl/android.hardware.media.c2.IComponentStore/software": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+01-01 08:01:36.983   276  1002 W libc    : Unable to set property "ctl.interface_start" to "aidl/android.hardware.media.c2.IComponentStore/software": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)

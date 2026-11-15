@@ -1,0 +1,300 @@
+# 改后验证（#145：ss9380 / cph2797 / popsicle 迁到基线 `odm` 段）
+
+日期：2026-11-03
+环境：macOS 15.3.2；`dump.erofs`（erofs-utils）、`debugfs`/`mke2fs`/`e2fsck`（e2fsprogs）都在
+Homebrew 前缀下。临时件与「只放 odm 的假解包根」都落 `engine/out/tmp`、`engine/out/roms`
+（AGENTS.md 第 7 条），验证完即删（见第 7 节）。
+
+## 1. 01 只抽 odm：三条厂商包形态都走通
+
+探针 `engine/build/tmp_probe_odm/main.go` 只是 `unpack.RunVendor(VendorOptions{Rom,Out,Keeps,Force:true})`。
+
+popsicle（tgz → super.img → liblp，8 个逻辑分区）：
+
+```
+==> 保留镜像: super.img、vendor_boot.img（命令行指定）
+==> 包类型: tar（gzip）
+==> super: 8 个逻辑分区
+  逻辑分区 odm_a (3.30 GiB, 1 段) -> super/odm_a.img
+  逻辑分区 product_a (4.18 GiB, 1 段) -> super/product_a.img
+  逻辑分区 system_a (0.85 GiB, 1 段) -> super/system_a.img
+  逻辑分区 system_dlkm_a (0.02 GiB, 1 段) -> super/system_dlkm_a.img
+  逻辑分区 system_ext_a (0.66 GiB, 1 段) -> super/system_ext_a.img
+  逻辑分区 vendor_a (0.84 GiB, 1 段) -> super/vendor_a.img
+  逻辑分区 vendor_dlkm_a (0.05 GiB, 1 段) -> super/vendor_dlkm_a.img
+  逻辑分区 mi_ext_a (0.10 GiB, 1 段) -> super/mi_ext_a.img
+[ok] 已解出 super.img（12.50 GiB）+ 8 个逻辑分区 + vendor_boot.img（96.00 MiB） -> out/tmp/probe-popsicle
+```
+
+ss9380（zip → 嵌套 AP_*.tar.md5 → super.img.lz4 → liblp，7 个逻辑分区）：
+
+```
+  [nested] BL_S9380ZCSDCZH1_..._MULTI_CERT.tar.md5
+  [nested] AP_S9380ZCSDCZH1_..._meta_OS16.tar.md5
+  + super.img.lz4（12.06 GiB）
+    (sparse) 已转 raw: super.img
+==> super: 7 个逻辑分区
+  逻辑分区 system_a (9.25 GiB, 1 段) -> super/system_a.img
+  逻辑分区 odm_a (0.00 GiB, 1 段) -> super/odm_a.img
+  逻辑分区 product_a (0.46 GiB, 1 段) -> super/product_a.img
+  逻辑分区 system_dlkm_a (0.01 GiB, 1 段) -> super/system_dlkm_a.img
+  逻辑分区 system_ext_a (0.15 GiB, 1 段) -> super/system_ext_a.img
+  逻辑分区 vendor_a (3.34 GiB, 1 段) -> super/vendor_a.img
+  逻辑分区 vendor_dlkm_a (0.03 GiB, 1 段) -> super/vendor_dlkm_a.img
+[ok] 已解出 super.img（18.07 GiB）+ 7 个逻辑分区 + vendor_boot.img（128.00 MiB） -> out/tmp/probe-ss9380
+```
+
+cph2797（OTA zip → payload.bin 分区表，48 个分区按 `rom.vendor.images` 筛掉）：
+
+```
+  + odm             2997.23 MiB  1499 ops  -> super/odm_a.img
+  + vendor_boot       96.00 MiB    48 ops  -> vendor_boot.img
+  - my_manifest        0.48 MiB  清单未声明，跳过
+  - modem            172.97 MiB  清单未声明，跳过
+  ...（共 48 个物理/边缘分区跳过）
+  清单 rom.vendor.images 筛掉 48 个分区（还原 2 个）
+  [ok] payload 还原 2 个分区
+[ok] 已由 OTA payload 还原 1 个逻辑分区（2.93 GiB） + vendor_boot.img（96.00 MiB），物理分区按 rom.vendor.images 全筛掉 -> out/tmp/probe-cph2797
+```
+
+## 2. dump.erofs：属性件到底在镜像里哪个路径
+
+ss9380（根下只有 `etc/`）：
+
+```
+$ dump.erofs --ls --path=/ out/tmp/probe-ss9380/super/odm_a.img
+       NID TYPE  FILENAME
+        38    2  .
+        38    2  ..
+        42    2  etc
+$ dump.erofs --cat --path=/build.prop out/tmp/probe-ss9380/super/odm_a.img
+<E> erofs: read inode failed @ /build.prop
+$ dump.erofs --cat --path=/etc/build.prop out/tmp/probe-ss9380/super/odm_a.img | wc -l; ... | md5
+      31
+52c42542e5a462602576c1151ed185c5
+```
+
+popsicle（根下有 app/bin/etc/firmware/lib…；`/build.prop` 不存在）：
+
+```
+$ dump.erofs --ls --path=/ out/tmp/probe-popsicle/super/odm_a.img
+       NID TYPE  FILENAME
+        45    2  .
+        45    2  ..
+        54    2  app
+        58    2  bin
+       128    2  etc
+       256    2  firmware
+       108    2  firmware_oemvm
+       111    2  firmware_qtvm
+       115    2  lib
+       211    2  lib64
+       252    2  mitee
+       118    2  overlay
+       123    2  vendor
+$ dump.erofs --cat --path=/build.prop out/tmp/probe-popsicle/super/odm_a.img
+<E> erofs: read inode failed @ /build.prop
+$ dump.erofs --cat --path=/etc/build.prop out/tmp/probe-popsicle/super/odm_a.img | wc -l; ... | md5
+     495
+7c4d59708467b71e17b722839a85798e
+```
+
+cph2797（**`/etc/build.prop` 只有 4 行 import 存根，正文在 `/build.prop`**）：
+
+```
+$ dump.erofs --ls --path=/ out/tmp/probe-cph2797/super/odm_a.img
+       NID TYPE  FILENAME
+        48    2  .
+        48    2  ..
+        60    1  24087_aec_param_bins_force-timestamp
+        62    2  app
+        66    2  bin
+        93    1  build.prop
+       256    2  etc
+       320    2  firmware
+       362    1  init.oplus.fingerprints.rc
+       364    1  init.oplus.seccommon.rc
+       377    2  lib
+       384    2  lib64
+        95    2  overlay
+       380    2  priv-app
+       101    2  vendor
+$ dump.erofs --cat --path=/etc/build.prop out/tmp/probe-cph2797/super/odm_a.img
+import /odm/build.prop
+import /odm/etc/${ro.boot.prjname}/build.gsi.prop
+import /odm/etc/${ro.boot.prjname}/build.${ro.boot.flag}.prop
+import /mnt/vendor/my_product/etc/${ro.boot.prjname}/build.${ro.boot.flag}.prop
+$ dump.erofs --cat --path=/build.prop out/tmp/probe-cph2797/super/odm_a.img | wc -l; ... | md5
+     138
+30786e407078d3269c4cee7e81cb32e8
+```
+
+## 3. 三台 06 实跑（真清单 + 只放 odm 的假解包根）
+
+```bash
+cd /Volumes/work/cloud-phone-hub/engine/build
+CDH_MANIFEST=/Volumes/work/cloud-phone-hub/engine/manifest/xiaomi/popsicle/baselines/popsicle_images_OS3.0.319.0.WPBCNXM_20260824.0000.00_16.0_cn_9d8daa8b5b.json go run . build-odm
+```
+
+popsicle：
+
+```
+    基线 odm 属性: odm_a.img:/etc/build.prop（sets 4 项 / unsets 0 项）
+==> [步骤 1] 基线 odm 属性件: out/roms/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/super/odm_a.img:/etc/build.prop（sets 4 项 / unsets 0 项）
+    原件: out/roms/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/super/unpack_vendor/etc/build.prop（整树解包留档）
+    厂商原件: out/roms/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/super/unpack_vendor/etc/build.prop（495 行 / sha256 2545d4789a3c）
+    [prop] 覆盖 debug.config.media.video.dolby_capture_supports=false
+    [prop] 覆盖 debug.config.media.video.dolby_vision_suports=false
+    [prop] 覆盖 debug.media.video.dolby_vision_dvs_support=false
+    [prop] 覆盖 ro.vendor.display.dolbyvision.support=false
+==> [步骤 1] odm 覆盖件已一致: out/devices/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/odm/etc/build.prop
+    abilist32="" abilist64=arm64-v8a sha256=495 行 / sha256 518213f8d4ef
+    配方: odm-75e6bec07719（layout v1:root=vendor_file;etc=vendor_configs_file;fixed-mode=dir0755,file0644）
+[skip] odm.img 可复用: out/devices/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/img/odm.img（odm-75e6bec07719）
+```
+
+ss9380：
+
+```
+    基线 odm 属性: odm_a.img:/etc/build.prop（sets 0 项 / unsets 0 项）
+==> [步骤 1] 基线 odm 属性件: out/roms/samsung/ss9380/S9380ZCSDCZH1/super/odm_a.img:/etc/build.prop（sets 0 项 / unsets 0 项）
+    原件: out/roms/samsung/ss9380/S9380ZCSDCZH1/super/unpack_vendor/etc/build.prop（整树解包留档）
+    厂商原件与基线增量已一致（out/roms/samsung/ss9380/S9380ZCSDCZH1/super/unpack_vendor/etc/build.prop，31 行 / sha256 c87db65f1c73）
+==> [步骤 1] odm 覆盖件已一致: out/devices/samsung/ss9380/S9380ZCSDCZH1/odm/etc/build.prop
+    abilist32="" abilist64=arm64-v8a sha256=31 行 / sha256 c87db65f1c73
+    配方: odm-2954e68cd96d（layout v1:root=vendor_file;etc=vendor_configs_file;fixed-mode=dir0755,file0644）
+[skip] odm.img 可复用: out/devices/samsung/ss9380/S9380ZCSDCZH1/img/odm.img（odm-2954e68cd96d）
+```
+
+cph2797（`prop: /build.prop`，5 条 sets）：
+
+```
+    基线 odm 属性: odm_a.img:/build.prop（sets 5 项 / unsets 0 项）
+==> [步骤 1] 基线 odm 属性件: out/roms/oppo/cph2797/16.0.8.301_EX01/super/odm_a.img:/build.prop（sets 5 项 / unsets 0 项）
+    原件: out/roms/oppo/cph2797/16.0.8.301_EX01/super/unpack_vendor/build.prop（整树解包留档）
+    厂商原件: out/roms/oppo/cph2797/16.0.8.301_EX01/super/unpack_vendor/build.prop（138 行 / sha256 0606e97aa3aa）
+    [prop] 覆盖 persist.oplus.bt.em.adb.tool=true
+    [prop] 覆盖 persist.vendor.oplus.icc.module.enable=1
+    [prop] 追加 ro.odm.product.cpu.abilist=arm64-v8a
+    [prop] 追加 ro.odm.product.cpu.abilist32=
+    [prop] 追加 ro.odm.product.cpu.abilist64=arm64-v8a
+==> [步骤 1] 生成 odm 覆盖件 -> out/devices/oppo/cph2797/16.0.8.301_EX01/odm/etc/build.prop
+    abilist32="" abilist64=arm64-v8a sha256=141 行 / sha256 cfc266f70d54
+    配方: odm-980cd98b019c（layout v1:root=vendor_file;etc=vendor_configs_file;fixed-mode=dir0755,file0644）
+==> [步骤 3] mke2fs -d 生成 odm.img
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/odm（2048 块 × 4096 B）
+    回填 4 条目（sif 12 + ea_set 4，标签值文件 2 个）
+    回读校验通过（4 条目 mode/uid/gid/标签一致）
+[ok] odm.img 构建完成: out/devices/oppo/cph2797/16.0.8.301_EX01/img/odm.img（8388608 字节，4 条目）
+```
+
+三台的 `odm.img` 都是 8388608 B（2048 块 × 4096 B），回读校验通过。
+
+## 4. 产物 vs 改前手抄件（逐行 diff）
+
+popsicle —— 只少 5 行 CDH 注释，属性值逐条相同：
+
+```
+$ diff -u out/tmp/popsicle-odm-old.prop out/devices/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/odm/etc/build.prop
+@@ -170,10 +170,6 @@
+ vendor.display.disable_query_luts=0
+-# CDH：云机没有 Dolby Vision 硬件，vendor.dolby.dvs.IDvs 服务不存在。保持厂商的 true 会让
+-# SurfaceFlinger 的 DolbyRenderer 每次合成重试 getService：实测每秒 300+ 次
+-# `Failed to get DVS Hal Service` + 同名 avc denied（开机 5 分钟累计 10 万条），
+-# 既拖慢合成又灌满串口（qemu.log 4 分钟 158 MB），screencap 的 SF 事务也会挂住。
+ ro.vendor.display.dolbyvision.support=false
+@@ -484,7 +480,6 @@
+ ro.hardware.wlan.dbs=2
+-# CDH：同上，云机无 Dolby Vision/DVS，关掉编解码与采集侧的 Dolby 探测。
+ debug.config.media.video.dolby_vision_suports=false
+```
+
+ss9380 —— 只多末尾一个空行：
+
+```
+$ diff -u out/tmp/ss9380-odm-old.prop out/devices/samsung/ss9380/S9380ZCSDCZH1/odm/etc/build.prop
+@@ -28,3 +28,4 @@
+ ####################################
+ # end of file
++
+```
+
+cph2797 —— 少 3 行注释、abilist 从第 5–7 行挪到末尾（含两条 CRLF 归一）：
+
+```
+$ diff out/tmp/cph2797-odm-old.prop out/devices/oppo/cph2797/16.0.8.301_EX01/odm/etc/build.prop
+2,7d1
+< # cdh: 06_build_odm 要求 odm 覆盖件把 CPU ABI 锁成纯 64 位。
+< # 官方 ColorOS odm/build.prop 不含 abilist 段（原本由 my_manifest/odm 的其他文件补），
+< # 云机只有 arm64 用户态，这里显式声明，避免 32 位 ABI 让包管理器去扫 /odm/lib。
+< ro.odm.product.cpu.abilist=arm64-v8a
+< ro.odm.product.cpu.abilist32=
+< ro.odm.product.cpu.abilist64=arm64-v8a
+144a139,141
+> ro.odm.product.cpu.abilist=arm64-v8a
+> ro.odm.product.cpu.abilist32=
+> ro.odm.product.cpu.abilist64=arm64-v8a
+```
+
+（未加两条「同值覆盖」前，该 diff 里还有 `persist.oplus.bt.em.adb.tool` /
+`persist.vendor.oplus.icc.module.enable` 两处 `\r` 差异；sets 归一后消失。）
+
+## 5. 失败面与路径反证
+
+缺 `odm_a.img` 的解包根上跑 cph2797 06（编号前那次）：
+
+```
+    基线 odm 属性: odm_a.img:/etc/build.prop（sets 3 项 / unsets 0 项）
+==> [步骤 1] 基线 odm 属性件: out/roms/oppo/cph2797/16.0.8.301_EX01/super/odm_a.img:/etc/build.prop（sets 3 项 / unsets 0 项）
+[warn] 厂商镜像不在位: out/roms/oppo/cph2797/16.0.8.301_EX01/super/odm_a.img
+[err] 取不到 odm 属性件：镜像 out/roms/oppo/cph2797/16.0.8.301_EX01/super/odm_a.img 里没有 /etc/build.prop，机型静态树也没有 manifest/oppo/cph2797/odm/etc/build.prop（先跑 01_unpack，或核对清单 odm.img / odm.prop）
+exit status 1
+```
+
+「按 AOSP 习惯猜 /etc/build.prop」的反证（把 `prop` 临时改回 `/etc/build.prop`）：
+
+```
+    厂商原件: out/roms/oppo/cph2797/16.0.8.301_EX01/super/unpack_vendor/etc/build.prop（4 行 / sha256 c968cfee899f）
+    [prop] 追加 persist.oplus.bt.em.adb.tool=true
+    [prop] 追加 persist.vendor.oplus.icc.module.enable=1
+    [prop] 追加 ro.odm.product.cpu.abilist=arm64-v8a
+    [prop] 追加 ro.odm.product.cpu.abilist32=
+    [prop] 追加 ro.odm.product.cpu.abilist64=arm64-v8a
+    abilist32="" abilist64=arm64-v8a sha256=9 行 / sha256 17d3eb7fc0bb
+```
+
+→ 产物只剩 9 行（144 行正文 → 4 行存根 + 5 条追加）。改回 `/build.prop` 后恢复 141 行 /
+`cfc266f70d54`。所以 `prop` 的实测值必须写进基线 `odm.note`，不能靠惯例推。
+
+## 6. 静态校验与单测
+
+```
+$ python3 …  # 解析 manifest/*/*/baselines/*.json
+基线 JSON 解析: 17 份 OK
+有 odm 段: 5 ['cph2797/baselines', 'gold/baselines', 'm22/baselines', 'popsicle/baselines', 'ss9380/baselines']
+
+$ find manifest -path "*/odm/*" -type f
+manifest/google/oriole/odm/etc/build.prop
+manifest/oneplus/15r/odm/build.prop
+```
+
+（`oriole` 待迁；`15r` 是顶层 `/odm/build.prop`，06 落点固定 `etc/`，不可迁。）
+
+```
+$ cd engine/build && go build ./... && echo "build ok" && go test -count=1 ./06_build_odm ./internal/proplines
+build ok
+ok      cloud-phone-hub/engine/build/06_build_odm       1.409s
+ok      cloud-phone-hub/engine/build/internal/proplines 1.412s
+```
+
+## 7. 清理
+
+验证完成后删掉：
+
+- 临时探针 `engine/build/tmp_probe_odm/`；
+- `engine/out/tmp/probe-{popsicle,ss9380,cph2797}/`、`*-odm-{old,orig,rootbuild}.prop`、`*.log`；
+- 为跑 06 造的假解包根 `engine/out/roms/{xiaomi/popsicle/OS3.0.319.0.WPBCNXM,samsung/ss9380/S9380ZCSDCZH1,oppo/cph2797/16.0.8.301_EX01}/super/odm_a.img`
+  （硬链接，删掉以免误导「out/roms 无解包树」的口径）。
+
+`engine/out/devices/*/*/img/odm.img` 与 `odm/etc/build.prop` 是构建产物，保留（06 的配方
+缓存可以复用）。

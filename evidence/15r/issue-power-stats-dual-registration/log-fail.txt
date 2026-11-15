@@ -1,0 +1,90 @@
+# 修复前日志（15R / CPH2769，实例 8，2026-11-03 09:19 启动、09:37 停止，uptime 12 min）
+#
+# vda：odm 覆盖树里还没有 power.stats 的 rc 覆盖件，官方
+#      /odm/etc/init/android.hardware.power.stats-service.oplus.rc 照常被 init 解析。
+# 取样：out/core/daemon/runtime/15r_16.0.10.500_EX01/8/qemu.log
+
+## 1) 两个进程抢注同一个 AIDL 实例，名字被 servicemanager 移除
+$ grep -c 'registered again from PID' qemu.log
+4
+$ grep -c 'originally registered from PID 542 but it is being registered again from PID 629' qemu.log
+1
+$ grep -c "could not be found trying to start it as a lazy AIDL service" qemu.log
+3131
+# 我们的空实现（07 自建，disabled + post-fs-data 显式 start）先注册成功：
+12-31 19:00:09.805   542   542 W android.hardware.power.stats-service: Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: android.hardware.power.stats.IPowerStats/default
+# 官方实现（class hal）随后也注册同一个名字：
+[   10.490161][  T248] servicemanager: Caller(pid=629,uid=1000,sid=u:r:hal_power_stats_default:s0) Found android.hardware.power.stats.IPowerStats/default in device VINTF manifest.
+[   10.496404][  T248] servicemanager: Service 'android.hardware.power.stats.IPowerStats/default' originally registered from PID 542 but it is being registered again from PID 629. Bad state? Late death notification? Multiple instances installed?
+
+## 2) 官方实现的崩溃链（单轮，pid 629）
+12-31 19:00:10.483   629   629 I android.hardware.power.stats-impl.oplus: start service android.hardware.power.stats-impl.oplus.
+12-31 19:00:10.483   629   629 I android.hardware.power.stats-impl.oplus: start service android.hardware.power.stats.IPowerStats/default.
+12-31 19:00:10.496   629   629 I android.hardware.power.stats-impl.oplus: start service vendor.oplus.hardware.handlefactory.IHandleFactory/default
+12-31 19:00:10.496   629   629 E android.hardware.power.stats-impl.oplus: handlefactory()
+12-31 19:00:10.496   629   629 E android.hardware.power.stats-impl.oplus: Scan dir /sys/devices/platform/soc failed. err: No such file or directory
+12-31 19:00:10.496   248   248 I auditd  : avc:  denied  { add } for pid=629 uid=1000 name=vendor.oplus.hardware.handlefactory.IHandleFactory/default scontext=u:r:hal_power_stats_default:s0 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0
+12-31 19:00:10.499   629   629 F android.hardware.power.stats-impl.oplus: Check failed: s == STATUS_OK
+12-31 19:00:10.499   629   629 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 629 (android.hardwar), pid 629 (android.hardwar)
+12-31 19:00:10.510   635   635 F DEBUG   : Abort message: 'Check failed: s == STATUS_OK '
+12-31 19:00:10.617   629   629 ... init: Service 'vendor.power.stats' (pid 629) received signal 6
+12-31 19:00:10.618 ... init: Sending signal 9 to service 'vendor.power.stats' (pid 629) process group...
+
+## 3) init 每 ~5 s 重启一轮（193 次 CHECK / 469 次 signal 6）
+$ grep -c 'Check failed: s == STATUS_OK' qemu.log
+193
+$ grep -c 'signal 6' qemu.log
+469
+$ grep -n "starting service 'vendor.power.stats'" qemu.log | head -8
+[   10.480446][    T1] init: starting service 'vendor.power.stats'...
+[   15.482152][    T1] init: starting service 'vendor.power.stats'...
+[   20.487214][    T1] init: starting service 'vendor.power.stats'...
+[   25.489200][    T1] init: starting service 'vendor.power.stats'...
+[   30.604168][    T1] init: starting service 'vendor.power.stats'...
+[   35.611685][    T1] init: starting service 'vendor.power.stats'...
+[   40.615953][    T1] init: starting service 'vendor.power.stats'...
+[   45.618404][    T1] init: starting service 'vendor.power.stats'...
+# 每轮 pid 都换（629 / 1020 / 1209 / 1666 / 2101 / 2462 / 2560 / 2589 / 2620 …）
+
+## 4) 名字没了以后，system_server 一直「找不到」，只能反复触发 lazy start
+[   12.436346][  T248] servicemanager: Caller(pid=956,uid=1000,sid=u:r:system_server:s0) Since 'android.hardware.power.stats.IPowerStats/default' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+[   12.437912][    T1] init: service 'vendor.power.stats-default' requested start, but it is already running (flags: 132)
+[   12.438541][    T1] init: Control message: Processed ctl.interface_start for 'aidl/android.hardware.power.stats.IPowerStats/default' from pid: 248 (/system/bin/servicemanager)
+12-31 19:00:15.439   956   956 W ServiceManagerCppClient: Waited one second for android.hardware.power.stats.IPowerStats/default (is service started? Number of threads started in the threadpool: 32. Are binder threads started and available?)
+[   13.440152][  T248] ... Since 'android.hardware.power.stats.IPowerStats/default' could not be found trying to start it as a lazy AIDL service.
+[   14.442102][  T248] ... Since 'android.hardware.power.stats.IPowerStats/default' could not be found trying to start it as a lazy AIDL service.
+[   15.446218][  T248] ... Since 'android.hardware.power.stats.IPowerStats/default' could not be found trying to start it as a lazy AIDL service.
+# 注意：'vendor.power.stats-default' 每次都是 already running——进程活着，只是名字不在服务表里，
+# 它只在启动时注册一次（19:00:09.805），被同名二次注册挤掉后不会自动重注册。
+
+## 5) 运行态判据（adb -s 127.0.0.1:5911）
+$ adb shell "getprop sys.boot_completed; getprop init.svc.vendor.power.stats; getprop init.svc.vendor.power.stats-default"
+1
+restarting
+running
+$ adb shell "service check android.hardware.power.stats.IPowerStats/default"
+Service android.hardware.power.stats.IPowerStats/default: not found
+$ adb shell "ps -A | grep -i power"
+system         542     1    2296252   6180 ... S android.hardware.power.stats-service   ← 我们的实现，活着
+system         626     1    2257408   5392 ... S android.hardware.power-service
+
+## 6) 官方 rc 与 VINTF 声明（固件原件，dump.erofs）
+$ cat odm_a/etc/init/android.hardware.power.stats-service.oplus.rc
+service vendor.power.stats /odm/bin/hw/android.hardware.power.stats-impl.oplus
+    class hal
+    user system
+    group system root
+# 无 interface aidl 行 → 懒启动只会命中我们的服务；它靠 class_start hal 起
+# （boot 阶段 10.606 s：Command 'class_start hal' action=boot 完成；early-init 在 0.81 s）
+
+$ cat odm_a/etc/vintf/manifest/android.hardware.power.stats-service.oplus.xml
+<manifest version="1.0" type="device">
+    <hal format="aidl"><name>vendor.oplus.hardware.handlefactory</name><fqname>IHandleFactory/default</fqname></hal>
+</manifest>
+# ↑ 这份已被覆盖件顶成空 manifest（云机无实现、无客户端），与本条无关
+
+$ cat odm_a/etc/vintf/manifest/android.hardware.power.stats.IPowerStats-V2.xml
+<manifest version="1.0" type="device">
+    <hal format="aidl" override="true"><name>android.hardware.power.stats</name><version>2</version><fqname>IPowerStats/default</fqname></hal>
+</manifest>
+# ↑ 这份保持不动：我们的实现正是要独占这个声明

@@ -1,0 +1,80 @@
+=== 1. 修复后 dist/google/oriole/CP1A.260405.005-20260310/device.json ===
+{
+  "id": "oriole_CP1A.260405.005-20260310",
+  "verified-boot-hash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f",
+  "name": "Pixel 6",
+  "brand": "oriole",
+  "width": 1080,
+  "height": 2400,
+  "density": 420,
+  "width-mm": 67,
+  "height-mm": 149,
+  "memory-mb": [8192],
+  "min-memory-mb": 8192,
+  "smp": 8,
+  "input": {"keyboard":{},"tablet":false,"touch":{"abs-to-mt":true,"bus":28,"name":"sec_touchscreen","product":0,"vendor":0,"version":0}},
+  "host-hvc-adbkey": "hvc2",
+  "host-hvc-bluetooth": "hvc5",
+  "host-hvc-daemon": "hvc7",
+  "host-hvc-keymint": "hvc3",
+  "host-hvc-radio": "hvc4",
+  "host-hvc-wifi": "hvc9",
+  "host-hvc-wifi-data": "hvc10"
+}
+
+=== 2. 修复后 QEMU 命令行输入设备参数（pid=76100） ===
+-device virtio-multitouch-pci,input-name=sec_touchscreen,input-bus=28,input-vendor=0,input-product=0,input-version=0,abs-to-mt=on
+-device virtio-keyboard-pci
+（不再创建 virtio-tablet-pci）
+
+=== 3. Guest /proc/bus/input/devices ===
+I: Bus=001c Vendor=0000 Product=0000 Version=0000
+N: Name="sec_touchscreen"
+P: Phys=virtio8/input0
+S: Sysfs=/devices/pci0000:00/0000:00:09.0/virtio8/input/input1
+U: Uniq=
+H: Handlers=event1 
+B: PROP=2
+B: EV=b
+B: KEY=30400 1f0000 0 0 0 0
+B: ABS=660800000000000
+
+=== 4. VNC (127.0.0.1:5912) 点击 (540, 1200) 后 dumpsys input 校验 ===
+VNC screen=1088x2400, clicked (540, 1200)
+    6: sec_touchscreen
+      Classes: KEYBOARD | TOUCH | TOUCH_MT
+      Path: /dev/input/event1
+      Enabled: true
+      Descriptor: 0fa9d3d0d40f7f5b316320876742e00ad5eb1ba9
+      Location: virtio8/input0
+      ControllerNumber: 0
+      UniqueId: 
+      Identifier: bus=0x001c, vendor=0x0000, product=0x0000, version=0x0000, bluetoothAddress=<not set>
+      KeyLayoutFile: /system/usr/keylayout/Generic.kl
+      KeyCharacterMapFile: /system/usr/keychars/Generic.kcm
+      ConfigurationFile: <none>
+      VideoDevice: <none>
+      SysfsDevicePath: /sys/devices/pci0000:00/0000:00:09.0/virtio8
+      KeyState (pressed): <none>
+      AbsState: ABS_MT_SLOT=0, ABS_MT_POSITION_X=16263, ABS_MT_POSITION_Y=16383, ABS_MT_TRACKING_ID=-1, ABS_MT_PRESSURE=0
+...
+  Device 4: sec_touchscreen
+    EventHub Devices: [ 6 ] 
+    Sources: KEYBOARD | TOUCHSCREEN
+    Motion Ranges:
+      X: source=TOUCHSCREEN, min=0.000, max=1079.967, flat=0.000, fuzz=0.000, resolution=0.000
+      Y: source=TOUCHSCREEN, min=0.000, max=2399.927, flat=0.000, fuzz=0.000, resolution=0.000
+      PRESSURE: source=TOUCHSCREEN, min=0.000, max=1.000, flat=0.000, fuzz=0.000, resolution=0.000
+    Touch Input Mapper (mode - DIRECT):
+      Parameters:
+        DeviceType: TOUCH_SCREEN
+      DisplayBounds: 1080x2400
+      Translation and Scaling Factors:
+        RawToDisplay Transform: (ROT_0) (SCALE )
+            0.0330  0.0000  0.0000
+            0.0000  0.0732  0.0000
+            0.0000  0.0000  1.0000
+      Last Raw Touch:
+        When: 76821232000
+        Read time: 76821377911
+

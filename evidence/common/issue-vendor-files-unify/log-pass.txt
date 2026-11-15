@@ -1,0 +1,54 @@
+$ gofmt -l 07_build_vendor/
+$ go build ./...
+(无输出=通过)
+$ go vet ./07_build_vendor/
+(无输出=通过)
+$ go test -count=1 ./...
+ok  	cloud-phone-hub/engine/build/01_unpack	2.625s
+ok  	cloud-phone-hub/engine/build/02_build_kernel	1.510s
+ok  	cloud-phone-hub/engine/build/03_build_modules	0.706s
+ok  	cloud-phone-hub/engine/build/04_build_boot	9.437s
+ok  	cloud-phone-hub/engine/build/05_build_vendor_boot	1.159s
+ok  	cloud-phone-hub/engine/build/06_build_odm	1.421s
+ok  	cloud-phone-hub/engine/build/07_build_vendor	17.070s
+ok  	cloud-phone-hub/engine/build/08_build_vendor_dlkm	3.710s
+ok  	cloud-phone-hub/engine/build/09_build_patch	2.630s
+ok  	cloud-phone-hub/engine/build/10_pack_super	2.427s
+ok  	cloud-phone-hub/engine/build/11_pack_vda	2.968s
+ok  	cloud-phone-hub/engine/build/internal/carrier	3.045s
+ok  	cloud-phone-hub/engine/build/internal/e2fs	2.214s
+ok  	cloud-phone-hub/engine/build/internal/env	1.932s
+ok  	cloud-phone-hub/engine/build/internal/kernelver	1.908s
+ok  	cloud-phone-hub/engine/build/internal/manifest	1.993s
+ok  	cloud-phone-hub/engine/build/internal/modmeta	1.442s
+ok  	cloud-phone-hub/engine/build/internal/pipeline	1.548s
+ok  	cloud-phone-hub/engine/build/internal/stagekit	1.558s
+ok  	cloud-phone-hub/engine/build/internal/stagelog	1.609s
+
+### m22：vendor.files 2 项（全 replace，来源官方固件镜像）
+==> 文件操作集合: 基线清单 vendor.files（2 项）
+    计划命令 [步骤 5]: 取代 vendor/lib64/libpng.so <- fsck.erofs --path=/lib64/libpng.so out/roms/flyme/m22/12.5.0.0A/super/vendor_a.img
+    计划命令 [步骤 5]: 取代 vendor/etc/permissions <- fsck.erofs --path=/etc/permissions out/roms/flyme/m22/12.5.0.0A/super/vendor_a.img
+
+### cph2797：vendor.files 4 项
+==> 文件操作集合: 基线清单 vendor.files（4 项）
+    计划命令 [步骤 5]: 取代 vendor/lib64/libpng.so <- fsck.erofs --path=/lib64/libpng.so out/roms/oppo/cph2797/16.0.8.301_EX01/super/vendor_a.img
+    计划命令 [步骤 5]: 取代 vendor/etc/permissions <- fsck.erofs --path=/etc/permissions out/roms/oppo/cph2797/16.0.8.301_EX01/super/vendor_a.img
+    计划命令 [步骤 5]: 取代 vendor/etc/security <- fsck.erofs --path=/etc/security out/roms/oppo/cph2797/16.0.8.301_EX01/super/vendor_a.img
+    计划命令 [步骤 5]: 取代 vendor/lib64/android.hardware.graphics.common-V5-ndk.so <- fsck.erofs --path=/lib64/android.hardware.graphics.common-V5-ndk.so out/roms/oppo/cph2797/16.0.8.301_EX01/super/vendor_a.img
+
+### oriole：vendor.files 13 项（1 取代 + 12 添加，全部官方固件）
+==> 文件操作集合: 基线清单 vendor.files（13 项）
+    计划命令 [步骤 5]: 取代 vendor/lib64/libpng.so <- debugfs -R "dump /lib64/libpng.so <目标>" out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img
+    计划命令 [步骤 5]: 添加 vendor/lib64/android.hardware.graphics.composer@2.1.so <- debugfs -R "dump /lib64/android.hardware.graphics.composer@2.1.so <目标>" out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img
+    计划命令 [步骤 5]: 添加 vendor/lib64/android.hardware.graphics.composer@2.2.so <- debugfs -R "dump /lib64/android.hardware.graphics.composer@2.2.so <目标>" out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img
+    计划命令 [步骤 5]: 添加 vendor/lib64/android.hardware.graphics.composer@2.3.so <- debugfs -R "dump /lib64/android.hardware.graphics.composer@2.3.so <目标>" out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img
+    计划命令 [步骤 5]: 添加 vendor/lib64/android.hardware.graphics.composer@2.4.so <- debugfs -R "dump /lib64/android.hardware.graphics.composer@2.4.so <目标>" out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img
+    计划命令 [步骤 5]: 添加 vendor/lib64/libfmq.so <- debugfs -R "dump /lib64/libfmq.so <目标>" out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img
+    计划命令 [步骤 5]: 添加 vendor/lib64/libui.so <- debugfs -R "dump /lib64/libui.so <目标>" out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img
+    计划命令 [步骤 5]: 添加 vendor/lib64/android.hardware.graphics.allocator@2.0.so <- debugfs -R "dump /lib64/android.hardware.graphics.allocator@2.0.so <目标>" out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img
+    计划命令 [步骤 5]: 添加 vendor/lib64/android.hardware.graphics.allocator@3.0.so <- debugfs -R "dump /lib64/android.hardware.graphics.allocator@3.0.so <目标>" out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img
+    计划命令 [步骤 5]: 添加 vendor/lib64/android.hardware.graphics.allocator@4.0.so <- debugfs -R "dump /lib64/android.hardware.graphics.allocator@4.0.so <目标>" out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img
+    计划命令 [步骤 5]: 添加 vendor/lib64/android.hardware.graphics.mapper@2.0.so <- debugfs -R "dump /lib64/android.hardware.graphics.mapper@2.0.so <目标>" out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img
+    计划命令 [步骤 5]: 添加 vendor/lib64/android.hardware.graphics.mapper@2.1.so <- debugfs -R "dump /lib64/android.hardware.graphics.mapper@2.1.so <目标>" out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img
+    计划命令 [步骤 5]: 添加 vendor/lib64/android.hardware.graphics.mapper@3.0.so <- debugfs -R "dump /lib64/android.hardware.graphics.mapper@3.0.so <目标>" out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img

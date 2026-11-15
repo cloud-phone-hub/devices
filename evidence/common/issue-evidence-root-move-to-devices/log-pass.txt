@@ -1,0 +1,61 @@
+# 证据根迁移 #237 —— 迁移后验证记录（2026-11-15）
+
+## 1. 目录迁移
+
+```
+$ mv engine/evidence devices/evidence
+$ find devices/evidence -type f | wc -l
+767
+$ du -sh devices/evidence
+ 62M	devices/evidence
+
+$ ls engine
+hardware  kernels  manifest  modules  out  roms
+$ ls devices
+evidence
+```
+
+分组与条目目录名原样保留，slug / #N / 组内 README 索引均未重排。
+
+## 2. 代码与文档同步
+
+- 新增 `tools.EvidenceRoot(engineRoot)`（= `<仓库根>/devices/evidence`）；
+- `evidence.search` / `ev.new`、cdha `POST /api/runs/{id}/evidence`、
+  诊断上下文包统一改用该函数；
+- cdha 的 `evDir` 改为 `<workspace>/devices/evidence` 并保留在 writeRoots；
+- `detectEngineRoot` 去掉 `evidence` 标记，改用 `manifest`；
+- `AGENTS.md` 第 2 条、`agent/README.md`、模块 README、清单 note、report、skill
+  与证据树内 `solution.md` 的导航链接同步为 `devices/evidence/...`；
+  历史 `log-*.txt` 作为事实快照保持原文（仍含旧绝对路径）。
+
+## 3. 构建 / 测试
+
+```
+$ cd agent && go build ./... && go vet ./... && go test ./...
+...
+ok  	cloud-phone-hub/agent/internal/tools
+ok  	cloud-phone-hub/agent/internal/agent
+ok  	cloud-phone-hub/agent/internal/server
+ok  	cloud-phone-hub/agent/cmd/cdha
+EVIDENCE_MOVE_GREEN
+```
+
+`internal/tools` 的 `evidence.search` 用例（#151）与 `ev.new` 落盘用例
+（相对路径断言 `devices/evidence/15r/...`）均通过。
+
+## 4. 运行时冒烟
+
+```
+$ cd agent && go run ./cmd/cdha tool evidence.search '{"query":"#151","limit":2}'
+检索 "#151" 命中 2 条历史证据：
+1. [#151] 15r/issue-15r-gpu-backend-name-mismatch — ...
+   路径: devices/evidence/15r/issue-15r-gpu-backend-name-mismatch/solution.md
+2. [#154] common/issue-odm-prop-source-unpack-dir — ...
+   路径: devices/evidence/common/issue-odm-prop-source-unpack-dir/solution.md
+
+$ go run ./cmd/cdha tool ev.new '{"group":"common","slug":"test-dryrun","title":"路径验证","problem":"p","rootCause":"r","dryRun":true}'
+[草稿预览（dryRun 未写盘）] 分配编号 #237 ->
+devices/evidence/common/issue-test-dryrun/solution.md（全文见句柄 h_482e5bee239bd452）
+```
+
+检索路径与新写入路径都落在 `devices/evidence/`，编号扫描仍从组索引取到 237。

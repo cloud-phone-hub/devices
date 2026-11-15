@@ -1,0 +1,81 @@
+# 通过侧：改 netif_rx 之后（实例 15，8 vCPU，与实例 13 同规格）
+# 取数：adb -s 127.0.0.1:5911 shell ...
+#       out/core/daemon/runtime/15r_16.0.10.500_EX01/15/qemu.log
+#       监控脚本 /tmp/watch15.py → /tmp/15r-15-watch.log（每帧 reconn 一次，20 分钟）
+# 实例 15：2026-11-03 11:29:40 启动，11:30:59 boot_completed=1（79 s）
+# 内核 6.12.81-4k-cdh，mac80211_hwsim 里 grep -c '^netif_rx$' = 3 / '^netif_receive_skb$' = 0
+
+== 1. 20 分钟监控：lockup / hung 全程 0（对照实例 13 的 136 s 就沦陷）==
+[01] 11:31:46 up=110.57s  load=[30.74 8.90 3.08] lockup=0 hung=0 crash=13 screencap=TIMEOUT
+[02] 11:33:32 up=216.53s  load=[12.34 9.59 4.01] lockup=0 hung=0 crash=14 screencap=TIMEOUT
+[03] 11:35:18 up=321.83s  load=[2.93 7.01 3.67]  lockup=0 hung=0 crash=13 screencap=TIMEOUT
+[04] 11:37:03 up=427.13s  load=[0.56 4.97 3.29]  lockup=0 hung=0 crash=7  screencap=TIMEOUT focus=launcher
+[05] 11:38:49 up=532.75s  load=[0.19 3.52 2.94]  lockup=0 hung=0 crash=6  screencap=TIMEOUT
+[06] 11:40:34 up=638.08s  load=[0.06 2.49 2.63]  lockup=0 hung=0 crash=6  screencap=TIMEOUT
+[07] 11:42:19 up=743.39s  load=[0.05 1.77 2.35]  lockup=0 hung=0 crash=5  screencap=TIMEOUT focus=launcher
+[08] 11:44:05 up=848.73s  load=[0.29 1.30 2.12]  lockup=0 hung=0 crash=5  screencap=TIMEOUT
+[09] 11:45:50 up=954.04s  load=[0.13 0.95 1.90]  lockup=0 hung=0 crash=5  screencap=TIMEOUT
+[10] 11:47:35 up=1059.31s load=[0.18 0.79 1.74]  lockup=0 hung=0 crash=3  screencap=TIMEOUT focus=launcher
+[11] 11:49:21 up=1164.59s load=[0.86 0.81 1.64]  lockup=0 hung=0 crash=2  screencap=TIMEOUT
+[12] 11:51:06 up=1269.79s load=[1.30 0.95 1.60]  lockup=0 hung=0 crash=1  screencap=TIMEOUT focus=launcher
+# load 从 GApps 首启峰 30.74 一路降到 0.05–0.29；实例 13 在 136 s 时 load 已 14.5 并持续攀升。
+# crash 是开机期残留（qtidataservices 的 JniHelper UnsatisfiedLinkError 等），逐帧递减、不增长。
+
+== 2. 内核侧判据：四个计数全部 0（同一时刻，up=1103 s）==
+$ adb shell "dmesg | grep -c 'soft lockup - CPU'"           -> 0
+$ adb shell "dmesg | grep -c 'blocked for more than'"       -> 0
+$ adb shell "dmesg | grep -c tcp_delack_timer"              -> 0
+$ adb shell "logcat -d | grep -c 'WATCHDOG KILLING'"        -> 0
+$ adb shell pidof surfaceflinger system_server              -> 1031 947（全程同一 PID，没重启）
+
+== 3. 宿主侧：vCPU 不再空转 ==
+$ ps -p 72232 -o %cpu,stat        # 实例 15（8 vCPU）
+13.2  RN                          # 稳定期 112.7 → 13.2，对照实例 13 的 493.5 / 实例 14 的 394.7
+$ stat -f%z 15/qemu.log           # 6 秒增量
+50238                             # 对照卡死时 0（停写）
+
+== 4. 数据面没被 netif_rx 削弱：8 个 CPU 都在收包，dropped 全 0 ==
+$ adb shell head -8 /proc/net/softnet_stat
+0000680b 00000000 00000013   <- CPU0: processed 26635, dropped 0
+00008c7b 00000000 00000006   <- CPU1: processed 35963, dropped 0
+000075d9 00000000 00000003   <- CPU2: processed 30169, dropped 0
+00008889 00000000 00000006   <- CPU3: processed 34953, dropped 0
+00008066 00000000 00000004   <- CPU4: processed 32870, dropped 0
+00009939 00000000 00000004   <- CPU5: processed 39225, dropped 0
+000097e8 00000000 0000000b   <- CPU6: processed 38888, dropped 0
+00007da7 00000000 00000006   <- CPU7: processed 32167, dropped 0
+# 第 2 列（dropped）全 0；第 3 列 time_squeeze 有个位数，是 backlog 排队正常现象。
+
+$ adb shell "cmd wifi status | head -4"
+Wifi is enabled
+Wifi scanning is always available
+==== Primary ClientModeManager instance ====
+Wifi is connected to "CDH-A"
+$ adb shell ip -4 addr show wlan0 | grep inet
+inet 192.168.60.100/24 brd 192.168.60.255 scope global dynamic wlan0
+
+== 5. framework 与画面都活着（screencap 超时不影响显示）==
+$ adb shell "dumpsys window | grep -m1 mCurrentFocus"
+mCurrentFocus=Window{eac4f59 u0 com.android.launcher/com.android.launcher.Launcher}   # 29 ms
+$ adb shell getprop sys.boot_completed     -> 1（20 ms）
+$ adb shell pidof surfaceflinger           -> 1031
+
+# 绕开 screencap，直接从宿主侧连 qemu 的 VNC 端口（5912）抓真实扫描输出：
+$ python3 out/tmp/vncgrab.py 5912
+尺寸 1280x2800  rect=1  md5=88921791ce7b134b
+$ adb shell cmd statusbar expand-notifications          # 主动制造画面变化
+$ python3 out/tmp/vncgrab.py 5912
+尺寸 1280x2800  rect=1  md5=1d8f47659b300c87        # ← 帧变了，合成/显示链路正常
+$ python3 out/tmp/vncpng.py /tmp/vnc-15-frame.png 5912
+/tmp/vnc-15-frame.png 1280x2800               # 存图目视为桌面：状态栏 11:50、wifi 满格、电量 100%
+
+== 6. 遗留（与自死锁无关，另立条目）==
+$ adb shell screencap -p /data/local/tmp/s.png     -> 45 s 不返回
+$ adb shell ps -A | grep screencap
+shell 19640 ... futex_wait_queue S screencap       # 卡在等 composer 回调
+$ adb shell "dumpsys SurfaceFlinger | wc -l"       -> 0（正常返回但无内容，112 ms）
+$ adb shell "logcat -d | grep -E 'getLuts' | tail -2"
+E HwcComposer: getLuts failed Status(-8, EX_SERVICE_SPECIFIC): '8: '
+E HWComposer: getLuts: getLuts failed for display 4632256312697818880: UNSUPPORTED (8)
+# 每秒一次。SF 44 个线程全 sleeping、CPU 0%（top -H），不是自旋；VNC 画面正常更新，
+# 说明坏的是 drmhwc 的 LUT / readback 路径与 SF 的 dump 入口，不是整机卡死。

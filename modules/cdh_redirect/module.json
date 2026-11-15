@@ -1,0 +1,14 @@
+{
+  "module": "cdh_redirect",
+  "outputs": ["cdh_redirect.ko"],
+  "inject": "first-stage",
+  "kernel": ["5.10", "5.15", "6.1", "6.6", "6.12", "6.18"],
+  "assets": [
+    {
+      "source": "kernel/cdh_redirect.rules",
+      "target": "lib/modules/cdh_redirect.rules",
+      "from-device": "redirect"
+    }
+  ],
+  "note": "必须最先一批起来：init 的 LoadKernelModules() 在 switchroot 之前、SELinux 策略加载之前扫 /lib/modules/<uname -r>/modules.load，所以由 05 放进 vendor_ramdisk 根级，而不是 08 的 vendor_dlkm。规则表是机型 device.json 的 modules.redirect（from-device=redirect 由 05 渲染成文本），同一份 .ko 源码按内核树编出三代二进制。"
+}

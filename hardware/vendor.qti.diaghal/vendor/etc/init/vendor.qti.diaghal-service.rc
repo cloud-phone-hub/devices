@@ -1,0 +1,19 @@
+# vendor.qti.diaghal（高通 diag HAL，IIdiag v1）的服务定义。
+#
+# 原厂对照：Flyme m22 上 Idiag/default 由 etc/init/vendor.qti.diag.rc 里的
+#   service vendor.diag-router /vendor/bin/diag-router (class hal, capabilities KILL, disabled)
+# 注册，并由 `on early-boot start vendor.diag-router` 拉起。本云没有 diag-router
+# 与 /dev/diag，改为自研二进制，故：
+#   * 服务名/二进制换成 vendor.default.diaghal / vendor.qti.diaghal-service
+#     （文件名沿用其他 HAL 的 *-service 习惯，与 hal list 的模块产物对齐）；
+#   * 不搬 capabilities KILL（diag-router 需要杀进程做 log 采样，本实现不需要）；
+#   * 不搬 disabled + early-boot 启动链（没有 diag-router 的依赖顺序），class hal 直接起；
+#   * 补 interface aidl 与 seclabel 两行（AIDL 实例登记、显式换域；
+#     可执行标签由 07 步骤 6b 按本行派生）。
+
+service vendor.default.diaghal /vendor/bin/hw/vendor.qti.diaghal-service
+    interface aidl vendor.qti.diaghal.Idiag/default
+    class hal
+    user system
+    group system
+    seclabel u:r:vendor_hal_diaghal_default:s0

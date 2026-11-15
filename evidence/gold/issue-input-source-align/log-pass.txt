@@ -1,0 +1,113 @@
+通过记录（issue-input-source-align，2026-10-27，实例 5）
+
+================================================================
+1) 构建链
+================================================================
+02_build_kernel：构建卷 cdh-kernel-lineage-22-6.6-cdh-762ce0c4aced 全量重建，完成。
+03_build_modules（11 个 .ko，含新增模块）：
+  [ok] cdh_input_identity.ko: 8 个符号版本一致
+  [ok] cdh_goodix_fingerprint.ko: 4 个符号版本一致
+  [ok] 模块构建完成: out/kernel/lineage-22-6.6/modules（11 个 .ko）
+
+07_build_vendor：
+    机型 usr: 写入 2，已存在同内容 0
+$ ls engine/out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/usr/idc/
+  uinput-fpc.idc
+$ ls engine/out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/usr/keylayout/
+  uinput-fpc.kl
+$ diff vendor/usr/idc/uinput-fpc.idc out/tmp/real-uinput-fpc.idc && echo IDC-SAME
+IDC-SAME
+$ diff vendor/usr/keylayout/uinput-fpc.kl out/tmp/real-uinput-fpc.kl && echo KL-SAME
+KL-SAME
+$ cat vendor/etc/excluded-input-devices.xml
+    <device name="QEMU QEMU USB Tablet"/>
+    <device name="QEMU Virtio Tablet"/>
+    <device name="Power Button"/>
+
+08_build_vendor_dlkm：
+  modules.load 含 cdh_input_identity
+  [ok] vendor_dlkm.img 构建完成（14147584 字节）
+
+09_build_patch：
+  [ok] patch.img 发布完成（402653184 字节，sha256 843a6ca25cce）
+
+11_pack_vda（停实例后执行）：
+  [..] patch.img 内容已变，重新发布（384.0 MiB）
+  [ok] device.json（id=gold_cn_OS3.0.10.0.VNQCNXM）-> out/dist/.../device.json
+  dist/device.json 的 input 段：
+    "input": {"touch":{"name":"goodix_ts","bus":2,"vendor":10182,"product":1,
+              "version":256,"abs-to-mt":true},
+              "keyboard":{"name":"mtk-kpd","bus":25,"vendor":0,"product":0,
+              "version":0},"tablet":false}
+
+QEMU 命令行（实例 5 重启后 qemu.log 摘录）：
+  -device virtio-multitouch-pci,input-name=goodix_ts,input-bus=2,input-vendor=10182,
+          input-product=1,input-version=256,abs-to-mt=on
+  -device virtio-keyboard-pci,input-name=mtk-kpd,input-bus=25,input-vendor=0,
+          input-product=0,input-version=0
+（没有 virtio-tablet-pci）
+
+================================================================
+2) dumpsys input 对照（真机 adb 4lmbvom7gifm5lbu vs 云机 127.0.0.1:5911）
+================================================================
+真机 InputReader 设备（id / name / Sources / Descriptor）
+   -1 Virtual                          KEYBOARD | DPAD            a718a782d34bc767f4689c232d64d527998ea7fd
+    0 uinput-fpc                       KEYBOARD | GAMEPAD         8136f1e77728f603ac0ec0e545d338eba3cbcbc0
+    2 mtk-kpd                          KEYBOARD                   9a244e01c90550ca2eb2798ffe20d8731e811765
+    3 mtk-pmic-keys                    KEYBOARD                   485d69228e24f5e46da1598745890b214130dbc4
+    4 fpc_irq@fingerprint              KEYBOARD                   dad8bc819b573998ec22ca3952b1006fc1aa1a82
+    5 mt6833-mt6359 Headset Jack       KEYBOARD                   393bc96fab9421f9d6a6059cfe79e8b042c8755d
+    6 goodix_ts                        KEYBOARD | TOUCHSCREEN     c63c3be2de98f10e6bbd97f78684d819a6c862b9
+
+云机 InputReader 设备（id / name / Sources / Descriptor）
+   -1 Virtual                          KEYBOARD | DPAD            a718a782d34bc767f4689c232d64d527998ea7fd
+    0 uinput-fpc                       KEYBOARD | GAMEPAD         8136f1e77728f603ac0ec0e545d338eba3cbcbc0
+    2 mtk-kpd                          KEYBOARD                   9a244e01c90550ca2eb2798ffe20d8731e811765
+    3 goodix_ts                        KEYBOARD | TOUCHSCREEN     c63c3be2de98f10e6bbd97f78684d819a6c862b9
+    4 fpc_irq@fingerprint              KEYBOARD                   dad8bc819b573998ec22ca3952b1006fc1aa1a82
+    5 mt6833-mt6359 Headset Jack       KEYBOARD                   393bc96fab9421f9d6a6059cfe79e8b042c8755d
+    6 mtk-pmic-keys                    KEYBOARD                   485d69228e24f5e46da1598745890b214130dbc4
+
+真机 7 台，云机 7 台
+仅在真机: 无
+仅在云机: 无
+(name, Sources, Descriptor) 三元组集合完全一致: True
+
+EventHub 逐字段对照（Descriptor/Location/Identifier/KeyLayoutFile/
+KeyCharacterMapFile/ConfigurationFile/Classes/UniqueId）：
+  fpc_irq@fingerprint、mtk-pmic-keys、mt6833-mt6359 Headset Jack、uinput-fpc、Virtual
+  → 全字段一致；
+  goodix_ts：Location（真机 goodix_ts/input0 vs 云机 virtio8/input0）、
+             Classes（真机多 BATTERY）不同；
+  mtk-kpd：Location（空 vs virtio9/input0）、Classes（云机多 ALPHAKEY）不同。
+
+vendored keylayout/idc 命中：
+  1: uinput-fpc …
+     KeyLayoutFile: /system/usr/keylayout/uinput-fpc.kl
+     ConfigurationFile: /system/usr/idc/uinput-fpc.idc
+
+================================================================
+3) 运行期功能
+================================================================
+触摸事件（getevent -lt /dev/input/event1，QMP tap 触发）：
+  EV_KEY       BTN_MOUSE            DOWN
+  EV_KEY       BTN_TOUCH            DOWN
+  EV_ABS       ABS_MT_TRACKING_ID   00000001
+  EV_ABS       ABS_MT_PRESSURE      00000032
+  EV_SYN       SYN_REPORT           00000000
+  EV_KEY       BTN_MOUSE            UP
+  EV_ABS       ABS_MT_PRESSURE      00000000
+  EV_ABS       ABS_MT_TRACKING_ID   ffffffff
+  EV_KEY       BTN_TOUCH            UP
+  EV_SYN       SYN_REPORT           00000000
+
+QMP 点击设置图标（924,1128）后：
+  mCurrentFocus=Window{38656a6 u0 com.android.settings/com.android.settings.MainSettings}
+
+QMP 从状态栏下拉（540,20 → 540,1300）：通知面板展开（out/tmp/ui-shade.png）。
+
+键盘（QMP 发 'a'，getevent /dev/input/event2）：
+  EV_KEY       KEY_A                DOWN
+  EV_SYN       SYN_REPORT           00000000
+  EV_KEY       KEY_A                UP
+  EV_SYN       SYN_REPORT           00000000

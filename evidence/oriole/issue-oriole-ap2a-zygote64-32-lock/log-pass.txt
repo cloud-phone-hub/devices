@@ -1,0 +1,55 @@
+# oriole AP2A 纯 64 位锁补齐后的复验：锁在 init 层确实生效（32 位 zygote 连坐链消失）
+# 实例 runtime/oriole_AP2A.240905.003.F1/1（pid 71837，06:32:48 起 / 06:41 停并删目录）
+# 本轮判定仍是【不通过】：整机没到 boot_completed，但原因已换成另一个堵点（system_server 崩溃循环，见 ../issue-oriole-system-server-crash-loop/）
+
+==== 1) 装配树 vendor/build.prop 六键实值（重跑 07 后）====
+10:ro.vendor.product.cpu.abilist=arm64-v8a
+11:ro.vendor.product.cpu.abilist32=
+12:ro.vendor.product.cpu.abilist64=arm64-v8a
+33:ro.bionic.2nd_arch=
+34:ro.bionic.2nd_cpu_variant=
+83:ro.zygote=zygote64
+
+==== 2) 07→11 重跑（阶段 5）EXIT=0 ====
+5:==> 阶段(5): build_vendor, build_vendor_dlkm, build_patch, pack_super, pack_vda
+19:    编译产物:   out/vendor/android14（android.hardware.audio@default 4 项、android.hardware.bluetooth@default 3 项、android.hardware.camera@default 3 项、android.hardware.graphics.composer@default 5 项、android.hardware.gnss@default 3 项、android.hardware.gpu@default 4 项、android.hardware.health@default 3 项、android.hardware.ir@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.radio@default 3 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.vibrator@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 14 项）
+32:    镜像产物:   out/devices/google/oriole/AP2A.240905.003.F1/img/vendor.img
+354:==> 模块产物: out/kernel/lineage-21-6.1/modules（9 个 .ko）
+360:    模块产物:   out/kernel/lineage-21-6.1/modules（9 个 .ko，整树哈希 1e18f831e5736de3099a5b0549ac8ce6834cc452cce248dff24bfa6cb2d7b454）
+365:    镜像产物:   out/devices/google/oriole/AP2A.240905.003.F1/img/vendor_dlkm.img
+402:    镜像产物:    out/devices/google/oriole/AP2A.240905.003.F1/img/patch.img（384 MiB，ext4）
+459:    产物:       out/devices/google/oriole/AP2A.240905.003.F1/img/super.img（已存在 4.78 GiB）
+514:    产物: out/dist/google/oriole/AP2A.240905.003.F1（vda.img 13.00 GiB，5 个分区已刷新）
+515:[ok] 已完成
+
+==== 3) init 侧口径翻转：只解析 init.zygote64.rc，不再有 64_32 ====
+598:[    0.413211][    T1] init: Added '/system/etc/init/hw/init.zygote64.rc' to import list
+610:[    0.416299][    T1] init: Parsing file /system/etc/init/hw/init.zygote64.rc...
+7809:[    0.406616][    T1] init: Added '/system/etc/init/hw/init.zygote64.rc' to import list
+Overriding previous property 'ro.zygote' 出现次数 = 0（修复前该轮为 1）
+
+==== 4) 连坐链消失 ====
+app_process32 行数 = 0（修复前同机 54 行）
+2015:[    9.018941][    T1] init: Command 'start zygote_secondary' action=zygote-start (/system/etc/init/hw/init.rc:1088) took 0ms and failed: service zygote_secondary not found
+primary zygote 存活窗口（日志原文）：
+2014:[    9.018605][    T1] init: ... started service 'zygote' has pid 673
+3798:[   25.447320][    T1] init: Service 'zygote' (pid 673) received signal 9
+→ 活满 16.4 s 且期间 system_server 正常运行（修复前是启动 2 ms 即被连坐杀死）
+2541:[   13.212240][    T1] init: Control message: Processed ctl.start for 'idmap2d' from pid: 835 (system_server)
+3490:[   23.402430][    T1] init: Control message: Processed ctl.stop for 'idmap2d' from pid: 835 (system_server)
+
+==== 5) 仍存在的占位件噪音（与本次改动无关，#105 遗留已记）====
+  32 cannot execv('/system/bin/drmserver')
+  27 cannot execv('/system/bin/mediaserver')
+
+==== 6) 整机判定仍不通过的证据（归 #150）====
+sys.boot_completed=1 次数 = 0
+critical process 'zygote' exited 次数 = 4；内核引导轮数 = 6
+3574:[   24.333495][    T1] init: starting service 'exec 17 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+3575:[   24.334007][    T1] init: ... started service 'exec 17 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 1924
+3576:[   24.334268][    T1] init: SVC_EXEC service 'exec 17 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 1924 (uid 1000 gid 1000+0 context default) started; waiting...
+3577:[   24.336418][    T1] init: Service 'exec 17 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 1924) exited with status 0 waiting took 0.002000 seconds
+
+==== 7) 抓帧（rescue/recovery 期，非桌面）====
+$ python3 core/host/daemon/tools/vnc_grab.py 5913 engine/out/tmp/oriole-round2.png 20
+engine/out/tmp/oriole-round2.png 1088x2400 bpp=32 平均亮度=3.9 峰值=255   → 本目录 round2-recovery.png

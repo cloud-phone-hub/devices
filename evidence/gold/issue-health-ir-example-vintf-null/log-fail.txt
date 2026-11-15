@@ -1,0 +1,12 @@
+# 修复前：实例 gold_OS3.0.10.0.VNQCNXM/21（2026-10-25 22:42 起机，当时 patch.img sha256 c7197b37a262）
+# 原始日志：out/core/daemon/runtime/gold_OS3.0.10.0.VNQCNXM/21/qemu.log
+# 计数：Conflicting FqInstance=10、NULL VINTF MANIFEST=9、vendor.health-default duplicate=1、IKeystoreService/default 重试=5027、zygote/adbd 启动=0
+
+1332:[    5.865259][  T186] servicemanager: getDeviceHalManifest: -2147483648 VINTF parse error: Cannot add manifest fragment /vendor/etc/vintf/manifest/android.hardware.health-service.xml: HAL "android.hardware.health" has a conflict: Conflicting FqInstance: IHealth/default (@3) (from /vendor/etc/vintf/manifest/android.hardware.health-service.example.xml) vs. IHealth/default (@3) (from /vendor/etc/vintf/manifest/android.hardware.health-service.xml). Check whether or not multiple modules providing the same HAL are installed.
+1343:[    5.870938][  T186] servicemanager: getDeviceHalManifest: -2147483648 VINTF parse error: Cannot add manifest fragment /vendor/etc/vintf/manifest/android.hardware.health-service.xml: HAL "android.hardware.health" has a conflict: Conflicting FqInstance: IHealth/default (@3) (from /vendor/etc/vintf/manifest/android.hardware.health-service.example.xml) vs. IHealth/default (@3) (from /vendor/etc/vintf/manifest/android.hardware.health-service.xml). Check whether or not multiple modules providing the same HAL are installed.
+1349:[    5.876535][  T186] servicemanager: NULL VINTF MANIFEST!: device
+
+771:[    0.474494][    T1] init: /vendor/etc/init/android.hardware.health-service.rc: 1: ignored duplicate definition of service 'vendor.health-default'
+
+1463:[    5.964556][  T186] servicemanager: Caller(pid=200,uid=0,sid=u:r:vold:s0) Since 'android.system.keystore2.IKeystoreService/default' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+1471:[    6.970234][  T186] servicemanager: Caller(pid=200,uid=0,sid=u:r:vold:s0) Since 'android.system.keystore2.IKeystoreService/default' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).

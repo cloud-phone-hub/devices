@@ -1,0 +1,220 @@
+# log-pass — 变更后实测（2026-11-03，xiaomi/gold）
+
+## 1) 构建
+
+```console
+$ cd /Volumes/work/cloud-phone-hub/engine/build && go build -o ../out/bin/cdh .
+$ cd .. && ../out/bin/cdh device build gold --only 07_build_vendor ; echo rc=$?
+rc=0
+```
+
+完整日志：`out/tmp/gold-07-buildprop.log`（484 行，`[ok] 已完成`，全文无 `[warn]`）。
+
+## 2) 日志节选（第 371~392 行）
+
+```
+==> [步骤 6] 厂商 build.prop 解包 -> 装配树
+    来源: out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/vendor_a.img（厂商原件，767 行 / sha256 12d7e632）
+    解包: out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/unpack_vendor/build.prop
+    落位: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/build.prop（本地增量由下面的基线收口施加）
+==> [步骤 6] 应用基线 vendor 属性 -> out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/build.prop
+    [prop] 删除 ro.frp.pst（1 行）
+    [prop] 追加 debug.sf.vsync_reactor_ignore_present_fences=true
+    [prop] 覆盖 persist.system.powerhal.applist_enable=0
+    [prop] 覆盖 ro.hardware.hwcomposer=drm
+    [prop] 追加 ro.hw_timeout_multiplier=10
+    [prop] 覆盖 ro.hwui.use_vulkan=false
+    [prop] 追加 ro.soc.manufacturer=Mediatek
+    [prop] 追加 ro.soc.model=MT6833
+    [prop] 追加 ro.vendor.boot_security_patch=2026-02-01
+    [prop] 覆盖 ro.vendor.product.cpu.abilist=arm64-v8a
+    [prop] 覆盖 ro.vendor.product.cpu.abilist32=
+    [prop] 追加 ro.vendor.soc.manufacturer=Mediatek
+    [prop] 追加 ro.vendor.soc.model=MT6833
+    [prop] 追加 ro.vendor.soc.model.external_name=MT6833V/PNZA
+    [prop] 追加 ro.vendor.soc.model.part_name=MT6833V/PNZA
+    [prop] 追加 ro.vendor.soc.model_ready=1
+    [prop] 覆盖 ro.zygote=zygote64
+```
+
+`ro.vendor.product.cpu.abilist64=arm64-v8a` 没有覆盖行——厂商原件原本就是这个值，
+属性收口幂等（值相同则跳过）。
+
+## 3) 三层对账
+
+```console
+$ cd /Volumes/work/cloud-phone-hub/engine
+# ① 厂商解包件（这一步现解出来的留档）
+$ wc -l out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/unpack_vendor/build.prop
+     767
+$ md5 -q out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/unpack_vendor/build.prop
+a23c86172e099926e54bf537ff302173        # = 厂商原件
+
+# ② 装配树
+$ wc -l out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/build.prop
+     776
+$ md5 -q out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/build.prop
+d9ea34b4107220af01052070801be2f7
+
+# ③ 打包后的镜像（vendor.img 是 ext4，用 debugfs 读；debugfs 不在 PATH，走 homebrew 全路径）
+$ /opt/homebrew/opt/e2fsprogs/sbin/debugfs -R 'cat /build.prop' \
+    out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor.img > out/tmp/gold-img-buildprop2.prop
+$ wc -l out/tmp/gold-img-buildprop2.prop ; md5 -q out/tmp/gold-img-buildprop2.prop
+     776
+d9ea34b4107220af01052070801be2f7
+$ diff -q out/tmp/gold-img-buildprop2.prop \
+    out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/build.prop && echo '镜像内 == 装配树'
+镜像内 == 装配树
+
+# 机型静态树副本（只作对账基准，07 不再读它当基底）
+$ wc -l manifest/xiaomi/gold/vendor/build.prop ; md5 -q manifest/xiaomi/gold/vendor/build.prop
+     767
+a23c86172e099926e54bf537ff302173
+```
+
+## 4) 原件 → 装配树的增量 = 基线那一份
+
+```console
+$ diff out/tmp/vbp-gold-official.prop out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/build.prop
+11,12c11,12
+< ro.vendor.product.cpu.abilist=arm64-v8a,armeabi-v7a,armeabi
+< ro.vendor.product.cpu.abilist32=armeabi-v7a,armeabi
+---
+> ro.vendor.product.cpu.abilist=arm64-v8a
+> ro.vendor.product.cpu.abilist32=
+50c50
+< ro.hwui.use_vulkan=true
+---
+> ro.hwui.use_vulkan=false
+77c77
+< ro.zygote=zygote64_32
+---
+> ro.zygote=zygote64
+99c99
+< ro.hardware.hwcomposer=mtk_common
+---
+> ro.hardware.hwcomposer=drm
+250d249
+< ro.frp.pst=/dev/block/by-name/frp
+729c728
+< persist.system.powerhal.applist_enable=1
+---
+> persist.system.powerhal.applist_enable=0
+767a767,776
+> debug.sf.vsync_reactor_ignore_present_fences=true
+> ro.hw_timeout_multiplier=10
+> ro.soc.manufacturer=Mediatek
+> ro.soc.model=MT6833
+> ro.vendor.boot_security_patch=2026-02-01
+> ro.vendor.soc.manufacturer=Mediatek
+> ro.vendor.soc.model=MT6833
+> ro.vendor.soc.model.external_name=MT6833V/PNZA
+> ro.vendor.soc.model.part_name=MT6833V/PNZA
+> ro.vendor.soc.model_ready=1
+```
+
+## 5) 关键属性（装配树）
+
+```console
+$ grep -nE '^(ro\.product\.vendor\.device|ro\.vendor\.product\.cpu\.abilist|ro\.vendor\.product\.cpu\.abilist32|ro\.vendor\.product\.cpu\.abilist64|ro\.hwui\.use_vulkan|ro\.hw_timeout_multiplier|ro\.zygote|ro\.hardware\.egl)=' \
+    out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/build.prop
+7:ro.product.vendor.device=gold
+11:ro.vendor.product.cpu.abilist=arm64-v8a
+12:ro.vendor.product.cpu.abilist32=
+13:ro.vendor.product.cpu.abilist64=arm64-v8a
+50:ro.hwui.use_vulkan=false
+77:ro.zygote=zygote64
+583:ro.hardware.egl=meow
+768:ro.hw_timeout_multiplier=10
+```
+
+产物行为与上一轮一致（abilist 纯 arm64-v8a、abilist32 空、无 Vulkan 后端、Watchdog ×10），
+但来路变了：原件来自镜像现解，增量全部落在基线台账里。
+
+## 6) 用例与静态检查
+
+```console
+$ cd build && gofmt -l ./07_build_vendor        # 无输出
+$ go vet ./07_build_vendor                       # 通过
+$ go test ./07_build_vendor -count=1
+ok      cloud-phone-hub/engine/build/07_build_vendor    13.986s
+
+$ go test ./07_build_vendor -count=1 \
+    -run 'TestWarnBuildPropDrift|TestPlaceVendorBuildProp|TestBuildPropSummary' -v
+=== RUN   TestPlaceVendorBuildPropFallsBackToStaticTree
+--- PASS: TestPlaceVendorBuildPropFallsBackToStaticTree (0.00s)
+=== RUN   TestPlaceVendorBuildPropWarnsWhenNothingAvailable
+--- PASS: TestPlaceVendorBuildPropWarnsWhenNothingAvailable (0.00s)
+=== RUN   TestWarnBuildPropDrift
+--- PASS: TestWarnBuildPropDrift (0.00s)
+=== RUN   TestBuildPropSummary
+--- PASS: TestBuildPropSummary (0.00s)
+PASS
+ok      cloud-phone-hub/engine/build/07_build_vendor    1.095s
+```
+
+`TestWarnBuildPropDrift` 覆盖两个方向：副本与原件不一致时打两条 `[warn]` 且返回 nil（不阻断）；
+一致时**静默**——本次 gold 实跑即后者，所以日志 484 行里没有任何 `[warn]`。
+
+## 7) describe / dry-run 与运行态一致（gold 有镜像、popsicle 没有）
+
+`officialVendorImage()` 只按路径拼候选名、不要求文件存在，而 `describe` / 运行态都要求
+`IsFile`。为免"dry-run 说要解包、实际却回退"的自相矛盾，`dryRunCommands` 的步骤 6 行
+describe 改成与运行态同一判据（`stagekit.IsFile`），`describeBuildPropSource` 新增
+"镜像与副本都不在位"分支：
+
+```console
+# gold：镜像在 out/roms，现解
+$ ./out/bin/cdh build-vendor --vendor xiaomi --brand gold --version OS3.0.10.0.VNQCNXM --android 15 \
+    --manifest manifest/xiaomi/gold/baselines/gold_images_..._a9729c6694.json --dry-run | grep -E 'build.prop'
+    vendor build.prop: 厂商原件 out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/vendor_a.img -> .../super/unpack_vendor/build.prop（步骤 6 现解）
+    计划命令 [步骤 6]: 从厂商固件解出 build.prop -> .../super/unpack_vendor/build.prop，再落到 .../vendor/build.prop
+    计划命令 [步骤 6]: 应用 20 项基线 vendor 属性 -> .../vendor/build.prop
+
+# popsicle：01 未跑、镜不在位且静态树无副本 → 明说“保留步骤 2 那份”
+$ ./out/bin/cdh build-vendor --vendor xiaomi --brand popsicle --version OS3.0.319..._9d8daa8b5b \
+    --android 16 --manifest manifest/xiaomi/popsicle/baselines/popsicle_images_..._9d8daa8b5b.json --dry-run | grep -E 'build.prop'
+    vendor build.prop: 厂商镜像与静态树副本都不在位，保留步骤 2 的 lineage build.prop（只套基线增量）
+    计划命令 [步骤 6]: 厂商 vendor 镜像不在位，build.prop 沿用现有副本（见上方 vendor build.prop 一行）
+    计划命令 [步骤 6]: 应用 286 项基线 vendor 属性 -> .../vendor/build.prop
+```
+
+这一改只动 `plan.go` 的文案（`placeVendorBuildProp` 的回退判据原本就是 `IsFile`），
+`gofmt`/`vet`/`go test ./07_build_vendor`（13.456s）重跑仍全绿。
+
+## 8) 口径改为「机型目录不放副本」，副本删除后重跑
+
+确认 07 不读这份抄件后全仓删除（删除前 md5 已记下，备份在 `out/tmp/manifest-backup-20261103-125146/`）：
+
+```console
+$ cd /Volumes/work/cloud-phone-hub/engine
+$ for f in $(find manifest -path '*/vendor/build.prop' | sort); do \
+    printf '%s  %4s 行  %s\n' "$(md5 -q $f)" "$(wc -l < $f)" "$f"; done
+4a012482c114a2f5694453f895716ed1   324 行  manifest/flyme/m22/vendor/build.prop
+df0c82b0dcdff32985a9e1e2f941b928   424 行  manifest/samsung/ss9380/vendor/build.prop
+a23c86172e099926e54bf537ff302173   767 行  manifest/xiaomi/gold/vendor/build.prop
+$ find manifest -path '*/vendor/build.prop' | wc -l
+       0
+```
+
+删除后重跑 gold（rc=0，日志 `out/tmp/gold-07-nocopy.log`，全文无 `[warn]`）：
+
+```console
+$ ./out/bin/cdh device build gold --only 07_build_vendor > out/tmp/gold-07-nocopy.log 2>&1 ; echo rc=$?
+rc=0
+$ wc -l out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/build.prop
+     776
+$ md5 -q out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/build.prop
+d9ea34b4107220af01052070801be2f7
+$ /opt/homebrew/opt/e2fsprogs/sbin/debugfs -R 'cat /build.prop' \
+    out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor.img | md5 -q
+d9ea34b4107220af01052070801be2f7
+$ diff -q …/vendor/build.prop out/tmp/gold-img-buildprop2.prop   # 与删副本前那份比
+（无输出：逐字节相同）
+```
+
+结论：删掉静态树副本对产物**零影响**（同 776 行、同 md5、无告警），只是少了一次
+`步骤 4` 的抄件覆盖——基底仍然来自步骤 6 现解 + 基线增量。
+
+检查器（`out/tmp/check_manifest_template.py`）同步删掉了这条检查，重跑后 13 台不再出现
+`[缺] vendor/build.prop`（popsicle 的 `缺` 从 3 条降到 2 条）。

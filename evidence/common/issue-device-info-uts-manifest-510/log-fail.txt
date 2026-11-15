@@ -1,0 +1,19 @@
+=== 1. 修复前：oriole 基线未声明 device_info 且内核态直读 /vendor_dlkm 不经过 cdh_redirect ===
+
+(a) 修复前 oriole 基线 `modules.external` 仅声明 `["cdh_redirect"]`，`device_info/module.json` 的 `kernel` 仅声明 `["6.6", "6.12"]`：
+$ adb -s 127.0.0.1:5911 shell "uname -a; ls -la /vendor_dlkm/lib/modules/cdh_device_info*"
+Linux localhost 5.10.270-4k-cdh #3 SMP PREEMPT Wed Nov 4 04:03:43 UTC 2026 aarch64 Toybox
+ls: /vendor_dlkm/lib/modules/cdh_device_info*: No such file or directory
+
+(b) 将 `device_info` 适配 5.10 并加入 `oriole` 的 `modules.external` 后首轮起机，
+    `dlkm_loader`（用户态）经 `getname_flags` 命中 `cdh_redirect` 打开 `/mnt/vendorpatch/vendor_dlkm/lib/modules/cdh_device_info.ko`，
+    但模块 `cdh_uts_init()` 内调用的 `kernel_read_file_from_path("/vendor_dlkm/lib/modules/cdh_device_info.uts")`
+    走内核态 `filp_open -> getname_kernel`，不经过 `cdh_redirect` 的 `getname_flags` kretprobe，
+    落回底层 `super.img` 的 `/vendor_dlkm` 分区而报 `-2` (`-ENOENT`)：
+
+[    0.875756] [  T214] dlkm_loader: Loading module /vendor_dlkm/lib/modules/cdh_device_info.ko with args ''
+[    0.877008] [  T214] cdh_device_info: uts: 读不到 UTS 文件 /vendor_dlkm/lib/modules/cdh_device_info.uts（-2）
+[    0.877276] [  T214] cdh_device_info: uts: UTS 装载失败（-2），模块不加载
+[    0.945136] [  T214] dlkm_loader: Failed to insmod '/vendor_dlkm/lib/modules/cdh_device_info.ko' with args '': No such file or directory
+[    0.945515] [  T214] dlkm_loader: LoadWithAliases was unable to load cdh_device_info, tried: cdh_device_info
+

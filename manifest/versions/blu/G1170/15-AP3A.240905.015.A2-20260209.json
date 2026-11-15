@@ -1,0 +1,19 @@
+{
+  "id": 39,
+  "buildId": "15-AP3A.240905.015.A2-20260209",
+  "deviceId": 31,
+  "configId": 32,
+  "osVersion": "15-AP3A.240905.015.A2-20260209",
+  "buildDate": "20260209",
+  "securityPatch": "2026-02-05",
+  "factoryTgz": "BLU-G75-G1170.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 BLU-G75-G1170.zip (vendor/build.prop) 自动生成。",
+    "fingerprint": "BLU/G75/G1170:15/AP3A.240905.015.A2/1770610308:user/release-keys",
+    "osVersion": "15-AP3A.240905.015.A2-20260209",
+    "securityPatch": "2026-02-05"
+  },
+  "updatedAt": "2026-11-09T03:17:21Z"
+}

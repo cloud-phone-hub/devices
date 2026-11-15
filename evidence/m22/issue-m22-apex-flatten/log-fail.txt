@@ -1,0 +1,133 @@
+# issue-m22-apex-flatten / 改动前取证（fail）
+#
+# 本条的"失败"不是某次构建报错，而是"图形栈根本进不了装配树"：底包不再提供散件、
+# 07 又把 apex 顶层整棵丢弃，产物里只能靠机型静态树手工落的 lineage-22.0 旧件顶上。
+# 下面每条命令都在本机实跑，输出为原样（省略无关行时标 [略]）。
+
+## 一、底包 lineage-23.2 的 vendor/bin/hw 只有 2 个文件 —— 图形栈不在散件里
+
+$ ls out/roms/lineage/lineage-23.2/super/unpack_vendor/bin/hw
+android.hardware.bluetooth-service.default
+android.hardware.security.keymint-service
+
+（对照 lineage-22.0 同目录：同批 25+ 项，含 android.hardware.composer.hwc3-service.drm、
+  android.hardware.graphics.allocator-service.minigbm —— 23.2 已把它们搬走）
+
+## 二、它们搬进了 vendor/apex（12 个 APEX，图形栈 2 个）
+
+$ ls out/roms/lineage/lineage-23.2/super/unpack_vendor/apex
+com.android.hardware.audio.apex
+com.android.hardware.boot.grub.apex
+com.android.hardware.cas.apex
+com.android.hardware.drm.clearkey.apex
+com.android.hardware.gatekeeper.nonsecure.apex
+com.android.hardware.graphics.composer.drm_hwcomposer_upstream.apex
+com.android.hardware.memtrack.apex
+com.android.hardware.power.apex
+com.android.hardware.sensors.apex
+com.android.hardware.wpa_supplicant.mainline_common.apex
+com.google.cf.health.apex
+org.lineageos.device.gralloc.minigbm_upstream.apex
+
+## 三、07 步骤 2 的白名单把 apex 整棵丢弃（改动前的构建日志原样）
+
+$ grep -n "丢弃" out/devices/flyme/m22/12.5.0.0A/img/vendor-log.txt
+190:    丢弃 apex / firmware / lost+found / odm / odm_dlkm / overlay / usr
+
+（白名单见 assemble.go:allowedVendorDirs / allowedVendorFiles，只有
+  bin / etc / lib / lib64 / firmware_mnt + build.prop / pci.ids；
+  unpackbase.go 的注释写明"apex…留在解包目录不回填"。
+  结果：装配树里既没有图形散件、也没有 APEX 内容。）
+
+## 四、APEX 里才是真件：payload 是 ext4，内容按 /apex/<挂载名>/ 布局
+
+$ file apex_unpack/com.android.hardware.graphics.composer.drm_hwcomposer_upstream/apex_payload.img
+…: Linux rev 1.0 ext2 filesystem data, UUID=7d1522e1-9dfa-5edb-a43e-98e3a4d20250 (extents) …
+
+$ find com.android.hardware.graphics.composer.drm_hwcomposer_upstream/root -type f | sed 's|.*/root/||' | sort
+apex_manifest.pb
+bin/hw/android.hardware.composer.hwc3-service.drm_upstream
+etc/hwc3-drm-upstream.apex.rc
+etc/vintf/hwc3-drm-upstream.xml
+lib64/android.hardware.common-V2-ndk.so
+lib64/android.hardware.drm.common-V1-ndk.so
+lib64/android.hardware.graphics.allocator-V2-ndk.so
+lib64/android.hardware.graphics.allocator@2.0.so
+lib64/android.hardware.graphics.allocator@3.0.so
+lib64/android.hardware.graphics.allocator@4.0.so
+lib64/android.hardware.graphics.common-V7-ndk.so
+lib64/android.hardware.graphics.common@1.0.so
+lib64/android.hardware.graphics.common@1.1.so
+lib64/android.hardware.graphics.common@1.2.so
+lib64/android.hardware.graphics.composer3-V4-ndk.so
+lib64/android.hardware.graphics.mapper@2.0.so
+lib64/android.hardware.graphics.mapper@2.1.so
+lib64/android.hardware.graphics.mapper@3.0.so
+lib64/android.hardware.graphics.mapper@4.0.so
+lib64/drm_hwcomposer_atom_reporter_upstream.so
+lib64/libbase.so
+lib64/libc++.so
+lib64/libcutils.so
+lib64/libdrm.so
+lib64/libgralloctypes.so
+lib64/libhardware.so
+lib64/libhidlbase.so
+lib64/libui.so
+lib64/libutils.so
+
+$ find org.lineageos.device.gralloc.minigbm_upstream/root -type f | sed 's|.*/root/||' | sort
+apex_manifest.pb
+bin/hw/android.hardware.graphics.allocator-service.minigbm_upstream
+etc/org.lineageos.device.gralloc.minigbm_upstream.rc
+etc/vintf/allocator.minigbm_upstream.xml
+lib64/android.hardware.common-V2-ndk.so
+lib64/android.hardware.graphics.allocator-V2-ndk.so
+lib64/android.hardware.graphics.common-V7-ndk.so
+lib64/android.hardware.graphics.common@1.0.so
+lib64/android.hardware.graphics.common@1.1.so
+lib64/android.hardware.graphics.common@1.2.so
+lib64/android.hardware.graphics.mapper@4.0.so
+lib64/libbase.so
+lib64/libc++.so
+lib64/libcutils.so
+lib64/libdmabufheap.so
+lib64/libdrm.so
+lib64/libgralloctypes.so
+lib64/libhidlbase.so
+lib64/libminigbm_gralloc4_utils_upstream.so
+lib64/libminigbm_gralloc_upstream.so
+lib64/libutils.so
+
+## 五、rc 写死 /apex/<挂载名>/：挂载名 ≠ APEX 文件名
+
+$ cat …/composer/root/etc/hwc3-drm-upstream.apex.rc
+service vendor.hwcomposer-3.drm_upstream /apex/com.android.hardware.graphics.composer/bin/hw/android.hardware.composer.hwc3-service.drm_upstream
+    class hal animation
+    interface aidl android.hardware.graphics.composer3.IComposer/default
+    …
+
+$ cat …/org.lineageos.device.gralloc.minigbm_upstream/root/etc/org.lineageos.device.gralloc.minigbm_upstream.rc
+service vendor.graphics.allocator.minigbm_upstream /apex/org.lineageos.device.gralloc/bin/hw/android.hardware.graphics.allocator-service.minigbm_upstream
+    class hal animation
+    …
+
+$ strings …/composer/root/apex_manifest.pb | head -3
+&com.android.hardware.graphics.composer
+libapexsupport.soB
+libbinder_ndk.soB
+
+（文件名是 com.android.hardware.graphics.composer.drm_hwcomposer_upstream.apex，
+  挂载名是 com.android.hardware.graphics.composer —— 按文件名去 .apex 推前缀会全部漏改，
+  这是第一版实现的 bug，见 log-pass.txt 的"两次实跑"。）
+
+$ grep -c "/apex/" apex_unpack/*/root/etc/*.rc
+apex_unpack/com.android.hardware.graphics.composer.drm_hwcomposer_upstream/root/etc/hwc3-drm-upstream.apex.rc:1
+apex_unpack/org.lineageos.device.gralloc.minigbm_upstream/root/etc/org.lineageos.device.gralloc.minigbm_upstream.rc:1
+
+## 六、搬运 rc 还有第二处坑：rc 可能在 etc 根、且没有 .apex 中缀
+
+- composer：etc/hwc3-drm-upstream.apex.rc（带 .apex）
+- gralloc：etc/org.lineageos.device.gralloc.minigbm_upstream.rc（不带 .apex）
+init 只扫 /vendor/etc/init/，两条都得改名搬进 etc/init，否则等于没装。
+第一版只认 *.apex.rc，gralloc 的 rc 既没落盘也没改写（实跑日志里只有 composer 的
+"rc 改写 1 个文件 1 行"），修复后才两条都命中。

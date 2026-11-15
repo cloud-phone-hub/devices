@@ -1,0 +1,89 @@
+# 修复前取证：m22_12.5.0.0A / 实例 28（vnc 5920、adb 5919），2026-10-29
+# 现象：noVNC 里点击落点与手指（鼠标）位置不符，点桌面图标挑不到目标元素。
+
+## 1. guest InputReader 视图：VNC 指针事件被 Virtio Tablet 接走，按鼠标解释
+# $ adb -s 127.0.0.1:5919 shell dumpsys input > input-m22.txt
+
+8: QEMU Virtio Tablet
+      Classes: KEYBOARD | TOUCH
+      Path: /dev/input/event2
+      Descriptor: 872e59ae8f1871b31e9c1170a2daf18e827d399a
+      Location: virtio9/input0
+      Identifier: bus=0x0006, vendor=0x0627, product=0x0003, version=0x0002, bluetoothAddress=<not set>
+      KeyLayoutFile: /system/usr/keylayout/Generic.kl
+      ConfigurationFile:
+      SysfsDevicePath: /sys/devices/pci0000:00/0000:00:0a.0/virtio9
+      AbsState: ABS_X=22286, ABS_Y=16724        <-- VNC 点击 (735,1225) 的原始值确实到了这台设备
+
+  Device 3: QEMU Virtio MultiTouch               <-- 全程没收到事件
+    Sources: KEYBOARD | TOUCHSCREEN
+    Motion Ranges:
+      X: source=TOUCHSCREEN, min=0.000, max=1079.967
+      Y: source=TOUCHSCREEN, min=0.000, max=2399.927
+    Touch Input Mapper (mode - DIRECT):
+        DeviceType: TOUCH_SCREEN
+      Translation and Scaling Factors:
+        RawToDisplay Transform: (ROT_0) (SCALE )
+            0.0330  0.0000  0.0000
+            0.0000  0.0732  0.0000
+
+  Device 2: QEMU Virtio Tablet                   <-- 真正吃事件的那台
+    Sources: KEYBOARD | MOUSE
+    Motion Ranges:
+      X: source=MOUSE, min=0.000, max=2399.927   <-- 本应是 1079.967
+      Y: source=MOUSE, min=0.000, max=2399.927
+    Touch Input Mapper (mode - POINTER):
+        DeviceType: POINTER
+    Viewport INTERNAL: ... deviceSize=[1080, 2400]
+      DisplayBounds: 1080x2400
+# X 轴按 2400 而不是 1080 建立映射 → 0.0732 = 2400/32767（正确值 0.0330 = 1080/32767），
+# 点击 x 被放大约 2.22 倍并裁到屏幕边缘。
+
+## 2. idc 在运行态不可见（/vendor/usr 不在内核重定向白名单）
+# $ 经 daemon hvc7 root 通道在云机内执行
+ls -d /vendor/usr /vendor/usr/idc /vendor/usr/keylayout
+ls: /vendor/usr: No such file or directory
+ls: /vendor/usr/idc: No such file or directory
+ls: /vendor/usr/keylayout: No such file or directory
+
+ls /mnt/patch
+lost+found  odm  vendor  vendor_dlkm
+ls /mnt/patch/vendor/usr/idc
+QEMU Virtio MultiTouch.idc  QEMU Virtio Tablet.idc  tablet2multitouch.idc
+grep -E "patch" /proc/mounts
+/dev/block/vdc /mnt/patch ext4 ro,seclabel,relatime 0 0
+
+## 3. 内核 fs/namei.c 的前向重定向表共 11 条，没有 /vendor/usr
+# $ sed -n '208,262p' engine/kernels/lineage-23-6.12/fs/namei.c
+/vendor/etc                              -> /mnt/patch/vendor/etc
+/vendor/bin                              -> /mnt/patch/vendor/bin
+/vendor/lib                              -> /mnt/patch/vendor/lib
+/vendor/lib64                            -> /mnt/patch/vendor/lib64
+/vendor/build.prop                       -> /mnt/patch/vendor/build.prop
+/vendor/ueventd.rc                       -> /mnt/patch/vendor/ueventd.rc
+/vendor_dlkm/lib                         -> /mnt/patch/vendor_dlkm/lib
+/system/lib/modules                      -> /mnt/patch/vendor_dlkm/lib/modules
+/odm/etc/build.prop                      -> /mnt/patch/odm/etc/build.prop
+/odm/etc/selinux/odm_sepolicy.cil        -> /mnt/patch/odm/etc/selinux/odm_sepolicy.cil
+/odm/etc/selinux/precompiled_sepolicy    -> /mnt/patch/odm/etc/selinux/precompiled_sepolicy
+
+## 4. daemon 下发的 QEMU 输入设备：默认三件套（device.json 没有 input 段）
+virtio-multitouch-pci
+virtio-tablet-pci        <-- 绝对坐标只能落到它；multitouch 只暴露 ABS_MT_*
+virtio-keyboard-pci
+
+## 5. 对照：gold 的 device.json 有 input 段，tablet 根本不创建
+$ python3 -c "..." < engine/manifest/xiaomi/gold/device.json
+{"touch": {"name": "goodix_ts", "bus": 2, "vendor": 10182, "product": 1,
+           "version": 256, "abs-to-mt": true},
+ "keyboard": {"name": "mtk-kpd", "bus": 25, "vendor": 0, "product": 0, "version": 0},
+ "tablet": false}
+
+## 6. 排查过程中被排除的对象
+# input_identity（engine/modules/input_identity）注册的 5 台设备在 InputReader 里
+# 全是 KEYBOARD / SWITCH，无 TOUCH 类、无 X/Y motion range，也不发事件：
+1: mtk-pmic-keys                      /dev/input/event8  Classes: KEYBOARD
+2: mt6833-mt6359 Headset Jack          /dev/input/event7  Classes: KEYBOARD | SWITCH
+3: swtp                               /dev/input/event6  Classes: KEYBOARD
+5: uinput-fpc                         /dev/input/event4  Classes: KEYBOARD
+4: fpc_irq@fingerprint                 /dev/input/event5  Classes: KEYBOARD

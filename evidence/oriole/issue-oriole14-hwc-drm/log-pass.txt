@@ -1,0 +1,170 @@
+# oriole-A14 显示栈打通后的通过证据（2026-11-01，实例 11，patch.img sha256 76ae0a0857e7）
+
+## ① 执行位修复：装配树与规则表都回到 0755
+
+$ ../out/bin/cdh device build oriole --manifest oriole-ap2a.240905.003.f1-factory-655c44e7 \
+    --only 07_build_vendor --refresh
+    机型静态树: 写入 3，已存在同内容 0
+    [ok] 已完成   EXIT=0
+
+$ grep -n "composer@2.4-service" engine/out/devices/google/oriole/AP2A.240905.003.F1/img/vendor-meta-rules.txt
+104:bin/hw/android.hardware.graphics.composer@2.4-service   file  0755  ...  hal_graphics_composer_default_exec  rule  fallback
+（修复前是 0644，见 log-fail.txt ①）
+
+## ② 流水线：09 / 11 均 EXIT=0
+
+$ ../out/bin/cdh device build oriole --manifest ... --only 09_build_patch --refresh
+    [ok] patch.img 构建完成（694 条目，回读校验 694 一致）
+
+$ ../out/bin/cdh device build oriole --manifest ... --only 11_pack_vda --refresh
+    [ok] patch.img -> out/dist/google/oriole/AP2A.240905.003.F1/patch.img（sha256 76ae0a0857e7）
+    [ok] 产物: out/dist/google/oriole/AP2A.240905.003.F1（vda.img 13.00 GiB，5 个分区已刷新）
+
+## ③ guest 内探针：BufferInfoGetter 通过，hotplug 回调收到
+
+$ adb -s 127.0.0.1:5911 shell /data/local/tmp/hwc_probe
+module id=hwcomposer name=DrmHwcTwo module api=512 hal_api=0
+open err=0 dev=... version=0x2000001
+VERBOSE: Device hook: android::DrmHwcTwo::GetMaxVirtualDisplayCount ... maxVirtualDisplays=0
+VERBOSE: Device hook: android::DrmHwcTwo::RegisterCallback
+ERR: DRM/KMS master access required          ← 预期：探针与服务抢 master
+INFO: No pipelines available. Creating null-display for headless mode
+>>> HOTPLUG display=0 conn=1                 ← 修复前这里一行都没有
+registerCallback(hotplug) ret=0
+
+# 与 log-fail.txt ③ 对比：'Gralloc name isn't valid' / 'Failed to initialize BufferInfoGetter'
+# 两条彻底消失 —— minigbm 的 "CrOS Gralloc" 现在走 BufferInfoMapperMetadata（IMapper-4.0 元数据）。
+
+## ④ 起机：boot_completed=1，服务只启一次，SF 稳定输出
+
+$ adb -s 127.0.0.1:5911 shell 'getprop sys.boot_completed; getprop ro.build.version.release; \
+      getprop init.svc.vendor.hwcomposer-2-4; pidof surfaceflinger; pidof android.hardware.graphics.composer@2.4-service'
+1
+14
+running
+725
+711
+
+$ grep -a "sys.boot_completed" runtime/oriole_AP2A.240905.003.F1/11/qemu.log | head -1
+[   32.791044][ T1] init: processing action (sys.boot_completed=1) from (/vendor/etc/init/cph_wifi_bootstrap.rc:20)
+→ 32.79 s 达成 boot_completed（上一版 A15 借件路线为 22 s 级别，差值来自 HIDL 2.4 的 SF 启动顺序）
+
+$ grep -ac "cgl-headless 大帧" runtime/oriole_AP2A.240905.003.F1/11/qemu.log
+2164
+→ 宿主侧持续收到 1080x2400 合成帧（约 4~5 ms/帧），不是静止画面
+
+## ⑤ 画面：VNC 抓帧（engine/evidence/issue-oriole14-hwc-drm/boot-desktop.png）
+
+$ python3 .tmp/rfb_shot.py 127.0.0.1 5912 /tmp/a14/oriole11.ppm 25
+ok 1088x2400 covered=2611200 px -> /tmp/a14/oriole11.ppm
+→ 桌面、状态栏（5:01 / 信号 / 电池）、图标、导航栏全部正常渲染；
+  AOSP Launcher3 + 壁纸，密度 420（#104）。
+
+# 备注：本机型 screencap 仍会挂住（drm_hwcomposer 无 readback 能力），
+# dumpsys SurfaceFlinger 直调返回 FAILED_TRANSACTION，两者都只影响取证方式，
+# 不影响画面 —— 观感取证统一走 VNC（.tmp/rfb_shot.py）。
+
+## ⑥ 显示栈三件全部现编（实例 14，patch.img sha256 06e93c8f36a5）
+
+$ ./out/bin/cdh device build oriole --manifest … --only 07_build_vendor --refresh
+==> [步骤 5b] 借件（基线清单 vendor.lifts）
+    输入: lineage-21.0 底包 system（借件集合 12 项）
+[replace] vendor/lib64/android.hardware.graphics.composer@2.4.so <- lineage-21.0 底包 system/system/lib64/…
+…（其余 11 条同样形式）
+==> [步骤 4c] 显示栈现编（drm_hwcomposer + composer 2.4 服务壳 + resources）
+    编译器: …/ndk/26.1.10909125/…/bin/clang++
+    hwcomposer: 现编 -> …/vendor/lib64/hw/hwcomposer.gs101.so
+    composer resources: 现编 -> …/vendor/lib64/android.hardware.graphics.composer@2.1-resources.so
+    composer 服务壳: 现编 -> …/vendor/bin/hw/android.hardware.graphics.composer@2.4-service
+[ok] 已完成   EXIT=0
+
+# 服务壳的 DT_NEEDED：19 项，零 adapter、零 @2.2-resources
+$ llvm-readelf -d …/vendor/bin/hw/android.hardware.graphics.composer@2.4-service | grep NEEDED
+  android.hardware.graphics.composer@2.4/.2.3/.2.2/.2.1.so, @2.1-resources.so,
+  libhidlbase libbinder libutils libcutils libbase libfmq libhardware libsync libui
+  libc++ libc libm libdl liblog
+$ llvm-readelf -d … | grep -E "hwc2on|2\.2-resources" | wc -l
+0        ← 旧路线里这两类 /@2.2-resources 是服务壳的必需项
+
+## ⑦ 09 / 11 重跑（分开跑！--only 是单值 flag）
+
+$ ../out/bin/cdh device build oriole --manifest … --only 09_build_patch --refresh
+[ok] patch.img 发布完成: …/img/patch.img（402653184 字节，sha256 06e93c8f36a5）
+    条目 691（源 689 + 固定 2），回读校验 691 一致
+$ ../out/bin/cdh device build oriole --manifest … --only 11_pack_vda --refresh
+[ok] patch.img -> out/dist/…（384.0 MiB，sha256 06e93c8f36a5）
+
+## ⑧ 起机：设备上的三件与装配树逐字节相等
+
+$ for f in bin/hw/…@2.4-service lib64/…@2.1-resources.so lib64/hw/hwcomposer.gs101.so; do
+      shasum -a 256 装配树/$f | cut -c1-16; adb shell sha256sum /vendor/$f | cut -c1-16; done
+bin/hw/android.hardware.graphics.composer@2.4-service   549d3b1e13088545 = 549d3b1e13088545
+lib64/android.hardware.graphics.composer@2.1-resources.so 74bcb26ede84e312 = 74bcb26ede84e312
+lib64/hw/hwcomposer.gs101.so                          cb3d26650b60c967 = cb3d26650b60c967
+
+$ adb shell 'getprop sys.boot_completed; getprop init.svc.vendor.hwcomposer-2-4; \
+      pidof surfaceflinger; pidof android.hardware.graphics.composer@2.4-service'
+1
+running
+730
+716
+$ grep -ac "cgl-headless 大帧" runtime/oriole_AP2A.240905.003.F1/14/qemu.log
+1297
+
+## ⑨ 画面：VNC 抓帧（boot-desktop-selfbuilt.png）
+
+$ python3 out/tmp/vncshot.py 5912 out/tmp/vnc14.png 90
+framebuffer 1088x2400 bpp=32 depth=24 be=0 tc=1 shift=16/8/0
+已写出 out/tmp/vnc14.png
+→ 桌面/状态栏/图标/导航栏均正常，与实例 11 的旧路线画面一致
+
+# logcat 里 cannot link / dlopen failed 只有 1 条，即 Chrome 的 libmonochrome.so
+# （预置壳包 + 无 Play 下发，见 ⑩ 与 solution.md 遗留 3），显示栈本身零链接错误。
+
+## ⑩ libmonochrome.so 定责：不是 lineage 没带，是官方预置的 Chrome 壳包里就没有
+
+# ① 现场（实例 14，out/core/daemon/runtime/oriole_AP2A.240905.003.F1/14/qemu.log）
+$ grep -a -i monochrome .../14/qemu.log | head -3
+I cr_LibraryLoader: Loading monochrome from within
+  /data/app/~~C5JRVlHGQ4b98pOdEuKgVw==/com.android.chrome-MPtxPaWEM3Wpv4RLcmCMAw==/Chrome.apk
+E AndroidRuntime: Caused by: java.lang.UnsatisfiedLinkError: dlopen failed:
+  library "libmonochrome.so" not found
+→ 注意是 “not found”，不是 ABI 不符（那会报 is 32-bit instead of 64-bit）。
+
+# ② 包自身：声明 arm64，实际没有主库
+$ aapt2 dump badging out/tmp/chrome/Chrome.apk | grep -E "package:|native-code"
+package: name='com.android.chrome' versionCode='622500031' versionName='122.0.6225.0'
+  compileSdkVersion='34'
+native-code: 'arm64-v8a'
+alt-native-code: 'armeabi-v7a'
+$ unzip -l out/tmp/chrome/Chrome.apk | grep -E " lib/"
+        0  lib/arm64-v8a/libplaceholder.so          ← 只有 0 字节占位
+    10040  lib/armeabi-v7a/libchromium_android_linker.so
+  1506948  lib/armeabi-v7a/libelements.so
+    33828  lib/armeabi-v7a/libmonochrome_cablev2_authenticator_partition.so
+   171164  lib/armeabi-v7a/libmonochrome_stack_unwinder_partition.so
+     2444  lib/armeabi-v7a/libmonochrome_test_dummy_partition.so
+  1483268  lib/armeabi-v7a/liboptimization_guide_internal.so
+→ 两个 ABI 都没有 libmonochrome.so，32 位目录里也只有 *_partition.so。
+
+# ③ 镜像里也别处没有：官方 system/product 都不带这个库
+$ debugfs -R "ls /system/lib64" out/roms/google/oriole/AP2A.240905.003.F1/super/system_a.img | grep -i monochrome
+（空）
+$ debugfs -R "ls /lib64" out/roms/google/oriole/AP2A.240905.003.F1/super/product_a.img | grep -i mono
+（空）
+$ debugfs -R "ls -l /app/Chrome" .../super/product_a.img
+ 28  100644  17447945  Chrome.apk.gz        ← 只有这一个包，没有 split
+
+# ④ 对照：lineage-21.0 自己的 product 压根没有 Chrome
+$ debugfs -R "ls -l /app" out/roms/lineage/lineage-21.0/super/product_a.img
+Aperture / ApertureLensLauncher / Backgrounds / DeskClock / Etar / ExactCalculator /
+Gallery2 / Glimpse / **Jelly** / LatinIME / LocalContactsBackup / … （共 17 项，无 Chrome）
+
+# ⑤ 本机 /product 的来源（不是 lineage 的）
+$ grep product_a out/devices/google/oriole/AP2A.240905.003.F1/img/super-info.txt
+  product_a  3203252224 B @ 50331648 B <- out/roms/google/oriole/AP2A.240905.003.F1/super/product_a.img
+
+# 定责：lineage 不带 Chrome（自带 Jelly）是事实，但与本机这个崩溃无关 —— 本机 /product
+# 是官方 Pixel A14 那份，里面的 Chrome（122.0.6225.0）是“壳包”：声明 arm64 却只放 0 字节占位 so，
+# 主库本来要靠 Play / Chrome 模块下发；云机没 GMS，于是永远 not found。
+

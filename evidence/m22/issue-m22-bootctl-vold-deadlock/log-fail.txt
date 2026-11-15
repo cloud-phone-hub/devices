@@ -1,0 +1,28 @@
+# 实例 32（撤 boot 之前）串口日志节选：vdc checkpoint → vold 等 IBootControl → init 互锁
+# 源: ../../out/core/daemon/runtime/m22_12.5.0.0A/32/qemu.log
+
+## 1. init 在 late-fs 同步 exec vdc
+1233:[   21.247387][    T1] init: Calling: /system/bin/vdc checkpoint restoreCheckpoint /dev/block/vdb
+1242:[   21.254879][    T1] init: Calling: /system/bin/vdc checkpoint needsCheckpoint
+
+## 2. vold 因 VINTF 声明进入 waitForService
+1244:[   21.258528][  T260] servicemanager: Caller(pid=269,uid=0,sid=u:r:vold:s0) Found android.hardware.boot.IBootControl/default in device VINTF manifest.
+1245:[   21.259196][  T260] servicemanager: Caller(pid=269,uid=0,sid=u:r:vold:s0) Since 'android.hardware.boot.IBootControl/default' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+1248:[   22.262790][  T260] servicemanager: Caller(pid=269,uid=0,sid=u:r:vold:s0) Since 'android.hardware.boot.IBootControl/default' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+1250:[   23.266926][  T260] servicemanager: Caller(pid=269,uid=0,sid=u:r:vold:s0) Since 'android.hardware.boot.IBootControl/default' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+
+## 3. 每秒 Waited one second 累计
+计数: 244
+1247:[   22.261878][  T269] ServiceManagerCppClient: Waited one second for android.hardware.boot.IBootControl/default (is service started? Number of threads started in the threadpool: 17. Are binder threads started and available?)
+2019:[  266.613397][  T269] ServiceManagerCppClient: Waited one second for android.hardware.boot.IBootControl/default (is service started? Number of threads started in the threadpool: 17. Are binder threads started and available?)
+
+## 4. init 消息队列打满 → 懒启动被丢
+1449:[  122.943942][  T137] init: Too many pending control messages, dropped 'interface_start' for 'aidl/android.hardware.boot.IBootControl/default' from pid: 260
+1453:[  123.946719][  T137] init: Too many pending control messages, dropped 'interface_start' for 'aidl/android.hardware.boot.IBootControl/default' from pid: 260
+1457:[  124.951262][  T137] init: Too many pending control messages, dropped 'interface_start' for 'aidl/android.hardware.boot.IBootControl/default' from pid: 260
+计数: 144
+
+## 5. 对照：实例 31（未加 boot HAL）只有一句 Could not find，正常引导
+1240:[   21.135516][  T260] servicemanager: Caller(pid=273,uid=0,sid=u:r:vold:s0) Could not find android.hardware.boot.IBootControl/default in the VINTF manifest. No alternative instances declared in VINTF.
+2670:[   23.422357][  T260] servicemanager: Caller(pid=701,uid=0,sid=u:r:update_engine:s0) Could not find android.hardware.boot.IBootControl/default in the VINTF manifest. No alternative instances declared in VINTF.
+实例 31 Too many pending 计数: 0

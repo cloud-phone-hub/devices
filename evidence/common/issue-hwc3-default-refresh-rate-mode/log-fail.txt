@@ -1,0 +1,8 @@
+# 修复前：4d5128bd8ca07462-cloud diff/display.json defaultMode 1 vs 2
+summary(old): {"identity": 0, "capability": 6, "state": 1, "availability": 0, "fatal": 6}
+{
+  "level": "capability",
+  "path": "display.fields.mDisplayInfo",
+  "base": "DisplayInfo{\"内置屏幕\", displayId 0, displayGroupId 0, FLAG_SECURE, FLAG_SUPPORTS_PROTECTED_BUFFERS, FLAG_TRUSTED, real 1080 x 2400, largest app 2400 x 2400, smallest app 1080 x 1080, appVsyncOff 1199999, presDeadline 14800000, mode 2, renderFrameRate 120.00001, defaultMode 2, userPreferredModeId -1, su…",
+  "target": "DisplayInfo{\"内置屏幕\", displayId 0, displayGroupId 0, FLAG_SECURE, FLAG_SUPPORTS_PROTECTED_BUFFERS, FLAG_TRUSTED, real 1080 x 2400, largest app 2400 x 2400, smallest app 1080 x 1080, appVsyncOff 1199999, presDeadline 14800000, mode 2, renderFrameRate 120.00001, defaultMode 1, userPreferredModeId -1, su…"
+}

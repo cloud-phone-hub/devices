@@ -1,0 +1,79 @@
+本文件记录 issue-battery-align 过程中失败的尝试与报错，按时间顺序。
+
+[1] 编译期：health_service.cpp 首次使用 ALOGI/ALOGW
+    现象：编译报 ALOGI/ALOGW 未声明（该文件未定义 LOG_TAG）。
+    处理：改为 __android_log_print(ANDROID_LOG_INFO/WARN, kTag, ...)。
+
+[2] 构建阶段名写错
+    $ cdh device build gold --only 07
+    现象：报未知阶段。实际阶段名为 build_vendor / build_patch / pack_vda。
+
+[3] 真机侧直接读 HAL 失败
+    $ adb -s 4lmbvom7gifm5lbu shell "dumpsys android.hardware.health.IHealth/default"
+    Error with service 'android.hardware.health.IHealth/default' while dumping: FAILED_TRANSACTION
+    真机 /sys/class/power_supply/* 全部 Permission denied（非 root）。
+    处理：真机改用 device-checker 的 hardware.battery（App 侧读 BATTERY_CHANGED）。
+
+[4] 云机 device-checker 连不上远端（按设计无外网）
+    .tmp/battery-cloud-run.json:
+      "error": "设备未连接（android_id）: 458ffdddb936e56b-cloud"
+    $ adb -s 127.0.0.1:5911 shell "dumpsys connectivity | head -25"
+      Active default network: none
+    $ adb -s 127.0.0.1:5911 shell "ping -c 2 101.33.73.101"
+      connect: Network is unreachable
+
+[5] 尝试给云机补默认路由/策略规则后直连远端
+    (root PTY，daemon hvc7)
+    $ ip route add default via 10.0.2.2 dev mgmt0
+    $ ip rule add pref 10500 lookup main
+    $ nc -w 3 101.33.73.101 80 </dev/null
+      nc: connect: Connection refused
+    根因（后确认）：实例 5 的 `-netdev user,id=net0,restrict=on` 只保留
+    hostfwd 5911→5555，slirp 不放行其他出站；补 main 路由到 10.0.2.2 仍被丢弃。
+    随后已删除该路由/规则，改走 net2/ccmni2（未 restrict）。
+
+
+[6] tcp_proxy + adb reverse 桥接失败
+    $ adb -s 127.0.0.1:5911 reverse tcp:18080 tcp:18080      # 注册成功
+    (guest root) $ iptables -t nat -A OUTPUT -d 101.33.73.101 -p tcp --dport 80 \
+                    -j REDIRECT --to-ports 18080
+    $ nc -w 5 127.0.0.1 18080   # guest 侧连接 rc=0，但宿主 tcp_proxy 收不到任何字节
+    宿主 127.0.0.1:18080 监听正常（lsof 可见），说明本实例 adb reverse 数据通路异常。
+    处理：放弃桥接；已删 iptables 规则、移除 reverse、停宿主代理。
+
+[7] app_process 接收 BATTERY_CHANGED 失败
+    首版（registerReceiver 后未跑 Looper）：
+      TIMEOUT_NO_BROADCAST
+      Killed
+    修正后（取 registerReceiver 返回值 + Looper.loop()）：
+      STICKY: <no intent>
+    粘性广播既没从返回值拿到，也未收到 live 广播；该取证路径未闭环。
+
+[8] 唤醒真机时遇到 MIUI 限制
+    $ adb -s 4lmbvom7gifm5lbu shell "input keyevent KEYCODE_WAKEUP"
+      java.lang.SecurityException: Injecting input events requires ... INJECT_EVENTS
+    改用 svc power stayon true 才唤醒（mWakefulness=Awake）。
+    $ wm dismiss-keyguard  # 解锁成功，焦点转到 dev.checker/.MainActivity
+
+[9] 熄屏时 service call 事务参数错误
+    $ service call power 13 i64 <epoch_ms> i32 0 i32 0
+      Result: Parcel(... 'event time must not be in the future' ...)
+    原因：goToSleep 的 eventTime 用 uptime 时间基，不是 epoch。改用
+    /proc/uptime 毫秒后成功（mWakefulness=Asleep）。
+
+[10] ccmni2 首次补默认路由「静默失败」
+    (root PTY) $ ip route add default via 100.64.155.2 dev ccmni2 2>/dev/null
+      rc=0 但 `ip route` 看不到默认路由（stderr 被丢弃掩盖了报错）。
+    处理：去掉 2>/dev/null 重跑，rc=0 且 `default via 100.64.155.2 dev ccmni2` 出现。
+
+[11] guest HTTP 探测判空过早
+    $ (guest) 发 HTTP 请求只等 5s → 输出为空，误判不通。
+    处理：等待窗口放宽到 12s，拿到 `HTTP/1.0 200 OK`。
+
+[12] 云机 dev.checker 进程未起（MIUI 权限弹窗占前台）
+    $ am start -n dev.checker/.MainActivity
+      dumpsys activity activities 显示前台是
+      com.lbe.security.miui/.GrantPermissionsActivity
+    处理：对 dev.checker 全量 `pm grant` 运行时权限 →
+    `am force-stop com.lbe.security.miui` → 重启 app，
+    服务端 /api/devices 出现 458ffdddb936e56b-cloud（online）。

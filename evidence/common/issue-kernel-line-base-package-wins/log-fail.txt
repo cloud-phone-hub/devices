@@ -1,0 +1,79 @@
+# log-fail：m22 在 02_build_kernel 直接失败（2026-11-04，逐机验收第 2 台）
+
+    $ cd engine/build && ../out/bin/cdh device build m22
+    ==> 设备: MEIZU 22（flyme/m22）
+    ==> 清单: manifest/flyme/m22/baselines/12.5.0.0A.json
+        厂商固件: roms/devices/flyme/m22/12.5.0.0A.zip
+        lineage 底包: roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip
+    ==> 阶段(11): unpack, build_kernel, build_modules, build_boot, build_vendor_boot, build_odm,
+                  build_vendor, build_vendor_dlkm, build_patch, pack_super, pack_vda
+    ==> [1/11] unpack  (01_unpack)
+      ...
+    [ok] 已导出 16 个分区 -> out/roms/lineage/lineage-23.2
+    [ok] 解包完成: 2 个任务 -> out/roms
+    ==> [2/11] build_kernel  (02_build_kernel)
+      + 进程内调用 build_kernel
+    ==> 内核线: 6.6（清单 kernel；与厂商固件内核同代）
+    [err] 阶段 build_kernel 失败: 无法确定内核源码：请用 --source 或 CDH_KERNEL_SOURCE 指定
+         （kernels/ 下可用: kernels/lineage-21-6.1, kernels/lineage-22-6.12,
+           kernels/lineage-22-6.6, kernels/lineage-23-6.12）
+
+（原文见 `engine/out/tmp/m22-build.log` 第 1~122 行；`[err]` 在第 122 行。）
+
+--------------------------------------------------------------------------
+## 同一口径下的另外两台（静态推演，本轮尚未实跑到）
+
+`02` 的树名来自 `kbuild.KernelTag(lineage 代, Kernel())`，所以顶层 `kernel` 抄厂商 uname
+的机型都会拼出不存在的目录。七台目标机里三台中招：
+
+| 机型 / 基线 | 顶层 `kernel`（改前） | `rom.lineage.kernel.version`（底包实测） | `rom.vendor.kernel.uname-version`（厂商） | 推导树名 | 树是否存在 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `flyme/m22` `12.5.0.0A` | `6.6` | `6.12.81` | `Linux version 6.6.66-android15-8-…-4k` | `lineage-23-6.6` | ✗ |
+| `samsung/ss9380` `SM-S9380_3_…fac` | `6.6` | `6.12.81` | `Linux version 6.6.98-a…` | `lineage-23-6.6` | ✗ |
+| `google/oriole` `oriole-ap2a.240905.003.f1` | `5.10` | `6.1` | `Linux localhost 5.10.1…` | `lineage-21-5.10` | ✗ |
+| `xiaomi/gold`（对照，本轮已跑通） | `6.6` | `6.6` | `Linux localhost 6.6.89…` | `lineage-22-6.6` | ✓ |
+| `oneplus/15r` / `oppo/cph2797` / `xiaomi/popsicle`（对照） | `6.12` | `6.12.81` / 未写 | `6.12.38` / `6.12.23` | `lineage-23-6.12` | ✓ |
+
+`kernels/` 实际只有四棵树、`out/kernel/` 已构建产物也只有三棵，与上表一致：
+
+    $ ls engine/kernels
+    lineage-21-6.1  lineage-22-6.12  lineage-22-6.6  lineage-23-6.12  patches
+    $ ls engine/out/kernel
+    lineage-21-6.1  lineage-22-6.6  lineage-23-6.12
+
+--------------------------------------------------------------------------
+## 这三台的 `kernel` 字段与它们自己的文档互相矛盾
+
+同一份清单里，机型 README 早就写死了该跑哪棵树：
+
+    $ grep -n "02_build_kernel" engine/manifest/flyme/m22/README.md
+    19:| `02_build_kernel` | ✅ | 源码 `kernels/lineage-23-6.12`（`android_kernel_virt_virtio@lineage-23.2`
+       + 3 个 CDH 提交，HEAD `bccd296879a5`）+ 统一片段 `build/02_build_kernel/lineage-kernel.config` …
+       → `Image` 43,969,024 B、release `6.12.81-4k-cdh` … |
+
+    $ grep -n "内核 6.12" engine/manifest/samsung/ss9380/README.md
+    187:# CDH 路径重定向规则 —— samsung/ss9380 / 16.0.0 / lineage-23.2（内核 6.12）
+    193:# 本表是 lineage-23-6.12 内核树内置白名单的数据化等价物——树已回退上游…
+
+    $ grep -n "lineage-21 6.1" engine/manifest/google/oriole/README.md
+    127:# CDH 路径重定向规则 —— google/oriole（Pixel 6）/ Android 14 / lineage-21 6.1
+
+m22 基线自己的 `rom.lineage.kernel.measured-from` 也写明了归属：
+
+    云机跑底包内核（6.12.81），官方 ROM 内核是 6.6.66-android15（见 rom.vendor.kernel），
+    两者不同代，镜像标签与源码目录名跟底包走。
+
+即：顶层 `kernel = "6.6"` 与同文件的底包口径相反。
+
+--------------------------------------------------------------------------
+## 注释是错的来源
+
+`engine/build/internal/manifest/manifest.go` 里 `Kernel()` 的口径说明（改前）：
+
+    // 顶层 kernel 的口径是「抄 rom.vendor.kernel.uname-version 的主次」：云机跑的是
+    // 厂商固件那颗内核，驱动/模块按它编，所以厂商线就是选核依据（gold：vendor
+    // 6.6.89 + lineage-22.2 → lineage-22-6.6）。…与厂商线不一致则必须有借用登记。
+
+gold 是「厂商线与底包同代」的特例，被写成了通则；最后一句还把借用登记的对象说错了——
+`verifyKernelBase` 校验的是**编出来的 release 与底包 boot.img** 是否同代
+（`02_build_kernel/plan.go:527~546`），与厂商 uname 无关。

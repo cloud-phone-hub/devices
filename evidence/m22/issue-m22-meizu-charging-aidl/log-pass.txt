@@ -1,0 +1,166 @@
+# #68 meizu_charging 逆向 + 落地流水（可复现）
+# 环境：m22 / flyme 12.5.0.0A / android 16；NDK 29.0.14206865
+#   原厂件根：out/tmp/unpack-vendor_a/flyme-m22      （记作 $V）
+#   逆向工作区：out/tmp/rev2
+# 接续 #67（aw_light），命令形状完全一致，只有包名/方法表不同。
+
+## 0) 定位原厂件
+
+    ls $V/bin/hw | grep meizu_charging
+        vendor.meizu.hardware.meizu_charging-service       # 104,800 B
+    ls $V/lib64 | grep meizu_charging
+        vendor.meizu.hardware.meizu_charging-V1-ndk.so     # 85,200 B
+    cat $V/etc/init/vendor.meizu.hardware.meizu_charging-service.rc
+        service vendor.default.meizu_charging /vendor/bin/hw/…-service
+            class late_start / user system / group system   （无 interface、无 seclabel）
+        on property:sys.run.charger_file_perms …（chmod + wait）
+        on boot     … chown /sys/class/qcom-battery/…
+        on charger  … chown /sys/class/qcom-battery/…
+    cat $V/etc/vintf/manifest/vendor.meizu.hardware.meizu_charging-service.xml
+        <manifest version="8.0"> … <fqname>IMeizuCharging/default</fqname>
+
+## 1) 取 descriptor 与接口 hash
+
+    strings -a $V/lib64/vendor.meizu.hardware.meizu_charging-V1-ndk.so | grep -E '^[0-9a-f]{40}$'
+        be64757e0ec349824b9e76e8982900f3c680e1d7
+    → vendor/hardware/vendor.meizu.hardware.meizu_charging/aidl/vendor.meizu.hardware.meizu_charging/1/.hash
+
+## 2) 事务表（反汇编，脚本 out/tmp/rev2/rev_any.py）
+
+    TC=~/Library/Android/sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/bin
+    $TC/llvm-objdump -d --no-show-raw-insn chg.so > chg.dis
+    python3 rev_any.py chg.dis
+
+    1  getWirelessTxModel             0x10000000 写[]       读[StatusHeader String]
+    2  setReverseWirelssChargingMode  0x10000000 写[Int32]  读[StatusHeader Bool]
+    3  setWiredCharingLevel           0x10000000 写[Int32]  读[StatusHeader Bool]
+    4  setWirelessChargingLevel       0x10000000 写[Int32]  读[StatusHeader Bool]
+    5  setWirelessTxFanMode           0x10000000 写[Int32]  读[StatusHeader Bool]
+    6  getBatterySOH                  0x10000000 写[]       读[StatusHeader Int32]
+    7  setBatteryUPSMode              0x10000000 写[Int32]  读[StatusHeader Bool]
+    8  getCharingThresholdCtrl        0x10000000 写[]       读[StatusHeader Int32]
+    9  setCharingThresholdCtrl        0x10000000 写[Int32]  读[StatusHeader Bool]
+    10 getCharingThreshold            0x10000000 写[]       读[StatusHeader Int32]
+    11 setCharingThreshold            0x10000000 写[Int32]  读[StatusHeader Bool]
+
+    11 条全同步（无 0x10000001）、无 out 参数、无 parcelable、无回调接口。
+    6 个 Int32 入参在 .so 里找不到对应 `writeToParcel` → 判为 AIDL enum（wire 恒 int32）。
+    方法名以 llvm-nm -D 原表核对（c++filt 拒解，见 log-fail.txt 坑 1）。
+
+## 3) 原厂策略事实
+
+    grep -E 'meizu_charging' $V/etc/selinux/vendor_file_contexts
+        /(vendor|system/vendor)/bin/hw/vendor\.meizu\.hardware\.meizu_charging-service  u:object_r:hal_meizu_charging_default_exec:s0
+        /sys/class/meizu/charger/(.*)   u:object_r:sysfs_meizu_charger:s0     （板级，未搬）
+    grep -oE '\(type hal_meizu_charging[a-z_]*\)' $V/etc/selinux/vendor_sepolicy.cil | sort -u
+        (type hal_meizu_charging_client) (type hal_meizu_charging_default)
+        (type hal_meizu_charging_default_exec) (type hal_meizu_charging_hwservice)
+        (type hal_meizu_charging_service)
+
+## 4) 模块落地
+
+    engine/vendor/hardware/vendor.meizu.hardware.meizu_charging/
+      aidl/vendor.meizu.hardware.meizu_charging/1/.hash                 1 行
+      aidl/…/1/IMeizuCharging.aidl                                      11 方法
+      aidl/…/1/{BatteryUPSMode,CharingThresholdCtrl,ReverseWirelssChargingMode,
+                WiredCharingLevel,WirelessChargingLevel,WirelessTxFanMode}.aidl
+                                                                        各 1 个 UNKNOWN=0
+      src/meizu_charging_service.cpp                                    148 行，内存回显
+      vendor/etc/init/vendor.meizu.hardware.meizu_charging-service.rc    只留 service 段 + interface + seclabel
+      vendor/etc/vintf/manifest/…-service.xml                            原厂逐字（8.0）
+      sepolicy/vendor_sepolicy.cil                                     2,718 B：域 + exec + 服务名 + add/find + 双向 binder
+      sepolicy/vendor_service_contexts                                 567 B：IMeizuCharging/default
+    engine/vendor/build/modules/vendor.meizu.hardware.meizu_charging.json  kind=aidl / v1 / workSubdir=meizu-charging-ndk-work
+    manifest/flyme/m22/device.json                                       hardware 33 → 34 项（含 aw_light）
+
+    机型层同批下放：
+      sepolicy/vendor_service_contexts   删 IMeizuCharging/default 一行（3 → 2 个未实现名）
+      sepolicy/vendor_sepolicy.cil       删 hal_meizu_charging_service 的 type/roletype/attributeset/allow 四段
+
+## 5) hal build
+
+    ./out/bin/cdh-vendor hal list | grep meizu_charging
+        vendor.meizu.hardware.meizu_charging  aidl -> vendor.meizu.hardware.meizu_charging-service
+
+    ./out/bin/cdh-vendor hal build vendor.meizu.hardware.meizu_charging --android 16 --out-dir out/vendor/android16
+        ==> AIDL 代码生成
+            vendor.meizu.hardware.meizu_charging (v1, hash be64757e0ec3)
+        ==> 编译 7+1 个源文件到 .o     （接口 + 6 枚举 + 实现）
+        ==> 链接服务二进制
+            写 bin/hw/vendor.meizu.hardware.meizu_charging-service
+        [ok] … 构建完成：codegen + 编译 + 链接 -> out/vendor/android16/bin/hw
+            写 etc/init/…-service.rc（0644）
+            写 etc/vintf/manifest/…-service.xml（0644）
+        [ok] … 合并 vendor 静态树：新增 2，已存在同内容 0
+
+    产物：
+        -rwxr-xr-x  104,800 B  a34192208776d33d0871e2409a623c5189d5a0b6511572766d9bf868beb704b3
+
+    strings -a <产物> | grep -E 'vendor\.meizu\.hardware\.meizu_charging|^be64757e'
+        be64757e0ec349824b9e76e8982900f3c680e1d7
+        vendor.meizu.hardware.meizu_charging.IMeizuCharging
+        vendor.meizu.hardware.meizu_charging.IMeizuCharging/default
+    llvm-readelf -d <产物> | grep NEEDED
+        libc++.so / libbinder_ndk.so / liblog.so / libdl.so / libm.so / libc.so
+        （没有任何原厂 meizu_charging so）
+
+## 6) wire 回放（自研产物 vs 原厂 .so，按 code 对方法名）
+
+    $TC/llvm-objdump -d --no-show-raw-insn <产物> > chg-new.dis
+    # 逐 code 比对（同 #67 的内联脚本，正则换成 BpMeizuCharging(\d+)(\w*?)E）
+    OK  1  getWirelessTxModel           OK  7  setBatteryUPSMode
+    OK  2  setReverseWirelssChargingMode OK  8  getCharingThresholdCtrl
+    OK  3  setWiredCharingLevel         OK  9  setCharingThresholdCtrl
+    OK  4  setWirelessChargingLevel     OK 10  getCharingThreshold
+    OK  5  setWirelessTxFanMode         OK 11  setCharingThreshold
+    OK  6  getBatterySOH                OK 16777214/16777215  getInterfaceHash/getInterfaceVersion
+
+## 7) 07 装配 + 打包
+
+    eval "$(./out/bin/cdh env manifest/flyme/m22/baselines/12.5.0.0A.json --env)"
+    ./out/bin/cdh build-vendor --android 16 --manifest "$CDH_MANIFEST" \
+        --vendor flyme --brand m22 --version 12.5.0.0A            # exit=0
+
+    关键行：
+        HAL 模块 vendor.meizu.hardware.meizu_charging（…产物齐全但源码/配置已变 -> 重编）
+        编译产物 vendor.meizu.hardware.meizu_charging@default: 写入 3，已存在同内容 0
+        写 …/vendor/bin/hw/vendor.meizu.hardware.meizu_charging-service（0755）
+        追加 …/vendor_sepolicy.cil <- …/meizu_charging/sepolicy/vendor_sepolicy.cil
+        追加 …/vendor_service_contexts <- …/meizu_charging/sepolicy/vendor_service_contexts（567 字节）
+        vendor.meizu.hardware.meizu_charging-service -> hal_meizu_charging_default_exec   # 步骤 6b
+        输出 vendor.img（mke2fs -d -> 元数据回写 -> e2fsck -> resize2fs -M）
+
+    装配树：out/devices/flyme/m22/12.5.0.0A/vendor  661 → 664 条目
+        （文件 433 / 链接 199 / 目录 32；find -mindepth 1 | wc -l 复核 = 664）
+
+## 8) 镜像回读
+
+    D=/opt/homebrew/opt/e2fsprogs/sbin/debugfs
+    IMG=out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+    ls -l $IMG            → 206,413,824 B（上一版 aw_light 后为 206,295,040 B）
+    shasum -a 256 $IMG    → b6af3300186d20a1…（sha 不作一致性判据）
+
+    debugfs dump 后 sha 对照（镜像 vs out/vendor/android16）  3/3 SAME
+        /bin/hw/vendor.meizu.hardware.meizu_charging-service     a3419220…   SAME
+        /etc/init/vendor.meizu.hardware.meizu_charging-service.rc 3d3146df…  SAME
+        /etc/vintf/manifest/…meizu_charging-service.xml          41fa583b…   SAME
+
+    debugfs ea_get /bin/hw/vendor.meizu.hardware.meizu_charging-service security.selinux
+        security.selinux (45) = "u:object_r:hal_meizu_charging_default_exec:s0"
+    debugfs stat 同名
+        Mode 0755  User 0  Group 2000  Size 104800
+
+    内容核对（dump 出来再 grep）：
+        vendor_service_contexts 第 72 行 = IMeizuCharging/default，
+            在 `# cdh-patch-begin: vendor_service_contexts@vendor.meizu.hardware.meizu_charging`
+            （63 行）… `patch-end`（73 行）之间；机型层块（114 行起）0 声明
+        vendor_sepolicy.cil 4656–4700 行是模块块，marker 块 2,854 B（含 begin/end 两行）
+        vendor_file_contexts 第 390 行 = /(vendor|system/vendor)/bin/hw/…-service
+            → hal_meizu_charging_default_exec:s0（步骤 6b 派生，仅 1 行）
+        {{vers}} 残留 0（已替换为 202504）
+
+## 9) 判据
+
+    - 装配树条目数（661 → 664）与逐文件 sha（3/3 SAME）是主判据；
+    - 镜像 sha 只做记录，mke2fs 非确定性 → 两次同内容构建也不保证同 sha；
+    - SELinux 落位用镜像内 xattr（ea_get）+ marker 块内出现次数判断。

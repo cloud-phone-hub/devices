@@ -1,0 +1,45 @@
+# 清理前现场（2026-11-15）：死符号与真实缺陷
+
+## 1. dshsdk 未被外部引用的导出符号（排除定义包后计数为 0）
+
+    SetHandlers      0      （聊天边车按回合换回调，聊天已删）
+    currentHandlers  0
+    Done             0
+    Pid              0
+    Prompt           0
+    Resume           0
+    Shutdown         0（仅 client_test 用于优雅退出，保留）
+    StatusNotification / QueryCompletedNotification /
+    SubagentStartedNotification / SubagentFinishedNotification  0
+    UserQuestionRequest / UserQuestionCancelled                  0
+    Capabilities                                                 0
+
+## 2. llm 包中已无生产调用者的能力
+
+    Complete                 0   （仅 Provider 接口内部实现）
+    CompleteStream           0   （SSE 流式，旧聊天）
+    CompleteModelStream      0
+    CompleteForRole          0   （角色路由 + 输入哈希缓存）
+    SetRole                  0
+    RegisterProvider         0   （仅 agent/server 测试样板调用）
+    ToolCall / ToolDef       0
+    ExtractDescriptionAndSchema 0
+
+## 3. store 缓存无读取方
+
+    GetCache / PutCache / cacheKey：除自身单测外无调用方
+    （out/harness/cache 只剩写入路径）
+
+## 4. 真实缺陷：声明了提问能力却没有 handler
+
+    internal/agent/dsh_bridge.go  runDiagWithDSH:
+        Initializ eParams{ ..., Capabilities: &dshsdk.Capabilities{UserQuestions: true} }
+    handlers := dshsdk.Handlers{ OnEvent: ..., OnApproval: ... }   // 没有 OnUserQuestion
+
+→ 模型调用提问工具时 dshsdk 回 -32601 "host does not handle user-question/ask"。
+聊天链路删除后（#233 后续），这半截声明已无对应实现。
+
+## 5. 规模基线
+
+    internal/llm        1267 行（llm.go 115 / openai.go 566 / router.go 397 / llm_test.go 189）
+    internal/dshsdk      732 行（client.go 404 / protocol.go 173 / runtime.go 132 / ...）

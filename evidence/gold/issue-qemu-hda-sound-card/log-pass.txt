@@ -1,0 +1,125 @@
+# 修复后验证（2026-10-27，实例 index 4，pid 16253，adb 5911，boot 50 s）
+
+## 1. 改动：qemu.go 追加 10 行（含 7 行注释 + 3 行参数）
+
+$ grep -n "cdhsnd\|intel-hda\|hda-duplex" core/host/daemon/run/qemu.go
+631:		"-audiodev", "none,id=cdhsnd",
+632:		"-device", "intel-hda",
+633:		"-device", "hda-duplex,audiodev=cdhsnd",
+
+# 上下文（622-636 行）
+	args = append(args,
+		"-device", "virtio-rng-pci",
+		// 声卡：guest 侧自研 audio HAL 用 /dev/snd/pcmC0D0p 把 AudioFlinger 的
+		// burst 背压锚定到真实消费节奏（缺节点时回退纯内存 VirtualDac，音频时钟
+		// 偏快，在线播放会快进）。guest 内核已带 CONFIG_SND_HDA_INTEL=y 与
+		// CONFIG_SND_HDA_GENERIC=y，QEMU 侧只需 intel-hda + hda-duplex。
+		// audiodev 选 none：云机不向宿主出声（音频经 REMOTE_SUBMIX 捕获给 scrcpy），
+		// 也不依赖宿主音频设备；QEMU 的音频定时器仍按 10ms 周期消费，
+		// 所以 snd_pcm_delay 反映真实节奏，背压成立。
+		"-audiodev", "none,id=cdhsnd",
+		"-device", "intel-hda",
+		"-device", "hda-duplex,audiodev=cdhsnd",
+		"-chardev", "stdio,mux=on,id=charconsole",
+		"-serial", "chardev:charconsole",
+	)
+
+## 2. 编译与部署
+
+$ cd core/host/daemon && go version
+go version go1.26.5 darwin/arm64
+
+$ go build -o ../../../out/core/daemon/dist/darwin/daemon .
+（成功，无输出）
+
+$ ls -l out/core/daemon/dist/darwin/daemon
+-rwxr-xr-x@ 1 cuimingqiang  staff  10969170 10 27 15:24 out/core/daemon/dist/darwin/daemon
+
+# daemon 是长驻进程，必须整体重启；重启后 /api/create 拉起的 QEMU 才会带新参数
+$ ps -o pid,lstart,command -p 14396 | tail -1
+14396 二 10/27 15:25:02 2026 ./out/core/daemon/dist/darwin/daemon -device-root .../engine/out/dist
+
+## 3. 参数确实进了 QEMU 实际命令行
+
+$ pgrep -fl qemu-system-aarch64 | tr ' ' '\n' | grep -B1 -A1 "cdhsnd"
+-device
+virtio-rng-pci
+-audiodev
+none,id=cdhsnd
+-device
+intel-hda
+-device
+hda-duplex,audiodev=cdhsnd
+-chardev        <== 之后才是 console，位置与代码一致
+
+# 实例信息
+{"index":"4","pid":16253,"console":5910,"adb":5911,"vnc":5912}
+boot completed at 80s   （首次）
+boot completed at 50s   （复用 data 重启后）
+
+## 4. guest 侧 PCM 节点全部出现
+
+$ adb -s 127.0.0.1:5911 shell "ls -l /dev/snd/"
+total 0
+crw-rw---- 1 system audio 116,  4 1970-01-01 08:00 controlC0
+crw-rw---- 1 system audio 116,  3 1970-01-01 08:00 pcmC0D0c
+crw-rw---- 1 system audio 116,  2 1970-01-01 08:00 pcmC0D0p     <== HAL 要的就是这个
+crw-rw---- 1 system audio 116, 33 1970-01-01 08:00 timer
+
+# 修复前只有 timer 一项，现在 4 个节点齐全，minor 编号与标准 HDA 一致
+# （2=playback 3=capture 4=control 33=timer）。
+
+## 5. HAL 真的打开了它（决定性日志）
+
+$ adb -s 127.0.0.1:5911 logcat -d | grep -E "cdh_vdac_alsa|cdh_audio.*open"
+01-01 08:00:16.658   544   544 I cdh_vdac_alsa: opened /dev/snd/pcmC0D0p: 48000 Hz 2 ch buffer=7680 period=1920 frames
+01-01 08:00:16.658   544   544 I cdh_audio: openOutputStream: primary OK cfgId=2 frames=1 buffer=8192
+01-01 08:00:16.677   544   544 I cdh_audio: openInputStream: primary OK cfgId=4 frames=1 buffer=4096
+
+# buffer=7680 / period=1920（40 ms）说明 ALSA 参数协商成功、写路径可用；
+# 不再是"打开失败 -> 回退内存 DAC"。
+# openInputStream 也 OK（采集仍是虚拟麦克风，见 solution.md「遗留」第 3 条）。
+
+## 6. 无 SELinux 拒绝
+
+$ adb -s 127.0.0.1:5911 shell "dmesg | grep 'avc:' | grep -i 'hal_audio\|audio_device'"
+（无输出）
+
+# 上一轮为 #29 预置的 (allow hal_audio_default audio_device_{{vers}} (chr_file (...)))
+# 这次正好覆盖了 /dev/snd/* 的 open/ioctl，不需要新增策略。
+
+## 7. 回归
+
+$ adb -s 127.0.0.1:5911 shell "dumpsys audio | grep -E 'Devices:'"
+   Devices: speaker(2)
+   Devices: speaker(2)
+
+$ adb -s 127.0.0.1:5911 logcat -d | grep -c "listAudioPorts error"
+0
+
+$ adb -s 127.0.0.1:5911 shell "cmd audio get-surround-format-supported; echo rc=$?"
+rc=0
+$ adb -s 127.0.0.1:5911 shell "input keyevent 3; echo rc=$?"
+rc=0
+$ adb -s 127.0.0.1:5911 shell "settings get system screen_brightness; echo rc=$?"
+23
+rc=0
+
+$ adb -s 127.0.0.1:5911 shell "getprop persist.system.powerhal.applist_enable"
+0
+$ adb -s 127.0.0.1:5911 shell "getprop debug.sf.vsync_reactor_ignore_present_fences"
+true
+
+## 8. 与修复前对比
+
+| 项 | 修复前（index 3） | 修复后（index 4） |
+|---|---|---|
+| QEMU 命令行 | 无声卡项 | `-audiodev none,id=cdhsnd` + `intel-hda` + `hda-duplex` |
+| `/dev/snd/` | 只有 `timer` | `controlC0` / `pcmC0D0c` / `pcmC0D0p` / `timer` |
+| HAL ALSA | 打开失败 → 回退内存 VirtualDac | `cdh_vdac_alsa: opened /dev/snd/pcmC0D0p: 48000 Hz 2 ch` |
+| `openOutputStream` | — | `primary OK cfgId=2 frames=1 buffer=8192` |
+| `dumpsys audio` 的 `Devices:` | speaker(2) | speaker(2)（未回归） |
+| `listAudioPorts error` | 0 | 0 |
+| `cmd / input / settings` | rc=0（#30 已修） | rc=0 |
+| applist_enable / vsync flag | 0 / true | 0 / true |
+| boot | — | 50 s（复用 data）/ 80 s（首次） |

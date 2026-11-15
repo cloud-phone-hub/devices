@@ -1,0 +1,117 @@
+# 改造后的取证（gold，2026-11-03）
+
+```bash
+cd /Volumes/work/cloud-phone-hub/engine
+./out/bin/cdh device build gold --only 07_build_vendor > out/tmp/gold-07-final-first.log 2>&1   # 首次（先删戳记）
+./out/bin/cdh device build gold --only 07_build_vendor > out/tmp/gold-07-final-reuse.log 2>&1   # 二次（复用）
+./out/bin/cdh device build gold --only 07_build_vendor > out/tmp/gold-07-label-fix.log 2>&1     # 修 stderr 污染后
+```
+
+## 1. 首次整树解包（erofs，带 --xattrs）
+
+```text
+$ grep -nA3 "步骤 1b" out/tmp/gold-07-final-first.log
+139:==> [步骤 1b] 解包厂商 vendor 镜像（取件与标签真值的唯一来源）
+140-    输入: out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/vendor_a.img（erofs，整树解包）
+141-    输出: out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/unpack_vendor
+142-    解包条目 6482（文件 5995 / 链接 222 / 目录 265，含 security.selinux 扩展属性）
+```
+
+## 2. 二次复用（镜像没变）
+
+```text
+$ grep -nA3 "步骤 1b" out/tmp/gold-07-final-reuse.log
+139:==> [步骤 1b] 解包厂商 vendor 镜像（取件与标签真值的唯一来源）
+140-    输入: out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/vendor_a.img（erofs，整树解包）
+141-    输出: out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/unpack_vendor
+142-    复用: 镜像没变，沿用上次的解包树（6482 条目）
+```
+
+戳记（镜像身份）与留档树的实际落点：
+
+```text
+$ cat out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/unpack_vendor/.cdh-unpack.json
+{
+  "image": "/Volumes/work/cloud-phone-hub/engine/out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/vendor_a.img",
+  "kind": "erofs",
+  "size": 1371250688,
+  "mtime": 1792676984000000000
+}
+$ du -sh out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/unpack_vendor
+2.0G    out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/unpack_vendor
+$ ls -l out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/unpack_vendor/build.prop
+-rw-------  1 cuimingqiang  staff  28616  1  1  2009 .../super/unpack_vendor/build.prop
+```
+
+## 3. 步骤 5 / 步骤 6 全部从这棵树取
+
+```text
+==> [步骤 5] 厂商文件操作（添加 / 取代 / 删除）
+    输入: 厂商 vendor（文件操作 10 项）
+    输出: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor
+[replace] vendor/lib64/egl/libGLES_mali.so <- 厂商 vendor/lib64/egl/libGLES_mali.so（文件覆盖）
+[replace] vendor/lib64/egl/libMEOW_data.so <- 厂商 vendor/lib64/egl/libMEOW_data.so（文件覆盖）
+[replace] vendor/lib64/egl/libMEOW_gift.so <- 厂商 vendor/lib64/egl/libMEOW_gift.so（文件覆盖）
+[replace] vendor/lib64/egl/libMEOW_qt.so <- 厂商 vendor/lib64/egl/libMEOW_qt.so（文件覆盖）
+[replace] vendor/lib64/egl/libMEOW_trace.so <- 厂商 vendor/lib64/egl/libMEOW_trace.so（文件覆盖）
+[replace] vendor/lib64/libOpenCL.so <- 厂商 vendor/lib64/libOpenCL.so（文件覆盖）
+[replace] vendor/lib64/libpng.so <- 厂商 vendor/lib64/libpng.so（文件覆盖）
+[replace] vendor/etc/permissions <- 厂商 vendor/etc/permissions（目录，46 个文件，取代）
+[replace] vendor/etc/security <- 厂商 vendor/etc/security（目录，165 个文件，取代）
+[replace] vendor/etc/md <- 厂商 vendor/etc/md（目录，40 个文件，取代）
+==> [步骤 6] 厂商 build.prop（取自步骤 1b 解包树）-> 装配树
+    来源: out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/vendor_a.img（厂商原件，767 行 / sha256 12d7e632）
+    解包: out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/unpack_vendor/build.prop
+    落位: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/build.prop（本地增量由下面的基线收口施加）
+```
+
+日志里没有任何逐条 `[unpack]` / `[extract]` 行——十条全部命中解包树。
+
+## 4. 产物对账
+
+```text
+# 装配树条目与改造前逐条一致（800 条目）
+$ find out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor | sort > out/tmp/gold-tree-after-rerun.txt
+$ diff out/tmp/gold-tree-before-rerun.txt out/tmp/gold-tree-after-rerun.txt && echo "装配树 diff 为空"
+装配树 diff 为空
+
+# build.prop 落位件 md5 不变（解包树里是厂商原件，故不同）
+$ md5 -q out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/build.prop
+d9ea34b4107220af01052070801be2f7
+$ md5 -q out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/unpack_vendor/build.prop
+a23c86172e099926e54bf537ff302173
+
+# 元数据规则表与改造前逐字节相同（说明标签数据源换了但真值没变）
+$ diff out/tmp/gold-meta-before-fix.txt \
+    out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor-meta-rules.txt | grep -c '^[<>]'
+0
+
+# 解包树保留了 security.selinux（erofs --xattrs）
+$ xattr -l out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/unpack_vendor/lib64/libpng.so
+security.selinux: u:object_r:same_process_hal_file:s0
+$ xattr -l out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/unpack_vendor/build.prop
+security.selinux: u:object_r:vendor_file:s0
+```
+
+## 5. 标签真值补齐到 6482（修 stderr 污染后）
+
+```text
+$ grep -nE "note|标签真值" out/tmp/gold-07-label-fix.log
+383:    [note] xattr 遍历报了 2 行错误（悬空链接等，不影响其余条目）: xattr: No such file: .../super/unpack_vendor/lib/modules
+384:==> 官方镜像标签真值: 6482 条（含 222 个符号链接自身）
+```
+
+6482 = 镜像条目总数（5995 文件 + 222 链接 + 265 目录），不再有缺口：
+`missingLabelPaths` 没有输出。
+
+## 6. 测试
+
+```text
+$ cd engine/build && gofmt -l 07_build_vendor/ ; go vet ./07_build_vendor
+$ go test ./07_build_vendor -count=1
+ok      cloud-phone-hub/engine/build/07_build_vendor    1.973s
+```
+
+（含 `TestEnsureOfficialVendorUnpackedErofs` 的首次/复用计数一致断言、
+`TestEnsureOfficialVendorUnpackedSkipsExt4`、`TestUnpackOfficialPathReusesExisting`、
+`TestOfficialUnpackFreshRejectsStaleStamp`。）

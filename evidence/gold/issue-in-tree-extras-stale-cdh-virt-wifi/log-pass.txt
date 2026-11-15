@@ -1,0 +1,186 @@
+==> 设备: Redmi Note 13 5G（xiaomi/gold）
+==> 清单: manifest/xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.json
+    厂商固件: roms/devices/xiaomi/gold/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.tgz
+    lineage 底包: roms/lineage/UTM-VM-lineage-22.2-20261010-UNOFFICIAL-virtio_arm64only.zip
+==> 阶段(9): build_modules, build_boot, build_vendor_boot, build_odm, build_vendor, build_vendor_dlkm, build_patch, pack_super, pack_vda
+==> [1/9] build_modules  (03_build_modules)
+  + 进程内调用 build_modules
+==> 内核产物目录: out/kernel/lineage-22-6.6（out/kernel/lineage-22-6.6）
+==> 内核源码: kernels/lineage-22-6.6（清单推导 lineage-22-6.6）
+==> 配置片段: build/02_build_kernel/lineage-kernel.config（本阶段默认）
+==> 外部模块: cdh_redirect(cdh_redirect.ko), device_info(cdh_device_info.ko), goodix_fingerprint(cdh_goodix_fingerprint.ko), input_identity(cdh_input_identity.ko), kernelsu(kernelsu.ko), virtio_media(cdh_media.ko)
+==> 构建镜像: ghcr.io/feicong/droid-ddk:android15-6.6（清单推导 android15-6.6）
+    输入: 缓存配方 lineage-22-6.6-cdh-747fed492a00（输入哈希）
+==> 阶段日志: out/kernel/lineage-22-6.6/modules-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    内核产物:   out/kernel/lineage-22-6.6（release 6.6.127-4k-cdh）
+    内核配方:   lineage-22-6.6-cdh-6251960c5fbd
+    源码:       kernels/lineage-22-6.6（HEAD 4d42ee3d41c6）
+    配置片段:   build/02_build_kernel/lineage-kernel.config
+    外部模块:   cdh_redirect(cdh_redirect.ko), device_info(cdh_device_info.ko), goodix_fingerprint(cdh_goodix_fingerprint.ko), input_identity(cdh_input_identity.ko), kernelsu(kernelsu.ko), virtio_media(cdh_media.ko)
+    in-tree:    virtio_console.ko, rfkill.ko, cfg80211.ko, mac80211.ko, mac80211_hwsim.ko, libarc4.ko, zram.ko, zsmalloc.ko
+    构建镜像:   ghcr.io/feicong/droid-ddk:android15-6.6
+    并行度:     10
+    LOCALVERSION: -4k-cdh
+    缓存配方:   lineage-22-6.6-cdh-747fed492a00
+    构建卷:     cdh-kernel-lineage-22-6.6-cdh-6251960c5fbd
+    产物目录:   out/kernel/lineage-22-6.6/modules
+    缓存状态:   需重建（缺少模块产物）
+==> [步骤 1] 判定产物复用
+    输入: out/kernel/lineage-22-6.6/modules（模块配方 lineage-22-6.6-cdh-747fed492a00，内核配方 lineage-22-6.6-cdh-6251960c5fbd）
+    输出: 需重建（缺少模块产物）
+==> [步骤 2] 导入外部模块到构建卷
+    输入: cdh_redirect、device_info、goodix_fingerprint、input_identity、kernelsu、virtio_media
+    输出: cdh-kernel-lineage-22-6.6-cdh-6251960c5fbd:/src/.cdh/modules
+    导入 6 个外部模块到卷 cdh-kernel-lineage-22-6.6-cdh-6251960c5fbd（10925056 B）
+==> [步骤 3] 容器内编译模块
+    输入: ghcr.io/feicong/droid-ddk:android15-6.6，-j10，6 个外部模块（6 个产物）+ 8 个 in-tree，release 6.6.127-4k-cdh
+    输出: cdh-kernel-lineage-22-6.6-cdh-6251960c5fbd:/src/.cdh/export-modules（*.ko + Module.symvers）
+    编译 ghcr.io/feicong/droid-ddk:android15-6.6，-j10（模块脚本输出见上）
+make[1]: Entering directory '/src/out'
+  GEN     Makefile
+  UPD     include/generated/compile.h
+  CALL    ../scripts/checksyscalls.sh
+  CC      init/version.o
+  AR      init/built-in.a
+  CHK     kernel/kheaders_data.tar.xz
+  GEN     kernel/kheaders_data.tar.xz
+  CC [M]  kernel/kheaders.o
+  AR      built-in.a
+  AR      vmlinux.a
+  LD      vmlinux.o
+  OBJCOPY modules.builtin.modinfo
+  GEN     modules.builtin
+  GEN     .vmlinux.objs
+  MODPOST Module.symvers
+  GEN     vmlinux.symvers
+  LD [M]  kernel/kheaders.ko
+make[1]: Leaving directory '/src/out'
+make[1]: Entering directory '/src/out'
+  CC [M]  /src/.cdh/modules/cdh_redirect/core/main.o
+  CC [M]  /src/.cdh/modules/cdh_redirect/core/rules.o
+  CC [M]  /src/.cdh/modules/cdh_redirect/hook/namei.o
+  CC [M]  /src/.cdh/modules/cdh_redirect/hook/readlink.o
+  LD [M]  /src/.cdh/modules/cdh_redirect/cdh_redirect.o
+  MODPOST /src/.cdh/modules/cdh_redirect/Module.symvers
+  CC [M]  /src/.cdh/modules/cdh_redirect/cdh_redirect.mod.o
+  LD [M]  /src/.cdh/modules/cdh_redirect/cdh_redirect.ko
+make[1]: Leaving directory '/src/out'
+make[1]: Entering directory '/src/out'
+  CC [M]  /src/.cdh/modules/device_info/core/main.o
+  CC [M]  /src/.cdh/modules/device_info/cpu/cpu_display.o
+  CC [M]  /src/.cdh/modules/device_info/cpu/topology.o
+  CC [M]  /src/.cdh/modules/device_info/cpu/midr_sysfs.o
+  CC [M]  /src/.cdh/modules/device_info/cpu/cache_sysfs.o
+  CC [M]  /src/.cdh/modules/device_info/cpu/cpufreq_sysfs.o
+  CC [M]  /src/.cdh/modules/device_info/meminfo/meminfo.o
+  CC [M]  /src/.cdh/modules/device_info/time/uptime.o
+  CC [M]  /src/.cdh/modules/device_info/uts/uts.o
+  LD [M]  /src/.cdh/modules/device_info/cdh_device_info.o
+  MODPOST /src/.cdh/modules/device_info/Module.symvers
+  CC [M]  /src/.cdh/modules/device_info/cdh_device_info.mod.o
+  LD [M]  /src/.cdh/modules/device_info/cdh_device_info.ko
+make[1]: Leaving directory '/src/out'
+make[1]: Entering directory '/src/out'
+  CC [M]  /src/.cdh/modules/goodix_fingerprint/cdh_goodix_fingerprint.o
+  MODPOST /src/.cdh/modules/goodix_fingerprint/Module.symvers
+  CC [M]  /src/.cdh/modules/goodix_fingerprint/cdh_goodix_fingerprint.mod.o
+  LD [M]  /src/.cdh/modules/goodix_fingerprint/cdh_goodix_fingerprint.ko
+make[1]: Leaving directory '/src/out'
+make[1]: Entering directory '/src/out'
+  CC [M]  /src/.cdh/modules/input_identity/cdh_input_identity.o
+  MODPOST /src/.cdh/modules/input_identity/Module.symvers
+  CC [M]  /src/.cdh/modules/input_identity/cdh_input_identity.mod.o
+  LD [M]  /src/.cdh/modules/input_identity/cdh_input_identity.ko
+make[1]: Leaving directory '/src/out'
+make[1]: Entering directory '/src/out'
+kernelsu: 应用 0001-shell-profile.patch
+kernelsu: 应用 0002-kernel-6.9-tracepoint-prio.patch
+kernelsu: 应用 0003-ksym-shim.patch
+-- KernelSU version: 32680
+-- KSU_NEW_DCACHE_FLUSH: 1
+-- KernelSU Manager package name: me.weishu.kernelsu
+-- KernelSU Manager signature size: 0x033b
+-- KernelSU Manager signature hash: c371061b19d8c7d7d6133c6a9bafe198fa944e50c1b31c9d8daa8d7f1fc2d2d6
+-- KernelSU is PR Build: 0
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/core/init.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/feature/kernel_umount.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/feature/module_blacklist.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/feature/sulog.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/feature/sucompat.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/hook/lsm_hook.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/hook/setuid_hook.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/hook/syscall_event_bridge.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/hook/syscall_hook_manager.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/hook/tp_marker.o
+  AS [M]  /src/.cdh/modules/kernelsu/source/kernel/infra/ksym_tramp.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/hook/arm64/patch_memory.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/hook/arm64/syscall_hook.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/infra/file_wrapper.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/infra/event_queue.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/infra/seccomp_cache.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/infra/su_mount_ns.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/infra/symbol_resolver.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/infra/ksym.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/manager/apk_sign.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/manager/pkg_observer.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/manager/throne_tracker.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/policy/allowlist.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/policy/shell_profile.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/policy/app_profile.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/policy/feature.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/runtime/boot_event.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/runtime/ksud_integration.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/selinux/selinux.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/selinux/rules.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/selinux/sepolicy.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/sulog/event.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/sulog/fd.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/supercall/dispatch.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/supercall/perm.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/supercall/supercall.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/feature/adb_root.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/feature/selinux_hide.o
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/feature/shell_su_adb_only.o
+  LD [M]  /src/.cdh/modules/kernelsu/source/kernel/kernelsu.o
+  MODPOST /src/.cdh/modules/kernelsu/Module.symvers
+  CC [M]  /src/.cdh/modules/kernelsu/source/kernel/kernelsu.mod.o
+  LD [M]  /src/.cdh/modules/kernelsu/source/kernel/kernelsu.ko
+make[1]: Leaving directory '/src/out'
+make[1]: Entering directory '/src/out'
+  CC [M]  /src/.cdh/modules/virtio_media/scatterlist_builder.o
+  CC [M]  /src/.cdh/modules/virtio_media/virtio_media_ioctls.o
+  CC [M]  /src/.cdh/modules/virtio_media/virtio_media_driver.o
+  LD [M]  /src/.cdh/modules/virtio_media/cdh_media.o
+  MODPOST /src/.cdh/modules/virtio_media/Module.symvers
+  CC [M]  /src/.cdh/modules/virtio_media/cdh_media.mod.o
+  LD [M]  /src/.cdh/modules/virtio_media/cdh_media.ko
+make[1]: Leaving directory '/src/out'
+==> [步骤 4] 导出并校验模块产物
+    输入: cdh-kernel-lineage-22-6.6-cdh-6251960c5fbd:/src/.cdh/export-modules
+    导出到临时目录 out/kernel/lineage-22-6.6/.modules.new.1855119545
+    输出: out/kernel/lineage-22-6.6/.modules.new.1855119545（数量 / in-tree 名单 / 符号版本校验）
+[ok] cdh_device_info.ko: 41 个符号版本一致
+[ok] cdh_goodix_fingerprint.ko: 4 个符号版本一致
+[ok] cdh_input_identity.ko: 8 个符号版本一致
+[ok] cdh_media.ko: 75 个符号版本一致
+[ok] cdh_redirect.ko: 31 个符号版本一致
+[ok] cfg80211.ko: 196 个符号版本一致
+[ok] kernelsu.ko: 166 个符号版本一致
+[ok] libarc4.ko: 1 个符号版本一致
+[ok] mac80211.ko: 319 个符号版本一致
+[ok] mac80211_hwsim.ko: 198 个符号版本一致
+[ok] rfkill.ko: 58 个符号版本一致
+[ok] virtio_console.ko: 102 个符号版本一致
+[ok] zram.ko: 112 个符号版本一致
+[ok] zsmalloc.ko: 51 个符号版本一致
+==> [步骤 5] 写模块清单与校验和
+    输入: out/kernel/lineage-22-6.6/.modules.new.1855119545
+    输出: out/kernel/lineage-22-6.6/.modules.new.1855119545/{build-recipe.txt、SHA256SUMS}
+==> [步骤 6] 发布模块产物
+    输入: out/kernel/lineage-22-6.6/.modules.new.1855119545
+    输出: out/kernel/lineage-22-6.6/modules
+[ok] 模块构建完成: out/kernel/lineage-22-6.6/modules（14 个 .ko）
+==> [2/9] build_boot  (04_build_boot)
+  + 进程内调用 build_boot
+==> 内核产物目录: out/kernel/lineage-22-6.6（out/kernel/lineage-22-6.6）

@@ -1,0 +1,123 @@
+# run-00002 复测（修复后）：真机 b8f75582353b320a vs 云机 02f9d9f965732349-cloud
+# 同批 63 项 × 2 设备；云机 63/63 succeeded，真机首轮 61/63（hardware.sensor/sim.telephony 执行超时），
+# 重跑这两项后 126/126 succeeded（run-00002-merged.json）。总差异键 25291 / 41898（基线 26063）。
+
+## targeted 项收敛（run-00001 → run-00002-merged）
+功能点 | 修复前 | 修复后 | 增减
+hardware.sensor | 842/843 | 0/843 | -842（完全对齐）
+hardware.inputs | 31/42 | 10/22 | -21（fts 改名+排除集+profile）
+hardware.battery | 13/20 | 5/20 | -8（battery_config.xml）
+hardware.gles | 3/6 | 1/6 | -2（GPU 身份 props）
+screen.display | 12/88 | 10/88 | -2（refresh-rates 60:90）
+sim.telephony | 78/1147 | 71/1140 | -7
+properties.getprop | 459/901 | 457/900 | -2
+properties.native | 537/1275 | 535/1274 | -2
+settings.provider | 139/391 | 138/391 | -1
+总计 | 26063 | 25291 | -772（targeted 合计约 -887，被瞬时噪声抵消）
+
+## 瞬时噪声（非本次修复目标，随测量时刻波动）
+files.storage 154→271(+117，空闲空间/文件随时间变)；id.partition_fsid 2→6(+4，fsid 每次格式化重生)；dev.test_mount 1117→1122(+5)
+
+## 修复后 targeted 剩余差异（均为永久遗留，见 solution.md 六）
+=== hardware.battery: 差异 5 / 20 键
+  battery.charge_counter
+    真机: 3498000
+    云机: 3507467
+  battery.metadata
+    真机: 1AIAAEJOREwSAAAACgAAAHQAZQBjAGgAbgBvAGwAbwBnAHkAAAAAAAAAAAAGAAAATABpAC0AaQBv
+AG4AAAAAAAoAAABpAGMAbwBuAC0AcwBtAGEAbABsAAAAAAABAAAARQkIARQAAABtAGEAeABfAGMA
+aABhAHIAZwBpAG4AZwBfAHYAbwBsAHQAYQBnAGUAAAAAAAEAAABAS0wABgAAAGgAZQBhAGwAdABo
+AAAAAAABAAAAAwAAABQAAABtAGEAeABfAGMAaABhAHIAZwBpAG4AZwBfAGMAdQByAHIAZQBuAHQA
+AAAAAAEAAADAxi0ABgAAAHMAdABhAHQAdQBzAAAAAAABAAAAAgAAAAcAAABwAGwAdQBnAGcAZQBk
+AAAAAQAAAAEAAAAHAAAAcAByAGUAcwBlAG4AdAAAAAkAAAABAAAAIAAAAGEAbgBkAHIAbwBpAGQA
+LgBvAHMALgBlAHgAdAByAGEALgBDAEgAQQBSAEcASQBOAEcAXwBTAFQAQQBUAFUAUwAAAAAAAQAA
+AAQAAAADAAAAcwBlAHEAAAABAAAA1D8AAA4AAABjAGgAYQByAGcAZQBfAGMAbwB1AG4AdABlAHIA
+AAAAAAEAAAAQYDUABQAAAGwAZQB2AGUAbAAAAAEAAABQAAAABQAAAHMAYwBhAGwAZQAAAAEAAABk
+AAAACwAAAHQAZQBtAHAAZQByAGEAdAB1AHIAZQAAAAEAAAAIAQAABwAAAHYAbwBsAHQAYQBnAGUA
+AAABAAAAIhAAABwAAABhAG4AZAByAG8AaQBkAC4AbwBzAC4AZQB4AHQAcgBhAC4AQwBZAEMATABF
+AF8AQwBPAFUATgBUAAAAAAABAAAAqwEAAA8AAABpAG4AdgBhAGwAaQBkAF8AYwBoAGEAcgBnAGUA
+cgAAAAEAAAAAAAAACwAAAGIAYQB0AHQAZQByAHkAXwBsAG8AdwAAAAkAAAAAAAAA
+  …（全文见 engine/out/tmp/oriole-align/diff-00002-merged.txt）
+
+=== hardware.gles: 差异 1 / 6 键
+  gles.extensions
+    真机: GL_EXT_debug_marker GL_ARM_rgba8 GL_ARM_mali_shader_binary GL_OES_depth24 GL_OES_depth_texture GL_OES_depth_texture_cube_map GL_OES_packed_depth_stencil GL_OES_rgb8_rgba8 GL_EXT_read_format_bgra GL_OES_compressed_paletted_texture GL_OES_compressed_ETC1_RGB8_texture GL_OES_standard_derivatives GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_EGL_image_external_essl3 GL_OES_EGL_sync GL_OES_texture_npot GL_OES_vertex_half_float GL_OES_required_internalformat GL_OES_vertex_array_object GL_OES_mapbuffer GL_EXT_texture_format_BGRA8888 GL_EXT_texture_rg GL_EXT_texture_type_2_10_10_10_REV GL_OES_fbo_render_mipmap GL_OES_element_index_uint GL_EXT_shadow_samplers GL_OES_texture_compression_astc GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_hdr GL_KHR_texture_compression_astc_sliced_3d GL_EXT_texture_compression_astc_decode_mode GL_EXT_texture_compression_astc_decode_mode_rgb9e5 GL_KHR_debug GL_EXT_occlusion_query_boolean GL_EXT_disjoint_timer_query GL_EXT_blend_minmax GL_EXT_discard_framebuffer GL_OES_get_program_binary GL_OES_texture_3D GL_EXT_texture_storage GL_EXT_multisampled_render_to_texture GL_EXT_multisampled_render_to_texture2 GL_OES_surfaceless_context GL_OES_texture_stencil8 GL_EXT_shader_pixel_local_storage GL_ARM_shader_framebuffer_fetch GL_ARM_shader_framebuffer_fetch_depth_stencil GL_ARM_mali_program_binary GL_EXT_sRGB GL_EXT_sRGB_write_control GL_EXT_texture_sRGB_decode GL_EXT_texture_sRGB_R8 GL_EXT_texture_sRGB_RG8 GL_KHR_blend_equation_advanced GL_KHR_blend_equation_advanced_coherent GL_OES_texture_storage_multisample_2d_array GL_OES_shader_image_atomic GL_EXT_robustness GL_EXT_draw_buffers_indexed GL_OES_draw_buffers_indexed GL_EXT_texture_border_clamp GL_OES_texture_border_clamp GL_EXT_texture_cube_map_array GL_OES_texture_cube_map_array GL_OES_sample_variables GL_OES_sample_shading GL_OES_shader_multisample_interpolation GL_EXT_shader_io_blocks GL_OES_shader_io_blocks GL_EXT_tessellation_shader GL_OES_tessellation_shader GL_EXT_primitive_bounding_box GL_OES_primitive_bounding_box GL_EXT_geometry_shader GL_OES_geometry_shader GL_ANDROID_extension_pack_es31a GL_EXT_gpu_shader5 GL_OES_gpu_shader5 GL_EXT_texture_buffer GL_OES_texture_buffer GL_EXT_copy_image GL_OES_copy_image GL_EXT_shader_non_constant_global_initializers GL_EXT_color_buffer_half_float GL_EXT_unpack_subimage GL_EXT_color_buffer_float GL_EXT_float_blend GL_EXT_YUV_target GL_OVR_multiview GL_OVR_multiview2 GL_OVR_multiview_multisampled_render_to_texture GL_KHR_robustness GL_KHR_robust_buffer_access_behavior GL_EXT_draw_elements_base_vertex GL_OES_draw_elements_base_vertex GL_EXT_protected_textures GL_EXT_buffer_storage GL_EXT_external_buffer GL_EXT_EGL_image_array GL_EXT_clear_texture GL_ARM_shader_core_properties GL_EXT_texture_filter_anisotropic GL_OES_texture_float_linear GL_ARM_texture_unnormalized_coordinates GL_EXT_shader_framebuffer_fetch GL_EXT_clip_control GL_EXT_polygon_offset_clamp GL_EXT_EGL_image_storage 
+    云机: GL_EXT_debug_marker GL_EXT_blend_minmax GL_EXT_multi_draw_arrays GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth24 GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_mapbuffer GL_OES_rgb8_rgba8 GL_OES_standard_derivatives GL_OES_stencil8 GL_OES_texture_3D GL_OES_texture_float GL_OES_texture_float_linear GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_vertex_half_float GL_EXT_draw_instanced GL_EXT_texture_sRGB_decode GL_OES_EGL_image GL_OES_depth_texture GL_OES_packed_depth_stencil GL_EXT_texture_type_2_10_10_10_REV GL_OES_get_program_binary GL_EXT_discard_framebuffer GL_EXT_read_format_bgra GL_EXT_texture_storage GL_EXT_frag_depth GL_OES_EGL_image_external GL_OES_EGL_sync GL_OES_vertex_array_object GL_EXT_occlusion_query_boolean GL_EXT_texture_rg GL_EXT_unpack_subimage GL_EXT_draw_buffers GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_shadow_samplers GL_KHR_debug GL_KHR_texture_compression_astc_ldr GL_OES_depth_texture_cube_map GL_OES_required_internalformat GL_OES_surfaceless_context GL_EXT_color_buffer_float GL_EXT_debug_label GL_EXT_sRGB_write_control GL_EXT_separate_shader_objects GL_EXT_shader_integer_mix GL_EXT_compressed_ETC1_RGB8_sub_texture GL_EXT_draw_buffers_indexed GL_EXT_draw_elements_base_vertex GL_EXT_render_snorm GL_EXT_texture_border_clamp GL_KHR_context_flush_control GL_OES_draw_buffers_indexed GL_OES_draw_elements_base_vertex GL_OES_sample_shading GL_OES_sample_variables GL_OES_shader_multisample_interpolation GL_OES_texture_border_clamp GL_EXT_blend_func_extended GL_EXT_float_blend GL_KHR_no_error GL_KHR_texture_compression_astc_sliced_3d GL_OES_EGL_image_external_essl3 GL_EXT_disjoint_timer_query GL_EXT_color_buffer_half_float GL_KHR_parallel_shader_compile GL_EXT_EGL_image_storage GL_EXT_depth_clamp GL_EXT_texture_query_lod GL_EXT_EGL_image_storage_compression GL_EXT_texture_storage_compression GL_ARM_mali_program_binary GL_ARM_mali_shader_binary GL_ARM_rgba8 GL_ARM_shader_core_properties GL_ARM_texture_unnormalized_coordinates
+  …（全文见 engine/out/tmp/oriole-align/diff-00002-merged.txt）
+
+=== hardware.inputs: 差异 10 / 22 键
+  devices[1].descriptor
+    真机: b7b9c5afc0b05e8bbf15d2ca5b330d3bc3d421d4
+    云机: 0b9bd9222b263a8a3ea88cfe70785f0b9cff09cf
+  devices[1].name
+    真机: goodix_fingerprint
+    云机: fts
+  devices[1].sources
+    真机: 257
+    云机: 4355
+  devices[1].sourcesHex
+    真机: 0x101
+    云机: 0x1103
+  devices[2].descriptor
+    真机: 485d69228e24f5e46da1598745890b214130dbc4
+    云机: b7b9c5afc0b05e8bbf15d2ca5b330d3bc3d421d4
+  devices[2].name
+    真机: gpio_keys
+  …（全文见 engine/out/tmp/oriole-align/diff-00002-merged.txt）
+
+=== screen.display: 差异 10 / 88 键
+  display.AppVsyncOffsetNanos
+    真机: 6233333
+    云机: 6233332
+  display.Hdr
+    真机: True
+    云机: False
+  display.Metrics.xdpi
+    真机: 409.4320068359375
+    云机: 457.2000122070313
+  display.Metrics.ydpi
+    真机: 411.8909912109375
+    云机: 435.4280090332031
+  display.RealMetrics.xdpi
+    真机: 409.4320068359375
+    云机: 457.2000122070313
+  display.RealMetrics.ydpi
+    真机: 411.8909912109375
+  …（全文见 engine/out/tmp/oriole-align/diff-00002-merged.txt）
+
+
+#=====================================================================
+# 构建侧验证（修复 modules.options 解析后重跑 08→11，build-stages2.log，EXIT=0）
+#=====================================================================
+==> 模块加载参数（module.json + 清单 modules.options）: options cdh_media allow_userptr=1；options cdh_input_identity profile=oriole
+    modules.options: 2 行
+[ok] 索引已生成: load 12 项，dep 12 项，alias 8 行，options 2 行，softdep 0 行
+# 镜像内回读（debugfs -R "cat /lib/modules/modules.options" vendor_dlkm.img）：
+options cdh_media allow_userptr=1
+options cdh_input_identity profile=oriole
+# 07 装配（build-stages.log）：
+    写 …/vendor/etc/battery_config.xml（0644）
+    写 …/vendor/etc/excluded-input-devices.xml（0644）
+    写 …/vendor/etc/sensors_config.xml（0644）
+[config] vendor/lib64/egl/gpu_id.cfg: 抽离 6 项 GPU/Vulkan 身份配置（从 vendor/build.prop 剥离）
+# 11 dist device.json：
+display: {"refresh-rates": [60, 90], "edid-native-only": true}
+input.touch: {"abs-to-mt": true, "bus": 28, "name": "fts", "product": 0, "vendor": 0, "version": 0}
+
+#=====================================================================
+# 运行态验证（实例 2 重启后，ADB 127.0.0.1:5911，boot_completed=1 @30s）
+#=====================================================================
+# 新 QEMU cmdline（display + input 透传生效）：
+refresh-rates=60:90
+edid-native-only=on
+input-name=fts
+width-mm=67  height-mm=149
+# guest 侧：
+/sys/module/cdh_input_identity/parameters/profile = oriole
+/proc/bus/input/devices: Name="fts"（sec_touchscreen 已消失）
+getprop ro.miui.product.home = （空，brand=google，miui 闸门跳过）
+/vendor/lib64/egl/gpu_id.cfg: gl_renderer=Mali-G78 / gl_vendor=ARM / gl_version=OpenGL ES 3.2 v1.r47p0-…（6 项齐）
+/vendor/etc/{sensors_config,battery_config,excluded-input-devices}.xml 三件落位
+android.hardware.sensors-service 进程在跑；dumpsys sensorservice: Total 35 h/w sensors
+# dumpsys display：supportedModes 含 60fps(id=1) 与 90fps(id=2)，renderFrameRate 90.0，activeModeId=2
+#   （修复前只有单一 60fps 模式）

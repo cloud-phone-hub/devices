@@ -1,0 +1,45 @@
+# roms 迁到仓库根 #239 —— 迁移前事实记录（2026-11-15）
+
+## 1. roms 仍在 engine/ 下
+
+```
+$ ls engine
+out  roms
+
+$ du -sh engine/roms
+293G	engine/roms
+
+$ ls engine/roms
+devices  lineage
+```
+
+`engine/roms` 是**只读输入**（官方固件包 + lineage 底包），与 `engine/out`
+（构建产物）混在一起；#238 已把 manifest/hardware/kernels/modules/evidence 迁到
+`devices/`，roms 是最后一块仍挂在 engine 下的输入。
+
+## 2. 代码里的 roms 根
+
+```
+$ cd agent && grep -rn '"roms"' --include="*.go" modules/pipeline/internal/engine
+modules/pipeline/internal/engine/root.go:116: func RomsRoot() string { return filepath.Join(root, "roms") }
+
+$ grep -rn 'filepath.Join(engineRoot, "roms"' --include="*.go" internal
+internal/cluster/cluster.go:84,182
+internal/server/roms.go:55,118
+internal/manifestview/inspector.go:779
+```
+
+以及 `engine.Init()` 的根判据要求 `<dir>/roms` 存在；迁走后必须同时改访问器、
+根判据与 server/cluster/manifestview 的输入根。
+
+## 3. 完成标记里是旧绝对路径
+
+`engine/out/roms/**/.unpacked.json` 的 `package` 字段记录的是迁移前绝对路径：
+
+```json
+{"package": "/Volumes/work/cloud-phone-hub/engine/roms/devices/xiaomi/gold/gold_images_....tgz"}
+```
+
+若只改目录不改判定，`readMarker` 会因路径不等把全部已完成机型判成未解包，
+触发 293 GB 固件重解包。`resolveMarkerPackage` 对绝对路径原样返回，需要补
+「同名 + 同大小」兜底（`prepare.go` 已有同类兜底，`official.go` 没有）。

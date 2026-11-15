@@ -1,0 +1,34 @@
+# 失败态（本轮修复前，实例 35 之前）
+
+## 1) 07 装配段的 hal 命令没有 --abi-dir：流水线必挂，手跑能过
+
+$ cd engine/build && ../out/bin/cdh build-vendor \
+    --manifest ../manifest/xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.json \
+    --manifest-dir ../manifest/xiaomi/gold --vendor xiaomi --brand gold --version OS3.0.10.0.VNQCNXM
+
+==> 编译 HAL 模块 android.hardware.media.v412（变体 default，待落盘 etc/init/android.hardware.media.c2@1.2-service-v4l2-64.rc, etc/vintf/manifest/android.hardware.media.c2@1.2-service-v4l2.xml）
+  + out/bin/cdh-vendor hal build android.hardware.media.v412 --android 15 --out-dir /Volumes/work/cloud-phone-hub/engine/out/vendor/android15
+[err] v412 需要恰好两个 --abi-dir（先 system、后 apex），实际 0 个
+[err] HAL 模块 android.hardware.media.v412 编译失败: cdh-vendor hal build android.hardware.media.v412 --android 15 --out-dir /Volumes/work/cloud-phone-hub/engine/out/vendor/android15 退出码非零（exit status 1）
+
+## 2) 上一轮「撤掉 v4l2」留下的产物仍是停用注释态，会被装配段原样装进镜像
+
+$ head -5 engine/out/vendor/android15/etc/init/android.hardware.media.c2@1.2-service-v4l2-64.rc
+# 临时停用 v4l2_codec2（整体注释，含 vintf 声明）：
+#   实测 disabled 拦不住 —— 它只管 class_start(hals)，而本服务声明了
+#   `interface aidl ...IComponentStore/default`，init 会按 lazy HAL 语义在收到
+#   请求时按需启动，仍会 exit 127 并进入 Reap 重启循环。要真正停住，必须把
+#   service 定义与 vintf 声明（../vintf/manifest/...v4l2.xml）一起撤掉。
+
+$ head -3 engine/out/vendor/android15/etc/vintf/manifest/android.hardware.media.c2@1.2-service-v4l2.xml
+<manifest version="1.0" type="device">
+    <!-- 临时停用 v4l2_codec2：与 vendor/etc/init/android.hardware.media.c2@1.2-service-v4l2-64.rc
+         一起撤掉声明。只注释 rc 不够——只要这里保留 fqname，init 的 lazy HAL 机 制
+
+## 3) 更早的失败态（见 phase1-log-fail.txt）
+
+- 文件标签是厂商的 hal_codec2_default_exec，lineage 基座的 vendor_sepolicy.cil
+  没有该 type；
+- 缺 15 个非 LLNDK 运行库，vendor 进程 namespace 看不到 system / swcodec APEX；
+- 结果：进程 127 退出，4 分钟崩 4 次后 updatable_crashing=1，flags_health_check
+  回滚杀 zygote（6 分钟 727 次退出、SSC=7）。

@@ -1,0 +1,127 @@
+# 12.5.0.0A 启动失败（第二轮）：/odm 预编译策略绕过 /vendor，property area 初始化失败
+# 采集时间：2026-10-28 19:05~19:15
+# 实例：out/core/daemon/runtime/m22_12.5.0.0A/3（19:05:46 起）、/4（19:12:56 起，用于验证 plat_sepolicy_vers 假设）
+# 前提：#49 的 6.12 CDH_PATH_REDIRECT 移植已生效（/mnt/patch 不再被 vold 撕掉、fstab.qcom 注入成功）
+
+=== 1. 现象：每次启动 0.31s 停在 property area，随后 InitFatalReboot，已循环 15 次 ===
+
+$ cd out/core/daemon/runtime/m22_12.5.0.0A/3
+$ grep -c "Failed to initialize property area" qemu.log   → 15
+$ grep -c "Restarting system"                      qemu.log   → 15
+$ grep -c "zygote"                                qemu.log   → 0
+
+最后一次循环（qemu.log:8560-8680 摘录）：
+[    0.215032][    T1] init: init first stage started!
+[    0.227907][    T1] init: Switching root to '/system'
+[    0.232081][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-6,target=/vendor,type=erofs)=0: Success
+[    0.240872][    T1] init: [libfs_mgr] __mount(source=/dev/block/vdc,target=/mnt/patch,type=ext4)=0: Success
+[    0.284321][    T1] cdh_redirect: /mnt/patch/vendor/etc/fstab.qcom
+[    0.285651][    T1] init: Opening SELinux policy
+[    0.289375][    T1] init: Loading SELinux policy
+[    0.293968][    T1] SELinux:  Class memfd_file not defined in policy.
+[    0.294552][    T1] SELinux: cdh: no pioneer type in policy, not marking permissive
+[    0.302329][    T1] cdh_redirect: /mnt/patch/vendor/etc/selinux/vendor_file_contexts
+[    0.317444][   T78] avc:  denied  { mac_admin } for  pid=1 comm="init" capability=33  scontext=u:r:init:s0 tcontext=u:r:init:s0 tclass=capability2 permissive=0
+[    0.317925][    T1] init: Failed to initialize property area
+[    0.318084][   T78] audit: type=1401 audit(0.304:6): op=setxattr invalid_context="u:object_r:vendor_camera_remapid_prop:s0"
+[    0.318538][    T1] init: InitFatalReboot: signal 6
+[    0.319524][   T78] audit: type=1401 audit(0.304:8): op=setxattr invalid_context="u:object_r:vendor_camera_skip_failed_ids_prop:s0"
+[    0.320613][   T78] audit: type=1401 audit(0.304:10): op=setxattr invalid_context="u:object_r:vendor_create_partition_table_prop:s0"
+[    0.325896][    T1] init:   #04 pc 0000000000165958  /system/bin/init (android::init::PropertyInit()+4268)
+[    0.939520][    T1] reboot: Restarting system with command 'recovery'
+
+注意：全过程没有 "Compiling SELinux policy"，也没有 "No precompiled sepolicy at /vendor/..."，
+"Opening SELinux policy" 到 "Loading SELinux policy" 只隔 3.7ms —— 说明加载的是一帧
+已经编好的二进制策略，没有任何 cil 合并。
+
+=== 2. mac_admin 是连带现象，不是根因（内核源码实锤） ===
+
+security/selinux/hooks.c:3258 selinux_inode_setxattr()：
+	rc = security_context_to_sid(value, size, &newsid, GFP_KERNEL);
+	if (rc == -EINVAL) {
+		if (!has_cap_mac_admin(true)) {       ← 类型查不到时才去要 CAP_MAC_ADMIN
+			... audit_log_format(ab, "op=setxattr invalid_context=");
+			return rc;
+		}
+		rc = security_context_to_sid_force(value, size, &newsid);
+	}
+
+即：context 里的 type 在策略中不存在（vendor_camera_remapid_prop 等）→ EINVAL →
+退而求其次要 CAP_MAC_ADMIN 强制转换 → init 没有该权限 → mac_admin denied + setxattr
+失败 → PropertyInit() 的 MUST 失败 → InitFatalReboot。类型一旦存在，这条路径根本不会走。
+
+=== 3. 策略来源：init 加载的是 /odm 的预编译二进制，绕过了 patch 的 /vendor 策略 ===
+
+官方 odm_a.img（out/roms/flyme/m22/12.5.0.0A/super/odm_a.img，782336 B）：
+$ dump.erofs --ls --path=/etc/selinux odm_a.img
+	 precompiled_sepolicy
+	 precompiled_sepolicy.plat_sepolicy_and_mapping.sha256
+	 precompiled_sepolicy.product_sepolicy_and_mapping.sha256
+	 precompiled_sepolicy.system_ext_sepolicy_and_mapping.sha256
+
+sha 校验必然通过（odm 记录 == system 现值）：
+odm/etc/selinux/precompiled_sepolicy.plat_sepolicy_and_mapping.sha256
+  = 797927f6c7c55f4414a8cf908f48d09ef22e2c094d36d1ec2876507e6a9b45fa
+system/etc/selinux/plat_sepolicy_and_mapping.sha256
+  = 797927f6c7c55f4414a8cf908f48d09ef22e2c094d36d1ec2876507e6a9b45fa
+
+system 分区里没有任何预编译二进制（所以 init 不会在 /system 命中）：
+$ dump.erofs --ls --path=/system/etc/selinux system_a.img    → 18 项，无 precompiled_sepolicy
+$ dump.erofs --path=/system/etc/selinux/precompiled_sepolicy system_a.img → read inode failed
+
+patch.img 的 /vendor/etc/selinux 也没有预编译二进制（lineage 侧清单）：
+genfs_labels_version.txt / plat_pub_versioned.cil / plat_sepolicy_vers.txt(202504) /
+selinux_denial_metadata / vendor_file_contexts / vendor_hwservice_contexts /
+vendor_keystore2_key_contexts / vendor_mac_permissions.xml / vendor_property_contexts /
+vendor_seapp_contexts / vendor_sepolicy.cil / vendor_service_contexts /
+vendor_tee_service_contexts / vndservice_contexts
+
+=> init 的候选顺序里 /system、/vendor 都空，命中 /odm 的二进制。
+
+=== 4. 该二进制里没有 lineage vendor 侧声明的类型 ===
+
+odm precompiled_sepolicy（1405958 B，magic 8cff7cf9）：
+$ strings -a precompiled_sepolicy | grep -c "^vendor_qms_0$"              → 1   （官方 vendor 类型在）
+$ strings -a precompiled_sepolicy | grep -c "^vendor_camera_remapid_prop$" → 0   （lineage 侧类型不在）
+
+而运行时 /vendor（patch）的 vendor_property_contexts 却在用它们：
+$ debugfs -R "cat /vendor/etc/selinux/vendor_property_contexts" patch.img | grep -n "remapid\|skip_failed\|partition_table"
+75:vendor.create_partition_table.       u:object_r:vendor_create_partition_table_prop:s0
+105:vendor.camera.remapid                  u:object_r:vendor_camera_remapid_prop:s0
+108:vendor.camera.skip_failed_ids          u:object_r:vendor_camera_skip_failed_ids_prop:s0
+
+这些类型在 patch 的 vendor_sepolicy.cil 里**有声明**（合并时会补上）：
+$ debugfs -R "cat /vendor/etc/selinux/vendor_sepolicy.cil" patch.img | sed -n '748,749p'
+(type vendor_camera_remapid_prop)
+(roletype object_r vendor_camera_remapid_prop)
+=> 问题不是「类型没人定义」，而是「声明在 cil 里，却被预编译二进制短路了，根本没参与编译」。
+
+对照官方 flyme vendor（vendor_a.img）：vendor_property_contexts 510 行，**不含**这 3 个属性；
+vendor_sepolicy.cil 1216306 B（17232 行）也不含这 3 个 type。官方是自洽的一对，
+patch 的 /vendor 用的是 lineage 的精简 cil（319418 B）+ 带 flyme 私有属性的 property contexts，
+只有走 cil 合并才能自洽。
+
+=== 5. 排除项：plat_sepolicy_vers.txt 不是判定开关 ===
+
+实验：把 patch.img 里 /vendor/etc/selinux/plat_sepolicy_vers.txt 由 "202504" 改成官方
+flyme vendor 的 "202404"（同长就地覆盖，块 12148 偏移 49758208），新建实例 4：
+$ cd out/core/daemon/runtime/m22_12.5.0.0A/4 && grep -E "SELinux policy|Compiling|precompiled" qemu.log
+[    0.271519][    T1] init: Opening SELinux policy
+[    0.274977][    T1] init: Loading SELinux policy
+[    0.305346][    T1] init: Failed to initialize property area
+行为完全不变 —— 仍然直接加载，说明版本号不是这条路径的开关（实验后已用 09 重出的
+patch.img 覆盖，未留在产物里）。
+
+=== 6. gold 对照（同为「官方 plat + lineage vendor」，但没这个坑） ===
+
+out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/5/qemu.log：
+535:[    0.196031][    T1] init: Opening SELinux policy
+536:[    0.196778][    T1] cdh_redirect: /mnt/patch/vendor/etc/selinux/precompiled_sepolicy
+537:[    0.197421][    T1] init: No precompiled sepolicy at /vendor/etc/selinux/precompiled_sepolicy: No such file or directory
+538:[    0.197698][    T1] init: Compiling SELinux policy
+543:[    0.353791][    T1] init: Loading SELinux policy
+$ grep -c "Failed to initialize property area" qemu.log → 0
+
+gold 的官方固件没有 odm 预编译策略，天然走「现场合并」，所以它的 lineage vendor 策略
+（含追加的 gold 属性类型补全段，见 evidence/issue-vendor-property-area-align）全部生效。
+m22 的差分只有一处：flyme 把预编译放进了 /odm。

@@ -1,0 +1,8 @@
+<manifest version="1.0" type="device">
+  <!-- engine/vendor 自研人脸 HAL（虚拟 HAL）：无传感器，只声明 IFace/default。 -->
+  <hal format="aidl">
+    <name>android.hardware.biometrics.face</name>
+    <version>4</version>
+    <fqname>IFace/default</fqname>
+  </hal>
+</manifest>

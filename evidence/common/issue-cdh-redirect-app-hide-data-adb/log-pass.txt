@@ -1,0 +1,27 @@
+# 修复后：实例 gold_15-OS3.0.11.0.VNQCNXM/2（4d5128bd8ca07462-cloud）实机与 aligner.security_full 重采验证
+
+# 1) shell (uid=2000 <= max_uid=10000) 验证 KernelSU 目录保留与 /proc/cdh_redirect 运行统计（engine/out/tmp/p0_cdh_redirect_pass.txt）
+=== /proc/cdh_redirect ===
+rules: 11/32
+...
+max_uid: 10000
+forward_hits: 85719
+reverse_hits: 48192
+uid_skipped: 17874
+forward_missed: 0
+reverse_missed: 0
+mount_hidden: 45
+peergroup_rewrites: 170
+dirent_hidden: 0
+
+=== /data/adb (shell uid=2000) ===
+drwx------ 2 root root 4096 1970-01-01 08:00 /data/adb
+  File: /data/adb
+  Size: 4096	 Blocks: 8	 IO Blocks: 512	 directory
+Access: (0700/drwx------)	Uid: (    0/    root)	Gid: (    0/    root)
+
+# 2) App 侧 aligner.security_full 重采对拍（engine/out/tmp/p0_aligner_pass_extract.txt，MIUIOP 10022 allow）
+security.availability: {"emuFileHits": 0, "installedCount": 374, "mapsAvailable": true, "permissionsProbed": 21, "riskPkgTotal": 0, "rootHitTotal": 0, "sceneNodeHits": 0, "selinux": "__unreadable__"}
+security.rootFiles: {"adbFs": [], "duckMarks": [], "injectLibs": [], "remoteCtrl": [], "scanned": {"adbFs": 46, "duckMarks": 10, "injectLibs": 10, "remoteCtrl": 28, "su": 54}, "su": []}
+{"level": "identity", "path": "rootFiles.adbFs", "base": {"missing": [], "count": 1}, "target": {"extra": ["/data/adb"], "count": 0}}
+# 注：base 为真机（已装 APatch 命中 /data/adb），target 云机命中 0 条。

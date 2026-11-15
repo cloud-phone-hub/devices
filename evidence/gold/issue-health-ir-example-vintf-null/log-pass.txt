@@ -1,0 +1,13 @@
+# 修复后：实例 gold_OS3.0.10.0.VNQCNXM/22（2026-10-25 23:03 起机，patch.img sha256 f4d9440688cb）
+# 原始日志：out/core/daemon/runtime/gold_OS3.0.10.0.VNQCNXM/22/qemu.log
+# 计数：Conflicting FqInstance=0、NULL VINTF MANIFEST=0、Failed to resolve allow statement=0、InitFatalReboot=0、vendor.health-default duplicate=0
+
+2530:[    8.403510][    T1] init: starting service 'vendor.health-default'...
+2536:[    8.406547][    T1] init: ... started service 'vendor.health-default' has pid 488
+2538:[    8.407934][    T1] init: starting service 'vendor.ir-default'...
+2540:[    8.411646][    T1] init: ... started service 'vendor.ir-default' has pid 493
+
+6159:[   85.507308][  T188] servicemanager: Caller(pid=674,uid=1000,sid=u:r:system_server:s0) Found android.hardware.ir.IConsumerIr/default in device VINTF manifest.
+
+1450:[    5.955517][  T201] vold: keystore2 Keystore generateKey returned service specific error: -67
+1509:[    7.236705][  T201] vold: keystore2 Keystore generateKey returned service specific error: -67

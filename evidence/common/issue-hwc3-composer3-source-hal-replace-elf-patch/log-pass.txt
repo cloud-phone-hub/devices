@@ -1,0 +1,67 @@
+=== 1. 纯源码编译 android.hardware.graphics.composer3 及 SHA-256 零篡改核对 ===
+==> 编译 HAL 模块 android.hardware.graphics.composer3（变体 default）
+  + out/bin/cdh-vendor hal build android.hardware.graphics.composer3 --android 15 --out-dir /Volumes/work/cloud-phone-hub/engine/out/vendor/android15 --prop ro.board.platform=mt6833
+[..] hidl 头已生成（>= 104）
+[..] android.hardware.graphics.composer3: 链接期库已就绪: /Volumes/work/cloud-phone-hub/engine/out/vendor/android15/abi/graphics-composer3/system/lib64
+==> 上游 AIDL 代码生成（@platform/hardware/interfaces/common/aidl、@platform/hardware/interfaces/drm/common/aidl、@platform/hardware/interfaces/graphics/common/aidl、@platform/hardware/interfaces/graphics/composer/aidl）
+==> 构建 android.hardware.graphics.composer3（HIDL 头 hidl-gen，0 个共享库 + 1 个服务）
+==> 编译服务共享单元（37 个源文件）
+==> 编译服务 android.hardware.composer.hwc3-service.drm（main: /Volumes/work/cloud-phone-hub/engine/vendor/hardware/android.hardware.graphics.composer3/src/service.cpp）
+    写 bin/hw/android.hardware.composer.hwc3-service.drm
+[ok] android.hardware.graphics.composer3 构建完成 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android15
+
+$ shasum -a 256 out/vendor/android15/bin/hw/android.hardware.composer.hwc3-service.drm out/devices/redmi/gold/15-OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.composer.hwc3-service.drm
+e1569e982808450bf1e4689f751745633d4c01c81d39dcf364ba2aa6afb067f3  out/vendor/android15/bin/hw/android.hardware.composer.hwc3-service.drm
+e1569e982808450bf1e4689f751745633d4c01c81d39dcf364ba2aa6afb067f3  out/devices/redmi/gold/15-OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.composer.hwc3-service.drm
+
+patch.img -> out/dist/redmi/gold/15-OS3.0.10.0.VNQCNXM/patch.img（384.0 MiB，sha256 f1a4f31c8b6d）
+配方: vda-1b76a4f7f922
+
+=== 2. 全新干净盘冷启动 boot_check.py ===
+实例: /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/gold_15-OS3.0.10.0.VNQCNXM/1  adb=5911 vnc=5912 ws=5913
+[shot] /Volumes/work/cloud-phone-hub/engine/out/tmp/gold-composer3-boot.png 1088x2400 bpp=32 平均亮度=209.3 峰值=255
+[pass] 引导完成（日志 10552 行）+ 截图非黑（平均亮度=209.3 峰值=255）-> /Volumes/work/cloud-phone-hub/engine/out/tmp/gold-composer3-boot.png
+
+=== 3. 系统态 dumpsys display 与运行态 120Hz/60Hz 切换核验 ===
+mViewports=[DisplayViewport{type=INTERNAL, valid=true, isActive=true, displayId=0, uniqueId='local:4627039422300187648', physicalPort=0, orientation=0, logicalFrame=Rect(0, 0 - 1080, 2400), physicalFrame=Rect(0, 0 - 1080, 2400), deviceWidth=1080, deviceHeight=2400}]
+DisplayDeviceInfo{"内置屏幕": uniqueId="local:4627039422300187648", 1080 x 2400, modeId 2, renderFrameRate 120.00001, defaultModeId 1, userPreferredModeId -1, supportedModes [{id=1, width=1080, height=2400, fps=60.0, vsync=60.0, synthetic=false, alternativeRefreshRates=[90.0, 120.00001], supportedHdrTypes=[]}, {id=2, width=1080, height=2400, fps=120.00001, vsync=120.00001, synthetic=false, alternativeRefreshRates=[60.0, 90.0], supportedHdrTypes=[]}, {id=3, width=1080, height=2400, fps=90.0, vsync=90.0, synthetic=false, alternativeRefreshRates=[60.0, 120.00001], supportedHdrTypes=[]}], colorMode 0, supportedColorModes [0, 7, 9], density 440, 394.40994 x 393.39185 dpi, appVsyncOff 1199999, presDeadline 14800000, address {port=0, model=0x40368bd6e7ee6c}, deviceProductInfo DeviceProductInfo{name=MTKDEV, manufacturerPnpId=MTK, productId=35638, modelYear=null, manufactureDate=ManufactureDate{week=42, year=2021}, connectionToSinkType=0}}
+
+=== 4. 普通 App device-checker 终验（0fb0407b27c20848-cloud，run-00282）===
+Finished run-00282 in 19.4s: 5/5 succeeded
+screen.display RealMetrics: xdpi=394.4099426269531, ydpi=393.391845703125, RefreshRate=120.00000762939452, SupportedRefreshRates=[60, 90, 120.00000762939452], WideColorGamut=true
+aligner_xiaomi_gold.display_gpu_webview: isWideColorGamut=true, preferredWideGamutColorSpace="Display P3", supportedModeCount=3, supports120Hz=true
+aligner_xiaomi_gold.all goldScorecard (32/32 passed):
+{
+  "A1_modelIsGold2312DRAABC": true,
+  "A2_socAndAbiIsMt6833Arm64": true,
+  "A3_crossPartitionIdentityConsistent": true,
+  "A4_bootSecurityAndVerityPropsComplete": true,
+  "B1_cpu8CoreBigLittle6xA55Plus2xA76": true,
+  "B2_cpufreqPoliciesVisibleToApp": true,
+  "B3_memoryAndSwapConsistent": true,
+  "B4_storageStandardDirsAllReady": true,
+  "B5_mapsHasRealMaliAndNoMesaMinigbm": true,
+  "B6_vendorDlkmNoCdhModuleNameLeak": true,
+  "B7_mountinfoNoPeerHolesAndLogSocketsExist": true,
+  "C1_displayIs1080x2400Dpi440": true,
+  "C2_displaySupports120HzAndWideColorGamut": true,
+  "C3_glesRendererIsMaliG57Mc2": true,
+  "C4_glesGlsl320AndArmExtsNoDesktopLeak": true,
+  "C5_webViewWebGlReadyAndMatchesMali": true,
+  "D1_sensorsCountIs29AndMagnetometerValid": true,
+  "D2_sensorsDynamic50HzStreamsActive": true,
+  "D3_sensorsAdcQuantizationAndGyroDriftReal": true,
+  "D4_inputsValidAndNoRiskyControlIme": true,
+  "E1_camera2AndCamera1Connectable": true,
+  "E2_mediaCodecsHasMtkAndDolbyNoV4l2Leak": true,
+  "E3_widevineVendorAndPropertiesAuthentic": true,
+  "E4_vibratorAndIrReady": true,
+  "F1_battery5000MahLiPolyAndNotConstant": true,
+  "F2_thermalZonesPresentInSysfs": true,
+  "G1_networkActiveAndNoSuspiciousIfaces": true,
+  "G2_wifiNoVirtWifiOrHwsimBssidLeak": true,
+  "G3_telephonyTacMatchesGold86717107": true,
+  "G4_bluetoothAdapterHasDeviceName": true,
+  "H1_criticalSystemServicesAndIfaaReady": true,
+  "H2_keystoreHwSignAndSepolicyClean": true
+}

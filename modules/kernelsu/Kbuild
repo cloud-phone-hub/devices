@@ -1,0 +1,50 @@
+# kernelsu 的编译入口。03 对所有外部模块一视同仁地 `make M=<模块目录> modules`，
+# 所以 kernelsu 特有的东西全部收在本目录，不往 03 里加分支。
+#
+# 为什么这些变量要在这里给默认值：
+#   CONFIG_KSU=m            外部模块不吃内核 .config，auto.conf 里没有 CONFIG_KSU，
+#                           不给就是 obj- 空、编不出内核对象；
+#   KBUILD_MODPOST_WARN=1   KernelSU 引用了 kallsyms_lookup_name、path_umount、
+#                           selinux_state 等 GKI 未导出符号；这些引用由
+#                           patches/0003-ksym-shim.patch 在模块内改成运行时解析
+#                           （kprobe + trampoline，见 infra/ksym.c），modpost 仍降级
+#                           为告警，是为了上游升 tag 出现新引用时能先出 .ko 再排查；
+#   KSU_GIT_VERSION=2680    上游按 git 提交数算版本号（KSU_VERSION=30000+提交数），
+#                           卷内源码不带 .git（03 导入时排除），不写死就退化成
+#                           KSU_VERSION=16，Manager 侧认不出内核；2680 是基线
+#                           v3.3.1 的提交数，换基线要同步改。
+KBUILD_MODPOST_WARN ?= 1
+CONFIG_KSU ?= m
+KSU_GIT_VERSION ?= 2680
+KSU_GIT_VERSION_VALID ?= 1
+export KBUILD_MODPOST_WARN CONFIG_KSU KSU_GIT_VERSION KSU_GIT_VERSION_VALID
+
+# 源码在 source/（manifest/kernel.xml 从 tiann/KernelSU 拉取，不入库），递归进
+# source/kernel/ 用上游自己的 Kbuild 编译，产物是 source/kernel/kernelsu.ko。
+obj-$(CONFIG_KSU) += source/kernel/
+
+MODULE_DIR := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
+
+# 源码不在库里，没同步就编不出东西；这里直接报错，比 kbuild 的“找不到目录”好定位。
+ifeq ($(wildcard $(MODULE_DIR)/source/kernel/Kbuild),)
+$(error kernelsu: 缺 source/kernel，先 repo sync 拉取源码（manifest 的 engine/modules/kernelsu/source）)
+endif
+
+# 云机定制以 patches/*.patch 落地，补丁路径相对本目录（a/source/kernel/…）。
+#
+# kbuild 会在编译、modpost 多个阶段反复 include 本文件，而补丁只能应用一次：
+# 用 --reverse --check 判断“已应用”不可行（多个补丁改同一文件，反向顺序对不上），
+# 因此应用完就在容器 /tmp 落一个标记。03 每轮会 rm -rf 并重新导入模块树、
+# 每次构建都是新容器，所以标记不会跨轮残留，也不会因为源码被重置而误跳过。
+KSU_PATCHES := $(sort $(wildcard $(MODULE_DIR)/patches/*.patch))
+KSU_PATCH_STAMP := /tmp/kernelsu-patches-applied
+
+ifeq ($(wildcard $(KSU_PATCH_STAMP)),)
+$(foreach patch,$(KSU_PATCHES),\
+  $(if $(shell cd $(MODULE_DIR) && git apply --check "$(patch)" >/dev/null 2>&1 && echo ok),\
+    $(if $(shell cd $(MODULE_DIR) && git apply "$(patch)" >/dev/null 2>&1 && echo ok),\
+      $(shell echo "kernelsu: 应用 $(notdir $(patch))" >&2),\
+      $(error kernelsu: 补丁 $(notdir $(patch)) 应用失败)),\
+    $(error kernelsu: 补丁 $(notdir $(patch)) 与 source/ 的基线不符，请按新基线重做补丁)))
+$(shell : > $(KSU_PATCH_STAMP))
+endif

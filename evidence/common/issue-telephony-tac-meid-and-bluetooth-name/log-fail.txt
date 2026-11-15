@@ -1,0 +1,54 @@
+# G3 & G4 修复前取证日志 (log-fail.txt)
+# 采样时间: 2026-11-10
+# 设备: Xiaomi Redmi Note 13 5G (gold / 2312DRAABC, OS3.0.10.0.VNQCNXM)
+# 真机 ID: ec519c7d513a3ad3 (USB: fmvwkrheonugvgjb)
+# 云机实例: gold_15-OS3.0.10.0.VNQCNXM/1 (df809591a4e085ae-cloud, ADB: 127.0.0.1:5911)
+# 测试批次: run-00222
+
+=== 1. 云机电话 RIL IMEI/MEID 日志与属性现状 ===
+logcat -b radio:
+11-10 13:47:54.047  1375  1375 D ImeiMeidSource: slot=1 imei=xxxxxxxxxxxx008
+11-10 13:47:54.047  1375  1375 D ImeiMeidSource: invalid meid= slot=1
+11-10 13:47:54.047  1375  1375 D ImeiMeidSource: slot=0 imei=xxxxxxxxxxxx055
+11-10 13:47:54.048  1375  1375 D ImeiMeidSource: invalid meid= slot=0
+
+真机对比属性 (fmvwkrheonugvgjb):
+[ro.ril.miui.imei0]: [867171070808903]
+[ro.ril.miui.imei1]: [867171070808911]
+[ro.ril.oem.imei]: [867171070808903]
+[ro.ril.oem.imei1]: [867171070808903]
+[ro.ril.oem.imei2]: [867171070808911]
+[ro.ril.oem.meid]: [99002082898445]
+[ro.vendor.oem.imei]: [867171070808903]
+[ro.vendor.oem.imei2]: [867171070808911]
+[ro.vendor.oem.meid]: [99002082898445]
+
+=== 2. 云机蓝牙状态与 Settings 现状 ===
+dumpsys bluetooth_manager:
+Bluetooth Status
+  enabled: false
+  state: OFF
+  address: 00:00:00:00:00:00
+  isSupportBluetoothHalfOn: true
+  BluetoothHalfOnState: false
+  name: null
+Bluetooth never enabled!
+
+settings get secure bluetooth_name       -> null
+settings get secure bluetooth_addr_valid -> null
+getprop bluetooth.device.default_name    -> (empty)
+
+=== 3. device-checker 双机对比失败项 (G3 & G4, run-00222) ===
+[REAL ] G3_telephonyTacMatchesGold86717107: true
+        typeAllocationCodeSlot0: "86717107", typeAllocationCodeSlot1: "86717107"
+        manufacturerCodeSlot0: "99002082", manufacturerCodeSlot1: "99002082"
+        deviceSoftwareVersionSlot0: "78", deviceSoftwareVersionSlot1: "78"
+[CLOUD] G3_telephonyTacMatchesGold86717107: false
+        typeAllocationCodeSlot0: "35948214", typeAllocationCodeSlot1: "35948214"
+        manufacturerCodeSlot0: null, manufacturerCodeSlot1: null
+        deviceSoftwareVersionSlot0: "01", deviceSoftwareVersionSlot1: "01"
+
+[REAL ] G4_bluetoothAdapterHasDeviceName: true
+        hasAdapter: true, name: "Redmi Note 13 5G", hasValidDeviceName: true
+[CLOUD] G4_bluetoothAdapterHasDeviceName: false
+        hasAdapter: true, name: null, hasValidDeviceName: false

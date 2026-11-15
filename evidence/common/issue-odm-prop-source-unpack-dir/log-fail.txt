@@ -1,0 +1,74 @@
+== 06 的 odm 属性件留档目录名写死 unpack_vendor：跨分区撞车，odm 层把 vendor 收口全盖回（2026-11-04，cph2797 实例 2）==
+
+前置：本轮实例 1 的 FRP 卡点已修（#153），system_server 越过 phase 500，引导才走得到渲染侧。
+实例:  out/core/daemon/runtime/cph2797_16.0.8.301_EX01/2
+构建:  engine/out/tmp/cph2797-build2.log（07 已单独跑过，unpack_vendor 树在位）
+判定:  engine/out/tmp/cph2797-boot-check2.log
+       [fail] 超时 600s 未出现 sys.boot_completed=1（当前日志 49976 行）
+
+
+## 1. 同一台机、同一条命令，两次读到的「厂商 odm 原件」不是一回事
+
+$ grep -n "厂商原件:" engine/out/tmp/cph2797-build.log engine/out/tmp/cph2797-build2.log
+cph2797-build.log:521:    厂商原件: .../super/unpack_vendor/build.prop（138 行 / sha256 0606e97aa3aa）
+cph2797-build2.log:21:   厂商原件: .../super/unpack_vendor/build.prop（917 行 / sha256 6af1959e68ad）
+
+run1 时 `<super>/unpack_vendor/` 还是空的，06 自己把 odm_a.img 的 /build.prop 解进去，
+内容恰好是真 odm 件（138 行）→ 产物正确（纯属侥幸）。
+run2 之前 07 步骤 1b 把厂商 **vendor_a.img 整树**解到同名目录，那里躺着 917 行的
+vendor build.prop；06 按「留档优先」直接读它 → 产出的 odm/etc/build.prop 成了 vendor 的副本：
+
+$ grep -n "生成 odm 覆盖件" -A1 engine/out/tmp/cph2797-build2.log
+27:==> [步骤 1] 生成 odm 覆盖件 -> out/devices/oppo/cph2797/16.0.8.301_EX01/odm/etc/build.prop
+28:    abilist32="" abilist64=arm64-v8a sha256=922 行 / sha256 a3f0ad343852
+        ↑ 138 行的 odm 原件不可能撑出 922 行产物；922 = vendor 917 + 5 条 odm sets 追加
+
+（官方 odm_a.img 的 /build.prop 只有 138 行，且不含任何 GPU 后端键：
+ engine/out/tmp/cph2797-official-odm-build.prop 为 dump.erofs --cat 取出的原件留档）
+
+
+## 2. 运行时后果：odm 层装载顺序最后，vendor 基线收口全数被盖回
+
+$ grep "Overriding previous property" out/core/daemon/runtime/cph2797_16.0.8.301_EX01/2/qemu.log \
+    | sed 's/.*init: //' | sort -u | grep -E 'egl|hwcomposer|use_vulkan|opengles'
+Overriding previous property 'ro.hardware.egl':'mesa' with new value 'mali'
+Overriding previous property 'ro.hardware.hwcomposer':'drm' with new value 'mtk_common'
+Overriding previous property 'ro.hwui.use_vulkan':'false' with new value ''
+Overriding previous property 'ro.hwui.use_vulkan':'' with new value 'true'
+Overriding previous property 'ro.opengles.version':'196608' with new value '196610'
+（前四行方向都是「基线收口值 → 厂商原值」：/vendor/build.prop 的收口白做了；
+ use_vulkan 出现两次是因为 vendor 副本里那两行重复键也被整份搬进了 odm 层）
+
+
+## 3. 崩点：zygote preload 阶段 libEGL 断言
+
+$ grep -c "couldn't find an OpenGL ES implementation" engine/out/tmp/cph2797-logcat-crash2.txt
+137
+
+12-31 19:00:23.364   660   680 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 680 (surfaceflinger), pid 660 (surfaceflinger)
+12-31 19:00:23.421   684   684 F DEBUG   : Process name is /system/bin/surfaceflinger, uid is 1000
+12-31 19:00:23.421   684   684 F DEBUG   : keyProcess: 1
+12-31 19:00:23.545   684   684 F DEBUG   : Abort message: 'couldn't find an OpenGL ES implementation, make sure one of persist.graphics.egl, ro.hardware.egl and ro.board.platform is set'
+12-31 19:00:24.463   914   914 F DEBUG   :       #07 pc 00000000005c796c  /system/lib64/libhwui.so (zygote_preload_graphics+92)
+        ↑ 137 条断言分两拨：surfaceflinger 侧 70 条、zygote preload 侧 67 条
+→ ro.hardware.egl=mali 时 libEGL 拼 /vendor/lib64/egl/libEGL_mali.so，而本树
+  lib64/egl/ 只有 libEGL_mesa.so / libGLESv1_CM_mesa.so / libGLESv2_mesa.so →
+  Loader::open 断言自杀；整机引导不动。
+$ grep -c 'PersistentDataBlockService' engine/out/tmp/cph2797-logcat-crash2.txt
+0        ← FRP 那条已独立闭环，本轮卡点只剩属性层
+
+
+## 4. 单测复现（去掉修复后 UnpackDir 的行为，其余代码不动）
+
+$ cd engine/build && go test -run TestBuildODMReadsOdmUnpackDirNotVendor ./06_build_odm/...
+--- FAIL: TestBuildODMReadsOdmUnpackDirNotVendor (0.04s)
+    baseline_test.go:301: 产物不是「odm 原件 + 基线增量」:
+        --- got ---
+        ro.product.vendor.model=CPH2797
+        ro.marker.partition=vendor
+        ro.hardware.egl=mali
+        ro.hwui.use_vulkan=true
+        ro.odm.product.cpu.abilist32=
+        ...
+（got 里的 `ro.marker.partition=vendor` 就是诱饵件的标记：06 读到了 vendor 的留档。
+ 这条失败输出与实例 2 的运行时留痕逐键对应。）

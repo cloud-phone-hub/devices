@@ -1,0 +1,183 @@
+# 通过现场：处置 + 重启后观察（2026-10-29 11:02–11:15）
+# 运行目录：/Volumes/work/cloud-phone-hub
+
+== 1) 先试就地救活：禁用动态壁纸（不重启）==
+$ adb -s 127.0.0.1:5919 shell "pm disable-user --user 0 com.flyme.alivewallpaper"
+Package com.flyme.alivewallpaper new state: disabled-user
+$ adb -s 127.0.0.1:5919 shell "pm disable-user --user 0 com.meizu.activeviewlivewallpaper"
+Package com.meizu.activeviewlivewallpaper new state: disabled-user
+
+结果：太晚。禁用命令本身能过（am/pm 走同步 binder），但 system_server 的 async 池已被灌满，
+40 秒里 `cannot allocate buffer` 从 169 涨到 206，system_server 168% CPU，界面仍冻。
+→ 结论：binder async 池打满不可自愈，只能重启进程。
+
+== 2) 重启同一实例（保留 writable-data，禁用状态跟着留下）==
+$ curl -s -X POST 127.0.0.1:9050/api/stop  -d '{"spec":"m22_12.5.0.0A","index":"31"}'
+{"dir":".../runtime/m22_12.5.0.0A/31","index":"31","ok":true,"spec":"m22_12.5.0.0A"}
+$ sleep 8
+$ curl -s -X POST 127.0.0.1:9050/api/start -d '{"spec":"m22_12.5.0.0A","index":"31"}'
+{"instance":{"spec":"m22_12.5.0.0A","index":"31","running":true,"pid":17794,
+             "started":"2026-10-29 11:06:09","slot":1,"console":5918,"adb":5919,"vnc":5920},"ok":true}
+
+（用 /api/start 复用实例目录，而不是 /api/create：后者会从 data.qcow2 种子重建 userdata，
+  本次禁用的壁纸包状态与用户已配置的数据都会丢）
+
+$ adb connect 127.0.0.1:5919
+$ adb shell getprop sys.boot_completed  -> 1（约 50 s，页面 5918/5919/5920 不变）
+
+== 3) 重启后观察 ==
+$ adb shell "dmesg | grep -c 'cannot allocate buffer'"       -> 5（且 2.5 min 后仍是 5，不再增长）
+$ adb shell "top -b -n 1 | head -6"
+800%cpu   0%user   0%nice   4%sys 793%idle   0%iow   4%irq   0%sirq   0%host
+（system_server 已不在 top 前四，宿主 QEMU 从 412% 降到常态）
+$ adb shell "ps -A | grep -cE 'alivewallpaper|activeview'"   -> 0（两个动态壁纸包都没起来）
+$ adb shell "pm list packages -d | grep -iE 'alivewallpaper|activeview'"
+package:com.flyme.alivewallpaper
+package:com.meizu.activeviewlivewallpaper
+
+# 清空 crash buffer 后等 90 s，确认没有新的 FATAL 循环
+$ adb shell logcat -b crash -c
+$ sleep 90
+$ adb shell logcat -d -b crash | grep -c "FATAL EXCEPTION"   -> 0
+
+== 4) 交互验证：VNC 点击仍精确 ==
+$ python3 .tmp/vnc_tap.py 127.0.0.1 5920 894 1388
+server 1088x2400 name='QEMU'
+sent pointer tap (894,1388) hold=150ms
+$ adb shell "dumpsys window | grep -E 'mCurrentFocus|mFocusedApp'"
+  mCurrentFocus=Window{56ebe3f u0 com.android.settings/com.android.settings.Settings}
+  mFocusedApp=ActivityRecord{71094099 u0 com.android.settings/.Settings t11}
+截图：screen-after-restart-31.png（桌面）、screen-after-restart-settings-ok.png（点进设置）
+
+== 5) 当时的结论（已被第 6 节推翻，保留原文备查）==
+禁用两个动态壁纸包 + 重启实例后，系统 4 分钟内稳定：binder ENOSPC 归零且不增长、
+无 FATAL 循环、点击精确命中。binder 打满的直接源头（SurfaceFlinger 持续向 system_server
+发 oneway）随动态壁纸崩溃循环消失而消失。
+
+→ 后续复测：再等 2 分钟即 ENOSPC 5→137、crash 0→488、mCurrentFocus=null，禁壁纸无效。
+
+== 6) A/B 定位：console 日志级别是触发条件（2026-10-29 11:20–11:37）==
+
+背景：27 分钟里三次重启都在「开机后 5–6 分钟」复发，说明不是偶发。
+另发现 qemu.log 规模与是否卡死强相关：28=176 MB/22 min(≈133 KB/s) 卡死、
+30=148 MB/25 min(≈100 KB/s) 卡死、29=19.9 MB/28 min(≈12 KB/s) 干净。
+
+$ adb shell cat /proc/sys/kernel/printk
+7       4       1       7        ← console_loglevel=7，KERN_INFO 全打串口
+$ adb shell cat /proc/cmdline
+console=tty0 stack_depot_disable=on … androidboot.seriallogging=hvc1 console=ttyAMA0 …
+  ↑ logcat 整体镜像到串口
+
+-- A 组：loglevel=4 --
+$ # 经 daemon 的 guest root 通道（hvc7），adb shell 用户写不了这个文件
+$ SPEC=m22_12.5.0.0A INDEX=31 python3 .tmp/root_shell.py "echo 4 > /proc/sys/kernel/printk; cat /proc/sys/kernel/printk"
+4       4       1       7
+11:23:40 设置 → 11:32:16 观察（10 分钟），期间做真实交互：
+  · 30 次快速滑动、连续开关设置页、横滑桌面、点桌面图标
+$ adb shell "dmesg | grep -c 'cannot allocate buffer'"   -> 1（10 分钟不增长）
+$ adb shell "dmesg | grep -c 'spamming oneway'"          -> 0
+$ adb shell "logcat -d -b crash | grep -c FATAL"         -> 1（开机那条 earphone NPE）
+串口速率：6728 B/s → 5782 B/s
+
+-- B 组：恢复 loglevel=7，同强度加压 30 s --
+$ python3 .tmp/root_shell.py "echo 7 > /proc/sys/kernel/printk"
+$ # 12 轮 × (6 次 swipe + am start settings + HOME)
+11:32:08  cannot allocate buffer 1 → 26
+          spamming oneway       0 → 148
+          crash FATAL           1 → 534
+
+-- 再压回 4（不重启）--
+11:32:19 enospc=60 spam=167 fatal=1634
+11:32:43 enospc=60 …
+11:33:03 enospc=80 fatal=2336
+11:33:23 enospc=99 fatal=3044
+11:33:44 enospc=118 fatal=4036     ← 池满后不可自愈
+
+-- C 组：重启后「开机 59 s 内」设 loglevel=4，跑同强度加压 --
+11:35:03 QEMU 起 / 11:35:09 boot_completed / 11:36:02 设为 4（boot+53 s）
+11:37:07 同强度加压（12 轮，与 B 组完全一致）：
+  cannot allocate buffer = 0
+  spamming oneway      = 0
+  crash FATAL          = 0
+
+== 7) 当时的结论（已被第 8 节推翻，保留原文备查）==
+触发条件是**内核 console 日志级别**：loglevel=7 时 30 秒内 binder async 池就被打满；
+loglevel=4 时同样的交互负载下 ENOSPC / oneway spam / FATAL 全为 0。
+但池子一旦打满就不可逆，事后压回 4 也救不回来 —— 必须开机第一时间生效。
+`/proc/sys/kernel/printk` 不是持久设置，重启即失效，当前只算临时缓解。
+
+→ 推翻依据：11:35 那轮已在 boot+53 s 设为 4，仍于 11:44 崩（ENOSPC 72 / spam 384 /
+  DeadSystem 1442）。loglevel 只是把崩点从开机 323 s 拖到 434 s 以上，不是根因。
+
+== 8) binder 层定因：SF RegionSampling → system_server 的 async 积压（12:20–12:45）==
+
+前提：debugfs 挂上后直接读 binder 内部（adb shell 权限不够，走 hvc7 root 通道）。
+
+-- 8.1 身份 --
+$ cat /proc/582/comm           -> surfaceflinger
+$ cat /proc/582/task/682/comm  -> RegionSampling        ← 发送方
+$ cat /proc/769/comm           -> system_server         ← 目标
+
+-- 8.2 唯一的异常进程 --
+$ grep 'free async space' /sys/kernel/debug/binder/stats | sort | uniq -c | sort -rn
+    155   free async space 520192      ← 其余全部满额
+      1   free async space 273888      ← 769 system_server，约 47% 已用（240848→250368→252608→273888，回升）
+
+-- 8.3 pending 全部同形 --
+$ grep -c 'pending async' /sys/kernel/debug/binder/proc/769     -> 941
+$ ... | sed 's/.*from \([0-9]*\):[0-9]* to \([0-9]*\):[0-9]* code \([0-9]*\) .*size \([0-9]*\):.*/from\1-to\2-code\3-size\4/' | sort | uniq -c | sort -rn
+    471 from582-to769-code2-size436
+    471 from582-to769-code1-size92
+  → 100% 来自 surfaceflinger，严格成对，没有第二个来源
+
+-- 8.4 队首从开机起没被消费 --
+pending async transaction 105409: … from 582:682 to 769:0 code 1 flags 11 pri 0:120 r0 elapsed 1254470ms node 9312 size 92:0  offset 22a18
+pending async transaction 105410: … from 582:682 to 769:0 code 2 flags 11 pri 0:120 r0 elapsed 1254470ms node 9312 size 436:24 offset 22a78
+node 9312: … ls 943 lw 0 is 1 iw 1 tr 1 proc 582        ← ls 943 ≈ pending 942，每个未消费事务各持 1 个 strong ref
+
+-- 8.5 队列在动，但只勉强持平 --
+30 秒差分（按事务 id）：918 → 912 条，消费 12（全在队首，id ≤104527）、新增 6（id 148475）
+→ FIFO 在推进（≈0.4 条/s），深度常年 900 上下，队首永远是开机时刻的事务。
+
+-- 8.6 记账 --
+520192 B 池子 / 528 B 每对 ≈ 985 对打满；当前 450 对 ≈ 246 KB（= 520192−273888 ✓）
+
+-- 8.7 本轮存活情况（12:09:17 起，boot+59 s 设 printk=4）--
+12:27   enospc 0 / spam 0 / DeadSystem 0，mCurrentFocus=com.meizu.connectivitysettings/.Settings
+12:45   同上，已连续存活 >35 min（超过之前所有崩点）
+→ 结论：不是「必崩」，而是「净增长率 > 0 才崩」。
+
+== 9) 结论 ==
+1. 真正机制：surfaceflinger 的 RegionSampling 线程每秒一对 oneway 通知 system_server，
+   system_server 侧消费速度只勉强持平（队首常驻 20 分钟）；一旦生产略快（负载/日志背压/
+   调度抖动），队列单调增长至 985 对打满 512 KiB async 池 → -28 ENOSPC → DeadSystem 风暴 → 冻结。
+2. console loglevel 是加速器：它压低消费速度，把「持平」变成「落后」。
+   loglevel=4 能延后崩点（323 s → 434 s+），但不能清零。
+3. 池满不可逆，只能重启进程（/api/stop + /api/start）。
+4. 待闭环：code1/code2 对应的 AIDL 接口，以及运行态关掉内容采样后 pending 是否归零（见 solution.md 第 6 节）。
+
+== 10) 决定性 A/B：自动亮度 ON/OFF 就是这条洪泛的开关（12:37–12:44）==
+
+指纹：取「最新一条 pending 的 elapsed」——生产停了它会跟着墙钟长，生产在跑它就重新变小。
+$ D=/sys/kernel/debug/binder/proc/769
+$ grep -o "elapsed [0-9]*ms" $D | awk "{print \$2+0}" | sort -n | head -1
+
+基线（settings get system screen_brightness_mode -> 1）
+  最新 29407ms      pending 941
+$ settings put system screen_brightness_mode 0
+  即时            最新 171001ms   pending 762
+  +120 s          最新 291042ms   pending 714     ← 恰好 +120 s，零新增 → 生产停了
+$ settings put system screen_brightness_mode 1
+  +90 s           最新  50419ms   pending 676     ← 重新变小 → 生产立即恢复
+$ settings put system screen_brightness_mode 0     # 收尾保留关闭
+  pending 666   free async space 333248（273888 → 333248，继续回落）
+
+同期系统健康（12:44:27）：
+  cannot allocate buffer = 0 / spamming oneway = 0 / DeadSystem = 0
+  mCurrentFocus = com.meizu.connectivitysettings/.Settings
+
+→ 最终结论：
+  ① 洪泛源：自动亮度 → SF 内容采样 → RegionSampling 每秒一对 oneway 给 system_server；
+  ② 打满条件：system_server 消费只有 ≈0.4 条/s 而 SF 投递 ≈2 条/s，净增长 > 0 就崩；
+  ③ 加速器：console loglevel=7 + seriallogging=hvc1 + 三个缺失 HAL 每秒重试；
+  ④ 落地建议：镜像层默认关闭自动亮度（云机无环境光传感器），再叠 loglevel=4。

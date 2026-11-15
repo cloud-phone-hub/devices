@@ -1,0 +1,88 @@
+# 证据 #178 修复后通过取证日志（log-pass.txt）
+# 采样时间: 2026-11-10
+# 设备: Xiaomi Redmi Note 13 5G (gold / 2312DRAABC, OS3.0.10.0.VNQCNXM)
+# 真机 ID: ec519c7d513a3ad3 (USB: fmvwkrheonugvgjb)
+# 云机实例: gold_15-OS3.0.10.0.VNQCNXM/1 (df809591a4e085ae-cloud, ADB: 127.0.0.1:5911)
+# 镜像产物: patch.img (sha256 4d830eba40e9), vda.img (vda-344033f7c706)
+# 测试批次: run-00226 / run-00227
+
+=== 1. 云机 SELinux 策略与服务上下文验证 ===
+$ adb -s 127.0.0.1:5911 shell getprop sys.boot_completed
+1
+$ adb -s 127.0.0.1:5911 shell grep -E 'IComponentStore/default9' /vendor/etc/selinux/vendor_service_contexts
+android.hardware.media.c2.IComponentStore/default9      u:object_r:hal_codec2_service:s0
+
+=== 2. E1_camera2AndCamera1Connectable 通过验证（run-00226） ===
+"camera": {
+  "camera1Count": 2,
+  "camera1OpenConnectable": true,
+  "camera1": {
+    "cam_0": {
+      "canDisableShutterSound": true,
+      "facing": 0,
+      "openProbe": {
+        "openSuccess": true,
+        "paramCount": 61
+      },
+      "orientation": 90
+    },
+    "cam_1": {
+      "canDisableShutterSound": true,
+      "facing": 1,
+      "openProbe": {
+        "openSuccess": true,
+        "paramCount": 0
+      },
+      "orientation": 270
+    }
+  },
+  "camera2Ids": ["0", "1"]
+}
+
+=== 3. E2_mediaCodecsHasMtkAndDolbyNoV4l2Leak 通过验证（run-00226） ===
+"mediaCodecs": {
+  "allCount": 84,
+  "regularCount": 77,
+  "decoderCount": 59,
+  "encoderCount": 25,
+  "hardwareAcceleratedCount": 28,
+  "mtkC2Count": 15,
+  "dolbyC2Count": 2,
+  "dolbyC2Names": [
+    "c2.dolby.ac4.decoder",
+    "c2.dolby.eac3.decoder"
+  ],
+  "noV4l2VirtualCodecs": true,
+  "v4l2LeakCount": 0,
+  "v4l2LeakNames": []
+}
+
+=== 4. E3_widevineVendorAndPropertiesAuthentic 通过验证（run-00226） ===
+"drm": {
+  "supportedCryptoSchemes": [
+    "29701fe4-3cc7-4a34-8c5b-ae90c7439a47",
+    "edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"
+  ],
+  "widevine": {
+    "algorithms": "AES/CBC/NoPadding,HmacSHA256",
+    "description": "Widevine CDM",
+    "deviceUniqueIdLen": 32,
+    "deviceUniqueIdNonZero": true,
+    "hdcpLevel": "Unprotected",
+    "isSupported": true,
+    "maxHdcpLevel": "Unprotected",
+    "maxNumberOfSessions": "16",
+    "oemCryptoApiVersion": "18",
+    "openSessionOk": true,
+    "securityLevel": "L1",
+    "sessionIdLen": true,
+    "systemId": "33098",
+    "usageReportingSupport": "True",
+    "vendor": "com.google.android.widevine",
+    "version": "19.0.1@AV1A.240725.002"
+  }
+}
+
+=== 5. aligner_xiaomi_gold.all 全量自检卡（run-00226） ===
+camera_media_drm_audio: cams=2 regCodecs=77 allCodecs=84(mtk=15,dolby=2,v4l2Leaks=0) widevine=L1
+aligner_xiaomi_gold.all: 深度基线自检 25/32 通过（E1=true, E2=true, E3=true, E4=true，维度 E 100% 通过）

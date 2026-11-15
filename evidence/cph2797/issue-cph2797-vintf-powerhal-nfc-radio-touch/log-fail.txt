@@ -1,0 +1,34 @@
+# 1. VINTF 冲突导致 NULL VINTF MANIFEST（缺 vendor.vintf-drop）
+[    1.236110][  T255] servicemanager: Cannot add VINTF manifest fragment /odm/etc/vintf/manifest/manifest_oplus_face.xml: HAL "android.hardware.biometrics.face" may have a duplicated/conflictingoverride="false"entry.
+[    1.236502][  T255] servicemanager: NULL VINTF MANIFEST!: device
+
+# 2. MTK PowerHAL applist_enable=1 持 AMS 锁阻塞 5s + com.android.nfc 持久进程无限崩溃触发 Watchdog 重启
+11-06 09:29:14.210  4120  4120 E AndroidRuntime: FATAL EXCEPTION: main
+11-06 09:29:14.210  4120  4120 E AndroidRuntime: Process: com.android.nfc, PID: 4120
+11-06 09:29:14.210  4120  4120 E AndroidRuntime: java.lang.RuntimeException: Unable to create application com.android.nfc.NfcApplication: java.lang.NullPointerException: Attempt to invoke interface method 'boolean vendor.oplus.hardware.nfc.V1_0.IOplusNfc.isGPFelicaCard()' on a null object reference
+11-06 09:29:14.210  4120  4120 E AndroidRuntime: 	at com.android.nfc.OplusNfcService.initOplusNfcService(OplusNfcService.java:90)
+
+[   51.412881][  T255] servicemanager: Caller(pid=881,uid=1000,sid=u:r:system_server:s0) Since 'vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist/default' could not be found trying to start it as a lazy AIDL service.
+[   56.415102][  T255] servicemanager: Caller(pid=881,uid=1000,sid=u:r:system_server:s0) Since 'vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist/default' could not be found trying to start it as a lazy AIDL service.
+[  164.812440][  T942] Watchdog: *** WATCHDOG KILLING SYSTEM PROCESS: Blocked in handler on foreground thread (android.fg) for 65s
+[  164.892115][  T942] sysrq: Resetting
+
+# 3. com.android.phone 主线程永久阻塞在 IRadioIms/slot1（/odm/etc/vintf/telephony_manifest_dsds.xml 声明）
+11-06 09:45:53.009 16719 16719 W ServiceManagerCppClient: Waited one second for android.hardware.radio.ims.IRadioIms/slot1 (is service started? Number of threads started in the threadpool: 32. Are binder threads started and available?)
+11-06 09:45:54.013 16719 16719 W ServiceManagerCppClient: Waited one second for android.hardware.radio.ims.IRadioIms/slot1 (is service started? Number of threads started in the threadpool: 32. Are binder threads started and available?)
+[  167.208154][T15360] servicemanager: Caller(pid=13403,uid=1001,sid=u:r:radio:s0) Tried to start aidl service android.hardware.radio.ims.IRadioIms/slot1 as a lazy service, but was unable to.
+
+# 4. 常驻服务每 5s 退出触发 sys.init.updatable_crashing=1，以及停用 vendor.ir-default 后未遮蔽 consumerir feature 导致 ConsumerIrService 崩溃
+[  335.235098][    T1] init: starting service 'vendor.ir-default'...
+[  335.249216][    T1] init: process with updatable components 'vendor.ir-default' exited 4 times in 4 minutes
+[  337.140096][    T1] init: starting service 'magt'...
+[  337.167644][    T1] init: process with updatable components 'magt' exited 4 times in 4 minutes
+[  337.346885][    T1] init: starting service 'netdiag'...
+[  337.366812][    T1] init: process with updatable components 'netdiag' exited 4 times in 4 minutes
+[  337.368320][    T1] init: processing action (sys.init.updatable_crashing=1) from (/system/etc/init/flags_health_check.rc:10)
+
+11-05 21:00:25.116  1254  1254 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+11-05 21:00:25.116  1254  1254 E AndroidRuntime: java.lang.RuntimeException: FEATURE_CONSUMER_IR present, but no IR HAL loaded!
+11-05 21:00:25.116  1254  1254 E AndroidRuntime: 	at com.android.server.ConsumerIrService.<init>(ConsumerIrService.java:73)
+11-05 21:00:25.116  1254  1254 E AndroidRuntime: 	at com.android.server.SystemServer.startOtherServices(SystemServer.java:1893)
+

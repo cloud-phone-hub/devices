@@ -1,0 +1,147 @@
+# hardware 段统一 —— 通过侧取证（#138）
+
+取样时间：2026-11-03
+改动范围：6 份 `device.json` 的 `hardware` 段（`flyme/m22`、`google/oriole`、`oppo/cph2797`、
+`samsung/ss9380`、`xiaomi/gold`、`xiaomi/popsicle`）+ 两处 `"hardware-platform"` 缩进。
+基准：`oneplus/15r/device.json`（本来就是紧凑单行，本次不动）。
+改动前快照：`out/tmp/devicejson-backup-hw-20261103/`。
+
+## 第 1 节：6 份改动量
+
+脚本 `out/tmp/normalize_hardware.py`（`--apply` 才写盘；不加只打印预览）：
+
+```console
+$ python3 out/tmp/normalize_hardware.py --apply
+备份 13 份 -> out/tmp/devicejson-backup-hw-20261103
+flyme/m22/device.json            条目36 缩进4 最长键40 行数 271 -> 91（-180）
+google/oriole/device.json        条目17 缩进2 最长键36 行数 143 -> 58（-85）
+nothing/3a/device.json           无 hardware 段，跳过
+oneplus/15r/device.json          已符合，跳过
+oneplus/ace3/device.json         无 hardware 段，跳过
+oppo/cph2797/device.json         条目29 缩进4 最长键33 行数 221 -> 76（-145）
+oppo/pme110/device.json          无 hardware 段，跳过
+realme/rmx3823/device.json       无 hardware 段，跳过
+realme/rmx5112/device.json       无 hardware 段，跳过
+realme/rmx6688/device.json       无 hardware 段，跳过
+samsung/ss9380/device.json       条目31 缩进4 最长键40 行数 243 -> 88（-155）
+xiaomi/gold/device.json          条目17 缩进4 最长键29 行数 165 -> 80（-85）
+xiaomi/popsicle/device.json      条目18 缩进4 最长键29 行数 155 -> 65（-90）
+已修改 6 份
+```
+
+`oneplus/15r` 报「已符合」不是靠字符串比较得来的运气：脚本对它有额外断言
+`new == old`，渲染规则只要与基准差一个空格就会中止（见 `log-fail.txt` 第 3 节）。
+
+## 第 2 节：13 份 JSON 与备份语义等价
+
+```console
+$ python3 - <<'EOF'
+import json,glob
+ok=True
+for p in sorted(glob.glob('manifest/*/*/device.json')):
+    rel=p.replace('manifest/','')
+    bak='out/tmp/devicejson-backup-hw-20261103/'+rel.replace('/','__')
+    new=json.load(open(p,encoding='utf-8')); old=json.load(open(bak,encoding='utf-8'))
+    same=new==old
+    if not same: ok=False
+    print('%-32s 与备份等价=%-5s hardware条目=%2d' % (rel,same,len(new.get('hardware') or [])))
+print('ALL OK' if ok else 'PROBLEM')
+EOF
+flyme/m22/device.json            与备份等价=True  hardware条目=36
+google/oriole/device.json        与备份等价=True  hardware条目=17
+nothing/3a/device.json           与备份等价=True  hardware条目= 0
+oneplus/15r/device.json          与备份等价=True  hardware条目=20
+oneplus/ace3/device.json         与备份等价=True  hardware条目= 0
+oppo/cph2797/device.json         与备份等价=True  hardware条目=29
+oppo/pme110/device.json          与备份等价=True  hardware条目= 0
+realme/rmx3823/device.json       与备份等价=True  hardware条目= 0
+realme/rmx5112/device.json       与备份等价=True  hardware条目= 0
+realme/rmx6688/device.json       与备份等价=True  hardware条目= 0
+samsung/ss9380/device.json       与备份等价=True  hardware条目=31
+xiaomi/gold/device.json          与备份等价=True  hardware条目=17
+xiaomi/popsicle/device.json      与备份等价=True  hardware条目=18
+ALL OK
+```
+
+`==` 对 dict 比较不区分键顺序，但脚本另有一条结构断言（每项恰好一个键、内层只有
+`variant`/`version`）；条目顺序由 `before["hardware"]` 原样喂回渲染函数，不会重排。
+
+## 第 3 节：改后的实际形态
+
+```console
+$ n=$(grep -n '"hardware": \[' manifest/flyme/m22/device.json | cut -d: -f1)
+$ sed -n "$((n-2)),$((n+5))p" manifest/flyme/m22/device.json
+    "hardware-platform": "qcom",
+
+    "hardware": [
+        { "android.hardware.audio":                    { "variant": "default", "version": "1.0" } },
+        { "android.hardware.authsecret":               { "variant": "default", "version": "1.0" } },
+        { "android.hardware.biometrics":               { "variant": "default", "version": "1.0" } },
+        { "android.hardware.bluetooth":                { "variant": "default", "version": "1.0" } },
+```
+
+```console
+$ n=$(grep -n '"hardware": \[' manifest/google/oriole/device.json | cut -d: -f1)
+$ sed -n "$((n)),$((n+3))p" manifest/google/oriole/device.json
+  "hardware": [
+      { "android.hardware.audio":                { "variant": "default", "version": "1.0" } },
+      { "android.hardware.bluetooth":            { "variant": "default", "version": "1.0" } },
+      { "android.hardware.camera":               { "variant": "default", "version": "1.0" } },
+```
+
+`oriole` 整份清单是 2 空格缩进，紧凑化时沿用本文件的缩进（`"hardware"` 前 2 空格、
+条目 6 空格），不强行掰成 4；列宽按本段最长键算，所以它比 15r 靠右 4 列。
+
+## 第 4 节：07 实跑（popsicle，18 个模块）
+
+```console
+$ ./out/bin/cdh device build popsicle --only 07_build_vendor
+...
+    装配树条目 556（文件 328 / 链接 199 / 目录 29），初始 58739 块（229 MB），inode 768
+[ok] 补充 HAL 可执行标签 8 条（out/devices/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/vendor/etc/selinux/vendor_file_contexts）：
+    android.hardware.bluetooth-service -> hal_bluetooth_default_exec
+    android.hardware.camera-service -> hal_camera_default_exec
+    android.hardware.gnss-service -> hal_gnss_default_exec
+    android.hardware.health-service -> hal_health_default_exec
+    android.hardware.lights-service -> hal_light_default_exec
+    android.hardware.memtrack-service -> hal_memtrack_default_exec
+    android.hardware.thermal-service -> hal_thermal_default_exec
+    android.hardware.vibrator-service -> hal_vibrator_default_exec
+[ok] 已完成
+```
+
+装配树 556 条目、8 条 HAL 可执行标签都在，说明 `hardware` 段的 18 条被完整读进
+`moduleBuilds`（漏读会在 `len(item.Hardware)==0` 处打 `[warn] 设备清单未声明 hardware`，
+或直接少编模块）。
+
+## 第 5 节：13 机型 dry-run
+
+```console
+$ for d in m22 oriole 3a 15r ace3 cph2797 pme110 rmx3823 rmx5112 rmx6688 ss9380 gold popsicle; do
+    ./out/bin/cdh device build $d --dry-run --only 07_build_vendor >/dev/null 2>&1
+    printf '%-10s rc=%d\n' $d $?
+  done
+m22        rc=0
+oriole     rc=1
+3a         rc=1
+15r        rc=0
+ace3       rc=0
+cph2797    rc=0
+pme110     rc=0
+rmx3823    rc=0
+rmx5112    rc=0
+rmx6688    rc=0
+ss9380     rc=0
+gold       rc=0
+popsicle   rc=0
+```
+
+`oriole` / `3a` 的 rc=1 是「该设备有多份基线清单，必须 `--manifest`」，与本次改动无关
+（#137 已记为同一个坑）。补上参数后均 rc=0：
+
+```console
+$ ./out/bin/cdh device build oriole --dry-run --only 07_build_vendor --manifest cp3a.261005.002.a1 >/dev/null 2>&1
+oriole(+--manifest) rc=0
+$ ./out/bin/cdh device build 3a --dry-run --only 07_build_vendor --manifest B4.1-260810-1153 >/dev/null 2>&1
+3a(+--manifest) rc=0
+```

@@ -1,0 +1,72 @@
+# 修复后：两处含空格路径的元数据完整落地
+
+# 1) <inode> filespec 实测生效（在 vendor.img 的副本上验证，真镜像只读）
+$ cat l.txt && debugfs -f l.txt /tmp/v.img
+  (l.txt) ls -l /usr/idc
+      596  100644 (1)      0      0     305  1-Jan-2009 08:00 QEMU Virtio MultiTouch.idc
+      597  100644 (1)      0      0     305  1-Jan-2009 08:00 QEMU Virtio Tablet.idc
+      598  100644 (1)      0      0     476  1-Jan-2009 08:00 tablet2multitouch.idc
+
+$ cat i.txt && debugfs -w -f i.txt /tmp/v.img
+  (i.txt) sif <597> mode 0100600
+  (i.txt) stat <597>
+Inode: 597   Type: regular    Mode:  0600   Flags: 0x80000
+Generation: 0    Version: 0x00000000:00000000
+User:     0   Group:     0   Project:     0   Size: 305
+
+$ cat e.txt && debugfs -f e.txt out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+  (e.txt) ea_list <597>
+security.selinux (25) = "u:object_r:vendor_file:s0"
+  (e.txt) stat <596>
+Inode: 596   Type: regular    Mode:  0644   Flags: 0x80000
+  security.selinux (25) = "u:object_r:vendor_file:s0"
+
+# 2) 07_build_vendor 通过
+$ cd engine && ./out/bin/cdh device build m22 --only 07_build_vendor
+==> [步骤 7] 打包 vendor.img
+    输入: out/devices/flyme/m22/12.5.0.0A/vendor（587 条目：文件 354 / 链接 199 / 目录 34）+ 基底 out/roms/lineage/lineage-23.2/super/vendor_a.img（取 UUID/features）
+    输出: out/devices/flyme/m22/12.5.0.0A/img/vendor.img（mke2fs -d -> 元数据回写 -> e2fsck -> resize2fs -M）
+==> 基底文件系统特征: UUID 2b96c597-1e2f-5ee1-9851-c4a9fa9de36e，block 4096 / inode 256，features ext_attr dir_index filetype extent sparse_super large_file huge_file uninit_bg dir_nlink extra_isize
+==> mke2fs -d 从装配树生成 vendor.img: out/devices/flyme/m22/12.5.0.0A/vendor -> out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+    装配树条目 587（文件 354 / 链接 199 / 目录 34），初始 53373 块（208 MB），inode 768
+==> 解包官方 vendor 镜像（取 SELinux 标签真值）: out/roms/flyme/m22/12.5.0.0A/super/vendor_a.img
+==> 官方镜像标签真值: 4594 条（含 297 个符号链接自身）
+==> vendor 元数据规则表: out/devices/flyme/m22/12.5.0.0A/img/vendor-meta-rules.txt, out/devices/flyme/m22/12.5.0.0A/img/vendor-meta-summary.txt
+==> debugfs 写入 587 个条目的元数据（权限 / 归属 / 时间 / SELinux）
+==> e2fsck 校验修复 vendor.img
+==> resize2fs -M 最小化收紧 vendor.img
+[ok] vendor.img 构建完成: out/devices/flyme/m22/12.5.0.0A/img/vendor.img（180748288 字节）
+
+# 关键：本次日志里「debugfs 有 N 条指令执行失败」的告警为 0 条（grep -c 结果 0）
+$ grep -c "debugfs 有" vendor-log.txt
+0
+
+$ ls -l out/devices/flyme/m22/12.5.0.0A/img/vendor.img out/devices/flyme/m22/12.5.0.0A/img/vendor-meta-*.txt
+-rw-r--r--@ 1 cuimingqiang  staff     110395 out/devices/flyme/m22/12.5.0.0A/img/vendor-meta-rules.txt
+-rw-r--r--@ 1 cuimingqiang  staff       2496 out/devices/flyme/m22/12.5.0.0A/img/vendor-meta-summary.txt
+-rw-r--r--@ 1 cuimingqiang  staff  180748288 out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+$ cat out/devices/flyme/m22/12.5.0.0A/img/vendor-meta-summary.txt
+条目 587（文件 354 / 链接 199 / 目录 34），标签 25 种
+
+# 3) 09_build_patch 通过（同一共享件）
+$ ./out/bin/cdh device build m22 --only 09_build_patch
+==> [步骤 3] 逐路径从源镜像取元数据
+    vendor.img: 读回 588 条目，[warn] 1 个缺 security.selinux（按 u:object_r:vendor_file:s0 兜底）
+[ok] 元数据就绪：823 条目，标签 25 种
+==> [步骤 5] debugfs 回填属主与标签并回读校验
+    输出: out/devices/flyme/m22/12.5.0.0A/patch/patch-debugfs.cmd（3292 条命令：sif 2469 + ea_set 823，标签值文件 25 个）
+[ok] 回填 823 条目，回读 823/823 一致
+==> [步骤 6] e2fsck 修复一致性
+[ok] e2fsck 通过（退出码 0 = 无需修复）
+[ok] patch.img 发布完成: out/devices/flyme/m22/12.5.0.0A/img/patch.img（402653184 字节，sha256 e0d1b581eca1）
+
+# 4) 单测通过（3 个用例）
+$ cd engine/build && go test ./internal/e2fs/ -v
+=== RUN   TestFilespecs
+--- PASS: TestFilespecs
+=== RUN   TestFilespecsKeepsPlainPaths
+--- PASS: TestFilespecsKeepsPlainPaths
+=== RUN   TestFilespecsRejectsSpacedDir
+--- PASS: TestFilespecsRejectsSpacedDir
+PASS
+ok      .../internal/e2fs

@@ -1,0 +1,32 @@
+# 11_pack_vda：底包成员名从 vda.qcow2 变成 vda.img（raw）
+$ cd engine && ./out/bin/cdh device build m22 --only 11_pack_vda
+==> 底盘: roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2
+==> [步骤 0] 解析计划
+    底盘:       roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2（zip）
+    盘集目录:   out/dist/flyme/m22/12.5.0.0A（vda.img 不存在，将新建）
+==> [步骤 1] 校验来源镜像并生成 device.json
+    [ok] super.img 9.39 GiB
+    [warn] 缺 boot.img（04_build_boot 产物），对应分区沿用底盘 lineage 原版
+    [warn] 缺 vendor_boot.img（05_build_vendor_boot 产物），对应分区沿用底盘 lineage 原版
+    [ok] patch.img 384.0 MiB
+==> [步骤 2] 准备 vda 底盘
+    输入: roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2
+[err] 阶段 pack_vda 失败: 底包 /Volumes/work/cloud-phone-hub/engine/roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip 里没有 LineageOS_on_arm64.utm/Data/vda.qcow2（成员: LineageOS_on_arm64.utm/Data/efi_vars.fd, LineageOS_on_arm64.utm/Data/vda.img, LineageOS_on_arm64.utm/Data/vdb.qcow2, LineageOS_on_arm64.utm/config.plist）
+
+# 底包成员实测（四代底包成员名与解压后体积）
+$ for f in roms/lineage/*.zip; do python3 -c "zipfile 列成员" "$f"; done
+UTM-VM-lineage-21.0-…zip   LineageOS_on_arm64.utm/Data/vda.qcow2   2.01 GiB
+UTM-VM-lineage-22.2-…zip   LineageOS_on_arm64.utm/Data/vda.qcow2   2.21 GiB
+UTM-VM-lineage-23.2-…zip   LineageOS_on_arm64.utm/Data/efi_vars.fd  0.00 GiB
+                           LineageOS_on_arm64.utm/Data/vda.img     13.00 GiB
+                           LineageOS_on_arm64.utm/Data/vdb.qcow2    0.00 GiB
+                           LineageOS_on_arm64.utm/config.plist      0.00 GiB
+UTM-VM-lineage-24.0-…zip   LineageOS_on_arm64.utm/Data/vda.img     13.00 GiB
+
+# 格式判定：读成员前 8 字节（zip 内是 deflate，流式读几字节即可，不必解 13 GiB）
+$ python3 -c "读前 8 字节"
+LineageOS_on_arm64.utm/Data/vda.img   -> 0000000000000000（全零 = raw，无 qcow2 头）
+LineageOS_on_arm64.utm/Data/vdb.qcow2 -> 514649fb00000003（qcow2 魔数）
+
+# 只看扩展名会误判：vda.img 是 raw 但 vdb 用的是 .qcow2；反过来 --member 也可能指向任意成员，
+# 所以必须解出后按魔数分流，不能凭文件名判断。

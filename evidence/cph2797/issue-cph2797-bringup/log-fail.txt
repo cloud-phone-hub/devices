@@ -1,0 +1,59 @@
+# CPH2797 首轮起机失败现场（实例 6，spec cph2797_16.0.8.301_EX01）
+# 采集：2026-10-30，来源 out/core/daemon/runtime/cph2797_16.0.8.301_EX01/6/qemu.log
+# 判据口径：串口日志（kernel printk + logd 混流）逐行 grep，计数在文件末尾给出。
+
+## 1. SurfaceFlinger：10bit target 分配失败 → assert → SIGABRT 回环
+12-31 19:00:28.981   910   913 E android.hardware.graphics.allocator-service.minigbm_upstream: Failed to allocate. Unsupported combination: pixel format:RGBA_FP16, drm format:DRM_FOURCC_AB4H, usage:CPU_READ_NEVER | CPU_WRITE_NEVER | GPU_TEXTURE | GPU_RENDER_TARGET (0x300)
+12-31 19:00:28.982   910   913 E android.hardware.graphics.allocator-service.minigbm_upstream: Failed to allocate. Unsupported combination: pixel format:RGBA_1010102, drm format:DRM_FOURCC_AB30, usage:CPU_READ_NEVER | CPU_WRITE_NEVER | GPU_TEXTURE | GPU_RENDER_TARGET (0x300)
+12-31 19:00:33.950   675   688 D RenderEngine: drawOplus160910401 exit 11
+12-31 19:00:33.980   675   688 D RenderEngine: drawOplus544806056 enter {0.000000, 0.000000, 1080.000000, 2340.000000} 12
+12-31 19:00:33.980   675   688 F RenderEngine: input buffer not gpu readable
+12-31 19:00:33.980   675   688 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 688 (RenderEngine), pid 675 (surfaceflinger)
+12-31 19:00:33.xxx  3539  3539 F DEBUG   : Abort message: 'input buffer not gpu readable'
+12-31 19:00:33.xxx  3539  3539 F DEBUG   :       #03 pc 000000000042c334  /system/bin/surfaceflinger (android::renderengine::skia::SkiaRenderEngine::drawLayersInternal(...)+24164)
+12-31 19:00:33.xxx  3539  3539 F DEBUG   :       #05 pc 00000000001e89c0  /system_ext/lib64/librenderengineextimpl.so (android::renderengine::skia::TemporaryPrecompile::draw(android::renderengine::skia::SkiaRenderEngine*)+267184)
+12-31 19:00:33.xxx  3539  3539 F DEBUG   :       #06 pc 00000000001ee0c8  /system_ext/lib64/librenderengineextimpl.so (android::renderengine::skia::SkiaRenderEngineExtImpl::precompile(...)+2744)
+12-31 19:00:33.xxx  3539  3539 F DEBUG   :       #07 pc 0000000000436bc0  /system/bin/surfaceflinger (android::renderengine::skia::Cache::primeShaderCache(...)+3072)
+12-31 19:01:45.818  3393  3432 D RenderEngine: TemporaryPrecompile::draw 1080 * 2340 start
+12-31 19:01:46.624  3539  3539 F DEBUG   : Abort message: 'input buffer not gpu readable'
+# init 侧表现：SF 反复退出，但首轮还没触发整机重启
+[   89.351317][    T1] init: Service 'surfaceflinger' (pid 2847) received signal 6
+[   95.116848][    T1] init: Service 'surfaceflinger' (pid 3039) received signal 6
+# 本实例统计（qemu.log 全文）：'input buffer not gpu readable' 412 次，
+# TemporaryPrecompile 621 次，Unsupported combination 1039 次，
+# "Service 'surfaceflinger' (pid" 422 行。
+
+## 2. audioserver：死等 IModule/virtual，永不注册 AudioPolicyService
+# servicemanager / init 侧：服务不存在，lazy start 也无法把它拉起来
+[   85.945741][  T261] servicemanager: Caller(pid=2836,uid=1041,sid=u:r:audioserver:s0) Since 'android.hardware.audio.core.IModule/virtual' could not be found trying to start it as a lazy AIDL service.
+[   85.947659][    T1] init: Control message: Could not find 'aidl/android.hardware.audio.core.IModule/virtual' for ctl.interface_start from pid: 261 (/system/bin/servicemanager)
+12-31 19:01:25.920  2836  2836 W ServiceManagerCppClient: Waited one second for android.hardware.audio.core.IModule/virtual (is service started? Number of threads started in the threadpool: 16. Are binder threads started and available?)
+12-31 19:01:25.923   261  2947 W libc    : Unable to set property "ctl.interface_start" to "aidl/android.hardware.audio.core.IModule/virtual": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+# system_server 侧：拿不到 IAudioFlingerService，AudioService 初始化即被 Watchdog 判死
+12-31 19:05:14.213  8456  8456 D AudioSystem: getService: IAudioFlingerService retrieved: 0x0  IAudioFlinger cached: 0x0
+# 本实例统计：'IModule/virtual' 6561 次，Watchdog 关键字 4 次。
+
+## 3. 放大成整机重启循环：updatable 服务在 boot 完成前崩溃 4 次
+[   44.806581][    T1] init: process with updatable components 'android-hardware-media-c2-hal' exited 4 times before boot completed
+[   44.809386][    T1] init: process with updatable components 'vendor-dolby-media-c2-hal' exited 4 times before boot completed
+[   44.810299][    T1] init: process with updatable components 'vendor.ir-default' exited 4 times before boot completed
+[  289.382314][    T1] init: process with updatable components 'vendor-dolby-media-c2-hal' exited 4 times before boot completed
+[  359.869697][    T1] init: process with updatable components 'vendor.nfc_hal_service' exited 4 times before boot completed
+[  360.106948][    T1] init: processing action (sys.init.updatable_crashing=1) from (/system/etc/init/flags_health_check.rc:10)
+[  360.769960][    T1] init: process with updatable components 'netdiag' exited 4 times before boot completed
+# 现场 getprop：sys.init.updatable_crashing=1、sys.boot_completed=（空）、bootanim=running
+# /odm/bin/hw 的失败样本（缺库 / 名字冲突）
+12-31 19:00:03.437   339   339 F linker  : CANNOT LINK EXECUTABLE "/odm/bin/hw/vendor.oplus.hardware.esepower-service": library "libMcClient.so" not found: needed by main executable
+12-31 19:00:03.438   341   341 F linker  : CANNOT LINK EXECUTABLE "/odm/bin/hw/vendor.oplus.hardware.secure_element-service": library "libMcClient.so" not found: needed by main executable
+12-31 19:00:23.603   643   643 F linker  : CANNOT LINK EXECUTABLE "/odm/bin/hw/android.hardware.nfc-service.nxp": library "libmemunreachable.so" not found: needed by main executable
+12-31 19:00:23.617   646   646 F DEBUG   : Cmdline: /odm/bin/hw/android.hardware.power.stats-impl.oplus
+12-31 19:00:23.617   646   646 F DEBUG   : Abort message: 'Check failed: s == STATUS_OK '
+
+## 4. 附带发现：实测内核与清单声明不一致
+# getprop 实测
+ro.kernel.version = 6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k
+# 清单 baselines/CPH2797_16.0.8.301_EX01_A11_full.json 声明
+rom.lineage.kernel.version = 6.12.81, vermagic 6.12.81-4k-g4f6bf47200d9
+rom.vendor.kernel.uname-version = Linux version 6.12.23-android16-5-...
+# → pack_vda 取到的 boot 不是清单声明的 6.12.81（疑似 06/11 取错内核树），
+#   6.12 的 in-tree 模块会因 vermagic 不符无法加载。

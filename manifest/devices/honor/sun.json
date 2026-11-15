@@ -1,0 +1,38 @@
+{
+  "id": 10,
+  "official": "荣耀",
+  "brand": "honor",
+  "model": "Honor Magic7 RSR",
+  "device": "sun",
+  "platform": "qcom",
+  "resolution": "1280x2800",
+  "inch": "72x158",
+  "density": 560,
+  "smp": 8,
+  "memory": [
+    8192
+  ],
+  "storage": [
+    128000,
+    256000
+  ],
+  "extra": {
+    "board": "qcom",
+    "hostHvc": {
+      "host-hvc-adbkey": "hvc2",
+      "host-hvc-bluetooth": "hvc5",
+      "host-hvc-daemon": "hvc7",
+      "host-hvc-keymint": "hvc3",
+      "host-hvc-radio": "hvc4",
+      "host-hvc-wifi": "hvc9",
+      "host-hvc-wifi-data": "hvc10"
+    },
+    "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f",
+    "cmdline": [
+      "vendorcountry=porsche/normal",
+      "devmodel=PTP-N59",
+      "androidboot.product.hardware.sku=PTP-N59"
+    ]
+  },
+  "updatedAt": "2026-11-05T04:33:32Z"
+}

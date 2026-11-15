@@ -1,0 +1,176 @@
+# 改前观测记录（2026-11-03，清单对齐前）
+
+本文件记录**改动前**的实际形态。机型 README 已被本次改动覆盖，第 1、4 节的原文摘录取自改动前的
+读取结果（取样方式写在每节标题下）；第 2、3、5 节的命令现在仍可复跑，输出以 `# 实测` 标注。
+
+---
+
+## 1. 机型 README 的三种形态（改前读取结果）
+
+取样方式：逐份 `Read` 各机型 `README.md`，取其 `## ` / `### ` 标题清单与总行数。
+
+| 机型 | 改前形态 | 缺的骨架节 |
+| :--- | :--- | :--- |
+| oppo/cph2797 | 只有 `## modules.redirect（cdh_redirect 规则表）` + 「原说明」text 块 | 目录 / 07 装配顺序 / vendor 文件来源 / 维护约定 / 已知缺口 |
+| samsung/ss9380 | 同上（静态树已有 21 件，却一件都没登记） | 同上 |
+| oneplus/15r | 同上 | 同上 |
+| xiaomi/popsicle | 规则表 + 渲染结果 + 已撤规则 + perf2 / userdata 两节 | 目录 / 07 装配顺序 / vendor 文件来源 / 维护约定 / 已知缺口 |
+| google/oriole | 83 行，仅规则表 10 条 + 原说明 | 同上 |
+| nothing/3a / oneplus/ace3 / realme/rmx3823 / rmx5112 / rmx6688 | 只有旧「原说明」，部分节标题与模板不一致 | 目录 / 07 装配顺序 / vendor 文件来源 / 已知缺口 |
+| oppo/pme110 | **没有 README.md** | 全部 |
+| flyme/m22 | 节齐全，但 `## 维护约定` 出现**两次**（第 226 行新版、第 400 行旧版），旧版仍写「未声明沿用内置」 | —（重复 + 过期口径） |
+| xiaomi/gold | 节齐全，缺「已知缺口」一节（模板 §3 要求） | 已知缺口 |
+
+`m22` 的旧「维护约定」原文（改前第 400~410 行）：
+
+```text
+## 维护约定
+
+- 新增 `<模块>_config.xml`：文件名必须与 HAL 源码常量一致；文件头写清「取值来源 + 消费方 +
+  覆盖 env」。
+- 从官方 ROM 提取的文件：在本表登记来源镜像路径与 md5，并给出可复现的
+  `dump.erofs --cat --path=…` 抽取命令。
+- 被基线清单 `vendor.files` 覆盖的路径（本机型只有 `lib64/libpng.so`、`etc/permissions`
+  两项）不要放同名文件；需要新增覆盖项时改 `baselines/12.5.0.0A.json` 的 `vendor.files`
+  （先用 `dump.erofs --ls/--cat` 核官方 vendor 确实有该路径，否则非 optional 条目会让
+  07 整阶段失败）。`etc/selinux` 始终不要纳入（策略必须与 lineage 基座同源）。
+- 改完本目录需重跑 `07 → 09 → 11`（HAL 源码改动还要先删产物强制重编）。
+```
+
+---
+
+## 2. `device.json` 的品牌键（改前写 `brand`）
+
+取样方式：`json.load` 后检查顶层键；改前三份命中 `brand`。
+
+```text
+oneplus/15r   → "brand": "15r"
+oneplus/ace3  → "brand": "ace3"
+oppo/pme110   → "brand": "pme110"
+```
+
+改后复核（可复跑）：
+
+```bash
+# 实测：0
+cd engine/manifest && python3 -c "
+import json,glob
+print(sum('brand' in json.load(open(f)) for f in glob.glob('*/*/device.json')))"
+```
+
+---
+
+## 3. 模板与代码不一致（可复跑）
+
+### 3.1 `Template.md` §3 维护约定（改前口径）
+
+第 3 条的原意是：清单 `vendor.files` 未声明时**沿用引擎内置集合**（`files.go` 的
+`builtinFileOps`，MTK 口径 10 条），声明了就只看清单。`builtinFileOps` 在 #142 删除后，
+这段话没跟着改。
+
+### 3.2 代码侧：`builtinFileOps` 已不存在
+
+```bash
+# 实测：仅 1 处，且是说明注释，不是实现
+cd engine && grep -rn 'builtinFileOps' --include='*.go' build | wc -l
+```
+
+```text
+1
+build/07_build_vendor/files.go:80:// 引擎不再有内置集合（2026-11-03 删掉 builtinFileOps）：那份集合是 gold 一家机的 MTK
+```
+
+模板还在把这条已删除的集合当成「未声明时的默认值」写，读者按模板会以为「不写 `vendor.files`
+就自动走 MTK 口径 10 条」，而实际是空表 + 一行 `[warn]`。
+
+### 3.3 `Template.md` §7 只列两个文件名，代码支持四个
+
+```bash
+# 实测
+cd engine && sed -n '54,59p' build/07_build_vendor/sepolicy.go
+```
+
+```go
+var sepolicyPatches = []sepolicyPatch{
+	{File: "vendor_sepolicy.cil", Target: filepath.Join("etc", "selinux", "vendor_sepolicy.cil"), Comment: ";;"},
+	{File: "vendor_file_contexts", Target: filepath.Join("etc", "selinux", "vendor_file_contexts"), Comment: "#"},
+	{File: "vendor_property_contexts", Target: filepath.Join("etc", "selinux", "vendor_property_contexts"), Comment: "#"},
+	{File: "vendor_service_contexts", Target: filepath.Join("etc", "selinux", "vendor_service_contexts"), Comment: "#"},
+}
+```
+
+模板 §7 改前只写了前两行对应的文件名，`vendor_property_contexts` / `vendor_service_contexts`
+在文档里无处可查。
+
+---
+
+## 4. `manifest/README.md` 的过期表述（改前原文）
+
+第 3 行：
+
+```text
+`manifest/<vendor>/<brand>/device.json` 是引擎侧设备运行参数的单一事实源。
+```
+
+第 98 行：
+
+```text
+**约束**：`manifest/<vendor>/<brand>/vendor/**` 里的件若要在厂商原件之上做 CDH 改动，就**整份**
+```
+
+第 210~212 行（「已知缺口」首条）：
+
+```text
+- 仅 gold / m22 / cph2797 / ss9380 写了 `hardware`（这四台也都有
+  `hardware-platform`；m22 / ss9380 / gold 另有 `modules.input`）；其余 8 台沿用 daemon 内建
+  输入身份、07_build_vendor 不做 HAL 平台覆盖层，需按 guest 实际 HAL 需求另补。
+```
+
+第 215~221 行（解包状态）：
+
+```text
+- `out/roms/<vendor>/<device>/<build-id>/super/vendor_a.img` 已就位的 8 台是 gold / m22 /
+  cph2797 / ss9380 / popsicle / oriole / 3a / 15r；ace3 / pme110 / rmx3823 / rmx5112 /
+  rmx6688 五台尚未实跑 `01_unpack`。…
+```
+
+第 222~223 行（`vendor/build.prop`）：
+
+```text
+- `vendor/build.prop` 只 3 台有文件，其中 gold 与厂商原件不一致（见上文「约束」
+  一节的现状表）；4 台已解包未补、5 台未解包。补齐前不要把 gold 那份当厂商原值引用。
+```
+
+三条都与事实相反：`hardware` 实为 7 台；`vendor/build.prop` 2026-11-03 已全仓删除、13 台都没有；
+`engine/out/roms/` 是构建产物目录（不入库），当时本机已无解包树。
+
+---
+
+## 5. 现状矩阵：缺口集中在哪（改后实测，可复跑）
+
+```bash
+cd engine/manifest && python3 -c "
+import json,glob
+for f in sorted(glob.glob('*/*/device.json')):
+    j=json.load(open(f)); v,d=f.split('/')[1:3]
+    print(f'{v}/{d:9s} hardware={len(j.get(\"hardware\") or []):2d} plat={j.get(\"hardware-platform\")} modules={\"有\" if j.get(\"modules\") else \"无\"}')"
+```
+
+```text
+flyme/m22       hardware=36 plat=qcom modules=有
+google/oriole    hardware=17 plat=None modules=有
+nothing/3a        hardware= 0 plat=None modules=有
+oneplus/15r       hardware=20 plat=qcom modules=有
+oneplus/ace3      hardware= 0 plat=None modules=有
+oppo/cph2797   hardware=29 plat=mtk modules=有
+oppo/pme110    hardware= 0 plat=None modules=无      ← 连 modules 段都没有
+realme/rmx3823   hardware= 0 plat=None modules=有
+realme/rmx5112   hardware= 0 plat=None modules=有
+realme/rmx6688   hardware= 0 plat=None modules=有
+samsung/ss9380    hardware=31 plat=qcom modules=有
+xiaomi/gold      hardware=17 plat=mtk modules=有
+xiaomi/popsicle  hardware=20 plat=qcom modules=有
+```
+
+`hardware=0` 的 6 台与 `modules=无` 的 pme110 是**真缺口**（HAL 面与 redirect 规则未补），
+本次只做文档对齐，没有替它们编造内容；清单已写进 `manifest/README.md`「已知缺口」与各自 README。

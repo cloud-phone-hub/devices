@@ -1,0 +1,22 @@
+=== 修复后 out/vendor 各版本/变体产物中 oplus / samsung 符号与字符串命中统计 ===
+out/vendor/android14/bin/hw/android.hardware.health-service                    oplus_hits= 0  samsung_hits= 0
+out/vendor/android15/bin/hw/android.hardware.health-service                    oplus_hits= 0  samsung_hits= 0
+out/vendor/android16/bin/hw/android.hardware.health-service                    oplus_hits= 0  samsung_hits= 0
+out/vendor/android17/bin/hw/android.hardware.health-service                    oplus_hits= 0  samsung_hits= 0
+out/vendor/android14/oplus/bin/hw/android.hardware.health-service              oplus_hits=44  samsung_hits= 0
+out/vendor/android14/samsung/bin/hw/android.hardware.health-service            oplus_hits= 0  samsung_hits=173
+out/vendor/android15/oplus/bin/hw/android.hardware.health-service              oplus_hits=44  samsung_hits= 0
+out/vendor/android15/samsung/bin/hw/android.hardware.health-service            oplus_hits= 0  samsung_hits=173
+out/vendor/android16/oplus/bin/hw/android.hardware.health-service              oplus_hits=44  samsung_hits= 0
+out/vendor/android16/samsung/bin/hw/android.hardware.health-service            oplus_hits= 0  samsung_hits=173
+out/vendor/android17/oplus/bin/hw/android.hardware.health-service              oplus_hits=44  samsung_hits= 0
+out/vendor/android17/samsung/bin/hw/android.hardware.health-service            oplus_hits= 0  samsung_hits=173
+out/vendor/android15/bin/hw/android.hardware.composer.hwc3-service.drm         oplus_hits= 0  samsung_hits= 0
+out/vendor/android15/oplus/bin/hw/android.hardware.composer.hwc3-service.drm   oplus_hits=16  samsung_hits= 0
+=== cdh-vendor hal list --android 15 变体枚举 ===
+  android.hardware.graphics.composer3 hidl -> android.hardware.composer.hwc3-service.drm -> 13 包 HIDL 头（变体: oplus）
+  android.hardware.health            aidl -> android.hardware.health-service（变体: oplus, samsung）
+
+=== 单元测试 ===
+  engine/vendor/build: ok build/internal/spec (含 TestRealHealthAndComposer3OplusVariants), build/internal/halbuild, build/internal/toolchain, build/internal/deps, build/internal/profile
+  engine/build       : ok 全 20 个测试包通过

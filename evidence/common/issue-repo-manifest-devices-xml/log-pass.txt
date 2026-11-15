@@ -1,0 +1,85 @@
+# repo manifest 为 devices/ 建立 devices.xml #241 —— 改动后记录（2026-11-15）
+
+## 1. XML 解析与项目路径去重
+
+```
+$ python3 - <<'PY'
+import glob, xml.etree.ElementTree as ET
+paths = {}
+for f in sorted(glob.glob('manifest/*.xml')):
+    root = ET.parse(f).getroot()
+    inc = [e.get('name') for e in root.findall('include')]
+    projs = [(e.get('path'), e.get('name')) for e in root.findall('project')]
+    print(f, '| include:', inc, '| projects:', len(projs))
+    for p, n in projs:
+        if p in paths:
+            print('  重复路径!', p, '已见于', paths[p])
+        paths[p] = f
+print('项目总数(不含 include 展开):', len(paths))
+print('devices 顶层项目:', [p for p in paths if p == 'devices'])
+PY
+manifest/cuttlefish.xml | include: [] | projects: 14
+manifest/default.xml | include: ['devices.xml', 'qemu.xml', 'cuttlefish.xml', 'kernel.xml'] | projects: 2
+manifest/devices.xml | include: [] | projects: 1
+manifest/kernel.xml | include: [] | projects: 8
+manifest/qemu.xml | include: [] | projects: 18
+
+项目总数(不含 include 展开): 43
+devices 顶层项目: ['devices']
+```
+
+## 2. repo 解析真实 manifest（无嵌套/重复路径报错）
+
+```
+$ cd .tmp/nest-test/client2 && repo init -u file://<备份的 manifest 仓库> -m default.xml --no-repo-verify
+repo has been initialized in .../client2
+$ repo manifest -o - | grep "project "
+  <project name="devices" remote="cloud-phone-hub" revision="main"/>
+  <project name="kernel/common" path="devices/kernels/5.10" remote="aosp" revision="android13-5.10"/>
+  <project name="android_kernel_virt_virtio" path="devices/kernels/5.15" ... revision="lineage-20"/>
+  <project name="android_kernel_virt_virtio" path="devices/kernels/6.1" ... revision="lineage-21"/>
+  <project name="android_kernel_virt_virtio" path="devices/kernels/6.6" ... revision="lineage-22.1"/>
+  <project name="android_kernel_virt_virtio" path="devices/kernels/6.12" ... revision="lineage-23.2"/>
+  <project name="android_kernel_virt_virtio" path="devices/kernels/6.18" ... revision="lineage-24.0"/>
+  <project name="kernel_lineage_patches" path="devices/kernels/patches" ... revision="main"/>
+  <project name="tiann/KernelSU" path="devices/modules/kernelsu/source" remote="github" revision="v3.3.1"/>
+```
+
+## 3. 嵌套 project 沙盒实测（repo 2.71）
+
+manifest：
+
+```xml
+<project path="devices" name="devices" remote="local" revision="main" />
+<project path="devices/kernels/5.10" name="kernel" remote="local" revision="main" />
+```
+
+父仓库 `.gitignore`：`kernels/`、`modules/kernelsu/source/`。
+
+```
+$ repo sync -j1 --no-clone-bundle
+repo sync has finished successfully.
+$ find . -maxdepth 4 -not -path './.repo*'
+./devices
+./devices/.git
+./devices/.gitignore
+./devices/README.md
+./devices/kernels
+./devices/kernels/5.10
+./devices/kernels/5.10/.git
+./devices/kernels/5.10/Makefile
+$ repo status
+nothing to commit (working directory clean)
+$ git -C devices status --porcelain
+（空）
+```
+
+结论：父项目 `devices` 先检出，子项目落进被 `.gitignore` 排除的 `kernels/`，父仓库
+`repo status` / `git status` 均不显脏，repo 未拒绝嵌套声明。
+
+## 4. 回归
+
+```
+$ cd agent && go build ./...
+build OK
+```

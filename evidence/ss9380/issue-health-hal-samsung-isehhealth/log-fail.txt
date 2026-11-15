@@ -1,0 +1,28 @@
+# 失败态取证：BatteryService 因 ISehHealth 为 null 抛 NPE（2026-10-30，改之前）
+
+# 命令：adb -s 127.0.0.1:5911 logcat -b crash -d -t 80
+# 机型标识：samsung/pa3qzcx/pa3q:16/BP4A.251205.006/S9380ZCSDCZH1
+
+--------- beginning of crash
+F DEBUG   : Build fingerprint: 'samsung/pa3qzcx/pa3q:16/BP4A.251205.006/S9380ZCSDCZH1:user/release-keys'
+java.lang.RuntimeException: Failed to start service com.android.server.BatteryService: onStart threw an exception
+Caused by: java.lang.NullPointerException: Attempt to invoke virtual method
+  'void vendor.samsung.hardware.health.ISehHealth$Stub$Proxy.registerCallback(
+     com.android.server.health.HealthRegCallbackAidl$HalInfoCallback)'
+  on a null object reference
+    at com.android.server.health.HealthRegCallbackAidl.onRegistration
+    at com.android.server.health.HealthServiceWrapperAidl.registerCallback
+    at com.android.server.BatteryService.onStart
+    at com.android.server.SystemServiceManager.startService
+    at com.android.server.SystemServer.startBootstrapServices
+    at com.android.server.SystemServer.main
+
+# 同一时刻「AOSP 那套明明在跑」的反证
+# adb shell getprop init.svc.vendor.health-default
+running
+# adb shell service list | grep health
+android.hardware.health.IHealth/default
+
+# 结果：system_server 自杀 → init 每 5 s 重启一次 zygote，sys.boot_completed 永不置位
+# init: Service 'zygote' (pid X) received SIGKILL  ← 反复出现
+# getprop sys.boot_completed                       ← 一直为空

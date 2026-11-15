@@ -1,0 +1,116 @@
+# 1. 修复后全新实例 gold_15-OS3.0.11.0.VNQCNXM/2 运行时核验（batch4-post-runtime.txt）
+getenforce=Enforcing
+service_list_count=464 (raw_lines=465, note line 0 header 'Found N services:')
+placeholders_total=44 present=44 missing=0
+forbidden_found=[]
+keep_missing=[]
+props:
+  sys.boot_completed=1
+  init.svc.bootanim=stopped
+  init.svc.vndservicemanager=running
+  init.svc.connsyslogger=running
+  init.svc.aee_aed=running
+  init.svc.aee_aed64=running
+  init.svc.aee-reinit=stopped
+  init.svc.update_verifier=stopped
+  init.svc.boringssl_self_test32=
+  init.svc.boringssl_self_test32_vendor=
+  init.svc.boringssl_self_test_apk32=
+  init.svc.zygote_secondary=
+qemu.log Multiple different specifications count=0, Service 'servicemanager' count=0
+
+=== Registered placeholders (44 expected) ===
+  OK vendor.mediatek.hardware.apuware.utils.IApuwareUtils/default
+  OK vendor.mediatek.hardware.lbs.ILbs/AgpsDebugInterface
+  OK vendor.mediatek.hardware.lbs.ILbs/AgpsInterface
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_agps2framework
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_agps2gnssAidl
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_agpsd2debugService
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_debugService2agpsd
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_debugService2mnld
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_framework2agps
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_gnssAidl2agps
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_jam2mnl
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_lbs_log_v2s
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_agps
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_bt
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_ipaddr
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_lbs
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_network
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_sensor
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_lppe_socket_wlan
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_meta2mnld
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_mnl2jam
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_mnld2debugService
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_mnld2mtklogger
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_mnld2nlputils
+  OK vendor.mediatek.hardware.lbs.ILbs/mtk_mtklogger2mnld
+  OK vendor.dolby.dms.IDms/default
+  OK vendor.mediatek.hardware.audio.IMtkAudio/default
+  OK vendor.mediatek.hardware.camera.bgservice.IBGService/default
+  OK vendor.mediatek.hardware.camera.isphal.IISPModule/internal/1
+  OK vendor.mediatek.hardware.mmagent.IMMAgent/default
+  OK vendor.mediatek.hardware.mtkpower.IMtkPowerService/default
+  OK vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist/default
+  OK vendor.mediatek.hardware.netdagent.INetdagents/default
+  OK vendor.mediatek.hardware.nvram.INvram/default
+  OK vendor.mediatek.hardware.nwk_opt_new.INwkOptNew/default
+  OK vendor.mediatek.hardware.videotelephony.IVideoTelephony/default
+  OK vendor.xiaomi.hardware.micharge.IMiCharge/default
+  OK vendor.xiaomi.hardware.mikeybag.IMiKeyBagService/default
+  OK vendor.xiaomi.hardware.misauth.IMiSharedAuth/default
+  OK vendor.xiaomi.hardware.mrm.IMiCertificate/default
+  OK vendor.xiaomi.hardware.mrm.IMrm/default
+  OK vendor.xiaomi.hardware.mrm.IMrmRemoteAuth/default
+  OK vendor.mediatek.hardware.gnss.IMtkGnss/default
+  OK android.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default
+
+=== HAL placeholder logcat lines ===
+11-14 23:09:20.627   721  3215 D PackageManager: set app component=ComponentInfo{com.miui.securitymanager/com.miui.securitymanager.PlaceholderAppWidgetProvider} enabled state: 2 from com.miui.securitycenter,uid=1000,pid=5045
+11-14 23:09:33.841   721   892 D SystemServerTimingAsync: ssm.onUnlockedUser-0_com.android.server.soundtrigger_middleware.SoundTriggerMiddlewareService$Lifecycle
+11-14 23:09:33.841   721   892 D SystemServerTimingAsync: ssm.onUnlockedUser-0_com.android.server.soundtrigger.SoundTriggerService
+11-14 23:09:38.847   721  8740 D SystemServerTimingAsync: ssm.onCompletedEventUser-0_{|Unlocked|}_com.android.server.soundtrigger_middleware.SoundTriggerMiddlewareService$Lifecycle
+11-14 23:09:38.847   721  8738 D SystemServerTimingAsync: ssm.onCompletedEventUser-0_{|Unlocked|}_com.android.server.soundtrigger.SoundTriggerService
+11-14 23:09:42.894  9371  9371 D nativeloader: InitLlndkLibrariesProduct: libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libRS.so:libandroid_net.so:libapexsupport.so:libbinder_ndk.so:libc.so:libcgrouprc.so:libclang_rt.asan-aarch64-android.so:libclang_rt.asan-arm-android.so:libclang_rt.hwasan-aarch64-android.so:libcom.android.tethering.connectivity_native.so:libdl.so:libft2.so:liblog.so:libm.so:libmediandk.so:libnativewindow.so:libneuralnetworks.so:libselinux.so:libsync.so:libvendorsupport.so:libvndksupport.so:libvulkan.so
+11-14 23:09:43.414  9564  9564 D nativeloader: InitLlndkLibrariesProduct: libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libRS.so:libandroid_net.so:libapexsupport.so:libbinder_ndk.so:libc.so:libcgrouprc.so:libclang_rt.asan-aarch64-android.so:libclang_rt.asan-arm-android.so:libclang_rt.hwasan-aarch64-android.so:libcom.android.tethering.connectivity_native.so:libdl.so:libft2.so:liblog.so:libm.so:libmediandk.so:libnativewindow.so:libneuralnetworks.so:libselinux.so:libsync.so:libvendorsupport.so:libvndksupport.so:libvulkan.so
+11-14 23:09:43.494  9602  9602 D nativeloader: InitLlndkLibrariesProduct: libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libRS.so:libandroid_net.so:libapexsupport.so:libbinder_ndk.so:libc.so:libcgrouprc.so:libclang_rt.asan-aarch64-android.so:libclang_rt.asan-arm-android.so:libclang_rt.hwasan-aarch64-android.so:libcom.android.tethering.connectivity_native.so:libdl.so:libft2.so:liblog.so:libm.so:libmediandk.so:libnativewindow.so:libneuralnetworks.so:libselinux.so:libsync.so:libvendorsupport.so:libvndksupport.so:libvulkan.so
+11-14 23:09:43.738  9667  9667 D nativeloader: InitLlndkLibrariesProduct: libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libRS.so:libandroid_net.so:libapexsupport.so:libbinder_ndk.so:libc.so:libcgrouprc.so:libclang_rt.asan-aarch64-android.so:libclang_rt.asan-arm-android.so:libclang_rt.hwasan-aarch64-android.so:libcom.android.tethering.connectivity_native.so:libdl.so:libft2.so:liblog.so:libm.so:libmediandk.so:libnativewindow.so:libneuralnetworks.so:libselinux.so:libsync.so:libvendorsupport.so:libvndksupport.so:libvulkan.so
+11-14 23:09:43.961  9710  9710 D nativeloader: InitLlndkLibrariesProduct: libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libRS.so:libandroid_net.so:libapexsupport.so:libbinder_ndk.so:libc.so:libcgrouprc.so:libclang_rt.asan-aarch64-android.so:libclang_rt.asan-arm-android.so:libclang_rt.hwasan-aarch64-android.so:libcom.android.tethering.connectivity_native.so:libdl.so:libft2.so:liblog.so:libm.so:libmediandk.so:libnativewindow.so:libneuralnetworks.so:libselinux.so:libsync.so:libvendorsupport.so:libvndksupport.so:libvulkan.so
+11-14 23:09:44.351  9747  9747 D nativeloader: InitLlndkLibrariesProduct: libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libRS.so:libandroid_net.so:libapexsupport.so:libbinder_ndk.so:libc.so:libcgrouprc.so:libclang_rt.asan-aarch64-android.so:libclang_rt.asan-arm-android.so:libclang_rt.hwasan-aarch64-android.so:libcom.android.tethering.connectivity_native.so:libdl.so:libft2.so:liblog.so:libm.so:libmediandk.so:libnativewindow.so:libneuralnetworks.so:libselinux.so:libsync.so:libvendorsupport.so:libvndksupport.so:libvulkan.so
+11-14 23:09:44.392  9779  9779 D nativeloader: InitLlndkLibrariesProduct: libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libRS.so:libandroid_net.so:libapexsupport.so:libbinder_ndk.so:libc.so:libcgrouprc.so:libclang_rt.asan-aarch64-android.so:libclang_rt.asan-arm-android.so:libclang_rt.hwasan-aarch64-android.so:libcom.android.tethering.connectivity_native.so:libdl.so:libft2.so:liblog.so:libm.so:libmediandk.so:libnativewindow.so:libneuralnetworks.so:libselinux.so:libsync.so:libvendorsupport.so:libvndksupport.so:libvulkan.so
+11-14 23:09:44.445  9820  9820 D nativeloader: InitLlndkLibrariesProduct: libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libRS.so:libandroid_net.so:libapexsupport.so:libbinder_ndk.so:libc.so:libcgrouprc.so:libclang_rt.asan-aarch64-android.so:libclang_rt.asan-arm-android.so:libclang_rt.hwasan-aarch64-android.so:libcom.android.tethering.connectivity_native.so:libdl.so:libft2.so:liblog.so:libm.so:libmediandk.so:libnativewindow.so:libneuralnetworks.so:libselinux.so:libsync.so:libvendorsupport.so:libvndksupport.so:libvulkan.so
+11-14 23:09:44.537  9862  9862 D nativeloader: InitLlndkLibrariesProduct: libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libRS.so:libandroid_net.so:libapexsupport.so:libbinder_ndk.so:libc.so:libcgrouprc.so:libclang_rt.asan-aarch64-android.so:libclang_rt.asan-arm-android.so:libclang_rt.hwasan-aarch64-android.so:libcom.android.tethering.connectivity_native.so:libdl.so:libft2.so:liblog.so:libm.so:libmediandk.so:libnativewindow.so:libneuralnetworks.so:libselinux.so:libsync.so:libvendorsupport.so:libvndksupport.so:libvulkan.so
+11-14 23:09:53.019   486   486 I adbd    : in ShellService: logcat -d | grep -iE 'RegisterPlaceholders|neuralnetworks|mtk-neuron|IMtkGnss|soundtrigger|Placeholder|cdh_|IBluetoothAudioProviderFactory' | head -n 60
+
+=== Crash filter ===
+(none)
+
+# 2. 修复后 19 域重采 services 与 build_props(init.svc.*) 差异（gold-aligner-20261114）
+services summary = {"identity": 0, "capability": 14, "state": 1, "availability": 0, "fatal": 14}
+  serviceList.count | base=471 | target=463
+  serviceList.names | base={'missing': ['android.hardware.media.c2.IComponentStore/default1', 'vendor.xiaomi.hardware.mlipay.IMlipayService/default'], 'count': 471} | target={'extra': ['android.hardware.gatekeeper.IGatekeeper/default', 'gsiservice', 'miui.powerkeeper.PowerMillet', 'mtkIms', 'mwis', 'vendor.mediatek.hardware.camera.atms.IATMs/default', 'vendor.mediatek.hardware.composer_ext.IComposerExt/default', 'vendor.mediatek.hardware.nps.nos.fastswitch.INativeFastSwitch/default', 'vendor.mediatek.hardware.pq_aidl.IPictureQuality_AIDL/default', 'vow_bridge'], 'count': 463}
+  serviceList.services.android.hardware.gatekeeper.IGatekeeper/default | base=[] | target=<缺>
+  serviceList.services.android.hardware.media.c2.IComponentStore/default1 | base=<缺> | target=[android.hardware.media.c2.IComponentStore]
+  serviceList.services.gsiservice | base=[] | target=<缺>
+  serviceList.services.miui.powerkeeper.PowerMillet | base=[] | target=<缺>
+  serviceList.services.mtkIms | base=[com.mediatek.ims.internal.IMtkImsService] | target=<缺>
+  serviceList.services.mwis | base=[com.mediatek.wfo.IMwiService] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.camera.atms.IATMs/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.composer_ext.IComposerExt/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.nps.nos.fastswitch.INativeFastSwitch/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.pq_aidl.IPictureQuality_AIDL/default | base=[] | target=<缺>
+  serviceList.services.vendor.xiaomi.hardware.mlipay.IMlipayService/default | base=<缺> | target=[]
+  serviceList.services.vow_bridge | base=[com.mediatek.vow.IVoiceWakeupBridge] | target=<缺>
+
+build_props init.svc.* diffs:
+  [state] props.init.svc.adbd | base=running | target=stopped
+  [state] props.init.svc.artd | base=stopped | target=running
+  [state] props.init.svc.boringssl_self_test32 | base=stopped | target=<缺>
+  [state] props.init.svc.boringssl_self_test32_vendor | base=stopped | target=<缺>
+  [state] props.init.svc.boringssl_self_test_apex32 | base=stopped | target=<缺>
+  [state] props.init.svc.gsid | base=running | target=<缺>
+  [state] props.init.svc.hidl_memory | base=running | target=stopped
+  [state] props.init.svc.hwservicemanager | base=running | target=stopped
+  [state] props.init.svc.snapuserd | base=stopped | target=<缺>
+  [state] props.init.svc.snapuserd_proxy | base=stopped | target=<缺>
+  [state] props.init.svc.zygote_secondary | base=running | target=<缺>

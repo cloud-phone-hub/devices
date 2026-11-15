@@ -1,0 +1,13 @@
+<!--
+    engine/vendor 自研 android.hardware.ir（AIDL v1）的 VINTF 片段。
+    档名不能带 .example：官方 vendor 的 reference 实现就叫
+    android.hardware.ir-service.example.xml，两者同时进装配树会声明同一个
+    FqInstance（IConsumerIr/default @1），整个 device manifest 将解析失败。
+-->
+<manifest version="1.0" type="device">
+    <hal format="aidl">
+        <name>android.hardware.ir</name>
+        <version>1</version>
+        <fqname>IConsumerIr/default</fqname>
+    </hal>
+</manifest>

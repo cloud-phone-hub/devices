@@ -1,0 +1,28 @@
+# popsicle 通过态取证（issue-hal-hardware-missing）
+#
+# 取样：当前运行实例 popsicle_cn_OS3.0.319.0.WPBCNXM / 7（console 5910 / adb 5911 / vnc 5912）
+# 构建：.tmp/popsicle-ir.log（07→11，EXIT=0，hardware 18 项）
+# 命令都在项目根执行：out/qemu/dist/darwin/bin/adb -s 127.0.0.1:5911 …
+
+$ adb -s 127.0.0.1:5911 shell 'getprop sys.boot_completed; getprop init.svc.bootanim'
+1
+stopped
+
+$ adb -s 127.0.0.1:5911 shell 'dumpsys activity activities | grep -m1 topResumedActivity'
+topResumedActivity=ActivityRecord{110598703 u0 com.miui.home/.launcher.Launcher t9}
+
+$ adb -s 127.0.0.1:5911 shell 'service list | grep -E "IHealth|IConsumerIr|IPower|IKeyMint"'
+46      android.hardware.health.IHealth/default: [android.hardware.health.IHealth]
+47      android.hardware.ir.IConsumerIr/default: [android.hardware.ir.IConsumerIr]
+52      android.hardware.power.IPower/default: [android.hardware.power.IPower]
+53      android.hardware.security.keymint.IKeyMintDevice/default: [android.hardware.security.keymint.IKeyMintDevice]
+115     consumer_ir: [android.hardware.IConsumerIrService]
+
+$ grep -c 'FATAL EXCEPTION IN SYSTEM PROCESS' out/core/daemon/runtime/popsicle_cn_OS3.0.319.0.WPBCNXM/7/qemu.log
+0
+
+# 构建侧（.tmp/popsicle-ir.log）：
+#   HAL 模块: android.hardware.ir（变体 default，变体产物根 out/vendor/android16，重编）
+#   输入: manifest/xiaomi/popsicle/device.json（hardware 18 项：…、android.hardware.ir@default、…）
+#   产物落到 patch 层：out/devices/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/patch/stage/root/vendor/
+#     bin/hw/android.hardware.ir-service、etc/vintf/manifest/android.hardware.ir-service.xml

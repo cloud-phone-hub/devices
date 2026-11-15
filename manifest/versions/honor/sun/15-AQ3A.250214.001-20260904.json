@@ -1,0 +1,17 @@
+{
+  "id": 14,
+  "buildId": "15-AQ3A.250214.001-20260904",
+  "deviceId": 10,
+  "configId": 10,
+  "osVersion": "15-AQ3A.250214.001-20260904",
+  "buildDate": "20260904",
+  "securityPatch": "2026-09-01",
+  "factoryTgz": "Honor-Magic-7-RSR-Porsche-Design-PTP-N59-16.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 Honor-Magic-7-RSR-Porsche-Design-PTP-N59-16.zip (vendor/build.prop) 自动生成。",
+    "osVersion": "15-AQ3A.250214.001-20260904"
+  },
+  "updatedAt": "2026-11-06 02:47:41"
+}

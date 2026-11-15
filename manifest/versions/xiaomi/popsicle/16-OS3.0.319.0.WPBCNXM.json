@@ -1,0 +1,17 @@
+{
+  "id": 8,
+  "buildId": "16-OS3.0.319.0.WPBCNXM",
+  "deviceId": 5,
+  "configId": 5,
+  "osVersion": "16-OS3.0.319.0.WPBCNXM",
+  "buildDate": "20260824",
+  "securityPatch": "2026-08-01",
+  "factoryTgz": "popsicle_images_OS3.0.319.0.WPBCNXM_20260824.0000.00_16.0_cn_9d8daa8b5b.tgz",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "popsicle-16（Xiaomi popsicle / SM8850 Kaanapali）OS3.0.319.0 基线件清单。官方 images 包分区为 EROFS，super.img 为 sparse 格式（unpack 阶段转 raw 后仅由 pack_super/pack-roms 原样搬运，super 零改动）；vendor/vendor_dlkm 实际以 lineage 底包（lineage-23 UTM virtio）的 ext4 vendor_a/vendor_dlkm_a 为基座。换 ROM = 新增一份同名 JSON，代码零改动。",
+    "osVersion": "16-OS3.0.319.0.WPBCNXM"
+  },
+  "updatedAt": "2026-11-05T04:33:32Z"
+}

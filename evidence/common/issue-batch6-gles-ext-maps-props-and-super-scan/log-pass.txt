@@ -1,0 +1,34 @@
+=== 1. GPU 扩展剥离宿主单元测试 ===
+$ clang -DCDH_GL_STRINGS_HOST_TEST -O2 -Wall -Wextra /Volumes/work/cloud-phone-hub/engine/vendor/hardware/android.hardware.gpu/src/cdh_gl_strings_test.c -o "$TMPDIR/cdh_gl_strings_test" && "$TMPDIR/cdh_gl_strings_test"
+[pass] cdh_gl_strings_test: 5/5 passed
+
+=== 2. 传感器倾斜角与磁力计微抖动宿主单元测试 ===
+$ clang++ -std=c++17 -DCDH_SENSORS_HOST_TEST -O2 -Wall -Wextra -I/Volumes/work/cloud-phone-hub/engine/vendor/hardware/android.hardware.sensors/src /Volumes/work/cloud-phone-hub/engine/vendor/hardware/android.hardware.sensors/src/sensor_event_model_test.cpp /Volumes/work/cloud-phone-hub/engine/vendor/hardware/android.hardware.sensors/src/sensor_event_model.cpp -o "$TMPDIR/sensor_event_model_test" && "$TMPDIR/sensor_event_model_test"
+PASS test_acc_and_gyro_stats_at_50hz: n=75 norm=9.8144 meanXY=(0.131,0.264) magSigma=(0.409,0.517,0.580) minAccDiff=0.001949 minMagDiff=0.018749 minGyroDiff=0.000137
+PASS test_next_wait_and_catchup
+
+=== 3. Batch-6 19 域 aligner.* 全量对比实测（98a058b2b0618483-cloud vs 07cf5fc1784783d5，run-00255..00275） ===
+- 8 域已对齐（fatal=0）：inputs, sensors, camera, media, battery_power, cpu_memory, app, network
+- display：仅云机 GLES 扩展 = []（58 项全部落入真机 109 项子集），capability = 5，state = 0
+- native_env：loadedVendorSo.gpuSo (24 vs 19) 与 vendorSo (59 vs 34) 仅云机有 = []，identity.base_apk 差异清零
+- build_props：props.dev.mnt.* 差异 = 0，raw = 429，identity = 16
+- proc：13 条 tmpfs 能力差异清零，capability = 5（18 -> 5）
+
+=== 4. 全量 14 套 ultimate.* 串行风控检测（run-00279..00292） ===
+ultimate.app_risk                run-00279 total=20 real=  302ms cloud=  836ms both=['H-97X'] real_only=[] cloud_only=[]
+ultimate.attestation_integrity   run-00280 total=18 real=  419ms cloud=  904ms both=['H-104', 'U-ATTEST-ROOT-KEY', 'U-ATTEST-SIGN-PROBE', 'U-GMS'] real_only=[] cloud_only=[]
+ultimate.boot_unlock             run-00281 total= 9 real=  453ms cloud=  390ms both=['U-BOOT-PROPS'] real_only=['H-09', 'H-13'] cloud_only=[]
+ultimate.cloud_emulator          run-00282 total=25 real= 3099ms cloud= 1746ms both=['H-115b', 'H-122', 'H-56', 'H-58', 'U-FS-TYPE'] real_only=[] cloud_only=[]
+ultimate.debug_integrity         run-00283 total=12 real= 4123ms cloud= 2262ms both=['H-32', 'H-35', 'H-38', 'H-39'] real_only=[] cloud_only=[]
+ultimate.device_identity         run-00284 total=16 real= 1882ms cloud=  842ms both=['H-121', 'U-ANDROID-ID', 'U-CANVAS-FP', 'U-IDENT-SNAP'] real_only=[] cloud_only=[]
+ultimate.hardware_env            run-00285 total=20 real= 1358ms cloud= 1020ms both=['U-HW-MIDR'] real_only=[] cloud_only=[]
+ultimate.hook_inject             run-00286 total=51 real=41081ms cloud= 7830ms both=['H-113', 'H-21'] real_only=[] cloud_only=[]
+  (cloud U-BINDER-TRANSACT: hit=false ms=[7.6, 7.3, 7.7, 6.7, 7.5] ratio=[0.961, 1.013, 0.882, 0.987])
+ultimate.location_network        run-00287 total=27 real= 1248ms cloud=  832ms both=[] real_only=[] cloud_only=[]
+ultimate.native_env              run-00288 total=39 real= 3655ms cloud= 2028ms both=['U-LOGD-TOMBSTONE'] real_only=['U-ARCHIVED-PKG', 'U-PM-SUNDRY'] cloud_only=[]
+ultimate.probe_runtime           run-00289 total=17 real= 2814ms cloud= 2138ms both=['U-STATUS-SANDBOX'] real_only=[] cloud_only=[]
+ultimate.root_selinux            run-00290 total=42 real= 6336ms cloud= 2738ms both=['H-01', 'H-40', 'U-MNT-TMPFS-OPEN'] real_only=['U-DIRTY-POLICY'] cloud_only=[]
+ultimate.super_scan              run-00291 total=38 real= 1653ms cloud=  871ms both=['H-104', 'H-115b', 'H-121', 'H-32'] real_only=['H-06', 'H-09'] cloud_only=[]
+  (real/cloud H-57 powerW=null hit=false; H-84 procUptimeSec=null driftSec=null hit=false)
+ultimate.webview_fp              run-00292 total= 4 real=  167ms cloud=  560ms both=[] real_only=[] cloud_only=[]
+SUMMARY: items=28/28 total_checks=338 any_fail=False any_cloud_only=False

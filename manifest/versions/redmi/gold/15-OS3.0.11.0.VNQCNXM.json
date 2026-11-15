@@ -1,0 +1,24 @@
+{
+  "id": 35,
+  "buildId": "15-OS3.0.11.0.VNQCNXM",
+  "deviceId": 28,
+  "configId": 28,
+  "osVersion": "15-OS3.0.11.0.VNQCNXM",
+  "buildDate": "20260924",
+  "securityPatch": "2026-02-01",
+  "factoryTgz": "gold_images_OS3.0.11.0.VNQCNXM_20260924.0000.00_15.0_cn_60017ed496.tgz",
+  "factoryDir": "OS3.0.11.0.VNQCNXM",
+  "overrides": {
+    "buildKernel": {
+      "lineageKernel": {
+        "borrowed-reason": "gold 接的小米 MTK vendor（super.img 里的 6.6 线 ko）只在 6.6 上能跑，而 lineage-22.2 底包自带 6.12.23；virtio 内核上游没有 22.2 的 6.6 分支，只能借 22.1 的 6.6 线（见 kernels/lineage-22-6.6/cdh/upstream.json）。代价是底包 vendor_dlkm 里 6.12.23 的通用模块 vermagic 不匹配、只能加载内核 built-in 与 08 注入的 6.6 模块。"
+      },
+      "uname": "Linux localhost 6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k #1 SMP PREEMPT Thu May 28 07:48:46 UTC 2026 aarch64 Toybox"
+    }
+  },
+  "extra": {
+    "comment": "gold-15 CN OS3.0.11.0 基线件清单：属性/标签基底沿用 OS3.0.10.0.VNQCNXM 实测配置，rom.official.kernel 与 version-description 按 OS3.0.11.0.VNQCNXM 官方镜像提取。",
+    "osVersion": "15-OS3.0.11.0.VNQCNXM"
+  },
+  "updatedAt": "2026-11-05T04:33:33Z"
+}

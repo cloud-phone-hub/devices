@@ -1,0 +1,6 @@
+# android.hardware.ir 自研服务的可执行文件标签。
+# lineage 的 vendor_sepolicy.cil 已定义 hal_ir_default / hal_ir_default_exec（见
+# unpack_vendor/etc/selinux/vendor_sepolicy.cil 第 398/400 行），基底
+# vendor_file_contexts 只覆盖 .example / .lineage / ir@1.0-service 三种档名，
+# 本模块用无后缀的 android.hardware.ir-service，故需补这一条。
+/(vendor|system/vendor)/bin/hw/android\.hardware\.ir-service  u:object_r:hal_ir_default_exec:s0

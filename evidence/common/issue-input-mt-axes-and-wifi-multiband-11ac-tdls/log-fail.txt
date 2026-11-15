@@ -1,0 +1,281 @@
+=== [修复前] #189 goodix_ts 8 轴触控对齐与 Wi-Fi 跨频扫描 / 11ac / TDLS ===
+
+1. hardware.inputs 云机 vs 真机:
+CLOUD:
+{
+  "runId": "run-00009",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "count": 7,
+    "devices": [
+      {
+        "descriptor": "a718a782d34bc767f4689c232d64d527998ea7fd",
+        "id": -1,
+        "name": "Virtual",
+        "sources": 769,
+        "sourcesHex": "0x301"
+      },
+      {
+        "descriptor": "8136f1e77728f603ac0ec0e545d338eba3cbcbc0",
+        "id": 0,
+        "name": "uinput-fpc",
+        "sources": 1281,
+        "sourcesHex": "0x501"
+      },
+      {
+        "descriptor": "c63c3be2de98f10e6bbd97f78684d819a6c862b9",
+        "id": 2,
+        "name": "goodix_ts",
+        "sources": 4355,
+        "sourcesHex": "0x1103"
+      },
+      {
+        "descriptor": "9a244e01c90550ca2eb2798ffe20d8731e811765",
+        "id": 3,
+        "name": "mtk-kpd",
+        "sources": 257,
+        "sourcesHex": "0x101"
+      },
+      {
+        "descriptor": "dad8bc819b573998ec22ca3952b1006fc1aa1a82",
+        "id": 4,
+        "name": "fpc_irq@fingerprint",
+        "sources": 257,
+        "sourcesHex": "0x101"
+      },
+      {
+        "descriptor": "393bc96fab9421f9d6a6059cfe79e8b042c8755d",
+        "id": 5,
+        "name": "mt6833-mt6359 Headset Jack",
+        "sources": 2147483905,
+        "sourcesHex": "0x80000101"
+      },
+      {
+        "descriptor": "485d69228e24f5e46da1598745890b214130dbc4",
+        "id": 6,
+        "name": "mtk-pmic-keys",
+        "sources": 257,
+        "sourcesHex": "0x101"
+      }
+    ],
+    "ok": true
+  }
+}
+
+REAL:
+{
+  "runId": "run-00009",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "count": 7,
+    "devices": [
+      {
+        "descriptor": "a718a782d34bc767f4689c232d64d527998ea7fd",
+        "id": -1,
+        "name": "Virtual",
+        "sources": 769,
+        "sourcesHex": "0x301"
+      },
+      {
+        "descriptor": "8136f1e77728f603ac0ec0e545d338eba3cbcbc0",
+        "id": 0,
+        "name": "uinput-fpc",
+        "sources": 1281,
+        "sourcesHex": "0x501"
+      },
+      {
+        "descriptor": "9a244e01c90550ca2eb2798ffe20d8731e811765",
+        "id": 2,
+        "name": "mtk-kpd",
+        "sources": 257,
+        "sourcesHex": "0x101"
+      },
+      {
+        "descriptor": "dad8bc819b573998ec22ca3952b1006fc1aa1a82",
+        "id": 3,
+        "name": "fpc_irq@fingerprint",
+        "sources": 257,
+        "sourcesHex": "0x101"
+      },
+      {
+        "descriptor": "485d69228e24f5e46da1598745890b214130dbc4",
+        "id": 4,
+        "name": "mtk-pmic-keys",
+        "sources": 257,
+        "sourcesHex": "0x101"
+      },
+      {
+        "descriptor": "393bc96fab9421f9d6a6059cfe79e8b042c8755d",
+        "id": 5,
+        "name": "mt6833-mt6359 Headset Jack",
+        "sources": 2147483905,
+        "sourcesHex": "0x80000101"
+      },
+      {
+        "descriptor": "c63c3be2de98f10e6bbd97f78684d819a6c862b9",
+        "id": 6,
+        "name": "goodix_ts",
+        "sources": 4355,
+        "sourcesHex": "0x1103"
+      }
+    ],
+    "ok": true
+  }
+}
+
+2. network.wifi & network.wifilist 云机 vs 真机:
+CLOUD wifi:
+{
+  "runId": "run-00014",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "ok": true,
+    "wifi": {
+      "bssid": "74:39:89:0b:24:63",
+      "connected": true,
+      "frequency": 2437,
+      "ipAddress": 1681696960,
+      "linkSpeed": 18,
+      "networkId": 0,
+      "rssi": -47,
+      "ssid": "\"TP-LINK_2464\"",
+      "wifiState": 3
+    }
+  }
+}
+CLOUD wifilist:
+{
+  "runId": "run-00014",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "ok": true,
+    "wifi": {
+      "configured": [],
+      "scan": [
+        {
+          "bssid": "74:39:89:0b:24:63",
+          "caps": "[ESS]",
+          "frequency": 2437,
+          "level": -47,
+          "ssid": "TP-LINK_2464"
+        }
+      ]
+    }
+  }
+}
+
+REAL wifi:
+{
+  "runId": "run-00014",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "ok": true,
+    "wifi": {
+      "bssid": "74:39:89:0b:24:64",
+      "connected": true,
+      "frequency": 5180,
+      "ipAddress": 1762371776,
+      "linkSpeed": 433,
+      "networkId": 0,
+      "rssi": -59,
+      "ssid": "\"TP-LINK_JIJIA_1\"",
+      "wifiState": 3
+    }
+  }
+}
+REAL wifilist:
+{
+  "runId": "run-00014",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "ok": true,
+    "wifi": {
+      "configured": [],
+      "scan": [
+        {
+          "bssid": "26:26:ba:01:9e:67",
+          "caps": "[WPA-PSK-TKIP+CCMP][WPA2-PSK-TKIP+CCMP][RSN-PSK-TKIP+CCMP][ESS]",
+          "frequency": 5180,
+          "level": -49,
+          "ssid": "EndpointA"
+        },
+        {
+          "bssid": "26:26:ba:11:9e:67",
+          "caps": "[WPA-PSK-TKIP+CCMP][WPA2-PSK-TKIP+CCMP][RSN-PSK-TKIP+CCMP][ESS]",
+          "frequency": 2427,
+          "level": -58,
+          "ssid": "EndpointB"
+        },
+        {
+          "bssid": "c2:f2:60:85:a5:6a",
+          "caps": "[WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS][WPS]",
+          "frequency": 5745,
+          "level": -62,
+          "ssid": "Huawei_B353_A585_5G"
+        },
+        {
+          "bssid": "ac:81:b5:05:78:c8",
+          "caps": "[WPA2-EAP/SHA1-CCMP][RSN-EAP/SHA1-CCMP][ESS]",
+          "frequency": 5220,
+          "level": -84,
+          "ssid": "alibaba-inc"
+        },
+        {
+          "bssid": "ac:81:b5:04:7d:f8",
+          "caps": "[WPA2-EAP/SHA1-CCMP][RSN-EAP/SHA1-CCMP][ESS]",
+          "frequency": 5260,
+          "level": -65,
+          "ssid": "alibaba-inc"
+        },
+        {
+          "bssid": "ac:81:b5:04:7e:c8",
+          "caps": "[WPA2-EAP/SHA1-CCMP][RSN-EAP/SHA1-CCMP][ESS]",
+          "frequency": 5745,
+          "level": -78,
+          "ssid": "alibaba-inc"
+        },
+        {
+          "bssid": "ac:81:b5:05:78:c9",
+          "caps": "[ESS]",
+          "frequency": 5220,
+          "level": -85,
+          "ssid": "alibaba-guest"
+        },
+        {
+          "bssid": "ac:81:b5:04:7e:c9",
+          "caps": "[ESS]",
+          "frequency": 5745,
+          "level": -77,
+          "ssid": "alibaba-guest"
+        },
+        {
+          "bssid": "26:26:ba:51:9e:67",
+          "caps": "[WPA-PSK-TKIP+CCMP][WPA2-PSK-TKIP+CCMP][RSN-PSK-TKIP+CCMP][ESS]",
+          "frequency": 5180,
+          "level": -49,
+ 
+
+3. shell getevent & cmd wifi list-scan-results:
+=== input goodix_ts ===
+add device 1: /dev/input/event1
+  name:     "goodix_ts"
+  events:
+    KEY (0001): BTN_MOUSE             BTN_RIGHT             BTN_MIDDLE            BTN_SIDE             
+                BTN_EXTRA             BTN_TOUCH             BTN_WHEEL             BTN_GEAR_UP          
+    ABS (0003): ABS_MT_SLOT           : value 0, min 0, max 10, fuzz 0, flat 0, resolution 0
+                ABS_MT_POSITION_X     : value 0, min 0, max 32767, fuzz 0, flat 0, resolution 0
+                ABS_MT_POSITION_Y     : value 0, min 0, max 32767, fuzz 0, flat 0, resolution 0
+                ABS_MT_TRACKING_ID    : value 0, min 0, max 65535, fuzz 0, flat 0, resolution 0
+                ABS_MT_PRESSURE       : value 0, min 0, max 32767, fuzz 0, flat 0, resolution 0
+  input props:
+    INPUT_PROP_DIRECT
+=== wifi scan & capabilities ===
+    BSSID              Frequency      RSSI           Age(sec)     SSID                                 Flags
+  74:39:89:0b:24:63       2437        -47             79.213    TP-LINK_2464                      [ESS]
+cat: /sys/module/mac80211_hwsim/parameters/disable_he: No such file or directory

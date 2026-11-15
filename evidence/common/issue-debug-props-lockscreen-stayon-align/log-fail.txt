@@ -1,0 +1,15 @@
+# 修复前：gold 15-OS3.0.11.0.VNQCNXM 云机（4503ac70a1c898f3-cloud）build_props & settings 对比真机 07cf5fc1784783d5
+# 提取来源：engine/out/tmp/p0_fail_extract.txt
+
+=== P0-6 fail (build_props persist.security.adb*) ===
+  cloud[persist.security.adbinput] = '1'  real = None
+  cloud[persist.security.adbinstall] = '1'  real = None
+
+=== P0-6 fail (settings.provider 7 items) ===
+  secure.lockscreen.disabled: real='0'  cloud='1'
+  global.stay_on_while_plugged_in: real='3'  cloud='15'
+  system.time_12_24: real='24'  cloud='12'
+  system.accelerometer_rotation: real='1'  cloud='0'
+  system.long_press_power_key: real='launch_voice_assistant'  cloud='null'
+  secure.color_scheme: real='1'  cloud='3'
+  global.hide_gesture_line: real='0'  cloud='1'

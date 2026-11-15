@@ -1,0 +1,37 @@
+# 1. 未修补前：com.miui.home 运行在 vulkan.pastel.so (SwiftShader CPU 软光栅) 下滑动桌面 CPU 飙升至 295%~615%
+
+=== /proc/$(pidof com.miui.home)/maps (未修补前) ===
+7359eb7000-735a5e7000 r--p 00000000 fe:20 569 /mnt/vendorpatch/vendor/lib64/hw/vulkan.pastel.so
+735a5e7000-735b72a000 r-xp 00730000 fe:20 569 /mnt/vendorpatch/vendor/lib64/hw/vulkan.pastel.so
+735b72b000-735b81f000 r--p 01874000 fe:20 569 /mnt/vendorpatch/vendor/lib64/hw/vulkan.pastel.so
+735b81f000-735b821000 rw-p 01968000 fe:20 569 /mnt/vendorpatch/vendor/lib64/hw/vulkan.pastel.so
+7408fd0000-7409665000 r--p 00000000 fd:01 1126 /system_ext/lib64/libhyper_os_flutter.so
+7409674000-740a126000 r-xp 00694000 fd:01 1126 /system_ext/lib64/libhyper_os_flutter.so
+
+=== top -b -n 1 (未修补前桌面滑动期间) ===
+Tasks: 416 total,   6 running, 410 sleeping,   0 stopped,   0 zombie
+800%cpu 489%user   4%nice  78%sys 211%idle   0%iow  18%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+ 3726 u0_a147      10 -10  22G 612M 248M R 615.0  7.9   1:42.18 com.miui.home
+  702 system       -3 -20  12G  92M  58M S  25.9  1.2   0:45.10 surfaceflinger
+  741 system       18  -2  24G 680M 440M S  18.5  8.9   1:12.04 system_server
+
+# 2. 仅切换 Impeller OpenGL ES 但未修补 GLSL / NPOT / RenderTarget / Stencil Pipeline 时的报错日志
+
+E flutter : [ERROR:flutter/impeller/renderer/backend/gles/shader_library_gles.cc(168)] ImpellerValidationBreak: Could not compile shader:
+E flutter : Shader [mi_glass_v13_f16_fragment_main]
+E flutter : 0:2(12): error: `GL_EXT_shader_implicit_conversions' : extension is not supported
+E flutter : 0:14(1): error: `__fp16' : syntax error: syntax error
+E flutter : [ERROR:flutter/impeller/renderer/backend/gles/pipeline_library_gles.cc(250)] ImpellerValidationBreak: Could not link pipeline program.
+
+E flutter : [ERROR:flutter/impeller/renderer/backend/gles/texture_gles.cc(485)] ImpellerValidationBreak: Cannot generate mipmaps for non-power-of-two textures.
+
+E flutter : [ERROR:flutter/impeller/renderer/render_target.cc(357)] ImpellerValidationBreak: Could not setup depth/stencil attachments.
+E flutter : [ERROR:flutter/impeller/entity/entity_pass.cc(725)] ImpellerValidationBreak: Could not complete contextSetup for context stage.
+
+# 3. 切换 Impeller OpenGL ES 后多窗口共享 onscreen_context_ 触发 EGL_BAD_ACCESS 致返回桌面假死及 PassBlur 掉帧日志
+
+E flutter : [ERROR:flutter/impeller/toolkit/egl/display.cc(135)] EGL Error: EGL_BAD_ACCESS (12290) in ../../flutter/impeller/toolkit/egl/context.cc:125
+E flutter : [ERROR:flutter/shell/platform/android/android_surface_gl_impeller.cc(186)] Could not make the context current
+E flutter : [ERROR:flutter/shell/platform/android/platform_view_android.cc(305)] Could not update surface.
+E Looper  : PerfMonitor doFrame : time=1482ms vsyncFrame=14125 latency=2ms procState=2

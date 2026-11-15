@@ -1,0 +1,21 @@
+# engine/vendor 自研 boot HAL（虚拟 HAL）：云机没有 A/B 槽位，服务注册
+# android.hardware.boot.IBootControl/default，槽位信息按单槽位（0）上报。
+service vendor.boot-default /vendor/bin/hw/android.hardware.boot-service.default
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_bootctl_default:s0
+    interface aidl android.hardware.boot.IBootControl/default
+
+# 必须在 post-fs 显式启动，不能只靠 class hal。
+#
+# 机制（证据：engine/evidence/m22/issue-m22-bootctl-vold-deadlock）：init 的 late-fs
+# 阶段用 `vdc checkpoint markBootAttempt` 打开分区，这是 SVC_EXEC，init 会同步等它
+# 退出；同一窗口里 vold 若发现 device manifest 声明了 IBootControl 就会
+# waitForService 等本服务，而 class hal 要到更晚的 boot 阶段才批量启动 → 两边互锁，
+# init 打印 "Too many pending control messages" 并丢掉后续 interface_start，
+# 表现为开机停在 late-fs（实例 32 实测 144 次 "Waited one second for …IBootControl"）。
+# post-fs 早于 late-fs，此时 /vendor 与 /dev/binder 已就绪，显式 start 把服务提前
+# 注册到 servicemanager，vold 的 waitForService 立即返回。
+on post-fs
+    start vendor.boot-default

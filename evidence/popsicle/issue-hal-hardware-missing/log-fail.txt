@@ -1,0 +1,30 @@
+# popsicle 失败态取证（第一段：device.json 缺整个 hardware 数组）
+#
+# 取样：out/core/daemon/runtime/popsicle_cn_OS3.0.319.0.WPBCNXM/4/qemu.log（实例 4，保留在盘上）
+# 现场：vendor 里只有 lineage 基座散件 + 摊平的两个 APEX（graphics/wifi），
+#       07 因 hardware 数组为空一个自研 HAL 都没装配，且完全静默。
+
+$ grep -c 'FATAL EXCEPTION IN SYSTEM PROCESS' out/core/daemon/runtime/popsicle_cn_OS3.0.319.0.WPBCNXM/4/qemu.log
+3054
+
+01-01 08:00:26.939   729   729 E System  : Caused by: java.util.NoSuchElementException: IHealth service instance default isn't available. Perhaps no permission?
+01-01 08:00:26.939   729   729 E Zygote  : Caused by: java.util.NoSuchElementException: IHealth service instance default isn't available. Perhaps no permission?
+01-01 08:00:26.939   729   729 E AndroidRuntime: Caused by: java.util.NoSuchElementException: IHealth service instance default isn't available. Perhaps no permission?
+
+# 补 android.hardware.health 之后（实例 6），health 这一层过了，暴露出下一个同源卡点：
+
+01-01 08:00:28.430   806   806 I SystemServiceManager: Starting com.android.server.power.hint.HintManagerService
+01-01 08:00:28.434   806   806 E System  : java.lang.RuntimeException: Failed to create service com.android.server.power.hint.HintManagerService: service constructor threw an exception
+01-01 08:00:28.434   806   806 E System  : Caused by: java.lang.NullPointerException: Attempt to read from field 'android.hardware.power.SupportInfo$HeadroomSupportInfo android.hardware.power.SupportInfo.headroom' on a null object reference
+
+# 补 android.hardware.power 之后（实例 7，该实例目录已在下一轮重建前 delete），
+# 日志摘录（当次 grep -A3 'FATAL EXCEPTION IN SYSTEM PROCESS' 的原文）：
+#
+# E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+# E AndroidRuntime: java.lang.RuntimeException: FEATURE_CONSUMER_IR present, but no IR HAL loaded!
+# E AndroidRuntime:       at com.android.server.ConsumerIrService.<init>(ConsumerIrService.java:65)
+# E AndroidRuntime:       at com.android.server.SystemServer.startOtherServices(SystemServer.java:1935)
+# 计数：grep -c 'FATAL EXCEPTION IN SYSTEM PROCESS' 60；根因唯一，全部是 ConsumerIrService。
+
+# 三个卡点同源：07 只看 device.json 的 hardware 数组，数组缺失时既不装配也不告警，
+# 而 system_server 对 IHealth / IPower / IConsumerIr 都是单向硬依赖，缺一项就自杀重启。

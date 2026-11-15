@@ -1,0 +1,288 @@
+# log-pass —— 改造后的通过日志（静态树 2 个文件 / 15 条借件 / 1 件现编）
+
+> 采集时间：2026-11-01；构建树：`engine/out/devices/google/oriole/AP2A.240905.003.F1`。
+> 完整复核输出落在 `engine/out/tmp/verify-lift.log`（脚本 `engine/out/tmp/verify-lift.sh`），
+> dry-run 全文落在 `engine/out/tmp/dryrun-lift.log`，07 两次实跑日志在 `/tmp/cdh-07/run{,2}.log`。
+
+## 0. 复现命令
+
+```sh
+cd /Volumes/work/cloud-phone-hub/engine/build
+
+# ① 单元测试 + 编译 + vet
+go build ./... && go vet ./07_build_vendor/ \
+  && go test ./07_build_vendor/ -run 'Lift|Compat' -count=1 -v
+
+# ② 计划（不落盘）：看 15 条借件与取件命令
+go run . build-vendor \
+  --manifest /Volumes/work/cloud-phone-hub/engine/manifest/google/oriole/baselines/oriole-ap2a.240905.003.f1-factory-655c44e7.json \
+  --vendor google --brand oriole --version AP2A.240905.003.F1 --dry-run
+
+# ③ 真跑 07（步骤 0~8 全量装配 + 打包 vendor.img）
+go run . build-vendor --manifest ...同②... --vendor google --brand oriole --version AP2A.240905.003.F1
+
+# ④ 复核：静态树 → 来源逐字节对表 → 符号 → 依赖闭包
+sh /Volumes/work/cloud-phone-hub/engine/out/tmp/verify-lift.sh
+```
+
+## 1. 单元测试（7 个新用例全绿）
+
+```
+=== RUN   TestLiftsFromManifestParsesEntries
+--- PASS: TestLiftsFromManifestParsesEntries (0.00s)
+=== RUN   TestLiftsFromManifestAbsentIsNil
+--- PASS: TestLiftsFromManifestAbsentIsNil (0.00s)
+=== RUN   TestParseLiftFrom
+--- PASS: TestParseLiftFrom (0.00s)
+=== RUN   TestApplyVendorLiftsFromLineageTree
+--- PASS: TestApplyVendorLiftsFromLineageTree (0.00s)
+=== RUN   TestApplyVendorLiftsMissingSourceFails
+--- PASS: TestApplyVendorLiftsMissingSourceFails (0.00s)
+=== RUN   TestComposerCompatSourceDefinesBothSymbols
+--- PASS: TestComposerCompatSourceDefinesBothSymbols (0.00s)
+=== RUN   TestBuildComposerCompatLibSkipsWithoutComposer
+--- PASS: TestBuildComposerCompatLibSkipsWithoutComposer (0.00s)
+PASS
+ok  	cloud-phone-hub/engine/build/07_build_vendor	1.258s
+```
+
+（`go build ./...` 与 `go vet ./07_build_vendor/` 均无输出、退出码 0。）
+
+## 2. 静态树只剩两个文本文件 + 15 件逐字节对表
+
+```
+### 1. 机型静态树（只应剩 rc 与 VINTF 片段）
+vendor/etc/init/hwc3-drm.rc
+vendor/etc/vintf/manifest/hwc3-drm.xml
+文件数: 2，字节数: 1861（rc 1426 + xml 435）
+
+### 2. 8 件 from=lineage:22.2 与 lineage-22.2 底包逐字节比对
+bin/hw/android.hardware.composer.hwc3-service.drm          38c60d8d7ef5a35e  PATCHED
+lib64/android.hardware.graphics.composer3-V4-ndk.so        7f5f2f6944d46a1e  same
+lib64/android.hardware.graphics.common-V6-ndk.so           d14f566776b7c535  same
+lib64/android.hardware.drm.common-V1-ndk.so                de7d1a537eb554f7  same
+lib64/android.hardware.graphics.composer@2.1.so            da42d70bdba44f5a  same
+lib64/android.hardware.graphics.composer@2.1-resources.so  e566b76d26d63e6b  same
+lib64/android.hardware.graphics.composer@2.2.so            ee8b4814cf22d407  same
+lib64/android.hardware.graphics.composer@2.2-resources.so  b5f58ca1b8866716  same
+  可执行文件为何不是 same：装配段 composercompat 把 DT_NEEDED 的空壳 resources 名原地改写成 compat 库名
+  与底包原件同样 242064 字节、差异 50 字节，偏移 17052~17102（dynstr 覆盖写 + 尾部补 NUL）
+
+### 3. 7 件 from=vendor 与官方 vendor_a.img 原件逐字节比对
+lib64/libui.so                                       683c68d98495de40  same
+lib64/android.hardware.graphics.allocator@2.0.so     7ba456604acc105b  same
+lib64/android.hardware.graphics.allocator@3.0.so     d533210d34ddeb3e  same
+lib64/android.hardware.graphics.allocator@4.0.so     6054a137db58ac26  same
+lib64/android.hardware.graphics.mapper@2.0.so        e24ea2cfea94d449  same
+lib64/android.hardware.graphics.mapper@2.1.so        d729d5e12618442a  same
+lib64/android.hardware.graphics.mapper@3.0.so        f52de2accd63040a  same
+```
+
+## 3. 可执行文件依赖与现编 compat 库
+
+```
+### 4. hwc3 可执行文件的 DT_NEEDED（compat 库应替掉空的 resources 壳）
+  NEEDED android.hardware.graphics.composer@2.1-resources.so
+  NEEDED libcdh_composer_compat.so
+  NEEDED libcutils.so
+  NEEDED libdrm.so
+  NEEDED libhardware.so
+  NEEDED libhidlbase.so
+  NEEDED libsync.so
+  NEEDED libui.so
+  NEEDED android.hardware.graphics.composer3-V4-ndk.so
+  NEEDED libbase.so
+  NEEDED libbinder_ndk.so
+  NEEDED liblog.so
+  NEEDED libutils.so
+  NEEDED libc++.so
+  NEEDED libc.so
+  NEEDED libm.so
+  NEEDED libdl.so
+
+### 5. 现编 compat 库导出的符号 + 未定义符号
+  导出 AIBinder_Class_setTransactionCodeToFunctionNameMap
+  导出 _ZNSt3__122__libcpp_verbose_abortEPKcz
+  未定义 abort
+  未定义 vdprintf
+  大小 3400 字节
+
+### 6. 借来的 A15 库里两个缺口符号（本段列出库自己未定义的）
+  lib64/android.hardware.composer3-V4-ndk.so
+  lib64/android.hardware.graphics.common-V6-ndk.so _ZNSt3__122__libcpp_verbose_abortEPKcz
+  lib64/android.hardware.drm.common-V1-ndk.so
+```
+
+注：`android.hardware.graphics.composer@2.2-resources.so` 那条空壳（零导出，只为占 DT_NEEDED 位）已被
+`libcdh_composer_compat.so` 顶替；`@2.1-resources.so` 仍保留，它带真实资源符号。
+
+## 4. 依赖闭包与产物指纹
+
+```
+### 7. 装配树 ELF 依赖闭包
+ELF 文件 159 个，未解析依赖 0 项
+
+### 8. vendor-info.txt 的借件与镜像指纹
+vendor-replace: 1 条（lib64/libpng.so（替换）；来源 out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img，已存在）
+vendor-lift: 15 条（bin/hw/android.hardware.composer.hwc3-service.drm <- lineage-22.2 底包、lib64/android.hardware.graphics.composer3-V4-ndk.so <- lineage-22.2 底包、li
+image_sha256: 56a36e541e4bb1d00e924376470b79ec4a8c8f266d06495c5c8ea05ad6af67cb
+recipe: vendor-67855d254548
+```
+
+（闭包判据：每个 `NEEDED` 必须由「装配树内同名件 / A14 `llndk.libraries.txt` / bionic 运行时
+libc·libm·libdl·libc++」之一解析；脚本 `/tmp/closure.sh`。）
+
+## 5. 07 实跑关键日志（第二次，`/tmp/cdh-07/run2.log`）
+
+```
+==> 厂商覆盖集合: 基线清单 vendor.replaces（1 项）
+==> 借件集合: 基线清单 vendor.lifts（15 项）
+...
+==> [步骤 5b] 借件（基线清单 vendor.lifts）
+    输入: lineage-22.2 底包、厂商 vendor（借件集合 15 项）
+    输出: out/devices/google/oriole/AP2A.240905.003.F1/vendor
+[replace] vendor/bin/hw/android.hardware.composer.hwc3-service.drm <- lineage-22.2 底包/…（文件覆盖）
+[replace] vendor/lib64/android.hardware.graphics.composer3-V4-ndk.so <- lineage-22.2 底包/…（文件覆盖）
+[replace] vendor/lib64/android.hardware.graphics.common-V6-ndk.so <- lineage-22.2 底包/…（文件覆盖）
+[replace] vendor/lib64/android.hardware.drm.common-V1-ndk.so <- lineage-22.2 底包/…（文件覆盖）
+[replace] vendor/lib64/android.hardware.graphics.composer@2.1.so <- lineage-22.2 底包/…（文件覆盖）
+[replace] vendor/lib64/android.hardware.graphics.composer@2.1-resources.so <- lineage-22.2 底包/…（文件覆盖）
+[replace] vendor/lib64/android.hardware.graphics.composer@2.2.so <- lineage-22.2 底包/…（文件覆盖）
+[replace] vendor/lib64/android.hardware.graphics.composer@2.2-resources.so <- lineage-22.2 底包/…（文件覆盖）
+[replace] vendor/lib64/libui.so <- 厂商 vendor/lib64/libui.so（文件覆盖）
+[replace] vendor/lib64/android.hardware.graphics.allocator@2.0.so <- 厂商 vendor/lib64/android.hardware.graphics.allocator@2.0.so（文件覆盖）
+[replace] vendor/lib64/android.hardware.graphics.allocator@3.0.so <- 厂商 vendor/lib64/android.hardware.graphics.allocator@3.0.so（文件覆盖）
+[replace] vendor/lib64/android.hardware.graphics.allocator@4.0.so <- 厂商 vendor/lib64/android.hardware.graphics.allocator@4.0.so（文件覆盖）
+[replace] vendor/lib64/android.hardware.graphics.mapper@2.0.so <- 厂商 vendor/lib64/android.hardware.graphics.mapper@2.0.so（文件覆盖）
+[replace] vendor/lib64/android.hardware.graphics.mapper@2.1.so <- 厂商 vendor/lib64/android.hardware.graphics.mapper@2.1.so（文件覆盖）
+[replace] vendor/lib64/android.hardware.graphics.mapper@3.0.so <- 厂商 vendor/lib64/android.hardware.graphics.mapper@3.0.so（文件覆盖）
+...
+    composer compat: 现编（/Users/cuimingqiang/Library/Android/sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++）
+        -> out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/libcdh_composer_compat.so
+    composer 依赖: DT_NEEDED android.hardware.graphics.composer@2.2-resources.so -> libcdh_composer_compat.so
+...
+EXIT=0
+```
+
+## 6. dry-run 摘录（`engine/out/tmp/dryrun-lift.log`）
+
+```
+    借件:       15 条（bin/hw/android.hardware.composer.hwc3-service.drm <- lineage-22.2 底包、… 、lib64/android.hardware.graphics.mapper@3.0.so <- 厂商 vendor）
+    计划命令 [步骤 5b]: 借件 vendor/bin/hw/android.hardware.composer.hwc3-service.drm <- out/roms/lineage/lineage-22.2/super/unpack_vendor/bin/hw/android.hardware.composer.hwc3-service.drm（模式：替换）
+    计划命令 [步骤 5b]: 借件 vendor/lib64/android.hardware.graphics.composer3-V4-ndk.so <- out/roms/lineage/lineage-22.2/super/unpack_vendor/lib64/…（模式：替换）
+    计划命令 [步骤 5b]: 借件 vendor/lib64/android.hardware.graphics.common-V6-ndk.so <- out/roms/lineage/lineage-22.2/super/unpack_vendor/lib64/…（模式：替换）
+    计划命令 [步骤 5b]: 借件 vendor/lib64/android.hardware.drm.common-V1-ndk.so <- out/roms/lineage/lineage-22.2/super/unpack_vendor/lib64/…（模式：替换）
+    计划命令 [步骤 5b]: 借件 vendor/lib64/android.hardware.graphics.composer@2.1.so <- out/roms/lineage/lineage-22.2/super/unpack_vendor/lib64/…（模式：替换）
+    计划命令 [步骤 5b]: 借件 vendor/lib64/android.hardware.graphics.composer@2.1-resources.so <- out/roms/lineage/lineage-22.2/super/unpack_vendor/lib64/…（模式：替换）
+    计划命令 [步骤 5b]: 借件 vendor/lib64/android.hardware.graphics.composer@2.2.so <- out/roms/lineage/lineage-22.2/super/unpack_vendor/lib64/…（模式：替换）
+    计划命令 [步骤 5b]: 借件 vendor/lib64/android.hardware.graphics.composer@2.2-resources.so <- out/roms/lineage/lineage-22.2/super/unpack_vendor/lib64/…（模式：替换）
+    计划命令 [步骤 5b]: 借件 vendor/lib64/libui.so <- debugfs -R "dump /lib64/libui.so <目标>" out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img（模式：替换）
+    计划命令 [步骤 5b]: 借件 vendor/lib64/android.hardware.graphics.allocator@2.0.so <- debugfs -R "dump /lib64/android.hardware.graphics.allocator@2.0.so <目标>" out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img（模式：替换）
+    计划命令 [步骤 5b]: 借件 vendor/lib64/android.hardware.graphics.allocator@3.0.so <- debugfs -R "dump /lib64/android.hardware.graphics.allocator@3.0.so <目标>" …（模式：替换）
+    计划命令 [步骤 5b]: 借件 vendor/lib64/android.hardware.graphics.allocator@4.0.so <- debugfs -R "dump /lib64/android.hardware.graphics.allocator@4.0.so <目标>" …（模式：替换）
+    计划命令 [步骤 5b]: 借件 vendor/lib64/android.hardware.graphics.mapper@2.0.so <- debugfs -R "dump /lib64/android.hardware.graphics.mapper@2.0.so <目标>" …（模式：替换）
+    计划命令 [步骤 5b]: 借件 vendor/lib64/android.hardware.graphics.mapper@2.1.so <- debugfs -R "dump /lib64/android.hardware.graphics.mapper@2.1.so <目标>" …（模式：替换）
+    计划命令 [步骤 5b]: 借件 vendor/lib64/android.hardware.graphics.mapper@3.0.so <- debugfs -R "dump /lib64/android.hardware.graphics.mapper@3.0.so <目标>" …（模式：替换）
+[dry-run] 未执行
+```
+
+对照点：`from=lineage:22.2` 的 8 条走**逐文件树**（`super/unpack_vendor`），`from=vendor` 的 7 条走
+**镜像抽取**（`debugfs -R "dump …"`）；ext4 与 erofs 的计划命令由 `imageExtractHint` 分流打印——
+这正是旧版一律打印 `fsck.erofs` 的那处误导。
+
+## 7. 符号损失面（换官方 A14 原件后）
+
+```
+$ # 树内 159 个 ELF 的未定义符号去重
+树内未定义符号 4000
+--- 4 个丢失符号是否被树内任何件引用 ---
+  未引用: _ZN7android9SingletonINS_19GraphicBufferMapperEE11getInstanceEv
+  未引用: _ZNKSt3__18functionIFvN7android8hardware7details16HidlInstrumentor20InstrumentationEventEPKcS7_S7_S7_S7_PNS_6vectorIPvNS_9allocatorIS9_EEEEEEclES5_S7_S7_S7_S7_SD_
+  未引用: _ZNSt3__16vectorINS_8functionIFvN7android8hardware7details16HidlInstrumentor20InstrumentationEventEPKcS8_S8_S8_S8_PNS0_IPvNS_9allocatorIS9_EEEEEEENSA_ISF_EEEC2ERKSH_
+  未引用: _ZNSt3__16vectorIPvNS_9allocatorIS1_EEE21__push_back_slow_pathIS1_EEvOT_
+```
+
+导出计数：`libui.so` 692（旧）→ 776（官方）；`mapper@2.0.so` 98（旧）→ 95（官方）。
+
+---
+
+# 第二部分：运行期验证（2026-11-01 补）
+
+静态树 rc 里那句「由机型静态树写入 /vendor」已不成立（二进制现在走 `vendor.lifts`），
+注释改写后 07 重装配 → `vendor.img` 变为 `56a36e54…`；随后重跑 09、11，把新 vendor 送进
+`patch.img` → `vda.img`，起实例取运行期证据。
+
+## 8. 07 → 09 → 11 重跑
+
+```
+$ out/bin/cdh build-vendor --vendor google --brand oriole --version AP2A.240905.003.F1 \
+    --manifest engine/manifest/google/oriole/baselines/oriole-ap2a.240905.003.f1-factory-655c44e7.json
+[ok] vendor 目录树装配与 vendor.img 打包完成: …/vendor, …/img/vendor.img
+    机型静态树: 写入 2，已存在同内容 0
+    composer compat: 现编（sdk/ndk/29.0.14206865/…/clang++）
+EXIT=0
+
+$ out/bin/cdh build-patch --vendor google --brand oriole --version AP2A.240905.003.F1 \
+    --manifest …oriole-ap2a.240905.003.f1-factory-655c44e7.json --refresh
+[ok] 回填 692 条目，回读 692/692 一致
+[ok] patch.img 发布完成: …/img/patch.img（402653184 字节，sha256 d4c6d5c60c29）
+
+$ out/bin/cdh pack-vda --vendor google --brand oriole --version AP2A.240905.003.F1 \
+    --lineage-zip roms/lineage/UTM-VM-lineage-21.0-20260804-UNOFFICIAL-virtio_arm64only.zip --refresh
+    [ok] super           4.78 GiB @ 129.0 MiB，回读一致
+    [ok] boot_a/boot_b、vendor_boot_a/b 回读一致
+    [ok] patch.img -> out/dist/google/oriole/AP2A.240905.003.F1/patch.img（384.0 MiB，sha256 d4c6d5c60c29）
+    产物: out/dist/google/oriole/AP2A.240905.003.F1（vda.img 13.00 GiB，5 个分区已刷新）
+```
+
+指纹对照（改注释前后）：
+
+| | 改前（首轮） | 改后（本轮） |
+| --- | --- | --- |
+| `vendor.img` sha256 | `5185b732ee07…` | `56a36e541e4b…` |
+| `vendor` recipe | `vendor-67855d254548` | `vendor-67855d254548`（**不变**） |
+| `patch.img` sha256 | `bb57b944c1e2…` | `d4c6d5c60c29…` |
+| `patch` recipe | `patch-65e79d8cf746` | `patch-9f55592f1c43` |
+
+## 9. 起实例并取运行期证据
+
+```
+$ curl -s -X POST http://127.0.0.1:9050/api/create -d '{"index":1}'
+{"ok":true,"index":1,"specId":"oriole_AP2A.240905.003.F1",
+ "instance":{"spec":"oriole_AP2A.240905.003.F1","index":"7","running":true,"pid":21439,
+             "console":5910,"adb":5911,"vnc":5912}}
+
+$ adb -s 127.0.0.1:5911 shell 'getprop sys.boot_completed; getprop ro.vendor.build.id; ps -A | grep -i composer; service list | grep -i composer3'
+1
+AP2A.240905.003.F1
+system         715     1   10912392  10592 0                   0 S android.hardware.composer.hwc3-service.drm
+26      android.hardware.graphics.composer3.IComposer/default: [android.hardware.graphics.composer3.IComposer]
+
+$ adb -s 127.0.0.1:5911 shell 'ls -l /vendor/lib64/libcdh_composer_compat.so /vendor/bin/hw/android.hardware.composer.hwc3-service.drm /vendor/lib64/libui.so'
+-rwxr-xr-x 1 root shell 242064 2009-01-01 08:00 /vendor/bin/hw/android.hardware.composer.hwc3-service.drm
+-rwxr-xr-x 1 root root    3400 2009-01-01 08:00 /vendor/lib64/libcdh_composer_compat.so
+-rw-r--r-- 1 root root  433584 2009-01-01 08:00 /vendor/lib64/libui.so
+```
+
+宿主侧 `out/core/daemon/runtime/oriole_AP2A.240905.003.F1/7/qemu.log` 关键行：
+
+```
+[    9.937558][    T1] init: starting service 'vendor.hwcomposer-3'...
+[   10.493694][    T1] init: ... started service 'vendor.hwcomposer-3' has pid 715
+[   10.507818][  T185] servicemanager: Found android.hardware.graphics.composer3.IComposer/default in device VINTF manifest.
+01-01 00:00:09.944   715   715 I drmhwc  : hwc3-drm starting up
+01-01 00:00:09.945   715   715 I drmhwc  : HWC3 service name android.hardware.graphics.composer3.IComposer/default
+01-01 00:00:10.019   725   725 I SurfaceFlinger: Using HWComposer service: default
+01-01 00:00:10.065   725   725 I HwcComposer: Loaded AIDL composer3 HAL service
+01-01 00:00:10.268   725   725 I HWComposer: Switching to generalized multi-display mode
+[   27.368146][    T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1218)
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+```
+
+计数校验：`starting service 'vendor.hwcomposer-3'` **1** 次（无崩溃重启）、`CANNOT LINK` **0** 次。
+
+> 本轮 `super.img` 未重打：10_pack_super 的 5 个分区都来自官方 `out/roms/…/super/*.img`，
+> 自建 vendor 是通过 `patch.img`（`/mnt/vendorpatch`）挂进来的，09 → 11 重刷即可。
+>
+> `adb shell screencap` 在本机型会挂住（无 GPU readback），`exec-out screencap -p` 与写盘两种写法都
+> 卡死、产物 0 字节，故未截图；合成是否上屏用上面那条 `cgl-headless 大帧` 统计替代。

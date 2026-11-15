@@ -1,0 +1,33 @@
+# Remote KeyMint HAL（android.hardware.security.keymint）—— Cuttlefish remote 实现，
+# 经 /dev/hvc3 与 host secure_env（KeymasterChannel）收发 keymaster 消息，密钥材料与
+# 证明能力全在 host。替换 lineage 底包同名的软件 keymint（路径同为
+# /vendor/bin/hw/android.hardware.security.keymint-service，直接遮蔽）。
+#
+# 三处非默认点 + 一处启动门控，均来自 gold-15 实机取证
+# （devices/xiaomi/gold-15/build/doc/evidence/issue-remote-keymint-hal/solution.md）：
+#
+# 1. `disabled`（原本是 `class early_hal`）：/dev/hvc3 由 virtio_console 提供，本机内核
+#    把它编成模块、由 vendor.dlkm_loader 在 on post-fs 加载；early_hal 阶段设备节点还
+#    不存在，open 失败即 LOG(FATAL) -> SIGABRT -> keystore2 找不到 keymint -> 卡 boot。
+# 2. service 行尾显式带通道参数 /dev/hvc3（v3 virtconsole 布局：hvc0/hvc1 归固件
+#    console、hvc2 空置预留、keymint = hvc3）。与服务内默认值一致，写出来避免布局漂移。
+# 3. `file /dev/kmsg w`：让 LOG(FATAL)/CHECK 的崩溃原文进 kmsg（否则被 init 丢弃，
+#    崩溃取证只能靠猜）。需要 sepolicy 授予 hal_keymint_default 写 kmsg 的权限，gold-15
+#    由 devices/xiaomi/gold-15/build/vendor/build/sepolicy.py 的 keymint 段提供（含
+#    kmsg_debug 的 tmpfs 兜底）。
+#
+# 4. 启动门控与 service 同在本文件：`disabled` 只禁止自动启动，必须显式 `start`。
+#    板级入口 /vendor/etc/init/hw/init.<board>.rc（gold: init.mt6833.rc → init.virt.rc）
+#    由 init.rc 早期 import，其 `on post-fs` 里的 `start vendor.dlkm_loader` 先入队；
+#    本文件属目录扫描阶段、解析更晚，故 `wait` 必然排在 dlkm_loader 之后。
+#    /dev/hvc3 由 virtio_console 提供，`wait` 只做就绪兜底，路径必须与 service 行一致。
+#    实测（gold-15）：`on late-fs` 不触发，post-fs 才可靠。
+
+on post-fs
+    wait /dev/hvc3 30
+    start vendor.keymint-default
+
+service vendor.keymint-default /vendor/bin/hw/android.hardware.security.keymint-service /dev/hvc3
+    file /dev/kmsg w
+    disabled
+    user nobody

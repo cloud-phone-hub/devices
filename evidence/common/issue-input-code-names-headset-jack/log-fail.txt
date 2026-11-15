@@ -1,0 +1,64 @@
+# 修复前：aligner.inputs_full 真机 07cf5fc1784783d5 vs 云机 4503ac70a1c898f3-cloud（run-00087 / run-00086，2026-11-14 10:07）
+# compare_align 汇总: {'identity': 0, 'capability': 17, 'state': 0, 'availability': 0, 'fatal': 17}
+
+[capability] devices[name=Virtual,vendorId=0,productId=0].keyCharacterMap.keyLabels[code=231]
+    真机: {"code": 231, "label": null, "number": null}
+    云机: "<缺>"
+[capability] devices[name=Virtual,vendorId=0,productId=0].keyCharacterMap.keyLabels[code=3]
+    真机: "<缺>"
+    云机: {"code": 3, "label": null, "number": null}
+[capability] devices[name=Virtual,vendorId=0,productId=0].keyCharacterMap.keyLabels[code=79]
+    真机: "<缺>"
+    云机: {"code": 79, "label": null, "number": null}
+[capability] devices[name=Virtual,vendorId=0,productId=0].keyCharacterMap.keyLabels[code=85]
+    真机: {"code": 85, "label": null, "number": null}
+    云机: "<缺>"
+[capability] devices[name=Virtual,vendorId=0,productId=0].keyCharacterMap.supportedKeyCodes
+    真机: {"missing": [3, 79], "count": 10}
+    云机: {"extra": [231, 85], "count": 10}
+[capability] devices[name=goodix_ts,vendorId=10182,productId=1].keyCharacterMap.keyLabels[code=224]
+    真机: {"code": 224, "label": null, "number": null}
+    云机: "<缺>"
+[capability] devices[name=goodix_ts,vendorId=10182,productId=1].keyCharacterMap.keyLabels[code=26]
+    真机: {"code": 26, "label": null, "number": null}
+    云机: "<缺>"
+[capability] devices[name=goodix_ts,vendorId=10182,productId=1].keyCharacterMap.supportedKeyCodes
+    真机: {"missing": [], "count": 2}
+    云机: {"extra": [224, 26], "count": 0}
+[capability] devices[name=goodix_ts,vendorId=10182,productId=1].motionRanges[axis=0,source=4098].max
+    真机: 1079.9375
+    云机: 1079.967
+[capability] devices[name=goodix_ts,vendorId=10182,productId=1].motionRanges[axis=0,source=4098].range
+    真机: 1079.9375
+    云机: 1079.967
+[capability] devices[name=goodix_ts,vendorId=10182,productId=1].motionRanges[axis=1,source=4098].max
+    真机: 2399.9375
+    云机: 2399.9268
+[capability] devices[name=goodix_ts,vendorId=10182,productId=1].motionRanges[axis=1,source=4098].range
+    真机: 2399.9375
+    云机: 2399.9268
+[capability] devices[name=mt6833-mt6359 Headset Jack,vendorId=0,productId=0].keyCharacterMap.keyLabels[code=231]
+    真机: {"code": 231, "label": null, "number": null}
+    云机: "<缺>"
+[capability] devices[name=mt6833-mt6359 Headset Jack,vendorId=0,productId=0].keyCharacterMap.keyLabels[code=3]
+    真机: "<缺>"
+    云机: {"code": 3, "label": null, "number": null}
+[capability] devices[name=mt6833-mt6359 Headset Jack,vendorId=0,productId=0].keyCharacterMap.keyLabels[code=79]
+    真机: "<缺>"
+    云机: {"code": 79, "label": null, "number": null}
+[capability] devices[name=mt6833-mt6359 Headset Jack,vendorId=0,productId=0].keyCharacterMap.keyLabels[code=85]
+    真机: {"code": 85, "label": null, "number": null}
+    云机: "<缺>"
+[capability] devices[name=mt6833-mt6359 Headset Jack,vendorId=0,productId=0].keyCharacterMap.supportedKeyCodes
+    真机: {"missing": [3, 79], "count": 4}
+    云机: {"extra": [231, 85], "count": 4}
+
+# getevent -lp（修复前，云机 127.0.0.1:5919）
+  name:     "mt6833-mt6359 Headset Jack"
+    KEY (0001): KEY_HOMEPAGE          KEY_MEDIA             BTN_1                 BTN_2
+    SW  (0005): SW_LID                SW_TABLET_MODE        SW_HEADPHONE_INSERT   SW_MICROPHONE_INSERT
+# getevent -lp（真机 4lmbvom7gifm5lbu）
+  name:     "mt6833-mt6359 Headset Jack"
+    KEY (0001): KEY_PLAYPAUSE         BTN_1                 BTN_2                 KEY_VOICECOMMAND
+    SW  (0005): SW_HEADPHONE_INSERT   SW_MICROPHONE_INSERT  SW_LINEOUT_INSERT     SW_JACK_PHYSICAL_INSERT
+# 渲染产物（修复前）cdh_input_identity.devices：key  172 257 258 226 / sw  0 1 2 4

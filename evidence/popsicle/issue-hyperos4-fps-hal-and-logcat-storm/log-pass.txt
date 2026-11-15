@@ -1,0 +1,33 @@
+=== properties ===
+1
+false
+0
+11
+true
+false
+=== init services ===
+stopped
+stopped
+stopped
+=== vtcon1 bind ===
+0
+=== vintf perf2 ===
+<manifest version="1.0" type="device">
+  <hal format="aidl">
+    <name>vendor.qti.hardware.perf2</name>
+    <version>1</version>
+    <fqname>IPerf/default</fqname>
+  </hal>
+</manifest>
+=== DisplayModeController active rate ===
+    mDefaultModeId=1
+    mActiveRenderFrameRate=60.0
+  mDefaultModeByDisplay:
+=== logcat error/spam counters after boot + window transition ===
+DolbyVisionGralloc5: 0
+vendor.qti.hardware.perf2.IPerf/default in the VINTF manifest: 0
+vendor.qti.hardware.perf@2.2::IPerf/default: 0
+ro.vendor.display.bt2020.supported: 0
+ro.vendor.display.max_hdr_luminance: 0
+avc:  denied.*hal_sensors_default: 0
+avc:  denied.*hal_perf2_service: 0

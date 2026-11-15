@@ -1,0 +1,32 @@
+# 通过：init 现场合并策略一次成功
+# 来源: out/core/daemon/runtime/m22_12.5.0.0A/8/qemu.log（实例 8，2026-10-28 19:47:38 起）
+# 产物: patch.img sha256 3dcc195d13fe（清单 4 条 vendor-cil-rewrite + 补 type 声明）
+
+[    0.499250][    T1] init: Opening SELinux policy
+[    0.502815][    T1] cdh_redirect: /mnt/patch/odm/etc/selinux/precompiled_sepolicy
+[    0.503543][    T1] cdh_redirect: /mnt/patch/vendor/etc/selinux/precompiled_sepolicy
+[    0.505401][    T1] init: No precompiled sepolicy at /vendor/etc/selinux/precompiled_sepolicy: No such file or directory
+[    0.506242][    T1] init: Compiling SELinux policy
+[    0.506627][    T1] cdh_redirect: /mnt/patch/vendor/etc/selinux/plat_sepolicy_vers.txt
+[    0.519335][    T1] cdh_redirect: /mnt/patch/vendor/etc/selinux/vendor_sepolicy.cil
+[    0.519659][    T1] cdh_redirect: /mnt/patch/vendor/etc/selinux/plat_pub_versioned.cil
+[    0.521246][    T1] init: Using /system/etc/selinux/plat_sepolicy_genfs_202504.cil for genfs labels
+[    0.876193][    T1] init: /system/bin/secilc: linker: Warning: failed to find generated linker configuration from "/linkerconfig/ld.config.txt"
+[    0.876803][    T1] init: /system/bin/secilc: WARNING: linker: Warning: failed to find generated linker configuration from "/linkerconfig/ld.config.txt"
+[    0.878092][    T1] init: Loading SELinux policy
+[    0.882487][    T1] SELinux:  Class memfd_file not defined in policy.
+[    0.882959][    T1] SELinux: the above unknown classes and permissions will be denied
+[    0.883262][    T1] SELinux: cdh: pioneer (type 2605) forced permissive
+
+# 判据
+# 1) 全程无 "Failed to resolve permission" / "Failed to resolve allow statement"
+# 2) 无 "Failed to compile cildb"、无 "Unable to open SELinux policy"、无 InitFatalReboot
+# 3) 属性区: property area 失败 0、invalid_context 0
+# 4) pioneer permissive 生效（说明模块层补的 pioneer/pioneer_exec 声明被合并进来）
+
+## 09_build_patch 侧的改写记录（out/devices/flyme/m22/12.5.0.0A/img/patch-log.txt）
+    改写 /vendor/etc/selinux/vendor_sepolicy.cil（清单 4 条规则）
+      #1 命中 1 次 -> (allow ot_rcp self (netlink_route_socket (nlmsg_write)))
+      #2 命中 1 次 -> ;; cdh: permissionx nlmsg 内核与 plat 均不支持，已删除（ot_rcp…）
+      #3 命中 1 次 -> ;; cdh: permissionx nlmsg 内核与 plat 均不支持，已删除（ot_rcp…）
+      #4 命中 1 次 -> ;; cdh: system class 的 firmware_load 是 6.13+ 权限，内核 clas…

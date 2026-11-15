@@ -1,0 +1,56 @@
+# 通过态：scpm 正常启动，JNI FatalError 归零（build15）
+
+- 盘集：`vendor.img 0ab16bc80f27c8dfb889f2ded5175c1827aefd2f0b2d330f142f2c68c110b833`
+  / `patch.img 2af63406bd4bf5c7982f2f86830132d09dda1e0f33697070ea1b36ffc6398624`
+- 实例：`ss9380_S9380ZCSDCZH1` / index 4，adb `127.0.0.1:5911`
+- 日志：`out/core/daemon/runtime/ss9380_S9380ZCSDCZH1/4/qemu.log`（build15 整份）
+- 取样时间：2026-10-31 06:23 ～ 06:30
+
+## 1. qemu.log 计数
+
+```
+JNI FatalError called（全部）                    = 0
+JNI FatalError called: (com.samsung.android.scpm) = 0
+seapp_context_lookup_internal: No match ... 5009  = 0
+```
+
+## 2. 启动记录
+
+```
+08-12 17:08:19.033   697   795 I am_proc_start: [0,4029,5009,com.samsung.android.scpm,content provider,{com.samsung.android.scpm/com.samsung.scsp.common.ScpmProvider}]
+08-12 17:08:19.033   697   795 I ActivityManager: Start proc 4029:com.samsung.android.scpm/5009 for content provider {com.samsung.android.scpm/com.samsung.scsp.common.ScpmProvider}
+08-12 17:08:19.048  4029  4029 I Zygote  : Process 4029 created for com.samsung.android.scpm
+08-12 17:08:19.251  4029  4165 I SmpLog  : [SMP] Test mode: false, v:3.3.11.2, com.samsung.android.scpm
+```
+
+## 3. guest 复核（取值时实例仍在运行）
+
+```
+$ adb -s 127.0.0.1:5911 shell 'pidof com.samsung.android.scpm'
+4029
+
+$ adb ... shell 'ps -Z -p $(pidof com.samsung.android.scpm)'
+LABEL                          USER                PID   PPID  ...  NAME
+u:r:platform_app:s0:c512,c768  vendor_samsungcloud 4029  659   ...  com.samsung.android.scpm
+```
+
+域与用户都按 seapp_contexts 的声明解析成功；修复前该进程根本创建不出来。
+
+## 4. 最终 vendor.img 的 passwd / group
+
+```
+debugfs -R 'stat etc/passwd' vendor.img  -> Size: 1439
+debugfs -R 'cat  etc/passwd' vendor.img | wc -l -> 37
+  vendor_samsungcloud::5009:5009::/:/bin/sh
+
+debugfs -R 'stat etc/group'  vendor.img  -> Size: 884
+debugfs -R 'cat  etc/group'  vendor.img | wc -l -> 37
+  vendor_samsungcloud::5009:
+```
+
+## 5. crash buffer
+
+```
+$ adb ... shell 'logcat -b crash -d | grep -c "com.samsung.android.scpm"'
+0
+```

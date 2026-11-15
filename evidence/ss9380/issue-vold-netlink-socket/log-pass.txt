@@ -1,0 +1,24 @@
+# 通过态取证：vold 正常起来，logcat 不再刷屏（2026-10-30，改之后）
+
+# 机型：samsung/pa3qzcx/pa3q:16/BP4A.251205.006/S9380ZCSDCZH1
+# 盘集：build8（patch.img sha256 e8a9bf71183e，片段追加第二段
+#       `(allow vold_202504 vold_202504 (netlink_socket (read write create bind)))`）
+# 实例：index 2（新建，避免复用坏掉的 /data 加密密钥），adb 127.0.0.1:5919
+
+# ---- 1) 服务在跑 ----
+$ adb shell getprop init.svc.vold
+running
+
+# ---- 2) avc 归零 ----
+$ adb shell dmesg | grep -c 'comm="vold"'
+0
+
+# ---- 3) logcat 刷屏消失 ----
+$ adb shell logcat -d | grep -c 'Socket created with fd:-1'
+2
+# （只剩极早期 2 条，之后不再出现；此前是毫秒级无限循环）
+
+# ---- 4) 连带效果 ----
+# main buffer 不再被冲掉，才看得到后续卡点的真实日志：
+#   - PersistentDataBlockService init timeout（见 issue-pdb-frp-block-device/）
+#   - vendor.wifi.dualconcurrent.interface 设置被拒（下一卡点）

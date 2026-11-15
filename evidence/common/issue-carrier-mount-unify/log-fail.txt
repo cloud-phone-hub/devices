@@ -1,0 +1,48 @@
+# 迁移前：三棵内核树的 /mnt/patch 命中（git grep，各自的迁移前提交）
+
+## lineage-22-6.6 (HEAD~1 = 改名前的提交)
+HEAD~1:fs/Kconfig:7
+HEAD~1:fs/namei.c:53
+HEAD~1:fs/namespace.c:5
+HEAD~1:fs/proc/base.c:1
+HEAD~1:include/linux/namei.h:1
+
+## lineage-23-6.12 (HEAD~1 = 改名前的提交)
+HEAD~1:fs/Kconfig:6
+HEAD~1:fs/namei.c:62
+HEAD~1:fs/namespace.c:5
+HEAD~1:fs/proc/base.c:1
+HEAD~1:include/linux/namei.h:1
+
+## lineage-21-6.1（上一轮已把落点改完，本次只未对齐 Kconfig help）
+迁移前 HEAD（现已被 `128aa20763b6` 覆盖）仅剩注释里的历史叙述：
+HEAD:fs/Kconfig:410:	  mapping it killed (they would be under /mnt/patch, which is why the
+HEAD:fs/namei.c:138: *  1) 不能挂在 /mnt/patch：system/vold 的 VolumeManager::start() 会把 /proc/mounts
+HEAD:fs/namei.c:144: *     /mnt/patch 时 vold 在 ~5.8 s 杀掉 maps 里引用它的 vndservicemanager，它 rc
+
+## 迁移前：构建侧与清单侧的命中（改前工作树 grep，2026-11-01）
+engine/build/05_build_vendor_boot/fstab.go 已改成 /mnt/vendorpatch（上一轮），
+但下面这些仍写 /mnt/patch：
+
+engine/vendor/hardware/android.hardware.gpu/src/cdh_vulkan_mali.c:109:
+    // 先按绝对路径开（/vendor 会被内核重定向到 /mnt/patch/vendor），失败再退回
+engine/vendor/hardware/android.service.daemon/src/rust/src/main.rs:111:
+    // （cdh_redirect 把 /vendor/bin 重定向到 /mnt/patch/vendor/bin）。
+engine/manifest/oppo/cph2797/vendor/etc/init/init.virtio_compat.rc:21,39,40,48,49:
+    #     /mnt/patch（patch.img）0.265 s
+    # 为什么 bind 的 source 写 /mnt/patch 而不是 /vendor（实测踩过的坑）：
+    #       source=/mnt/patch/vendor/etc/compat/ → rc=0，挂载出现在 mounts 里
+engine/manifest/oppo/cph2797/vendor/etc/init/init.virtio_compat.rc:71,99,100,162:
+    mount none /mnt/patch/vendor/etc/compat/renderengine_ext_unavailable.so ... bind wait
+    mount none /mnt/patch/vendor/etc/compat/vintf_empty.xml ... bind wait   （3 条）
+engine/manifest/oppo/cph2797/baselines/CPH2797_16.0.8.301_EX01_A11_full.json:16:
+    "... 运行态由 patch.img（vdc -> /mnt/patch）加内核 getname_flags 路径重定向遮蔽。"
+engine/manifest/oppo/CPH2797/baselines/CPH2797_16.0.8.301_EX01_A11_full.json:16:（同上）
+engine/manifest/flyme/m22/README.md:197:
+    只有 `/mnt/patch/vendor/usr/idc` 有文件。
+
+## 错位的后果（机制）
+05 生成的 first_stage fstab: /dev/block/vdc /mnt/vendorpatch ext4 ro first_stage_mount
+22/23 内核的重定向目标:        /mnt/patch/vendor/...
+→ vdc 挂到 /mnt/vendorpatch，而 /vendor/etc 等被改写到不存在的 /mnt/patch/vendor/etc，
+  属性/策略/服务全部 ENOENT；cph2797 的 4 条 bind source 更是直接指向不存在的路径。

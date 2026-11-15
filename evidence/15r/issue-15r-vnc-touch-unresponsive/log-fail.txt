@@ -1,0 +1,381 @@
+=== 1. 修复前 QEMU 进程命令行 (pid 31981) ===
+/Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/bin/qemu-system-aarch64 -L /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/share/qemu -machine virt -rtc base=localtime -m 8192 -smp 8 -accel hvf -object memory-backend-shm,id=stage-ram,size=8192M,share=on -numa node,memdev=stage-ram -chardev socket,id=stage-media-dec,path=/tmp/stage-e30ce887/media-decoder.sock -device vhost-user-media-pci,chardev=stage-media-dec,id=media-dec -chardev socket,id=stage-media-enc,path=/tmp/stage-e30ce887/media-encoder.sock -device vhost-user-media-pci,chardev=stage-media-enc,id=media-enc -device virtio-gpu-gl-pci,blob=on,hostmem=256M,venus=on,edid=on,xres=1272,yres=2800,xmax=1272,ymax=2800,refresh-rates=60,width-mm=72,height-mm=158 -display cgl-headless,gl=on,readback=on -vnc 127.0.0.1:20,websocket=5921,share=force-shared -qmp unix:/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/qmp.sock,server=on,wait=off -drive if=pflash,unit=0,file=/Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/firmware/edk2-aarch64-code.fd,file.locking=off,format=raw,readonly=on -drive if=pflash,unit=1,file=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/efi-vars.fd -drive file=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/writable-base.qcow2,if=none,id=vda,format=qcow2,node-name=stage-vda,discard=unmap,detect-zeroes=unmap -device virtio-blk-pci,drive=vda,bootindex=0 -drive file=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/writable-data.qcow2,if=none,id=vdb,format=qcow2,node-name=stage-vdb,discard=unmap,detect-zeroes=unmap -device virtio-blk-pci,drive=vdb,bootindex=1 -drive file=/Volumes/work/cloud-phone-hub/engine/out/dist/oneplus/15r/16.0.10.500_EX01/patch.img,if=none,id=vdc,format=raw,readonly=on -device virtio-blk-pci,drive=vdc,bootindex=2 -device virtio-net-pci,netdev=net0,romfile= -netdev user,id=net0,restrict=on,hostfwd=tcp::5919-:5555 -device virtio-net-pci,netdev=net2,romfile=,mac=52:54:00:12:34:58 -netdev user,id=net2,net=100.64.155.0/24,dhcpstart=100.64.155.15 -device virtio-multitouch-pci -device virtio-tablet-pci -device virtio-keyboard-pci -device virtio-serial,id=stage-vserial -chardev null,id=stage-hvc0 -device virtconsole,chardev=stage-hvc0,id=stage-hvc0-console -chardev null,id=stage-hvc1 -device virtconsole,chardev=stage-hvc1,id=stage-hvc1-console -chardev socket,id=stage-adbkey,fd=3 -device virtconsole,chardev=stage-adbkey,id=stage-hvc2-adbkey -chardev socket,id=stage-keymint,fd=4,logfile=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/secure-env/keymint-wire.log,logappend=on -device virtconsole,chardev=stage-keymint,id=stage-hvc3-keymint -chardev socket,id=stage-radio,fd=5 -device virtconsole,chardev=stage-radio,id=stage-hvc4-radio -chardev null,id=stage-hvc5 -device virtconsole,chardev=stage-hvc5,id=stage-hvc5-console -chardev null,id=stage-hvc6 -device virtconsole,chardev=stage-hvc6,id=stage-hvc6-console -chardev socket,id=stage-event,path=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/channels/event.sock,server=on,wait=off,logfile=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/channels/event.sock.log,logappend=on -device virtconsole,chardev=stage-event,id=stage-hvc7-event -chardev null,id=stage-hvc8 -device virtconsole,chardev=stage-hvc8,id=stage-hvc8-console -chardev socket,id=stage-wifi,path=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/channels/wifi.sock,server=on,wait=off,logfile=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/channels/wifi.sock.log,logappend=on -device virtconsole,chardev=stage-wifi,id=stage-hvc9-wifi -chardev socket,id=stage-wifi-data,path=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/channels/wifi-data.sock,server=on,wait=off,logfile=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/channels/wifi-data.sock.log,logappend=on -device virtconsole,chardev=stage-wifi-data,id=stage-hvc10-wifi-data -device virtio-rng-pci -audiodev none,id=cdhsnd -device intel-hda -device hda-duplex,audiodev=cdhsnd -chardev stdio,mux=on,id=charconsole -serial chardev:charconsole
+
+=== 2. /vendor/etc/excluded-input-devices.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<devices>
+    <device name="QEMU QEMU USB Tablet"/>
+    <device name="QEMU Virtio Tablet"/>
+</devices>
+
+=== 3. /proc/bus/input/devices ===
+I: Bus=0019 Vendor=0000 Product=0001 Version=0000
+N: Name="Power Button"
+P: Phys=PNP0C0C/button/input0
+S: Sysfs=/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0C:00/input/input0
+U: Uniq=
+H: Handlers=event0 
+B: PROP=0
+B: EV=3
+B: KEY=8000 10000000000000 0
+
+I: Bus=0006 Vendor=0627 Product=0003 Version=0001
+N: Name="QEMU Virtio MultiTouch"
+P: Phys=virtio8/input0
+S: Sysfs=/devices/pci0000:00/0000:00:09.0/virtio8/input/input1
+U: Uniq=
+H: Handlers=event1 
+B: PROP=2
+B: EV=b
+B: KEY=30400 1f0000 0 0 0 0
+B: ABS=660800000000000
+
+I: Bus=0006 Vendor=0627 Product=0003 Version=0002
+N: Name="QEMU Virtio Tablet"
+P: Phys=virtio9/input0
+S: Sysfs=/devices/pci0000:00/0000:00:0a.0/virtio9/input/input2
+U: Uniq=
+H: Handlers=event2 
+B: PROP=0
+B: EV=f
+B: KEY=30400 1f0000 0 0 0 0
+B: REL=100
+B: ABS=3
+
+I: Bus=0006 Vendor=0627 Product=0001 Version=0001
+N: Name="QEMU Virtio Keyboard"
+P: Phys=virtio10/input0
+S: Sysfs=/devices/pci0000:00/0000:00:0b.0/virtio10/input/input3
+U: Uniq=
+H: Handlers=leds event3 
+B: PROP=0
+B: EV=120003
+B: KEY=400000007 ff803078f800dfff febeffff7bcfffff fffffffffffffffe
+B: LED=7
+
+
+=== 4. getevent -p ===
+add device 1: /dev/input/event0
+  name:     "Power Button"
+  events:
+    KEY (0001): 0074  008f 
+  input props:
+    <none>
+add device 2: /dev/input/event3
+  name:     "QEMU Virtio Keyboard"
+  events:
+    KEY (0001): 0001  0002  0003  0004  0005  0006  0007  0008 
+                0009  000a  000b  000c  000d  000e  000f  0010 
+                0011  0012  0013  0014  0015  0016  0017  0018 
+                0019  001a  001b  001c  001d  001e  001f  0020 
+                0021  0022  0023  0024  0025  0026  0027  0028 
+                0029  002a  002b  002c  002d  002e  002f  0030 
+                0031  0032  0033  0034  0035  0036  0037  0038 
+                0039  003a  003b  003c  003d  003e  003f  0040 
+                0041  0042  0043  0044  0045  0046  0047  0048 
+                0049  004a  004b  004c  004d  004e  004f  0050 
+                0051  0052  0053  0056  0057  0058  0059  005b 
+                005c  005d  005e  0060  0061  0062  0063  0064 
+                0065  0066  0067  0068  0069  006a  006b  006c 
+                006d  006e  006f  0071  0072  0073  0074  0075 
+                0077  0079  007a  007b  007c  007d  007e  007f 
+                0080  0081  0082  0083  0084  0085  0086  0087 
+                0088  0089  008a  008b  008c  008e  008f  009b 
+                009c  009d  009e  009f  00a3  00a4  00a5  00a6 
+                00ac  00ad  00b7  00b8  00b9  00ba  00bb  00bc 
+                00bd  00be  00bf  00c0  00c1  00c2  00e2 
+    LED (0011): 0000  0001  0002 
+  input props:
+    <none>
+add device 3: /dev/input/event1
+  name:     "QEMU Virtio MultiTouch"
+  events:
+    KEY (0001): 0110  0111  0112  0113  0114  014a  0150  0151 
+    ABS (0003): 002f  : value 0, min 0, max 10, fuzz 0, flat 0, resolution 0
+                0035  : value 0, min 0, max 32767, fuzz 0, flat 0, resolution 0
+                0036  : value 0, min 0, max 32767, fuzz 0, flat 0, resolution 0
+                0039  : value 0, min 0, max 65535, fuzz 0, flat 0, resolution 0
+                003a  : value 0, min 0, max 32767, fuzz 0, flat 0, resolution 0
+  input props:
+    INPUT_PROP_DIRECT
+add device 4: /dev/input/event2
+  name:     "QEMU Virtio Tablet"
+  events:
+    KEY (0001): 0110  0111  0112  0113  0114  014a  0150  0151 
+    REL (0002): 0008 
+    ABS (0003): 0000  : value 28082, min 0, max 32767, fuzz 0, flat 0, resolution 0
+                0001  : value 21509, min 0, max 32767, fuzz 0, flat 0, resolution 0
+  input props:
+    <none>
+
+=== 5. dumpsys input (EventHub + InputReader) ===
+Input properties:
+  velocitytracker_strategy (flag value) = default
+
+Input Manager State:
+  Display not interactive: {}
+  System UI Lights Out: false
+  Pointer Speed: 0
+  Display with Mouse Scaling Disabled: {}
+  Pointer Gestures Enabled: true
+  Support Laser: false
+  Pointer Capture: Disabled, seq=0
+
+Event Hub State:
+  BuiltInKeyboardId: -2
+  Devices:
+    1: Power Button
+      Classes: KEYBOARD
+      Path: /dev/input/event0
+      Enabled: true
+      Descriptor: 26d13db3fa0f6bd5d05831266fb01ea6c500b88c
+      Location: PNP0C0C/button/input0
+      ControllerNumber: 0
+      UniqueId: 
+      Identifier: bus=0x0019, vendor=0x0000, product=0x0001, version=0x0000, bluetoothAddress=<not set>
+      KeyLayoutFile: /system/usr/keylayout/Generic.kl
+      KeyCharacterMapFile: /system/usr/keychars/Generic.kcm
+      ConfigurationFile: 
+      VideoDevice: <none>
+      SysfsDevicePath: /sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0C:00
+      KeyState (pressed): <none>
+    2: QEMU Virtio Keyboard
+      Classes: KEYBOARD | ALPHAKEY
+      Path: /dev/input/event3
+      Enabled: true
+      Descriptor: e9ac6dde47cf0ffa91b87f7b85e6f8de0933fc98
+      Location: virtio10/input0
+      ControllerNumber: 0
+      UniqueId: 
+      Identifier: bus=0x0006, vendor=0x0627, product=0x0001, version=0x0001, bluetoothAddress=<not set>
+      KeyLayoutFile: /system/usr/keylayout/Generic.kl
+      KeyCharacterMapFile: /system/usr/keychars/Generic.kcm
+      ConfigurationFile: 
+      VideoDevice: <none>
+      SysfsDevicePath: /sys/devices/pci0000:00/0000:00:0b.0/virtio10
+      KeyState (pressed): <none>
+    3: QEMU Virtio MultiTouch
+      Classes: KEYBOARD | TOUCH | TOUCH_MT
+      Path: /dev/input/event1
+      Enabled: true
+      Descriptor: 2e9b7bc1fac2daf412c6597a1aa5fa9961a50490
+      Location: virtio8/input0
+      ControllerNumber: 0
+      UniqueId: 
+      Identifier: bus=0x0006, vendor=0x0627, product=0x0003, version=0x0001, bluetoothAddress=<not set>
+      KeyLayoutFile: /system/usr/keylayout/Generic.kl
+      KeyCharacterMapFile: /system/usr/keychars/Generic.kcm
+      ConfigurationFile: 
+      VideoDevice: <none>
+      SysfsDevicePath: /sys/devices/pci0000:00/0000:00:09.0/virtio8
+      KeyState (pressed): <none>
+      AbsState: ABS_MT_SLOT=0, ABS_MT_POSITION_X=0, ABS_MT_POSITION_Y=0, ABS_MT_TRACKING_ID=0, ABS_MT_PRESSURE=0
+    -1: Virtual
+      Classes: KEYBOARD | ALPHAKEY | DPAD | VIRTUAL
+      Path: <virtual>
+      Enabled: true
+      Descriptor: a718a782d34bc767f4689c232d64d527998ea7fd
+      Location: 
+      ControllerNumber: 0
+      UniqueId: <virtual>
+      Identifier: bus=0x0000, vendor=0x0000, product=0x0000, version=0x0000, bluetoothAddress=<not set>
+      KeyLayoutFile: /system/usr/keylayout/Generic.kl
+      KeyCharacterMapFile: /system/usr/keychars/Virtual.kcm
+      ConfigurationFile: 
+      VideoDevice: <none>
+      SysfsDevicePath: <none>
+  Unattached video devices:
+    <none>
+
+Input Reader State (Nums of device: 4):
+  Device 4: Power Button
+    EventHub Devices: [ 1 ] 
+    Generation: 34
+    IsExternal: false
+    IsWaking: false
+    AssociatedDisplayPort: <none>
+    AssociatedDisplayUniqueIdByPort: <none>
+    AssociatedDisplayUniqueIdByDescriptor: <none>
+    SysfsRootPath:     /sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0C:00
+    HasMic:     false
+    Sources: KEYBOARD
+    KeyboardType: 1
+    ControllerNum: 0
+    SupportWinMac: 0
+    SupportBacklight: 0
+    SupportPressure: 0
+    Keyboard Input Mapper:
+      Parameters:
+        OrientationAware: false
+        HandlesKeyRepeat: false
+      Orientation: Rotation0
+      KeyDowns: 0 keys currently down
+      MetaState: 0x0
+      KeyboardLayoutInfo: <not set>
+  Device 3: QEMU Virtio Keyboard
+    EventHub Devices: [ 2 ] 
+    Generation: 35
+    IsExternal: false
+    IsWaking: false
+    AssociatedDisplayPort: <none>
+    AssociatedDisplayUniqueIdByPort: <none>
+    AssociatedDisplayUniqueIdByDescriptor: <none>
+    SysfsRootPath:     /sys/devices/pci0000:00/0000:00:0b.0/virtio10
+    HasMic:     false
+    Sources: KEYBOARD
+    KeyboardType: 2
+    ControllerNum: 0
+    SupportWinMac: 0
+    SupportBacklight: 0
+    SupportPressure: 0
+    Keyboard Input Mapper:
+      Parameters:
+        OrientationAware: false
+        HandlesKeyRepeat: false
+      Orientation: Rotation0
+      KeyDowns: 0 keys currently down
+      MetaState: 0x0
+      KeyboardLayoutInfo: <not set>
+  Device 2: QEMU Virtio MultiTouch
+    EventHub Devices: [ 3 ] 
+    Generation: 36
+    IsExternal: false
+    IsWaking: false
+    AssociatedDisplayPort: <none>
+    AssociatedDisplayUniqueIdByPort: <none>
+    AssociatedDisplayUniqueIdByDescriptor: <none>
+    SysfsRootPath:     /sys/devices/pci0000:00/0000:00:09.0/virtio8
+    HasMic:     false
+    Sources: KEYBOARD | TOUCHSCREEN
+    KeyboardType: 1
+    ControllerNum: 0
+    SupportWinMac: 0
+    SupportBacklight: 0
+    SupportPressure: 0
+    Motion Ranges:
+      X: source=TOUCHSCREEN, min=0.000, max=1271.961, flat=0.000, fuzz=0.000, resolution=0.000
+      Y: source=TOUCHSCREEN, min=0.000, max=2799.915, flat=0.000, fuzz=0.000, resolution=0.000
+      PRESSURE: source=TOUCHSCREEN, min=0.000, max=1.000, flat=0.000, fuzz=0.000, resolution=0.000
+    Keyboard Input Mapper:
+      Parameters:
+        OrientationAware: false
+        HandlesKeyRepeat: false
+      Orientation: Rotation0
+      KeyDowns: 0 keys currently down
+      MetaState: 0x0
+      KeyboardLayoutInfo: <not set>
+    Touch Input Mapper (mode - DIRECT):
+      Parameters:
+        GestureMode: MULTI_TOUCH
+        DeviceType: TOUCH_SCREEN
+        AssociatedDisplay: hasAssociatedDisplay=true, isExternal=false, displayId=''
+        OrientationAware: true
+        Orientation: Rotation0
+        UsiVersion: <not set>
+        EnableForInactiveViewport: false
+      Raw Touch Axes:
+        X: min=0, max=32767, flat=0, fuzz=0, resolution=0
+        Y: min=0, max=32767, flat=0, fuzz=0, resolution=0
+        Pressure: min=0, max=32767, flat=0, fuzz=0, resolution=0
+        TouchMajor: unknown range
+        TouchMinor: unknown range
+        ToolMajor: unknown range
+        ToolMinor: unknown range
+        Orientation: unknown range
+        Distance: unknown range
+        TiltX: unknown range
+        TiltY: unknown range
+        TrackingId: min=0, max=65535, flat=0, fuzz=0, resolution=0
+        Slot: min=0, max=10, flat=0, fuzz=0, resolution=0
+      Calibration:
+        touch.size.calibration: NONE
+        touch.pressure.calibration: physical
+        touch.orientation.calibration: none
+        touch.distance.calibration: none
+      Affine Transformation:
+        X scale: 1.000
+        X ymix: 0.000
+        X offset: 0.000
+        Y xmix: 0.000
+        Y scale: 1.000
+        Y offset: 0.000
+      Viewport INTERNAL: displayId=0, uniqueId=local:4632256312697818880, port=0, orientation=0, logicalFrame=[0, 0, 1272, 2800], physicalFrame=[0, 0, 1272, 2800], deviceSize=[1272, 2800], isActive=[1]
+      DisplayBounds: 1272x2800
+      PhysicalFrameInRotatedDisplay: Rect{0, 0, 1272, 2800}
+      InputDeviceOrientation: Rotation0
+      Translation and Scaling Factors:
+        RawToDisplay Transform: (ROT_0) (SCALE )
+            0.0388  0.0000  0.0000
+            0.0000  0.0854  0.0000
+            0.0000  0.0000  1.0000
+        RawRotation Transform: (ROT_0) (IDENTITY)
+        OrientedXPrecision: 25.761
+        OrientedYPrecision: 11.703
+        GeometricScale: 0.062
+        PressureScale: 0.000
+        SizeScale: 0.000
+        OrientationScale: 0.000
+        DistanceScale: 0.000
+        HaveTilt: false
+        TiltXCenter: 0.000
+        TiltXScale: 0.000
+        TiltYCenter: 0.000
+        TiltYScale: 0.000
+      Last Raw Button State: 0x00000000
+      Last Raw Touch:
+        When: -9223372036854775808
+        Read time: 0
+        Button state: 0x00000000
+        Raw pointer data:
+          0 pointers:
+          ID bits: hovering = 0x00000000, touching = 0x00000000, canceled = 0x00000000
+      Last Cooked Button State: 0x00000000
+      Last Cooked Touch: pointerCount=0
+      Stylus Fusion:
+        ExternalStylusPresence: NONE
+        Fused External Stylus Pointer ID: <not set>
+        External Stylus Data Timeout: 9223372036854775807
+        External Stylus Buttons Applied: 0x00000000
+      External Stylus State:
+        When: 0
+        Pressure: <not set>
+        Button State: 0x00000000
+        Tool Type: UNKNOWN
+  Device -1: Virtual
+    EventHub Devices: [ -1 ] 
+    Generation: 33
+    IsExternal: false
+    IsWaking: false
+    AssociatedDisplayPort: <none>
+    AssociatedDisplayUniqueIdByPort: <none>
+    AssociatedDisplayUniqueIdByDescriptor: <none>
+    SysfsRootPath:     <none>
+    HasMic:     false
+    Sources: KEYBOARD | DPAD
+    KeyboardType: 2
+    ControllerNum: 0
+    SupportWinMac: 0
+    SupportBacklight: 0
+    SupportPressure: 0
+    Keyboard Input Mapper:
+      Parameters:
+        OrientationAware: false
+        HandlesKeyRepeat: false
+      Orientation: Rotation0
+      KeyDowns: 0 keys currently down
+      MetaState: 0x0
+      KeyboardLayoutInfo: <not set>
+  NextTimeout: 9223372036854775807
+  Configuration:
+    ExcludedDeviceNames: [QEMU QEMU USB Tablet, QEMU Virtio Tablet]
+    VirtualKeyQuietTime: 0.0ms
+    PointerVelocityControlParameters: scale=1.000, lowThreshold=500.000, highThreshold=3000.000, acceleration=3.000
+    WheelVelocityControlParameters: scale=1.000, lowThreshold=15.000, highThreshold=50.000, acceleration=4.000
+    PointerGesture:
+      Enabled: true
+      QuietInterval: 100.0ms
+      DragMinSwitchSpeed: 50.0px/s
+      TapInterval: 150.0ms
+      TapDragInterval: 300.0ms
+      TapSlop: 20.0px
+      MultitouchSettleInterval: 100.0ms

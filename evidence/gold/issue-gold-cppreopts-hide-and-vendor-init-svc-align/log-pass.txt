@@ -1,0 +1,120 @@
+=== 实机 shell init.svc.* 与 44 服务逐条核验 (batch2-post.log) ===
+init.svc.cppreopts=[]
+init.svc.mi_thermald=[running]
+init.svc.nvram_daemon=[stopped]
+init.svc.audioserver=[running]
+bt_secure=[Redmi Note 13 5G]
+  name: Redmi Note 13 5G
+    inet 192.168.60.100/24 brd 192.168.60.255 scope global wlan0
+=== service list IModule ===
+32	android.hardware.audio.core.IModule/bluetooth: [android.hardware.audio.core.IModule]
+33	android.hardware.audio.core.IModule/default: [android.hardware.audio.core.IModule]
+34	android.hardware.audio.core.IModule/r_submix: [android.hardware.audio.core.IModule]
+=== 44 vendor services ===
+running=34, stopped=10, mismatched=[]
+
+=== diff/build_props.json init.svc.* count (post) = 17 ===
+[
+ {
+  "level": "state",
+  "path": "props.init.svc.adbd",
+  "base": "running",
+  "target": "stopped"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.aee-reinit",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.aee_aed",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.aee_aed64",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.artd",
+  "base": "stopped",
+  "target": "running"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.boringssl_self_test32",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.boringssl_self_test32_vendor",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.boringssl_self_test_apex32",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.connsyslogger",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.gsid",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.hidl_memory",
+  "base": "running",
+  "target": "stopped"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.hwservicemanager",
+  "base": "running",
+  "target": "stopped"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.snapuserd",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.snapuserd_proxy",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.update_verifier",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.vndservicemanager",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.zygote_secondary",
+  "base": "running",
+  "target": "<缺>"
+ }
+]

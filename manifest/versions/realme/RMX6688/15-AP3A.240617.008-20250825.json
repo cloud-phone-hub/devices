@@ -1,0 +1,17 @@
+{
+  "id": 31,
+  "buildId": "15-AP3A.240617.008-20250825",
+  "deviceId": 25,
+  "configId": 25,
+  "osVersion": "15-AP3A.240617.008-20250825",
+  "buildDate": "20250825",
+  "securityPatch": "2025-09-01",
+  "factoryTgz": "811_sign_RMX6688_11_A_OTA_0380_all_Qt92xR_10010111.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 811_sign_RMX6688_11_A_OTA_0380_all_Qt92xR_10010111.zip (vendor/build.prop) 自动生成。",
+    "osVersion": "15-AP3A.240617.008-20250825"
+  },
+  "updatedAt": "2026-11-06 02:47:41"
+}

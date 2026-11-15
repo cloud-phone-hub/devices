@@ -1,0 +1,34 @@
+# vendor.qti.hardware.perf2（IPerf v1）服务定义 —— 空实现 HAL，方法即时回 0。
+#
+# 为什么由模块自带而不是机型静态树提供：这份 rc 只有服务定义与启动门控，没有任何
+# 机型数值（无通道号、无设备节点、无实例名差异），符合 vendor/build/README.md 的
+# 切分口径「etc/init/*.rc 设备无关，随服务/源码走」。本文件由
+# vendor/build 的 publishVendor 并进产物根；07 步骤 4 只复制 device.json **声明**了
+# 本模块的机型的 VendorTree——「在哪些机型上注册」由 device.json 决定，
+# 不需要靠机型静态树里有没有这份 rc 来门控。
+#
+# 为什么必须补实体：Flyme 的 vendor.perfservice / BoostFramework 在
+# handleBindApplication 里**同步**连 QTI perf HAL；实例缺失时每次查询都要到
+# servicemanager 走一遍失败路径（实例日志里有 383 条 "Could not find
+# vendor.qti.hardware.perf2.IPerf/default in the VINTF manifest"，调用方是
+# system_server / system_app / lmkd），3a-15 上同一缺口曾放大成 app 主线程阻塞。
+#
+# 为什么 disabled + on post-fs-data 显式 start：perfservice 在 system_server 起来后
+# 才查询，post-fs-data 足够早；显式启动避开 class 批量启动窗口的失败重试循环。
+# 不注入 VINTF 片段：客户端用 native getService（不做 VINTF 校验），本机官方与
+# lineage 底座也都没声明过该 HAL；声明一个不在 FCM 里的包反而引入 VINTF 校验面，
+# 一旦服务晚到还会把 getService 拖成 waitForDeclaredService 的阻塞等待。
+# SELinux：复用底座标准域 hal_sensors_default（本仓虚拟 HAL 一律复用基座标准域）；
+# 本实例名的类型与 service_manager(add find) 由模块层片段给出——
+# engine/vendor/hardware/vendor.qti.hardware.perf2/sepolicy/，随 HAL 复用，本文件只声明
+# 启动链；可执行标签由 07_build_vendor 步骤 6b 按本文件的 seclabel 自动补 _exec 规则。
+service vendor.perf2-default /vendor/bin/hw/vendor.qti.hardware.perf2-hal-service
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_sensors_default:s0
+    interface aidl vendor.qti.hardware.perf2.IPerf/default
+    disabled
+
+on post-fs-data
+    start vendor.perf2-default

@@ -1,0 +1,56 @@
+# 失败证据：内核事实指到官方侧 + lineage-23.2 不带 CDH 补丁
+# 采集时间 2026-10-28，采集时 engine/kernels/lineage-23-6.12 = 空目录
+
+## 1) 旧口径清单（去掉 rom.lineage.kernel，还原改动前状态）推导出 6.6 代际
+$ python3 -c "…把 baselines/12.5.0.0A.json 的 rom.lineage.kernel 删掉，落到 /tmp/m22-legacy-baseline.json…"
+已生成 /tmp/m22-legacy-baseline.json（去掉 rom.lineage.kernel）
+
+$ CDH_MANIFEST=/tmp/m22-legacy-baseline.json CDH_LINEAGE_VERSION=lineage-23.2 \
+      ./out/bin/cdh build-kernel --dry-run
+[err] 无法确定内核源码：请用 --source 或 CDH_KERNEL_SOURCE 指定（kernels/ 下可用: kernels/lineage-22-6.6, kernels/lineage-23-6.12）
+
+# 说明：KernelTag("lineage-23.2", "6.6") = lineage-23-6.6，去找 kernels/lineage-23-6.6；
+# 官方 ROM 内核是 6.6.66-android15，而底包内核是 6.12.81，两者不同代。
+
+## 2) 纯 lineage-23.2 源码里没有 CDH 符号（补丁缺失，配置静默失效）
+$ grep -rn "CDH_PATH_REDIRECT\|CDH_PIONEER_PERMISSIVE" --include="Kconfig*" kernels/lineage-23-6.12
+（无输出）
+
+$ grep -rln "cdh_path_redirect\|CDH_PATH_REDIRECT" kernels/lineage-23-6.12
+（无输出）
+
+## 3) 首编（纯 lineage-23.2）产出的 config：片段要的 PIONEER_PERMISSIVE 整条消失
+$ grep -E "^CONFIG_(CDH_PIONEER_PERMISSIVE|CDH_PATH_REDIRECT|VIRTIO_CONSOLE|MAC80211_HWSIM|CRYPTO_LIB_ARC4)=" \
+      out/kernel/lineage-23-6.12/config
+CONFIG_MAC80211_HWSIM=m
+CONFIG_VIRTIO_CONSOLE=m
+CONFIG_CRYPTO_LIB_ARC4=m
+# 片段同时要求：
+#   CONFIG_CDH_PIONEER_PERMISSIVE=y   ← 整条不见（Kconfig 无此符号，merge_config 不报错）
+#   CONFIG_VIRTIO_CONSOLE=y           ← 被阶段脚本 scripts/config --module 压回 m
+#   CONFIG_CRYPTO_LIB_ARC4=y          ← 因 MAC80211=m 的 select 上限被压回 m（内核规则，非 bug）
+
+## 4) 首编 Image 与 v1 已验收 Image 的差异（补丁缺失导致内核能力回退）
+$ shasum -a 256 devices/flyme/m22/out/kernel/Image engine/out/kernel/lineage-23-6.12/Image | awk '{print $1}'
+9c6d2d106f0917d0108c571d1a710802d3b851fb75ee87e69eb1f024a91d3a03
+85c4bcea67ce466e95f803d9fbfc4981efbefb940f12c891ee14f43428a0b732
+# 两者 kernelrelease 都是 6.12.81-4k-cdh、大小同为 43,969,024 B，但内容不同；
+# v1 那份带 CDH 三补丁，本次首编那份没有 → 必须 graft 补丁后再编。
+$ grep -hE "^CONFIG_(VIRTIO_CONSOLE|CDH_PIONEER_PERMISSIVE)=" devices/flyme/m22/out/kernel/config
+CONFIG_VIRTIO_CONSOLE=m
+CONFIG_CDH_PIONEER_PERMISSIVE=y
+
+## 5) graft 时 GitHub 不可达（只能用本地同仓库克隆作为对象源）
+$ ssh -o BatchMode=yes -T git@github.com
+Connection closed by UNKNOWN port 65535
+
+$ git ls-remote --heads https://github.com/cloud-phone-hub/android_kernel_virt_virtio.git
+致命错误：无法访问 …：LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to github.com:443
+
+$ GIT_SSH_COMMAND="ssh -o BatchMode=yes" git fetch --depth 1 origin 15R-16
+Connection closed by UNKNOWN port 65535
+致命错误：无法读取远程仓库。
+
+# 可用性对照：本次会话早期 ls-remote 成功过，记录了 15R-16 = 6e8576671a439c7a2b9d842701afa854ae4cd52e
+$ GIT_SSH_COMMAND="ssh -o BatchMode=yes" git ls-remote --heads git@github.com:cloud-phone-hub/android_kernel_virt_virtio.git | grep 15R-16
+6e8576671a439c7a2b9d842701afa854ae4cd52e        refs/heads/15R-16

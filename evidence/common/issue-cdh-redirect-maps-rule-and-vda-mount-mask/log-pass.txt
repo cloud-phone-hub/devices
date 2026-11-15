@@ -1,0 +1,36 @@
+=== [1] Go 单元测试：cd engine/build && go test -v ... ===
+=== RUN   TestParseRedirectEntriesMaps
+--- PASS: TestParseRedirectEntriesMaps (0.00s)
+=== RUN   TestParseRedirectEntriesMapsRejectsShortTarget
+--- PASS: TestParseRedirectEntriesMapsRejectsShortTarget (0.00s)
+=== RUN   TestParseRedirectEntriesRejectsUnknownType
+--- PASS: TestParseRedirectEntriesRejectsUnknownType (0.00s)
+=== RUN   TestRedirectRulesCarrierTargets
+    carrier_mount_test.go:110: 规则载体口径一致：40 份机型规则（自映射护栏除外）全部指向 /mnt/vendorpatch
+--- PASS: TestRedirectRulesCarrierTargets (0.08s)
+=== RUN   TestKernelTreesCarryNoRedirect
+    carrier_mount_test.go:197: 内核树干净：18 个文件无内置重定向实现
+--- PASS: TestKernelTreesCarryNoRedirect (0.01s)
+PASS
+ok  	cloud-phone-hub/engine/build/internal/device	1.151s
+
+=== [2] 模块编译校验（engine/out/tmp/batch3-build.log） ===
+  CC [M]  /src/.cdh/modules/cdh_redirect/core/main.o
+  CC [M]  /src/.cdh/modules/cdh_redirect/core/rules.o
+  CC [M]  /src/.cdh/modules/cdh_redirect/hook/namei.o
+  CC [M]  /src/.cdh/modules/cdh_redirect/hook/readlink.o
+  CC [M]  /src/.cdh/modules/cdh_redirect/hook/mountinfo.o
+[ok] cdh_redirect.ko: 40 个符号版本一致
+[ok] patch.img -> out/dist/redmi/gold/15-OS3.0.11.0.VNQCNXM/patch.img（384.0 MiB，sha256 ef95bd07802d）
+
+=== [3] 非特权 App 侧实测（dfc3bfc1d643037a-cloud，batch3-post-runtime.txt [9]） ===
+proc.mountinfo /dev/block/vda* count=0
+  [mountinfo] 1205 1202 254:13 / /mnt/vendor/persist rw,nosuid,nodev,noatime master:19 - ext4 /dev/block/sdc15 rw,seclabel,nodelalloc,noauto_da_alloc,commit=1
+  [mountinfo] 1245 1186 254:12 / /cust ro,relatime master:56 - erofs /dev/block/bootdevice/by-name/cust ro,seclabel,user_xattr,acl,cache_strategy=readaround
+proc.mounts /dev/block/vda* count=0
+proc.mountstats /dev/block/vda* count=0
+
+loadedVendorSo.gpuSo=["/vendor/lib64/android.hardware.graphics.allocator-V2-ndk.so", ... "/vendor/lib64/egl/libGLES_meow.so", ... "/vendor/lib64/libgralloctypes_mtk.so"]  (22 项，onlyCloud=0，仅缺真机 libgralloc_extra.so / libpqhdrmetaparser.so)
+loadedVendorSo.vendorSo (59 vs 33, onlyCloud=0)
+forbidden_old_meow_libs_present=[]
+libGLES_meow.so md5_app=e5884bc660bd75888f69209c9503325e md5_host_official=e5884bc660bd75888f69209c9503325e match=True

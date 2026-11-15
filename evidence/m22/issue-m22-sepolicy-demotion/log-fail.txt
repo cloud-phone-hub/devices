@@ -1,0 +1,81 @@
+# log-fail：这次下放里被推翻的判断与踩到的风险（2026-10-29）
+
+记录目的：下次遇到「机型层 sepolicy 要不要搬」时，先看这几条能省一轮试错。
+
+## 1. 错误认知一：以为 8 条 exec 标签必须手写
+
+初始判断是「把它们逐条搬进各模块的 `sepolicy/vendor_file_contexts`」。核对
+`build/07_build_vendor/halexec.go` 后发现步骤 6b 早就能从 rc 的 `seclabel`
+反推 `<域>_exec` 并写进同一份 `vendor_file_contexts`（#55 引入）。这 8 条里 7 条
+对应 rc 本来就有 seclabel，手写只是 6b 之前的历史兜底，6b 看到规则已存在就跳过。
+
+**推翻后的做法**：不新建任何模块级 `vendor_file_contexts`，把 health 的 rc 补上
+`seclabel`，让 6b 一次派生 26 条（日志第 4 节）。
+
+顺带纠正一个既有印象：用户此前明确否过「把 `vendor_file_contexts` 放模块层」
+（理由是 file_contexts 要写死路径，`/dev/hvc3` 这类通道号属于板级事实）。本次不
+碰那条结论——exec 标签不进模块层，走 rc。
+
+## 2. 错误认知二：以为 sensor_aux 还没有模块实体
+
+机型层注释与 README「缺口 3」都写着「引擎侧没有这个桩模块，实体仍缺」。实际：
+
+```
+vendor/build/modules/vendor.meizu.sensor_aux.json     # spec 在
+vendor/hardware/vendor.meizu.sensor_aux/{aidl,src,vendor}
+out/vendor/android16/bin/hw/vendor.meizu.sensor_aux-service
+out/vendor/android16/etc/init/vendor.meizu.sensor_aux-service.rc   # seclabel u:r:hal_sensors_default:s0
+manifest/flyme/m22/device.json → hardware 里有 vendor.meizu.sensor_aux
+```
+
+**教训**：注释里的「缺口」会随代码推进失效，动之前先在 `out/vendor/` 与
+`vendor/build/modules/` 里核一遍，别照着 README 的待办做。
+
+## 3. 错误认知三：想把 5 个 vendor 服务名也塞进「Flyme 兼容模块」
+
+一度考虑给它们造一个虚拟模块（无二进制、只带 sepolicy），这样机型层能再瘦一半。
+放弃的理由：
+
+- `sepolicySources()` 只遍历 `device.json` 声明的模块，而这些名字 vendor 侧没有
+  实现、`device.json` 里也没有对应项；凭空加一个「策略模块」会让 `modules/*.json`
+  的语义（编什么、装什么）失真。
+- 这 5 个名字是 Flyme 独有（gold 是 MIUI 名单），本质是 framework 的查询名单，
+  和「HAL 自身契约」不是一回事；放模块层反而把机型知识伪装成通用契约。
+
+**结论**：判据不是「文件大小」而是「换机型要不要重写」。要重写的留机型层。
+
+## 4. 操作风险：整段替换头注释时残留了半句
+
+第一次替换 m22 `vendor_sepolicy.cil` 的头部清单时，新文本以「vendor 侧又没有实现
+可挂——」结尾，而原文下一行「;;      realitytap。perf2 已移入模块层（…」还在，
+拼出一段语义重复的残句。是读回文件才发现的（SearchReplace 只报成功，不报语义）。
+
+**教训**：改注释块这类「没有编译期保护」的文本，替换后必须 `sed -n` 回读一段；
+本次因此多做了两轮修补（残句 + 段号 1/2/3/4 重排）。
+
+## 5. 退化路径：health rc 不加 seclabel 就删 file_contexts
+
+health 是 8 条里唯一「rc 无 seclabel」的。如果只删机型层 `vendor_file_contexts`
+不给它补 `seclabel`：
+
+- 6b 扫不到这个服务的域 → 不补 `hal_health_default_exec`；
+- 二进制回落 `vendor_file`，init 在**定义服务**阶段就报
+  `File /vendor/bin/hw/android.hardware.health-service(labeled "u:object_r:vendor_file:s0")
+  has incorrect label or no domain transition from u:r:init:s0`；
+- 该报错 permissive 下也会出现，服务起不来 → BatteryService 的
+  `waitForDeclaredService` 死等 66 s → system_server 重启循环（#55 已记录）。
+
+**所以改动顺序必须是「先补 rc seclabel、再删手写规则」**，本次即按此顺序。
+
+## 6. 退化路径：`(allow init vendor_file (file (execute)))` 不能顺手删
+
+标签正确后它看起来多余，但它是 `{ execute }`（不是 `entrypoint`），删掉是否会回退
+取决于底座有没有给 init 对 `*_exec` 的 execute 授权——构建层看不出来，只能实机
+看 `avc`。本次保留，写进遗留 2。
+
+## 7. 刻意没做的事
+
+- 不把 `patch.img` / `out/dist` 一起刷新（09/11 未跑）：本轮只验证 07 的装配与镜像。
+- 不动 `manifest/xiaomi/gold/sepolicy/`（gold 的 widevine 片段与本次无关）；但
+  `android.hardware.gnss` 模块新增的 gps/fix 读授权会随模块作用于 gold，已写进遗留 3。
+- 不新增/删除任何模块 spec，不碰 `device.json`。

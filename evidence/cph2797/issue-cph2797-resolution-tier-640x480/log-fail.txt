@@ -1,0 +1,67 @@
+# 失败现场：实例 15（整机 640x480）
+# 实例目录：out/core/daemon/runtime/cph2797_16.0.8.301_EX01/15/
+# 日志全量：同目录 qemu.log；以下命令输出取自 guest root shell
+
+# 1）整机尺寸
+$ wm size
+Physical size: 640x480
+$ wm density
+Physical density: 560
+Override density: 480
+
+# 2）EDID / DRM 模式表正常：preferred 就是 1256x2760
+$ cat /sys/class/drm/card0-Virtual-1/modes
+1256x2760
+1024x768
+800x600
+640x480
+640x480
+$ cat /sys/class/drm/card0-Virtual-1/status
+connected
+
+# 3）框架知道 defaultModeId=1，却选了 modeId=4
+$ dumpsys display | grep -m1 DisplayDeviceInfo
+DisplayDeviceInfo{"Layar Built-In": uniqueId="local:4632256312697818880", 640 x 480,
+  modeId 4, ... defaultModeId 1, userPreferredModeId -1, supportedModes
+  [{id=1, width=1256, height=2760, fps=60.0}, {id=2, width=1024, height=768},
+   {id=3, width=800, height=600}, {id=4, width=640, height=480},
+   {id=5, width=640, height=480, fps=59.94}], ...}
+$ dumpsys display | grep -m1 mActiveModeId
+    mActiveModeId=4
+
+# 4）锁死 base mode 的那张票：OPlus 的分辨率档位以 App 请求尺寸的形式投票
+$ dumpsys display | sed -n '/mVotesByDisplay/,+12p'
+  mVotesByDisplay:
+      PRIORITY_DEFAULT_REFRESH_RATE -> RenderVote{ RefreshRateVote{ mMinRefreshRate=0.0, mMaxRefreshRate=121.0 } }
+      PRIORITY_USER_SETTING_PEAK_RENDER_FRAME_RATE -> RenderVote{ ... mMaxRefreshRate=60.0 }
+      PRIORITY_USER_SETTING_PEAK_REFRESH_RATE -> CombinedVote{ ... }
+      PRIORITY_APP_REQUEST_SIZE -> SizeVote{ mWidth=640, mHeight=480, mMinWidth=640, mMinHeight=480 }
+      PRIORITY_APP_REQUEST_BASE_MODE_REFRESH_RATE -> BaseModeRefreshRateVote{ mAppRequestBaseModeRefreshRate=60.0 }
+
+# 5）wm size 不是修复路径：被 config_maxDisplayHeight=1920 钳掉，且不改 HWC 模式
+$ wm size 1256x2760
+Physical size: 640x480
+Override size: 1256x1920
+$ dumpsys display | grep -m1 mActiveModeId
+    mActiveModeId=4
+$ cmd display set-user-preferred-display-mode 1256 2760 60
+$ dumpsys display | grep -m1 mActiveModeId
+    mActiveModeId=4
+
+# 6）DRM 现行模式也跟着是 640x480
+$ mount -t debugfs none /sys/kernel/debug
+$ grep -m1 crtc-pos /sys/kernel/debug/dri/0/state
+        crtc-pos=640x480+0+0
+
+# 7）同 QEMU / 同 HWC 的 m22 对照：链路本身没问题
+#    （实例 46，spec=m22_12.5.0.0A）
+$ wm size
+Physical size: 1080x2400
+$ dumpsys display | grep -m1 mActiveModeId
+    mActiveModeId=1
+$ grep -m1 crtc-pos /sys/kernel/debug/dri/0/state
+        crtc-pos=1080x2400+0+0
+
+# 8）根因键：出厂默认 2（低分辨率档）
+$ settings get secure oplus_customize_screen_resolution_adjust
+2

@@ -1,0 +1,8 @@
+# engine/vendor 自研 weaver HAL（虚拟 HAL）：云机没有 TEE 存储，服务注册
+# android.hardware.weaver.IWeaver/default，读写槽位一律按失败返回。
+service vendor.weaver-default /vendor/bin/hw/android.hardware.weaver-service
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_weaver_default:s0
+    interface aidl android.hardware.weaver.IWeaver/default

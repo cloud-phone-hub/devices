@@ -1,0 +1,36 @@
+=== [1] Go 单元测试（05_build_vendor_boot & 11_pack_vda） ===
+=== RUN   TestMergeCloudFstabVDAExtrasOverridePersist
+--- PASS: TestMergeCloudFstabVDAExtrasOverridePersist (0.00s)
+ok  	cloud-phone-hub/engine/build/stages/05_build_vendor_boot	1.792s
+=== RUN   TestEnsureBlankExt4GenerateReuseAndRebuild
+--- PASS: TestEnsureBlankExt4GenerateReuseAndRebuild (0.14s)
+=== RUN   TestRunAppendsVDAPartition
+--- PASS: TestRunAppendsVDAPartition (0.25s)
+ok  	cloud-phone-hub/engine/build/stages/11_pack_vda	2.497s
+
+=== [2] 全链路构建输出（engine/out/tmp/batch3-build.log） ===
+==> [2/6] build_vendor_boot  (05_build_vendor_boot)
+    生成: 2026-11-14 19:39，算法 fstab-rev: merge-v13
+==> [6/6] pack_vda  (11_pack_vda)
+    [mkfs] 生成空白 ext4 vendor_persist -> out/devices/redmi/gold/15-OS3.0.11.0.VNQCNXM/img/vendor_persist.img（32.0 MiB，mode=0771 uid=1000 gid=1000）
+    [ok] vendor_persist  32.0 MiB @ 14.00 GiB（容量 32.0 MiB，余量 0 B），回读一致
+    [mkfs] 生成空白 ext4 protect_f      -> out/devices/redmi/gold/15-OS3.0.11.0.VNQCNXM/img/protect_f.img（8.0 MiB，mode=0770 uid=1000 gid=1000）
+    [ok] protect_f       8.0 MiB @ 14.03 GiB（容量 8.0 MiB，余量 0 B），回读一致
+    [mkfs] 生成空白 ext4 protect_s      -> out/devices/redmi/gold/15-OS3.0.11.0.VNQCNXM/img/protect_s.img（8.0 MiB，mode=0770 uid=1000 gid=1000）
+    [ok] protect_s       8.0 MiB @ 14.04 GiB（容量 8.0 MiB，余量 0 B），回读一致
+    [mkfs] 生成空白 ext4 nvdata         -> out/devices/redmi/gold/15-OS3.0.11.0.VNQCNXM/img/nvdata.img（64.0 MiB，mode=0771 uid=1000 gid=1000）
+    [ok] nvdata          64.0 MiB @ 14.05 GiB（容量 64.0 MiB，余量 0 B），回读一致
+    [mkfs] 生成空白 ext4 nvcfg          -> out/devices/redmi/gold/15-OS3.0.11.0.VNQCNXM/img/nvcfg.img（32.0 MiB，mode=0771 uid=1000 gid=1000）
+    [ok] nvcfg           32.0 MiB @ 14.11 GiB（容量 32.0 MiB，余量 0 B），回读一致
+    [mkfs] 生成空白 ext4 rescue         -> out/devices/redmi/gold/15-OS3.0.11.0.VNQCNXM/img/rescue.img（64.0 MiB，mode=0770 uid=1000 gid=1000）
+    [ok] rescue          64.0 MiB @ 14.14 GiB（容量 64.0 MiB，余量 0 B），回读一致
+    [grow] 盘大小 13.00 GiB -> 14.21 GiB
+
+=== [3] 非特权 App 侧实测（batch3-post-runtime.txt [9]） ===
+  [mountinfo] 1205 1202 254:13 / /mnt/vendor/persist rw,nosuid,nodev,noatime master:19 - ext4 /dev/block/sdc15 rw,seclabel,nodelalloc,noauto_da_alloc,commit=1
+  [mountinfo] 1206 1202 254:14 / /mnt/vendor/protect_f rw,nosuid,nodev,noatime master:20 - ext4 /dev/block/sdc18 rw,seclabel,nodelalloc,noauto_da_alloc,commit=1
+  [mountinfo] 1207 1202 254:15 / /mnt/vendor/protect_s rw,nosuid,nodev,noatime master:21 - ext4 /dev/block/sdc19 rw,seclabel,nodelalloc,noauto_da_alloc,commit=1
+  [mountinfo] 1208 1202 259:0 / /mnt/vendor/nvdata rw,nosuid,nodev,noatime master:22 - ext4 /dev/block/sdc7 rw,seclabel,nodelalloc,noauto_da_alloc,commit=1
+  [mountinfo] 1209 1202 259:1 / /mnt/vendor/nvcfg rw,nosuid,nodev,noatime master:23 - ext4 /dev/block/sdc6 rw,seclabel,nodelalloc,noauto_da_alloc,commit=1
+  [mountinfo] 1210 1202 259:2 / /mnt/rescue rw,noatime master:24 - ext4 /dev/block/by-name/rescue rw,seclabel
+# aligner 收敛：proc fatal 137 -> 124（capability 29 -> 22），native_env blockMounts 缺项与 persist vfat 全部清零

@@ -1,0 +1,137 @@
+# log-pass.txt — issue-m22-hardware-list-align 通过态证据
+# 采集：2026-10-29，m22 实例 36（宿主 14:35:31 起，guest 串口日志窗口
+#       01-01 00:00:00 → 06-25 20:59:51，运行约 8.4 min；adb 127.0.0.1:5919）
+# 盘集：07→09→11 重跑（/tmp/m22-round5.log，EXIT=0）
+#   vendor.img 206,651,392 B · patch.img 402,653,184 B / sha256 e51ecc57cba9
+#   vda.img 13.00 GiB（5 个分区已刷新）
+
+## A. 07：清单与产物
+
+$ grep -a "输入: manifest/flyme/m22/device.json" /tmp/m22-round5.log
+    输入: manifest/flyme/m22/device.json（hardware 31 项：… android.hardware.bluetooth@default、
+          android.hardware.boot@default … android.hardware.power.stats@default …
+          android.hardware.secure_element@default … vendor.meizu.sensor_aux@default、
+          vendor.qti.hardware.perf2@default）
+
+$ grep -ac "default_exec$" /tmp/m22-round5.log
+18            ← 步骤 6b 补的 `_exec` 标签条数（含 6 个新二进制）
+
+## B. 启动与服务
+
+$ adb -s 127.0.0.1:5919 shell 'getprop sys.boot_completed; cat /proc/uptime'
+1
+173277.78 3317.18
+
+$ grep -a "record_boot_complete" out/core/daemon/runtime/m22_12.5.0.0A/36/qemu.log | head -1
+… [   71.428977][    T1] init: starting service 'exec 18 (/system/bin/bootstat --record_boot_complete …)'
+
+$ adb -s 127.0.0.1:5919 shell 'for s in …; do echo "init.svc.$s=$(getprop init.svc.$s)"; done'
+init.svc.vendor.boot-default=running
+init.svc.vendor.power.stats-default=running
+init.svc.vendor.secure_element-default=running
+init.svc.vendor.bluetooth-default=running
+init.svc.vendor.sensor_aux-default=running
+init.svc.vendor.perf2-default=running
+
+$ Q=out/core/daemon/runtime/m22_12.5.0.0A/36/qemu.log      # 每个服务都只启动 1 次、无退出
+vendor.boot-default            start=1  exit=0
+vendor.power.stats-default     start=1  exit=0
+vendor.secure_element-default  start=1  exit=0
+vendor.bluetooth-default       start=1  exit=0
+vendor.sensor_aux-default      start=1  exit=0
+vendor.perf2-default           start=1  exit=0
+
+$ grep -a "starting service 'vendor.power.stats-default'" $Q
+[   26.667881][    T1] init: starting service 'vendor.power.stats-default'...
+[   26.672316][    T1] init: starting service 'vendor.secure_element-default'...
+[   26.696941][    T1] init: starting service 'vendor.bluetooth-default'...
+[   26.709235][    T1] init: starting service 'vendor.sensor_aux-default'...
+[   26.714988][    T1] init: starting service 'vendor.perf2-default'...
+（boot-default 在 post-fs 起，21.07 s；其余 5 个在 post-fs-data 一起起）
+
+$ adb -s 127.0.0.1:5919 shell 'service list | grep -E "IBluetoothHci|IBootControl|IPowerStats|ISecureElement|ISensorAux|IPerf"'
+ 29     android.hardware.bluetooth.IBluetoothHci/default: [android.hardware.bluetooth.IBluetoothHci]
+ 30     android.hardware.boot.IBootControl/default: [android.hardware.boot.IBootControl]
+ 49     android.hardware.power.stats.IPowerStats/default: [android.hardware.power.stats.IPowerStats]
+ 63     android.hardware.secure_element.ISecureElement/eSE1: [android.hardware.secure_element.ISecureElement]
+ 79     android.se.omapi.ISecureElementService/default: [android.se.omapi.ISecureElementService]
+248     perfcore_service: [com.meizu.perfcore.IPerfCore]
+260     powerstats: [android.os.IPowerStatsService]
+281     secure_element: [android.se.omapi.ISecureElementService]
+332     vendor.meizu.sensor_aux.ISensorAux/default: [vendor.meizu.sensor_aux.ISensorAux]
+333     vendor.perfservice: [com.qualcomm.qti.IPerfManager]
+335     vendor.qti.hardware.perf2.IPerf/default: [vendor.qti.hardware.perf2.IPerf]
+
+$ adb -s 127.0.0.1:5919 shell 'service check powerstats; service check secure_element'
+Service powerstats: found
+Service secure_element: found
+
+## C. SELinux 可执行标签（#55 的 6b 规则生效）
+
+$ adb -s 127.0.0.1:5919 shell ls -Z /vendor/bin/hw | grep -E "bluetooth|boot|power.stats|secure_element|sensor_aux|perf2"
+u:object_r:hal_bluetooth_default_exec:s0          android.hardware.bluetooth-service
+u:object_r:hal_bluetooth_default_exec:s0          android.hardware.bluetooth-service.default
+u:object_r:hal_bootctl_default_exec:s0            android.hardware.boot-service.default
+u:object_r:hal_power_stats_default_exec:s0        android.hardware.power.stats-service
+u:object_r:hal_secure_element_default_exec:s0     android.hardware.secure_element-service
+u:object_r:hal_sensors_default_exec:s0            vendor.meizu.sensor_aux-service
+u:object_r:hal_sensors_default_exec:s0            vendor.qti.hardware.perf2-hal-service
+
+## D. 蓝牙可用（log-fail.txt §C/D 的对照项）
+
+$ adb -s 127.0.0.1:5919 shell 'dumpsys bluetooth_manager | grep -E "enabled:|state:|address:|crashed"'
+  enabled: true
+  state: ON
+  address: XX:XX:XX:XX:17:00
+  time since enabled: 00:07:12.405
+Bluetooth crashed 0 times
+
+$ grep -ac "initializationComplete" out/core/daemon/runtime/m22_12.5.0.0A/36/qemu.log
+0             ← 实例 35 为 12 行，补 console_device 授权后归零
+
+## E. 运行期计数（实例 36，开机 → 20:59:51）
+
+$ Q=out/core/daemon/runtime/m22_12.5.0.0A/36/qemu.log
+$ grep -ac "<pattern>" $Q
+Waiting for service 'vendor.meizu.sensor_aux          0     ← 实例 34 为 892
+Waiting for service 'vendor.qti.hardware.perf2          0
+Could not find vendor.qti.hardware.perf2               227     ← 快速失败回话，调用方不睡（实例 34：472）
+Waited one second for                                  18
+Too many pending                                        0
+cannot execv                                            0
+not found in VINTF                                      0
+exited with status 127                                  0
+initializationComplete                                  0
+Watchdog triggered                                     16     ← 4 次（每 90 s），全为 NfcService
+
+$ grep -a "Waited one second for" $Q | grep -aoE "for [A-Za-z0-9_.]+" | sort | uniq -c
+  18 for activity                     ← 开机后应用启动期，无 HAL 等待
+
+$ grep -a "Watchdog triggered, aborting" $Q | grep -aoE "^[0-9-]+ [0-9:.]+ +[0-9]+" | awk '{print $3}' | sort -u
+06-25 20:54:06 … 20:55:36 … 20:57:06 … 20:58:37     （4 次，间隔严格 90 s）
+
+$ grep -a "cdh_perf2_service" $Q | grep -aoE "scontext=u:r:[a-z_0-9]+" | sort | uniq -c | sort -rn
+ 421  mediaserver
+ 178  platform_app
+  22  priv_app
+  18  nfc
+  17  vendor_perfservice
+   9  radio
+   9  mediaprovider
+   7  pioneer
+   6  vendor_qtelephony
+   3  vendor_xpanprovider_app
+（总计 722 行；实例 34 同档——perf2 的客户端 `find` 缺口，见 solution.md §6.1）
+
+$ grep -a "cdh_sensor_aux_service" $Q | grep -aoE "scontext=u:r:[a-z_0-9]+" | sort | uniq -c
+   6  pioneer          ← sensor_aux 只需 system_server 侧，6 行为启动期一次探测
+
+## F. 设备面
+
+$ adb -s 127.0.0.1:5919 shell 'dumpsys sensorservice | head -3'
+Sensor Device:
+Total 29 h/w sensors, 29 running 0 disabled clients:
+
+$ adb -s 127.0.0.1:5919 shell 'am start -a android.settings.SETTINGS'
+Starting: Intent { act=android.settings.SETTINGS }        ← OK
+$ adb -s 127.0.0.1:5919 shell 'input keyevent HOME'        ← OK

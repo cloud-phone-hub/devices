@@ -1,0 +1,14 @@
+{
+  "module": "input_identity",
+  "outputs": ["cdh_input_identity.ko"],
+  "inject": "vendor-dlkm",
+  "kernel": ["5.10", "5.15", "6.1", "6.6", "6.12", "6.18"],
+  "assets": [
+    {
+      "source": "kernel/cdh_input_identity.devices",
+      "target": "lib/modules/cdh_input_identity.devices",
+      "from-manifest": "input-devices"
+    }
+  ],
+  "note": "按真机取证静态注册输入设备集合，让 InputReader 算出的 name/descriptor/sources 与真机 hardware.inputs 一致；不发事件，只声明身份与 capability。机型差异全部在基线清单 modules.input_identity 声明（一机型一份），由 08_build_vendor_dlkm 渲染为行式文本 /lib/modules/cdh_input_identity.devices（from-manifest=input-devices，source 为名义兜底、实际由清单渲染，无需静态文件），模块加载时通过 kernel_read_file_from_path 读取解析（config.c，照 device_info/uts 范式，先读 patch 物理路径再回退直挂路径）。声明该机型全部内核侧输入设备：静态注册设备集 devices + QEMU 侧键盘能力对齐 aligns + 触屏 TOUCH_MAJOR 补齐 touch_major + goodix_fp 形态开关；执行侧（main.c）泛化注册与对齐，零机型分支、零机型缺省。无 profile 参数、无内置缺省设备集：清单未声明 modules.input_identity 则 08 构建失败，缺文件/解析失败则模块加载 -EINVAL。QEMU 侧设备身份（name/bus/vendor/product）仍在清单 modules.input，本模块只对齐能力位。另含原 goodix_fingerprint 模块收归的 goodix_fp platform driver 形态（/sys/bus/platform/drivers/goodix_fp，供 AIDA64/DevInfo 读取），由配置 goodix_fp 开关控制。所用 API 为 5.10–6.18 稳定导出符号，多版本同源码编译。"
+}

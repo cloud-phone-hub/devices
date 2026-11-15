@@ -1,0 +1,64 @@
+# kernelsu v3.3.1 首次编译失败（6.6.127 / lineage-22-6.6 + droid-ddk:android15-6.6，2026-11-02）
+
+环境：宿主机 macOS + OrbStack；容器内内核源码挂 `/src`（`engine/kernels/lineage-22-6.6`），
+输出目录 `/out`（`gki_defconfig` + `modules_prepare` + `make security/selinux/` 生成 `flask.h`），
+模块树 `/out/modtest`（= `engine/modules/kernelsu`，排除 `.git`）。
+
+命令：
+
+    make O=/out ARCH=arm64 LLVM=1 -j12 M=/out/modtest modules
+
+## 第一次（源码 = 上游 v3.3.1 原样，未打补丁）
+
+    CC [M]  /out/modtest/source/kernel/hook/syscall_hook_manager.o
+    /out/modtest/source/kernel/hook/syscall_hook_manager.c:150:11: error: call to undeclared
+      function 'register_trace_prio_sys_enter'; ISO C99 and later do not support implicit
+      function declarations [-Wimplicit-function-declaration]
+        ret = register_trace_prio_sys_enter(ksu_sys_enter_handler, NULL, INT_MIN);
+              ^
+    /src/include/trace/events/syscalls.h:18:1: note: 'register_trace_sys_enter' declared here
+    make[4]: *** [/src/scripts/Makefile.build:243:
+      /out/modtest/source/kernel/hook/syscall_hook_manager.o] Error 1
+
+`register_trace_prio_*` 是 6.9 才有的入口，6.6.127 的头里没有；上游 v3.3.1 无条件用它。
+
+## 第二次（补 0002 兼容补丁后：定制代码里的 v3.3.1 字段/宏不匹配）
+
+    CC [M]  /out/modtest/source/kernel/policy/shell_profile.o
+    /out/modtest/source/kernel/policy/shell_profile.c:22:14: error: no member named
+      'current_uid' in 'struct app_profile'; did you mean 'curr_uid'?
+        profile->current_uid = KSU_SHELL_UID;
+    /out/modtest/source/kernel/policy/shell_profile.c:28:39: error: no member named
+      'current_uid' in 'struct app_profile'; did you mean 'curr_uid'?
+    /out/modtest/source/kernel/policy/allowlist.c:297:25: error: use of undeclared
+      identifier 'SHELL_UID'
+        if (unlikely(uid == SHELL_UID) && !ksu_shell_su_allowed_for_current()) {
+
+`struct app_profile` 的 `current_uid` 在 v3.3.1 改名 `curr_uid`；`allowlist.c` 里上游的
+`#define SHELL_UID 2000` 在平移定制时被换成 `KSU_SHELL_UID`，但第 297 行漏改。
+
+## 第三次（补完定制后：modpost 阶段补丁幂等判断误报）
+
+    LD [M]  /out/modtest/source/kernel/kernelsu.o
+    /out/modtest/Kbuild:31: *** kernelsu: 补丁 0001-shell-profile.patch 与 source/ 基线不符，
+      请按新基线重做补丁.  Stop.
+    make[2]: *** [/src/Makefile:1920: modpost] Error 2
+
+kbuild 会在编译、modpost 多个阶段反复 include 模块 Kbuild。用
+`git apply --reverse --check` 判断「已应用」在「两个补丁改同一文件」时不成立（反向顺序
+对不上），于是一次成功应用后第二次解析误判为基线不符。
+
+## 另有两类环境性报错（非真问题，记录以区分）
+
+    /src/security/selinux/include/objsec.h:28:10: fatal error: 'flask.h' file not found
+
+`flask.h` 由 `security/selinux` 编译阶段生成；只做 `modules_prepare` 时没有，真实构建里
+02 已编过内核（`CONFIG_SECURITY_SELINUX=y`）必然存在。实验环境用
+`gki_defconfig` + `make security/selinux/` 补齐后消失。
+
+    WARNING: Module.symvers is missing.
+             Modules may not have dependencies or modversions.
+
+同样是「没编 vmlinux」的实验现象；`KBUILD_MODPOST_WARN=1` 把未导出符号降级为告警后
+照常产出 `.ko`（真实构建用 02 的 `Module.symvers`，只剩 KernelSU 依赖的那几个运行时
+解析符号需要降级）。

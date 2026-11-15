@@ -1,0 +1,33 @@
+#!/system/bin/sh
+# Continuously stream logcat to the serial console (appears in serial.log)
+# 带 events/crash 缓冲，捕获 system_server 被 kill/watchdog/ANR 的关键证据。
+#
+# 门控（2026-11-03）：默认**不开**，只在 `debug.cdh.logcat_serial` 为 1 时抓。
+# 原因是它在所有声明 daemon 的机型上常态生效，全量（main/system/events/crash/
+# kernel）灌串口实测占掉近一个核（guest 侧 logcat 88% CPU），宿主 qemu.log 稳定
+# 写入 ~290 KB/s（10 分钟 170 MB），pl011 逐字符陷入把界面拖到卡顿；popsicle 上
+# 与 Cuttlefish 的 seriallogging（`-b all *:V`）叠加时更明显。
+#
+# 用法：`adb shell setprop debug.cdh.logcat_serial 1` 打开、
+#       `adb shell setprop debug.cdh.logcat_serial 0` 关闭，运行期即生效
+#       （本脚本每 2 秒轮询一次，起停都不需要重启实例）。
+# 开机早期（zygote / SystemServer 起不来那一段）仍可用 rc 的三个触发点：
+# 它们在 early-boot 就把本脚本拉起来，只要在那之前把属性设成 1 即可（例如
+# vendor_boot 的 cmdline 传 androidboot 版本，或临时改 rc）。
+#
+# 门控关闭时不跑 logcat，只 sleep —— 服务保持 running，后两次 `start` 被 init
+# 当作「已在运行」忽略（rc 里 oneshot 的幂等前提不变）。
+while :; do
+    if [ "$(getprop debug.cdh.logcat_serial)" = "1" ]; then
+        # 只抓未读增量：-T 1 从「现在」开始，避免每次打开都把历史全量刷一遍。
+        logcat -v threadtime -T 1 -b main -b system -b events -b crash -b kernel \
+            > /dev/ttyAMA0 2>/dev/null &
+        child=$!
+        while [ "$(getprop debug.cdh.logcat_serial)" = "1" ]; do
+            sleep 2
+        done
+        kill "$child" 2>/dev/null
+        wait "$child" 2>/dev/null
+    fi
+    sleep 2
+done

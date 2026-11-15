@@ -1,0 +1,25 @@
+# 修前现场：guest 时钟停在镜像构建时刻（gold 云机）
+# 摘自本轮实测（同一实例，注入逻辑上线之前）
+
+$ date -u
+Wed Jul 15 13:09:17 UTC 2026          # 宿主同一时刻是 2026-10-31 09:0x UTC → 落后 108 天
+
+$ getprop ro.build.date.utc
+1784120585                            # = Wed Jul 15 21:03:05 CST 2026，正是镜像构建时间
+
+$ ls -l /dev/rtc*
+ls: /dev/rtc*: No such file or directory     # 没有 RTC 设备（-rtc base=localtime 是空转）
+
+$ cat /proc/driver/rtc
+cat: /proc/driver/rtc: No such file or directory
+
+$ stat /data
+mtime 2026-07-15 21:03:11             # /data 的 mtime 就是"被冻结"的开机瞬间
+
+$ cmd network_time_update_service force_refresh
+false                                 # 无外网，NTP 补不回来
+
+# device-checker 侧的假阳性（云机 ultimate.cloud_emulator）
+check id=U-DATA-ATIME  hit=True
+  evidence: {"ageDays": 0, "earliestAtime": "2026-07-15T13:03:31.000Z", "probed": 24}
+# 真机同项：ageDays=170（earliestAtime 2026-05-14T07:07:02Z），hit=False

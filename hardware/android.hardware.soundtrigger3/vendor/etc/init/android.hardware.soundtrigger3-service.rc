@@ -1,0 +1,14 @@
+# cdh：soundtrigger3 空实现服务（0 module），用于打断 system_server 在
+# StartSoundTriggerMiddlewareService 里的紧循环（实例 10 实测 151 s 被 sysrq 重启）。
+#
+# 域借用 hal_audio_default：真机上 soundtrigger 本就由 MTK audio HAL 进程内注册
+# （官方 /vendor/lib64/hw/soundtrigger3-impl.so 无独立进程），语义一致；同时避免
+# 在 vendor 侧新造 hal_soundtrigger 类型 —— 基底 plat 策略里没有它，自造标签会
+# 落 unlabeled。07 的 ensureHalExecLabels 会按本文件的 seclabel 反推
+# hal_audio_default_exec 并补进 vendor_file_contexts。
+service vendor.soundtrigger3-hal /vendor/bin/hw/android.hardware.soundtrigger3-service.example
+    class hal
+    user audioserver
+    group audio system
+    capabilities BLOCK_SUSPEND
+    seclabel u:r:hal_audio_default:s0

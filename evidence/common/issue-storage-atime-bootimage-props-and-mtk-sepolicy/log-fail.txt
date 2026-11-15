@@ -1,0 +1,173 @@
+=== [修复前] #186 存储时间戳、bootimage 属性、MTK 公开属性 SELinux 与 vendor 文件标签 ===
+
+1. ultimate.cloud_emulator 云机命中 U-DATA-ATIME:
+{
+  "cloud_hits": [],
+  "cloud_raw_summary": "{'runId': 'run-00002', 'status': 'succeeded', 'error': None, 'result': {'build': {'board': 'gold', 'device': 'gold', 'hardware': 'mt6833', 'product': 'gold'}, 'category': 'cloud_emulator', 'checks': [{'evidence': [], 'hit': False, 'id': 'H-115', 'name': '模拟器检测(Build 危险值)', 'risk': 'deadly'}, {'evidence': {'scanned': 60}, 'hit': False, 'id': 'H-64', 'name': '模拟器/QEMU 特征文件(easydetect+secsdk 全量 60 条)', 'risk': 'warn'}, {'evidence': {'model': '2312DRAABC'}, 'hit': False, 'id': 'U-EMU-MODEL', 'name': '模拟器机型名/fingerprint 关键字', 'risk': 'warn'}, {'evidence': {'baseappfullPkg': False, 'modDevice': 'gold'}, 'hit': True, 'id': 'H-58', 'name': '云固件包/mod_device 改写', 'risk': 'info'}, {'evidence': {'marks': [], 'noThermal': False, 'tempFiles': '(无)', 'thermalZones': '31'}, 'hit': False, 'id': 'H-115b', 'name': '模拟器环境/挂载/温度文件三路', 'risk': 'warn'}, {'evidence': {'scanned': 15}, 'hit': False, 'id': 'U-DOCKER', 'name': 'Docker/容器环境标记(属性+13 路径)', 'risk': 'warn'}, {'evidence': {'initMntId': None, 'nsDiff': '(同一 ns)', 'selfMntId': None}, 'hit': False, 'id': 'U-MNT-NS', 'name': '挂载命名空间隔离(与 init/zygote 不同)', 'risk': 'warn'}, {'evidence': {'overlayMounts': 24, 'rootFs': 'erofs', 'systemFs': '(未知)'}, 'hit': True, 'id': 'U-FS-TYPE', 'name': '根/system 为 overlay 型文件系统', 'risk': 'warn'}, {'evidence': {'note': '原文仅判 vmmsf，本侧扩三类'}, 'hit': False, 'id': 'U-VM-FS', 'name': '/proc/filesystems 含虚拟化驱动(vmmsf/vboxsf/9p)', 'risk': 'warn'}, {'evidence': {'ageDays': 1, 'earliestAtime': '2026-11-10T03:50:40.000Z', 'earl",
+  "real_raw_summary": "{'runId': 'run-00002', 'status': 'succeeded', 'error': None, 'result': {'build': {'board': 'gold', 'device': 'gold', 'hardware': 'mt6833', 'product': 'gold'}, 'category': 'cloud_emulator', 'checks': [{'evidence': [], 'hit': False, 'id': 'H-115', 'name': '模拟器检测(Build 危险值)', 'risk': 'deadly'}, {'evidence': {'scanned': 60}, 'hit': False, 'id': 'H-64', 'name': '模拟器/QEMU 特征文件(easydetect+secsdk 全量 60 条)', 'risk': 'warn'}, {'evidence': {'model': '2312DRAABC'}, 'hit': False, 'id': 'U-EMU-MODEL', 'name': '模拟器机型名/fingerprint 关键字', 'risk': 'warn'}, {'evidence': {'baseappfullPkg': False, 'modDevice': 'gold'}, 'hit': True, 'id': 'H-58', 'name': '云固件包/mod_device 改写', 'risk': 'info'}, {'evidence': {'marks': [], 'noThermal': False, 'tempFiles': '(无)', 'thermalZones': '31'}, 'hit': False, 'id': 'H-115b', 'name': '模拟器环境/挂载/温度文件三路', 'risk': 'warn'}, {'evidence': {'scanned': 15}, 'hit': False, 'id': 'U-DOCKER', 'name': 'Docker/容器环境标记(属性+13 路径)', 'risk': 'warn'}, {'evidence': {'initMntId': None, 'nsDiff': "
+}
+
+2. files.storage 双机对比 (云机 vs 真机):
+CLOUD:
+{
+  "runId": "run-00007",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "ok": true,
+    "pathCount": 20,
+    "paths": [
+      {
+        "path": "/storage/emulated",
+        "stat": {
+          "atime": "1970-01-01 08:00:06.848000",
+          "ctime": "2026-11-10 11:51:34.564000",
+          "mtime": "2026-11-10 11:51:34.564000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 179,
+          "st_gid": 1023,
+          "st_ino": 6774785,
+          "st_mode": 16744,
+          "st_nlink": 4,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 1023
+        }
+      },
+      {
+        "path": "/storage/emulated/0",
+        "stat": {
+          "atime": "2026-11-10 11:51:34.560000",
+          "ctime": "2026-11-11 09:35:21.012000",
+          "mtime": "2026-11-10 11:51:36.296000",
+          "st_blksize": 4096,
+          "st_blocks": 16,
+          "st_dev": 179,
+          "st_gid": 1023,
+          "st_ino": 6774787,
+          "st_mode": 17912,
+          "st_nlink": 19,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 1023
+        }
+      },
+      {
+        "path": "/data/system/users/0",
+        "stat": {
+          "atime": "1970-01-01 08:00:06.988000",
+          "ctime": "2026-11-11 10:21:23.449001",
+          "mtime": "2026-11-11 10:21:23.449001",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 64816,
+          "st_gid": 1000,
+          "st_ino": 2293767,
+          "st_mode": 16893,
+          "st_nlink": 3,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 1000
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Alarms",
+        "stat": {
+          "atime": "2026-11-10 11:51:35.448000",
+          "ctime": "2026-11-11 09:35:21.632000",
+          "mtime": "2026-11-10 11:51:35.448000",
+          "st_blksize": 4096,
+          "st_blocks": 8,
+          "st_dev": 179,
+          "st_gid": 1023,
+          "st_ino": 6774815,
+          "st_mode":
+REAL:
+{
+  "runId": "run-00007",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "ok": true,
+    "pathCount": 20,
+    "paths": [
+      {
+        "path": "/storage/emulated",
+        "stat": {
+          "atime": "2026-07-28 16:29:36.652000",
+          "ctime": "2026-07-28 16:32:59.900000",
+          "mtime": "2026-07-28 16:32:59.900000",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 139,
+          "st_mode": 16744,
+          "st_nlink": 4,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 1023
+        }
+      },
+      {
+        "path": "/storage/emulated/0",
+        "stat": {
+          "atime": "2026-07-28 16:32:59.900000",
+          "ctime": "2026-11-05 15:37:09.636015",
+          "mtime": "2026-11-03 19:47:44.368006",
+          "st_blksize": 4096,
+          "st_blocks": 16,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 10810,
+          "st_mode": 17912,
+          "st_nlink": 22,
+          "st_rdev": 0,
+          "st_size": 4096,
+          "st_uid": 1023
+        }
+      },
+      {
+        "path": "/data/system/users/0",
+        "stat": {
+          "atime": "2026-07-28 16:29:37.000000",
+          "ctime": "2026-11-11 10:21:43.698733",
+          "mtime": "2026-11-11 10:21:43.698733",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 65082,
+          "st_gid": 1000,
+          "st_ino": 222,
+          "st_mode": 16893,
+          "st_nlink": 3,
+          "st_rdev": 0,
+          "st_size": 3452,
+          "st_uid": 1000
+        }
+      },
+      {
+        "path": "/storage/emulated/0/Alarms",
+        "stat": {
+          "atime": "2026-07-28 16:33:04.116000",
+          "ctime": "2026-07-28 16:33:04.116000",
+          "mtime": "2026-07-28 16:33:04.116000",
+          "st_blksize": 4096,
+          "st_blocks": 7,
+          "st_dev": 187,
+          "st_gid": 1023,
+          "st_ino": 12140,
+          "st_mode": 17912,
+    
+
+3. adb shell 实测属性、SELinux 标签与 /data atime (127.0.0.1:5911):
+persist.sys.locale=[]
+ro.product.locale=[zh-CN]
+gsm.version.ril-impl=[]
+ro.bootimage.build.fingerprint=[]
+ro.vendor.mediatek.rsc_name=[]
+u:object_r:unlabeled:s0 /vendor/etc/md
+u:object_r:unlabeled:s0 /vendor/firmware/connfem.cfg
+wc: /vendor/etc/public.libraries.txt: No such file or directory
+/data/app atime=6 mtime=1794303604
+/data/user atime=6 mtime=6

@@ -1,0 +1,141 @@
+# m22 真机输入身份取证（从官方镜像反推 input 段的 name/bus/vendor/product/version）
+# 目的：不依赖真机，仅用 12.5.0.0A 官方镜像 + dlkm 反汇编，确定 touch 该填什么。
+# 时间：2026-10-29
+
+## 0. 结论
+
+touch:  name=fts  bus=28(BUS_SPI)  vendor=1  product=2  version=256  abs-to-mt=true
+键盘：  真机为 gpio-keys（音量）+ PMIC 电源键；云机保持 keyboard:{}（见第 7 节权衡）
+
+## 1. 机型与平台（super/vendor_a.img : /build.prop）
+
+$ dump.erofs --cat --path=/build.prop super/vendor_a.img | grep -E 'board|product|soc'
+ro.product.vendor.brand=meizu
+ro.product.vendor.device=Meizu22
+ro.product.vendor.manufacturer=meizu
+ro.product.vendor.model=MEIZU 22
+ro.product.vendor.name=Meizu_22_CN
+ro.product.first_api_level=35
+ro.product.board=sun
+ro.board.platform=sun
+ro.soc.manufacturer=QTI
+vendor.meizu.fingerprint.vendor=Goodix
+vendor.meizu.fingerprint.model=GUM5228EN2      # 屏下指纹是 Goodix，不是触摸
+
+## 2. dtbo 里魅族自己的 overlay（firmware/dtbo.img）
+
+dtbo header 为大端（magic d7b7ab1e / header_size 0x20 / entry_size 0x20 / count 0x51），
+共 81 段 dtb，其中 model 含 Meizu 的只有 15 段（60~64 CDP、65~74 M2582 系列、76/77/78~80 Tuna MTP）：
+
+$ dtc -I dtb -O dts 65_id0_rev0.dtb | head -20
+/dts-v1/;
+/plugin/;
+/ {
+        model = "Meizu M2582 DVT1(tuna QRD)";
+        compatible = "qcom,tuna-qrd", "qcom,tuna", ...
+        qcom,board-id = <0x0b 0x01>;
+        meizu,board-id = <0x01 0x05>;          # 魅族自己的板型键
+        fragment@0 {
+                target = <&qupv3_se4_spi>;
+                __overlay__ {
+                        status = "ok";
+                        qcom,touch-active = "st,fts";        # ← 触摸方案指名
+                        st_fts@0 {
+                                compatible = "st,fts";
+                                spi-max-frequency = <0xf4240>;
+                                st,touch-type = "primary";
+                                qts,trusted-touch-mode = "vm_mode";
+                        };
+                };
+        };
+
+同一 overlay 里另一条总线上的 synaptics 节点是 status = "disabled"：
+  fragment@6 -> target = <&qupv3_se5_i2c> -> synaptics-tcm-spi@0 { status = "disabled"; }
+即 goodix / focaltech / synaptics 只是 QTI 参考设计的并存候选，魅族量产 overlay 一律指向 st,fts。
+（M2582 DVT1 / EVT0 / EVB / PRO DVT1 / PRO EVT0 六段 overlay 的 touch-active 全是 st,fts）
+
+## 3. 键位文件对得上（super/system_a.img）
+
+$ dump.erofs --ls --path=/system/usr/keylayout super/system_a.img | grep -v Vendor_
+  AVRCP.kl  Generic.kl  fts.kl  gpio-keys.kl  idroid_con.kl  main_touch.kl  ndt.kl
+
+fts.kl 是 Flyme 加的手势键（key 624 DOUBLE_TAP / 640 SWIPE_X_LEFT / 656 UNICODE_E ...），
+与 driver 注册名 fts 对应；main_touch.kl / ndt.kl 属 focaltech、synaptics、novatek 方案，m22 不用。
+
+## 4. 从 st_fts.ko 直接读出 input_id（super/vendor_dlkm_a.img）
+
+$ dump.erofs --cat --path=/lib/modules/st_fts.ko super/vendor_dlkm_a.img > st_fts.ko   # 486512 B
+$ llvm-objdump -dr st_fts.ko | grep -n input_allocate_device
+  26a4:  R_AARCH64_CALL26  input_allocate_device
+
+$ llvm-objdump -dr --start-address=0x26b4 --stop-address=0x2760 st_fts.ko
+    26b8:  R_AARCH64_ADD_ABS_LO12_NC   .rodata.str1.1+0x38bd      # -> "fts"
+    26dc:  str     x9, [x8]                                        # input_dev->name = "fts"
+    26c4:  R_AARCH64_ADR_PREL_PG_HI21   .rodata.str1.1+0x9bbe      # -> "%s/input0"
+    26f8:  str     x21, [x8, #0x8]                                  # phys = snprintf("fts/input0")
+    26fc:  ldrh    w8, [x19, #0x25a]                                # ts->bus_type
+    2704:  strh    w8, [x9, #0x18]                                  # id.bustype = bus_type
+    2668:  mov     w22, #0x1
+    2710:  strh    w22, [x8, #0x1a]                                 # id.vendor = 1
+    2708:  mov     w9, #0x2
+    2718:  strh    w9, [x8, #0x1c]                                  # id.product = 2
+    271c:  mov     w9, #0x100
+    2724:  strh    w9, [x8, #0x1e]                                  # id.version = 0x0100 = 256
+
+bus_type 由 probe 分支写入：
+    1c80:  mov  w9, #0x18 ; strh w9, [x0, #0x25a]     # st_fts_i2c_probe -> 24 (BUS_I2C)
+    4cec:  mov  w8, #0x1c ; strh w8, [x0, #0x25a]     # st_fts_spi_probe -> 28 (BUS_SPI)
+m22 的 dtb 挂在 qupv3_se4_spi → bus = 28。
+
+## 5. 其余三家的身份（备查，避免以后再猜）
+
+| ko                        | input name    | bus       | vendor / product / version |
+| st_fts.ko                 | fts           | 28 / 24   | 1 / 2 / 256                |
+| goodix_ts.ko              | goodix_ts     | SPI / I2C | 0x27c6 / 1 / 256（=10182/1/256，gold 用的就是这组）|
+| synaptics_tcm2_ts.ko      | main_touch    | 0（未设） | 0 / 1 / 1  （phys=synaptics_tcm/touch_input）|
+| focaltech_ft3682g.ko      | main_touch    | 24 / 28   | 0 / 0 / 0                  |
+
+## 6. 落地后云机侧实测（实例 30，vnc 5928 / adb 5927）
+
+$ ps -p <qemu> -o command= | tr ',' '\n' | grep -E 'virtio-multitouch|input-|tablet'
+-device virtio-multitouch-pci
+input-name=fts
+input-bus=28
+input-vendor=1
+input-product=2
+input-version=256
+abs-to-mt=on -device virtio-keyboard-pci          # 无 tablet
+
+$ adb -s 127.0.0.1:5927 shell dumpsys input | sed -n '/^    7: fts/,+6p'
+    7: fts
+      Classes: KEYBOARD | TOUCH | TOUCH_MT
+      Path: /dev/input/event1
+      Descriptor: ddfb717d907e8defcc82f81ba273111db984c56a
+      Location: virtio8/input0
+      Identifier: bus=0x001c, vendor=0x0001, product=0x0002, version=0x0100
+      KeyLayoutFile: /system/usr/keylayout/fts.kl
+
+$ adb -s 127.0.0.1:5927 shell dumpsys input | sed -n '/^  Device 2: fts/,+8p'
+  Device 2: fts
+    Sources: KEYBOARD | TOUCHSCREEN
+      X: source=TOUCHSCREEN, min=0.000, max=1079.967
+      Y: source=TOUCHSCREEN, min=0.000, max=2399.927
+    Touch Input Mapper (mode - DIRECT):
+        DeviceType: TOUCH_SCREEN
+        RawToDisplay Transform: 0.0330 / 0.0732        # 与修复前一致，未被改名影响
+
+键盘仍是 QEMU 内建名（未改名），点击落点复查：
+  vnc_tap (894,1388) -> 精确打开"设置"隐私政策弹窗      tap-3-settings-fts.png
+  vnc_tap (757,2178) -> 精确命中"同意"，进入设置主页      tap-4-consent-fts.png
+
+## 7. 为什么键盘不写 gpio-keys
+
+真机 gpio-keys 的 id 是全 0（bus=25 BUS_HOST），且 /system/usr/keylayout/gpio-keys.kl
+只定义了音量键。把 virtio-keyboard 改名成 gpio-keys 会让 Android 命中这个 kl，
+其它扫描码映射不到 keycode，反而破坏云机键盘输入；故 keyboard 保持 {}（沿用
+QEMU 内建身份 + Generic.kl）。gold 的 mtk-kpd 是现成可用的先例，但 m22 没有对应收益。
+
+## 8. 注意
+
+dlkm 的 vermagic=6.6.66-android15-8（mz_gesture_ts.ko 等），云机底盘是 6.12 内核，
+这些模块在云机上不会 insmod；上述身份只是"抄真机的字符串与数值"，不涉及加载真机驱动。

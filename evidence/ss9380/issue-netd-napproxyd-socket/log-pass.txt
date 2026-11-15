@@ -1,0 +1,21 @@
+# 通过态取证：netd 起得来、napproxyd 标签正确（build7 盘集）
+# 机型：samsung/pa3qzcx/pa3q:16/BP4A.251205.006/S9380ZCSDCZH1
+# 盘集：build7（patch.img sha256 0071f17bbfaf，sepolicy 第二版补了
+#       (typeattributeset file_type (napproxyd_socket)) 与
+#       (allow socket_device napproxyd_socket (sock_file (create)))）
+# 实例：index 1，adb 127.0.0.1:5911
+
+## 采集时间: 2026-10-31 00:11:07
+## 实例: index 1（pid 76709，adb 5911）
+
+$ adb shell getprop init.svc.netd
+running
+$ adb shell getprop init.svc.zygote
+running
+$ adb shell ls -lZ /dev/socket/napproxyd
+srw-rw---- 1 root inet u:object_r:dnsproxyd_socket:s0  0 2026-08-12 09:25 /dev/socket/dnsproxyd
+srw-rw---- 1 root inet u:object_r:napproxyd_socket:s0  0 2026-08-12 09:25 /dev/socket/napproxyd
+$ adb shell service list | grep -i health
+37	android.hardware.health.IHealth/default: [android.hardware.health.IHealth]
+$ adb shell getprop init.svc.vendor.health-samsung
+running

@@ -1,0 +1,40 @@
+# 1. 07_build_vendor 构建日志（SELinux 版本对齐 + 冗余文件删除 + VINTF 裁剪 + ashmem_libcutils_device 授权）
+==> [步骤 5] 替换厂商文件（4 项）
+    取代 out/devices/google/oriole/CP3A.261005.002.A1-20260905/vendor/lib64/libpng.so <- out/roms/google/oriole/CP3A.261005.002.A1-20260905/super/vendor_a.img:lib64/libpng.so
+    删除 out/devices/google/oriole/CP3A.261005.002.A1-20260905/vendor/etc/vintf/manifest/android.hardware.audio.effect.service-aidl.legacy.xml
+    删除 out/devices/google/oriole/CP3A.261005.002.A1-20260905/vendor/etc/init/android.hardware.audio.effect.service-aidl.legacy.rc
+    删除 out/devices/google/oriole/CP3A.261005.002.A1-20260905/vendor/bin/hw/android.hardware.audio.effect.service-aidl.legacy
+==> [步骤 6] 对齐平台 SELinux 策略版本: 202704 -> 202604（匹配厂商固件 mapping/202604.cil）
+==> [步骤 6] 注入 SELinux 策略补丁
+    追加 out/devices/google/oriole/CP3A.261005.002.A1-20260905/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.service.daemon/sepolicy/vendor_sepolicy.cil（5602 字节，marker ;; vendor_sepolicy.cil@android.service.daemon）
+==> [步骤 6] 裁剪 VINTF 片段（基线 vintf-drop 2 项）
+    删除 out/devices/google/oriole/CP3A.261005.002.A1-20260905/vendor/etc/vintf/manifest/android.hardware.wifi-service.xml
+    删除 out/devices/google/oriole/CP3A.261005.002.A1-20260905/vendor/etc/vintf/manifest/android.hardware.camera-service.xml
+
+# 2. 实例启动状态与关键进程验证 (oriole_CP3A.261005.002.A1-20260905/1, adb=127.0.0.1:5911)
+$ adb -s 127.0.0.1:5911 shell "getprop sys.boot_completed; getprop init.svc.bootanim; ps -ef | grep -E 'system_server|zygote|launcher|systemui'"
+1
+stopped
+root           588     1 0 10:39:19 ?     00:00:01 zygote64
+system         771   588 0 10:39:22 ?     00:00:17 system_server
+u0_a239       3401   588 0 10:39:46 ?     00:00:02 com.android.systemui
+webview_zygote 3467  588 0 10:39:46 ?     00:00:00 webview_zygote
+u0_a252       3777   588 0 10:39:46 ?     00:00:01 com.google.android.apps.nexuslauncher
+
+# 3. HAL 服务注册表与触控/Wi-Fi 验收
+$ adb -s 127.0.0.1:5911 shell "service list | grep -i -E 'wifi|camera|audio|media|radio'"
+2	android.frameworks.cameraservice.service.ICameraService/default: [android.frameworks.cameraservice.service.ICameraService]
+4	android.hardware.camera.provider.ICameraProvider/internal/0: [android.hardware.camera.provider.ICameraProvider]
+11	android.hardware.media.c2.IComponentStore/default: [android.hardware.media.c2.IComponentStore]
+12	android.hardware.media.c2.IComponentStore/software: [android.hardware.media.c2.IComponentStore]
+14	android.hardware.radio.config.IRadioConfig/default: [android.hardware.radio.config.IRadioConfig]
+15	android.hardware.radio.data.IRadioData/slot1: [android.hardware.radio.data.IRadioData]
+35	android.hardware.wifi.IWifi/default: [android.hardware.wifi.IWifi]
+56	media.camera: [android.hardware.ICameraService]
+
+$ python3 core/host/daemon/tools/boot_check.py oriole_CP3A.261005.002.A1-20260905 --index 1 --png engine/out/tmp/cp3a-boot-pass.png
+实例: /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/oriole_CP3A.261005.002.A1-20260905/1  adb=5911 vnc=5912 ws=5913
+日志: /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/oriole_CP3A.261005.002.A1-20260905/1/qemu.log
+[shot] /Volumes/work/cloud-phone-hub/engine/out/tmp/cp3a-boot-pass.png 1088x2400 bpp=32 平均亮度=34.8 峰值=255
+[pass] 引导完成（日志 11128 行）+ 截图非黑（平均亮度=34.8 峰值=255）-> /Volumes/work/cloud-phone-hub/engine/out/tmp/cp3a-boot-pass.png
+

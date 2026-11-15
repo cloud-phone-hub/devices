@@ -1,0 +1,114 @@
+# 失败侧：wifi 数据面在 kthread 里直接调 netif_receive_skb，TCP 锁自死锁（改前）
+# 取数：out/core/daemon/runtime/15r_16.0.10.500_EX01/{13,14}/qemu.log
+#       （logcat 与内核 console 混流，内核行带 [ 秒 ] 时间戳）
+# 代码口径：engine/kernels/patches/lineage-23-6.12/0002-hwsim-fake-wifi.patch
+# 实例 13：2026-11-03 10:43:16 启动，8 vCPU，136 s 起报
+# 实例 14：2026-11-03 10:50:11 启动，4 vCPU（smp=4 单变量实验），696 s 起报
+# 两次独立实例、不同 vCPU，原发栈逐帧相同 —— 与并发度无关，是固定代码路径。
+
+== 1. 原发栈：cdh-wifi-rx 自己在软中断里撞自己持有的 sk_lock（实例 13，uptime 136 s）==
+[  136.020524][    C7] watchdog: BUG: soft lockup - CPU#7 stuck for 26s! [cdh-wifi-rx:7075]
+[  136.020527][    C7] CPU#7 Utilization every 4s during lockup:
+[  136.020528][    C7]  #1:   1% system,         98% softirq,     3% hardirq,    0% idle
+[  136.020529][    C7]  #4:   1% system,         99% softirq,     3% hardirq,    0% idle
+#                                             ^^^^^^^^^^ 全在软中断，idle 0% —— 不是等 IO
+[  136.020551][    C7] CPU: 7 UID: 0 PID: 7075 Comm: cdh-wifi-rx Tainted: G           OE
+[  136.020563][    C7] pc : queued_spin_lock_slowpath+0x8c/0x444
+[  136.020582][    C7] Call trace:
+[  136.020583][    C7]  queued_spin_lock_slowpath+0x8c/0x444
+[  136.020585][    C7]  _raw_spin_lock+0x64/0x6c
+[  136.020586][    C7]  tcp_delack_timer+0x28/0x158          <-- 定时器要拿 sk->sk_lock.slock
+[  136.020589][    C7]  call_timer_fn+0x4c/0x210
+[  136.020591][    C7]  __run_timer_base+0x1f8/0x32c
+[  136.020592][    C7]  run_timer_softirq+0x38/0x6c
+[  136.020593][    C7]  handle_softirqs+0x130/0x3f0
+[  136.020595][    C7]  __do_softirq+0x14/0x20
+[  136.020598][    C7]  call_on_irq_stack+0x48/0x68
+[  136.020601][    C7]  do_softirq_own_stack+0x1c/0x2c
+[  136.020602][    C7]  irq_exit_rcu+0x54/0xa8               <-- 硬中断退出，BH 计数为 0
+[  136.020603][    C7]  el1_interrupt+0x48/0x90
+[  136.020605][    C7]  el1h_64_irq_handler+0x18/0x24
+[  136.020606][    C7]  el1h_64_irq+0x7c/0x80
+[  136.020607][    C7]  __wake_up_sync_key+0xc8/0x15c       <-- 下面这条栈正持着锁
+[  136.020608][    C7]  sock_def_readable+0x64/0x178
+[  136.020610][    C7]  tcp_data_ready+0x98/0xe0
+[  136.020610][    C7]  tcp_data_queue+0x1164/0x1508
+[  136.020611][    C7]  tcp_rcv_established+0x4f8/0x78c
+[  136.020611][    C7]  tcp_v4_do_rcv+0xc0/0x350
+[  136.020612][    C7]  tcp_v4_rcv+0xa88/0xf1c               <-- bh_lock_sock 只做 spin_lock
+[  136.020613][    C7]  ip_protocol_deliver_rcu+0x190/0x358
+[  136.020615][    C7]  ip_local_deliver+0xd8/0x178
+[  136.020616][    C7]  ip_rcv+0x8c/0x110
+[  136.020617][    C7]  __netif_receive_skb_core+0xdcc/0x101c
+[  136.020621][    C7]  netif_receive_skb+0x54/0x250          <-- 进程上下文，BH 开着
+[  136.020622][    C7]  cdh_rx_thread+0x238/0x370 [mac80211_hwsim 4da3712eb1a0be9ead750bde1e449b752897e1b5]
+[  136.020635][    C7]  kthread+0x11c/0x1c8
+
+== 2. 实例 13：5 个 CPU 各报 7 波，直到 160 s 仍在自旋 ==
+$ grep -o "soft lockup - CPU#[0-9] stuck for [0-9]*s! *\[[^]]*\]" 13/qemu.log | sort | uniq -c
+   7 CPU#0  stuck 26→48→71→93→115→138→160s  [netd:832]                 <- 等待者
+   7 CPU#3  stuck 26→48→71→93→115→138→160s  [NetworkMonitor/:8310]     <- 等待者
+   7 CPU#5  stuck 26→48→71→93→115→138→160s  [binder:825_1:866]         <- 等待者
+   7 CPU#6  stuck 26→48→71→93→115→138→160s  [CronetNet:13590]          <- 等待者
+   7 CPU#7  stuck 26→48→71→93→115→138→160s  [cdh-wifi-rx:7075]         <- 原发
+# 等待者（netd，uptime 156 s）等的是同一把 TCP 锁：
+[156.020585][    C0]  queued_spin_lock_slowpath+0x1a8/0x444
+[156.020587][    C0]  _raw_spin_lock_bh+0x64/0x6c
+[156.020588][    C0]  __lock_sock_fast+0x2c/0xd4
+[156.020590][    C0]  tcp_get_info+0xc0/0x4bc
+[156.020592][    C0]  tcp_diag_get_info+0x6c/0x7c
+[156.020595][    C0]  inet_sk_diag_fill+0x37c/0x4e8
+[156.020596][    C0]  sk_diag_fill+0x11c/0x31c
+[156.020598][    C0]  inet_diag_dump_icsk+0x710/0x7e0
+[156.020602][    C0]  netlink_dump+0x20c/0x418
+[156.020604][    C0]  netlink_recvmsg+0x1bc/0x3a0
+[156.020606][    C0]  sock_read_iter+0xd0/0x164
+[156.020609][    C0]  ksys_read+0x78/0xe8
+# 一个 CPU 自死锁 → 全系统遍历 socket 的调用点（netd / NetworkMonitor / sock_diag /
+# tcp_recvmsg）全部堵在同一把锁上 → 8 个 CPU 逐一沦陷。
+
+== 3. 实例 13：RCU 与 per-CPU work 停摆（uptime 183 s，hung_task 10 条）==
+[  183.280816][   T79] INFO: task khugepaged:83 blocked for more than 61 seconds.
+[  183.283168][   T79]  __flush_work+0x248/0x390
+[  183.283466][   T79]  flush_work+0x14/0x24
+[  183.283611][   T79]  __lru_add_drain_all+0x184/0x1c8   <-- 等每一颗 CPU 响应 IPI
+[  183.283869][   T79]  lru_add_drain_all+0x14/0x20
+[  183.284036][   T79]  khugepaged+0x184/0x9cc
+[  183.286113][   T79] INFO: task OomAdjuster:1113 blocked for more than 61 seconds.
+[  183.288434][   T79]  __wait_rcu_gp+0x120/0x1ac
+[  183.288881][   T79]  synchronize_rcu_normal+0xd4/0x1c8
+[  183.289669][   T79]  synchronize_rcu+0x50/0x1e0        <-- 有 CPU 在自旋，GP 永不完成
+[  183.291191][   T79]  rcu_sync_enter+0xd8/0x1a4
+[  183.294900][   T79]  percpu_down_write+0x38/0x29c
+[  183.295313][   T79]  cgroup_procs_write_start+0x80/0x194
+# 其余：main:13964 / init:1 / init:138 / init:4252 / servicemanager:248 / khugepaged(122 s)
+
+== 4. 实例 14（4 vCPU）：同样的栈，晚 560 s 才爆发，此后一路锁到 719 s ==
+[  696.007509][    C2] watchdog: BUG: soft lockup - CPU#2 stuck for 26s! [cdh-wifi-rx:5635]
+[  696.007511][    C2] CPU#2 Utilization every 4s during lockup:
+[  696.007511][    C2]  #1:   1% system,        100% softirq,     1% hardirq,    0% idle
+[  696.007572][    C2]  tcp_v4_rcv+0xa88/0xf1c
+[  696.007580][    C2]  netif_receive_skb+0x54/0x250
+[  696.007582][    C2]  cdh_rx_thread+0x238/0x370 [mac80211_hwsim ...]
+# 4 个 CPU 各报 32 波（26 s 起，每 22 s 一次，直到 719 s）：
+#   CPU#0 OwmBaseUtils:2112 / CPU#1 binder:901_1:913 /
+#   CPU#2 cdh-wifi-rx:5635（原发）/ CPU#3 AI-download
+$ grep -c "soft lockup" 14/qemu.log
+128
+# 实例 14 没有 hung_task（0 条）—— 4 个 CPU 全在软中断自旋，还没来得及进入 D 状态
+
+== 5. 宿主侧同时刻的判据：guest 忙等而非等 IO ==
+$ ps -p 21442 -o %cpu,stat        # 实例 13
+493.5  RN
+$ ps -p 35420 -o %cpu,stat        # 实例 14
+394.7  RN
+# RN = running，%CPU 接近满核（8 vCPU 480%+ / 4 vCPU 394%）→ 所有 vCPU 在 guest 内核空转
+# 此时 adb shell 单条命令全部超时，但 adb devices 仍显示 device（adbd 进程没死，被锁挡住）
+$ ls -l 15/qemu.log               # 日志停写；实例 15（修后）同一时段 6 s 写 50 KB
+
+== 6. 代码位置：约定的违反点 ==
+$ grep -n "netif_receive_skb(skb);" engine/kernels/patches/lineage-23-6.12/0002-hwsim-fake-wifi.patch
++	netif_receive_skb(skb);
+# 该行在 cdh_rx_inject() 末尾，由 cdh-wifi-rx 内核线程调用（进程上下文，BH 未禁用）。
+# 上游约定见 net/core/dev.c 的 netif_receive_skb() 注释「must be called with BH disabled」；
+# include/net/sock.h 的 bh_lock_sock() 就是 spin_lock(&sk->sk_lock.slock)，不禁 BH。

@@ -1,0 +1,40 @@
+=== uid=2000 (<= cdh_max_uid=10000) 进入全目录规则的对照样本 (batch2-pre.log) ===
+=== 32bit vendor libs ===
+ls: /vendor/lib/libdrm.so: No such file or directory
+ls: /vendor/lib/hw/gralloc.default.so: No such file or directory
+ls: /vendor/lib/hw/mapper.mediatek.so: No such file or directory
+ls: /vendor/lib/hw/vulkan.mali.so: No such file or directory
+
+=== diff/native_env.json summary (pre) ===
+{"identity": 260, "capability": 2, "state": 3, "availability": 1, "fatal": 262}
+=== App (uid > 10000) vendorTree.readable & availability (pre) ===
+[
+ {
+  "level": "availability",
+  "path": "availability.vendorReadable",
+  "base": 354,
+  "target": 353
+ },
+ {
+  "level": "state",
+  "path": "vendorTree.readable[path=/vendor/lib/libdrm.so]",
+  "base": {
+   "md5": "504e7332b6d389a850383966c1e76e8a",
+   "path": "/vendor/lib/libdrm.so",
+   "size": 59096
+  },
+  "target": "<缺>"
+ },
+ {
+  "level": "identity",
+  "path": "vendorTree.readable[path=/vendor/lib64/libdrm.so].md5",
+  "base": "10e2de0de029b412db1472dc905f155c",
+  "target": "3798101f7f52d7bdb909b67485b42825"
+ },
+ {
+  "level": "state",
+  "path": "vendorTree.readable[path=/vendor/lib64/libdrm.so].size",
+  "base": 96864,
+  "target": 133784
+ }
+]

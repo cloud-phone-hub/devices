@@ -1,0 +1,36 @@
+=== 1. 08_build_vendor_dlkm 渲染注入 cdh_device_info.uts 与 cdh_device_info.ko ===
+==> 模块伴随文件: /lib/modules/cdh_device_info.uts <- manifest/google/oriole/baselines/oriole-ap2a.240905.003.f1-factory-655c44e7.json rom.vendor.kernel.uname-version（184 B）
+    注入模块:   cdh_device_info.ko（name=cdh_device_info，vermagic=5.10.270-4k-cdh SMP preempt mod_unload modversions aarch64，65912 B）
+    伴随文件:   /lib/modules/cdh_device_info.uts <- manifest/google/oriole/baselines/oriole-ap2a.240905.003.f1-factory-655c44e7.json rom.vendor.kernel.uname-version（184 B）
+==> [步骤 6] debugfs 写入并回读校验
+    输入: 16 个文件（模块 10 + 索引 5 + 伴随文件 1 + build.prop 无）
+[ok] 写入 16 个文件，回读 16/16 内容一致
+
+=== 2. oriole (5.10.270-4k-cdh) 启动时 dlkm_loader 加载日志 (qemu.log) ===
+[    0.909584][  T214] dlkm_loader: Loading module /vendor_dlkm/lib/modules/cdh_device_info.ko with args ''
+[    0.910692][  T214] cdh_device_info: uts: patched init_uts_ns (/mnt/vendorpatch/vendor_dlkm/lib/modules/cdh_device_info.uts) release=5.10.198-android13-4-00050-g12f3388846c3-ab11920634 version=#1 SMP PREEMPT Mon Jun 3 20:51:42 UTC 2024
+[    0.913034][  T214] cdh_device_info_meminfo: registered si_meminfo and /proc/meminfo display hooks
+[    0.931089][  T214] cdh_device_info_cpu: registered /proc/cpuinfo kretprobe and cpu_scale display values
+[    0.931371][  T214] cdh_device_info_topology: updated cpu_topology for  package and cluster ids
+[    0.961770][  T214] cdh_device_info_midr: updated cpu_data reg_midr for  MIDR sysfs
+[    1.039450][  T214] cdh_device_info_cache: hid cpu cache sysfs devices for  Android15 profile
+[    1.039742][  T214] cdh_device_info_cpufreq: created readonly cpufreq sysfs nodes for  targets
+[    1.043461][  T214] cdh_device_info_uptime: registered uptime offset hooks offset_seconds=172800
+[    1.043761][  T214] cdh_device_info: loaded gki_abi_release=5.10.270-4k-cdh
+[    1.044039][  T214] dlkm_loader: Loaded kernel module /vendor_dlkm/lib/modules/cdh_device_info.ko
+[    1.068751][  T214] dlkm_loader: module load count is 10
+[    1.082399][    T1] init: Service 'vendor.dlkm_loader' (pid 214) exited with status 0 oneshot service took 0.175000 seconds in background
+
+=== 3. 运行态 adb shell 实测 ===
+$ adb -s 127.0.0.1:5911 shell "getprop sys.boot_completed; uname -a; lsmod | grep cdh; cat /vendor_dlkm/lib/modules/cdh_device_info.uts"
+1
+Linux localhost 5.10.198-android13-4-00050-g12f3388846c3-ab11920634 #1 SMP PREEMPT Mon Jun 3 20:51:42 UTC 2024 aarch64 Toybox
+cdh_device_info        45056  0 
+cdh_redirect           28672  0 
+sysname  Linux
+nodename  localhost
+release  5.10.198-android13-4-00050-g12f3388846c3-ab11920634
+version  #1 SMP PREEMPT Mon Jun 3 20:51:42 UTC 2024
+machine  aarch64
+domainname  (none)
+

@@ -1,0 +1,7 @@
+# 修复前：gold 15-OS3.0.11.0.VNQCNXM 云机（4503ac70a1c898f3-cloud）aligner.security_full
+# 提取来源：engine/out/tmp/p0_fail_extract.txt
+
+=== P0-7 fail (security rootFiles) ===
+  cloud rootFiles: {"adbFs": ["/data/adb"], "duckMarks": [], "injectLibs": [], "remoteCtrl": [], "scanned": {"adbFs": 46, "duckMarks": 10, "injectLibs": 10, "remoteCtrl": 28, "su": 54}, "su": []}
+  real  rootFiles: {"adbFs": ["/data/adb"], "duckMarks": [], "injectLibs": [], "remoteCtrl": [], "scanned": {"adbFs": 46, "duckMarks": 10, "injectLibs": 10, "remoteCtrl": 28, "su": 54}, "su": []}
+  availability.rootHitTotal = 1

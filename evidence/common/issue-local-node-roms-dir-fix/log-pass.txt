@@ -1,0 +1,50 @@
+# 修复 nodes.json 的 local.romsDir #243 —— 修复后记录（2026-11-15）
+
+## 1. 配置修正
+
+```
+$ python3 -c "
+import json
+d=json.load(open('out/agent/config/nodes.json'))
+print(json.dumps([{k:n[k] for k in ('id','romsDir') if k in n} for n in d], ensure_ascii=False, indent=2))
+"
+[
+  {
+    "id": "local",
+    "romsDir": "/Volumes/work/cloud-phone-hub/roms"
+  },
+  {
+    "id": "node-cuimingqiang-pc",
+    "romsDir": "/home/workspace/cloud-phone-hub/roms"
+  }
+]
+```
+
+## 2. 路径存在性
+
+```
+$ ls -d roms roms/devices roms/lineage
+roms
+roms/devices
+roms/lineage
+```
+
+## 3. 管理台重启后 API 复核
+
+```
+$ curl -s "http://127.0.0.1:17890/api/nodes?token=…"
+{"nodes": [{"id": "local", ..., "romsDir": "/Volumes/work/cloud-phone-hub/roms", ...}, ...]}
+$ curl -s -o /dev/null -w "HTTP %{http_code}\n" "http://127.0.0.1:17890/?token=…"
+HTTP 200
+```
+
+## 4. CLI 复核
+
+```
+$ cd agent && ../out/agent/dist/cdha node list
+  local          [local] 本机节点 (Local)           roles=[rom-builder runtime-host] host=- engine=/Volumes/work/cloud-phone-hub/engine device=/Volumes/work/cloud-phone-hub/engine/out/dist
+  node-cuimingqiang-pc [ssh  ] cuimingqiang-pc (81.70.30.115) roles=[rom-builder runtime-host] host=81.70.30.115 engine=/home/workspace/cloud-phone-hub/engine device=/home/workspace/cloud-phone-hub/images
+```
+
+未改 Go 代码：`NewManager` 的 local 默认 `RomsDir` 本就是 `<engine>/../roms`，
+本次只修过期配置并重启进程使其生效。

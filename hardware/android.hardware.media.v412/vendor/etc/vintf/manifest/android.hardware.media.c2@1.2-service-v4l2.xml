@@ -1,0 +1,10 @@
+<manifest version="1.0" type="device">
+    <!-- v4l2_codec2 的 Codec2 store：与 rc 里的 interface aidl 声明配套。
+         只留 fqname 才能在客户端请求时按 lazy HAL 拉起；version 是对外暴露的
+         AIDL 主版本（服务二进制本身是 @1.2 的 legacy 命名，接口仍是 v1）。 -->
+    <hal format="aidl">
+        <name>android.hardware.media.c2</name>
+        <version>1</version>
+        <fqname>IComponentStore/default</fqname>
+    </hal>
+</manifest>

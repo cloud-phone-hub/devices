@@ -1,0 +1,52 @@
+# oriole_BP1A.250505.005-20250326 Wi-Fi 与 Radio 未生效失败取证日志
+
+## 1. Wi-Fi 失败：dmesg 模块加载拦截（CONFIG_MODULE_SIG_PROTECT=y）
+
+```text
+[    0.647097] [  T219] dlkm_loader: Loading module /vendor_dlkm/lib/modules/rfkill.ko with args ''
+[    0.648059] [  T219] rfkill: exports protected symbol rfkill_alloc
+[    0.648382] [  T219] dlkm_loader: Failed to insmod '/vendor_dlkm/lib/modules/rfkill.ko' with args '': Permission denied
+[    0.648573] [  T219] dlkm_loader: Failed to load module /vendor_dlkm/lib/modules/rfkill.ko
+[    0.649167] [  T219] dlkm_loader: Loading module /vendor_dlkm/lib/modules/libarc4.ko with args ''
+[    0.650110] [  T219] libarc4: exports protected symbol arc4_crypt
+[    0.650356] [  T219] dlkm_loader: Failed to insmod '/vendor_dlkm/lib/modules/libarc4.ko' with args '': Permission denied
+[    0.650546] [  T219] dlkm_loader: Failed to load module /vendor_dlkm/lib/modules/libarc4.ko
+[    0.650781] [  T219] dlkm_loader: Check failed: m.LoadListedModules(false)
+```
+
+`lsmod` 仅剩 `zram`、`zsmalloc`、`virtio_console` 与 `cdh_*` 4 个模块，`cfg80211.ko`、`mac80211.ko`、`mac80211_hwsim.ko`、`virt_wifi.ko` 均未加载，`ip link` 无 `wlan0`。
+
+## 2. Radio 失败：缺少 FEATURE_TELEPHONY 导致 PhoneGlobals.onCreate() 提前返回
+
+```text
+$ adb -s 127.0.0.1:5919 shell "pm list features | grep telephony; service check phone; service check isub"
+feature:android.hardware.telephony.euicc
+feature:com.verizon.hardware.telephony.ehrpd
+feature:com.verizon.hardware.telephony.lte
+Service phone: not found
+Service isub: not found
+```
+
+`logcat -b radio` 报错：
+```text
+03-26 22:57:26.059  1059  1374 E CarrierConfigManager: Error getting config for subId -1 ICarrierConfigLoader is null
+03-26 22:57:59.621  7870  7900 D SubscriptionManager: [getActiveSubscriptionInfoForSimSlotIndex]- invalid slotIndex
+03-26 22:58:24.512  3080  3080 E SatelliteManager: requestIsSupported() invalid telephony
+11-05 07:51:18.280 12063 12090 E TelephonyManager: Error calling #isDataEnabled, returning default (false).
+11-05 07:51:18.280 12063 12090 E TelephonyManager: java.lang.IllegalStateException: telephony service is null.
+```
+
+`TeleService.apk`（`BP1A.250505.005`）反编译 `com.android.phone.PhoneGlobals.onCreate()`：
+```java
+public void onCreate() {
+    PhoneGlobals phoneGlobals;
+    ContentResolver contentResolver = getContentResolver();
+    if (!getResources().getBoolean(android.R.bool.config_flexibleSplitRatios)
+            && !getPackageManager().hasSystemFeature("android.hardware.telephony")) {
+        Log.v("PhoneGlobals", "onCreate()... but not defined FEATURE_TELEPHONY");
+        return;
+    }
+    ...
+    PhoneFactory.makeDefaultPhones(this, this.mFeatureFlags);
+```
+

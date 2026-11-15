@@ -1,0 +1,58 @@
+# 2026-10-31 自研 health HAL 加 samsung 变体（撤掉官方借件）的构建取证
+
+## $ cd engine/vendor/build && go run . hal build android.hardware.health --android 16 --variant samsung
+==> AIDL 代码生成
+    android.hardware.health (v4, hash c8d014c7bb95)
+    vendor/samsung/hardware/health (v1, 模块自带无 hash)
+==> 编译 16+2 个源文件到 .o
+==> 链接服务二进制
+==> 编译静态库 libxml2（38 个 C 源，静态编入服务）
+    写 bin/hw/android.hardware.health-service
+[ok] android.hardware.health 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/samsung/bin/hw
+[ok] android.hardware.health 合并 vendor 静态树：新增 0，已存在同内容 2
+
+## $ ... --android 16（基础 AOSP 变体）
+==> AIDL 代码生成
+    android.hardware.health (v4, hash c8d014c7bb95)
+==> 编译 13+1 个源文件到 .o
+==> 链接服务二进制
+==> 编译静态库 libxml2（38 个 C 源，静态编入服务）
+    写 bin/hw/android.hardware.health-service
+[ok] android.hardware.health 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+[ok] android.hardware.health 合并 vendor 静态树：新增 0，已存在同内容 2
+
+## 产物与符号（三星 descriptor 只出现在 samsung 变体）
+-rwxr-xr-x@ 1 cuimingqiang  staff  729288 10 31 14:01 bin/hw/android.hardware.health-service
+-rwxr-xr-x@ 1 cuimingqiang  staff  823808 10 31 14:00 samsung/bin/hw/android.hardware.health-service
+base 命中数: 0
+samsung 命中: 173
+vendor.samsung.hardware.health.ISehHealth
+vendor.samsung.hardware.health.ISehHealthInfoCallback
+
+## DT_NEEDED（两变体一致，不依赖官方 .so）
+[base]
+0x0000000000000001 (NEEDED)          Shared library: [libc++.so]
+0x0000000000000001 (NEEDED)          Shared library: [libbinder_ndk.so]
+0x0000000000000001 (NEEDED)          Shared library: [liblog.so]
+0x0000000000000001 (NEEDED)          Shared library: [libdl.so]
+0x0000000000000001 (NEEDED)          Shared library: [libm.so]
+0x0000000000000001 (NEEDED)          Shared library: [libc.so]
+[samsung]
+0x0000000000000001 (NEEDED)          Shared library: [libc++.so]
+0x0000000000000001 (NEEDED)          Shared library: [libbinder_ndk.so]
+0x0000000000000001 (NEEDED)          Shared library: [liblog.so]
+0x0000000000000001 (NEEDED)          Shared library: [libdl.so]
+0x0000000000000001 (NEEDED)          Shared library: [libm.so]
+0x0000000000000001 (NEEDED)          Shared library: [libc.so]
+## 生成代码的形状（codegen 产物，与官方 .so 反汇编口径对照）
+[ISehHealth.h] 39:  static inline const int32_t version = 1;
+32:    case (FIRST_CALL_TRANSACTION + 0 /*registerCallback*/): {
+46:    case (FIRST_CALL_TRANSACTION + 1 /*unregisterCallback*/): {
+60:    case (FIRST_CALL_TRANSACTION + 2 /*update*/): {
+70:    case (FIRST_CALL_TRANSACTION + 3 /*sehWriteEnableToParam*/): {
+88:    case (FIRST_CALL_TRANSACTION + 16777214 /*getInterfaceVersion*/): {
+
+对照（官方 vendor.samsung.hardware.health-V1-ndk.so 反汇编，见 ../../solution.md 第 3 节）：
+  descriptor = vendor.samsung.hardware.health.ISehHealth
+  version    = 1
+  registerCallback=1 / unregisterCallback=2 / update=3 / sehWriteEnableToParam=4

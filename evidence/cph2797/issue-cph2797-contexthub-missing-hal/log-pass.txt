@@ -1,0 +1,29 @@
+# 通过现场：实例 15（early-init 把 contexthub 的 VINTF 片段遮成空 manifest）
+# 日志全量：out/core/daemon/runtime/cph2797_16.0.8.301_EX01/15/qemu.log
+
+# 计数（15/qemu.log -> 与 14/qemu.log 对照）：
+#   grep -c "contexthub"                            -> 7     （实例 14：1200）
+#   grep -c "WATCHDOG KILLING SYSTEM PROCESS"       -> 0     （实例 14：1）
+#   grep -c "sysrq: Resetting"                      -> 0     （实例 14：1）
+#   grep -c "boot_progress_enable_screen"           -> 1     （实例 14：0）
+
+# 1）决定性一行：框架判定「未声明」，不再等
+I boot_progress_start: 22761
+D IContextHubWrapper: Context Hub AIDL service is not declared
+D SystemServerTiming: StartContextHubSystemService
+I SystemServiceManager: Starting com.android.server.ContextHubSystemService
+D SystemServerTimingAsync: InitThreadPoolExec:Init ContextHubSystemService
+
+# 2）剩下的 7 行 contexthub 全是「rc 还在、二进制缺失」的一次性噪声（无害）
+init: Parsing file /odm/etc/init/android.hardware.contexthub-service.tinysys.rc...
+init: processing action (post-fs-data) from (/odm/etc/init/android.hardware.contexthub-service.tinysys.rc:1)
+init: Could not start service 'vendor.contexthub-default' as part of class 'hal':
+      Cannot find '/vendor/bin/hw/android.hardware.contexthub-service.tinysys': No such file or directory
+
+# 3）主线程没有再被 65 s 阻塞，boot 一路走完
+I boot_progress_enable_screen: 68564
+init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:2268)
+$ getprop sys.boot_completed
+1
+$ getprop dev.bootcomplete
+1

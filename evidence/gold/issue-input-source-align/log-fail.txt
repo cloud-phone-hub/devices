@@ -1,0 +1,64 @@
+失败记录（issue-input-source-align 迭代中实际遇到的拦路点）
+
+================================================================
+1) 03_build_modules：耳机孔 SW 常量名写错
+================================================================
+$ cd engine/build && ../out/bin/cdh device build gold --only 03_build_modules
+  CC [M]  /src/.cdh/modules/input_identity/cdh_input_identity.o
+/src/.cdh/modules/input_identity/cdh_input_identity.c:104:7: error: use of undeclared
+    identifier 'SW_JACK_PHYSICAL_INS'
+      SW_JACK_PHYSICAL_INS};
+      ^
+/src/.cdh/modules/input_identity/cdh_input_identity.c:113:19: error: invalid application
+    of 'sizeof' to an incomplete type 'const unsigned int[]'
+  for (i = 0; i < ARRAY_SIZE(switches); i++)
+                  ^~~~~~~~~~~~~~~~~~~~~~~~
+2 errors generated.
+make[2]: *** [/src/Makefile:1968: /src/.cdh/modules/input_identity] Error 2
+[err] 阶段 build_modules 失败: 模块编译失败（exit status 2）
+
+内核头文件实际名字（qemu/source/include/standard-headers/linux/input-event-codes.h）：
+  #define SW_JACK_PHYSICAL_INSERT 0x07  /* set = mechanical switch set */
+
+================================================================
+2) 07_build_vendor：usr 层写了 2 个文件，装配树里却不存在
+================================================================
+07 日志摘录：
+    机型静态树: 写入 20，已存在同内容 0
+    机型 usr: 写入 2，已存在同内容 0
+    ...
+[ok] 已完成
+
+但产物树没有 usr：
+$ ls engine/out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/usr/idc/
+ls: .../vendor/usr/idc/: No such file or directory
+$ ls engine/out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/usr/keylayout/
+ls: .../vendor/usr/keylayout/: No such file or directory
+
+原因：overlayLayer{src: StaticTree/usr} 没设 base="usr"，登记键是 idc/…、
+keylayout/…；pruneVendorDir 只放行 bin/etc/lib/lib64/firmware_mnt 与根级文件，
+顶层 idc、keylayout 被当垃圾删除。日志统计发生在 prune 之前，因此仍报「写入 2」。
+
+================================================================
+3) 触摸设备就位后，QMP/VNC 点击不下发（指针被判悬停）
+================================================================
+7 台设备身份已对齐，但点击设置图标无反应。按住不放时抓 InputDispatcher 状态：
+
+$ adb shell dumpsys input | sed -n '/TouchStatesByDisplay/,+3p'
+  TouchStatesByDisplay:
+    0 :       Windows:
+        0 : name='7909f7f com.miui.home/com.miui.home.launcher.Launcher',
+            mDeviceStates=2:[touchingPointers=[], downTimeInTarget=<not set>,
+            hoveringPointers=[Pointer(id=0, FINGER)], pilferingPointerIds=<none>]
+
+同时 event1 抓包只有 MT tracking，没有 BTN_TOUCH：
+  EV_KEY       BTN_MOUSE            DOWN
+  EV_ABS       ABS_MT_TRACKING_ID   00000001
+  EV_ABS       ABS_MT_PRESSURE      00000032
+  EV_SYN       SYN_REPORT           00000000
+
+AOSP 判定（frameworks/native/.../TouchButtonAccumulator.cpp）：
+  bool TouchButtonAccumulator::isHovering() const {
+      return mHaveBtnTouch && !mBtnTouch;
+  }
+guest 侧设备声明了 BTN_TOUCH 能力但从未按下，故指针一直是 hovering。

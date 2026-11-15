@@ -1,0 +1,75 @@
+# 失败证据：清单 odm.prop 仍写 /etc/build.prop（旧写法）
+
+## 1) 旧写法指错了文件：odm 属性件在镜像的 /odm/etc/build.prop，不在 /etc/build.prop
+
+```
+$ cd out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/unpack_vendor
+$ ls -1 odm/etc/build.prop; ls -1 etc/build.prop; ls -1 build.prop
+odm/etc/build.prop
+ls: etc/build.prop: No such file or directory
+build.prop
+```
+
+vendor 镜像里 `/etc/build.prop` 根本不存在（vendor 属性件在镜像根 `/build.prop`），
+旧清单写法只能靠「退回机型静态树抄件」兜住 —— 真值于是变成手抄件。
+
+## 2) 厂商原件本身是三档 abilist：先校验再套增量必然失败
+
+```
+$ grep -nE "ro\.odm\.product\.cpu\.abilist" odm/etc/build.prop
+11:ro.odm.product.cpu.abilist=arm64-v8a,armeabi-v7a,armeabi
+12:ro.odm.product.cpu.abilist32=armeabi-v7a,armeabi
+13:ro.odm.product.cpu.abilist64=arm64-v8a
+```
+
+## 3) 旧手抄件与「厂商原件 + 基线三条 sets」的差异（抄件已删，备份在 out/tmp/）
+
+```
+$ diff -u <厂商原件> out/tmp/odm-buildprop-before.txt
+--- /Volumes/work/cloud-phone-hub/engine/out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/unpack_vendor/odm/etc/build.prop	2009-01-01 08:00:00
++++ /Volumes/work/cloud-phone-hub/engine/out/tmp/odm-buildprop-before.txt	2026-11-03 22:57:32
+@@ -8,8 +8,8 @@
+ ro.product.odm.manufacturer=Xiaomi
+ ro.product.odm.model=gold
+ ro.product.odm.name=vnd_gold
+-ro.odm.product.cpu.abilist=arm64-v8a,armeabi-v7a,armeabi
+-ro.odm.product.cpu.abilist32=armeabi-v7a,armeabi
++ro.odm.product.cpu.abilist=arm64-v8a
++ro.odm.product.cpu.abilist32=
+ ro.odm.product.cpu.abilist64=arm64-v8a
+ ro.odm.build.date=Wed Jul 15 12:57:32 UTC 2026
+ ro.odm.build.date.utc=1784120252
+@@ -30,5 +30,3 @@
+ # end of file
+ import /vendor/odm/etc/build_${ro.boot.product.hardware.sku}.prop
+ #  end
+-
+-
+```
+
+## 4) 新代码 + 旧 prop 写法：直接失败，不再静默退回抄件
+
+```
+$ CDH_MANIFEST=out/tmp/odm-baseline-wrongprop.json CDH_ODM_OUT=out/tmp/odm-wrongprop-out cdh build-odm
+==> 产物目录: out/tmp/odm-wrongprop-out（CDH_ODM_OUT）
+==> 阶段日志: out/tmp/odm-wrongprop-out/img/odm-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    设备:       xiaomi/gold OS3.0.10.0.VNQCNXM
+    覆盖树: manifest/xiaomi/gold/odm 整棵（清单为准）
+    基线清单: out/tmp/odm-baseline-wrongprop.json
+    基线 odm 属性: vendor_a.img:/etc/build.prop（sets 3 项 / unsets 0 项）
+    属性件原件: out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/unpack_vendor/etc/build.prop（树里没有则按镜像逐件解留档）
+    输出: out/tmp/odm-wrongprop-out/odm/etc/build.prop
+    镜像: out/tmp/odm-wrongprop-out/img/odm.img（ext4，打包 out/tmp/odm-wrongprop-out/odm）
+    工具: debugfs=/opt/homebrew/opt/e2fsprogs/sbin/debugfs，mke2fs=/opt/homebrew/opt/e2fsprogs/sbin/mke2fs，e2fsck=/opt/homebrew/opt/e2fsprogs/sbin/e2fsck，fsck.erofs=/opt/homebrew/opt/erofs-utils/bin/fsck.erofs
+==> [步骤 1] 基线 odm 属性件: out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/vendor_a.img:/etc/build.prop（sets 3 项 / unsets 0 项）
+[warn] 镜像里没有 odm.prop 声明的路径: /etc/build.prop（out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/vendor_a.img）
+[err] 取不到 odm 属性件：镜像 out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/vendor_a.img 里没有 /etc/build.prop，机型静态树也没有 manifest/xiaomi/gold/odm/etc/build.prop（先跑 01_unpack，或核对清单 odm.img / odm.prop）
+[exit=1]
+```
+
+## 5) 旧代码的另一个后果：基线 odm 段没有消费者
+
+```
+$ grep -rn "odm" --include=*.go engine/build --exclude-dir=06_build_odm | grep -i "build-prop\\|PropDecl"   # 改前为空
+```

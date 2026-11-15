@@ -1,0 +1,12 @@
+[workspace]
+resolver = "2"
+members = ["resetprop", "rust"]
+
+[workspace.package]
+edition = "2024"
+version = "0.1.0"
+license = "Apache-2.0"
+
+[profile.release]
+strip = true
+lto = true

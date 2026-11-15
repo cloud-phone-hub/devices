@@ -1,0 +1,80 @@
+gold 云机 Wi-Fi 开机引导 —— 通过态取证
+=====================================
+实例：gold_cn_OS3.0.10.0.VNQCNXM / index 2（18:38:27 启动，改用新 patch.img sha256 ebb783007f84）
+前提：开机前人为把 Wi-Fi 打回「全新 data」状态 —— wifi_on=0、无保存网络、wlan0 DOWN
+      （见 log-fail.txt ②），因此这一轮完全由 /vendor/bin/cph-wifi-bootstrap 起效。
+
+--------------------------------------------------------------------
+① dmesg：boot_completed 同时拉起存储与 Wi-Fi 两个 oneshot
+--------------------------------------------------------------------
+$ dmesg | grep -iE 'cph_wifi|cph_storage'
+[   34.437523] init: processing action (sys.boot_completed=1) from (/vendor/etc/init/cph_storage_align.rc:27)
+[   34.449006] init: starting service 'cph_storage_align'...
+[   34.470736] init: ... started service 'cph_storage_align' has pid 2301
+[   34.491410] init: processing action (sys.boot_completed=1) from (/vendor/etc/init/cph_wifi_bootstrap.rc:20)
+[   34.494274] init: starting service 'cph_wifi_bootstrap'...
+[   34.515498] init: ... started service 'cph_wifi_bootstrap' has pid 2336
+[   36.690240] init: Service 'cph_storage_align' (pid 2301) exited with status 0 oneshot service took 2.231000 seconds in background
+[   42.032699] init: Service 'cph_wifi_bootstrap' (pid 2336) exited with status 0 oneshot service took 7.527000 seconds in background
+
+--------------------------------------------------------------------
+② 脚本自落盘日志 /data/local/tmp/cph-wifi.log（首次引导，7 s 内连上）
+--------------------------------------------------------------------
+[10-31 18:39:07] 启动（boot_completed=1，目标 AP=CDH-A）
+[10-31 18:39:07] boot_completed 就绪（等待 0 轮）
+[10-31 18:39:07] WifiService 就绪（等待 0 轮）
+[10-31 18:39:07] Wi-Fi 处于关闭态，打开
+[10-31 18:39:13] 连接 CDH-A（第 1 轮）
+[10-31 18:39:16] 结果：Wifi is enabled
+[10-31 18:39:16] wlan0：wlan0            UP             192.168.60.100/24 fe80::2c04:ddff:fe83:134b/64
+[10-31 18:39:16] 默认路由：101.33.73.101 via 192.168.60.1 dev wlan0 table wlan0 src 192.168.60.100 uid 0
+
+--------------------------------------------------------------------
+③ 引导后的 Wi-Fi / 网络形态（18:41:30）
+--------------------------------------------------------------------
+$ cmd wifi status
+Wifi is enabled
+Wifi is connected to "CDH-A"
+WifiInfo: SSID: "CDH-A", BSSID: 02:00:00:00:00:11, IP: /192.168.60.100, Supplicant state: COMPLETED,
+          Frequency: 2437MHz, RSSI: -38,
+          NetworkCapabilities: [ Transports: WIFI Capabilities: NOT_METERED&INTERNET&NOT_RESTRICTED&TRUSTED
+          &NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&... ]
+$ ip -br addr show wlan0
+wlan0            UP             192.168.60.100/24 fe80::2c04:ddff:fe83:134b/64
+$ ip route show table wlan0
+default via 192.168.60.1 dev wlan0 proto static
+192.168.60.0/24 dev wlan0 proto static scope link
+$ ping -c 2 -W 2 192.168.60.1
+2 packets transmitted, 2 received, 0% packet loss
+$ cmd wifi list-networks
+Network Id      SSID                         Security type
+0            CDH-A                            open
+0            CDH-A                            owe^
+
+--------------------------------------------------------------------
+④ 宿主侧：AP 由 wifi-host-service 提供，scan_profile 周期下发
+   来源：out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/2/runtime/wifi/wifi-host-service.log
+--------------------------------------------------------------------
+2026/10/31 18:29:40 [ctrl] 下发 scan_profile #11（ping，4 条记录）: 5669727457696669,02:00:00:00:00:01,5240,-50,open;4344482d41,02:00:00:00:00:11,2437,-41,open;4344482d42,02:00:00:00:00:12,2437,-48,open;4344482d43,02:00:00:00:00:13,2437,-66,open
+2026/10/31 18:29:40 [ctrl] scan_profile_ack seq=11 ok=true detail=applied 4 access points
+
+$ cat out/qemu/dist/darwin/libexec/wifi-aps.json   （节选）
+{ "ssid": "CDH-A", "channel": 6, "ipSubnet": "192.168.60.0/24", "rssiBase": -42, "backend": "" }
+{ "ssid": "CDH-B", ... "backend": "socks5://127.0.0.1:7891" }
+{ "ssid": "CDH-C", ... "backend": "socks5://127.0.0.1:1080" }
+    → 只有 CDH-A 是直连出口，与真机的「家用路由器直连」最接近，脚本固定接它。
+
+--------------------------------------------------------------------
+⑤ 端到端：guest 用 nc 打通检查服务，/api/devices 里出现云机
+--------------------------------------------------------------------
+$ printf 'GET /api/devices HTTP/1.0\r\nHost: 101.33.73.101\r\n\r\n' | nc 101.33.73.101 80
+HTTP/1.0 200 OK
+content-type: application/json
+content-length: 294
+
+[{"androidId":"07cf5fc1784783d5", ...},                          ← 真机
+ {"androidId":"c46c631991f2196b-cloud", ...,
+  "ro.product.build.version.incremental":"OS3.0.10.0.VNQCNXM","name":"gold"}]   ← 云机
+
+注意：这一轮**没有**任何临时手段 —— 无 adb reverse、无 OUTPUT DNAT、无宿主 TCP 代理，
+      云机 agent 是经 wlan0 直连注册的。

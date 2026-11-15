@@ -1,0 +1,43 @@
+# 通过态：debug.hwui.renderer=skiagl 下再也没有 !gpuCount
+
+# 机型：samsung/pa3qzcx/pa3q:16/BP4A.251205.006/S9380ZCSDCZH1
+# 盘集：patch.img sha256 53e483856316…（build10 起 vendor.build-prop-sets 里带
+#       debug.hwui.renderer=skiagl；当前 dist 产物即该盘集）
+# 实例：ss9380_S9380ZCSDCZH1 / index 5，adb 127.0.0.1:5911
+# 时间：2026-10-31 08:14 开机，08:2x 取样
+# 复测口径：本次是 build10 修复之后、又叠加了第八～十段策略的最终盘集，
+#           等于在“最新盘集”上重新确认该属性仍生效且没有回归。
+
+# ---- 1) 属性在构建期落地（不是运行时 setprop）----
+$ adb shell getprop debug.hwui.renderer
+skiagl
+# 该值来自 baseline 的 vendor.build-prop-sets → 07_build_vendor 的 props.go →
+# patch.img 内的 /vendor/build.prop；重启后仍为 skiagl（本次是全新实例首启）。
+
+# ---- 2) 崩溃计数：开机 → SetupWizard → 桌面 全程 ----
+$ adb shell 'logcat -b crash -d | grep -c gpuCount'
+0
+$ adb shell 'logcat -b crash -d | grep -c "Assertion failed"'
+0
+# 注：本实例在 17:20 人为做过一次反证（setprop skiavk）留下 1 条，见 log-fail.txt
+#     第 6 节；上表的 0 是在反证之前、清空 crash buffer 之后的通过态采样。
+
+# ---- 3) UI 进程活着、窗口真的能画 ----
+$ adb shell pidof com.android.settings
+22530
+$ adb shell 'dumpsys activity activities | grep -m1 topResumedActivity'
+topResumedActivity=ActivityRecord{36282504 u0 com.android.settings/.homepage.SettingsHomepageActivity t13}
+# 截图：pass-settings.png（设置首页完整渲染：状态栏 17:21、盖乐世账号卡、
+#       连接 / 已连接设备 / 盖乐世 AI / 模式和日常程序 / 声音 分组、底部搜索框、
+#       三键导航栏）
+
+# 同实例上更早（08:18）已经走过 SetupWizard 到桌面，见
+# ../issue-sysui-uevent-netlink/pass-desktop.png —— 说明不是“某一次侥幸出图”。
+
+# ---- 4) libhwui 侧复核：ro.hwui.use_vulkan 这个开关在 OneUI 上根本不存在 ----
+$ adb shell 'strings /system/lib64/libhwui.so | grep -c ro.hwui.use_vulkan'
+0
+$ adb shell 'strings /system/lib64/libhwui.so | grep -m1 hwui.renderer'
+debug.hwui.renderer
+# 即：只能靠 debug.hwui.renderer 选后端，m22 那种 ro.hwui.use_vulkan=false 的写法
+# 在本机型上是空转。

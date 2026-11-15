@@ -1,0 +1,56 @@
+# #70 log-pass —— 手写板级入口下线后（07 步骤 6 改名接管）
+# 采集：2026-10-30 flyme/m22（Android 16 / 基底 lineage-23.2）
+
+$ ./out/bin/cdh build-vendor --android 16 --manifest manifest/flyme/m22/baselines/12.5.0.0A.json --vendor flyme --brand m22 --version 12.5.0.0A
+EXIT=0
+
+--- 计划与步骤 6 ---
+    vendor init:  etc/init/hw/init.virtio.rc -> init.qcom.rc（计划）
+==> [步骤 6] fstab 收口
+    输入: out/devices/flyme/m22/12.5.0.0A/vendor_boot/fstab.qcom（05 阶段缓存的 first_stage fstab）
+    输出: out/devices/flyme/m22/12.5.0.0A/vendor/etc（落 fstab.<board>，删除 lineage fstab.virtio*；把 init.virtio.rc 改名成 init.<board>.rc）
+    删除 out/devices/flyme/m22/12.5.0.0A/vendor/etc/fstab.virtio（lineage fstab.virtio 副本）
+    删除 out/devices/flyme/m22/12.5.0.0A/vendor/etc/fstab.virtio.gsi.sda（lineage fstab.virtio 副本）
+    删除 out/devices/flyme/m22/12.5.0.0A/vendor/etc/fstab.virtio.gsi.vdc（lineage fstab.virtio 副本）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/fstab.qcom（first_stage fstab：out/devices/flyme/m22/12.5.0.0A/vendor_boot/fstab.qcom）
+    改名 init.virtio.rc -> init.qcom.rc（init 按 ro.hardware=qcom 找板级入口）
+==> [步骤 6] 注入 SELinux 策略补丁
+    输入[模块层 android.hardware.audio]: vendor/hardware/android.hardware.audio/sepolicy
+    输入[模块层 android.hardware.bluetooth]: vendor/hardware/android.hardware.bluetooth/sepolicy
+
+--- 装配树落位 ---
+total 32
+-rw-r--r--@ 1 cuimingqiang  staff  1416 10 30 10:17 init.low_performance.rc
+-rw-r--r--@ 1 cuimingqiang  staff   307 10 30 10:17 init.mainline.rc
+-rw-r--r--@ 1 cuimingqiang  staff  2164 10 30 10:17 init.qcom.rc
+-rw-r--r--@ 1 cuimingqiang  staff  2080 10 30 10:17 init.virt.rc
+
+--- 装配树 init.qcom.rc vs 基底 init.virtio.rc ---
+c77d9905a8d32168ea11ff9ce6f6dd4cdf97ba042b752c8169ae75feb175ca67  out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/hw/init.qcom.rc
+c77d9905a8d32168ea11ff9ce6f6dd4cdf97ba042b752c8169ae75feb175ca67  out/roms/lineage/lineage-23.2/super/unpack_vendor/etc/init/hw/init.virtio.rc
+
+--- 装配树条目 / 镜像 ---
+==> debugfs 写入 670 个条目的元数据（权限 / 归属 / 时间 / SELinux）
+[ok] vendor.img 构建完成: out/devices/flyme/m22/12.5.0.0A/img/vendor.img（206704640 字节）
+
+--- 镜像回读（debugfs）---
+$ debugfs -R "ls -l /etc/init/hw" vendor.img
+    351   40755 (2)      0   2000    4096  1-Jan-2009 08:00 .
+    310   40755 (2)      0   2000    4096  1-Jan-2009 08:00 ..
+    352  100644 (1)      0      0    1416  1-Jan-2009 08:00 init.low_performance.rc
+    353  100644 (1)      0      0     307  1-Jan-2009 08:00 init.mainline.rc
+    354  100644 (1)      0      0    2164  1-Jan-2009 08:00 init.qcom.rc
+    355  100644 (1)      0      0    2080  1-Jan-2009 08:00 init.virt.rc
+
+
+$ debugfs -R "dump /etc/init/hw/init.qcom.rc" && sha256sum
+c77d9905a8d32168ea11ff9ce6f6dd4cdf97ba042b752c8169ae75feb175ca67  out/tmp/chk-init.rc
+
+$ debugfs -R "stat …" && debugfs -R "ea_list …"
+Inode: 354   Type: regular    Mode:  0644   Flags: 0x80000
+Generation: 0    Version: 0x00000000:00000000
+User:     0   Group:     0   Project:     0   Size: 2164
+  security.selinux (33) = "u:object_r:vendor_configs_file:s0"
+
+结论：镜像内 init.qcom.rc 与基底 lineage-23.2 init.virtio.rc 逐字节一致，0644/0:0，
+      xattr vendor_configs_file；/etc/init/hw 下 init.virtio.rc 已不存在（仅 4 件）。

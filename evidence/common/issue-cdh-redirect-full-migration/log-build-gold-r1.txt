@@ -1,0 +1,618 @@
+==> 设备: Redmi Note 13 5G（xiaomi/gold）
+==> 清单: manifest/xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.json
+    厂商固件: roms/devices/xiaomi/gold/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.tgz
+    lineage 底包: roms/lineage/UTM-VM-lineage-22.2-20261010-UNOFFICIAL-virtio_arm64only.zip
+==> 阶段(7): build_vendor_boot, build_odm, build_vendor, build_vendor_dlkm, build_patch, pack_super, pack_vda
+==> [1/7] build_vendor_boot  (05_build_vendor_boot)
+  + 进程内调用 build_vendor_boot
+==> vendor_boot 基底: out/roms/lineage/lineage-22.2/vendor_boot_a.img（CDH_LINEAGE_DIR）
+==> 产物目录: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM（out/devices）
+==> vendor 镜像目录: out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM（命令行）
+==> 板级名: mt6833
+==> fstab: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor_boot/fstab.mt6833（缓存复用）
+    来源记录: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor_boot/.fstab.mt6833.src
+    生成: 2026-11-02 08:24，算法 fstab-rev: merge-v8
+    厂商 fstab: first_stage_ramdisk/fstab.mt6833（out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor_boot.img）
+    lineage fstab: first_stage_ramdisk/system/etc/fstab.virtio（out/roms/lineage/lineage-22.2/vendor_boot_a.img）
+    合并: 厂商 89 行、lineage 28 行；保留 40、覆盖 7、追加 14、丢弃 42、跳过逻辑分区 14
+    云机分区集: 9 个（BIOS, EFI, boot_a, firmware, metadata, misc, persist, super, vendor_boot_a）
+    云机不存在的分区已剔除: boot_para, dpm_1, dpm_2, dtbo, expdb, frp, gz1, gz2, init_boot, lk, lk2, logo, mcupm_1, mcupm_2, md1arm7, md1dsp, md1img, md3img, modem, nvcfg, nvdata, nvram, odmdtbo, otp, para, pi_img, proinfo, protect1, protect2, rescue, scp1, scp2, seccfg, spmfw, sspm_1, sspm_2, tee1, tee2, userdata, vbmeta, vbmeta_system, vbmeta_vendor
+==> 内核产物目录: out/kernel/lineage-22-6.6（out/kernel/lineage-22-6.6）
+==> 重定向模块: out/kernel/lineage-22-6.6/modules/cdh_redirect.ko（39736 B，内核 6.6.127-4k-cdh，规则 manifest/xiaomi/gold/kernel/cdh_redirect.rules）
+    输入: 缓存配方 vboot-32f4b543d685（输入哈希）
+==> 阶段日志: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor_boot-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    vendor_boot 基底: out/roms/lineage/lineage-22.2/vendor_boot_a.img
+    基底信息:   version 4，page 2048 B，ramdisk 21576680 B，fragment 2 个
+    cmdline:    log_buf_len=4M loop.max_part=7 printk.devkmsg=on rw vt.global_cursor_default=0 androidboot.verifiedbootstate=green console=tty0 console=ttyAMA0 androidboot.hardware=mt6833 bootconfig
+    cmdline 改写: androidboot.verifiedbootstate=orange -> androidboot.verifiedbootstate=green；(缺失) -> androidboot.hardware=mt6833
+    板级名:     mt6833
+    fstab:      out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor_boot/fstab.mt6833（缓存复用），5963 B -> first_stage_ramdisk/system/etc/fstab.mt6833
+    重定向模块: cdh_redirect.ko（out/kernel/lineage-22-6.6/modules/cdh_redirect.ko，39736 B）+ 规则 manifest/xiaomi/gold/kernel/cdh_redirect.rules（2900 B）-> lib/modules/6.6.127-4k-cdh/
+    产物:       out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor_boot.img
+    缓存配方:   vboot-32f4b543d685
+    缓存状态:   可复用
+[skip] vendor_boot.img 可复用: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor_boot.img
+==> [2/7] build_odm  (06_build_odm)
+  + 进程内调用 build_odm
+==> 阶段日志: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/odm-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    设备:       xiaomi/gold OS3.0.10.0.VNQCNXM
+    输入: manifest/xiaomi/gold/odm/etc/build.prop
+    输出: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/odm/etc/build.prop
+    镜像: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/odm.img（ext4，打包 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/odm）
+    工具: debugfs=/opt/homebrew/opt/e2fsprogs/sbin/debugfs，mke2fs=/opt/homebrew/opt/e2fsprogs/sbin/mke2fs，e2fsck=/opt/homebrew/opt/e2fsprogs/sbin/e2fsck
+==> [步骤 1] odm 覆盖件已一致: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/odm/etc/build.prop
+    abilist32="" abilist64=arm64-v8a sha256=646258ee51bb4c0c40b4fd5ffd8b4997437f0b99c5caeacb76717c60cfb5cd4d
+==> [步骤 2] 计算 odm 镜像配方
+    输入: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/odm（3 条目，sha256 a72364b2419c）
+    配方: odm-78ba56d2a671（layout v1:root=vendor_file;etc=vendor_configs_file;fixed-mode=dir0755,file0644）
+[skip] odm.img 可复用: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/odm.img（odm-78ba56d2a671）
+==> [3/7] build_vendor  (07_build_vendor)
+  + 进程内调用 build_vendor
+==> android: 15（命令行）
+==> 产物目录: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM（out/devices）
+==> 厂商解包根: out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM（命令行）
+==> HAL 产物根: out/vendor/android15（out/vendor）
+==> vendor 基底: out/roms/lineage/lineage-22.2/super/vendor_a.img（命令行）
+==> 阶段日志: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    HAL 编译器: out/bin/cdh-vendor
+    设备清单:   manifest/xiaomi/gold/device.json
+    机型静态树: manifest/xiaomi/gold/vendor（23 个文件）
+    编译产物:   out/vendor/android15（android.hardware.audio@default 4 项、android.hardware.bluetooth@default 3 项、android.hardware.camera@default 3 项、android.hardware.gnss@default 3 项、android.hardware.gpu@default 4 项、android.hardware.health@default 3 项、android.hardware.ir@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.media.v412@default 20 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.vibrator@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 14 项）；out/vendor/android15/mtk（android.hardware.radio@mtk 3 项）
+    基底镜像:   out/roms/lineage/lineage-22.2/super/vendor_a.img（已存在，作为打包 vendor.img 基底）
+    解包目录:   out/roms/lineage/lineage-22.2/super/unpack_vendor（已有 453 个文件，步骤 1 会清空重解）
+    vendor APEX: default（预计摊平 0/9）
+    平台覆盖层: out/vendor/android15/mtk（3 个文件）
+    目标树:     out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor（已有 762 个文件（仅保留白名单顶层））
+    厂商覆盖:   10 条（lib64/egl/libGLES_mali.so（替换）、lib64/egl/libMEOW_data.so（替换）、lib64/egl/libMEOW_gift.so（替换）、lib64/egl/libMEOW_qt.so（替换）、lib64/egl/libMEOW_trace.so（替换）、lib64/libOpenCL.so（替换）、lib64/libpng.so（替换）、etc/permissions（替换）、etc/security（替换）、etc/md（替换）；来源 out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/vendor_a.img，已存在）
+    借件:       无
+    vendor fstab: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor_boot/fstab.mt6833 -> etc/fstab.mt6833（删除 fstab.virtio, fstab.virtio.gsi.sda, fstab.virtio.gsi.vdc）
+    vendor init:  etc/init/hw/init.virtio.rc -> init.mt6833.rc（计划）
+    SELinux 补丁: 模块层 android.hardware.audio vendor/hardware/android.hardware.audio/sepolicy（2 个文件）；模块层 android.hardware.bluetooth vendor/hardware/android.hardware.bluetooth/sepolicy（1 个文件）；模块层 android.hardware.gnss vendor/hardware/android.hardware.gnss/sepolicy（1 个文件）；模块层 android.hardware.ir vendor/hardware/android.hardware.ir/sepolicy（1 个文件）；模块层 android.hardware.keymint vendor/hardware/android.hardware.keymint/sepolicy（2 个文件）；模块层 android.hardware.media vendor/hardware/android.hardware.media/sepolicy（1 个文件）；模块层 android.hardware.media.v412 vendor/hardware/android.hardware.media.v412/sepolicy（2 个文件）；模块层 android.hardware.radio vendor/hardware/android.hardware.radio/sepolicy（1 个文件）；模块层 android.hardware.thermal vendor/hardware/android.hardware.thermal/sepolicy（1 个文件）；模块层 android.hardware.wifi vendor/hardware/android.hardware.wifi/sepolicy（2 个文件）；模块层 android.service.daemon vendor/hardware/android.service.daemon/sepolicy（2 个文件）；机型层 manifest/xiaomi/gold/sepolicy（1 个文件）
+    vendor 属性: 基线 build-prop-sets 15 项 / unsets 1 项 -> vendor/build.prop
+    VINTF schema: schema -> 8.0（26 个片段，0 个待改写）
+    镜像产物:   out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor.img
+    HAL 模块:  android.hardware.audio（变体 default，变体产物根 out/vendor/android15，4 项齐全（编译产物 2 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/bin/hw/android.hardware.audio.service
+        期望产物 out/vendor/android15/bin/hw/android.hardware.audio.effect.service
+        期望静态树 out/vendor/android15/etc/init/android.hardware.audio.service.rc
+        期望静态树 out/vendor/android15/etc/vintf/manifest/android.hardware.audio.service.xml
+    HAL 模块:  android.hardware.bluetooth（变体 default，变体产物根 out/vendor/android15，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/bin/hw/android.hardware.bluetooth-service
+        期望静态树 out/vendor/android15/etc/init/bluetooth-service-default.rc
+        期望静态树 out/vendor/android15/etc/vintf/manifest/bluetooth-service-default.xml
+    HAL 模块:  android.hardware.camera（变体 default，变体产物根 out/vendor/android15，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/bin/hw/android.hardware.camera-service
+        期望静态树 out/vendor/android15/etc/init/android.hardware.camera-service.rc
+        期望静态树 out/vendor/android15/etc/vintf/manifest/android.hardware.camera-service.xml
+    HAL 模块:  android.hardware.gnss（变体 default，变体产物根 out/vendor/android15，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/bin/hw/android.hardware.gnss-service
+        期望静态树 out/vendor/android15/etc/init/android.hardware.gnss-service.rc
+        期望静态树 out/vendor/android15/etc/vintf/manifest/android.hardware.gnss-service.xml
+    HAL 模块:  android.hardware.gpu（变体 default，变体产物根 out/vendor/android15，4 项齐全（编译产物 4 + vendor 静态树 0，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/lib64/egl/libEGL_meow.so
+        期望产物 out/vendor/android15/lib64/egl/libGLESv1_CM_meow.so
+        期望产物 out/vendor/android15/lib64/egl/libGLESv2_meow.so
+        期望产物 out/vendor/android15/lib64/hw/vulkan.mali.so
+    HAL 模块:  android.hardware.health（变体 default，变体产物根 out/vendor/android15，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/bin/hw/android.hardware.health-service
+        期望静态树 out/vendor/android15/etc/init/android.hardware.health-service.rc
+        期望静态树 out/vendor/android15/etc/vintf/manifest/android.hardware.health-service.xml
+    HAL 模块:  android.hardware.ir（变体 default，变体产物根 out/vendor/android15，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/bin/hw/android.hardware.ir-service
+        期望静态树 out/vendor/android15/etc/init/android.hardware.ir-service.rc
+        期望静态树 out/vendor/android15/etc/vintf/manifest/android.hardware.ir-service.xml
+    HAL 模块:  android.hardware.keymint（变体 default，变体产物根 out/vendor/android15，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/bin/hw/android.hardware.security.keymint-service
+        期望静态树 out/vendor/android15/etc/init/android.hardware.security.keymint-service.rc
+        期望静态树 out/vendor/android15/etc/vintf/manifest/android.hardware.security.keymint-service.xml
+    HAL 模块:  android.hardware.light（变体 default，变体产物根 out/vendor/android15，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/bin/hw/android.hardware.lights-service
+        期望静态树 out/vendor/android15/etc/init/android.hardware.lights-service.rc
+        期望静态树 out/vendor/android15/etc/vintf/manifest/android.hardware.lights-service.xml
+    HAL 模块:  android.hardware.media（变体 default，变体产物根 out/vendor/android15，6 项齐全（编译产物 2 + vendor 静态树 4，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/bin/hw/android.hardware.media.c2-mediatek
+        期望产物 out/vendor/android15/bin/hw/vendor.dolby.media.c2-default-service-dax
+        期望静态树 out/vendor/android15/etc/init/android.hardware.media.c2-mediatek.rc
+        期望静态树 out/vendor/android15/etc/init/vendor.dolby.media.c2-default-service-dax.rc
+        期望静态树 out/vendor/android15/etc/vintf/manifest/manifest_media_c2_default.xml
+        期望静态树 out/vendor/android15/etc/vintf/manifest/vendor.dolby.media.c2-default-service-dax.xml
+    HAL 模块:  android.hardware.media.v412（变体 default，变体产物根 out/vendor/android15，20 项齐全（编译产物 17 + vendor 静态树 3，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/bin/hw/android.hardware.media.c2@1.2-service-v4l2-64
+        期望产物 out/vendor/android15/lib64/libc2plugin_store.so
+        期望产物 out/vendor/android15/lib64/android.hardware.graphics.bufferqueue@2.0.so
+        期望产物 out/vendor/android15/lib64/android.hardware.media.bufferpool2-V2-ndk.so
+        期望产物 out/vendor/android15/lib64/android.hardware.media.bufferpool@2.0.so
+        期望产物 out/vendor/android15/lib64/android.hardware.media.c2-V1-ndk.so
+        期望产物 out/vendor/android15/lib64/libchrome.so
+        期望产物 out/vendor/android15/lib64/libcodec2.so
+        期望产物 out/vendor/android15/lib64/libcodec2_aidl.so
+        期望产物 out/vendor/android15/lib64/libcodec2_hal_common.so
+        期望产物 out/vendor/android15/lib64/libcodec2_vndk.so
+        期望产物 out/vendor/android15/lib64/libevent.so
+        期望产物 out/vendor/android15/lib64/libfmq.so
+        期望产物 out/vendor/android15/lib64/libion.so
+        期望产物 out/vendor/android15/lib64/libsfplugin_ccodec_utils.so
+        期望产物 out/vendor/android15/lib64/libstagefright_aidl_bufferpool2.so
+        期望产物 out/vendor/android15/lib64/libstagefright_bufferpool@2.0.1.so
+        期望静态树 out/vendor/android15/etc/init/android.hardware.media.c2@1.2-service-v4l2-64.rc
+        期望静态树 out/vendor/android15/etc/seccomp_policy/android.hardware.media.c2-extended-seccomp_policy
+        期望静态树 out/vendor/android15/etc/vintf/manifest/android.hardware.media.c2@1.2-service-v4l2.xml
+    HAL 模块:  android.hardware.radio（变体 mtk，变体产物根 out/vendor/android15/mtk，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/mtk/bin/hw/android.hardware.radio-service
+        期望静态树 out/vendor/android15/mtk/etc/init/android.hardware.radio-service.rc
+        期望静态树 out/vendor/android15/mtk/etc/vintf/manifest/android.hardware.radio-service.xml
+    HAL 模块:  android.hardware.sensors（变体 default，变体产物根 out/vendor/android15，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/bin/hw/android.hardware.sensors-service
+        期望静态树 out/vendor/android15/etc/init/android.hardware.sensors-service.rc
+        期望静态树 out/vendor/android15/etc/vintf/manifest/android.hardware.sensors-service.xml
+    HAL 模块:  android.hardware.thermal（变体 default，变体产物根 out/vendor/android15，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/bin/hw/android.hardware.thermal-service
+        期望静态树 out/vendor/android15/etc/init/android.hardware.thermal-service.rc
+        期望静态树 out/vendor/android15/etc/vintf/manifest/android.hardware.thermal-service.xml
+    HAL 模块:  android.hardware.vibrator（变体 default，变体产物根 out/vendor/android15，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/bin/hw/android.hardware.vibrator-service
+        期望静态树 out/vendor/android15/etc/init/android.hardware.vibrator-service.rc
+        期望静态树 out/vendor/android15/etc/vintf/manifest/android.hardware.vibrator-service.xml
+    HAL 模块:  android.hardware.wifi（变体 default，变体产物根 out/vendor/android15，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/bin/hw/android.hardware.wifi-service
+        期望静态树 out/vendor/android15/etc/init/android.hardware.wifi-service.rc
+        期望静态树 out/vendor/android15/etc/vintf/manifest/android.hardware.wifi-service.xml
+    HAL 模块:  android.service.daemon（变体 default，变体产物根 out/vendor/android15，14 项齐全（编译产物 1 + vendor 静态树 13，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android15/bin/service_daemon
+        期望静态树 out/vendor/android15/bin/cph-logcat-dump
+        期望静态树 out/vendor/android15/bin/cph-netmgr-setup
+        期望静态树 out/vendor/android15/bin/cph-setup-display
+        期望静态树 out/vendor/android15/bin/cph-storage-align
+        期望静态树 out/vendor/android15/bin/cph-wifi-bootstrap
+        期望静态树 out/vendor/android15/etc/init/cph_daemon_service.rc
+        期望静态树 out/vendor/android15/etc/init/cph_disable_provision.rc
+        期望静态树 out/vendor/android15/etc/init/cph_logcat_dump.rc
+        期望静态树 out/vendor/android15/etc/init/cph_netmgr.rc
+        期望静态树 out/vendor/android15/etc/init/cph_start_adbd.rc
+        期望静态树 out/vendor/android15/etc/init/cph_storage_align.rc
+        期望静态树 out/vendor/android15/etc/init/cph_wifi_bootstrap.rc
+        期望静态树 out/vendor/android15/etc/vintf/manifest/android.se.omapi.xml
+    缓存配方:   vendor-b7db63af118e
+==> [步骤 1] 解包 lineage vendor 镜像
+    输入: out/roms/lineage/lineage-22.2/super/vendor_a.img（debugfs /opt/homebrew/opt/e2fsprogs/sbin/debugfs）
+    输出: out/roms/lineage/lineage-22.2/super/unpack_vendor
+    解包条目 488（文件 254 / 链接 199 / 目录 35），权限与归属由打包段按官方真值重设
+==> [步骤 2] 按白名单复制到装配树
+    输入: out/roms/lineage/lineage-22.2/super/unpack_vendor（顶层白名单 bin / build.prop / etc / firmware_mnt / lib / lib64 / pci.ids）
+    输出: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor
+    保留 bin / build.prop / etc / firmware_mnt / lib / lib64 / pci.ids（复制 460 条目：文件 235 / 链接 198 / 目录 27）
+    丢弃 apex / lost+found / odm / odm_dlkm / overlay / usr
+==> [步骤 2b] 摊平 vendor APEX（模式 default）
+    输入: out/roms/lineage/lineage-22.2/super/unpack_vendor/apex（共 9 个 .apex，选中 0 个）
+    输出: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor
+    没有需要摊平的 APEX（模式 none/未命中），装配树保持白名单铺底结果
+==> [步骤 3] 编译 HAL 模块
+    输入: manifest/xiaomi/gold/device.json（hardware 17 项：android.hardware.audio@default、android.hardware.bluetooth@default、android.hardware.camera@default、android.hardware.gnss@default、android.hardware.gpu@default、android.hardware.health@default、android.hardware.ir@default、android.hardware.keymint@default、android.hardware.light@default、android.hardware.media@default、android.hardware.media.v412@default、android.hardware.radio@mtk、android.hardware.sensors@default、android.hardware.thermal@default、android.hardware.vibrator@default、android.hardware.wifi@default、android.service.daemon@default）
+    输出: out/vendor/android15（android.hardware.audio@default 4 项、android.hardware.bluetooth@default 3 项、android.hardware.camera@default 3 项、android.hardware.gnss@default 3 项、android.hardware.gpu@default 4 项、android.hardware.health@default 3 项、android.hardware.ir@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.media.v412@default 20 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.vibrator@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 14 项）；out/vendor/android15/mtk（android.hardware.radio@mtk 3 项）
+    机型属性: ro.board.platform=virt（展开产物名占位）
+[skip] android.hardware.audio 已编译（2 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.bluetooth 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.camera 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.gnss 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.gpu 已编译（4 个编译产物 + 0 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.health 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.ir 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.keymint 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.light 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.media 已编译（2 个编译产物 + 4 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.media.v412 已编译（17 个编译产物 + 3 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.radio 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.sensors 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.thermal 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.vibrator 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.wifi 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.service.daemon 已编译（1 个编译产物 + 13 个 vendor 静态树文件齐全，源码指纹一致）
+==> [步骤 4] 复制编译产物到装配树
+    输入: 机型静态树 manifest/xiaomi/gold/vendor；编译产物 out/vendor/android15（android.hardware.audio@default 4 项、android.hardware.bluetooth@default 3 项、android.hardware.camera@default 3 项、android.hardware.gnss@default 3 项、android.hardware.gpu@default 4 项、android.hardware.health@default 3 项、android.hardware.ir@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.media.v412@default 20 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.vibrator@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 14 项）；out/vendor/android15/mtk（android.hardware.radio@mtk 3 项）；平台覆盖层 out/vendor/android15/mtk
+    输出: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/cph-logcat-dump（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/cph-netmgr-setup（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/cph-setup-display（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/cph-storage-align（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/cph-wifi-bootstrap（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.audio.effect.service（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.audio.service（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.bluetooth-service（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.camera-service（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.gnss-service（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.health-service（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.ir-service（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.lights-service（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.media.c2-mediatek（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.media.c2@1.2-service-v4l2-64（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.radio-service（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.security.keymint-service（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.sensors-service（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.thermal-service（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.vibrator-service（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/android.hardware.wifi-service（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/hw/vendor.dolby.media.c2-default-service-dax（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/bin/service_daemon（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/build.prop（0600）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/audio_config.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/battery_config.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/excluded-input-devices.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/gnss_config.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/android.hardware.audio.service.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/android.hardware.camera-service.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/android.hardware.gnss-service.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/android.hardware.health-service.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/android.hardware.ir-service.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/android.hardware.lights-service.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/android.hardware.media.c2-mediatek.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/android.hardware.media.c2@1.2-service-v4l2-64.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/android.hardware.radio-service.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/android.hardware.security.keymint-service.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/android.hardware.sensors-service.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/android.hardware.thermal-service.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/android.hardware.vibrator-service.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/android.hardware.wifi-service.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/bluetooth-service-default.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/cph_daemon_service.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/cph_disable_provision.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/cph_logcat_dump.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/cph_netmgr.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/cph_start_adbd.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/cph_storage_align.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/cph_wifi_bootstrap.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/init/vendor.dolby.media.c2-default-service-dax.rc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/light_config.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/media_codecs.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/media_codecs_c2.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/media_codecs_dolby_audio.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/media_codecs_google_audio.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/media_codecs_google_video_le.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/media_codecs_performance.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/media_codecs_system_default.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/media_config.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/permissions/android.hardware.telephony.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/permissions/privapp-permissions-miuihome.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/primary_audio_policy_configuration.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/seccomp_policy/android.hardware.media.c2-extended-seccomp_policy（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/sensors_config.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/thermal_config.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vibrator_config.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/android.hardware.audio.service.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/android.hardware.camera-service.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/android.hardware.gnss-service.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/android.hardware.health-service.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/android.hardware.ir-service.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/android.hardware.lights-service.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/android.hardware.media.c2@1.2-service-v4l2.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/android.hardware.radio-service.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/android.hardware.security.keymint-service.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/android.hardware.sensors-service.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/android.hardware.thermal-service.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/android.hardware.vibrator-service.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/android.hardware.wifi-service.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/android.se.omapi.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/bluetooth-service-default.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/manifest_media_c2_default.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/vintf/manifest/vendor.dolby.media.c2-default-service-dax.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/wifi_config.xml（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/android.hardware.graphics.bufferqueue@2.0.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/android.hardware.media.bufferpool2-V2-ndk.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/android.hardware.media.bufferpool@2.0.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/android.hardware.media.c2-V1-ndk.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/egl/libEGL_meow.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/egl/libGLESv1_CM_meow.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/egl/libGLESv2_meow.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/hw/vulkan.mali.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/libc2plugin_store.so（0755）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/libchrome.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/libcodec2.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/libcodec2_aidl.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/libcodec2_hal_common.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/libcodec2_vndk.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/libevent.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/libfmq.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/libion.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/libsfplugin_ccodec_utils.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/libstagefright_aidl_bufferpool2.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/libstagefright_bufferpool@2.0.1.so（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/usr/idc/uinput-fpc.idc（0644）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/usr/keylayout/uinput-fpc.kl（0644）
+==> [步骤 5] 厂商 vendor 原件覆盖
+    输入: out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM（厂商 vendor 原件）（覆盖集合 10 项）
+    输出: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor
+[replace] vendor/lib64/egl/libGLES_mali.so <- 厂商 vendor/lib64/egl/libGLES_mali.so（文件覆盖）
+[replace] vendor/lib64/egl/libMEOW_data.so <- 厂商 vendor/lib64/egl/libMEOW_data.so（文件覆盖）
+[replace] vendor/lib64/egl/libMEOW_gift.so <- 厂商 vendor/lib64/egl/libMEOW_gift.so（文件覆盖）
+[replace] vendor/lib64/egl/libMEOW_qt.so <- 厂商 vendor/lib64/egl/libMEOW_qt.so（文件覆盖）
+[replace] vendor/lib64/egl/libMEOW_trace.so <- 厂商 vendor/lib64/egl/libMEOW_trace.so（文件覆盖）
+[replace] vendor/lib64/libOpenCL.so <- 厂商 vendor/lib64/libOpenCL.so（文件覆盖）
+[replace] vendor/lib64/libpng.so <- 厂商 vendor/lib64/libpng.so（文件覆盖）
+[replace] vendor/etc/permissions <- 厂商 vendor/etc/permissions（目录，46 个文件，替换）
+[replace] vendor/etc/security <- 厂商 vendor/etc/security（目录，165 个文件，替换）
+[replace] vendor/etc/md <- 厂商 vendor/etc/md（目录，40 个文件，替换）
+==> VINTF schema 对齐到 8.0（系统 libvintf 上限）
+    [vintf] etc/vintf/compatibility_matrix.xml: schema -> 8.0
+    [vintf] etc/vintf/manifest/allocator.xml: schema -> 8.0
+    [vintf] etc/vintf/manifest/android.hardware.security.secureclock-service.xml: schema -> 8.0
+    [vintf] etc/vintf/manifest/android.hardware.security.sharedsecret-service.xml: schema -> 8.0
+    [vintf] etc/vintf/manifest/android.hardware.wifi.hostapd.xml: schema -> 8.0
+    [vintf] etc/vintf/manifest/android.hardware.wifi.supplicant.xml: schema -> 8.0
+    [vintf] etc/vintf/manifest/hwc3-drm.xml: schema -> 8.0
+    [vintf] etc/vintf/manifest/mapper.minigbm.xml: schema -> 8.0
+    [vintf] etc/vintf/manifest.xml: schema -> 8.0
+    改写 9 个文件
+==> [步骤 6] 应用基线 vendor 属性 -> out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/build.prop
+    [prop] 删除 ro.frp.pst（1 行）
+    [prop] 追加 debug.sf.vsync_reactor_ignore_present_fences=true
+    [prop] 覆盖 persist.system.powerhal.applist_enable=0
+    [prop] 覆盖 ro.hardware.hwcomposer=drm
+    [prop] 追加 ro.soc.manufacturer=Mediatek
+    [prop] 追加 ro.soc.model=MT6833
+    [prop] 追加 ro.vendor.boot_security_patch=2026-02-01
+    [prop] 追加 ro.vendor.soc.manufacturer=Mediatek
+    [prop] 追加 ro.vendor.soc.model=MT6833
+    [prop] 追加 ro.vendor.soc.model.external_name=MT6833V/PNZA
+    [prop] 追加 ro.vendor.soc.model.part_name=MT6833V/PNZA
+    [prop] 追加 ro.vendor.soc.model_ready=1
+    [prop] 覆盖 ro.zygote=zygote64
+    composer compat: 现编（/Users/cuimingqiang/Library/Android/sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++）-> out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/lib64/libcdh_composer_compat.so
+    composer 依赖: DT_NEEDED android.hardware.graphics.composer@2.2-resources.so -> libcdh_composer_compat.so
+==> [步骤 6] fstab 收口
+    输入: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor_boot/fstab.mt6833（05 阶段缓存的 first_stage fstab）
+    输出: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc（落 fstab.<board>，删除 lineage fstab.virtio*；把 init.virtio.rc 改名成 init.<board>.rc）
+    删除 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/fstab.virtio（lineage fstab.virtio 副本）
+    删除 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/fstab.virtio.gsi.sda（lineage fstab.virtio 副本）
+    删除 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/fstab.virtio.gsi.vdc（lineage fstab.virtio 副本）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/fstab.mt6833（first_stage fstab：out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor_boot/fstab.mt6833）
+    改名 init.virtio.rc -> init.mt6833.rc（init 按 ro.hardware=mt6833 找板级入口）
+==> [步骤 6] 注入 SELinux 策略补丁
+    输入[模块层 android.hardware.audio]: vendor/hardware/android.hardware.audio/sepolicy
+    输入[模块层 android.hardware.bluetooth]: vendor/hardware/android.hardware.bluetooth/sepolicy
+    输入[模块层 android.hardware.gnss]: vendor/hardware/android.hardware.gnss/sepolicy
+    输入[模块层 android.hardware.ir]: vendor/hardware/android.hardware.ir/sepolicy
+    输入[模块层 android.hardware.keymint]: vendor/hardware/android.hardware.keymint/sepolicy
+    输入[模块层 android.hardware.media]: vendor/hardware/android.hardware.media/sepolicy
+    输入[模块层 android.hardware.media.v412]: vendor/hardware/android.hardware.media.v412/sepolicy
+    输入[模块层 android.hardware.radio]: vendor/hardware/android.hardware.radio/sepolicy
+    输入[模块层 android.hardware.thermal]: vendor/hardware/android.hardware.thermal/sepolicy
+    输入[模块层 android.hardware.wifi]: vendor/hardware/android.hardware.wifi/sepolicy
+    输入[模块层 android.service.daemon]: vendor/hardware/android.service.daemon/sepolicy
+    输入[机型层]: manifest/xiaomi/gold/sepolicy
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.audio/sepolicy/vendor_sepolicy.cil（3439 字节，marker ;; vendor_sepolicy.cil@android.hardware.audio）
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_service_contexts <- vendor/hardware/android.hardware.audio/sepolicy/vendor_service_contexts（1516 字节，marker # vendor_service_contexts@android.hardware.audio）
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.bluetooth/sepolicy/vendor_sepolicy.cil（1820 字节，marker ;; vendor_sepolicy.cil@android.hardware.bluetooth）
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.gnss/sepolicy/vendor_sepolicy.cil（1326 字节，marker ;; vendor_sepolicy.cil@android.hardware.gnss）
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_file_contexts <- vendor/hardware/android.hardware.ir/sepolicy/vendor_file_contexts（486 字节，marker # vendor_file_contexts@android.hardware.ir）
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.keymint/sepolicy/vendor_sepolicy.cil（2300 字节，marker ;; vendor_sepolicy.cil@android.hardware.keymint）
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_property_contexts <- vendor/hardware/android.hardware.keymint/sepolicy/vendor_property_contexts（647 字节，marker # vendor_property_contexts@android.hardware.keymint）
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.media/sepolicy/vendor_sepolicy.cil（2188 字节，marker ;; vendor_sepolicy.cil@android.hardware.media）
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.media.v412/sepolicy/vendor_sepolicy.cil（1162 字节，marker ;; vendor_sepolicy.cil@android.hardware.media.v412）
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_file_contexts <- vendor/hardware/android.hardware.media.v412/sepolicy/vendor_file_contexts（1244 字节，marker # vendor_file_contexts@android.hardware.media.v412）
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.radio/sepolicy/vendor_sepolicy.cil（2351 字节，marker ;; vendor_sepolicy.cil@android.hardware.radio）
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.thermal/sepolicy/vendor_sepolicy.cil（482 字节，marker ;; vendor_sepolicy.cil@android.hardware.thermal）
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.wifi/sepolicy/vendor_sepolicy.cil（3335 字节，marker ;; vendor_sepolicy.cil@android.hardware.wifi）
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_file_contexts <- vendor/hardware/android.hardware.wifi/sepolicy/vendor_file_contexts（586 字节，marker # vendor_file_contexts@android.hardware.wifi）
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.service.daemon/sepolicy/vendor_sepolicy.cil（7534 字节，marker ;; vendor_sepolicy.cil@android.service.daemon）
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_file_contexts <- vendor/hardware/android.service.daemon/sepolicy/vendor_file_contexts（1568 字节，marker # vendor_file_contexts@android.service.daemon）
+    追加 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil <- manifest/xiaomi/gold/sepolicy/vendor_sepolicy.cil（4486 字节，marker ;; vendor_sepolicy.cil）
+[ok] 补充 HAL 可执行标签 10 条（out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_file_contexts）：
+    android.hardware.bluetooth-service -> hal_bluetooth_default_exec
+    android.hardware.camera-service -> hal_camera_default_exec
+    android.hardware.gnss-service -> hal_gnss_default_exec
+    android.hardware.health-service -> hal_health_default_exec
+    android.hardware.lights-service -> hal_light_default_exec
+    android.hardware.media.c2-mediatek -> mediacodec_exec
+    android.hardware.radio-service -> hal_radio_default_exec
+    android.hardware.thermal-service -> hal_thermal_default_exec
+    android.hardware.vibrator-service -> hal_vibrator_default_exec
+    vendor.dolby.media.c2-default-service-dax -> mediacodec_exec
+==> [步骤 7] 打包 vendor.img
+    输入: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor（801 条目：文件 564 / 链接 198 / 目录 39）+ 基底 out/roms/lineage/lineage-22.2/super/vendor_a.img（取 UUID/features）
+    输出: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor.img（mke2fs -d -> 元数据回写 -> e2fsck -> resize2fs -M）
+==> 基底文件系统特征: UUID 2b96c597-1e2f-5ee1-9851-c4a9fa9de36e，block 4096 / inode 256，features ext_attr dir_index filetype extent sparse_super large_file huge_file uninit_bg dir_nlink extra_isize
+==> mke2fs -d 从装配树生成 vendor.img: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor -> out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor.img
+    装配树条目 801（文件 564 / 链接 198 / 目录 39），初始 51029 块（199 MB），inode 1024
+==> 解包官方 vendor 镜像（取 SELinux 标签真值）: out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/vendor_a.img
+==> 官方镜像标签真值: 6481 条（含 222 个符号链接自身）
+==> vendor 元数据规则表: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor-meta-rules.txt, out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor-meta-summary.txt
+==> debugfs 写入 801 个条目的元数据（权限 / 归属 / 时间 / SELinux）
+==> e2fsck 校验修复 vendor.img
+==> resize2fs -M 最小化收紧 vendor.img
+[ok] vendor.img 构建完成: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor.img（170680320 字节）
+==> [步骤 8] 写清单与校验和
+    输入: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor.img、out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor-meta-rules.txt、out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor-meta-summary.txt
+    输出: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/{vendor-info.txt、vendor-recipe.txt、SHA256SUMS}
+[ok] vendor 目录树装配与 vendor.img 打包完成: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor, out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor.img
+    机型静态树: 写入 21，已存在同内容 0
+    机型 usr: 写入 2，已存在同内容 0
+    编译产物 android.hardware.audio@default: 写入 4，已存在同内容 0
+    编译产物 android.hardware.bluetooth@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.camera@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.gnss@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.gpu@default: 写入 4，已存在同内容 0
+    编译产物 android.hardware.health@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.ir@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.keymint@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.light@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.media@default: 写入 6，已存在同内容 0
+    编译产物 android.hardware.media.v412@default: 写入 20，已存在同内容 0
+    编译产物 android.hardware.radio@mtk: 写入 0，已存在同内容 0，被后层覆盖 3
+    编译产物 android.hardware.sensors@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.thermal@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.vibrator@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.wifi@default: 写入 3，已存在同内容 0
+    编译产物 android.service.daemon@default: 写入 14，已存在同内容 0
+    平台覆盖层 mtk: 写入 3，已存在同内容 0
+    备注: vendor.img 由装配树经 mke2fs -d 全量生成，复刻基底 UUID/features，元数据经回查与 e2fsck 校验
+    备注: mke2fs 会在新镜像里自带一个空的 /lost+found（e2fsck 也会补回），不属于装配树，已补 0700 root:root 与 vendor_file 标签
+    备注: 符号链接在 ext4 上恒为 0777，规则表里记的是官方 EROFS 原值（0755 之类），两者不同属预期
+    备注: 机型侧 vendor_builder.py 走的是镜像内就地注入路线，与本阶段统一为先解包装配再建镜像
+    备注: 模块 vendor 静态树（rc / VINTF）已计入复用判据：产物根缺件会自动重跑该模块的 hal build
+==> [4/7] build_vendor_dlkm  (08_build_vendor_dlkm)
+  + 进程内调用 build_vendor_dlkm
+==> 产物目录: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM（out/devices）
+==> vendor_dlkm 基座: out/roms/lineage/lineage-22.2/super/vendor_dlkm_a.img（命令行）
+==> 模块产物目录: out/kernel/lineage-22-6.6/modules（out/kernel/lineage-22-6.6）
+==> 厂商 vendor_dlkm: out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/vendor_dlkm_a.img（命令行）
+==> build.prop 基线: 清单未声明 vendor-dlkm.baseline-build-prop（步骤 5 跳过）
+==> 模块产物: out/kernel/lineage-22-6.6/modules（8 个 .ko）
+    输入: 缓存配方 dlkm-ddbe22fafc3c（输入哈希）
+==> 阶段日志: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor_dlkm-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    基底镜像:   out/roms/lineage/lineage-22.2/super/vendor_dlkm_a.img（14147584 B，已存在，lineage 虚机 vendor_dlkm）
+    工作镜像:   out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor_dlkm/vendor_dlkm.work.img（步骤 1 每次从基底重拷）
+    模块产物:   out/kernel/lineage-22-6.6/modules（8 个 .ko，整树哈希 580f54559b2c0599f6a96abc103048eb5db65ab773b2071da37b8a7680e56dae）
+    官方镜像:   out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/vendor_dlkm_a.img（13983744 B）
+    清单基线:   清单未声明 vendor-dlkm.baseline-build-prop（步骤 5 跳过）
+    工具:       debugfs=/opt/homebrew/opt/e2fsprogs/sbin/debugfs，e2fsck=/opt/homebrew/opt/e2fsprogs/sbin/e2fsck，dump.erofs=/opt/homebrew/bin/dump.erofs
+    回收候选:   24 个基座测试模块（步骤 2 按 debugfs stat 探测后删除）
+    镜像产物:   out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor_dlkm.img
+    注入模块:   cdh_redirect.ko（name=cdh_redirect，vermagic=6.6.127-4k-cdh SMP preempt mod_unload modversions aarch64，39736 B）
+    注入模块:   cdh_virt_wifi.ko（name=cdh_virt_wifi，vermagic=6.6.127-4k-cdh SMP preempt mod_unload modversions aarch64，41552 B）
+        依赖 cfg80211
+    注入模块:   cfg80211.ko（name=cfg80211，vermagic=6.6.127-4k-cdh SMP preempt mod_unload modversions aarch64，1779272 B）
+        依赖 rfkill
+    注入模块:   libarc4.ko（name=libarc4，vermagic=6.6.127-4k-cdh SMP preempt mod_unload modversions aarch64，10304 B）
+    注入模块:   mac80211.ko（name=mac80211，vermagic=6.6.127-4k-cdh SMP preempt mod_unload modversions aarch64，1707752 B）
+        依赖 cfg80211
+        依赖 libarc4
+    注入模块:   mac80211_hwsim.ko（name=mac80211_hwsim，vermagic=6.6.127-4k-cdh SMP preempt mod_unload modversions aarch64，172680 B）
+        依赖 cfg80211
+        依赖 mac80211
+    注入模块:   rfkill.ko（name=rfkill，vermagic=6.6.127-4k-cdh SMP preempt mod_unload modversions aarch64，55744 B）
+    注入模块:   virtio_console.ko（name=virtio_console，vermagic=6.6.127-4k-cdh SMP preempt mod_unload modversions aarch64，63464 B）
+    缓存配方:   dlkm-ddbe22fafc3c
+[skip] vendor_dlkm.img 可复用: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor_dlkm.img
+    配方、清单与校验和均未变（dlkm-ddbe22fafc3c）
+==> [5/7] build_patch  (09_build_patch)
+  + 进程内调用 build_patch
+==> 产物目录: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM（out/devices）
+==> vendor 源镜像（07 产物）: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor.img（170680320 B，sha256 09b45533cfb0，产物目录缺省）
+==> vendor_dlkm 源镜像（08 产物）: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor_dlkm.img（14147584 B，sha256 c5594b5ca5cc，产物目录缺省）
+==> odm 源镜像（06 产物）: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/odm.img（8388608 B，sha256 62b9964959c5，产物目录缺省）
+    基线清单: manifest/xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.json（无 patch.vendor-cil-rewrite）
+    输入: 缓存配方 patch-c48e9b7dbefe（输入哈希）
+==> 阶段日志: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/patch-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    载体:        /dev/block/vdc -> /mnt/vendorpatch（first_stage_mount；名以 /mnt/vendor 为前缀命中 vold 白名单，避开强拆）
+    子树 vendor: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor.img（170680320 B，已存在，sha256 09b45533cfb0） -> /vendor
+    子树 dlkm:   out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor_dlkm.img（14147584 B，已存在，sha256 c5594b5ca5cc） -> /vendor_dlkm
+    子树 odm:    out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/odm.img（8388608 B，已存在，sha256 62b9964959c5） -> /odm
+    形态修正:    /vendor/odm 软链接换真实空目录；/vendor/lib/modules 由 vendor_dlkm 复制实体
+    屏蔽落点:    odm/etc/selinux/odm_sepolicy.cil、odm/etc/selinux/precompiled_sepolicy（必须不存在，否则反噬引导）
+    工具:        debugfs=/opt/homebrew/opt/e2fsprogs/sbin/debugfs，e2fsck=/opt/homebrew/opt/e2fsprogs/sbin/e2fsck，mkfs.ext4=/opt/homebrew/opt/e2fsprogs/sbin/mkfs.ext4
+    镜像产物:    out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/patch.img（384 MiB，ext4）
+    缓存配方:    patch-c48e9b7dbefe
+==> [步骤 1] 解包三棵源树
+    输入: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor.img（170680320 B）+ out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor_dlkm.img（14147584 B）+ out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/odm.img（8388608 B）
+    输出: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch/stage/{raw_vendor、raw_vendor_dlkm、raw_odm}（debugfs rdump）
+    vendor: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch/stage/raw_vendor（802 条目：文件 564 / 链接 198 / 目录 40）
+    vendor_dlkm: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch/stage/raw_vendor_dlkm（93 条目：文件 89 / 链接 0 / 目录 4）
+    odm: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch/stage/raw_odm（3 条目：文件 1 / 链接 0 / 目录 2）
+[ok] 源树已解包
+==> [步骤 2] 组装 patch 容器根
+    输入: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch/stage/raw_vendor -> /vendor，out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch/stage/raw_vendor_dlkm -> /vendor_dlkm，out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch/stage/raw_odm -> /odm
+    输出: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch/stage/root（= 运行态 /mnt/vendorpatch）
+    /vendor/lib/modules 符号链接（-> /vendor_dlkm/lib/modules）替换为真实目录（从 /vendor_dlkm/lib/modules 复制 85 条目）
+    屏蔽落点校验通过（2 项均不存在）
+[ok] 组装完成：986 条目（文件 739 / 链接 197 / 目录 50）
+==> [步骤 3] 逐路径从源镜像取元数据
+    输入: 987 条目（源 985 + 固定 2），源镜像 3 张
+    输出: 每个条目的 mode（含类型位）/ uid / gid / security.selinux
+    out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/odm.img: 读回 4 条目
+    out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor.img: 读回 802 条目，[warn] 1 个缺 security.selinux（按 u:object_r:vendor_file:s0 兜底）
+    out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor_dlkm.img: 读回 179 条目
+[ok] 元数据就绪：987 条目，标签 37 种
+==> [步骤 4] mkfs.ext4 -d 导入内容与权限位
+    输入: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch/stage/root（987 条目，384 MiB）
+    输出: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch/patch.work.img（98304 块 × 4096 B；uid/gid 留给步骤 5 回填）
+[ok] 文件系统已建立: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch/patch.work.img（402653184 B）
+==> [步骤 5] debugfs 回填属主与标签并回读校验
+    输入: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch/patch.work.img（987 条目）
+    输出: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch/patch-debugfs.cmd（3948 条命令：sif 2961 + ea_set 987，标签值文件 37 个）
+[ok] 回填 987 条目，回读 987/987 一致
+==> [步骤 6] e2fsck 修复一致性
+    输入: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch/patch.work.img
+    输出: 元数据一致、可挂载的 ext4 镜像
+[ok] e2fsck 通过（退出码 0 = 无需修复）
+==> [步骤 7] 发布镜像并写清单与校验和
+    输入: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch/patch.work.img（987 条目，384 MiB）
+    输出: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/{patch.img、patch-info.txt、patch-recipe.txt、SHA256SUMS}
+[ok] patch.img 发布完成: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/patch.img（402653184 字节，sha256 2dae19e48a48）
+[ok] patch.img 构建完成: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/patch.img
+    条目 987（源 985 + 固定 2），回读校验 987 一致，标签值文件 37 个
+    备注: patch.img 根是容器：/vendor、/vendor_dlkm、/odm 三棵并列子树分别来自 vendor.img / vendor_dlkm.img / odm.img
+    备注: mke2fs -d 不保留 uid/gid：属主与标签由步骤 5 的 debugfs 会话统一回填（标签用 -f 值文件带 NUL）
+    备注: 容器根、/vendor/odm、/vendor/lib/modules 的元数据固定，不取自源镜像
+    备注: /vendor/odm 在 vendor.img 里是绝对软链接，组装时换成真实空目录；odm 内容由 /odm 子树承载
+    备注: /vendor/lib/modules 在 vendor.img 里是软链接，组装时替换为真实目录并从 vendor_dlkm 复制；其子项元数据取自 vendor_dlkm.img
+    备注: odm 子树（odm.img）由 06_build_odm 产出，承载 odm/etc/build.prop 的 64 位 ABI 覆盖件
+    备注: 屏蔽落点（odm/etc/selinux/odm_sepolicy.cil）用 exists 校验；/system/bin/update_verifier 由内核 getname 直接返回 ENOENT，与镜像内容无关
+    备注: 镜像大小固定 384 MiB（--size 可调）；ext4 只按内容占用，剩余空间留白供 vdc 只读挂载
+    备注: /mnt/vendor 不再被 patch 覆盖，EFI/persist/shared/mi_ext 由 first_stage_init 的 tmpfs + 官方 fstab 挂载
+==> [6/7] pack_super  (10_pack_super)
+  + 进程内调用 pack_super
+==> 来源目录: out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM（命令行）
+==> 产物目录: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM（out/devices）
+==> 阶段日志: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/super-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    模式:       案例 1 · 复制官方 super.img（不解析、不重排；vendor/vendor_dlkm 改动走 patch.img）
+    来源目录:   out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super.img（官方 super.img 8.50 GiB，mtime 2026-10-22 21:49:13）
+    产物:       out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/super.img（已存在 8.50 GiB）
+    工作镜像:   out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/pack-super/super.work.img
+    模板:       不需要（复制不重排；来源为 liblp v10.2、16 条分区，仅作展示）
+    geometry:   max-size=65536 slot-count=3 block-size=4096（槽 6 份 × 64.0 KiB）
+    组:         default / main_a / main_b
+    容量:       8.50 GiB（与来源一致）
+    缓存配方:   记录为 super-a47fd996d549，实跑时重新计算比对
+[skip] super.img 可复用: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/super.img
+    来源 super.img 未变（super-a47fd996d549）
+==> [7/7] pack_vda  (11_pack_vda)
+  + 进程内调用 pack_vda
+==> 底盘: roms/lineage/UTM-VM-lineage-22.2-20261010-UNOFFICIAL-virtio_arm64only.zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2 / LineageOS_on_arm64.utm/Data/vda.img（CDH_LINEAGE_ZIP）
+==> 阶段日志: out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/vda-log.txt（边写边变，不在 SHA256SUMS 之内）
+==> [步骤 0] 解析计划
+    设备:       xiaomi/gold OS3.0.10.0.VNQCNXM（id=gold_cn_OS3.0.10.0.VNQCNXM）
+    来源镜像:   out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img（super 必需，boot/vendor_boot 可缺，patch 必需）
+    底盘:       roms/lineage/UTM-VM-lineage-22.2-20261010-UNOFFICIAL-virtio_arm64only.zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2 / LineageOS_on_arm64.utm/Data/vda.img（zip）
+    盘集目录:   out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM（已有 vda.img 13.00 GiB）
+    分区表:     11 个分区、扇区 512 B（EFI/super/misc/persist/metadata/firmware/vendor_boot_a/vendor_boot_b/boot_a/boot_b/BIOS）
+    设备规格:   Redmi Note 13 5G / mt6833 1080×2400 @ 400 dpi，2 档内存，8 vCPU；verified-boot-hash fe049d35e450
+    data:       稀疏种子 110.27 GiB（data.qcow2）
+    grub:       固化固定 _a 槽 + 菜单零等待 + vbmeta 注入（幂等，缺 mtools 只告警）
+    缓存配方:   记录为 vda-bdfccc983000，实跑时重新计算比对
+    重建原因: 配方变化: vda-bdfccc983000 -> vda-7db1eaa26d43
+==> [步骤 1] 校验来源镜像并生成 device.json
+    [ok] super.img 8.50 GiB（out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/super.img）
+    [ok] boot.img         80.0 MiB（out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/boot.img）
+    [ok] vendor_boot.img  20.6 MiB（out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor_boot.img）
+    [ok] patch.img 384.0 MiB（out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/patch.img）
+    [ok] device.json 内容已生成（id=gold_cn_OS3.0.10.0.VNQCNXM，738 B）
+==> [步骤 2] 准备 vda 底盘
+    输入: roms/lineage/UTM-VM-lineage-22.2-20261010-UNOFFICIAL-virtio_arm64only.zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2 / LineageOS_on_arm64.utm/Data/vda.img
+    [skip] 缓存 raw 可用: out/tmp/pack-vda/xiaomi/gold/OS3.0.10.0.VNQCNXM/vda.raw（13.00 GiB）
+    [skip] 复用 out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/vda.img（底盘未变，仅原位刷新分区）
+==> [步骤 3] 替换 super 分区（安卓系统盘）
+    [ok] super           8.50 GiB @ 129.0 MiB（容量 12.00 GiB，余量 3.50 GiB），回读一致
+==> [步骤 4] 替换 boot / vendor_boot 分区（A/B 双槽）
+    [ok] boot_a          80.0 MiB @ 12.49 GiB（容量 80.0 MiB，余量 0 B），回读一致
+    [ok] boot_b          80.0 MiB @ 12.57 GiB（容量 80.0 MiB，余量 0 B），回读一致
+    [ok] vendor_boot_a   20.6 MiB @ 12.30 GiB（容量 100.0 MiB，余量 79.4 MiB），回读一致
+    [ok] vendor_boot_b   20.6 MiB @ 12.40 GiB（容量 100.0 MiB，余量 79.4 MiB），回读一致
+==> [步骤 5] 固化 EFI grub.cfg（固定 _a + 菜单零等待 + vbmeta + 设备 cmdline）
+    [..] 已含# CDH: 固定启动 A 槽
+    [..] 已含# CDH: 引导菜单零等待
+    [..] 已含# CDH: Remote KeyMint verified boot 参数
+    [..] 已含# CDH: 设备清单 cmdline 注入
+    [skip] grub.cfg 已含全部 CDH 固化
+==> [步骤 6] 发布盘集（patch.img / data.qcow2 / device.json）
+    [..] patch.img 内容已变，重新发布（384.0 MiB）
+    [ok] patch.img -> out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch.img（384.0 MiB，sha256 2dae19e48a48）
+    [skip] data.qcow2 已就位（193.7 KiB）
+    [ok] device.json（id=gold_cn_OS3.0.10.0.VNQCNXM）-> out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/device.json
+    [ok] out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/vda-info.txt / out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/vda-recipe.txt
+    产物: out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM（vda.img 13.00 GiB，5 个分区已刷新）
+[ok] 已完成

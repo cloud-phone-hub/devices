@@ -1,0 +1,34 @@
+;; vendor.qti.hardware.perf2（IPerf v1 空实现 HAL）的 SELinux 片段，由
+;; 07_build_vendor 步骤 6 以 marker 整块并入装配树的 etc/selinux/vendor_sepolicy.cil。
+;;
+;; 背景：Flyme framework（BoostFramework → vendor.perfservice）、lmkd 与一批
+;; vendor/平台应用在进程绑定时会 native getService 这个名字。服务端 rc 由机型层提供
+;; （disabled + on post-fs-data 显式 start），以 seclabel u:r:hal_sensors_default 运行
+;; —— 复用基座标准域，与 sensor_aux 桩同口径。
+;;
+;; 为什么类型与授权放模块层：服务名、「谁能看见它」是本 HAL 的契约，随模块复用，
+;; 换机型不必重写；机型层只保留绑定本机路径/启动链的事实。
+;;
+;; 为什么客户端侧用 domain 通配而不逐域列举：
+;;   * 发起方散在 plat（system_server / lmkd / mediaserver / platform_app / priv_app /
+;;     radio / nfc / mediaprovider / secure_element）、system_ext（vendor_perfservice、
+;;     vendor_dataservice_app、vendor_qtelephony 等 Flyme 域）与各 HAL 客户端，逐条列举
+;;     每换一次底座就要重数；漏掉的会退回 default_android_service 继续产 avc
+;;     （实例 36 实测 722 次 / 8.4 min，实例 37 缓冲内 90 行）。
+;;   * 只授 service_manager find —— 只是「名字可见」；真正调用仍需
+;;     (binder (call transfer))，本文件不给，且服务方法全是即时回 0 的空实现。
+;;   * 本机已实测可编译：2026-10-29 实例 37 上用 guest 的 secilc 按 init 同序编译，
+;;     domain 通配与逐域列举两种写法 RC 均为 0（见 engine/evidence/
+;;     issue-m22-perf2-find-grant/log-pass.txt）。
+;;
+;; 类型名用 hal_perf2_service：跟 AOSP hal_*_service 命名一致，不带项目缩写，
+;; 镜像里 /vendor/etc/selinux 的标签与 avc 日志都看不出改造来源。
+(type hal_perf2_service)
+(roletype object_r hal_perf2_service)
+(typeattributeset service_manager_type (hal_perf2_service))
+
+;; 服务端：以 hal_sensors_default 域注册本名（见机型层 rc 的 seclabel）。
+(allow hal_sensors_default hal_perf2_service (service_manager (add find)))
+
+;; 客户端：任意域可查询本名（只 find，不含 binder 调用）。
+(allow domain hal_perf2_service (service_manager (find)))

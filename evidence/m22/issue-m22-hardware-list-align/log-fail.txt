@@ -1,0 +1,78 @@
+# log-fail.txt — issue-m22-hardware-list-align 失败态证据
+# 采集：2026-10-29（m22，实例 34 = 对齐前 / 实例 35 = 首轮对齐后未补蓝牙 sepolicy）
+# 说明：A 段的首轮 07 输出在会话中产生时未单独落盘，随后 14:28 的重跑把
+#       /tmp/m22-round4.log 覆盖成成功日志（现 `grep -ac "未知子命令"` = 0），
+#       故按会话原文引用，与 solution.md §3.3 同源；md5 / 尺寸为盘上实测。
+
+## A. 07 首轮：out/bin/cdh-vendor 是 cdh 的副本
+
+$ ./out/bin/cdh device build m22 --from build_vendor …      # 首轮，失败
+==> 编译 HAL 模块 android.hardware.bluetooth（变体 default，待落盘 bin/hw/android.hardware.bluetooth-service, …）
+  + out/bin/cdh-vendor hal build android.hardware.bluetooth --android 16 --out-dir …/out/vendor/android16
+[err] 未知子命令: hal（cdh help 查看用法）
+[err] 阶段 build_vendor 失败: HAL 模块 android.hardware.bluetooth 编译失败: … 退出码非零（exit status 1）
+
+$ md5 -q out/bin/cdh out/bin/cdh-vendor      # 修复前：同一个二进制
+dd8f80773f437f88784c0ba17a1a3893
+dd8f80773f437f88784c0ba17a1a3893
+
+$ md5 -q out/bin/cdh out/bin/cdh-vendor      # 修复后（engine/vendor/build 重编 cdh-vendor）
+7f34d76094b458ac2dbf6f45378cb260      out/bin/cdh         7,216,242 B
+5e8f995001dc760008bafa4a56b59e53      out/bin/cdh-vendor 10,004,834 B
+
+## B. 实例 34（对齐前；窗口 01-01 00:00:00 → 06-25 21:30:07，约 37 min）
+
+$ Q=out/core/daemon/runtime/m22_12.5.0.0A/34/qemu.log
+$ grep -ac "<pattern>" $Q
+Waiting for service 'vendor.meizu.sensor_aux          892     ← 引擎侧无该模块，每 ~2.4 s 一次
+Waiting for service 'vendor.qti.hardware.perf2          0     ← 客户端走 getService，不等声明
+Could not find vendor.qti.hardware.perf2               472     ← 快速失败回话，调用方不睡
+Waited one second for                                  35     ← 见下：22 行是蓝牙通道（本条第 3 点）
+Too many pending                                        0
+cannot execv                                            0
+Watchdog triggered                                     96     ← 24 次（每 90 s），全为 NfcService
+
+$ grep -a "Waited one second for" $Q | grep -aoE "for [A-Za-z0-9_.]+" | sort | uniq -c
+  13 for activity
+  22 for android.hardware.bluetooth.IBluetoothHci     ← 实例 34 尚未补 console_device 授权
+  10 for ctl.interface_start
+（IBootControl 计 0：boot 已在 #54 从 device.json 撤下）
+
+$ grep -a "Watchdog triggered, aborting" $Q | grep -aoE "^[0-9-]+ [0-9:.]+ +[0-9]+" | awk '{print $3}' | sort -u | wc -l
+      24
+06-25 20:54:04.697 pid=2449 … 06-25 21:28:39.697 pid=11469
+
+## C. 实例 35（首轮对齐、未补蓝牙 sepolicy）：服务在、通道不通
+
+$ adb -s 127.0.0.1:5919 shell 'service list | grep IBluetoothHci'
+29      android.hardware.bluetooth.IBluetoothHci/default: [android.hardware.bluetooth.IBluetoothHci]
+$ adb -s 127.0.0.1:5919 shell getprop init.svc.vendor.bluetooth-default
+running
+
+$ adb -s 127.0.0.1:5919 shell 'dumpsys bluetooth_manager | head -6'
+Bluetooth Status
+  enabled: false
+  state: OFF
+  address: [address is null]
+Bluetooth never enabled!
+（以上 dumpsys 输出为会话当时的原文引用：实例 35 已停，guest 侧 logcat 不可再取；
+  同一现象在宿主侧串口日志里有留痕，见下一条。）
+
+$ Q=out/core/daemon/runtime/m22_12.5.0.0A/35/qemu.log
+$ grep -ac "initializationComplete" $Q
+12
+06-25 20:55:37.649  8337  8370 W bluetooth: system/gd/hal/hci_backend_aidl.cc:37 initializationComplete: status != AidlStatus::SUCCESS
+06-25 20:55:44.228  8577  8607 W bluetooth: system/gd/hal/hci_backend_aidl.cc:37 initializationComplete: status != AidlStatus::SUCCESS
+（HAL 进程活着、服务已注册；framework 每次 enable 起新进程重试，12 行分属 5 次尝试）
+
+## D. 装配树给 hal_bluetooth_default 的设备授权（修复前的真值：缺 console_device）
+
+(allow hal_bluetooth_default bt_device_202504 (chr_file (ioctl read write open)))
+(allow hal_bluetooth_default rfkill_device (chr_file (ioctl read write getattr lock append map open watch watch_reads)))
+                       ← 无 console_device（/dev/hvc5 的运行时标签）
+(allow hal_radio_default console_device_202504 (chr_file …))    ← 同族先例
+(allow hal_wifi_default  console_device_202504 (chr_file …))
+
+> 后 4 行中的 console_device 授权已在 solution.md §4.1 新模块 `sepolicy/vendor_sepolicy.cil`
+> 里补上（`{{vers}}` 占位，构建期替换）；本段记录的是补之前的装配树真值，
+> 即 `openDevice()` 返回 -1 → `UNABLE_TO_OPEN_INTERFACE` 的直接原因。

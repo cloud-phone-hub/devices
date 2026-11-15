@@ -1,0 +1,40 @@
+=== [修复后：2026-11-15 P1 Batch-5 实例 gold_15-OS3.0.11.0.VNQCNXM/3 (61f8a3a6a912df72-cloud)] ===
+# 1) vm-root-pass.txt：dmesg 内核模块初始化与 maps 缓存预热
+[    0.340210] cdh_redirect: loading out-of-tree module taints kernel.
+[    0.340802] cdh_redirect: module verification failed: signature and/or required key missing - tainting kernel
+[    0.342721] cdh_redirect: 规则来自 /lib/modules/cdh_redirect.rules：26 条
+[    0.344550] cdh_redirect: 前向钩子就绪：getname_flags（maxactive 4096）
+[    0.355381] cdh_redirect: 逆向钩子就绪：proc_pid_readlink + vfs_readlink + d_path
+[    0.362228] cdh_redirect: 挂载表视图钩子就绪：mountinfo=1 mounts=1 mountstats=1
+[    0.368351] cdh_redirect: maps dev:ino 钩子就绪：show_map_vma
+[    0.369630] cdh_redirect: 已加载：26 条规则（/lib/modules/cdh_redirect.rules），内核未打补丁
+[    0.924761] cdh_redirect: maps 缓存预热完成：ready=66/68
+
+# 2) vm-root-pass.txt：/proc/cdh_redirect 运行态（26/32 规则、第 26 条 maps 规则、零拦截异常）
+rules: 26/32
+  file /vendor/lib64/egl/libGLES_meow.so -> /mnt/vendorpatch/vendor/lib64/egl/libEGL_meow.so
+  file /vendor/lib64/egl/libMEOW_qt.so -> /mnt/vendorpatch/vendor/lib64/egl/libGLESv1_CM_meow.so
+  file /vendor/lib64/libgpu_aux.so -> /mnt/vendorpatch/vendor/lib64/egl/libGLESv2_meow.so
+  file /vendor/lib64/libgralloc_extra.so -> /mnt/vendorpatch/vendor/lib64/hw/gralloc.default.so
+  file /vendor/lib64/libgpudataproducer.so -> /mnt/vendorpatch/vendor/lib64/libui.so
+  file /vendor/lib64/libaal_sec.so -> /mnt/vendorpatch/vendor/lib64/android.hardware.graphics.allocator@2.0.so
+  file /vendor/lib64/libFrameRecord.so -> /mnt/vendorpatch/vendor/lib64/android.hardware.graphics.allocator@3.0.so
+  file /vendor/lib64/libpng.so -> /mnt/vendorpatch/vendor/lib64/android.hardware.graphics.allocator@4.0.so
+  file /vendor/lib64/egl/libMEOW_data.so -> /mnt/vendorpatch/vendor/lib64/android.hardware.graphics.common-V6-ndk.so
+  file /vendor/lib64/mt6833/libpq_sec.so -> /mnt/vendorpatch/vendor/lib64/hw/mapper.mediatek.so
+max_uid: 10000
+forward_hits: 17878
+reverse_hits: 6019
+uid_skipped: 320
+forward_missed: 0
+reverse_missed: 0
+sphal_blocked: 0
+maps_ino_rewrites: 0
+
+# 3) core3-verify.txt：非特权 App 侧 maps 设备/inode、文件截断边界与 vendorLibMd5 全量对账
+maps_lines=3810 fe:20=0 /mnt/vendorpatch=0
+checked_vendor_libs=36 CLOUD_MAP>PAGE_ALIGN(REAL_FILE)=0 CLOUD_MAP>EXACT_REAL_FILE=10 off>=real_st_size=0 ino_mismatch=0
+mountinfo lines=182 /dev/block/vda=0 vendorpatch=0 dm_f2fs=17 with_inlinecrypt=17
+display.gles: vendor=ARM renderer=Mali-G57 MC2 version=OpenGL ES 3.2 v1.r49p1-03bet0.569c83bf81f68e2ce8910542c6846b7e
+vendorLibMd5: cloud=4 real=4 diffs=0 []
+vendorTree diffs=0 []

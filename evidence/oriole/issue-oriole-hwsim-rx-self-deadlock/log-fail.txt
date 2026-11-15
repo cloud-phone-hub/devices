@@ -1,0 +1,97 @@
+# 失败证据：oriole (AP2A.240905.003.F1, kernel 5.10.270-4k-cdh) 运行到 ~822 s 整机卡死
+# 采样时间：2026-11-04 11:49（实例 1：out/core/daemon/runtime/oriole_AP2A.240905.003.F1/1）
+
+# ==============================================================================
+# 1. 宿主侧现场：qemu-system-aarch64 占满 4 核（402.8% CPU），adb shell 全部超时挂起
+# ==============================================================================
+$ ps aux | grep "[q]emu-system-aarch64"
+cuimingqiang     19671 402.8  6.2 422703408 1567856 s000  R    11:17AM 107:56.70 /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/bin/qemu-system-aarch64 ... -m 8192 -smp 8 ...
+
+# ==============================================================================
+# 2. 原发栈（qemu.log 第 22947~22998 行）：uptime 822.15 s，CPU#0 的 cdh-wifi-rx 内核线程
+#    在进程上下文直接调 netif_receive_skb()（未禁用 BH），持 sk_lock.slock 期间被硬中断打断，
+#    irq_exit 跑 timer 软中断重入 tcp_delack_timer 抢同一把锁 —— 单核自死锁
+# ==============================================================================
+[  822.158919][    C0] rcu: INFO: rcu_preempt self-detected stall on CPU
+[  822.159233][    C0] rcu: 	0-....: (1 GPs behind) idle=a2e/1/0x4000000000000004 softirq=62294/62295 fqs=2600 last_accelerate: e95f/fdec dyntick_enabled: 1
+[  822.159602][    C0] 	(t=5250 jiffies g=138173 q=16732)
+[  822.159740][    C0] Task dump for CPU 0:
+[  822.159845][    C0] task:cdh-wifi-rx     state:R  running task     stack:    0 pid: 5332 ppid:     2 flags:0x0000000a
+[  822.160128][    C0] Call trace:
+[  822.160247][    C0]  dump_backtrace+0x0/0x1ec
+[  822.160515][    C0]  show_stack+0x20/0x30
+[  822.160649][    C0]  sched_show_task+0x180/0x224
+[  822.160777][    C0]  dump_cpu_task+0x54/0x6c
+[  822.160922][    C0]  rcu_dump_cpu_stacks+0x114/0x148
+[  822.161060][    C0]  rcu_sched_clock_irq+0x4d8/0xff0
+[  822.161246][    C0]  update_process_times+0xa4/0xd4
+[  822.161396][    C0]  tick_sched_timer+0x80/0xd4
+[  822.161531][    C0]  __hrtimer_run_queues+0x138/0x2f8
+[  822.161680][    C0]  hrtimer_interrupt+0xe4/0x3a8
+[  822.161833][    C0]  arch_timer_handler_virt+0x40/0x54
+[  822.161996][    C0]  handle_percpu_devid_irq+0x8c/0x250
+[  822.162171][    C0]  __handle_domain_irq+0xa0/0xf0
+[  822.162324][    C0]  gic_handle_irq+0x64/0x148
+[  822.162450][    C0]  el1_irq+0xe4/0x1c0
+[  822.162562][    C0]  queued_spin_lock_slowpath+0x204/0x384
+[  822.162768][    C0]  tcp_delack_timer+0x30/0x17c
+[  822.163021][    C0]  call_timer_fn+0x3c/0x25c
+[  822.163151][    C0]  __run_timers+0x1e0/0x338
+[  822.163284][    C0]  run_timer_softirq+0x2c/0x54
+[  822.163421][    C0]  __do_softirq+0x108/0x410
+[  822.163570][    C0]  __irq_exit_rcu+0xc4/0xc8
+[  822.163697][    C0]  irq_exit+0x18/0x2c
+[  822.163810][    C0]  __handle_domain_irq+0xa4/0xf0
+[  822.163953][    C0]  gic_handle_irq+0x64/0x148
+[  822.164082][    C0]  el1_irq+0xe4/0x1c0
+[  822.164621][    C0]  __wake_up_sync_key+0xa8/0x164
+[  822.164935][    C0]  sock_def_readable+0xb8/0x158
+[  822.165103][    C0]  tcp_data_ready+0x90/0xe8
+[  822.165231][    C0]  tcp_rcv_established+0x5cc/0x68c
+[  822.165377][    C0]  tcp_v4_do_rcv+0xa0/0x208
+[  822.165501][    C0]  tcp_v4_rcv+0x848/0x8e8
+[  822.165624][    C0]  ip_protocol_deliver_rcu+0xdc/0x208
+[  822.165769][    C0]  ip_local_deliver+0xc0/0x15c
+[  822.165892][    C0]  ip_rcv+0x80/0x110
+[  822.165993][    C0]  __netif_receive_skb_core+0xbac/0xe48
+[  822.166298][    C0]  __netif_receive_skb+0x48/0x100
+[  822.166439][    C0]  netif_receive_skb+0x44/0x1e4
+[  822.166571][    C0]  cdh_rx_thread+0x338/0x35c [mac80211_hwsim]
+[  822.166729][    C0]  kthread+0x140/0x214
+[  822.166833][    C0]  ret_from_fork+0x10/0x30
+
+# ==============================================================================
+# 3. 次生等待栈（qemu.log 第 23102~23645 行、52256~52350 行）：
+#    CPU#2 (CronetNet:16363) 与 CPU#4 (netd:719) 等同一把锁 x0=ffffff80b9b94148，
+#    与 CPU#0 (cdh-wifi-rx:5332) 一起持续报 soft lockup
+# ==============================================================================
+[  828.002916][    C2] watchdog: BUG: soft lockup - CPU#2 stuck for 23s! [CronetNet:16363]
+[  828.003455][    C2] Modules linked in: zram(E) zsmalloc(E) virtio_console(E) virt_wifi(E) mac80211_hwsim(E) mac80211(E) libarc4(E) cfg80211(E) rfkill(E) cdh_redirect(OE)
+[  828.003885][    C2] CPU: 2 PID: 16363 Comm: CronetNet Tainted: G           OE     5.10.270-4k-cdh #1
+[  828.004621][    C2] pc : queued_spin_lock_slowpath+0x88/0x384
+[  828.004785][    C2] lr : _raw_spin_lock_bh+0x90/0x94
+[  828.007387][    C2] x1 : 0000000000000001 x0 : ffffff80b9b94148
+[  828.007549][    C2] Call trace:
+[  828.007641][    C2]  queued_spin_lock_slowpath+0x88/0x384
+[  828.007787][    C2]  lock_sock_nested+0x3c/0xe8
+[  828.007916][    C2]  tcp_recvmsg+0xd0/0x980
+[  828.008029][    C2]  inet_recvmsg+0x5c/0x114
+[  828.008143][    C2]  sock_read_iter+0xc8/0x138
+[  828.008270][    C2]  vfs_read+0x2b0/0x2dc
+[  828.008385][    C2]  ksys_read+0x80/0xf0
+
+[  840.002918][    C4] watchdog: BUG: soft lockup - CPU#4 stuck for 23s! [netd:719]
+[  848.002918][    C0] watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [cdh-wifi-rx:5332]
+
+[ 1888.002966][    C2] watchdog: BUG: soft lockup - CPU#2 stuck for 23s! [CronetNet:16363]
+[ 1888.003007][    C4] watchdog: BUG: soft lockup - CPU#4 stuck for 23s! [netd:719]
+[ 1888.015373][    C4] x1 : 0000000000040101 x0 : ffffff80b9b94148
+[ 1888.015533][    C4] Call trace:
+[ 1888.015618][    C4]  queued_spin_lock_slowpath+0x1c0/0x384
+[ 1888.015772][    C4]  lock_sock_fast+0x3c/0xf0
+[ 1888.015888][    C4]  tcp_get_info+0xc4/0x448
+[ 1888.016000][    C4]  tcp_diag_get_info+0x78/0x88
+[ 1888.016214][    C4]  inet_sk_diag_fill+0x364/0x4a4
+[ 1888.016345][    C4]  sk_diag_fill+0x124/0x310
+[ 1888.016463][    C4]  inet_diag_dump_icsk+0x36c/0x52c
+

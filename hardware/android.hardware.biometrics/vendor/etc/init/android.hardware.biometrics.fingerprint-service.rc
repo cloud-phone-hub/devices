@@ -1,0 +1,9 @@
+# engine/vendor 自研指纹 HAL（虚拟 HAL）：云机没有指纹传感器，服务注册
+# android.hardware.biometrics.fingerprint.IFingerprint/default；getSensorProps 返回
+# 空列表、createSession 返回 UNSUPPORTED_OPERATION，FingerprintService 正常降级。
+service vendor.fingerprint-default /vendor/bin/hw/android.hardware.biometrics.fingerprint-service
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_fingerprint_default:s0
+    interface aidl android.hardware.biometrics.fingerprint.IFingerprint/default

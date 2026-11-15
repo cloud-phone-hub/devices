@@ -1,0 +1,23 @@
+# drm_hwcomposer：AOSP android-14 的 HWC2 实现（hwc2_device），走 HIDL 2.4。
+#
+# 为什么是 2.4 而不是 AIDL composer3：A14 的 surfaceflinger 两条路都认
+# （Hwc2::Composer::create 先找 AIDL composer3.IComposer/default，再找 HIDL
+# @2.4::IComposer/default），而 lineage-21 自己只带 HIDL 2.1~2.4 的客户端库
+# （/system/lib64/android.hardware.graphics.composer@2.4.so 实测存在），
+# AIDL V3 只有客户端 stub、没有服务端，故取 HIDL 2.4 这条与底包同代的通路。
+#
+# 属 HAL 本体的一部分，跟着模块源码走：cdh-vendor 的 publishVendor 把它并进产物根
+# （<产物根>/etc/init/），07 再按 device.json 的模块清单装配进 vendor 分区，机型
+# 静态树不必重复维护。三件产物（服务壳、@2.1-resources、hwcomposer 实现体）都由
+# build/modules/android.hardware.graphics.composer.json 描述，实现体文件名按
+# ro.board.platform 展开成 hwcomposer.<platform>.so —— 与 libhardware 的
+# hw_get_module 查找顺序（ro.hardware → ro.product.board → ro.board.platform →
+# default）一致，换机型不必改这份 rc。
+service vendor.hwcomposer-2-4 /vendor/bin/hw/android.hardware.graphics.composer@2.4-service
+    class hal animation
+    interface android.hardware.graphics.composer@2.4::IComposer default
+    user system
+    group graphics drmrpc
+    capabilities SYS_NICE
+    onrestart restart surfaceflinger
+    task_profiles ServiceCapacityLow

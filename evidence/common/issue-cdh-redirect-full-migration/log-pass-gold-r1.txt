@@ -1,0 +1,68 @@
+### gold（Redmi Note 13 5G / lineage-22.2 / 内核 6.6.127-4k-cdh）开机验证  2026-11-02 08:44:16
+
+== 1. 启动完成与存活
+1
+132.38 540.92
+AP3A.240905.015.A2
+
+== 2. 模块装载（qemu.log）
+451:[    0.150683][    T1] cdh_redirect: 规则来自 /lib/modules/cdh_redirect.rules：10 条
+452:[    0.151395][    T1] cdh_redirect: 前向钩子就绪：getname_flags（maxactive 4096）
+453:[    0.152384][    T1] cdh_redirect: 逆向钩子就绪：proc_pid_readlink + vfs_readlink
+454:[    0.153259][    T1] cdh_redirect: 已加载：10 条规则（/lib/modules/cdh_redirect.rules），内核未打补丁
+
+== 3. update_verifier 屏蔽
+2516:[    8.448722][    T1] init: Command 'exec_start update_verifier' action=zygote-start (/system/etc/init/hw/init.rc:1222) took 0ms and failed: Could not start exec service: Cannot find '/system/bin/update_verifier': No such file or directory
+
+== 4. /proc/cdh_redirect
+rules: 10/32
+  dir  /vendor/etc -> /mnt/vendorpatch/vendor/etc
+  dir  /vendor/bin -> /mnt/vendorpatch/vendor/bin
+  dir  /vendor/lib -> /mnt/vendorpatch/vendor/lib
+  dir  /vendor/lib64 -> /mnt/vendorpatch/vendor/lib64
+  file /vendor/build.prop -> /mnt/vendorpatch/vendor/build.prop
+  file /vendor/ueventd.rc -> /mnt/vendorpatch/vendor/ueventd.rc
+  dir  /vendor_dlkm/lib -> /mnt/vendorpatch/vendor_dlkm/lib
+  file /odm/etc/build.prop -> /mnt/vendorpatch/odm/etc/build.prop
+  file /odm/etc/selinux/odm_sepolicy.cil -> /mnt/vendorpatch/odm/etc/selinux/odm_sepolicy.cil
+  file /system/bin/update_verifier -> /mnt/vendorpatch/system/bin/update_verifier
+forward_hits: 12966
+reverse_hits: 3579
+forward_missed: 0
+reverse_missed: 0
+readlink[proc]: entries=85213 rets=85213 hits=3579 skipped=81634
+readlink[vfs]: entries=90497 rets=90497 hits=0 skipped=90497
+
+== 5. 逆向（readlink 显示虚拟路径）
+0
+
+== 6. /vendor 走载体
+apex
+app
+bin
+build.prop
+build_gold_a_cn.prop
+grep: /vendor/build.prop: Permission denied
+85
+
+== 5b. HAL 进程的 exe 反查（应显示虚拟 /vendor/bin/hw/...）
+pid 251 -> (busy)
+pid 447 -> (busy)
+pid 449 -> (busy)
+pid 453 -> (busy)
+pid 555 -> (busy)
+
+== 6b. /vendor/etc 与 /vendor/lib64 抽检（走载体）
+/vendor/etc/fstab.mt6833
+/vendor/etc/vintf/compatibility_matrix.xml
+audio.primary.default.so
+gralloc.default.so
+gralloc.minigbm.so
+
+== 5c. 自进程 cwd 反查（cd 进 /vendor/etc 后 cwd 仍显示虚拟路径）
+/vendor/etc
+lrwxrwxrwx 1 shell shell 0 2026-11-02 08:44 /proc/self/cwd -> /vendor/etc
+/vendor_dlkm/lib/modules
+
+== 5d. 全进程 exe 里残留物理路径计数（应为 0）
+0

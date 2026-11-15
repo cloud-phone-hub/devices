@@ -1,0 +1,16 @@
+<!--
+    HIDL 2.4 形态的 composer 清单（A14 libvintf 8.0 schema 下 HIDL 片段仍是 1.0）。
+    属 HAL 本体：模块启用即随 cdh-vendor 的 publishVendor 并进产物根 etc/vintf/manifest/，
+    与 libhardware 加载的 hwcomposer.<ro.board.platform>.so 是同一套三件产物。
+-->
+<manifest version="1.0" type="device">
+    <hal format="hidl">
+        <name>android.hardware.graphics.composer</name>
+        <transport>hwbinder</transport>
+        <version>2.4</version>
+        <interface>
+            <name>IComposer</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+</manifest>

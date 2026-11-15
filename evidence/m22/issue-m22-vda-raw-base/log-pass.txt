@@ -1,0 +1,86 @@
+# 修复后：raw 底盘直接采用，不跑 qemu-img、不写满 13 GiB
+$ cd engine && ./out/bin/cdh device build m22 --only 11_pack_vda
+==> 底盘: roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2 / LineageOS_on_arm64.utm/Data/vda.img（CDH_LINEAGE_ZIP）
+==> [步骤 0] 解析计划
+    设备:       flyme/m22 12.5.0.0A（id=m22_12.5.0.0A）
+    底盘:       … 的 LineageOS_on_arm64.utm/Data/vda.qcow2 / LineageOS_on_arm64.utm/Data/vda.img（zip）
+    盘集目录:   out/dist/flyme/m22/12.5.0.0A（vda.img 不存在，将新建）
+    设备规格:   MEIZU 22 / sun 1080×2400 @ 440 dpi，1 档内存，8 vCPU；verified-boot-hash fe049d35e450
+    data:       稀疏种子 110.27 GiB（data.qcow2）
+==> [步骤 1] 校验来源镜像并生成 device.json
+    [ok] super.img 9.39 GiB（out/devices/flyme/m22/12.5.0.0A/img/super.img）
+    [warn] 缺 boot.img（04_build_boot 产物），对应分区沿用底盘 lineage 原版
+    [warn] 缺 vendor_boot.img（05_build_vendor_boot 产物），对应分区沿用底盘 lineage 原版
+    [ok] patch.img 384.0 MiB（out/devices/flyme/m22/12.5.0.0A/img/patch.img）
+    [ok] device.json 内容已生成（id=m22_12.5.0.0A，425 B）
+==> [步骤 2] 准备 vda 底盘
+    输入: roms/lineage/UTM-VM-lineage-23.2-…zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2 / LineageOS_on_arm64.utm/Data/vda.img
+    提取: LineageOS_on_arm64.utm/Data/vda.img（13.00 GiB）
+    [ok] 成员 LineageOS_on_arm64.utm/Data/vda.img 已是 raw，无需转换
+    输出: out/tmp/pack-vda/flyme/m22/12.5.0.0A/vda.raw（13.00 GiB）
+    输出: out/dist/flyme/m22/12.5.0.0A/vda.img <- out/tmp/pack-vda/flyme/m22/12.5.0.0A/vda.raw（13.00 GiB）
+    [ok] 底盘就位 13.00 GiB（写出 out/dist/flyme/m22/12.5.0.0A/vda.img）
+==> [步骤 3] 替换 super 分区（安卓系统盘）
+    [ok] super           9.39 GiB @ 129.0 MiB（容量 12.00 GiB，余量 2.61 GiB），回读一致
+==> [步骤 4] 替换 boot / vendor_boot 分区（A/B 双槽）
+    [warn] 缺 boot_a / boot_b / vendor_boot_a / vendor_boot_b，底盘沿用 lineage 原版该分区
+==> [步骤 5] 固化 EFI grub.cfg（固定 _a + 菜单零等待 + vbmeta + 设备 cmdline）
+    [ok] 固定启动 _a 槽（禁 abootctl 自动切槽）
+    [ok] 引导菜单零等待（grub_timeout=0）
+    [ok] vbmeta 参数注入（digest fe049d35e450）
+    [ok] grub.cfg 已固化：固定 _a、禁自动切槽、菜单零等待、vbmeta
+==> [步骤 6] 发布盘集（patch.img / data.qcow2 / device.json）
+    [ok] patch.img -> out/dist/flyme/m22/12.5.0.0A/patch.img（384.0 MiB，sha256 e0d1b581eca1）
+    [ok] data.qcow2: 193.7 KiB（虚拟 110.27 GiB）
+    [ok] device.json（id=m22_12.5.0.0A）-> out/dist/flyme/m22/12.5.0.0A/device.json
+    产物: out/dist/flyme/m22/12.5.0.0A（vda.img 13.00 GiB，1 个分区已刷新）
+
+# 稀疏解出：代码走 Seek，但本项目所在的 /Volumes/work 是 HFS+，不支持稀疏文件
+$ mount | grep /Volumes/work
+/dev/disk4s1 on /Volumes/work (hfs, local, nodev, nosuid, journaled, noowners)
+$ du -h out/tmp/pack-vda/flyme/m22/12.5.0.0A/vda.raw
+ 13G    out/tmp/pack-vda/flyme/m22/12.5.0.0A/vda.raw
+$ du -h out/dist/flyme/m22/12.5.0.0A/vda.img
+ 13G    out/dist/flyme/m22/12.5.0.0A/vda.img
+# 对照：同样 “seek 1 GiB 后写 1 字节” 的文件系统差异（探针文件用完即删）
+$ python3 -c "f.seek(1<<30); f.write(b'x')"   # /Volumes/work (HFS+)
+$ du -h /Volumes/work/.sparse-probe
+1.0G    /Volumes/work/.sparse-probe
+$ python3 -c "f.seek(1<<30); f.write(b'x')"   # /tmp (APFS)
+$ du -h /tmp/.sparse-probe
+4.0K    /tmp/.sparse-probe
+# 结论：稀疏只在 APFS/ext4 上省空间；HFS+ 上该优化退化为“少几次用户态 write”，
+#       磁盘占用仍是 13 GiB。
+$ ls -l out/dist/flyme/m22/12.5.0.0A/
+-rw-r--r--@ 1 cuimingqiang  staff         198376 data.qcow2
+-rw-r--r--@ 1 cuimingqiang  staff            425 device.json
+-rw-r--r--@ 1 cuimingqiang  staff      402653184 patch.img
+-rw-r--r--@ 1 cuimingqiang  staff    13958643712 vda.img
+
+# 产物是真 raw 盘（GPT 自证，不是转换残片）
+$ python3 -c "读 vda.img 的 LBA1 与分区表"
+sig b'EFI PART'  part_lba 2  num 128  entry_size 128
+EFI            0.00 ~  0.13 GiB
+super          0.13 ~ 12.13 GiB
+misc          12.13 ~ 12.13 GiB
+persist       12.13 ~ 12.14 GiB
+metadata      12.14 ~ 12.17 GiB
+firmware      12.17 ~ 12.30 GiB
+vendor_boot_a 12.30 ~ 12.40 GiB
+vendor_boot_b 12.40 ~ 12.49 GiB
+boot_a        12.49 ~ 12.57 GiB
+boot_b        12.57 ~ 12.65 GiB
+BIOS          12.65 ~ 12.65 GiB
+
+# 单测（2 个用例）
+$ cd engine/build && go test ./11_pack_vda/ -v -run 'LocateBaseMember|ExtractZipMemberSparse'
+=== RUN   TestLocateBaseMemberPrefersQcow2ThenRaw
+--- PASS: TestLocateBaseMemberPrefersQcow2ThenRaw
+=== RUN   TestExtractZipMemberSparseKeepsContent
+--- PASS: TestExtractZipMemberSparseKeepsContent
+PASS
+ok      cloud-phone-hub/engine/build/11_pack_vda
+
+# 缓存指纹（base.txt，格式：<底包大小>:<mtimeNanos>|<成员名>）→ 换成员会重建
+$ cat out/tmp/pack-vda/flyme/m22/12.5.0.0A/base.txt
+1169728685:1790061978000000000|LineageOS_on_arm64.utm/Data/vda.img

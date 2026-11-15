@@ -1,0 +1,176 @@
+# 验证记录（2026-11-03，清单对齐后）
+
+四节，全部可复跑。命令都在 `engine/manifest` 或 `engine/build` 下执行。
+
+---
+
+## 1. JSON 全解析 + `brand` 键残留
+
+```bash
+cd engine/manifest && python3 - <<'PY'
+import json,glob
+devs=sorted(glob.glob('*/*/device.json')); bls=sorted(glob.glob('*/*/baselines/*.json'))
+bad=[f for f in devs if 'brand' in json.load(open(f))]
+for f in bls: json.load(open(f))
+print(f'[json] device.json={len(devs)}  baselines={len(bls)}  brand 键残留={len(bad)}')
+PY
+```
+
+```text
+[json] device.json=13  baselines=17  brand 键残留=0
+```
+
+13 台 × `device.json` 与 17 份基线全部 `json.load` 通过；`oneplus/15r`、`oneplus/ace3`、
+`oppo/pme110` 的 `brand` 键已改为 `device`，全仓 0 处残留。
+
+---
+
+## 2. 13 台 README 骨架齐全度
+
+```bash
+cd engine/manifest && python3 - <<'PY'
+import glob
+need=['## 目录','## 07 装配顺序','## vendor/ 文件来源','## 维护约定','## 已知缺口','## modules.redirect']
+rows=[]
+for r in sorted(glob.glob('*/*/README.md')):
+    t=open(r).read(); rows.append((r,t.count(chr(10)),[h for h in need if h not in t]))
+for r,n,m in rows: print(f'{r:32s} {n:4d} 行  miss={m}')
+print(f'[skeleton] 缺节 README 数 = {sum(1 for _,_,m in rows if m)} / {len(rows)}')
+PY
+```
+
+```text
+flyme/m22/README.md               502 行  miss=[]
+google/oriole/README.md           182 行  miss=[]
+nothing/3a/README.md              172 行  miss=[]
+oneplus/15r/README.md             440 行  miss=[]
+oneplus/ace3/README.md            171 行  miss=[]
+oppo/cph2797/README.md            220 行  miss=[]
+oppo/pme110/README.md             111 行  miss=[]
+realme/rmx3823/README.md          173 行  miss=[]
+realme/rmx5112/README.md          173 行  miss=[]
+realme/rmx6688/README.md          173 行  miss=[]
+samsung/ss9380/README.md          248 行  miss=[]
+xiaomi/gold/README.md             281 行  miss=[]
+xiaomi/popsicle/README.md         373 行  miss=[]
+[skeleton] 缺节 README 数 = 0 / 13
+```
+
+`m22` 的两个「## 维护约定」已合并（旧节里仍有效的两条并入新节），`pme110` 的
+「## 重定向规则（待补）」已改为模板标题「## modules.redirect（cdh_redirect 规则表，规则待补）」。
+
+---
+
+## 3. 相对链接
+
+```bash
+cd engine/manifest && python3 - <<'PY'
+import glob,re,os
+badlink=[]
+for r in sorted(glob.glob('*/*/README.md')+['README.md','Template.md']):
+    for m in re.finditer(r'\]\((\.{1,2}/[^)#]+)', open(r).read()):
+        tgt=os.path.normpath(os.path.join(os.path.dirname(r), m.group(1)))
+        if not os.path.exists(tgt): badlink.append(f'{r} -> {m.group(1)}')
+print(f'[link] 坏链 = {len(badlink)}')
+for b in badlink: print('   ',b)
+PY
+```
+
+```text
+[link] 坏链 = 1
+    Template.md -> ../../../modules/cdh_redirect/README.md
+```
+
+唯一一条是 `Template.md` §3 骨架里的**示例链接**：它以 `manifest/<vendor>/<device>/` 为基准写，
+抄进机型目录后正好指向 `engine/modules/cdh_redirect/README.md`；留在 `Template.md` 位置点开
+必然 404。已在 §3 前言写明这条基准，故不算坏链。
+
+机型 README 与 `manifest/README.md` 的坏链 **0**（本轮修掉的 3 条：
+`nothing/3a` 的 `../flyme/m22/README.md` → `../../flyme/m22/README.md`、
+`xiaomi/gold` 的 `../Template.md` / `../README.md` → `../../…`）。
+
+---
+
+## 4. 代码与清单加载
+
+```bash
+cd engine/build && go build ./... && go vet ./internal/device ./07_build_vendor
+```
+
+```text
+（无输出，退出码 0）
+```
+
+```bash
+cd engine/build && go test -count=1 ./...
+```
+
+```text
+ok      cloud-phone-hub/engine/build/03_build_modules          1.034s
+ok      cloud-phone-hub/engine/build/04_build_boot             1.014s
+ok      cloud-phone-hub/engine/build/05_build_vendor_boot      1.313s
+ok      cloud-phone-hub/engine/build/06_build_odm             1.783s
+ok      cloud-phone-hub/engine/build/07_build_vendor          1.875s
+ok      cloud-phone-hub/engine/build/08_build_vendor_dlkm     5.124s
+ok      cloud-phone-hub/engine/build/09_build_patch           2.257s
+ok      cloud-phone-hub/engine/build/10_pack_super            2.739s
+ok      cloud-phone-hub/engine/build/11_pack_vda              3.089s
+ok      cloud-phone-hub/engine/build/internal/carrier         2.774s
+?       cloud-phone-hub/engine/build/internal/cpio            [no test files]
+?       cloud-phone-hub/engine/build/internal/device          [no test files]
+ok      cloud-phone-hub/engine/build/internal/e2fs            2.501s
+ok      cloud-phone-hub/engine/build/internal/engine          2.724s
+ok      cloud-phone-hub/engine/build/internal/env             2.701s
+ok      cloud-phone-hub/engine/build/internal/f2fs            2.435s
+?       cloud-phone-hub/engine/build/internal/kbuild          [no test files]
+ok      cloud-phone-hub/engine/build/internal/kernelver       2.686s
+?       cloud-phone-hub/engine/build/internal/lz4             [no test files]
+ok      cloud-phone-hub/engine/build/internal/manifest        2.535s
+?       cloud-phone-hub/engine/build/internal/modinfo          [no test files]
+ok      cloud-phone-hub/engine/build/internal/modmeta         2.588s
+?       cloud-phone-hub/engine/build/internal/ordered         [no test files]
+ok      cloud-phone-hub/engine/build/internal/pipeline        2.127s
+ok      cloud-phone-hub/engine/build/internal/proplines       2.406s
+ok      cloud-phone-hub/engine/build/internal/stagekit        2.662s
+ok      cloud-phone-hub/engine/build/internal/stagelog        2.730s
+?       cloud-phone-hub/engine/build/internal/testkit         [no test files]
+?       cloud-phone-hub/engine/build/internal/text            [no test files]
+ok      cloud-phone-hub/engine/build/internal/vendorimg       2.721s
+```
+
+清单加载（13 台 / 17 份基线，全部「就位」= `device.json` 与基线都能解析）：
+
+```bash
+cd engine/build && go run . device list
+```
+
+```text
+序号  厂商     型号      名称                      设备参数  版本
+   1  xiaomi   gold      Redmi Note 13 5G          就位      baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.json
+   2  flyme    m22       MEIZU 22                  就位      baselines/12.5.0.0A.json
+   3  google   oriole    Pixel 6                   就位      baselines/oriole-ap2a.240905.003.f1-factory-655c44e7.json
+   4  google   oriole    Pixel 6                   就位      baselines/oriole-bp1a.250505.005-factory-9fc37bcc.json
+   5  google   oriole    Pixel 6                   就位      baselines/oriole-cp1a.260405.005-factory-8081a8ba.json
+   6  google   oriole    Pixel 6                   就位      baselines/oriole-cp3a.261005.002.a1-factory-1257b58e.json
+   7  nothing  3a        Nothing Phone (3a)        就位      baselines/Asteroids_B4.1-260810-1153.json
+   8  nothing  3a        Nothing Phone (3a)        就位      baselines/Asteroids_V3.2-251013-1406.json
+   9  oneplus  15r       OnePlus 15R               就位      baselines/CPH2769_16.0.10.500_EX01_A51_full.json
+  10  oneplus  ace3      OnePlus Ace 3             就位      baselines/OP_ACE_3_PJE110_15.0.0.870_CN01.json
+  11  oppo     cph2797   OPPO Find X9              就位      baselines/CPH2797_16.0.8.301_EX01_A11_full.json
+  12  oppo     pme110    OPPO Find X9s Pro         就位      baselines/OPPO_FIND_X9s_PRO_PME110_17.0.0.102_CN01.json
+  13  realme   rmx3823   realme GT5 240W           就位      baselines/1862_sign_RMX3823_11_F_OTA_2160_all_Mfq9LH_10010111.json
+  14  realme   rmx5112   realme 15T                就位      baselines/851_sign_RMX5112_11_A_OTA_0520_all_0Q8VwS_10010111.json
+  15  realme   rmx6688   realme GT7                就位      baselines/811_sign_RMX6688_11_A_OTA_0380_all_Qt92xR_10010111.json
+  16  samsung  ss9380    Samsung Galaxy S25 Ultra  就位      baselines/SM-S9380_3_20260813083211_652iw49crl_fac.json
+  17  xiaomi   popsicle  Xiaomi 17 Pro Max         就位      baselines/popsicle_images_OS3.0.319.0.WPBCNXM_20260824.0000.00_16.0_cn_9d8daa8b5b.json
+```
+
+---
+
+## 5. 未跑的验证（如实记录）
+
+- `01_unpack` → `11_pack_vda` 整链：`engine/out/roms/` 无解包树（该目录是构建产物、不入库），
+  环境准备不起来，本轮未跑；因此 `m22` 删掉 `odm/etc/build.prop` 抄件后「06 只取原件 + 校验 ABI」
+  这条路径**没有**在真构建里复验过（静态读取 `06_build_odm` 的 `readOdmBaseline` /
+  `officialOdmProp` + 单测是当前的证据上限）。
+- `07_build_vendor --dry-run` 逐机型：同样缺厂商 `vendor_a.img`，未跑。

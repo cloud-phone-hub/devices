@@ -1,0 +1,44 @@
+# P0-3 (G1 & G2) 修复前取证日志 (log-fail.txt)
+# 采样时间: 2026-11-10
+# 设备: Xiaomi Redmi Note 13 5G (gold / 2312DRAABC, OS3.0.10.0.VNQCNXM)
+# 真机 ID: ec519c7d513a3ad3 (USB: fmvwkrheonugvgjb)
+# 云机实例: gold_15-OS3.0.10.0.VNQCNXM/1 (df809591a4e085ae-cloud, ADB: 127.0.0.1:5911)
+# 测试批次: run-00221
+
+=== 1. 云机主网络命名空间网卡与地址现状 (ip -br addr) ===
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+dummy0           UNKNOWN        fe80::68e9:c7ff:fe43:a667/64
+mgmt0            UP             10.0.2.15/24 fec0::5054:ff:fe12:3456/64 fe80::5054:ff:fe12:3456/64
+ccmni2           UP             fec0::5054:ff:fe12:3458/64 fe80::5054:ff:fe12:3458/64
+wlan0            UP             192.168.60.100/24 fe80::862:14ff:fef8:61bf/64
+ccmni0           UNKNOWN        240e:573:ec0:1345:18d1:1082:f180:ed50/64 fe80::98b5:d8ff:fe84:7b52/64
+
+=== 2. 云机 mac80211_hwsim scan_profile 与 Wi-Fi 状态现状 ===
+scan_profile:
+5669727457696669,02:00:00:00:00:01,5240,-50,open;4344482d41,02:00:00:00:00:11,2437,-34,open;4344482d42,02:00:00:00:00:12,2437,-54,open;4344482d43,02:00:00:00:00:13,2437,-71,open
+
+cmd wifi status:
+Wifi is connected to "CDH-A"
+WifiInfo: SSID: "CDH-A", BSSID: 02:00:00:00:00:11, IP: /192.168.60.100, Security type: 0, Supplicant state: COMPLETED, Frequency: 2437MHz
+
+cmd wifi list-scan-results:
+    BSSID              Frequency      RSSI           Age(sec)     SSID                                 Flags
+  02:00:00:00:00:13       2437        -66            >1000.0    CDH-C                             [ESS]
+  02:00:00:00:00:01       5240        -50            >1000.0    VirtWifi                          [ESS]
+  02:00:00:00:00:12       2437        -60            >1000.0    CDH-B                             [ESS]
+  02:00:00:00:00:11       2437        -39            >1000.0    CDH-A                             [ESS]
+
+=== 3. device-checker 双机对比失败项 (G1 & G2) ===
+[REAL ] G1_networkActiveAndNoSuspiciousIfaces: true
+        interfaces: ["ccmni0", "dummy0", "lo", "wlan0"], suspiciousInterfaceNames: []
+[CLOUD] G1_networkActiveAndNoSuspiciousIfaces: false
+        interfaces: ["ccmni0", "ccmni2", "dummy0", "lo", "mgmt0", "wlan0"]
+        hasSuspiciousMgmt0: true, suspiciousInterfaceNames: ["mgmt0"]
+
+[REAL ] G2_wifiNoVirtWifiOrHwsimBssidLeak: true
+        connectedSsid: "TP-LINK_JIJIA_1", connectedBssid: "74:39:89:0b:24:64", frequency: 5180, hwsimBssidApCount: 0
+[CLOUD] G2_wifiNoVirtWifiOrHwsimBssidLeak: false
+        connectedSsid: "CDH-A", connectedBssid: "02:00:00:00:00:11", frequency: 2437
+        hasValidNonHwsimBssid: false, noSuspiciousConnectedSsid: false, noVirtWifiOrHwsimInScan: false
+        hwsimBssidApCount: 4
+        suspiciousScanAps: ["CDH-C(02:00:00:00:00:13)", "VirtWifi(02:00:00:00:00:01)", "CDH-B(02:00:00:00:00:12)", "CDH-A(02:00:00:00:00:11)"]

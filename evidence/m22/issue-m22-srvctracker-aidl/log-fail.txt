@@ -1,0 +1,140 @@
+# log-fail：servicetracker 逆向切源码（2026-10-29 23:05~23:25）
+
+本文件只记「撞过的墙」，按出现顺序；每次都给出现场输出与修正动作。
+
+---
+
+## 1. DeleteFile 报 success，但文件仍在（工具/环境坑，#45 已踩过）
+
+想删掉模块里 3 个原厂 ELF：
+
+```
+$ DeleteFile vendor/bin/hw/vendor.qti.hardware.servicetrackeraidl-service   -> success
+$ DeleteFile vendor/lib64/hw/…-impl.so                                      -> success
+$ DeleteFile vendor/lib64/…-V1-ndk.so                                       -> success
+
+$ find vendor -type f
+vendor/bin/hw/vendor.qti.hardware.servicetrackeraidl-service        ← 还在
+vendor/etc/init/…rc
+vendor/etc/vintf/manifest/…xml
+vendor/lib64/hw/vendor.qti.hardware.servicetrackeraidl-impl.so      ← 还在
+vendor/lib64/vendor.qti.hardware.servicetrackeraidl-V1-ndk.so       ← 还在
+
+$ ls -liR vendor | grep '^-'
+13894601  -rwxr-xr-x  …  …-service
+13894602  -rw-r--r--  …  …-impl.so
+13894603  -rw-r--r--  …  …-V1-ndk.so
+```
+
+复现了「删除文件工具报成功但文件仍存在」的老坑（inode 都没变）。
+**修正**：改用 shell 删除，删前先备份并记 sha：
+
+```
+$ mkdir -p /tmp/st-prebuilt-bak
+$ cp -p <3 个文件> /tmp/st-prebuilt-bak/
+$ shasum -a 256 /tmp/st-prebuilt-bak/*
+64b07cd5…  vendor.qti.hardware.servicetrackeraidl-V1-ndk.so
+2745ff2d…  vendor.qti.hardware.servicetrackeraidl-impl.so
+eec0ceb7…  vendor.qti.hardware.servicetrackeraidl-service     ← 原厂二进制指纹，留档
+$ rm -f <3 个文件> && rmdir vendor/bin/hw vendor/bin vendor/lib64/hw vendor/lib64
+$ find vendor -type f
+vendor/etc/init/…rc
+vendor/etc/vintf/manifest/…xml        ← 只剩静态件
+```
+
+---
+
+## 2. aidl: Couldn't find import for class ClientConnection
+
+同包跨文件也要显式 import，aidl 只在 import 路径里按全限定名解析：
+
+```
+$ out/bin/cdh-vendor hal build vendor.qti.hardware.servicetrackeraidl
+==> AIDL 代码生成
+ERROR: …/ClientRecord.aidl: Couldn't find import for class ClientConnection. Searched here:
+ - …/aidl/
+ - …/aidl/vendor.qti.hardware.servicetrackeraidl/1/
+ERROR: …/ClientRecord.aidl:13.1-21: Failed to resolve 'ClientConnection'
+[err] 命令失败: aidl: exit status 1
+```
+
+**修正**：`IServicetracker.aidl` 补 6 条 import（`ClientConnection`/`ClientData`/`ClientRecord`/
+`ServiceConnection`/`ServiceData`/`ServiceRecord`），`ClientRecord.aidl` 补 `ClientConnection`，
+`ServiceRecord.aidl` 补 `ServiceConnection`。
+
+---
+
+## 3. aidl: 'pid' can't be an out parameter because int can only be an in parameter
+
+第一版把 `getPid` / `isServiceB` / `getServiceBCount` 的 int/boolean 写成 `out`：
+
+```
+$ out/bin/cdh-vendor hal build vendor.qti.hardware.servicetrackeraidl
+ERROR: …/IServicetracker.aidl:39.43-47: 'pid' can't be an out parameter because int can only be an in parameter.
+```
+
+先验证「换 aidl 版本能过」是假希望——34/35/36/37 全拒：
+
+```
+$ for v in 34.0.0 35.0.0 36.1.0 37.0.0; do build-tools/$v/aidl --lang=ndk --structured --stability=vintf … ; done
+=== build-tools 34.0.0 === ERROR: … 'pid' can't be an out parameter …
+=== build-tools 35.0.0 === ERROR: …（同上）
+=== build-tools 36.1.0 === ERROR: …（同上）
+=== build-tools 37.0.0 === ERROR: …（同上）
+```
+
+（另：`--structured --stability=vintf` 拼成一个参数会被 aidl 当成未知选项
+`unrecognized option '--structured --stability=vintf'`，得分开传。）
+
+---
+
+## 4. 误判：把 getServiceBCount 当成「两个 out」
+
+最初按「mangled 有 `(vector*, int*)`」推断声明是
+`void getServiceBCount(out ServiceRecord[] services, out int count)`，两处都错：
+
+1. int 不能 `out`（见上）；
+2. 顺序也会反——aidl 生成规则是**返回值先写、出参后写**，两个 out 才是按声明序写。
+
+反汇编才定案（Bp 侧读回包）：
+
+```
+e194: ldr x0, [sp, #0x8]      ; reply
+e198: mov x1, x21             ; x21 = 第 2 个参数 = int*
+e19c: bl  AParcel_readInt32   ; ← 先读 int
+e1b8: mov x1, x20             ; x20 = 第 1 个参数 = vector<ServiceRecord>*
+e1bc: bl  AParcel_readParcelableArray  ; ← 后读数组
+```
+
+⇒ 回包序是 `[count][services]`，对应**返回值 + out**：
+`int getServiceBCount(out ServiceRecord[] services);`
+同理 `int getPid(in String)`、`boolean isServiceB(in String)`。
+用探针工程确认了生成序：
+
+```
+$ aidl --lang=ndk --structured --stability=vintf … IT.aidl     # int f(out int[] a)
+  33: _aidl_impl->f(&out_a, &_aidl_return);
+  39: AParcel_writeData(_aidl_out, _aidl_return);   ← 返回值先写
+  …:  AParcel_writeData(_aidl_out, out_a);          ← 出参后写
+```
+
+**修正**：改 3 个方法签名 + 实现里的 `*_aidl_return`；其余「只有一个出参」的方法
+（数组/结构体）保留 `out`——回包只有一项时两种写法 wire 完全相同。
+
+---
+
+## 5. `hal build` 默认产物根 android15，07 的变体根是 android16
+
+```
+$ out/bin/cdh-vendor hal build vendor.qti.hardware.servicetrackeraidl
+    写 bin/hw/…-service   -> out/vendor/android15/bin/hw/… sha  f2f05a1d…
+
+$ out/bin/cdh build-vendor … --dry-run | grep servicetracker
+  HAL 模块:  …（变体 default，变体产物根 out/vendor/android16，产物齐全但源码/配置已变 -> 重编）
+
+$ out/bin/cdh build-vendor …            # 实跑
+    写 bin/hw/…-service   -> out/vendor/android16/bin/hw/… sha  91ff07dc…
+```
+
+同一份源码两个产物根、两个 sha（`f2f05a1d…` vs `91ff07dc…`），是 `-DCDH_ANDROID15`
+之类的宏与 sysroot 差异导致，**不是错误**。回读镜像时必须拿 `android16` 的那份比。

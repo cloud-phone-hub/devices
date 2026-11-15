@@ -1,0 +1,381 @@
+=== 实机 shell init.svc.* (batch2-pre.log) ===
+cppreopts=[stopped]
+mi_thermald=[]
+nvram_daemon=[]
+=== service list ===
+
+=== diff/build_props.json init.svc.* count (pre) = 62 ===
+[
+ {
+  "level": "state",
+  "path": "props.init.svc.adbd",
+  "base": "running",
+  "target": "stopped"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.aee-reinit",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.aee_aed",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.aee_aed64",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.agpsd",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.artd",
+  "base": "stopped",
+  "target": "running"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.batterysecret",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.bluetooth_hal_service",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.board_id",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.boringssl_self_test32",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.boringssl_self_test32_vendor",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.boringssl_self_test_apex32",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.camerahalserver",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.ccci_mdinit",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.charge_logger",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.citsensor-hal-1-1",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.connsyslogger",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.cppreopts",
+  "base": "<缺>",
+  "target": "stopped"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.displayfeature",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.dms-hal",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.fuelgauged",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.fuelgauged_nvram",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.gbe",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.gsid",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.hidl_memory",
+  "base": "running",
+  "target": "stopped"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.hwservicemanager",
+  "base": "running",
+  "target": "stopped"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.initprop_bin",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.insmod_sh",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.ipsec_mon",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.jxnosfastswitch",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.lightsensornvcfg",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.mi_ric_init",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.mi_ric_run",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.mi_ric_snapshot",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.mi_thermald",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.micharge-hal",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.mimd-service",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.miteelog",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.mnld",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.mtk_lbs_service",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.mtk_storageproxyd",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.netdagent",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.neuralnetworks_hal_service_shim_mtk",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.nvram-aidl",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.nvram_daemon",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.nwk_opt-hal-1-0",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.snapuserd",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.snapuserd_proxy",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.tee-supplicant",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.thermal",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.thermal_manager",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.thermalloadalgod",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.touchfeature-hal-1-0",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.update_verifier",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.v3avpud",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.vender.mediatek.hardware.pq_aidl-default",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.vndservicemanager",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.vtservice_aidl",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.wlan_assistant",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.wmt_launcher",
+  "base": "running",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.wmt_loader",
+  "base": "stopped",
+  "target": "<缺>"
+ },
+ {
+  "level": "state",
+  "path": "props.init.svc.zygote_secondary",
+  "base": "running",
+  "target": "<缺>"
+ }
+]

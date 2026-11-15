@@ -1,0 +1,338 @@
+# issue-m22-apex-flatten / 改动后验证（pass）
+#
+# 全部命令在 /Volumes/work/cloud-phone-hub 下实跑，输出原样（省略无关行时标 [略]）。
+
+## 一、质量门
+
+$ cd engine/build && gofmt -l 07_build_vendor/ && go vet ./07_build_vendor/ && go test ./07_build_vendor/
+ok      cloud-phone-hub/engine/build/07_build_vendor    11.0s
+
+$ go test -count=1 -run "TestApex|TestPlaceApexTree|TestRewriteApexRc" -v ./07_build_vendor/
+=== RUN   TestApexSelected
+--- PASS: TestApexSelected (0.00s)
+=== RUN   TestApexTargetPath
+--- PASS: TestApexTargetPath (0.00s)
+=== RUN   TestRewriteApexRc
+--- PASS: TestRewriteApexRc (0.00s)
+=== RUN   TestPlaceApexTree
+--- PASS: TestPlaceApexTree (0.00s)
+PASS
+ok      cloud-phone-hub/engine/build/07_build_vendor    0.157s
+
+$ go build -o ../out/bin/cdh .
+（cdh 重新编译，含步骤 2b）
+
+## 二、步骤 0 摘要：摊平模式与预计命中
+
+$ grep -n "vendor APEX" out/devices/flyme/m22/12.5.0.0A/img/vendor-log.txt
+16:    vendor APEX: graphics（预计摊平 2/12：com.android.hardware.graphics.composer.drm_hwcomposer_upstream / org.lineageos.device.gralloc.minigbm_upstream）
+
+（缓存配方随模式变化：vendor-46a596d4b501，见同日志第 181 行）
+
+## 三、步骤 2b 实跑日志（rc=0）
+
+$ grep -n -A 5 "步骤 2b" out/devices/flyme/m22/12.5.0.0A/img/vendor-log.txt
+191:==> [步骤 2b] 摊平 vendor APEX（模式 graphics）
+192-    输入: out/roms/lineage/lineage-23.2/super/unpack_vendor/apex（共 12 个 .apex，选中 2 个：com.android.hardware.graphics.composer.drm_hwcomposer_upstream / org.lineageos.device.gralloc.minigbm_upstream）
+193-    输出: out/devices/flyme/m22/12.5.0.0A/vendor
+194-    com.android.hardware.graphics.composer.drm_hwcomposer_upstream.apex: 新增 6 / 覆盖 22 / 跳过 2，rc 改写 1 个文件 1 行
+195-    org.lineageos.device.gralloc.minigbm_upstream.apex: 新增 4 / 覆盖 16 / 跳过 2，rc 改写 1 个文件 1 行
+196-    合计: 新增 10 / 覆盖 38 / 跳过 4，rc 改写 2 个文件 2 行（2 个 APEX）
+
+（新增 10 = 2 个二进制 + 2 个 rc + 2 个 VINTF 片段 + 4 个 upstream 独有库；
+  覆盖 38 = 与底包/另一 APEX 同名的 lib64 库；跳过 4 = 每个 APEX 的 lost+found 目录
+  与 apex_manifest.pb。）
+
+## 四、产物：二进制落位（装配树；第一次实跑，静态树旧件尚未撤，两套并存）
+
+$ ls -l out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw | grep -E "composer|allocator"
+-rwxr-xr-x  242064 android.hardware.composer.hwc3-service.drm            # 22.0 静态树旧件
+-rwxr-xr-x  358504 android.hardware.composer.hwc3-service.drm_upstream   # 步骤 2b 新增
+-rwxr-xr-x   69208 android.hardware.graphics.allocator-service.minigbm           # 22.0 静态树旧件
+-rwxr-xr-x   52648 android.hardware.graphics.allocator-service.minigbm_upstream  # 步骤 2b 新增
+
+## 五、产物：rc 已改写 /apex → /vendor，且从 etc 根搬到 etc/init
+
+$ ls out/devices/flyme/m22/12.5.0.0A/vendor/etc/init | grep -E "hwc|allocator|gralloc|minigbm"
+allocator.rc
+hwc3-drm-upstream.rc
+hwc3-drm.rc
+org.lineageos.device.gralloc.minigbm_upstream.rc
+
+$ cat out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/hwc3-drm-upstream.rc
+service vendor.hwcomposer-3.drm_upstream /vendor/bin/hw/android.hardware.composer.hwc3-service.drm_upstream
+    class hal animation
+    interface aidl android.hardware.graphics.composer3.IComposer/default
+    user system
+    group graphics drmrpc
+    capabilities SYS_NICE
+    onrestart restart surfaceflinger
+    task_profiles ServiceCapacityLow
+
+$ cat out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/org.lineageos.device.gralloc.minigbm_upstream.rc
+service vendor.graphics.allocator.minigbm_upstream /vendor/bin/hw/android.hardware.graphics.allocator-service.minigbm_upstream
+    class hal animation
+    user system
+    group graphics drmrpc
+    capabilities SYS_NICE
+    onrestart restart surfaceflinger
+    task_profiles ServiceCapacityLow
+
+$ shasum -a 256 vendor/etc/init/hwc3-drm-upstream.rc vendor/etc/init/org.lineageos.device.gralloc.minigbm_upstream.rc
+cf1857540f51c3c088f1de3ed61dab694fab2dc3c278902a2a852097585d4b8a  vendor/etc/init/hwc3-drm-upstream.rc
+9f221af971454b5270b048ff8eedce3439f4c8a2f115438bbda5742c4f286585  vendor/etc/init/org.lineageos.device.gralloc.minigbm_upstream.rc
+
+（对照 log-fail.txt 的原始 rc：路径前缀已从 /apex/<挂载名>/ 全部换成 /vendor/；
+  文件落位从 etc/<名>.[apex.]rc 改成 etc/init/<名>.rc。）
+
+## 六、产物：VINTF 片段从 etc/vintf 归位到 etc/vintf/manifest
+
+$ ls out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest | grep -E "hwc|allocator|mapper"
+allocator.minigbm_upstream.xml
+allocator.xml
+hwc3-drm-upstream.xml
+hwc3-drm.xml
+mapper.minigbm.xml
+mapper.minigbm_upstream.xml
+
+## 七、镜像内确认（第一次实跑，两套并存时的状态；最终产物见第十节）
+
+$ shasum -a 256 out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+41461ba26f16993a7b70056e9776434cc5eba6e0d6b693ff455de47bdbf348c7  vendor.img   （207,130,624 B）
+
+$ debugfs -R "ls -l /bin/hw" vendor.img | grep -E "upstream|hwc3|allocator"
+     98  100755 (1)      0   2000   242064  android.hardware.composer.hwc3-service.drm
+     99  100755 (1)      0   2000   358504  android.hardware.composer.hwc3-service.drm_upstream
+    103  100755 (1)      0   2000    69208  android.hardware.graphics.allocator-service.minigbm
+    104  100755 (1)      0   2000    52648  android.hardware.graphics.allocator-service.minigbm_upstream
+
+$ debugfs -R "ls /etc/init" vendor.img | tr ' ' '\n' | grep -E "hwc|allocator|minigbm"
+allocator.rc
+hwc3-drm-upstream.rc
+hwc3-drm.rc
+org.lineageos.device.gralloc.minigbm_upstream.rc
+
+## 八、SELinux 标签（底座 vendor_file_contexts 已有 (_upstream)? 与 .minigbm.* 规则）
+
+$ debugfs -R "ea_get -V /bin/hw/android.hardware.composer.hwc3-service.drm_upstream security.selinux" vendor.img
+u:object_r:hal_graphics_composer_default_exec:s0
+
+$ debugfs -R "ea_get -V /bin/hw/android.hardware.graphics.allocator-service.minigbm_upstream security.selinux" vendor.img
+u:object_r:hal_graphics_allocator_default_exec:s0
+
+$ grep -nE "hwc3|allocator|minigbm" out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_file_contexts
+208:/(vendor|system/vendor)/bin/hw/android\.hardware\.composer\.hwc3-service\.drm(_upstream)?   u:object_r:hal_graphics_composer_default_exec:s0
+259:/vendor/bin/hw/android\.hardware\.composer\.hwc3-service\.drm(|\.[0-9a-z_]+)u:object_r:hal_graphics_composer_default_exec:s0
+260:/vendor/bin/hw/android\.hardware\.graphics\.allocator-service\.minigbm.*   u:object_r:hal_graphics_allocator_default_exec:s0
+261:/vendor/bin/hw/android\.hardware\.graphics\.allocator@4\.0-service\.minigbm.*  u:object_r:hal_graphics_allocator_default_exec:s0
+240:/vendor/lib(64)?/hw/mapper\.minigbm.*\.so    u:object_r:same_process_hal_file:s0
+244:/vendor/lib(64)?/hw/gralloc\.minigbm.*\.so   u:object_r:same_process_hal_file:s0
+245:/vendor/lib(64)?/libminigbm_gralloc.*\.so    u:object_r:same_process_hal_file:s0
+
+（摊平只补文件的落位与 rc 路径；标签仍走原有四级真值，命中底座规则即可，
+  不需要 #55 的 ensureHalExecLabels 兜底——这两条 rc 里本来就没有 seclabel 行。）
+
+## 九、回归检查
+
+- `--apex-flatten none`：`TestApexSelected` 里有用例（composer 返回 false），摊平循环
+  只打印"没有需要摊平的 APEX"，装配树保持步骤 2 白名单铺底结果（代码路径，未整跑）。
+- 底包无 vendor/apex（lineage-22.0）：代码打印 `底包无 vendor/apex，跳过` 后直接返回
+  （代码路径，未拿 22.0 整跑；gold 线后续跑到该分支时可补）。
+- 摊平模式进入缓存配方：`ComputeVendorRecipe` 拼入 `apex:<mode>`，`graphics` 与 `none`
+  算出的 `vendor-recipe` 不同，换模式不会误命中旧产物。
+- 单测覆盖：模式选择（默认 graphics 不碰 audio/boot/cas）、路径映射（含
+  `etc/org.lineageos.device.gralloc.minigbm_upstream.rc → etc/init/…rc`）、rc 前缀改写
+  （挂载名 ≠ 文件名 / 无 /apex 前缀不改）、摊平落盘（4 写 2 跳过、幂等重跑记 Overwrote）。
+
+## 十、撤掉静态树 22.0 旧件后复跑（最终产物）
+
+撤掉的 11 个文件（撤前 sha256，备回退）：
+
+89cac85d8e1169d8d7410c59521865bb7caa0ad1a66d921445d87cefd0a5301f  vendor/bin/hw/android.hardware.composer.hwc3-service.drm
+a6de8a99b6c130d42f5981c00a57df2221c40b601c813aa8396f6d3920069a80  vendor/bin/hw/android.hardware.graphics.allocator-service.minigbm
+6399fd2e6ab2b4297a64eac9d3593d9c4dd9c0cfd12094ac75f3858f1ff7ad4e  vendor/etc/init/allocator.rc
+4dc24ee1cd109644dbebcc0e4b4ef60bee2dda2c9f21ca38bbfc4a5de085a0a9  vendor/etc/init/hwc3-drm.rc
+9f5c8ecffaa04a609af6d02322e43dcd9e9efbe8240d7f31bdd5c32a2ebf8894  vendor/etc/vintf/manifest/allocator.xml
+1b08d7a5286d59da39544d54006017b4fa97b4b099c2095947fb68a483644a14  vendor/etc/vintf/manifest/hwc3-drm.xml
+89ea599e25d05f4316d88982b4ea9aa817add552da1817895d5e104e3a33d4c6  vendor/etc/vintf/manifest/mapper.minigbm.xml
+54ade08f1583c6b7304e440562dcc53b457ee90e239eeceed969f913af7e98d5  vendor/lib64/hw/gralloc.minigbm.so
+e34814bc13d35c118520c97eeec99ca978b4465987264f5698525dc331035551  vendor/lib64/hw/mapper.minigbm.so
+74db0c23fafccd9dacd0a16677081344e459a60182db2c2958a9f1e2717906f1  vendor/lib64/libminigbm_gralloc.so
+6825ad8e54a83939d9626e531f01852220b252dc9e744e307e20651bfb6200d5  vendor/lib64/libminigbm_gralloc4_utils.so
+
+（注意：`lib64/hw` 与 `bin/hw` 两个目录撤完变空，保留空目录不影响装配，
+  步骤 2/2b 会按需要重建。）
+
+$ cd engine && ./out/bin/cdh device build m22 --only 07_build_vendor
+[ok] 已完成
+
+$ ls -l out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw | grep -E "composer|allocator"
+-rwxr-xr-x  358504 android.hardware.composer.hwc3-service.drm_upstream
+-rwxr-xr-x   52648 android.hardware.graphics.allocator-service.minigbm_upstream
+
+$ ls out/devices/flyme/m22/12.5.0.0A/vendor/etc/init | grep -E "hwc|allocator|minigbm"
+hwc3-drm-upstream.rc
+org.lineageos.device.gralloc.minigbm_upstream.rc
+
+$ ls out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest | grep -E "hwc|allocator|mapper"
+allocator.minigbm_upstream.xml
+hwc3-drm-upstream.xml
+mapper.minigbm_upstream.xml
+
+$ ls -l out/devices/flyme/m22/12.5.0.0A/vendor/lib64 | grep -E "minigbm|mapper"
+android.hardware.graphics.mapper@2.0.so
+android.hardware.graphics.mapper@2.1.so
+android.hardware.graphics.mapper@3.0.so
+android.hardware.graphics.mapper@4.0.so
+libminigbm_gralloc4_utils_upstream.so
+libminigbm_gralloc_upstream.so
+
+$ ls -l out/devices/flyme/m22/12.5.0.0A/vendor/lib64/hw | grep -E "mapper|gralloc"
+gralloc.default.so
+mapper.minigbm_upstream.so
+
+（静态树写入量 38 → 32；步骤 2b 日志不变：新增 10 / 覆盖 38 / 跳过 4，rc 改写 2 文件 2 行。）
+
+## 十一、VINTF 去重与镜像回读（最终）
+
+$ grep -l "composer3\|IAllocator\|<name>mapper</name>" vendor/etc/vintf/manifest/*.xml
+vendor/etc/vintf/manifest/allocator.minigbm_upstream.xml
+vendor/etc/vintf/manifest/hwc3-drm-upstream.xml
+vendor/etc/vintf/manifest/mapper.minigbm_upstream.xml
+
+$ grep -h "IComposer/default\|IAllocator/default\|@5.0/minigbm" vendor/etc/vintf/manifest/*.xml
+        <fqname>IAllocator/default</fqname>
+        <fqname>IComposer/default</fqname>
+        <fqname>@5.0/minigbm_upstream</fqname>
+
+（三个 fqname 各一处，不再有 22.0 / 23.2 双声明；mapper 的 native 声明由底包
+  `mapper.minigbm_upstream.xml` 承接。）
+
+$ shasum -a 256 img/vendor.img
+143ad2711b57e0ae42abf2b355e0062b33dbc861595058d8140b1a368fe5ef7c  vendor.img   （206,524,416 B）
+
+$ debugfs -R "ls -l /bin/hw" vendor.img | grep -E "composer|allocator"
+     98  100755 (1)      0   2000   358504  android.hardware.composer.hwc3-service.drm_upstream
+    102  100755 (1)      0   2000    52648  android.hardware.graphics.allocator-service.minigbm_upstream
+
+$ debugfs -R "ea_get -V /bin/hw/android.hardware.composer.hwc3-service.drm_upstream security.selinux" vendor.img
+u:object_r:hal_graphics_composer_default_exec:s0
+
+$ debugfs -R "ea_get -V /bin/hw/android.hardware.graphics.allocator-service.minigbm_upstream security.selinux" vendor.img
+u:object_r:hal_graphics_allocator_default_exec:s0
+
+$ debugfs -R "ea_get -V /lib64/libminigbm_gralloc_upstream.so security.selinux" vendor.img
+u:object_r:same_process_hal_file:s0
+
+$ debugfs -R "ea_get -V /lib64/hw/mapper.minigbm_upstream.so security.selinux" vendor.img
+u:object_r:same_process_hal_file:s0
+
+$ debugfs -R "ls /etc/init" vendor.img | tr ' ' '\n' | grep -E "hwc|allocator|minigbm"
+hwc3-drm-upstream.rc
+org.lineageos.device.gralloc.minigbm_upstream.rc
+
+## 十二、第二批撤件：静态树里 7 个 22.0 composer/HIDL 依赖库
+
+# 触发：复查「静态树是否还有 lineage-22.0 借件」。判据不是「和 22.0 像」，而是
+#   与 23.2 基座同路径比对：23.2 里没有该文件、而 22.0 里有且 sha256 逐字节一致
+#   → 只能是当初从 22.0 借的。28 个静态树文件里查出 7 个，全在 lib64：
+
+$ shasum -a 256 <7 个文件>   # 撤前
+de7d1a537eb554f74cebc13384182e516c1a5b13b93420a3984bc2da1280b14f  lib64/android.hardware.drm.common-V1-ndk.so
+d14f566776b7c5351c6547601f1c382b0f9ff020c6149857f9bf1d4eaab201c3  lib64/android.hardware.graphics.common-V6-ndk.so
+7f5f2f6944d46a1e98da5507d0a7b0ddee331c62f017d164990e815d97adb238  lib64/android.hardware.graphics.composer3-V4-ndk.so
+e566b76d26d63e6b9a775e7941c5130a7bf7a4908fff4506fe14aee7f48ca69a  lib64/android.hardware.graphics.composer@2.1-resources.so
+da42d70bdba44f5ab213fb53be0a9c8e2851f267507901252d27b59d4810ceda  lib64/android.hardware.graphics.composer@2.1.so
+b5f58ca1b886671652b4f285437636e58bb421235f94d88aa05873362518013e  lib64/android.hardware.graphics.composer@2.2-resources.so
+ee8b4814cf22d4075292e843d4fac4c24a9404ee894b9d9c0004ef418e8ec771  lib64/android.hardware.graphics.composer@2.2.so
+
+# 为什么必须撤（不只是「多余」）：步骤 4 的机型静态树是步骤 2b 的后层，
+#   同名库会把摊平结果压掉。撤件前产物里两个关键库的 sha256 是 22.0 的：
+
+$ shasum -a 256 <产物>/vendor/lib64/android.hardware.graphics.composer3-V4-ndk.so
+7f5f2f6944d4...        # 22.0 静态树版（错）
+$ shasum -a 256 <23.2 APEX staging>/root/lib64/android.hardware.graphics.composer3-V4-ndk.so
+bc002b73ff36...        # 23.2 APEX 版（应胜出）
+$ shasum -a 256 <产物>/vendor/lib64/android.hardware.drm.common-V1-ndk.so
+de7d1a537eb5...        # 22.0 静态树版（错）；23.2 APEX 为 3709aab3cb13...
+
+# 撤前确认无 HAL 消费者（全树二进制搜 NEEDED 字符串）：
+$ for b in composer@2.1.so composer@2.2.so drm.common-V1-ndk.so graphics.common-V6-ndk.so; do
+    grep -rla "android.hardware.graphics.$b" vendor/ | grep -v "^vendor/lib64/$b$"; done
+vendor/lib64/android.hardware.graphics.composer@2.1-resources.so   # 只有这几件互相引用
+vendor/lib64/android.hardware.graphics.composer@2.2.so
+vendor/lib64/android.hardware.graphics.composer@2.2-resources.so
+vendor/lib64/android.hardware.graphics.composer3-V4-ndk.so         # 22.0 版这个；
+# bin/hw 下两个 upstream 二进制与其它 HAL 服务均无引用 → 可安全撤
+
+$ rm -f <7 个文件>; ls lib64 | grep -E "composer|common|drm"
+（无输出）
+
+$ ./out/bin/cdh device build m22 --only 07_build_vendor
+    机型静态树: 写入 25，已存在同内容 0
+[ok] 已完成
+
+$ ls -l img/vendor.img; shasum -a 256 img/vendor.img
+-rw-r--r--@ 1 cuimingqiang  staff  205897728 10 29 21:06 img/vendor.img
+bce47cdbb2a7fa273382fbaa6185b5792be5f9ed5c68c4fee82258a5ef987f68  img/vendor.img
+
+# 产物 lib64：只剩 23.2 APEX 版本，两代 common 并存与 composer@2.x 全部消失
+$ ls -l vendor/lib64 | grep -E "composer|graphics\.common|drm\.common"
+51312 android.hardware.drm.common-V1-ndk.so
+51992 android.hardware.graphics.common-V7-ndk.so
+35296 android.hardware.graphics.common@1.0.so
+35312 android.hardware.graphics.common@1.1.so
+35344 android.hardware.graphics.common@1.2.so
+252448 android.hardware.graphics.composer3-V4-ndk.so
+35848 drm_hwcomposer_atom_reporter_upstream.so
+
+$ shasum -a 256 vendor/lib64/android.hardware.graphics.composer3-V4-ndk.so \
+                 vendor/lib64/android.hardware.drm.common-V1-ndk.so \
+                 vendor/lib64/android.hardware.graphics.common-V7-ndk.so
+bc002b73ff36...  android.hardware.graphics.composer3-V4-ndk.so   # = 23.2 APEX
+3709aab3cb13...  android.hardware.drm.common-V1-ndk.so          # = 23.2 APEX
+edcc297dc91a...  android.hardware.graphics.common-V7-ndk.so
+
+# 镜像内回读（vendor.img 根即 /vendor，路径是 /lib64）
+$ debugfs -R "ls -l /lib64" img/vendor.img | grep -E "composer|graphics\.common|drm\.common"
+51312  android.hardware.drm.common-V1-ndk.so
+51992  android.hardware.graphics.common-V7-ndk.so
+35296  android.hardware.graphics.common@1.0.so
+35312  android.hardware.graphics.common@1.1.so
+35344  android.hardware.graphics.common@1.2.so
+252448 android.hardware.graphics.composer3-V4-ndk.so
+35848  drm_hwcomposer_atom_reporter_upstream.so
+
+## 十三、基底来源唯一性核查（07 全程无 lineage-22.0 输入）
+
+$ grep -o "out/roms/lineage/[a-z0-9.\-]*" img/vendor-log.txt | sort | uniq -c
+   8 out/roms/lineage/lineage-23.2
+$ grep -n "lineage-22" img/vendor-log.txt
+（无输出）
+
+# 8 处分别是：基底镜像（第 5/13 行）、解包目录（14）、步骤 1 输入/输出（182/183）、
+#   步骤 2 白名单输入（186）、步骤 2b 摊平输入（191）、步骤 7 打包取 UUID/features（460）。
+
+# 静态树 28 个文件与两代基座逐文件比对（python + sha256）：
+#   A 与 23.2 同路径同内容           0
+#   B 与 23.2 同名不同内容           3  build.prop / etc/excluded-input-devices.xml / usr/idc/tablet2multitouch.idc
+#   C 23.2 无 · 22.0 同内容（借件）  0  ← 第二批撤件后清零
+#   D 两基座均无（自研/手工）        25
+$ diff <23.2 unpack_vendor>/etc/excluded-input-devices.xml manifest/flyme/m22/vendor/etc/excluded-input-devices.xml
+> <!-- m22 云机的输入设备排除表 … -->
+>     <device name="Power Button"/>
+<     <device name="QEMU QEMU USB Tablet"/>
+<     <device name="QEMU Virtio Tablet"/>
+$ diff <23.2 unpack_vendor>/usr/idc/tablet2multitouch.idc manifest/flyme/m22/vendor/usr/idc/tablet2multitouch.idc
+> # CDH: 无 toolType 时 InputReader 保留内核上报的 STYLUS 能力…
+> touch.toolType = finger
+$ grep -in "lineage" manifest/flyme/m22/vendor/build.prop
+（无输出）
+# 结论：这 3 个是机型定制覆盖，不是 22.0 内容。
+
+# 其它阶段产物里也搜不到 22.0：
+$ grep -rl "lineage-22\.0" out/devices/flyme/m22 out/dist/flyme/m22
+（无输出）
+
+# 注：out/dist/flyme/m22/12.5.0.0A 里的 vda.img/patch.img 仍是 17:33 那版（未含本次 vendor.img），
+#   要发布需重跑 08/09/11 或整条流水线。

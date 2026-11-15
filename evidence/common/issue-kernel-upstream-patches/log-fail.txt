@@ -1,0 +1,52 @@
+# 改动前：内核树带 CDH 改动（相对上游基线的净 diff，取自 cdh-backup-20261102 tag）
+
+## lineage-21-6.1（基线 7012e868a414）
+
+## lineage-22-6.6（基线 bf3c4b5c67f89）
+ drivers/android/binder.c                      |    8 +
+ drivers/gpu/drm/virtio/virtgpu_display.c      |   36 +
+ drivers/gpu/drm/virtio/virtgpu_drv.h          |   14 +
+ drivers/gpu/drm/virtio/virtgpu_object.c       |   10 +-
+ drivers/gpu/drm/virtio/virtgpu_plane.c        |   73 +-
+ drivers/gpu/drm/virtio/virtgpu_prime.c        |   60 +-
+ drivers/net/wireless/virtual/mac80211_hwsim.c | 1057 +++++++++++++++++++++++++
+ fs/file.c                                     |   17 +
+ fs/open.c                                     |   12 +-
+ kernel/signal.c                               |   10 +
+ security/selinux/Kconfig                      |   16 +
+ security/selinux/ss/services.c                |   54 ++
+ 12 files changed, 1354 insertions(+), 13 deletions(-)
+
+## lineage-22-6.12（基线 afb0ad713e3c）
+ CDH.md                                        |   24 +
+ cdh/device.json                               |    6 +
+ cdh/upstream.json                             |    5 +
+ drivers/android/binder.c                      |    8 +
+ drivers/gpu/drm/virtio/virtgpu_display.c      |   36 +
+ drivers/gpu/drm/virtio/virtgpu_drv.h          |   14 +
+ drivers/gpu/drm/virtio/virtgpu_object.c       |   10 +-
+ drivers/gpu/drm/virtio/virtgpu_plane.c        |   73 +-
+ drivers/gpu/drm/virtio/virtgpu_prime.c        |   60 +-
+ drivers/gpu/drm/virtio/virtgpu_vram.c         |   11 +-
+ drivers/net/wireless/virtual/mac80211_hwsim.c | 1057 +++++++++++++++++++++++++
+ fs/file.c                                     |   17 +
+ fs/open.c                                     |   12 +-
+ kernel/signal.c                               |   10 +
+ security/selinux/Kconfig                      |   16 +
+ security/selinux/ss/services.c                |   54 ++
+ 16 files changed, 1398 insertions(+), 15 deletions(-)
+
+## lineage-23-6.12（基线 4f6bf47200d9）
+ drivers/gpu/drm/virtio/virtgpu_vram.c         |   12 +-
+ drivers/net/wireless/virtual/mac80211_hwsim.c | 1057 +++++++++++++++++++++++++
+ security/selinux/Kconfig                      |   15 +
+ security/selinux/ss/services.c                |   40 +
+ 4 files changed, 1122 insertions(+), 2 deletions(-)
+
+## 为什么模块化不了：02 产出的 Module.symvers 只有 vmlinux 导出
+19471 vmlinux
+ieee80211_*/cfg80211_* 导出数: 0
+virtio_gpu_* 导出数: 0
+CONFIG_MAC80211=m
+CONFIG_MAC80211_HWSIM=m
+CONFIG_DRM_VIRTIO_GPU=y

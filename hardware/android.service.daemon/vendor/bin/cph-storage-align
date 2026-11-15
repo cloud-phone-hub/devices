@@ -1,0 +1,214 @@
+#!/system/bin/sh
+# 共享存储对齐（对齐真机 gold）：挂上 emulated 卷 + 补齐标准媒体目录。
+#
+# 现象（device-checker files.storage）：/storage/emulated 只有 tmpfs 空壳，
+# /storage/emulated/0 里没有 Alarms/DCIM/... 等标准目录 —— 20 个探测路径里
+# 17 个 ENOENT。`dumpsys mount` 里 emulated;0 一直是 state=UNMOUNTED、
+# path=null，system_server 每 2 s 刷一条
+#   StorageManagerService: Reporting emulated;0 unmounted due to system locked
+# 但同一时刻 `dumpsys user` 已是 RUNNING_UNLOCKED、vold `CE unlocked users: [0]`，
+# 手工 `sm mount 'emulated;0'` 立即成功且此后一直有效 —— 判定为框架侧
+# 「system locked」判据与本机（无锁屏凭据的云机）不匹配，不是 vold 拒绝挂载。
+# 取证与取舍见 engine/evidence/gold/issue-emulated-storage-unmounted/solution.md。
+#
+# 时序（两处一起兜）：rc 里 service 带 disabled、只由 boot_completed=1 触发；
+# 脚本自身再等一次 sys.boot_completed，防止有人把 class main 的自动启动加回来
+# 导致在 init main 阶段（实测约 18 s）就跑、那时 vold/system_server 还没就绪。
+# 挂载本身带 40 轮 × 3 s 重试；全程幂等：已挂载直接过，目录已存在只校正属主/权限。
+set -u
+
+LOG=/data/local/tmp/cph-storage-align.log
+log() { /system/bin/log -t cph-storage-align "$@"; }
+
+# 诊断落盘：/vendor 只读、logcat 的 ring buffer 在 boot_completed 前未必起得来，
+# 所以同时写一份 /data 下的文件（持久），重启后可直接回看时序。
+exec >>"${LOG}" 2>&1
+say() { echo "[$(/system/bin/date '+%m-%d %H:%M:%S')] $*"; log "$*"; }
+
+is_mounted() {
+    /system/bin/sm list-volumes emulated 2>/dev/null | /system/bin/grep -q '^emulated;0 mounted'
+}
+
+say "启动（boot_completed=$(/system/bin/getprop sys.boot_completed)）"
+
+n=0
+while [ "$(/system/bin/getprop sys.boot_completed)" != "1" ] && [ "${n}" -lt 90 ]; do
+    n=$((n + 1))
+    /system/bin/sleep 2
+done
+say "boot_completed 就绪（等待 ${n} 轮）"
+
+mounted=0
+i=0
+while [ "${i}" -lt 40 ]; do
+    if is_mounted; then
+        mounted=1
+        break
+    fi
+    /system/bin/sm mount 'emulated;0' 2>&1 || true
+    if is_mounted; then
+        mounted=1
+        break
+    fi
+    i=$((i + 1))
+    if [ $((i % 5)) -eq 0 ]; then
+        say "仍在等 emulated;0 挂载（已 ${i} 轮）"
+    fi
+    /system/bin/sleep 3
+done
+
+if [ "${mounted}" -ne 1 ]; then
+    say "emulated;0 等待约 120 s 仍未挂载，跳过目录对齐"
+    exit 0
+fi
+say "emulated;0 已挂载（第 $((i + 1)) 次尝试）"
+
+fail=0
+# ensure_dir <path> <uid:gid> <mode>
+ensure_dir() {
+    /system/bin/mkdir -p "$1" || fail=$((fail + 1))
+    /system/bin/chown "$2" "$1" || fail=$((fail + 1))
+    /system/bin/chmod "$3" "$1" || fail=$((fail + 1))
+}
+
+# align_dirs：标准目录直接落在底层 /data/media/0。经 FUSE（/storage/emulated/0）
+# 创建会由 MediaProvider 重新映射属主（实测 owner 变成 10211），与真机的 10224
+# 不一致；写底层再回读 FUSE 才与真机逐字段一致（mode 2770 / uid 10224 / gid 1023）。
+align_dirs() {
+    for d in Alarms Audiobooks DCIM Documents Download Movies Music Notifications \
+        Pictures Podcasts Recordings Ringtones; do
+        ensure_dir "/data/media/0/${d}" 10224:1023 2770
+    done
+
+    # Android/data、Android/obb 是各自独立的 gid（1078 / 1079），权限 2771，
+    # 且各带一个 0660 的 .nomedia（真机同样存在）。
+    for pair in data:1078 obb:1079; do
+        name="${pair%%:*}"
+        gid="${pair##*:}"
+        dir="/data/media/0/Android/${name}"
+        ensure_dir "${dir}" "1023:${gid}" 2771
+        if [ ! -f "${dir}/.nomedia" ]; then
+            : > "${dir}/.nomedia" || fail=$((fail + 1))
+            /system/bin/chown "10224:${gid}" "${dir}/.nomedia" || fail=$((fail + 1))
+            /system/bin/chmod 0660 "${dir}/.nomedia" || fail=$((fail + 1))
+        fi
+    done
+}
+
+# 期望值核对：返回不一致项数（mode 带 setgid 位，真机是 2770/2771）。
+#
+# 注意：设置 setgid 需要 CAP_FSETID，否则 chmod 会「返回 0 但静默清掉 S_ISGID」——
+# 实测漏配时同一秒回读就是 770/771（rc 里 capabilities 必须带 FSETID）。
+count_mismatch() {
+    bad=0
+    for d in Alarms Audiobooks DCIM Documents Download Movies Music Notifications \
+        Pictures Podcasts Recordings Ringtones; do
+        [ "$(/system/bin/stat -c '%u:%g %a' "/data/media/0/${d}" 2>/dev/null)" = "10224:1023 2770" ] || bad=$((bad + 1))
+    done
+    for pair in data:1078 obb:1079; do
+        name="${pair%%:*}"
+        gid="${pair##*:}"
+        [ "$(/system/bin/stat -c '%u:%g %a' "/data/media/0/Android/${name}" 2>/dev/null)" = "1023:${gid} 2771" ] || bad=$((bad + 1))
+    done
+    echo "${bad}"
+}
+
+# age_storage_timestamps：对新创建的标准存储目录与 /data 顶层基础目录执行时间戳老化。
+#
+# 现象（ultimate.cloud_emulator U-DATA-ATIME）：全新拉起或刚灌包的云机 userdata 里
+# /data、/data/local/tmp、/storage/emulated/0/* 等目录的 atime 距当前时间不足 7 天
+# （或落在 1970/2009 默认纪元），被判定为刚创建的云机镜像（ageDays < 7）。
+# 真机出厂激活并日常使用后，基础目录与闲置标准媒体目录的基准时间通常在数月前。
+#
+# 策略：
+#   1) 基准时间戳优先取 ro.build.date.utc + 7 天，且保证至少早于当前时间 120 天
+#      （防新发版固件 ro.build.date.utc 距今过近）；
+#   2) 对空置的标准媒体子目录（若目录内尚无用户文件）同时老化 atime 与 mtime；
+#   3) 对 /data 顶层及应用沙箱父目录，仅当当前 atime 异常偏旧（< 2018-01-01）或
+#      过于新鲜（距今 < 30 天）时用 `touch -a -c` 老化 atime，绝不改动活跃目录的 mtime。
+age_storage_timestamps() {
+    now_ts="$(/system/bin/date '+%s' 2>/dev/null || echo 0)"
+    case "${now_ts}" in
+        ''|*[!0-9]*) now_ts=0 ;;
+    esac
+    if [ "${now_ts}" -lt 1700000000 ]; then
+        now_ts=1760000000
+    fi
+
+    build_ts="$(/system/bin/getprop ro.build.date.utc 2>/dev/null || true)"
+    case "${build_ts}" in
+        ''|*[!0-9]*) build_ts=0 ;;
+    esac
+
+    max_allowed=$((now_ts - 120 * 86400))
+    if [ "${build_ts}" -gt 1577836800 ]; then
+        target_ts=$((build_ts + 7 * 86400))
+        if [ "${target_ts}" -gt "${max_allowed}" ]; then
+            target_ts="${max_allowed}"
+        fi
+    else
+        target_ts="${max_allowed}"
+    fi
+
+    iso_base="$(/system/bin/date -d "@${target_ts}" '+%Y-%m-%dT%H:%M:%S' 2>/dev/null || true)"
+    if [ -z "${iso_base}" ]; then
+        iso_base="2025-07-17T10:35:14"
+    fi
+
+    # 1) 标准共享存储目录（空目录同步老化 atime + mtime；已有用户内容则只老化过新的 atime）
+    idx=0
+    for d in Alarms Audiobooks DCIM Documents Download Movies Music Notifications \
+        Pictures Podcasts Recordings Ringtones Android Android/data Android/obb; do
+        p="/data/media/0/${d}"
+        [ -d "${p}" ] || continue
+        off_ts=$((target_ts + idx * 413))
+        iso_d="$(/system/bin/date -d "@${off_ts}" '+%Y-%m-%dT%H:%M:%S' 2>/dev/null || printf '%s' "${iso_base}")"
+        cur_atime="$(/system/bin/stat -c '%X' "${p}" 2>/dev/null || echo 0)"
+        case "${cur_atime}" in ''|*[!0-9]*) cur_atime=0 ;; esac
+        if [ "${cur_atime}" -lt 1514779200 ] || [ "${cur_atime}" -gt $((now_ts - 30 * 86400)) ]; then
+            if [ -z "$(/system/bin/ls -A "${p}" 2>/dev/null | /system/bin/grep -v '^\.nomedia$' || true)" ]; then
+                /system/bin/touch -c -d "${iso_d}" "${p}" 2>/dev/null || true
+            else
+                /system/bin/touch -a -c -d "${iso_d}" "${p}" 2>/dev/null || true
+            fi
+        fi
+        if [ -f "${p}/.nomedia" ]; then
+            nm_atime="$(/system/bin/stat -c '%X' "${p}/.nomedia" 2>/dev/null || echo 0)"
+            case "${nm_atime}" in ''|*[!0-9]*) nm_atime=0 ;; esac
+            if [ "${nm_atime}" -lt 1514779200 ] || [ "${nm_atime}" -gt $((now_ts - 30 * 86400)) ]; then
+                /system/bin/touch -c -d "${iso_d}" "${p}/.nomedia" 2>/dev/null || true
+            fi
+        fi
+        idx=$((idx + 1))
+    done
+
+    # 2) /data 顶层与沙箱基础路径（仅老化异常或新鲜的 atime，保留真实 mtime）
+    for p in /data /data/media /data/media/0 /data/user /data/user/0 /data/user_de \
+        /data/user_de/0 /data/data /data/app /data/system /data/misc /data/local \
+        /data/local/tmp /data/dalvik-cache /data/vendor; do
+        [ -e "${p}" ] || continue
+        cur_atime="$(/system/bin/stat -c '%X' "${p}" 2>/dev/null || echo 0)"
+        case "${cur_atime}" in ''|*[!0-9]*) cur_atime=0 ;; esac
+        if [ "${cur_atime}" -lt 1514779200 ] || [ "${cur_atime}" -gt $((now_ts - 30 * 86400)) ]; then
+            off_ts=$((target_ts + idx * 617))
+            iso_p="$(/system/bin/date -d "@${off_ts}" '+%Y-%m-%dT%H:%M:%S' 2>/dev/null || printf '%s' "${iso_base}")"
+            /system/bin/touch -a -h -c -d "${iso_p}" "${p}" 2>/dev/null || true
+        fi
+        idx=$((idx + 1))
+    done
+    say "时间戳老化基准: ${iso_base} (ts=${target_ts})"
+}
+
+# 贴一轮就够（rc 已带 FSETID，setgid 不会被内核静默清掉）；
+align_dirs
+age_storage_timestamps
+bad=$(count_mismatch)
+say "对齐后不一致 ${bad} 项"
+
+# 回读核对（底层 + FUSE 两侧），失败项写进日志，便于 device-checker 前的自检。
+for p in Alarms DCIM Pictures Android/data Android/obb; do
+    say "stat ${p}: $(/system/bin/stat -c '%u:%g %a' "/data/media/0/${p}" 2>&1)"
+done
+say "fuse 侧: $(/system/bin/ls -ln /storage/emulated/0 2>/dev/null | /system/bin/tr '\n' '|')"
+say "完成（失败 ${fail} 项）"
+exit 0

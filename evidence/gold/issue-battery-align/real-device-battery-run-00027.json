@@ -1,0 +1,41 @@
+[
+ {
+  "id": "hardware.battery",
+  "name": "电池信息",
+  "device": "07cf5fc1784783d5",
+  "status": "succeeded",
+  "result": {
+   "battery": {
+    "android.os.extra.CHARGING_STATUS": 0,
+    "android.os.extra.CYCLE_COUNT": 753,
+    "battery_low": false,
+    "charge_counter": 4962,
+    "health": 2,
+    "icon-small": 17303933,
+    "invalid_charger": 0,
+    "level": 100,
+    "max_charging_current": 0,
+    "max_charging_voltage": 0,
+    "metadata": "1AIAAEJOREwSAAAACgAAAHQAZQBjAGgAbgBvAGwAbwBnAHkAAAAAAAAAAAAHAAAATABpAC0AcABv\nAGwAeQAAAAoAAABpAGMAbwBuAC0AcwBtAGEAbABsAAAAAAABAAAAfQkIARQAAABtAGEAeABfAGMA\naABhAHIAZwBpAG4AZwBfAHYAbwBsAHQAYQBnAGUAAAAAAAEAAAAAAAAABgAAAGgAZQBhAGwAdABo\nAAAAAAABAAAAAgAAABQAAABtAGEAeABfAGMAaABhAHIAZwBpAG4AZwBfAGMAdQByAHIAZQBuAHQA\nAAAAAAEAAAAAAAAABgAAAHMAdABhAHQAdQBzAAAAAAABAAAABQAAAAcAAABwAGwAdQBnAGcAZQBk\nAAAAAQAAAAEAAAAHAAAAcAByAGUAcwBlAG4AdAAAAAkAAAABAAAAIAAAAGEAbgBkAHIAbwBpAGQA\nLgBvAHMALgBlAHgAdAByAGEALgBDAEgAQQBSAEcASQBOAEcAXwBTAFQAQQBUAFUAUwAAAAAAAQAA\nAAAAAAADAAAAcwBlAHEAAAABAAAATg0AAA4AAABjAGgAYQByAGcAZQBfAGMAbwB1AG4AdABlAHIA\nAAAAAAEAAABiEwAABQAAAGwAZQB2AGUAbAAAAAEAAABkAAAABQAAAHMAYwBhAGwAZQAAAAEAAABk\nAAAACwAAAHQAZQBtAHAAZQByAGEAdAB1AHIAZQAAAAEAAABAAQAABwAAAHYAbwBsAHQAYQBnAGUA\nAAABAAAAGREAABwAAABhAG4AZAByAG8AaQBkAC4AbwBzAC4AZQB4AHQAcgBhAC4AQwBZAEMATABF\nAF8AQwBPAFUATgBUAAAAAAABAAAA8QIAAA8AAABpAG4AdgBhAGwAaQBkAF8AYwBoAGEAcgBnAGUA\ncgAAAAEAAAAAAAAACwAAAGIAYQB0AHQAZQByAHkAXwBsAG8AdwAAAAkAAAAAAAAA\n",
+    "plugged": 1,
+    "present": true,
+    "scale": 100,
+    "seq": 3406,
+    "status": 5,
+    "technology": "Li-poly",
+    "temperature": 320,
+    "voltage": 4377
+   },
+   "ok": true
+  },
+  "logs": [
+   {
+    "at_ms": 1793113671200,
+    "line": "hardware.battery 键=18 level=100/100 status=5 metadata=989字符"
+   }
+  ],
+  "error": null,
+  "startedAtMs": 1793113670875,
+  "finishedAtMs": 1793113671203
+ }
+]

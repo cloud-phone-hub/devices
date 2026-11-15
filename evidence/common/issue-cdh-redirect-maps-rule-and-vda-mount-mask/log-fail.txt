@@ -1,0 +1,17 @@
+=== [修复前：2026-11-14 P1 Batch-3 前金丝雀基线 4abff687a02e421f-cloud] ===
+# 1) batch3-pre-diffs/diff/proc.json 片段（普通 App 挂载表暴露 /dev/block/vda*）
+identity mountinfo.entries[mountPoint=/cust].source | base: /dev/block/bootdevice/by-name/cust | target: /dev/block/vda12
+identity mountinfo.entries[mountPoint=/metadata].source | base: /dev/block/sdc14 | target: /dev/block/vda5
+identity mountinfo.entries[mountPoint=/mnt/vendor/persist].source | base: /dev/block/sdc15 | target: /dev/block/vda4
+
+# 2) batch3-pre-diffs/diff/native_env.json 片段（mounts.blockMounts 与 loadedVendorSo）
+identity mounts.blockMounts[mountpoint=/cust].source | base: /dev/block/bootdevice/by-name/cust | target: /dev/block/vda12
+identity mounts.blockMounts[mountpoint=/metadata].source | base: /dev/block/sdc14 | target: /dev/block/vda5
+identity mounts.blockMounts[mountpoint=/mnt/vendor/persist].source | base: /dev/block/sdc15 | target: /dev/block/vda4
+
+identity loadedVendorSo.gpuSo:
+  base(24): missing=['allocator@2.0.so','allocator@3.0.so','allocator@4.0.so','graphics.common-V6-ndk.so','egl/libEGL_meow.so','egl/libGLESv1_CM_meow.so','egl/libGLESv2_meow.so','hw/gralloc.default.so']
+  target(23): extra=['graphics.common-V5-ndk.so','arm.graphics-V5-ndk.so','egl/libGLES_meow.so','egl/libMEOW_qt.so','libgpu_aux.so','libgralloc_extra.so','libgralloc_metadata.so','libgralloctypes_mtk.so','libpqhdrmetaparser.so']
+
+identity loadedVendorSo.vendorSo (59 vs 34):
+  base missing 9 项含 libui.so / allocator@2.0~4.0 / graphics.common-V6 / lib*_meow.so(3) / hw/gralloc.default.so

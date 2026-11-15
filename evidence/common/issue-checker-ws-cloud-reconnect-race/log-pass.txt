@@ -1,0 +1,24 @@
+=== 1. 服务端竞态单测（cargo test） ===
+$ cd /Volumes/work/cloud-phone-hub/core/development/device-checker/server && cargo test
+running 1 test
+test adapter::tests::stale_connection_disconnect_does_not_remove_replacement ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s
+
+=== 2. 客户端重编译与通过本地 daemon 安装至干净云机 ===
+$ ./app/gradlew -p app assembleDebug
+BUILD SUCCESSFUL in 2s
+-> /Volumes/work/cloud-phone-hub/out/core/development/dist/darwin/device-checker/device-checker-cloud.apk (9010495 bytes)
+$ curl -sS -X POST "http://127.0.0.1:9050/api/channel/cmd?spec=gold_15-OS3.0.11.0.VNQCNXM&index=3" ...
+pm install -r -g /data/local/tmp/dc-cloud.apk && rm -f /data/local/tmp/dc-cloud.apk
+am start -n dev.checker/.MainActivity
+
+=== 3. 双机在线与批量下发验证 ===
+$ adb devices
+4lmbvom7gifm5lbu	device
+127.0.0.1:5911	device
+
+$ curl -sS http://101.33.73.101/api/devices
+[{"androidId":"07cf5fc1784783d5",...,"name":"gold"},{"androidId":"98a058b2b0618483-cloud",...,"name":"gold"},...]
+
+- force-stop 12s 压测：t+1s..t+12s 期间 98a058b2b0618483-cloud 在 101.33.73.101 持续在线零掉线；
+- 随后 Batch-6 全量采集（aligner run-00255..00275 共 19 域 38/38 succeeded、ultimate run-00279..00292 共 14 套 28/28 succeeded）全程稳定在线完成。

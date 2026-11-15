@@ -1,0 +1,569 @@
+=== [修复后] #190 gold 最后 5 项精细字段对齐全新干净盘终验记录 ===
+云机实例: gold_15-OS3.0.10.0.VNQCNXM/1 (全新干净盘)
+内核配方: 6.6-cdh-595096a3795b | vendor_dlkm: dlkm-45531ca7d3f8 | patch.img: c0e939dbf3bc | vda: vda-7de3bfef388d
+云机 device-checker ID: 3d737b9b5d823eec-cloud (runs: run-00279, run-00280, run-00281) | 同版本真机基线 ID: ec519c7d513a3ad3
+
+---------------- A. 系统态 adb / dumpsys / cmd wifi / ip link 核验 ----------------
+=== [1] Input mtk-kpd & am get-config ===
+        Tool Type: UNKNOWN
+  Device 2: mtk-kpd
+    EventHub Devices: [ 7 ] 
+    Generation: 68
+    IsExternal: false
+    IsWaking: false
+    AssociatedDisplayPort: <none>
+    AssociatedDisplayUniqueIdByPort: <none>
+    AssociatedDisplayUniqueIdByDescriptor: <none>
+    HasMic:     false
+    Sources: KEYBOARD
+    KeyboardType: 1
+    ControllerNum: 0
+    Keyboard Input Mapper:
+      Parameters:
+        OrientationAware: false
+config: mcc460-mnc1-zh-rCN-ldltr-sw393dp-w393dp-h873dp-normal-long-notround-widecg-lowdr-port-notnight-440dpi-finger-keysexposed-nokeys-navhidden-nonav-2400x1080-v35
+abi: arm64-v8a
+=== [2] GPU SELinux prop ===
+u:object_r:cdh_gpu_public_prop:s0
+16383
+=== [3] Audio SELinux prop & STREAM_ALARM ===
+u:object_r:vendor_misound_ro_prop:s0
+true
+- STREAM_ALARM:
+   Muted: false
+   Muted Internally: false
+   Min: 1 w/o perm:6
+   Max: 15
+   streamVolume:12
+   Current: 2 (speaker): 12, 40000000 (default): 12
+   Devices: speaker(2)
+   Volume Group: AUDIO_STREAM_ALARM
+=== [4] Wi-Fi p2p0, wlan1, WMM/VHT dmesg, cmd wifi status ===
+17: p2p0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether 76:39:89:0b:24:65 brd ff:ff:ff:ff:ff:ff
+Device "wlan1" does not exist.
+QEMU_LOG_NO_HT_VHT_DISABLED
+NO_SIOCSIFNAME_AVC
+Wifi is enabled
+Wifi scanning is always available
+==== Primary ClientModeManager instance ====
+Wifi is connected to "TP-LINK_2464"
+WifiInfo: SSID: "TP-LINK_2464", BSSID: 74:39:89:0b:24:63, MAC: <none>, IP: /192.168.60.100, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: 11ac, RSSI: -43, Link speed: 433Mbps, Tx Link speed: 433Mbps, Max Supported Tx Link speed: 433Mbps, Rx Link speed: 433Mbps, Max Supported Rx Link speed: 433Mbps, Frequency: 5180MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"TP-LINK_2464"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+successfulTxPackets: 6423
+successfulTxPacketsPerSecond: 1.2173879788478162E-4
+retriedTxPackets: 0
+retriedTxPacketsPerSecond: 0.0
+lostTxPackets: 0
+lostTxPacketsPerSecond: 0.0
+successfulRxPackets: 7915
+successfulRxPacketsPerSecond: 1.6231819616072528E-4
+=== [5] Display uniqueId, xdpi/ydpi, DeviceProductInfo ===
+  DisplayDeviceInfo{"内置屏幕": uniqueId="local:4627039422300187648", 1080 x 2400, modeId 2, renderFrameRate 120.00001, defaultModeId 1, userPreferredModeId -1, supportedModes [{id=1, width=1080, height=2400, fps=60.0, vsync=60.0, synthetic=false, alternativeRefreshRates=[90.0, 120.00001], supportedHdrTypes=[]}, {id=2, width=1080, height=2400, fps=120.00001, vsync=120.00001, synthetic=false, alternativeRefreshRates=[60.0, 90.0], supportedHdrTypes=[]}, {id=3, width=1080, height=2400, fps=90.0, vsync=90.0, synthetic=false, alternativeRefreshRates=[60.0, 120.00001], supportedHdrTypes=[]}], colorMode 0, supportedColorModes [0, 7, 9], hdrCapabilities HdrCapabilities{mSupportedHdrTypes=[], mMaxLuminance=500.0, mMaxAverageLuminance=500.0, mMinLuminance=0.0}, allmSupported false, gameContentTypeSupported false, density 440, 394.40994 x 393.39185 dpi, appVsyncOff 1199999, presDeadline 14800000, cutout DisplayCutout{insets=Rect(0, 111 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(512, 0 - 568, 111), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1080 displayHeight=2400 physicalDisplayWidth=1080 physicalDisplayHeight=2400 density={2.75} cutoutSpec={M 0,0 H -28 V 111 H 28 V 0 H 0 Z} rotation={0} scale={1.0} physicalPixelDisplaySizeRatio={1.0}}} sideOverrides={}}, touch INTERNAL, rotation 0, type INTERNAL, address {port=0, model=0x40368bd6e7ee6c}, deviceProductInfo DeviceProductInfo{name=MTKDEV, manufacturerPnpId=MTK, productId=35638, modelYear=null, manufactureDate=ManufactureDate{week=42, year=2021}, connectionToSinkType=0}, state ON, committedState ON, frameRateOverride , brightnessMinimum 0.0, brightnessMaximum 1.0, brightnessDefault 0.074743524, hdrSdrRatio NaN, roundedCorners RoundedCorners{[RoundedCorner{position=TopLeft, radius=70, center=Point(70, 70)}, RoundedCorner{position=TopRight, radius=70, center=Point(1010, 70)}, RoundedCorner{position=BottomRight, radius=70, center=Point(1010, 2330)}, RoundedCorner{position=BottomLeft, radius=70, center=Point(70, 2330)}]}, FLAG_ALLOWED_TO_BE_DEFAULT_DISPLAY, FLAG_ROTATES_WITH_CONTENT, FLAG_SECURE, FLAG_SUPPORTS_PROTECTED_BUFFERS, FLAG_TRUSTED, installOrientation 0, displayShape DisplayShape{ spec=1406003047 displayWidth=1080 displayHeight=2400 physicalPixelDisplaySizeRatio=1.0 rotation=0 offsetX=0 offsetY=0 scale=1.0}}
+    mStaticDisplayInfo=StaticDisplayInfo{isInternal=true, density=2.75, secure=true, deviceProductInfo=DeviceProductInfo{name=MTKDEV, manufacturerPnpId=MTK, productId=35638, modelYear=null, manufactureDate=ManufactureDate{week=42, year=2021}, connectionToSinkType=0}, installOrientation=0}
+
+---------------- B. 普通 App 视角 device-checker 逐字段对账 ----------------
+1. 输入设备 mtk-kpd & Configuration (与真机 100% 完全一致):
+{
+  "mtk-kpd": {
+    "descriptor": "9a244e01c90550ca2eb2798ffe20d8731e811765",
+    "hasMicrophone": false,
+    "isExternal": false,
+    "isVirtual": false,
+    "keyboardType": 1,
+    "motionRanges": [],
+    "motionRangesCount": 0,
+    "name": "mtk-kpd",
+    "productId": 0,
+    "sources": 257,
+    "sourcesHex": "0x101",
+    "vendorId": 0
+  },
+  "deviceConfigInfo": {
+    "glEsVersion": "3.2",
+    "reqGlEsVersionHex": "0x30002",
+    "reqInputFeatures": 0,
+    "reqKeyboardType": 1,
+    "reqNavigation": 1,
+    "reqTouchScreen": 3
+  },
+  "configuration": {
+    "GrammaticalGender": 0,
+    "LayoutDirection": 0,
+    "Locales": {},
+    "NightModeActive": false,
+    "ScreenHdr": false,
+    "ScreenRound": false,
+    "ScreenWideColorGamut": true,
+    "Stability": 0,
+    "blur": 0,
+    "colorMode": 6,
+    "densityDpi": 440,
+    "fontScale": 1,
+    "fontWeightAdjustment": 0,
+    "hardKeyboardHidden": 2,
+    "keyboard": 1,
+    "keyboardHidden": 1,
+    "locale": {},
+    "mcc": 460,
+    "mnc": 1,
+    "navigation": 1,
+    "navigationHidden": 2,
+    "orientation": 1,
+    "screenHeightDp": 873,
+    "screenLayout": 268435810,
+    "screenWidthDp": 393,
+    "seq": 63,
+    "smallestScreenWidthDp": 393,
+    "touchscreen": 3,
+    "uiMode": 17,
+    "userSetLocale": false
+  }
+}
+
+2. GPU glGetIntegerv 6 项上限、6 项安全 GL_ARM_* 扩展与 WebView WebGL:
+{
+  "limits": {
+    "maxCombinedTextureImageUnits": 96,
+    "maxCubeMapTextureSize": 16383,
+    "maxRenderbufferSize": 16383,
+    "maxTextureImageUnits": 16,
+    "maxTextureSize": 16383,
+    "maxVertexAttribs": 32
+  },
+  "limitsExactMatchReal": true,
+  "armExtensions": [
+    "GL_ARM_mali_program_binary",
+    "GL_ARM_mali_shader_binary",
+    "GL_ARM_rgba8",
+    "GL_ARM_debug_assert",
+    "GL_ARM_shader_core_properties",
+    "GL_ARM_texture_unnormalized_coordinates"
+  ],
+  "webview": {
+    "currentWebViewPackage": {
+      "packageName": "com.google.android.webview",
+      "versionName": "131.0.6778.260"
+    },
+    "defaultUserAgent": "Mozilla/5.0 (Linux; Android 15; 2312DRAABC Build/AP3A.240905.015.A2; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/131.0.6778.260 Mobile Safari/537.36",
+    "webViewRuntimeFp": {
+      "audioFp": 0,
+      "canvasDataUrlLen": 64,
+      "canvasMd5": "7f268286fa55e1f110c07a75bc7e6cf3",
+      "downlink": 10,
+      "hardwareConcurrency": 8,
+      "languages": "zh-CN,en-US",
+      "maxTouchPoints": 5,
+      "netType": "4g",
+      "platform": "Linux aarch64",
+      "screen": "393x873x24dpr2.75",
+      "supported": true,
+      "userAgent": "Mozilla/5.0 (Linux; Android 15; 2312DRAABC Build/AP3A.240905.015.A2; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/131.0.6778.260 Mobile Safari/537.36",
+      "vendor": "Google Inc.",
+      "webglMissing": false,
+      "webglReadyAndMatchesMali": true,
+      "webglRenderer": "Mali-G57 MC2",
+      "webglVendor": "ARM",
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+    }
+  }
+}
+
+3. Audio 23 项音效字典与全部 8 路 MIUI 流音量 (整个 audio 对象与真机 == 逐字节相等):
+{
+  "audioExactMatchReal": true,
+  "effectCount": 23,
+  "streamVolumeRanges": {
+    "accessibility": {
+      "maxVolume": 15,
+      "minVolume": 1
+    },
+    "alarm": {
+      "maxVolume": 15,
+      "minVolume": 6
+    },
+    "dtmf": {
+      "maxVolume": 15,
+      "minVolume": 0
+    },
+    "music": {
+      "maxVolume": 17,
+      "minVolume": 0
+    },
+    "notification": {
+      "maxVolume": 17,
+      "minVolume": 0
+    },
+    "ring": {
+      "maxVolume": 17,
+      "minVolume": 0
+    },
+    "system": {
+      "maxVolume": 15,
+      "minVolume": 0
+    },
+    "voice_call": {
+      "maxVolume": 11,
+      "minVolume": 1
+    }
+  },
+  "nonInsertAndExtensionEffects": {
+    "Acoustic Echo Canceler_bb392ec0-8d4d-11e0-a896-0002a5d5c51b": {
+      "connectMode": "Pre Processing",
+      "implementor": "The Android Open Source Project",
+      "name": "Acoustic Echo Canceler",
+      "type": "7b491460-8d4d-11e0-bd61-0002a5d5c51b",
+      "uuid": "bb392ec0-8d4d-11e0-a896-0002a5d5c51b"
+    },
+    "Automatic Gain Control V2_89f38e65-d4d2-4d64-ad0e-2b3e799ea886": {
+      "connectMode": "Pre Processing",
+      "implementor": "The Android Open Source Project",
+      "name": "Automatic Gain Control V2",
+      "type": "ae3c653b-be18-4ab8-8938-418f0a7f06ac",
+      "uuid": "89f38e65-d4d2-4d64-ad0e-2b3e799ea886"
+    },
+    "Auxiliary Environmental Reverb_4a387fc0-8ab3-11df-8bad-0002a5d5c51b": {
+      "connectMode": "Auxiliary",
+      "implementor": "NXP Software Ltd.",
+      "name": "Auxiliary Environmental Reverb",
+      "type": "c2e5d5f0-94bd-4763-9cac-4e234d06839e",
+      "uuid": "4a387fc0-8ab3-11df-8bad-0002a5d5c51b"
+    },
+    "Auxiliary Preset Reverb_f29a1400-a3bb-11df-8ddc-0002a5d5c51b": {
+      "connectMode": "Auxiliary",
+      "implementor": "NXP Software Ltd.",
+      "name": "Auxiliary Preset Reverb",
+      "type": "47382d60-ddd8-11db-bf3a-0002a5d5c51b",
+      "uuid": "f29a1400-a3bb-11df-8ddc-0002a5d5c51b"
+    },
+    "ExtensionEffectExample_fa81dd00-588b-11ed-9b6a-0242ac120002": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "ExtensionEffectExample",
+      "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+      "uuid": "fa81dd00-588b-11ed-9b6a-0242ac120002"
+    },
+    "Noise Suppression_c06c8400-8e06-11e0-9cb6-0002a5d5c51b": {
+      "connectMode": "Pre Processing",
+      "implementor": "The Android Open Source Project",
+      "name": "Noise Suppression",
+      "type": "58b4b260-8e06-11e0-aa8e-0002a5d5c51b",
+      "uuid": "c06c8400-8e06-11e0-9cb6-0002a5d5c51b"
+    }
+  }
+}
+
+4. Wi-Fi Direct (isP2pSupported=true) & 5GHz 802.11ac 433Mbps & 网络接口列表:
+{
+  "alignerWifi": {
+    "connected": true,
+    "connectedBssid": "74:39:89:0b:24:63",
+    "connectedFrequencyMhz": 5180,
+    "connectedLinkSpeedMbps": 433,
+    "connectedRssi": -42,
+    "connectedSsid": "TP-LINK_2464",
+    "frequencyPositive": true,
+    "hasValidNonHwsimBssid": true,
+    "hasValidSsid": true,
+    "hwsimBssidApCount": 0,
+    "is5GHzBandSupported": true,
+    "is6GHzBandSupported": false,
+    "isEnhancedOpenSupported": true,
+    "isP2pSupported": true,
+    "isTdlsSupported": true,
+    "isWifiEnabled": true,
+    "isWpa3SaeSupported": true,
+    "isWpa3SuiteBSupported": true,
+    "linkSpeedPositive": true,
+    "noSuspiciousConnectedSsid": true,
+    "noVirtWifiOrHwsimInScan": true,
+    "scanResultCount": 4,
+    "scanResultsSample": [
+      {
+        "bssid": "74:39:89:0b:24:64",
+        "capabilities": "[WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]",
+        "frequency": 5180,
+        "level": -56,
+        "ssid": "TP-LINK_5G_2464"
+      },
+      {
+        "bssid": "28:6c:07:51:a4:90",
+        "capabilities": "[WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]",
+        "frequency": 5220,
+        "level": -59,
+        "ssid": "Xiaomi_A490_5G"
+      },
+      {
+        "bssid": "c8:3a:35:4c:8f:3a",
+        "capabilities": "[WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]",
+        "frequency": 2412,
+        "level": -57,
+        "ssid": "ChinaNet-8F3A"
+      },
+      {
+        "bssid": "74:39:89:0b:24:63",
+        "capabilities": "[ESS]",
+        "frequency": 5180,
+        "level": -37,
+        "ssid": "TP-LINK_2464"
+      }
+    ],
+    "std11acSupported": true,
+    "std11axSupported": false,
+    "std11nSupported": true,
+    "suspiciousScanAps": [],
+    "wifiState": 3
+  },
+  "networkWifi": {
+    "bssid": "74:39:89:0b:24:63",
+    "connected": true,
+    "frequency": 5180,
+    "ipAddress": 1681696960,
+    "linkSpeed": 433,
+    "networkId": 0,
+    "rssi": -42,
+    "ssid": "\"TP-LINK_2464\"",
+    "wifiState": 3
+  },
+  "activeIfaces": [
+    "dummy0",
+    "wlan0",
+    "lo",
+    "ccmni2",
+    "ccmni0"
+  ]
+}
+
+5. 屏幕精确物理 xDpi / yDpi、uniqueId 与 EDID DeviceProductInfo (与真机 100% 完全一致):
+{
+  "realMetrics": {
+    "density": 2.75,
+    "densityDpi": 440,
+    "heightPixels": 2400,
+    "scaledDensity": 2.75,
+    "widthPixels": 1080,
+    "xdpi": 394.41,
+    "ydpi": 393.392
+  },
+  "screenResourceMetrics": {
+    "density": 2.75,
+    "densityDpi": 440,
+    "heightPixels": 2400,
+    "noncompatDensityDpi": 440,
+    "noncompatHeightPixels": 2400,
+    "noncompatWidthPixels": 1080,
+    "scaledDensity": 2.75,
+    "widthPixels": 1080,
+    "xdpi": 394.4099426269531,
+    "ydpi": 393.391845703125
+  }
+}
+
+6. aligner_xiaomi_gold.all 32 项硬核自检卡总表 (32 / 32 全绿):
+{
+  "scoreSummary": {
+    "failedItems": [],
+    "passed": 32,
+    "total": 32
+  },
+  "goldScorecard": {
+    "A1_modelIsGold2312DRAABC": true,
+    "A2_socAndAbiIsMt6833Arm64": true,
+    "A3_crossPartitionIdentityConsistent": true,
+    "A4_bootSecurityAndVerityPropsComplete": true,
+    "B1_cpu8CoreBigLittle6xA55Plus2xA76": true,
+    "B2_cpufreqPoliciesVisibleToApp": true,
+    "B3_memoryAndSwapConsistent": true,
+    "B4_storageStandardDirsAllReady": true,
+    "B5_mapsHasRealMaliAndNoMesaMinigbm": true,
+    "B6_vendorDlkmNoCdhModuleNameLeak": true,
+    "B7_mountinfoNoPeerHolesAndLogSocketsExist": true,
+    "C1_displayIs1080x2400Dpi440": true,
+    "C2_displaySupports120HzAndWideColorGamut": true,
+    "C3_glesRendererIsMaliG57Mc2": true,
+    "C4_glesGlsl320AndArmExtsNoDesktopLeak": true,
+    "C5_webViewWebGlReadyAndMatchesMali": true,
+    "D1_sensorsCountIs29AndMagnetometerValid": true,
+    "D2_sensorsDynamic50HzStreamsActive": true,
+    "D3_sensorsAdcQuantizationAndGyroDriftReal": true,
+    "D4_inputsValidAndNoRiskyControlIme": true,
+    "E1_camera2AndCamera1Connectable": true,
+    "E2_mediaCodecsHasMtkAndDolbyNoV4l2Leak": true,
+    "E3_widevineVendorAndPropertiesAuthentic": true,
+    "E4_vibratorAndIrReady": true,
+    "F1_battery5000MahLiPolyAndNotConstant": true,
+    "F2_thermalZonesPresentInSysfs": true,
+    "G1_networkActiveAndNoSuspiciousIfaces": true,
+    "G2_wifiNoVirtWifiOrHwsimBssidLeak": true,
+    "G3_telephonyTacMatchesGold86717107": true,
+    "G4_bluetoothAdapterHasDeviceName": true,
+    "H1_criticalSystemServicesAndIfaaReady": true,
+    "H2_keystoreHwSignAndSepolicyClean": true
+  }
+}
+
+7. 全部 14 个 ultimate.* 终极风控套件真机 vs 云机命中对账 (全部 cloudOnlyHits = []):
+{
+  "ultimate.app_risk": {
+    "cloudHits": [
+      "H-97X"
+    ],
+    "realHits": [
+      "H-97X"
+    ],
+    "cloudOnlyHits": []
+  },
+  "ultimate.attestation_integrity": {
+    "cloudHits": [
+      "H-104",
+      "U-ATTEST-ROOT-KEY",
+      "U-ATTEST-SIGN-PROBE",
+      "U-GMS"
+    ],
+    "realHits": [
+      "H-104",
+      "U-ATTEST-ROOT-KEY",
+      "U-ATTEST-SIGN-PROBE",
+      "U-GMS"
+    ],
+    "cloudOnlyHits": []
+  },
+  "ultimate.boot_unlock": {
+    "cloudHits": [
+      "U-BOOT-PROPS"
+    ],
+    "realHits": [
+      "H-09",
+      "H-13",
+      "U-BOOT-PROPS"
+    ],
+    "cloudOnlyHits": []
+  },
+  "ultimate.cloud_emulator": {
+    "cloudHits": [
+      "H-122",
+      "H-56",
+      "H-58",
+      "U-FS-TYPE"
+    ],
+    "realHits": [
+      "H-122",
+      "H-56",
+      "H-58",
+      "U-FS-TYPE"
+    ],
+    "cloudOnlyHits": []
+  },
+  "ultimate.debug_integrity": {
+    "cloudHits": [
+      "H-32",
+      "H-35",
+      "H-38",
+      "H-39"
+    ],
+    "realHits": [
+      "H-32",
+      "H-35",
+      "H-38",
+      "H-39"
+    ],
+    "cloudOnlyHits": []
+  },
+  "ultimate.device_identity": {
+    "cloudHits": [
+      "H-121",
+      "U-ANDROID-ID",
+      "U-CANVAS-FP",
+      "U-IDENT-SNAP"
+    ],
+    "realHits": [
+      "H-121",
+      "U-ANDROID-ID",
+      "U-CANVAS-FP",
+      "U-IDENT-SNAP"
+    ],
+    "cloudOnlyHits": []
+  },
+  "ultimate.hardware_env": {
+    "cloudHits": [
+      "U-HW-MIDR"
+    ],
+    "realHits": [
+      "U-HW-MIDR"
+    ],
+    "cloudOnlyHits": []
+  },
+  "ultimate.hook_inject": {
+    "cloudHits": [
+      "H-21"
+    ],
+    "realHits": [
+      "H-113",
+      "H-21"
+    ],
+    "cloudOnlyHits": []
+  },
+  "ultimate.location_network": {
+    "cloudHits": [],
+    "realHits": [],
+    "cloudOnlyHits": []
+  },
+  "ultimate.native_env": {
+    "cloudHits": [
+      "U-KERNEL-BUILD-DATE"
+    ],
+    "realHits": [
+      "U-ARCHIVED-PKG",
+      "U-DEX2OAT-FLAGS",
+      "U-KERNEL-BUILD-DATE",
+      "U-PM-SUNDRY"
+    ],
+    "cloudOnlyHits": []
+  },
+  "ultimate.probe_runtime": {
+    "cloudHits": [
+      "U-STATUS-SANDBOX"
+    ],
+    "realHits": [
+      "U-STATUS-SANDBOX"
+    ],
+    "cloudOnlyHits": []
+  },
+  "ultimate.root_selinux": {
+    "cloudHits": [
+      "H-01",
+      "H-40",
+      "U-MNT-TMPFS-OPEN"
+    ],
+    "realHits": [
+      "H-01",
+      "H-04",
+      "H-124",
+      "H-40",
+      "U-MNT-TMPFS-OPEN"
+    ],
+    "cloudOnlyHits": []
+  },
+  "ultimate.super_scan": {
+    "cloudHits": [
+      "H-104",
+      "H-121",
+      "H-32",
+      "U-GMS"
+    ],
+    "realHits": [
+      "H-04",
+      "H-09",
+      "H-104",
+      "H-121",
+      "H-32",
+      "U-GMS",
+      "U-STATUS-SANDBOX"
+    ],
+    "cloudOnlyHits": []
+  },
+  "ultimate.webview_fp": {
+    "cloudHits": [],
+    "realHits": [],
+    "cloudOnlyHits": []
+  }
+}

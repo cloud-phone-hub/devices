@@ -1,0 +1,10 @@
+=== 实机 shell service list (batch2-post.log) ===
+=== service list IModule ===
+32	android.hardware.audio.core.IModule/bluetooth: [android.hardware.audio.core.IModule]
+33	android.hardware.audio.core.IModule/default: [android.hardware.audio.core.IModule]
+34	android.hardware.audio.core.IModule/r_submix: [android.hardware.audio.core.IModule]
+
+=== diff/services.json summary (post) ===
+{"identity": 0, "capability": 89, "state": 1, "availability": 0, "fatal": 89}
+remaining IModule diffs: []
+serviceList.count diff: [{'level': 'capability', 'path': 'serviceList.count', 'base': 471, 'target': 390}]

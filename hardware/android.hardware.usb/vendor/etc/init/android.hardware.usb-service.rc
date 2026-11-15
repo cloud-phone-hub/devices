@@ -1,0 +1,8 @@
+# engine/vendor 自研 usb HAL（虚拟 HAL）：云机没有 USB 控制器，服务注册
+# android.hardware.usb.IUsb/default，端口状态一律按未连接上报。
+service vendor.usb-default /vendor/bin/hw/android.hardware.usb-service
+    class hal
+    user root
+    group root
+    seclabel u:r:hal_usb_default:s0
+    interface aidl android.hardware.usb.IUsb/default

@@ -1,0 +1,57 @@
+# 修复前：engine 的 patch 根不是 vendor 根，与 gold-15 布局不一致
+
+## 1. 两种布局的实测差异
+
+# ---- gold-15 原厂 patch.img（挂在 /mnt/vendor 时）----
+$ adb -s 127.0.0.1:5919 shell "ls /mnt/vendor"
+build.prop   bin   etc   lib   lib64   apex   firmware_mnt   odm_dlkm   mi_ext   EFI
+# 根下一层直接就是 vendor 内容；build.prop 在根
+
+# ---- engine（merge-v4，/mnt/patch）----
+$ adb shell "ls /mnt/patch"
+EFI  mi_ext  odm  persist  shared  vendor  vendor_dlkm
+# vendor 内容被包在子目录里；build.prop 在 /mnt/patch/vendor/build.prop
+
+## 2. 由此产生的重定向负担
+
+# engine 侧内核 fs/namei.c 的 rules 表必须写成「双层前缀」：
+{ "/vendor/etc",   ... "/mnt/patch/vendor/etc",   ... true },
+{ "/vendor/bin",   ... "/mnt/patch/vendor/bin",   ... true },
+{ "/vendor/lib",   ... "/mnt/patch/vendor/lib",   ... true },
+{ "/vendor/lib64", ... "/mnt/patch/vendor/lib64", ... true },
+{ "/vendor_dlkm/lib", ... "/mnt/patch/vendor_dlkm/lib", ... },
+{ "/odm/etc/build.prop", ... "/mnt/patch/odm/etc/build.prop", ... },
+...
+# 每棵子树都要单独列条目；漏一条 = 该路径读不到补丁内容。
+# 且裸 "/vendor"、"/vendor_dlkm"、"/odm" 不在白名单（列目录会看到空目录）。
+
+## 3. 父子挂载关系不一致
+
+# 真机（gold-15）：mi_ext / EFI / persist / shared 以 vendor 为父
+#   /mnt/vendor = patch.img
+#   /mnt/vendor/mi_ext  <- 挂在其上
+
+# engine（merge-v4）：
+#   /mnt/patch 是 tmpfs 上的普通目录（first_stage_init 创建）
+#   /mnt/patch/mi_ext 等是 tmpfs 的子目录
+#   patch.img 只挂在 /mnt/patch/vendor 这一棵上 —— 与真机的父子关系不同
+
+$ adb shell "cat /proc/self/mountinfo | grep -E 'mnt/patch|mnt/vendor'"
+# merge-v4 下看不到 "/ /mnt/vendor" 这一行；载体是 /mnt/patch
+
+## 4. 结果：vendor 根语义无法直接复用
+
+# 任何「以 vendor 根为基准」的行为在两套布局下都不同：
+#   - ueventd 读取 /vendor/ueventd.rc 的路径推断
+#   - init 对 ro.vendor.* 前缀属性的来源判断
+#   - 第三方脚本里写死的 /vendor/... 绝对路径
+# 这些都不会立刻报错，但排查时极易误判「文件明明在，为什么读不到」。
+
+## 5. 为什么当时决定试 merge-v5
+
+# 目标：让 patch 分区在语义上**就是** vendor 的替身，与 gold-15 一致。
+# 代价：
+#   - fstab 的 vdc 行要从文件末尾前移到第一个 logical first_stage_mount 之前；
+#   - 内核重定向目标全部改成 /mnt/vendor/...；
+#   - 三棵子树布局仍然保留在镜像里（构建链未改），只是挂载后由 /mnt/vendor 当根。
+# 这一步是「语义对齐」，不是修 bug；所以它的失败态是「布局不一致」而非报错。

@@ -1,0 +1,17 @@
+{
+  "id": 20,
+  "buildId": "15-205.1.0.212_SP2",
+  "deviceId": 15,
+  "configId": 15,
+  "osVersion": "15-205.1.0.212_SP2",
+  "buildDate": "20250726",
+  "securityPatch": "",
+  "factoryTgz": "Huawei-Pura-80-HED-AL00.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 Huawei-Pura-80-HED-AL00.zip (vendor/build.prop) 自动生成。",
+    "osVersion": "15-205.1.0.212_SP2"
+  },
+  "updatedAt": "2026-11-06 02:47:41"
+}

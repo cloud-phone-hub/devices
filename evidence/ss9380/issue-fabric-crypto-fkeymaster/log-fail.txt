@@ -1,0 +1,42 @@
+# 失败态：fabric_crypto 每 ~5 s 因 Fkeymaster 缺失 abort（index 3）
+
+- 日志：`out/core/daemon/runtime/ss9380_S9380ZCSDCZH1/3/qemu.log`（修复前 build）
+- 首次启动：96.616752 s；末次启动：1018.419307 s（约 15.4 分钟）
+
+## 1. 等待不存在的服务
+
+```
+01-01 00:01:36.621   934   934 I libbinder.ServiceManagerCppClient: Waiting for service 'vendor.samsung.hardware.security.fkeymaster.ISehFkeymaster/default' on '/dev/binder'...
+```
+
+## 2. 硬检查失败与 abort
+
+```
+01-01 00:01:41.731  1098  1098 F DEBUG   : Abort message: 'Check failed: fKeymaster !@ Error : Not found Fkeymaster service'
+08-12 09:07:51.314  1101  1101 F fabric_crypto: Check failed: fKeymaster !@ Error : Not found Fkeymaster service
+```
+
+## 3. 重启循环
+
+```
+[   96.616752][  T1] init: starting service 'fabric_crypto'...
+[  137.912138][  T1] init: starting service 'fabric_crypto'...
+...
+[  977.590916][  T1] init: starting service 'fabric_crypto'...
+[ 1018.419307][  T1] init: starting service 'fabric_crypto'...
+```
+
+## 4. 计数（整份 qemu.log）
+
+```
+starting service 'fabric_crypto'              = 185
+Not found Fkeymaster service                  = 347
+Abort message: 'Check failed: fKeymaster ...' = 174
+```
+
+## 5. 为什么不是权限问题
+
+失败发生在 `fabric_crypto` 的 main 里对服务存在性的硬断言（`Check failed`），
+而不是 binder 调用被 SELinux 拒绝后的返回错误；`vendor.samsung.hardware.
+security.fkeymaster-service` 依赖 `/dev/qseecom`，QEMU 无此设备，服务无法注册。
+补 sepolicy 不会让一个不存在的服务出现。

@@ -1,0 +1,42 @@
+# service_daemon 源码目录辅助命令
+#
+# 交叉编译由 engine 管线负责：cdh-vendor hal build android.service.daemon
+# （kind=cargo，NDK 29 / API 35 / aarch64-linux-android，产物落产物根
+# out/vendor/android<ver>/bin/service_daemon）。
+# 本文件只保留幂等抓取 external 依赖与快速语法检查。
+
+# 拉取 bionic system_properties + nanopb 到 resetprop/external/（幂等: 存在即跳过）
+fetch-external:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd "{{justfile_directory()}}/resetprop"
+    mkdir -p external
+
+    # bionic system_properties（patch 加 prop_area::reset + CMakeLists）
+    if [ ! -f external/system_properties/CMakeLists.txt ]; then
+        if [ ! -d external/system_properties/.git ]; then
+            rm -rf external/system_properties
+            git clone --depth 1 https://github.com/topjohnwu/system_properties external/system_properties
+        fi
+        if git -C external/system_properties apply --check ../../patch/system_properties.patch 2>/dev/null; then
+            git -C external/system_properties apply ../../patch/system_properties.patch
+            echo "[fetch] system_properties patch 已应用"
+        else
+            echo "[fetch] system_properties patch 无法应用（可能已应用过）"
+        fi
+    else
+        echo "[fetch] external/system_properties 已就绪"
+    fi
+
+    # nanopb（persist.cpp 的 persistent_properties 编解码，PB_BIND 宏依赖 pb.h）
+    if [ ! -f external/nanopb/pb.h ]; then
+        rm -rf external/nanopb
+        git clone --depth 1 --branch 0.4.9.1 https://github.com/nanopb/nanopb external/nanopb
+        echo "[fetch] nanopb 已拉取"
+    else
+        echo "[fetch] external/nanopb 已就绪"
+    fi
+
+# 快速语法检查（不链接，无需 NDK）
+check:
+    cd "{{justfile_directory()}}" && cargo check --target aarch64-linux-android 2>&1 | tail -5 || cargo check 2>&1 | tail -5

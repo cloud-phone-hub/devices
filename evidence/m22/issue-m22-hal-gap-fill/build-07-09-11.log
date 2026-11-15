@@ -1,0 +1,596 @@
+# cdh device build m22 --from build_vendor --skip build_vendor_dlkm --skip pack_super
+2026年10月29日 星期四 13时30分19秒 CST
+==> 设备: MEIZU 22（flyme/m22）
+==> 清单: manifest/flyme/m22/baselines/12.5.0.0A.json
+    厂商固件: roms/devices/flyme/m22/12.5.0.0A.zip
+    lineage 底包: roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip
+==> 阶段(3): build_vendor, build_patch, pack_vda
+==> [1/3] build_vendor  (07_build_vendor)
+  + 进程内调用 build_vendor
+==> android: 16（命令行）
+==> 产物目录: out/devices/flyme/m22/12.5.0.0A（out/devices）
+==> 厂商解包根: out/roms/flyme/m22/12.5.0.0A（命令行）
+==> HAL 产物根: out/vendor/android16（out/vendor）
+==> vendor 基底: out/roms/lineage/lineage-23.2/super/vendor_a.img（命令行）
+==> 厂商覆盖集合: 基线清单 vendor.replaces（2 项）
+==> 阶段日志: out/devices/flyme/m22/12.5.0.0A/img/vendor-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    HAL 编译器: out/bin/cdh-vendor
+    设备清单:   manifest/flyme/m22/device.json
+    机型静态树: manifest/flyme/m22/vendor（45 个文件）
+    编译产物:   out/vendor/android16（android.hardware.audio@default 4 项、android.hardware.authsecret@default 3 项、android.hardware.biometrics@default 9 项、android.hardware.boot@default 3 项、android.hardware.camera@default 3 项、android.hardware.confirmationui@default 3 项、android.hardware.drm@default 3 项、android.hardware.gnss@default 3 项、android.hardware.health@default 3 项、android.hardware.identity@default 3 项、android.hardware.ir@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.media.v412@default 20 项、android.hardware.memtrack@default 3 项、android.hardware.nfc@default 3 项、android.hardware.power@default 3 项、android.hardware.radio@default 3 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.usb@default 6 项、android.hardware.vibrator@default 3 项、android.hardware.weaver@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 9 项）
+    基底镜像:   out/roms/lineage/lineage-23.2/super/vendor_a.img（已存在，作为打包 vendor.img 基底）
+    解包目录:   out/roms/lineage/lineage-23.2/super/unpack_vendor（已有 444 个文件，步骤 1 会清空重解）
+    平台覆盖层: 无（device.json 未声明 hardware-platform）
+    目标树:     out/devices/flyme/m22/12.5.0.0A/vendor（已有 584 个文件（仅保留白名单顶层））
+    厂商覆盖:   2 条（lib64/libpng.so（替换）、etc/permissions（替换）；来源 out/roms/flyme/m22/12.5.0.0A/super/vendor_a.img，已存在）
+    vendor fstab: out/devices/flyme/m22/12.5.0.0A/vendor_boot/fstab.qcom -> etc/fstab.qcom（删除 fstab.virtio, fstab.virtio.gsi.sda, fstab.virtio.gsi.vdc）
+    vendor init:  etc/init/hw/init.virtio.rc -> init.sun.rc（计划）
+    SELinux 补丁: 模块层 android.hardware.audio vendor/hardware/android.hardware.audio/sepolicy（2 个文件）；模块层 android.hardware.ir vendor/hardware/android.hardware.ir/sepolicy（1 个文件）；模块层 android.hardware.keymint vendor/hardware/android.hardware.keymint/sepolicy（2 个文件）；模块层 android.hardware.media vendor/hardware/android.hardware.media/sepolicy（1 个文件）；模块层 android.hardware.media.v412 vendor/hardware/android.hardware.media.v412/sepolicy（2 个文件）；模块层 android.hardware.power vendor/hardware/android.hardware.power/sepolicy（1 个文件）；模块层 android.hardware.radio vendor/hardware/android.hardware.radio/sepolicy（1 个文件）；模块层 android.hardware.thermal vendor/hardware/android.hardware.thermal/sepolicy（1 个文件）；模块层 android.hardware.wifi vendor/hardware/android.hardware.wifi/sepolicy（2 个文件）；模块层 android.service.daemon vendor/hardware/android.service.daemon/sepolicy（2 个文件）；机型层 manifest/flyme/m22/sepolicy（3 个文件）
+    vendor 属性: 基线 build-prop-sets 5 项 / unsets 0 项 -> vendor/build.prop
+    VINTF schema: schema -> 9.0（25 个片段，0 个待改写）
+    镜像产物:   out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+    HAL 模块:  android.hardware.audio（变体 default，变体产物根 out/vendor/android16，4 项齐全（编译产物 2 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.audio.service
+        期望产物 out/vendor/android16/bin/hw/android.hardware.audio.effect.service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.audio.service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.audio.service.xml
+    HAL 模块:  android.hardware.authsecret（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.authsecret-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.authsecret-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.authsecret-service.xml
+    HAL 模块:  android.hardware.biometrics（变体 default，变体产物根 out/vendor/android16，9 项齐全（编译产物 4 + vendor 静态树 5）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.biometrics.fingerprint-service
+        期望产物 out/vendor/android16/bin/hw/android.hardware.biometrics.face-service
+        期望产物 out/vendor/android16/bin/hw/android.hardware.biometrics.fingerprint-virtualhal-service
+        期望产物 out/vendor/android16/bin/hw/android.hardware.biometrics.face-virtualhal-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.biometrics.face-service.rc
+        期望静态树 out/vendor/android16/etc/init/android.hardware.biometrics.fingerprint-service.rc
+        期望静态树 out/vendor/android16/etc/init/android.hardware.biometrics.virtualhal-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.biometrics.face-service.xml
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.biometrics.fingerprint-service.xml
+    HAL 模块:  android.hardware.boot（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.boot-service.default
+        期望静态树 out/vendor/android16/etc/init/android.hardware.boot-service.default.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.boot-service.default.xml
+    HAL 模块:  android.hardware.camera（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.camera-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.camera-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.camera-service.xml
+    HAL 模块:  android.hardware.confirmationui（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.confirmationui-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.confirmationui-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.confirmationui-service.xml
+    HAL 模块:  android.hardware.drm（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.drm-service.clearkey
+        期望静态树 out/vendor/android16/etc/init/android.hardware.drm-service.clearkey.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.drm-service.clearkey.xml
+    HAL 模块:  android.hardware.gnss（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.gnss-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.gnss-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.gnss-service.xml
+    HAL 模块:  android.hardware.health（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.health-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.health-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.health-service.xml
+    HAL 模块:  android.hardware.identity（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.identity-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.identity-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.identity-service.xml
+    HAL 模块:  android.hardware.ir（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.ir-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.ir-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.ir-service.xml
+    HAL 模块:  android.hardware.keymint（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.security.keymint-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.security.keymint-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.security.keymint-service.xml
+    HAL 模块:  android.hardware.light（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.lights-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.lights-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.lights-service.xml
+    HAL 模块:  android.hardware.media（变体 default，变体产物根 out/vendor/android16，6 项齐全（编译产物 2 + vendor 静态树 4）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.media.c2-mediatek
+        期望产物 out/vendor/android16/bin/hw/vendor.dolby.media.c2-default-service-dax
+        期望静态树 out/vendor/android16/etc/init/android.hardware.media.c2-mediatek.rc
+        期望静态树 out/vendor/android16/etc/init/vendor.dolby.media.c2-default-service-dax.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/manifest_media_c2_default.xml
+        期望静态树 out/vendor/android16/etc/vintf/manifest/vendor.dolby.media.c2-default-service-dax.xml
+    HAL 模块:  android.hardware.media.v412（变体 default，变体产物根 out/vendor/android16，20 项齐全（编译产物 17 + vendor 静态树 3）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.media.c2@1.2-service-v4l2-64
+        期望产物 out/vendor/android16/lib64/libc2plugin_store.so
+        期望产物 out/vendor/android16/lib64/android.hardware.graphics.bufferqueue@2.0.so
+        期望产物 out/vendor/android16/lib64/android.hardware.media.bufferpool2-V2-ndk.so
+        期望产物 out/vendor/android16/lib64/android.hardware.media.bufferpool@2.0.so
+        期望产物 out/vendor/android16/lib64/android.hardware.media.c2-V1-ndk.so
+        期望产物 out/vendor/android16/lib64/libchrome.so
+        期望产物 out/vendor/android16/lib64/libcodec2.so
+        期望产物 out/vendor/android16/lib64/libcodec2_aidl.so
+        期望产物 out/vendor/android16/lib64/libcodec2_hal_common.so
+        期望产物 out/vendor/android16/lib64/libcodec2_vndk.so
+        期望产物 out/vendor/android16/lib64/libevent.so
+        期望产物 out/vendor/android16/lib64/libfmq.so
+        期望产物 out/vendor/android16/lib64/libion.so
+        期望产物 out/vendor/android16/lib64/libsfplugin_ccodec_utils.so
+        期望产物 out/vendor/android16/lib64/libstagefright_aidl_bufferpool2.so
+        期望产物 out/vendor/android16/lib64/libstagefright_bufferpool@2.0.1.so
+        期望静态树 out/vendor/android16/etc/init/android.hardware.media.c2@1.2-service-v4l2-64.rc
+        期望静态树 out/vendor/android16/etc/seccomp_policy/android.hardware.media.c2-extended-seccomp_policy
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.media.c2@1.2-service-v4l2.xml
+    HAL 模块:  android.hardware.memtrack（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.memtrack-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.memtrack-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.memtrack-service.xml
+    HAL 模块:  android.hardware.nfc（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.nfc-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.nfc-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.nfc-service.xml
+    HAL 模块:  android.hardware.power（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.power-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.power-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.power.xml
+    HAL 模块:  android.hardware.radio（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.radio-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.radio-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.radio-service.xml
+    HAL 模块:  android.hardware.sensors（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.sensors-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.sensors-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.sensors-service.xml
+    HAL 模块:  android.hardware.thermal（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.thermal-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.thermal-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.thermal-service.xml
+    HAL 模块:  android.hardware.usb（变体 default，变体产物根 out/vendor/android16，6 项齐全（编译产物 2 + vendor 静态树 4）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.usb-service
+        期望产物 out/vendor/android16/bin/hw/android.hardware.usb.gadget-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.usb-service.rc
+        期望静态树 out/vendor/android16/etc/init/android.hardware.usb.gadget-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.usb-service.xml
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.usb.gadget-service.xml
+    HAL 模块:  android.hardware.vibrator（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.vibrator-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.vibrator-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.vibrator-service.xml
+    HAL 模块:  android.hardware.weaver（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.weaver-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.weaver-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.weaver-service.xml
+    HAL 模块:  android.hardware.wifi（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.wifi-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.wifi-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.wifi-service.xml
+    HAL 模块:  android.service.daemon（变体 default，变体产物根 out/vendor/android16，9 项齐全（编译产物 1 + vendor 静态树 8）-> 复用）
+        期望产物 out/vendor/android16/bin/service_daemon
+        期望静态树 out/vendor/android16/bin/cph-logcat-dump
+        期望静态树 out/vendor/android16/bin/cph-netmgr-setup
+        期望静态树 out/vendor/android16/bin/cph-setup-display
+        期望静态树 out/vendor/android16/etc/init/cph_daemon_service.rc
+        期望静态树 out/vendor/android16/etc/init/cph_disable_provision.rc
+        期望静态树 out/vendor/android16/etc/init/cph_logcat_dump.rc
+        期望静态树 out/vendor/android16/etc/init/cph_netmgr.rc
+        期望静态树 out/vendor/android16/etc/init/cph_start_adbd.rc
+    缓存配方:   vendor-e72ec891cd62
+==> [步骤 1] 解包 lineage vendor 镜像
+    输入: out/roms/lineage/lineage-23.2/super/vendor_a.img（debugfs /opt/homebrew/opt/e2fsprogs/sbin/debugfs）
+    输出: out/roms/lineage/lineage-23.2/super/unpack_vendor
+    解包条目 481（文件 244 / 链接 200 / 目录 37），权限与归属由打包段按官方真值重设
+==> [步骤 2] 按白名单复制到装配树
+    输入: out/roms/lineage/lineage-23.2/super/unpack_vendor（顶层白名单 bin / build.prop / etc / firmware_mnt / lib / lib64 / pci.ids）
+    输出: out/devices/flyme/m22/12.5.0.0A/vendor
+    保留 bin / build.prop / etc / firmware_mnt / lib / lib64 / pci.ids（复制 446 条目：文件 219 / 链接 199 / 目录 28）
+    丢弃 apex / firmware / lost+found / odm / odm_dlkm / overlay / usr
+==> [步骤 3] 编译 HAL 模块
+    输入: manifest/flyme/m22/device.json（hardware 26 项：android.hardware.audio@default、android.hardware.authsecret@default、android.hardware.biometrics@default、android.hardware.boot@default、android.hardware.camera@default、android.hardware.confirmationui@default、android.hardware.drm@default、android.hardware.gnss@default、android.hardware.health@default、android.hardware.identity@default、android.hardware.ir@default、android.hardware.keymint@default、android.hardware.light@default、android.hardware.media@default、android.hardware.media.v412@default、android.hardware.memtrack@default、android.hardware.nfc@default、android.hardware.power@default、android.hardware.radio@default、android.hardware.sensors@default、android.hardware.thermal@default、android.hardware.usb@default、android.hardware.vibrator@default、android.hardware.weaver@default、android.hardware.wifi@default、android.service.daemon@default）
+    输出: out/vendor/android16（android.hardware.audio@default 4 项、android.hardware.authsecret@default 3 项、android.hardware.biometrics@default 9 项、android.hardware.boot@default 3 项、android.hardware.camera@default 3 项、android.hardware.confirmationui@default 3 项、android.hardware.drm@default 3 项、android.hardware.gnss@default 3 项、android.hardware.health@default 3 项、android.hardware.identity@default 3 项、android.hardware.ir@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.media.v412@default 20 项、android.hardware.memtrack@default 3 项、android.hardware.nfc@default 3 项、android.hardware.power@default 3 项、android.hardware.radio@default 3 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.usb@default 6 项、android.hardware.vibrator@default 3 项、android.hardware.weaver@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 9 项）
+[skip] android.hardware.audio 已编译（2 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.authsecret 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.biometrics 已编译（4 个编译产物 + 5 个 vendor 静态树文件齐全）
+[skip] android.hardware.boot 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.camera 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.confirmationui 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.drm 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.gnss 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.health 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.identity 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.ir 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.keymint 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.light 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.media 已编译（2 个编译产物 + 4 个 vendor 静态树文件齐全）
+[skip] android.hardware.media.v412 已编译（17 个编译产物 + 3 个 vendor 静态树文件齐全）
+[skip] android.hardware.memtrack 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.nfc 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.power 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.radio 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.sensors 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.thermal 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.usb 已编译（2 个编译产物 + 4 个 vendor 静态树文件齐全）
+[skip] android.hardware.vibrator 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.weaver 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.hardware.wifi 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全）
+[skip] android.service.daemon 已编译（1 个编译产物 + 8 个 vendor 静态树文件齐全）
+==> [步骤 4] 复制编译产物到装配树
+    输入: 机型静态树 manifest/flyme/m22/vendor；编译产物 out/vendor/android16（android.hardware.audio@default 4 项、android.hardware.authsecret@default 3 项、android.hardware.biometrics@default 9 项、android.hardware.boot@default 3 项、android.hardware.camera@default 3 项、android.hardware.confirmationui@default 3 项、android.hardware.drm@default 3 项、android.hardware.gnss@default 3 项、android.hardware.health@default 3 项、android.hardware.identity@default 3 项、android.hardware.ir@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.media.v412@default 20 项、android.hardware.memtrack@default 3 项、android.hardware.nfc@default 3 项、android.hardware.power@default 3 项、android.hardware.radio@default 3 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.usb@default 6 项、android.hardware.vibrator@default 3 项、android.hardware.weaver@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 9 项）；平台覆盖层 无（device.json 未声明 hardware-platform）
+    输出: out/devices/flyme/m22/12.5.0.0A/vendor
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/cph-logcat-dump（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/cph-netmgr-setup（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/cph-setup-display（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.audio.effect.service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.audio.service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.authsecret-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.biometrics.face-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.biometrics.face-virtualhal-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.biometrics.fingerprint-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.biometrics.fingerprint-virtualhal-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.boot-service.default（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.camera-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.composer.hwc3-service.drm（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.confirmationui-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.drm-service.clearkey（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.gnss-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.graphics.allocator-service.minigbm（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.health-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.identity-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.ir-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.lights-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.media.c2-mediatek（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.media.c2@1.2-service-v4l2-64（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.memtrack-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.nfc-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.power-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.radio-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.security.keymint-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.sensors-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.thermal-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.usb-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.usb.gadget-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.vibrator-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.weaver-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/android.hardware.wifi-service（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/hw/vendor.dolby.media.c2-default-service-dax（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/bin/service_daemon（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/build.prop（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/cdh_battery.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/cdh_gnss.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/cdh_light.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/cdh_media.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/cdh_sensors.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/cdh_thermal.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/cdh_vibrator.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/cdh_wifi.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/excluded-input-devices.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/allocator.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.audio.service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.authsecret-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.biometrics.face-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.biometrics.fingerprint-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.biometrics.virtualhal-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.boot-service.default.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.camera-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.confirmationui-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.drm-service.clearkey.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.gnss-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.health-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.identity-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.ir-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.lights-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.media.c2-mediatek.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.media.c2@1.2-service-v4l2-64.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.memtrack-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.nfc-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.power-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.radio-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.security.keymint-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.sensors-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.thermal-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.usb-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.usb.gadget-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.vibrator-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.weaver-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/android.hardware.wifi-service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/cdh_frp_symlink.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/cph_daemon_service.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/cph_disable_provision.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/cph_logcat_dump.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/cph_logcat_dump_early.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/cph_netmgr.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/cph_start_adbd.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/hw/init.qcom.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/hwc3-drm.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/vendor.dolby.media.c2-default-service-dax.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/media_codecs.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/media_codecs_c2.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/media_codecs_c2_audio.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/media_codecs_google_audio.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/media_codecs_google_c2.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/media_codecs_google_c2_audio.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/media_codecs_google_c2_video.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/media_codecs_google_telephony.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/media_codecs_vendor_audio.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/seccomp_policy/android.hardware.media.c2-extended-seccomp_policy（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/ueventd.qcom.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/allocator.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.audio.service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.authsecret-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.biometrics.face-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.biometrics.fingerprint-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.boot-service.default.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.camera-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.confirmationui-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.drm-service.clearkey.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.gnss-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.health-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.identity-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.ir-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.lights-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.media.c2@1.2-service-v4l2.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.memtrack-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.nfc-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.power.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.radio-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.security.keymint-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.sensors-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.thermal-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.usb-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.usb.gadget-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.vibrator-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.weaver-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.hardware.wifi-service.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.se.omapi.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/hwc3-drm.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/manifest_media_c2_default.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/mapper.minigbm.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/vendor.dolby.media.c2-default-service-dax.xml（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/android.hardware.drm.common-V1-ndk.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/android.hardware.graphics.bufferqueue@2.0.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/android.hardware.graphics.common-V6-ndk.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/android.hardware.graphics.composer3-V4-ndk.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/android.hardware.graphics.composer@2.1-resources.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/android.hardware.graphics.composer@2.1.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/android.hardware.graphics.composer@2.2-resources.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/android.hardware.graphics.composer@2.2.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/android.hardware.media.bufferpool2-V2-ndk.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/android.hardware.media.bufferpool@2.0.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/android.hardware.media.c2-V1-ndk.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/hw/gralloc.minigbm.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/hw/mapper.minigbm.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/libc2plugin_store.so（0755）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/libchrome.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/libcodec2.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/libcodec2_aidl.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/libcodec2_hal_common.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/libcodec2_vndk.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/libevent.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/libfmq.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/libion.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/libminigbm_gralloc.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/libminigbm_gralloc4_utils.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/libsfplugin_ccodec_utils.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/libstagefright_aidl_bufferpool2.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/lib64/libstagefright_bufferpool@2.0.1.so（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/usr/idc/QEMU Virtio MultiTouch.idc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/usr/idc/QEMU Virtio Tablet.idc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/usr/idc/tablet2multitouch.idc（0644）
+==> [步骤 5] 厂商 vendor 原件覆盖
+    输入: out/roms/flyme/m22/12.5.0.0A（厂商 vendor 原件）（覆盖集合 2 项）
+    输出: out/devices/flyme/m22/12.5.0.0A/vendor
+[replace] vendor/lib64/libpng.so <- 厂商 vendor/lib64/libpng.so（文件覆盖）
+[replace] vendor/etc/permissions <- 厂商 vendor/etc/permissions（目录，80 个文件，替换）
+==> VINTF schema 对齐到 9.0（系统 libvintf 上限）
+    已全部是 9.0，无需改写
+==> [步骤 6] 应用基线 vendor 属性 -> out/devices/flyme/m22/12.5.0.0A/vendor/build.prop
+    [prop] 覆盖 ro.hardware.egl=mesa
+    [prop] 覆盖 ro.hwui.use_vulkan=false
+    [prop] 覆盖 ro.opengles.version=196608
+    [prop] 追加 ro.vendor.boot_security_patch=2025-12-05
+==> [步骤 6] fstab 收口
+    输入: out/devices/flyme/m22/12.5.0.0A/vendor_boot/fstab.qcom（05 阶段缓存的 first_stage fstab）
+    输出: out/devices/flyme/m22/12.5.0.0A/vendor/etc（落 fstab.<board>，删除 lineage fstab.virtio*；把 init.virtio.rc 改名成 init.<board>.rc）
+    删除 out/devices/flyme/m22/12.5.0.0A/vendor/etc/fstab.virtio（lineage fstab.virtio 副本）
+    删除 out/devices/flyme/m22/12.5.0.0A/vendor/etc/fstab.virtio.gsi.sda（lineage fstab.virtio 副本）
+    删除 out/devices/flyme/m22/12.5.0.0A/vendor/etc/fstab.virtio.gsi.vdc（lineage fstab.virtio 副本）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/fstab.qcom（first_stage fstab：out/devices/flyme/m22/12.5.0.0A/vendor_boot/fstab.qcom）
+    改名 init.virtio.rc -> init.sun.rc（init 按 ro.hardware=sun 找板级入口）
+==> [步骤 6] 注入 SELinux 策略补丁
+    输入[模块层 android.hardware.audio]: vendor/hardware/android.hardware.audio/sepolicy
+    输入[模块层 android.hardware.ir]: vendor/hardware/android.hardware.ir/sepolicy
+    输入[模块层 android.hardware.keymint]: vendor/hardware/android.hardware.keymint/sepolicy
+    输入[模块层 android.hardware.media]: vendor/hardware/android.hardware.media/sepolicy
+    输入[模块层 android.hardware.media.v412]: vendor/hardware/android.hardware.media.v412/sepolicy
+    输入[模块层 android.hardware.power]: vendor/hardware/android.hardware.power/sepolicy
+    输入[模块层 android.hardware.radio]: vendor/hardware/android.hardware.radio/sepolicy
+    输入[模块层 android.hardware.thermal]: vendor/hardware/android.hardware.thermal/sepolicy
+    输入[模块层 android.hardware.wifi]: vendor/hardware/android.hardware.wifi/sepolicy
+    输入[模块层 android.service.daemon]: vendor/hardware/android.service.daemon/sepolicy
+    输入[机型层]: manifest/flyme/m22/sepolicy
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.audio/sepolicy/vendor_sepolicy.cil（3439 字节，marker ;; vendor_sepolicy.cil@android.hardware.audio）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_service_contexts <- vendor/hardware/android.hardware.audio/sepolicy/vendor_service_contexts（1516 字节，marker # vendor_service_contexts@android.hardware.audio）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_file_contexts <- vendor/hardware/android.hardware.ir/sepolicy/vendor_file_contexts（486 字节，marker # vendor_file_contexts@android.hardware.ir）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.keymint/sepolicy/vendor_sepolicy.cil（2300 字节，marker ;; vendor_sepolicy.cil@android.hardware.keymint）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_property_contexts <- vendor/hardware/android.hardware.keymint/sepolicy/vendor_property_contexts（647 字节，marker # vendor_property_contexts@android.hardware.keymint）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.media/sepolicy/vendor_sepolicy.cil（2188 字节，marker ;; vendor_sepolicy.cil@android.hardware.media）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.media.v412/sepolicy/vendor_sepolicy.cil（1162 字节，marker ;; vendor_sepolicy.cil@android.hardware.media.v412）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_file_contexts <- vendor/hardware/android.hardware.media.v412/sepolicy/vendor_file_contexts（1244 字节，marker # vendor_file_contexts@android.hardware.media.v412）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_file_contexts <- vendor/hardware/android.hardware.power/sepolicy/vendor_file_contexts（989 字节，marker # vendor_file_contexts@android.hardware.power）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.radio/sepolicy/vendor_sepolicy.cil（2351 字节，marker ;; vendor_sepolicy.cil@android.hardware.radio）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.thermal/sepolicy/vendor_sepolicy.cil（482 字节，marker ;; vendor_sepolicy.cil@android.hardware.thermal）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.wifi/sepolicy/vendor_sepolicy.cil（3083 字节，marker ;; vendor_sepolicy.cil@android.hardware.wifi）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_file_contexts <- vendor/hardware/android.hardware.wifi/sepolicy/vendor_file_contexts（592 字节，marker # vendor_file_contexts@android.hardware.wifi）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.service.daemon/sepolicy/vendor_sepolicy.cil（7534 字节，marker ;; vendor_sepolicy.cil@android.service.daemon）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_file_contexts <- vendor/hardware/android.service.daemon/sepolicy/vendor_file_contexts（1568 字节，marker # vendor_file_contexts@android.service.daemon）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_sepolicy.cil <- manifest/flyme/m22/sepolicy/vendor_sepolicy.cil（7790 字节，marker ;; vendor_sepolicy.cil）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_file_contexts <- manifest/flyme/m22/sepolicy/vendor_file_contexts（2527 字节，marker # vendor_file_contexts）
+    追加 out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_service_contexts <- manifest/flyme/m22/sepolicy/vendor_service_contexts（1734 字节，marker # vendor_service_contexts）
+==> [步骤 7] 打包 vendor.img
+    输入: out/devices/flyme/m22/12.5.0.0A/vendor（660 条目：文件 427 / 链接 199 / 目录 34）+ 基底 out/roms/lineage/lineage-23.2/super/vendor_a.img（取 UUID/features）
+    输出: out/devices/flyme/m22/12.5.0.0A/img/vendor.img（mke2fs -d -> 元数据回写 -> e2fsck -> resize2fs -M）
+==> 基底文件系统特征: UUID 2b96c597-1e2f-5ee1-9851-c4a9fa9de36e，block 4096 / inode 256，features ext_attr dir_index filetype extent sparse_super large_file huge_file uninit_bg dir_nlink extra_isize
+==> mke2fs -d 从装配树生成 vendor.img: out/devices/flyme/m22/12.5.0.0A/vendor -> out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+    装配树条目 660（文件 427 / 链接 199 / 目录 34），初始 60382 块（235 MB），inode 768
+==> 解包官方 vendor 镜像（取 SELinux 标签真值）: out/roms/flyme/m22/12.5.0.0A/super/vendor_a.img
+==> 官方镜像标签真值: 4594 条（含 297 个符号链接自身）
+==> vendor 元数据规则表: out/devices/flyme/m22/12.5.0.0A/img/vendor-meta-rules.txt, out/devices/flyme/m22/12.5.0.0A/img/vendor-meta-summary.txt
+==> debugfs 写入 660 个条目的元数据（权限 / 归属 / 时间 / SELinux）
+==> e2fsck 校验修复 vendor.img
+==> resize2fs -M 最小化收紧 vendor.img
+[ok] vendor.img 构建完成: out/devices/flyme/m22/12.5.0.0A/img/vendor.img（205688832 字节）
+==> [步骤 8] 写清单与校验和
+    输入: out/devices/flyme/m22/12.5.0.0A/img/vendor.img、out/devices/flyme/m22/12.5.0.0A/img/vendor-meta-rules.txt、out/devices/flyme/m22/12.5.0.0A/img/vendor-meta-summary.txt
+    输出: out/devices/flyme/m22/12.5.0.0A/img/{vendor-info.txt、vendor-recipe.txt、SHA256SUMS}
+[ok] vendor 目录树装配与 vendor.img 打包完成: out/devices/flyme/m22/12.5.0.0A/vendor, out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+    机型静态树: 写入 42，已存在同内容 0
+    机型 usr: 写入 3，已存在同内容 0
+    编译产物 android.hardware.audio@default: 写入 4，已存在同内容 0
+    编译产物 android.hardware.authsecret@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.biometrics@default: 写入 9，已存在同内容 0
+    编译产物 android.hardware.boot@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.camera@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.confirmationui@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.drm@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.gnss@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.health@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.identity@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.ir@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.keymint@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.light@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.media@default: 写入 6，已存在同内容 0
+    编译产物 android.hardware.media.v412@default: 写入 20，已存在同内容 0
+    编译产物 android.hardware.memtrack@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.nfc@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.power@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.radio@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.sensors@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.thermal@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.usb@default: 写入 6，已存在同内容 0
+    编译产物 android.hardware.vibrator@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.weaver@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.wifi@default: 写入 3，已存在同内容 0
+    编译产物 android.service.daemon@default: 写入 9，已存在同内容 0
+    平台覆盖层: 跳过（device.json 未声明 hardware-platform）
+    备注: vendor.img 由装配树经 mke2fs -d 全量生成，复刻基底 UUID/features，元数据经回查与 e2fsck 校验
+    备注: mke2fs 会在新镜像里自带一个空的 /lost+found（e2fsck 也会补回），不属于装配树，已补 0700 root:root 与 vendor_file 标签
+    备注: 符号链接在 ext4 上恒为 0777，规则表里记的是官方 EROFS 原值（0755 之类），两者不同属预期
+    备注: 机型侧 vendor_builder.py 走的是镜像内就地注入路线，与本阶段统一为先解包装配再建镜像
+    备注: 模块 vendor 静态树（rc / VINTF）已计入复用判据：产物根缺件会自动重跑该模块的 hal build
+==> [2/3] build_patch  (09_build_patch)
+  + 进程内调用 build_patch
+==> 产物目录: out/devices/flyme/m22/12.5.0.0A（out/devices）
+==> vendor 源镜像（07 产物）: out/devices/flyme/m22/12.5.0.0A/img/vendor.img（205688832 B，sha256 951a9c1462ee，产物目录缺省）
+==> vendor_dlkm 源镜像（08 产物）: out/devices/flyme/m22/12.5.0.0A/img/vendor_dlkm.img（15831040 B，sha256 6ff7b05cddb4，产物目录缺省）
+==> odm 源镜像（06 产物）: out/devices/flyme/m22/12.5.0.0A/img/odm.img（8388608 B，sha256 81b0f198a1ed，产物目录缺省）
+    基线清单: manifest/flyme/m22/baselines/12.5.0.0A.json（patch.vendor-cil-rewrite 4 条）
+      #1 (allow ot_rcp self (netlink_route_socket (nlmsg)))
+      #2 (allowx ot_rcp self (nlmsg netlink_route_socket (0x16 0x1a 0x22 0x26 0x2a 0x2e 0x32 0x3a 0x3e 0x4a 0x4e 0x52 0x56 0x5a 0x5c 0x5e 0x60 0x66 0x6a 0x72 0x76 0x7a)))
+      #3 (allowx ot_rcp self (nlmsg netlink_route_socket (0x12)))
+      #4 (allow kernel_202504 vendor_firmware_file (system (firmware_load)))
+    输入: 缓存配方 patch-0393f4bb03ca（输入哈希）
+==> 阶段日志: out/devices/flyme/m22/12.5.0.0A/img/patch-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    载体:        /dev/block/vdc -> /mnt/patch（first_stage_mount，不复用 /mnt/vendor）
+    子树 vendor: out/devices/flyme/m22/12.5.0.0A/img/vendor.img（205688832 B，已存在，sha256 951a9c1462ee） -> /vendor
+    子树 dlkm:   out/devices/flyme/m22/12.5.0.0A/img/vendor_dlkm.img（15831040 B，已存在，sha256 6ff7b05cddb4） -> /vendor_dlkm
+    子树 odm:    out/devices/flyme/m22/12.5.0.0A/img/odm.img（8388608 B，已存在，sha256 81b0f198a1ed） -> /odm
+    形态修正:    /vendor/odm 软链接换真实空目录；/vendor/lib/modules 由 vendor_dlkm 复制实体
+    屏蔽落点:    odm/etc/selinux/odm_sepolicy.cil、odm/etc/selinux/precompiled_sepolicy（必须不存在，否则反噬引导）
+    工具:        debugfs=/opt/homebrew/opt/e2fsprogs/sbin/debugfs，e2fsck=/opt/homebrew/opt/e2fsprogs/sbin/e2fsck，mkfs.ext4=/opt/homebrew/opt/e2fsprogs/sbin/mkfs.ext4
+    镜像产物:    out/devices/flyme/m22/12.5.0.0A/img/patch.img（384 MiB，ext4）
+    缓存配方:    patch-0393f4bb03ca
+==> [步骤 1] 解包三棵源树
+    输入: out/devices/flyme/m22/12.5.0.0A/img/vendor.img（205688832 B）+ out/devices/flyme/m22/12.5.0.0A/img/vendor_dlkm.img（15831040 B）+ out/devices/flyme/m22/12.5.0.0A/img/odm.img（8388608 B）
+    输出: out/devices/flyme/m22/12.5.0.0A/patch/stage/{raw_vendor、raw_vendor_dlkm、raw_odm}（debugfs rdump）
+    vendor: out/devices/flyme/m22/12.5.0.0A/patch/stage/raw_vendor（661 条目：文件 427 / 链接 199 / 目录 35）
+    vendor_dlkm: out/devices/flyme/m22/12.5.0.0A/patch/stage/raw_vendor_dlkm（102 条目：文件 98 / 链接 0 / 目录 4）
+    odm: out/devices/flyme/m22/12.5.0.0A/patch/stage/raw_odm（3 条目：文件 1 / 链接 0 / 目录 2）
+[ok] 源树已解包
+==> [步骤 2] 组装 patch 容器根
+    输入: out/devices/flyme/m22/12.5.0.0A/patch/stage/raw_vendor -> /vendor，out/devices/flyme/m22/12.5.0.0A/patch/stage/raw_vendor_dlkm -> /vendor_dlkm，out/devices/flyme/m22/12.5.0.0A/patch/stage/raw_odm -> /odm
+    输出: out/devices/flyme/m22/12.5.0.0A/patch/stage/root（= 运行态 /mnt/patch）
+    /vendor/lib/modules 符号链接（-> /vendor_dlkm/lib/modules）替换为真实目录（从 /vendor_dlkm/lib/modules 复制 94 条目）
+    屏蔽落点校验通过（2 项均不存在）
+    改写 /vendor/etc/selinux/vendor_sepolicy.cil（清单 4 条规则）
+      #1 命中 1 次 -> (allow ot_rcp self (netlink_route_socket (nlmsg_write)))
+      #2 命中 1 次 -> ;; cdh: permissionx nlmsg 内核与 plat 均不支持，已删除（ot_r…
+      #3 命中 1 次 -> ;; cdh: permissionx nlmsg 内核与 plat 均不支持，已删除（ot_r…
+      #4 命中 1 次 -> ;; cdh: system class 的 firmware_load 是 6.13+ 权限，内核 classma…
+[ok] 组装完成：863 条目（文件 620 / 链接 198 / 目录 45）
+==> [步骤 3] 逐路径从源镜像取元数据
+    输入: 864 条目（源 862 + 固定 2），源镜像 3 张
+    输出: 每个条目的 mode（含类型位）/ uid / gid / security.selinux
+    out/devices/flyme/m22/12.5.0.0A/img/odm.img: 读回 4 条目
+    out/devices/flyme/m22/12.5.0.0A/img/vendor.img: 读回 661 条目，[warn] 1 个缺 security.selinux（按 u:object_r:vendor_file:s0 兜底）
+    out/devices/flyme/m22/12.5.0.0A/img/vendor_dlkm.img: 读回 197 条目
+[ok] 元数据就绪：864 条目，标签 36 种
+==> [步骤 4] mkfs.ext4 -d 导入内容与权限位
+    输入: out/devices/flyme/m22/12.5.0.0A/patch/stage/root（864 条目，384 MiB）
+    输出: out/devices/flyme/m22/12.5.0.0A/patch/patch.work.img（98304 块 × 4096 B；uid/gid 留给步骤 5 回填）
+[ok] 文件系统已建立: out/devices/flyme/m22/12.5.0.0A/patch/patch.work.img（402653184 B）
+==> [步骤 5] debugfs 回填属主与标签并回读校验
+    输入: out/devices/flyme/m22/12.5.0.0A/patch/patch.work.img（864 条目）
+    输出: out/devices/flyme/m22/12.5.0.0A/patch/patch-debugfs.cmd（3456 条命令：sif 2592 + ea_set 864，标签值文件 36 个）
+[ok] 回填 864 条目，回读 864/864 一致
+==> [步骤 6] e2fsck 修复一致性
+    输入: out/devices/flyme/m22/12.5.0.0A/patch/patch.work.img
+    输出: 元数据一致、可挂载的 ext4 镜像
+[ok] e2fsck 通过（退出码 0 = 无需修复）
+==> [步骤 7] 发布镜像并写清单与校验和
+    输入: out/devices/flyme/m22/12.5.0.0A/patch/patch.work.img（864 条目，384 MiB）
+    输出: out/devices/flyme/m22/12.5.0.0A/img/{patch.img、patch-info.txt、patch-recipe.txt、SHA256SUMS}
+[ok] patch.img 发布完成: out/devices/flyme/m22/12.5.0.0A/img/patch.img（402653184 字节，sha256 8471dfc5e79d）
+[ok] patch.img 构建完成: out/devices/flyme/m22/12.5.0.0A/img/patch.img
+    条目 864（源 862 + 固定 2），回读校验 864 一致，标签值文件 36 个
+    备注: patch.img 根是容器：/vendor、/vendor_dlkm、/odm 三棵并列子树分别来自 vendor.img / vendor_dlkm.img / odm.img
+    备注: mke2fs -d 不保留 uid/gid：属主与标签由步骤 5 的 debugfs 会话统一回填（标签用 -f 值文件带 NUL）
+    备注: 容器根、/vendor/odm、/vendor/lib/modules 的元数据固定，不取自源镜像
+    备注: /vendor/odm 在 vendor.img 里是绝对软链接，组装时换成真实空目录；odm 内容由 /odm 子树承载
+    备注: /vendor/lib/modules 在 vendor.img 里是软链接，组装时替换为真实目录并从 vendor_dlkm 复制；其子项元数据取自 vendor_dlkm.img
+    备注: odm 子树（odm.img）由 06_build_odm 产出，承载 odm/etc/build.prop 的 64 位 ABI 覆盖件
+    备注: 屏蔽落点（odm/etc/selinux/odm_sepolicy.cil）用 exists 校验；/system/bin/update_verifier 由内核 getname 直接返回 ENOENT，与镜像内容无关
+    备注: 镜像大小固定 384 MiB（--size 可调）；ext4 只按内容占用，剩余空间留白供 vdc 只读挂载
+    备注: /mnt/vendor 不再被 patch 覆盖，EFI/persist/shared/mi_ext 由 first_stage_init 的 tmpfs + 官方 fstab 挂载
+==> [3/3] pack_vda  (11_pack_vda)
+  + 进程内调用 pack_vda
+==> 底盘: roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2 / LineageOS_on_arm64.utm/Data/vda.img（CDH_LINEAGE_ZIP）
+==> 阶段日志: out/dist/flyme/m22/12.5.0.0A/vda-log.txt（边写边变，不在 SHA256SUMS 之内）
+==> [步骤 0] 解析计划
+    设备:       flyme/m22 12.5.0.0A（id=m22_12.5.0.0A）
+    来源镜像:   out/devices/flyme/m22/12.5.0.0A/img（super 必需，boot/vendor_boot 可缺，patch 必需）
+    底盘:       roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2 / LineageOS_on_arm64.utm/Data/vda.img（zip）
+    盘集目录:   out/dist/flyme/m22/12.5.0.0A（已有 vda.img 13.00 GiB）
+    分区表:     11 个分区、扇区 512 B（EFI/super/misc/persist/metadata/firmware/vendor_boot_a/vendor_boot_b/boot_a/boot_b/BIOS）
+    设备规格:   MEIZU 22 / sun 1080×2400 @ 440 dpi，1 档内存，8 vCPU；verified-boot-hash fe049d35e450
+    data:       稀疏种子 110.27 GiB（data.qcow2）
+    grub:       固化固定 _a 槽 + 菜单零等待 + vbmeta 注入（幂等，缺 mtools 只告警）
+    缓存配方:   记录为 vda-5fe78d51e413，实跑时重新计算比对
+    重建原因: 配方变化: vda-5fe78d51e413 -> vda-e9f7b85d87bb
+==> [步骤 1] 校验来源镜像并生成 device.json
+    [ok] super.img 9.39 GiB（out/devices/flyme/m22/12.5.0.0A/img/super.img）
+    [ok] boot.img         80.0 MiB（out/devices/flyme/m22/12.5.0.0A/img/boot.img）
+    [ok] vendor_boot.img  21.4 MiB（out/devices/flyme/m22/12.5.0.0A/img/vendor_boot.img）
+    [ok] patch.img 384.0 MiB（out/devices/flyme/m22/12.5.0.0A/img/patch.img）
+    [ok] device.json 内容已生成（id=m22_12.5.0.0A，554 B）
+==> [步骤 2] 准备 vda 底盘
+    输入: roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2 / LineageOS_on_arm64.utm/Data/vda.img
+    [skip] 缓存 raw 可用: out/tmp/pack-vda/flyme/m22/12.5.0.0A/vda.raw（13.00 GiB）
+    [skip] 复用 out/dist/flyme/m22/12.5.0.0A/vda.img（底盘未变，仅原位刷新分区）
+==> [步骤 3] 替换 super 分区（安卓系统盘）
+    [ok] super           9.39 GiB @ 129.0 MiB（容量 12.00 GiB，余量 2.61 GiB），回读一致
+==> [步骤 4] 替换 boot / vendor_boot 分区（A/B 双槽）
+    [ok] boot_a          80.0 MiB @ 12.49 GiB（容量 80.0 MiB，余量 0 B），回读一致
+    [ok] boot_b          80.0 MiB @ 12.57 GiB（容量 80.0 MiB，余量 0 B），回读一致
+    [ok] vendor_boot_a   21.4 MiB @ 12.30 GiB（容量 100.0 MiB，余量 78.6 MiB），回读一致
+    [ok] vendor_boot_b   21.4 MiB @ 12.40 GiB（容量 100.0 MiB，余量 78.6 MiB），回读一致
+==> [步骤 5] 固化 EFI grub.cfg（固定 _a + 菜单零等待 + vbmeta + 设备 cmdline）
+    [..] 已含# CDH: 固定启动 A 槽
+    [..] 已含# CDH: 引导菜单零等待
+    [..] 已含# CDH: Remote KeyMint verified boot 参数
+    [warn] device.json 未登记 cmdline，跳过设备参数注入
+    [skip] grub.cfg 已含全部 CDH 固化
+==> [步骤 6] 发布盘集（patch.img / data.qcow2 / device.json）
+    [..] patch.img 内容已变，重新发布（384.0 MiB）
+    [ok] patch.img -> out/dist/flyme/m22/12.5.0.0A/patch.img（384.0 MiB，sha256 8471dfc5e79d）
+    [skip] data.qcow2 已就位（193.7 KiB）
+    [ok] device.json（id=m22_12.5.0.0A）-> out/dist/flyme/m22/12.5.0.0A/device.json
+    [ok] out/dist/flyme/m22/12.5.0.0A/vda-info.txt / out/dist/flyme/m22/12.5.0.0A/vda-recipe.txt
+    产物: out/dist/flyme/m22/12.5.0.0A（vda.img 13.00 GiB，5 个分区已刷新）
+[ok] 已完成
+EXIT=0

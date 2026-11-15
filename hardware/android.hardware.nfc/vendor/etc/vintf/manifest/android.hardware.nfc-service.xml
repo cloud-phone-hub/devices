@@ -1,0 +1,10 @@
+<manifest version="1.0" type="device">
+  <!-- engine/vendor 自研 nfc HAL（虚拟 HAL）：底座没有 NFCC，由本服务声明
+       INfc/default，NfcService 据此判定「有 HAL、无控制器」并原地降级，
+       不再每秒打 "Waited one second for android.hardware.nfc.INfc/default"。 -->
+  <hal format="aidl">
+    <name>android.hardware.nfc</name>
+    <version>1</version>
+    <fqname>INfc/default</fqname>
+  </hal>
+</manifest>

@@ -1,0 +1,108 @@
+本文件记录 issue-battery-align 最终生效的取证与验证输出。
+
+== 1. 产物/配置一致性 ==
+$ shasum -a 256 engine/out/vendor/android15/bin/hw/android.hardware.health-service
+84229d30640a09e3283f5187eb2036b4553ebcd30b44ffe196d0036edbc651db
+$ adb -s 127.0.0.1:5911 shell "sha256sum /vendor/bin/hw/android.hardware.health-service"
+84229d30640a09e3283f5187eb2036b4553ebcd30b44ffe196d0036edbc651db  /vendor/bin/hw/android.hardware.health-service
+
+$ adb -s 127.0.0.1:5911 shell "cat /vendor/etc/cdh_battery.conf"
+technology=Li-poly
+cycle_count=753
+charge_counter_min=4947
+charge_counter_max=4972
+voltage_full_mv=4384
+voltage_charge_mv=4450
+temperature_full_decic=310
+temperature_charge_decic=380
+cycle_seconds=600
+
+== 2. 云机健康 HAL 直读（/data/local/tmp/battery_probe，AIDL 客户端）==
+HealthInfo: HealthInfo{chargerAcOnline: true, chargerUsbOnline: true,
+ chargerWirelessOnline: false, chargerDockOnline: false,
+ batteryStatus: FULL, batteryHealth: GOOD, batteryPresent: true, batteryLevel: 100,
+ batteryVoltageMillivolts: 4384, batteryTemperatureTenthsCelsius: 364,
+ batteryCurrentMicroamps: 0, batteryCycleCount: 753,
+ batteryFullChargeUah: 5000, batteryChargeCounterUah: 4966, batteryTechnology: Li-poly,
+ batteryCapacityLevel: FULL, ...}
+getCapacity=100
+getChargeCounterUah=4966
+getChargeStatus=5
+
+== 3. 云机 30s 采样覆盖相位切换（samples-cloud-600s.txt 摘要）==
+ n  宿主时刻   uptime(s)  status    voltage  temp  counter  current(uA)
+ 1  23:01:30  173578.5  FULL      4383mV   376   4970     0
+15  23:08:31  173999.6  FULL      4383mV   310   4947     0
+16  23:09:01  174029.6  CHARGING  4397mV   324   4952     774333
+20  23:11:01  174149.9  CHARGING  4449mV   380   4972     254333
+21  23:11:31  174179.9  FULL      4385mV   375   4970     0
+22  23:12:01  174210.0  FULL      4383mV   371   4969     0
+
+== 4. HAL 30s 周期推送到达 framework ==
+$ adb -s 127.0.0.1:5911 shell "logcat -d -s PowerCheckerService:D | tail -6"
+07-15 21:26:28.099  3097  5072 D PowerCheckerService: onBatteryChanged, mBatteryLevel = 100, status = 5, level = 100, plug = 1, scale = 100
+07-15 21:26:58.099  3097  5072 D PowerCheckerService: onBatteryChanged, mBatteryLevel = 100, status = 5, level = 100, plug = 1, scale = 100
+
+== 5. 真机最新基准（device-checker run-00027，唤醒+前台后下发）==
+$ python3 compare.py 风格调用 POST /api/run {"ids":["hardware.battery"],
+    "devices":["07cf5fc1784783d5"]}
+result.battery:
+  CYCLE_COUNT = 753
+  charge_counter = 4962
+  voltage = 4377
+  temperature = 320
+  status = 5
+  health = 2
+  technology = Li-poly
+  plugged = 1
+  level = 100 / scale = 100
+  seq = 3406
+
+== 6. 真机状态复位 ==
+唤醒：svc power stayon true → mWakefulness=Awake；wm dismiss-keyguard 解锁。
+熄屏：service call power 13 i64 <uptime_ms> i32 0 i32 0 → mWakefulness=Asleep。
+（run-00025 在真机 Asleep 时下发返回「执行超时」；重启 app 前台后 run-00027 成功。）
+
+== 7. 云机 device-checker 上线（ccmni2 临时桥）==
+$ dumpsys connectivity | grep -i "Active default network"
+  Active default network: none                    # mgmt0 无默认路由（设计）
+$ ip link | grep -E "mgmt0|ccmni2"
+  mgmt0  ...                                       # QEMU net0 restrict=on
+  ccmni2 ...                                       # QEMU net2 100.64.155.0/24
+(root PTY) $ ip addr add 100.64.155.15/24 dev ccmni2
+(root PTY) $ ip route add default via 100.64.155.2 dev ccmni2
+(root PTY) $ ip rule add pref 10500 lookup main
+(root PTY) $ ping -c 2 101.33.73.101
+  2 packets transmitted, 2 received
+$ (guest) HTTP 探测（12s 等待，5s 窗口会误判为空）
+  HTTP/1.0 200 OK
+$ (app) am force-stop dev.checker && am start -n dev.checker/.MainActivity
+服务端 /api/devices 出现：
+  458ffdddb936e56b-cloud   online
+
+== 8. 双端同批正式对比（run-00028，`compare-run-00028.json`）==
+$ POST /api/run {"ids":["hardware.battery"],
+    "devices":["07cf5fc1784783d5","458ffdddb936e56b-cloud"]}
+result[真机 07cf5fc1784783d5] status=succeeded:
+  CYCLE_COUNT = 753
+  charge_counter = 4957
+  voltage = 4377
+  temperature = 320
+  status = 5   health = 2   plugged = 1   level = 100 / scale = 100
+  technology = Li-poly   seq = 3428
+result[云机 458ffdddb936e56b-cloud] status=succeeded:
+  CYCLE_COUNT = 753
+  charge_counter = 4949
+  voltage = 4384
+  temperature = 317
+  status = 5   health = 2   plugged = 1   level = 100 / scale = 100
+  technology = Li-poly   seq = 61
+
+== 9. 收尾复位 ==
+真机：service call power 13 i64 <uptime_ms> i32 0 i32 0 → mWakefulness=Asleep。
+云机：(root PTY) $ ip rule del pref 10500
+      (root PTY) $ ip route del default via 100.64.155.2 dev ccmni2
+      (root PTY) $ ip addr del 100.64.155.15/24 dev ccmni2
+      → dumpsys connectivity 恢复 "Active default network: none"，agent 离线（预期）；
+        health HAL 与 PowerCheckerService 30s 推送不受影响。
+

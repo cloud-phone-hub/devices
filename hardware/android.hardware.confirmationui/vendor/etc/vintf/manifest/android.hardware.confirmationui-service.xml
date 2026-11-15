@@ -1,0 +1,8 @@
+<manifest version="1.0" type="device">
+  <!-- engine/vendor 自研 confirmationui HAL（虚拟 HAL）：声明 IConfirmationUI/default。 -->
+  <hal format="aidl">
+    <name>android.hardware.confirmationui</name>
+    <version>1</version>
+    <fqname>IConfirmationUI/default</fqname>
+  </hal>
+</manifest>

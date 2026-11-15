@@ -1,0 +1,59 @@
+# issue-m22-sepolicy-domain-attributes · 失败现场
+# 采集时间: 2026-10-30 11:00（实例 43，m22 全量重建后首次运行）
+# 现场: out/core/daemon/runtime/m22_12.5.0.0A/43/qemu.log
+# 现象: 卡在 Flyme 启动动画（bootanimation loop2）不动，约每 72 秒重来一轮
+
+== 1) 真正致命的一行：进程域不存在，init 无法 setexeccon ==
+[   29.615027][ T1075] init: cannot setexeccon('u:r:hal_aw_light_default:s0') for vendor.default.aw_light: Invalid argument
+[   29.626893][    T1] init: Service 'vendor.default.aw_light' (pid 1075) received signal 6
+
+计数（实例 43 全程）：
+  472  cannot setexeccon('u:r:hal_aw_light_default:s0')        for vendor.default.aw_light
+  880  cannot setexeccon('u:r:vendor_hal_diaghal_default:s0')  for vendor.default.diaghal
+   95  cannot setexeccon('u:r:hal_meizu_charging_default:s0')  for vendor.default.meizu_charging
+   94  cannot setexeccon('u:r:hal_realitytap_default:s0')      for vendor.awa.realitytap
+   95  cannot setexeccon('u:r:vendor_hal_srvctracker_default:s0') for vendor.servicetrackeraidl
+
+== 2) 对应服务的 abort 计数 ==
+  873  Service 'vendor.default.diaghal'          received signal 6
+  475  Service 'vendor.default.aw_light'         received signal 6
+   95  Service 'vendor.awa.realitytap'           received signal 6
+   92  Service 'vendor.servicetrackeraidl'       received signal 6
+   95  Service 'vendor.default.meizu_charging-service' received signal 6
+   18  Service 'audioserver'                     received signal 6   # AudioPolicyService TimeCheck timeout
+
+== 3) 连锁后果：SystemServer 被 watchdog 杀掉，开机循环 ==
+01-01 00:00:28.957  SystemServer: Entered the Android system server!   # 第 1 轮
+01-01 00:01:41.361  boot_progress_start: 101361                       # 第 2 轮（zygote 重启）
+01-01 00:02:53.679  boot_progress_start: 173679                       # 第 3 轮
+01-01 00:01:41.051  W Watchdog: *** WATCHDOG KILLING SYSTEM PROCESS: Blocked in handler on main thread (main) for 66s
+    at android.os.ServiceManager.waitForServiceNative(Native Method)
+    at android.os.ServiceManager.waitForService(ServiceManager.java:334)
+    at com.android.server.lights.LightsService$IAwLightWrapper.connectToHal(LightsService.java:876)
+servicemanager: Found vendor.meizu.hardware.aw_light.IAwLight/default in device VINTF manifest.
+servicemanager: Since 'vendor.meizu.hardware.aw_light.IAwLight/default' could not be found
+               trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service,
+               it may be stuck starting or still starting).
+
+== 4) 同一次运行里另一个独立缺陷：v412 运行库没上树 ==
+479  F linker: CANNOT LINK EXECUTABLE "/vendor/bin/hw/android.hardware.media.c2@1.2-service-v4l2-64":
+            library "libchrome.so" not found: needed by main executable
+     （v412 相关日志共 661 行；该服务每秒重试一次，一直起不来）
+
+== 5) SELinux 本身是加载成功的（不是策略没生效的问题）==
+init: Opening SELinux policy
+init: No precompiled sepolicy at /vendor/etc/selinux/precompiled_sepolicy: No such file or directory
+init: Compiling SELinux policy          # 现场用 /system/bin/secilc 编译
+init: Using /system/etc/selinux/plat_sepolicy_genfs_202504.cil for genfs labels
+init: Loading SELinux policy
+SELinux: cdh: pioneer (type 2605) forced permissive
+selinux: Loaded file context from: /system/etc/selinux/plat_file_contexts, /vendor/etc/selinux/vendor_file_contexts ...
+
+== 6) 镜像内策略里确实有这些 type（只缺 domain 属性归类）==
+$ debugfs dump /etc/selinux/vendor_sepolicy.cil（348,423 B）
+hal_aw_light_default             type:1 domain-set:0
+hal_meizu_charging_default       type:1 domain-set:0
+hal_realitytap_default           type:1 domain-set:0
+vendor_hal_diaghal_default       type:1 domain-set:0
+vendor_hal_srvctracker_default   type:1 domain-set:0
+pioneer                          type:1 domain-set:1     <- 唯一写对的（android.service.daemon 片段）

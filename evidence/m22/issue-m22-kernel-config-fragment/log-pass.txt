@@ -1,0 +1,158 @@
+# 通过现场：机型片段生效 + 02→11 续跑
+# 采集时间：2026-10-28 18:24–18:30
+# 运行目录：/Volumes/work/cloud-phone-hub/engine
+
+== 02_build_kernel（重编，配方随片段哈希变化）==
+$ head -8 out/kernel/lineage-23-6.12/kernel-log.txt
+==> 内核源码: kernels/lineage-23-6.12（清单推导 lineage-23-6.12）
+==> 配置片段: manifest/flyme/m22/kernel.config（清单 rom.lineage.kernel.config）
+==> 产物目录: out/kernel/lineage-23-6.12（out/kernel/lineage-23-6.12）
+==> 构建镜像: ghcr.io/feicong/droid-ddk:android16-6.12（清单推导 android16-6.12）
+    输入: 缓存配方 lineage-23-6.12-cdh-caaa3aa6868c（输入哈希）
+    内核:       lineage-23-6.12（release 6.12.81-4k-cdh）
+    源码:       kernels/lineage-23-6.12（HEAD bccd296879a5）
+    配置片段:   manifest/flyme/m22/kernel.config
+
+$ cat out/kernel/lineage-23-6.12/kernelrelease.txt out/kernel/lineage-23-6.12/build-recipe.txt
+6.12.81-4k-cdh
+lineage-23-6.12-cdh-caaa3aa6868c
+
+$ ls -l out/kernel/lineage-23-6.12/Image
+-rwxr-xr-x  1 cuimingqiang  staff  43969024 10 28 18:24 out/kernel/lineage-23-6.12/Image
+
+$ grep -E "^CONFIG_(CDH_PIONEER_PERMISSIVE|CDH_PATH_REDIRECT|VIRTIO_CONSOLE|MAC80211|MAC80211_HWSIM|CRYPTO_LIB_ARC4)=" \
+    out/kernel/lineage-23-6.12/config
+CONFIG_MAC80211=m
+CONFIG_MAC80211_HWSIM=m
+CONFIG_VIRTIO_CONSOLE=m
+CONFIG_CDH_PIONEER_PERMISSIVE=y
+CONFIG_CRYPTO_LIB_ARC4=m
+
+$ grep -c "CDH_PATH_REDIRECT" out/kernel/lineage-23-6.12/config
+0
+
+== 03_build_modules（同源片段，10 个 .ko 符号版本逐项一致）==
+$ head -4 out/kernel/lineage-23-6.12/modules-log.txt
+==> 内核产物目录: out/kernel/lineage-23-6.12（out/kernel/lineage-23-6.12）
+==> 内核源码: kernels/lineage-23-6.12（清单推导 lineage-23-6.12）
+==> 配置片段: manifest/flyme/m22/kernel.config（清单 rom.lineage.kernel.config）
+==> 外部模块: device_info, goodix_fingerprint, input_identity, virtio_media（modules/ 下全部）
+    输入: 缓存配方 lineage-23-6.12-cdh-efe543b5e7fc（输入哈希）
+
+[ok] cdh_device_info.ko: 39 个符号版本一致
+[ok] cdh_goodix_fingerprint.ko: 4 个符号版本一致
+[ok] cdh_input_identity.ko: 8 个符号版本一致
+[ok] cdh_media.ko: 75 个符号版本一致
+[ok] cfg80211.ko: 198 个符号版本一致
+[ok] libarc4.ko: 1 个符号版本一致
+[ok] mac80211.ko: 323 个符号版本一致
+[ok] mac80211_hwsim.ko: 204 个符号版本一致
+[ok] rfkill.ko: 58 个符号版本一致
+[ok] virtio_console.ko: 100 个符号版本一致
+[ok] 模块构建完成: out/kernel/lineage-23-6.12/modules（10 个 .ko）
+
+== 04→11 续跑（device build m22 --from 04_build_boot）==
+04: boot.img 83,886,080 B，配方 boot-aaf1fbee2753（kernel 段换成新 Image）
+05: vendor_boot.img 22,395,140 B，配方 vboot-629cc0d55dc0（输入未变，复用）
+06: odm.img 8,388,608 B（未变）
+07: vendor.img 180,752,384 B；vendor-replace: 2 条
+    （lib64/libpng.so、etc/permissions；来源 out/roms/flyme/m22/12.5.0.0A/super/vendor_a.img）
+08: vendor_dlkm.img 15,831,040 B（sha256 875ad70e1f67）
+    回收 24 个基座测试模块；写入 15 个文件，回读 15/15 内容一致；e2fsck 退出码 0
+    模块: cdh_device_info / cdh_goodix_fingerprint / cdh_input_identity / cdh_media /
+          cfg80211 / libarc4 / mac80211 / mac80211_hwsim / rfkill / virtio_console
+09: patch.img 402,653,184 B（sha256 de25270034b1）
+    组装 791 条目（文件 548 / 链接 198 / 目录 45）；元数据 792 条目、25 种标签；
+    回填 792 条目，回读 792/792 一致；e2fsck 退出码 0
+10: super.img 可复用（10,083,106,816 B，sha256 3eb133bbc4af）
+11: dist 五槽刷新；patch.img 与 img/patch.img 同 sha（de25270034b1）
+    vda.img 13,958,643,712 B，配方 vda-65fda46b4d77
+
+$ go vet ./... && go test ./...
+ok  cloud-phone-hub/engine/build/internal/kbuild
+ok  cloud-phone-hub/engine/build/07_build_vendor   (22.9s)
+ok  cloud-phone-hub/engine/build/test              (17.6s)
+（其余包 ok / no test files，无 FAIL）
+
+
+================================================================
+# 回退后重编验证（2026-10-29 10:47–10:58）
+# 目标：撤销机型片段后，统一片段里的 `# CONFIG_DMIID is not set` 真正落到产物，
+#       且输入身份等既有对齐不回退。
+================================================================
+
+== 0) 刷新 out/bin/cdh（10-28 的旧二进制不认 CDH_MANIFEST）==
+$ cd engine/build && go build -o /Volumes/work/cloud-phone-hub/out/bin/cdh .
+$ ls -l /Volumes/work/cloud-phone-hub/out/bin/cdh   -> 10 29 10:47  7,182,162 B
+$ strings /Volumes/work/cloud-phone-hub/out/bin/cdh | grep -c CDH_MANIFEST  -> 1
+
+== 1) 02_build_kernel ==
+$ cd engine && CDH_MANIFEST=manifest/flyme/m22/baselines/12.5.0.0A.json \
+    CDH_LINEAGE_VERSION=lineage-23.2 CDH_KERNEL_SOURCE=kernels/lineage-23-6.12 \
+    ../out/bin/cdh build-kernel
+==> 内核源码: kernels/lineage-23-6.12（CDH_KERNEL_SOURCE）
+==> 配置片段: build/02_build_kernel/lineage-kernel.config（本阶段默认）
+==> 构建镜像: ghcr.io/feicong/droid-ddk:android16-6.12（清单推导 android16-6.12）
+[ok] 内核构建完成: out/kernel/lineage-23-6.12
+    构建卷: cdh-kernel-lineage-23-6.12-cdh-b4fe1c987b3a（保留，供 03_build_modules 编译模块）
+$ cat out/kernel/lineage-23-6.12/build-recipe.txt        -> lineage-23-6.12-cdh-b4fe1c987b3a
+$ grep -n DMIID out/kernel/lineage-23-6.12/config        -> 2033:# CONFIG_DMIID is not set
+$ shasum -a 256 out/kernel/lineage-23-6.12/Image
+  83d15e7d598ba5b010869f5e29a241b0a73825d18db1fc859951b3871793c96c（43,969,024 B）
+
+== 2) 03_build_modules ==
+==> 配置片段: build/02_build_kernel/lineage-kernel.config
+[ok] cdh_goodix_fingerprint.ko: 4 个符号版本一致
+[ok] cdh_input_identity.ko: 8 个符号版本一致
+[ok] cdh_media.ko: 75 个符号版本一致
+[ok] cfg80211.ko: 198 个符号版本一致
+[ok] libarc4.ko: 1 个符号版本一致
+[ok] mac80211.ko: 323 个符号版本一致
+[ok] mac80211_hwsim.ko: 204 个符号版本一致
+[ok] rfkill.ko: 58 个符号版本一致
+[ok] virtio_console.ko: 100 个符号版本一致
+[ok] 模块构建完成: out/kernel/lineage-23-6.12/modules（10 个 .ko）
+    模块配方: lineage-23-6.12-cdh-461b4ca5934a
+
+== 3) 04_build_boot（首跑漏 --vendor/--brand/--version 被拒，补齐后通过）==
+$ ../out/bin/cdh build-boot --vendor flyme --brand m22 --version 12.5.0.0A
+    内核配方:   lineage-23-6.12-cdh-b4fe1c987b3a
+    内核镜像:   out/kernel/lineage-23-6.12/Image
+    缓存状态:   需重建（配方变化: boot-6c0678e2f433 -> boot-5a215e13e2f5）
+[ok] boot.img 打包完成: out/devices/flyme/m22/12.5.0.0A/img/boot.img（83,886,080 字节）
+    kernel 43,969,024 B（基底 44,780,032 B），ramdisk 1,707,747 B
+$ shasum -a 256 …/img/boot.img
+  414801a6d238ae3c371b6ce135727f09a00b8509559bc119ac54115de7e92844
+
+== 4) 11_pack_vda ==
+$ CDH_LINEAGE_ZIP=roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip \
+    ../out/bin/cdh pack-vda --vendor flyme --brand m22 --version 12.5.0.0A
+    重建原因: 配方变化: vda-d3da89ad6175 -> vda-5fe78d51e413
+    [skip] 复用 out/dist/flyme/m22/12.5.0.0A/vda.img（底盘未变，仅原位刷新分区）
+    [ok] super           9.39 GiB @ 129.0 MiB，回读一致
+    [ok] boot_a / boot_b 80.0 MiB，回读一致
+    [ok] vendor_boot_a / vendor_boot_b 21.4 MiB，回读一致
+    [ok] device.json（id=m22_12.5.0.0A，554 B）-> out/dist/flyme/m22/12.5.0.0A/device.json
+         input 段透传：{"touch":{"name":"fts","bus":28,"vendor":1,"product":2,"version":256,
+                        "abs-to-mt":true},"keyboard":{},"tablet":false}
+    vda.img 13,958,643,712 B，vda-recipe.txt = vda-5fe78d51e413
+
+== 5) 起机验证（实例 31，console 5918 / adb 5919 / vnc 5920）==
+$ adb -s 127.0.0.1:5919 shell "dmesg | head -2"
+[    0.000000] Linux version 6.12.81-4k-cdh (root@38588ffa6ec1) …
+             #1 SMP PREEMPT Thu Oct 29 02:52:55 UTC 2026     <- 本次新编（旧为 10-28 12:04:39）
+$ adb shell ls /sys/class/dmi
+  ls: /sys/class/dmi: No such file or directory          <- 旧行为是 product_name=QEMU Virtual Machine
+$ adb shell cat /sys/class/dmi/id/product_name
+  cat: /sys/class/dmi/id/product_name: No such file or directory
+$ adb shell uname -r        -> 6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k（device_info 模块伪装）
+$ adb shell getprop ro.kernel.version -> 6.12
+
+== 6) 输入身份未回退 ==
+$ adb shell dumpsys input | sed -n '/    7: fts/,/SysfsDevicePath/p'
+    7: fts
+      Classes: KEYBOARD | TOUCH | TOUCH_MT
+      Location: virtio8/input0
+      Identifier: bus=0x001c, vendor=0x0001, product=0x0002, version=0x0100
+      KeyLayoutFile: /system/usr/keylayout/fts.kl
+  Device 2: fts（SysfsRootPath virtio8）

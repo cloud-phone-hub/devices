@@ -1,0 +1,506 @@
+=== [修复后] #189 goodix_ts 8 轴触控对齐与 Wi-Fi 跨频扫描 / 11ac / TDLS ===
+
+1. hardware.inputs & aligner_xiaomi_gold.sensors_input (goodix_ts motionRangesCount=8, axis 0..7) 云机 vs 真机:
+CLOUD (0b7cd3333759d674-cloud) sensors_input.inputs:
+{
+  "devices": {
+    "Virtual": {
+      "descriptor": "a718a782d34bc767f4689c232d64d527998ea7fd",
+      "hasMicrophone": false,
+      "isExternal": false,
+      "isVirtual": true,
+      "keyboardType": 2,
+      "motionRanges": [],
+      "motionRangesCount": 0,
+      "name": "Virtual",
+      "productId": 0,
+      "sources": 769,
+      "sourcesHex": "0x301",
+      "vendorId": 0
+    },
+    "fpc_irq@fingerprint": {
+      "descriptor": "dad8bc819b573998ec22ca3952b1006fc1aa1a82",
+      "hasMicrophone": false,
+      "isExternal": false,
+      "isVirtual": false,
+      "keyboardType": 1,
+      "motionRanges": [],
+      "motionRangesCount": 0,
+      "name": "fpc_irq@fingerprint",
+      "productId": 0,
+      "sources": 257,
+      "sourcesHex": "0x101",
+      "vendorId": 0
+    },
+    "goodix_ts": {
+      "descriptor": "c63c3be2de98f10e6bbd97f78684d819a6c862b9",
+      "hasMicrophone": false,
+      "isExternal": false,
+      "isVirtual": false,
+      "keyboardType": 1,
+      "motionRanges": [
+        {
+          "axis": 0,
+          "max": 1079.967,
+          "min": 0,
+          "resolution": 0
+        },
+        {
+          "axis": 1,
+          "max": 2399.927,
+          "min": 0,
+          "resolution": 0
+        },
+        {
+          "axis": 2,
+          "max": 1,
+          "min": 0,
+          "resolution": 0
+        },
+        {
+          "axis": 3,
+          "max": 1,
+          "min": 0,
+          "resolution": 0
+        },
+        {
+          "axis": 4,
+          "max": 2631.805,
+          "min": 0,
+          "resolution": 0
+        },
+        {
+          "axis": 5,
+          "max": 2631.805,
+          "min": 0,
+          "resolution": 0
+        },
+        {
+          "axis": 6,
+          "max": 2631.805,
+          "min": 0,
+          "resolution": 0
+        },
+        {
+          "axis": 7,
+          "max": 2631.805,
+          "min": 0,
+          "resolution": 0
+        }
+      ],
+      "motionRangesCount": 8,
+      "name": "goodix_ts",
+      "productId": 1,
+      "sources": 4355,
+      "sourcesHex": "0x1103",
+      "vendorId": 10182
+    },
+    "mt6833-mt6359 Headset Jack": {
+      "descriptor": "393bc96fab9421f9d6a6059cfe79e8b042c8755d",
+      "hasMicrophone": false,
+      "isExternal": false,
+      "isVirtual": false,
+      "keyboardType": 1,
+      "motionRanges": [],
+      "motionRangesCount": 0,
+      "name": "mt6833-mt6359 Headset Jack",
+      "productId": 0,
+      "sources": 2147483905,
+      "sourcesHex": "0x80000101",
+      "vendorId": 0
+    },
+    "mtk-kpd": {
+      "descriptor": "9a244e01c90550ca2eb2798ffe20d8731e811765",
+      "hasMicrophone": false,
+      "isExternal": false,
+      "isVirtual": false,
+      "keyboardType": 2,
+      "motionRanges": [],
+      "motionRangesCount": 0,
+      "name": "mtk-kpd",
+      "productId": 0,
+      "sources": 257,
+      "sourcesHex": "0x101",
+      "vendorId": 0
+    },
+    "mtk-pmic-keys": {
+      "descriptor": "485d69228e24f5e46da1598745890b214130dbc4",
+      "hasMicrophone": false,
+      "isExternal": false,
+      "isVirtual": false,
+      "keyboardType": 1,
+      "motionRanges": [],
+      "motionRangesCount": 0,
+      "name": "mtk-pmic-keys",
+      "productId": 1,
+      "sources": 257,
+      "sourcesHex": "0x101",
+      "vendorId": 1
+    },
+    "uinput-fpc": {
+      "descriptor": "8136f1e77728f603ac0ec0e545d338eba3cbcbc0",
+      "hasMicrophone": false,
+      "isExternal": false,
+      "isVirtual": false,
+      "keyboardType": 1,
+      "motionRanges": [],
+      "motionRangesCount": 0,
+      "name": "uinput-fpc",
+      "productId": 2184,
+      "sources": 1281,
+      "sourcesHex": "0x501",
+      "vendorId": 1638
+    }
+  },
+  "hasFpcFingerprint": true,
+  "hasGoodixTouchscreen": true,
+  "noSuspiciousVirtualInput": true,
+  "suspiciousVirtualInputs": [],
+  "totalCount": 7
+}
+CLOUD hardware.inputs:
+{
+  "runId": "run-00019",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "count": 7,
+    "devices": [
+      {
+        "descriptor": "a718a782d34bc767f4689c232d64d527998ea7fd",
+        "id": -1,
+        "name": "Virtual",
+        "sources": 769,
+        "sourcesHex": "0x301"
+      },
+      {
+        "descriptor": "8136f1e77728f603ac0ec0e545d338eba3cbcbc0",
+        "id": 0,
+        "name": "uinput-fpc",
+        "sources": 1281,
+        "sourcesHex": "0x501"
+      },
+      {
+        "descriptor": "c63c3be2de98f10e6bbd97f78684d819a6c862b9",
+        "id": 2,
+        "name": "goodix_ts",
+        "sources": 4355,
+        "sourcesHex": "0x1103"
+      },
+      {
+        "descriptor": "9a244e01c90550ca2eb2798ffe20d8731e811765",
+        "id": 3,
+        "name": "mtk-kpd",
+        "sources": 257,
+        "sourcesHex": "0x101"
+      },
+      {
+        "descriptor": "dad8bc819b573998ec22ca3952b1006fc1aa1a82",
+        "id": 4,
+        "name": "fpc_irq@fingerprint",
+        "sources": 257,
+        "sourcesHex": "0x101"
+      },
+      {
+        "descriptor": "393bc96fab9421f9d6a6059cfe79e8b042c8755d",
+        "id": 5,
+        "name": "mt6833-mt6359 Headset Jack",
+        "sources": 2147483905,
+        "sourcesHex": "0x80000101"
+      },
+      {
+        "descriptor": "485d69228e24f5e46da1598745890b214130dbc4",
+        "id": 6,
+        "name": "mtk-pmic-keys",
+        "sources": 257,
+        "sourcesHex": "0x101"
+      }
+    ],
+    "ok": true
+  }
+}
+
+REAL (ec519c7d513a3ad3) sensors_input.inputs:
+{
+  "devices": {
+    "Virtual": {
+      "descriptor": "a718a782d34bc767f4689c232d64d527998ea7fd",
+      "hasMicrophone": false,
+      "isExternal": false,
+      "isVirtual": true,
+      "keyboardType": 2,
+      "motionRanges": [],
+      "motionRangesCount": 0,
+      "name": "Virtual",
+      "productId": 0,
+      "sources": 769,
+      "sourcesHex": "0x301",
+      "vendorId": 0
+    },
+    "fpc_irq@fingerprint": {
+      "descriptor": "dad8bc819b573998ec22ca3952b1006fc1aa1a82",
+      "hasMicrophone": false,
+      "isExternal": false,
+      "isVirtual": false,
+      "keyboardType": 1,
+      "motionRanges": [],
+      "motionRangesCount": 0,
+      "name": "fpc_irq@fingerprint",
+      "productId": 0,
+      "sources": 257,
+      "sourcesHex": "0x101",
+      "vendorId": 0
+    },
+    "goodix_ts": {
+      "descriptor": "c63c3be2de98f10e6bbd97f78684d819a6c862b9",
+      "hasMicrophone": false,
+      "isExternal": false,
+      "isVirtual": false,
+      "keyboardType": 1,
+      "motionRanges": [
+        {
+          "axis": 0,
+          "max": 1079.938,
+          "min": 0,
+          "resolution": 0
+        },
+        {
+          "axis": 1,
+          "max": 2399.938,
+          "min": 0,
+          "resolution": 0
+        },
+        {
+          "axis": 2,
+          "max": 1,
+          "min": 0,
+          "resolution": 0
+        },
+        {
+          "axis": 3,
+          "max": 1,
+          "min": 0,
+          "resolution": 0
+        },
+        {
+          "axis": 4,
+          "max": 2631.805,
+          "min": 0,
+          "resolution": 0
+        },
+        {
+          "axis": 5,
+          "max": 2631.805,
+          "min": 0,
+          "resolution": 0
+        },
+        {
+          "axis": 6,
+          "max": 2631.805,
+          "min": 0,
+          "resolution": 0
+        },
+        {
+          "axis": 7,
+          "max": 2631.805,
+          "min": 0,
+          "resolution": 0
+        }
+      ],
+      "motionRangesCount": 8,
+      "name": "goodix_ts",
+      "productId": 1,
+      "sources": 4355,
+      "sourcesHex": "0x1103",
+      "vendorId": 10182
+    },
+    "mt6833-mt6359 Headset Jack": {
+      "descriptor": "393bc96fab9421f9d6a6059cfe79e8b042c8755d",
+      "hasMicrophone": false,
+      "isExternal": false,
+      "isVirtual": false,
+      "keyboardType": 1,
+      "motionRanges": [],
+      "motionRangesCount": 0,
+      "name": "mt6833-mt6359 Headset Jack",
+      "productId": 0,
+      "sources": 2147483905,
+      "sourcesHex": "0x80000101",
+      "vendorId": 0
+    },
+    "mtk-kpd": {
+      "descriptor": "9a244e01c90550ca2eb2798ffe20d8731e811765",
+      "hasMicrophone": false,
+      "isExternal": false,
+      "isVirtual": false,
+      "keyboardType": 1,
+      "motionRanges": [],
+      "motionRangesCount": 0,
+      "name": "mtk-kpd",
+      "productId": 0,
+      "sources": 257,
+      "sourcesHex": "0x101",
+      "vendorId": 0
+    },
+    "mtk-pmic-keys": {
+      "descriptor": "485d69228e24f5e46da1598745890b214130dbc4",
+      "hasMicrophone": false,
+      "isExternal": false,
+      "isVirtual": false,
+      "keyboardType": 1,
+      "motionRanges": [],
+      "motionRangesCount": 0,
+      "name": "mtk-pmic-keys",
+      "productId": 1,
+      "sources": 257,
+      "sourcesHex": "0x101",
+      "vendorId": 1
+    },
+    "uinput-fpc": {
+      "descriptor": "8136f1e77728f603ac0ec0e545d338eba3cbcbc0",
+      "hasMicrophone": false,
+      "isExternal": false,
+      "isVirtual": false,
+      "keyboardType": 1,
+      "motionRanges": [],
+      "motionRangesCount": 0,
+      "name": "uinput-fpc",
+      "productId": 2184,
+      "sources": 1281,
+      "sourcesHex": "0x501",
+      "vendorId": 1638
+    }
+  },
+  "hasFpcFingerprint": true,
+  "hasGoodixTouchscreen": true,
+  "noSuspiciousVirtualInput": true,
+  "suspiciousVirtualInputs": [],
+  "totalCount": 7
+}
+
+2. network.wifi & network.wifilist (跨频 2.4GHz+5GHz 4 AP, TDLS=true, 11ac=true, 11ax=false) 云机 vs 真机:
+CLOUD (0b7cd3333759d674-cloud) network.wifi:
+{
+  "runId": "run-00019",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "ok": true,
+    "wifi": {
+      "bssid": "74:39:89:0b:24:63",
+      "connected": true,
+      "frequency": 2437,
+      "ipAddress": 1681696960,
+      "linkSpeed": 18,
+      "networkId": 0,
+      "rssi": -35,
+      "ssid": "\"TP-LINK_2464\"",
+      "wifiState": 3
+    }
+  }
+}
+CLOUD (0b7cd3333759d674-cloud) network.wifilist:
+{
+  "runId": "run-00019",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "ok": true,
+    "wifi": {
+      "configured": [],
+      "scan": [
+        {
+          "bssid": "74:39:89:0b:24:64",
+          "caps": "[WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]",
+          "frequency": 5180,
+          "level": -42,
+          "ssid": "TP-LINK_5G_2464"
+        },
+        {
+          "bssid": "28:6c:07:51:a4:90",
+          "caps": "[WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]",
+          "frequency": 5220,
+          "level": -58,
+          "ssid": "Xiaomi_A490_5G"
+        },
+        {
+          "bssid": "c8:3a:35:4c:8f:3a",
+          "caps": "[WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]",
+          "frequency": 2412,
+          "level": -73,
+          "ssid": "ChinaNet-8F3A"
+        },
+        {
+          "bssid": "74:39:89:0b:24:63",
+          "caps": "[ESS]",
+          "frequency": 2437,
+          "level": -41,
+          "ssid": "TP-LINK_2464"
+        }
+      ]
+    }
+  }
+}
+
+REAL (ec519c7d513a3ad3) network.wifi:
+{
+  "runId": "run-00019",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "ok": true,
+    "wifi": {
+      "bssid": "74:39:89:0b:24:64",
+      "connected": true,
+      "frequency": 5180,
+      "ipAddress": 1762371776,
+      "linkSpeed": 433,
+      "networkId": 0,
+      "rssi": -57,
+      "ssid": "\"TP-LINK_JIJIA_1\"",
+      "wifiState": 3
+    }
+  }
+}
+
+3. shell getevent & cmd wifi list-scan-results (127.0.0.1:5911):
+=== input goodix_ts ===
+    7: goodix_ts
+      Classes: KEYBOARD | TOUCH | TOUCH_MT
+      Path: /dev/input/event1
+      Enabled: true
+      Descriptor: c63c3be2de98f10e6bbd97f78684d819a6c862b9
+      Location: virtio8/input0
+      ControllerNumber: 0
+      UniqueId: 
+      Identifier: bus=0x0002, vendor=0x27c6, product=0x0001, version=0x0100, bluetoothAddress=<not set>
+      KeyLayoutFile: /system/usr/keylayout/Generic.kl
+      KeyCharacterMapFile: /system/usr/keychars/Generic.kcm
+      ConfigurationFile: 
+      VideoDevice: <none>
+      SysfsDevicePath: /sys/devices/pci0000:00/0000:00:09.0/virtio8
+      KeyState (pressed): <none>
+      AbsState: ABS_MT_SLOT=0, ABS_MT_TOUCH_MAJOR=0, ABS_MT_POSITION_X=27918, ABS_MT_POSITION_Y=29681, ABS_MT_TRACKING_ID=-1, ABS_MT_PRESSURE=0
+    5: uinput-fpc (aka device 0 - built-in keyboard)
+      Classes: KEYBOARD | GAMEPAD
+      Path: /dev/input/event3
+--
+=== wifi scan & capabilities ===
+    BSSID              Frequency      RSSI           Age(sec)     SSID                                 Flags
+  74:39:89:0b:24:64       5180        -42            >1000.0    TP-LINK_5G_2464                   [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  28:6c:07:51:a4:90       5220        -58            >1000.0    Xiaomi_A490_5G                    [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  c8:3a:35:4c:8f:3a       2412        -73            >1000.0    ChinaNet-8F3A                     [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  74:39:89:0b:24:63       2437        -41            >1000.0    TP-LINK_2464                      [ESS]
+Wifi is enabled
+Wifi scanning is always available
+==== Primary ClientModeManager instance ====
+Wifi is connected to "TP-LINK_2464"
+WifiInfo: SSID: "TP-LINK_2464", BSSID: 74:39:89:0b:24:63, MAC: <none>, IP: /192.168.60.100, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -34, Link speed: 18Mbps, Tx Link speed: 18Mbps, Max Supported Tx Link speed: 54Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: 54Mbps, Frequency: 2437MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"TP-LINK_2464"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+successfulTxPackets: 3037
+successfulTxPacketsPerSecond: 0.004105167047808782
+retriedTxPackets: 0
+retriedTxPacketsPerSecond: 0.0
+lostTxPackets: 0
+lostTxPacketsPerSecond: 0.0
+successfulRxPackets: 3260
+successfulRxPacketsPerSecond: 0.004105167007917382

@@ -1,0 +1,40 @@
+# 修后现场：宿主 daemon 每次 boot 自动注入宿主 UTC（gold 云机 实例 2）
+
+## ① 宿主 daemon 日志（out/tmp/daemon-web.log）：4 次 boot，每次两行
+daemon: 已把宿主时间 2026-10-31 09:44:12 UTC 写入 guest
+daemon: 已把宿主时间 2026-10-31 09:44:27 UTC 写入 guest     # 第 1 次 boot（status{up} + 6s 兜底）
+daemon: 已把宿主时间 2026-10-31 09:49:50 UTC 写入 guest
+daemon: 已把宿主时间 2026-10-31 09:50:06 UTC 写入 guest     # 第 2 次 boot
+daemon: 已把宿主时间 2026-10-31 09:54:45 UTC 写入 guest
+daemon: 已把宿主时间 2026-10-31 09:55:01 UTC 写入 guest     # 第 3 次 boot
+daemon: 已把宿主时间 2026-10-31 09:57:40 UTC 写入 guest
+daemon: 已把宿主时间 2026-10-31 09:57:56 UTC 写入 guest     # 第 4 次 boot（当前实例）
+
+## ② 当前实例：宿主机与 guest 同一秒抓取，epoch 完全相等
+$ date -u '+host-utc: %Y-%m-%d %H:%M:%S (%s)'
+host-utc: 2026-10-31 10:20:37 (1793442037)
+
+$ python3 out/tmp/jsf.py out/tmp/chkrtc.js
+### rtc        {"code":0,"out":"ls: /dev/rtc*: No such file or directory\ncat: /proc/driver/rtc: No such file or directory\n1784120585\n"}
+### guestDate  {"code":0,"out":"2026-10-31 10:20:37 UTC\n1793442037\n"}
+### timezone   {"code":0,"out":"Asia/Shanghai\n"}
+（guest 仍没有 RTC，但时间已被推平：host 1793442037 = guest 1793442037，差 0 s）
+
+## ③ 真机同一时刻（USB adb）
+$ adb -s 4lmbvom7gifm5lbu shell date -u
+Sat Oct 31 10:16:16 UTC 2026
+
+## ④ device-checker 侧效果（run-00039，18:10）
+云机 ultimate.cloud_emulator 差异只剩文件年龄（3 项，全部来自镜像构建日期差异）：
+  checks[9].evidence.ageDays            真机 170   云机 108
+  checks[9].evidence.earliestAtime      真机 2026-05-14T07:07:02Z   云机 2026-07-15T13:03:31Z
+  checks[9].evidence.earliestAtimeSec   真机 1778742422            云机 1784120611
+（修前 U-DATA-ATIME 的 hit=False→True 假阳性已消失；这 3 项是"镜像比真机新 62 天"的真实差异，
+  与时钟无关——两者 now 都等于宿主时间）
+
+## ⑤ 存储目录的时间戳也随之正确（此前是 1970 / 构建日）
+$ dmesg | grep cph_storage_align
+[   31.559108] init: processing action (sys.boot_completed=1) ...
+$ ls -ln /data/media/0 | head -3
+drwxrws--- 2 10224 1023 4096 2026-10-31 17:38 Alarms      # 本地时区 CST = UTC+8，与宿主一致
+drwxrws--x 5 1023  1023 4096 2026-10-31 17:24 Android

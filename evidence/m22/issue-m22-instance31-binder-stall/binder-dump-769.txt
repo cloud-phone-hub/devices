@@ -1,0 +1,103 @@
+# binder 层现场：system_server(769) 的 async 队列积压
+# 设备：flyme/m22 12.5.0.0A 实例 31（console 5918 / adb 5919 / vnc 5920）
+# 轮次：第 5 轮，QEMU pid 68855，2026-10-29 12:09:17 起；boot+59 s 设 printk=4
+# 取证通道：guest daemon hvc7 root PTY
+#   SPEC=m22_12.5.0.0A INDEX=31 python3 .tmp/root_shell.py '<cmd>' 8
+# 前提：mount -t debugfs none /sys/kernel/debug
+
+== 0) 身份确认 ==
+$ cat /proc/582/comm            -> surfaceflinger
+$ cat /proc/582/task/682/comm   -> RegionSampling      ← 发送方线程
+$ cat /proc/769/comm            -> system_server       ← 目标进程
+$ cat /proc/sys/kernel/printk    -> 4       4       1       7
+$ grep -o 'seriallogging=[a-z0-9]*' /proc/cmdline -> seriallogging=hvc1
+
+== 1) 取样 1（~12:28）stats：156 个进程里只有 769 的 async 池不是满额 ==
+$ grep 'free async space' /sys/kernel/debug/binder/stats | sort -t: -k2 -n | head -5
+  free async space 240848       ← 769 system_server（约 54% 已用）
+  free async space 520192
+  free async space 520192
+  free async space 520192
+  free async space 520192
+$ grep -c 'pending async transaction' /sys/kernel/debug/binder/proc/769
+996
+
+== 2) 取样 2–3（~12:29–12:32）连续采样：队列在缩（并非单调增长）==
+$ grep -c 'pending async' .../proc/769 ; grep 'free async space' .../stats | grep -v 520192
+996    free async space 240848
+962    free async space 250368
+954    free async space 252608
+
+== 3) 取样 4：相隔 30 秒做差分（按事务 id 排序后 comm）==
+$ D=/sys/kernel/debug/binder/proc/769
+$ grep -o 'pending async transaction [0-9]*' $D | awk '{print $4}' | sort > s1 ; sleep 30 ; ... > s2
+918                                   ← s1 条数
+912                                   ← s2 条数
+gone..12                              ← 被消费的 12 条
+new..6                                ← 新增 6 条
+firsts1..104269                       ← s1 队首 id
+lastgone..104527                      ← 被消费的最大 id（全在队首 → FIFO 在推进）
+lastnew..148475                       ← 新增的最大 id
+
+== 4) 取样 5：同形统计 + node 9312 ==
+$ grep -c 'pending async' .../proc/769
+942
+$ ... | sed 's/.*from \([0-9]*\):[0-9]* to \([0-9]*\):[0-9]* code \([0-9]*\) .*size \([0-9]*\):.*/from\1-to\2-code\3-size\4/' | sort | uniq -c | sort -rn
+    471 from582-to769-code2-size436
+    471 from582-to769-code1-size92
+$ grep 'node 9312' /sys/kernel/debug/binder/state | head -2
+  node 9312: ub400007914601840 cb400007804527f98 pri 0:120 hs 1 hw 1 ls 943 lw 0 is 1 iw 1 tr 1 proc 582
+  pending async transaction 104871: 0000000000000000 from 582:682 to 769:0 code 1 flags 11 pri 0:120 r0 elapsed 1194425ms node 9312 size 92:0  offset 5520
+  pending async transaction 104872: 0000000000000000 from 582:682 to 769:0 code 2 flags 11 pri 0:120 r0 elapsed 1194425ms node 9312 size 436:24 offset 5580
+# ls 943 ≈ pending 942：每个未消费事务各持 1 个 strong ref，node 属 surfaceflinger(proc 582)
+
+== 5) 取样 6：队列深度 941、free async 回升 ==
+$ grep -c 'pending async' .../proc/769
+941
+$ grep 'free async space' .../stats | sort | uniq -c | sort -rn | head -3
+    155   free async space 520192
+      1   free async space 273888     ← 769（约 47% 已用）
+$ 队首（debugfs 输出顺序为最新在前，以下为该文件里 elapsed 最大的一对）
+pending async transaction 105409: 0000000000000000 from 582:682 to 769:0 code 1 flags 11 pri 0:120 r0 elapsed 1254470ms node 9312 size 92:0  offset 22a18
+pending async transaction 105410: 0000000000000000 from 582:682 to 769:0 code 2 flags 11 pri 0:120 r0 elapsed 1254470ms node 9312 size 436:24 offset 22a78
+$ 最新一对
+pending async transaction 150139: 0000000000000000 from 582:682 to 769:0 code 1 flags 11 pri 0:120 r0 elapsed 29407ms node 9312 size 92:0  offset 5520
+pending async transaction 150140: 0000000000000000 from 582:682 to 769:0 code 2 flags 11 pri 0:120 r0 elapsed 29406ms node 9312 size 436:24 offset 5580
+
+== 6) 记账核对 ==
+async 空间总量        = 520192 B（mmap 半边）
+当前已用              = 520192 - 273888 = 246304 B
+每对数据量            = 92 + 436 = 528 B
+450 对 × 528 B        = 237600 B（+ binder 元数据 ≈ 246304）✓
+打满阈值              = 520192 / 528 ≈ 985 对 ≈ 1970 条
+
+== 7) 同期阈值告警（崩溃轮的内核侧，取自 dmesg-31.txt）==
+[ 323.3] binder_alloc: 972: pid 861 spamming oneway? 1486 buffers allocated for a total size of 416080
+[ 366.1] binder: cannot allocate buffer: no space left
+[ 456.4] binder: 861:986 transaction async to 972:0 failed 856391/29201/-28, code 1 size 92-0
+[ 491.7] binder_alloc: 972: pid 861 spamming oneway? 1868 buffers allocated for a total size of 520096
+
+# 注：崩溃轮 pid 为 861(surfaceflinger)/972(system_server)，与本轮 582/769 不同，属同一问题不同轮次。
+
+== 8) 决定性 A/B：自动亮度就是开关（~12:37–12:44）==
+# 指纹：取「最新一条 pending 的 elapsed」——生产停了它就跟着墙钟长；生产在跑它就重新变小。
+$ D=/sys/kernel/debug/binder/proc/769
+$ grep -o 'elapsed [0-9]*ms' $D | awk '{print $2+0}' | sort -n | head -1     # 最小 = 最新
+
+基线（自动亮度=1）
+  最新 elapsed 29407ms              pending 941
+
+$ settings put system screen_brightness_mode 0 ; settings get system screen_brightness_mode -> 0
+  观察 1（即时）            最新 171001ms   pending 762
+  观察 2（+120 s）         最新 291042ms   pending 714     ← 恰好 +120 s，零新增：生产停了
+
+$ settings put system screen_brightness_mode 1 ; settings get system screen_brightness_mode -> 1
+  观察 3（+90 s）          最新  50419ms   pending 676     ← 重新变小：生产立即恢复
+
+$ settings put system screen_brightness_mode 0     # 收尾保留关闭状态
+  pending 666     free async space 333248（273888 → 333248，继续回落）
+
+# 结论：自动亮度 ON ⇒ SF RegionSampling 每秒一对 oneway → system_server；
+#     OFF ⇒ 新投递归零。云机无环境光传感器，自动亮度本无意义。
+# 同期系统健康：12:44:27  cannot allocate buffer=0 / spamming oneway=0 / DeadSystem=0，
+#        mCurrentFocus=com.meizu.connectivitysettings/.Settings

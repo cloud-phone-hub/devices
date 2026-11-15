@@ -1,0 +1,54 @@
+;; vendor.awa.reality（MEIZU/awa 触感 HAL，自研实现）的 SELinux 片段，由
+;; 07_build_vendor 步骤 6 以 marker
+;;（;; cdh-patch-begin: vendor_sepolicy.cil@vendor.awa.reality）
+;; 整块并入装配树 /vendor/etc/selinux/vendor_sepolicy.cil；同一 marker 重复执行幂等。
+;;
+;; 为什么在模块层：域、可执行标签、服务名标签都是这个 HAL 自身的契约，换机型不重写。
+;; 机型层原本只有 hal_awa_reality_service 的类型与 system_server 的 find 授权
+;;（"无实体的占位标签"），自研实体接入后整段搬到这里，机型层同批删除（重复
+;; (type …) 会让 secilc Failed to resolve → init InitFatalReboot）。
+;;
+;; 类型名逐字沿原厂（原厂 vendor_sepolicy.cil：hal_realitytap_default /
+;; hal_realitytap_default_exec / hal_realitytap_service，且原厂 file_contexts 把
+;; /bin/hw/vendor.awa.realitytap.service 标成 hal_realitytap_default_exec），
+;; 这样镜像里的标签与 Flyme avc 可直接对照。
+;;
+;; 与原厂的差异：原厂把域挂进 socket_between_core_and_vendor_violators /
+;; halserverdomain 等大 attribute，并有 hal_realitytap_client(=
+;; system_server_202404) / hal_realitytap_server、realitytap_device
+;;（/dev/awa_realitytap_dev）、realitytap 属性类型一整套 —— 那是驱动本机 awa
+;; 触感芯片才需要的。本云实现不 open 任何设备节点、不解析波形，故一条都不搬。
+;; 平台域一律用 {{vers}} 占位，由构建阶段按 plat_sepolicy_vers.txt 替换。
+
+;; ---- 1) 域与可执行标签 ----
+;; 进程域必须归入 domain 属性，否则 init 的 setexeccon 报 EINVAL、服务 fork 后 signal 6
+;;（同 vendor.meizu.hardware.aw_light 的说明）。
+(type hal_realitytap_default)
+(typeattributeset domain (hal_realitytap_default))
+(roletype object_r hal_realitytap_default)
+(type hal_realitytap_default_exec)
+(roletype object_r hal_realitytap_default_exec)
+
+;; ---- 2) init 启动链 ----
+;; rc 的 seclabel 让 init 显式换域；exec 标签由 07 步骤 6b 按同一行派生
+;;（/(vendor|system/vendor)/bin/hw/vendor.awa.realitytap.service）。
+(allow init_{{vers}} hal_realitytap_default_exec (file (read getattr map execute open entrypoint)))
+(allow init_{{vers}} hal_realitytap_default (process (transition noatsecure siginh rlimitinh)))
+(allow hal_realitytap_default hal_realitytap_default_exec (file (read getattr map execute open entrypoint)))
+(dontaudit init_{{vers}} hal_realitytap_default (process (noatsecure)))
+
+;; ---- 3) AIDL 服务注册与查询 ----
+;; 服务名标签走同目录 vendor_service_contexts。
+(type hal_realitytap_service)
+(roletype object_r hal_realitytap_service)
+(typeattributeset service_manager_type (hal_realitytap_service))
+(allow hal_realitytap_default servicemanager_{{vers}} (binder (call transfer)))
+(allow hal_realitytap_default hal_realitytap_service (service_manager (add find)))
+;; 客户端侧用 domain 通配（perf2 先例）：只需要「名字可见」，真正调用还要 binder call。
+(allow domain hal_realitytap_service (service_manager (find)))
+
+;; ---- 4) Binder 域间调用 ----
+;; 唯一调用方是 Flyme framework（system_server 的 RealityTapManagerService）；
+;; performTap/performRtp 会把客户端的 IVibratorCallback binder 传进来，故双向授权。
+(allow system_server_{{vers}} hal_realitytap_default (binder (call)))
+(allow hal_realitytap_default system_server_{{vers}} (binder (call)))

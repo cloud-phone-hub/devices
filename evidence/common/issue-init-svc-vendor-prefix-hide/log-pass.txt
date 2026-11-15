@@ -1,0 +1,31 @@
+# 修复后：单测 + 实例 gold_15-OS3.0.11.0.VNQCNXM/2（4d5128bd8ca07462-cloud）实机与 aligner.build_props_full 验证
+
+# 1) Go 单元测试
+$ cd /Volumes/work/cloud-phone-hub/engine/build && TMPDIR=/Volumes/work/cloud-phone-hub/engine/out/tmp go test -v -run 'TestMergeCloudFstabDropsEFIMount|TestSanitizeCloudInitRCDropsEFIAndPrefixesServices' ./stages/05_build_vendor_boot ./stages/07_build_vendor
+=== RUN   TestSanitizeCloudInitRCDropsEFIAndPrefixesServices
+--- PASS: TestSanitizeCloudInitRCDropsEFIAndPrefixesServices (0.00s)
+PASS
+ok  	cloud-phone-hub/engine/build/stages/07_build_vendor	2.333s
+
+# 2) 实机 shell 与 cdh_redirect 规则表（engine/out/tmp/p0_smoke_pass.txt & p0_cdh_redirect_pass.txt）
+=== P0-3 init.svc (shell getprop) ===
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+[init.svc.vendor.cph_wifi_bootstrap]: [stopped]
+[init.svc.vendor.keep_awake]: [running]
+[init.svc.vendor.logcat_dump]: [running]
+[init.svc.vendor.media.c2-v4l2-hal-1-2]: [running]
+[init.svc.vendor.seriallogging]: [running]
+[init.svc.vendor.suspend_blocker]: [running]
+--- P0-3 check old names count ---
+OLD_NAMES_NONE
+
+$ cat /proc/cdh_redirect | grep mdnsd
+  file /system/etc/init/mdnsd.rc -> /mnt/vendorpatch/vendor/etc/init/cph_empty.rc
+
+# 3) App 侧 aligner.build_props_full 重采对拍（engine/out/tmp/p0_aligner_pass_extract.txt）
+=== P0-3: init.svc.* ===
+  real init.svc count=146, cloud init.svc count=90
+  cloud-only init.svc keys: ['init.svc.cppreopts']
+  any old_9 or init.svc.vendor.* visible in cloud: []
+  substring scan in cloud build_props: []

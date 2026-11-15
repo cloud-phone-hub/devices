@@ -1,0 +1,177 @@
+# popsicle 外部模块缺口 + cust 不可装 —— 失败侧取证（#136）
+
+取样时间：2026-11-03
+取样环境：`engine/` 下（`cdh device build popsicle`），产物落
+`out/devices/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/`，内核产物落
+`out/kernel/lineage-23-6.12/modules/`。
+本文记录**改动前**的状态与**被否掉的方案**，正向结果见同目录 `log-pass.txt`。
+
+## 第 1 节：改动前 03 只产物 9 个 .ko，四个外部模块全缺
+
+`modules.external` 是「声明即取代」——`manifest.ExternalModules()` 在
+`declared=true` 时只返回清单里列的模块，缺项不是「走默认全编」而是**该项零产物**。
+所以清单只有 1 项 + 公共 in-tree 集 8 项 = 9 个 `.ko`，可以逐项对上：
+
+```console
+$ python3 -c "import json;d=json.load(open('manifest/xiaomi/popsicle/baselines/popsicle_images_OS3.0.319.0.WPBCNXM_20260824.0000.00_16.0_cn_9d8daa8b5b.json'));print(d['modules'])"
+{'external': ['cdh_redirect']}
+
+$ sed -n '43,52p' build/internal/kbuild/kbuild.go | grep -c '\.ko'
+8        # virtio_console / rfkill / cfg80211 / mac80211 / mac80211_hwsim / libarc4 / zram / zsmalloc
+```
+
+改动前 `out/kernel/lineage-23-6.12/modules/` 的 9 个 `.ko`：
+
+| # | .ko | 来源 |
+| :--- | :--- | :--- |
+| 1 | `cdh_redirect.ko` | 清单 `modules.external` 唯一一项（first-stage，进 vendor_boot ramdisk） |
+| 2 | `virtio_console.ko` | 公共 in-tree 集 |
+| 3 | `rfkill.ko` | 公共 in-tree 集 |
+| 4 | `cfg80211.ko` | 公共 in-tree 集 |
+| 5 | `mac80211.ko` | 公共 in-tree 集 |
+| 6 | `mac80211_hwsim.ko` | 公共 in-tree 集 |
+| 7 | `libarc4.ko` | 公共 in-tree 集 |
+| 8 | `zram.ko` | 公共 in-tree 集 |
+| 9 | `zsmalloc.ko` | 公共 in-tree 集 |
+
+缺的四个（本应来自 `modules.external`）：
+
+```console
+$ ls out/kernel/lineage-23-6.12/modules/ | grep -E 'cdh_device_info|cdh_goodix|cdh_input|cdh_media'
+（无输出）
+```
+
+后果不是「少个可选件」：`device.json` 的 `hardware` 里写着
+`android.hardware.media.v412`（v4l2_codec2），而 v4l2_codec2 的硬前提是
+`cdh_media.ko` 带 `allow_userptr=1`——没有驱动，V4L2 会清掉 USERPTR 能力位、
+DMABUF 又恒被拒，codec2 直接拒绝启动；`goodix_fingerprint` / `input_identity`
+同理对应 `hardware` 里的 biometrics 与触控身份件。
+
+```console
+$ python3 -c "import json;d=json.load(open('manifest/xiaomi/popsicle/device.json'));print([list(h)[0] for h in d['hardware'] if 'media' in list(h)[0]])"
+['android.hardware.media', 'android.hardware.media.v412']
+```
+
+## 第 2 节：cust 在 popsicle 上无源可装（四条独立反证）
+
+用户要求「popsicle 也要像 gold 那样保留 cust」（`rom.vendor.images` 加 `cust.img`、
+`vda.partitions` 加 `{image: cust.img, mount: /cust}`）。**做不到**，因为 popsicle 这一代
+已经把 cust 分区整个去掉了，四条证据互相独立：
+
+### 证据 1：固件包内 0 个 cust 条目
+
+```console
+$ tar tzf roms/devices/xiaomi/popsicle/popsicle_images_OS3.0.319.0.WPBCNXM_20260824.0000.00_16.0_cn_9d8daa8b5b.tgz | grep -icE cust
+0
+
+$ tar tzf roms/devices/xiaomi/popsicle/popsicle_images_OS3.0.319.0.WPBCNXM_*.tgz | grep -E "images/.*\.img$"
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/vm-persist.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/countrycode.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/init_boot.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/qtvm-dtbo.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/misc.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/vbmeta.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/dtbo.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/vbmeta_system.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/dummy.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/recovery.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/vm-bootsys.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/persist.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/pvmfw.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/vendor_boot.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/userdata.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/boot.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/super.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/rescue.img
+popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/metadata.img
+```
+
+对照 gold（同一家、同一代工线，Android 15 那代 cust 还在）：
+
+```console
+$ tar tzf roms/devices/xiaomi/gold/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.tgz | grep -E "images/.*\.img$"
+gold_images_OS3.0.10.0.VNQCNXM_15.0/images/cust.img          ← 就是这个文件
+gold_images_OS3.0.10.0.VNQCNXM_15.0/images/super.img
+gold_images_OS3.0.10.0.VNQCNXM_15.0/images/vendor_boot.img
+（其余为 lk / sspm / md1img / efuse 等固件分区件）
+```
+
+### 证据 2：`rawprogram*.xml` 的物理分区表里没有 cust
+
+```console
+$ tar xzOf roms/devices/xiaomi/popsicle/popsicle_images_OS3.0.319.0.WPBCNXM_*.tgz \
+    --include='*rawprogram*.xml' | grep -o 'label="[^"]*"' | sed 's/label="//;s/"//' | sort -u | wc -l
+     163
+
+$ tar xzOf roms/devices/xiaomi/popsicle/popsicle_images_OS3.0.319.0.WPBCNXM_*.tgz \
+    --include='*rawprogram*.xml' | grep -ic 'label="cust'
+0
+```
+
+即：整机 163 个 label（含 `rawprogram0..5` 与 `partition_ext_p2p3q200.xml`）里
+**一个 cust 都没有**。真机都没有这个分区，云机盘集自然无从建。
+
+### 证据 3：super 的 8 个逻辑分区里没有 cust
+
+```console
+$ ls out/roms/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/super/
+mi_ext_a.img  odm_a.img  product_a.img  system_a.img
+system_dlkm_a.img  system_ext_a.img  vendor_a.img  vendor_dlkm_a.img
+```
+
+cust 也不是 super 里的 logical 分区（gold 的 cust 是独立物理分区，不在 super 里）。
+
+### 证据 4：官方 `fstab.canoe` 里没有 `/cust` 挂载点，职能在 `mi_ext`
+
+```console
+$ debugfs -R "cat /etc/fstab.canoe" out/devices/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/img/vendor.img > /tmp/pops_fstab.txt
+$ wc -l < /tmp/pops_fstab.txt
+      65
+$ grep -cE "^cust[[:space:]]" /tmp/pops_fstab.txt
+0
+$ grep -cE "[[:space:]]/cust[[:space:]]" /tmp/pops_fstab.txt
+0
+$ grep -n cust /tmp/pops_fstab.txt
+25:overlay /product/opcust overlay ro,lowerdir=/mnt/vendor/mi_ext/product/opcust/:/product/opcust check,nofail
+35:overlay /product/etc/precust_theme overlay ro,lowerdir=/mnt/vendor/mi_ext/product/etc/precust_theme:/product/etc/precust_theme check,nofail
+```
+
+`cust` 字面量只出现在 `opcust` / `precust_theme` 这两个 overlay 的路径里，
+两者 lowerdir 都指向 `/mnt/vendor/mi_ext`——**cust 的职能被 mi_ext 接管了**：
+
+```console
+$ grep -nE "^mi_ext|/mnt/vendor/mi_ext /mi_ext" /tmp/pops_fstab.txt
+13:mi_ext /mnt/vendor/mi_ext ext4 ro,barrier=1,discard wait,slotselect,logical,first_stage_mount,nofail
+14:/mnt/vendor/mi_ext /mi_ext ext4 ro,bind wait,nofail
+15:mi_ext /mnt/vendor/mi_ext erofs ro wait,slotselect,logical,first_stage_mount,nofail
+16:/mnt/vendor/mi_ext /mi_ext erofs ro,bind wait,nofail
+```
+
+### 硬加会怎样（被否掉的方案）
+
+若照 gold 写 `"images": ["super.img","vendor_boot.img","cust.img"]` +
+`"vda": {"partitions":[{"image":"cust.img","mount":"/cust"}]}`：
+
+1. `01_unpack` 在固件包里找不到 `cust.img`（`tar tzf` 已证 0 个）→ 该影像永不落
+   `out/roms/xiaomi/popsicle/…/`；
+2. `11_pack` 的 `vda` 附加分区按清单去取源镜像，源不存在 → 报「取不到 cust.img」失败，
+   或（更糟）建出一个 0 字节/全零的分区；
+3. 即便强行造一个空 cust，官方 `fstab.canoe` 也没有 `/cust` 行去挂它——多出来的分区
+   既是死区又要把 backup GPT 白扩一次。
+
+**结论**：`rom.vendor.images` 与 `vda.partitions` 一个字节都不改。用户要的「cust 能力」
+在 popsicle 上由 super 内的 `mi_ext`（`/product/opcust`、`/product/etc/precust_theme`
+的 overlay lowerdir）承担，这是 Xiaomi 从 Android 15 到 Android 16 的代际变化。
+
+## 第 3 节：本轮自己的两次误判（记录以免后人重踩）
+
+1. **把代际记错**：初版 solution 的对照表写「`flyme/m22`（sun）6.12」「`samsung/ss9380`
+   6.12」，实测两份基线顶层 `kernel` 字段都是 **6.6**，6.12 的那批是 `oppo/cph2797`、
+   `oneplus/15r`、`xiaomi/popsicle`。教训：代际一律读基线 JSON 的顶层 `kernel` 字段，
+   不按机型代号或印象推断。
+2. **「唯一性」结论下早了**：初版写「popsicle 是唯一 6.12 却只声明 redirect 的机型」，
+   横向扫描 17 份基线后发现 `oneplus/15r` 同样是 6.12（`board: canoe`）且
+   `external` 只有 `["cdh_redirect"]`。它已能起机，是因为启动路径不依赖 `cdh_media`，
+   但 codec2 同样不可用——同类缺口，已记进 solution 的「六、遗留」第 5 条。
+   教训：写「唯一 / 全部 / 一个都没有」这类全称判断前，先跑一遍覆盖全仓的枚举命令，
+   并把枚举输出留在 log 里。

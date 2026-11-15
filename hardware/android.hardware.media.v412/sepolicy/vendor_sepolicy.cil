@@ -1,0 +1,17 @@
+;; cdh：v4l2_codec2 store 运行期的域授权（由 07_build_vendor 并入装配树的
+;; etc/selinux/vendor_sepolicy.cil）。
+;;
+;; 只有一条：dlopen 同进程插件 /vendor/lib64/libc2plugin_store.so。
+;; 该文件的标签是 same_process_hal_file（官方基线标签表定的，与 AOSP 的
+;; codec2 插件一致），而基底策略里同进程库的授权只给了 kernel 域：
+;;   (allow kernel_202404 same_process_hal_file_202404 (file (ioctl read ...)))
+;; mediacodec 没有任何一条，缺这里会把插件加载打成 avc denied —— 服务能起来、
+;; store 却枚举不出 v4l2 组件，问题看起来像「HAL 没注册」。
+;;
+;; same_process_hal_file 是 plat 私有类型，vendor CIL 必须写版本化影子名，
+;; 故用 {{vers}} 占位（202404），由构建阶段替换。
+;;
+;; 运行库（/vendor/lib64 下的 libcodec2_* / libchrome 等）标签是 vendor_file，
+;; 同域的媒体模块 android.hardware.media/sepolicy/ 已补 (allow mediacodec
+;; vendor_file (file (read getattr map open execute)))，本文件不重复。
+(allow mediacodec same_process_hal_file_{{vers}} (file (read getattr map open execute)))

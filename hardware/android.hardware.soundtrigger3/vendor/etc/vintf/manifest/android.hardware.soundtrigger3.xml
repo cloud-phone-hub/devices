@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  cdh：自研 soundtrigger3 空 HAL 的 VINTF 声明（0 module）。
+
+  必须声明：ColorOS 的 SoundTriggerMiddlewareDefaultHalFactory 先查
+  AServiceManager_isDeclared("android.hardware.soundtrigger3.ISoundTriggerHw/default")，
+  为假时退回 HIDL soundtrigger-V2.x 并每次 getService() 拿 null，system_server 主线程
+  紧循环重试（实例 10：5 万条日志 / 151 s 后 sysrq 重启）。声明为真后走 AIDL
+  waitForService —— 由 vendor.soundtrigger3-hal 这个 class hal 服务在 boot phase 200
+  之前应答。
+
+  version 属性不能省：libvintf 对每个 fragment 校验 <manifest version=...>，裸
+  <manifest/> 会得到 Illformed file → NULL VINTF MANIFEST（实例 9 的教训）。
+-->
+<manifest version="1.0" type="device">
+    <hal format="aidl">
+        <name>android.hardware.soundtrigger3</name>
+        <version>3</version>
+        <fqname>ISoundTriggerHw/default</fqname>
+    </hal>
+</manifest>

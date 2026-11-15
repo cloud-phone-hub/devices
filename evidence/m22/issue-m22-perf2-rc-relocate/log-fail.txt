@@ -1,0 +1,97 @@
+# issue-m22-perf2-rc-relocate / 改动前取证（fail / 分层不成立）
+
+> 全部命令在 `/Volumes/work/cloud-phone-hub/engine` 下执行；输出原样，省略无关行时标 [略]。
+
+## 一、perf2 的 rc 当时在机型静态树，不在模块目录
+
+```
+$ find vendor/hardware -path "*/vendor/etc/init/*.rc" | sort
+vendor/hardware/android.hardware.audio/vendor/etc/init/android.hardware.audio.service.rc
+vendor/hardware/android.hardware.authsecret/vendor/etc/init/android.hardware.authsecret-service.rc
+[略 35 行：biometrics×3、bluetooth、boot、camera、confirmationui、drm、gnss、health、
+ identity、ir、keymint、light、media.v412、media×2、memtrack、nfc、power.stats、power、
+ radio、secure_element、sensors、thermal、usb×2、vibrator、weaver、wifi、daemon×5]
+vendor/hardware/vendor.meizu.sensor_aux/vendor/etc/init/vendor.meizu.sensor_aux-service.rc
+# 共 38 个文件，没有 vendor.qti.hardware.perf2
+
+$ find vendor/hardware/vendor.qti.hardware.perf2 -type f | sort
+aidl/vendor.qti.hardware.perf2/1/.hash
+aidl/vendor.qti.hardware.perf2/1/vendor/qti/hardware/perf2/IPerf.aidl
+aidl/vendor.qti.hardware.perf2/1/vendor/qti/hardware/perf2/IPerfCallback.aidl
+sepolicy/vendor_sepolicy.cil
+sepolicy/vendor_service_contexts
+src/perf2_service.cpp
+# 模块目录没有 vendor/ 静态树
+
+$ grep -rn "perf2" manifest/flyme/m22/device.json
+215:            "vendor.qti.hardware.perf2": {
+# 只有 m22 声明该模块；gold 的 device.json 没有 perf2
+
+$ find manifest/xiaomi/gold -iname "*perf2*"
+（无输出）
+```
+
+## 二、机型静态树那份 rc 的原文（含「为什么由机型层提供」的自述）
+
+```
+$ cat manifest/flyme/m22/vendor/etc/init/vendor.qti.hardware.perf2-hal-service.rc
+# m22 机型层：vendor.qti.hardware.perf2（IPerf v1）服务入口。
+#
+# 为什么由机型层提供而不是模块自带：perf2 的接口与实现由引擎的
+# engine/vendor/hardware/vendor.qti.hardware.perf2 提供（空实现、方法即时回 0），
+# 但「在哪些机型上、以什么实例名注册」属设备集成层职责（见 vendor/build/README.md）。
+#
+# 为什么必须补实体：Flyme 的 vendor.perfservice / BoostFramework 在
+# handleBindApplication 里**同步**连 QTI perf HAL；实例缺失时每次查询都要到
+# servicemanager 走一遍失败路径（实例日志里有 383 条 "Could not find
+# vendor.qti.hardware.perf2.IPerf/default in the VINTF manifest"，调用方是
+# system_server / system_app / lmkd），3a-15 上同一缺口曾放大成 app 主线程阻塞。
+#
+# 为什么 disabled + on post-fs-data 显式 start：perfservice 在 system_server 起来后
+# 才查询，post-fs-data 足够早；显式启动避开 class 批量启动窗口的失败重试循环。
+# 不注入 VINTF 片段：客户端用 native getService（不做 VINTF 校验），本机官方与
+# lineage 底座也都没声明过该 HAL；声明一个不在 FCM 里的包反而引入 VINTF 校验面，
+# 一旦服务晚到还会把 getService 拖成 waitForDeclaredService 的阻塞等待。
+# SELinux：复用底座标准域 hal_sensors_default（本仓虚拟 HAL 一律复用基座标准域；
+# 本实例名的类型与 service_manager(add find) 由模块层片段给出——
+# engine/vendor/hardware/vendor.qti.hardware.perf2/sepolicy/，随 HAL 复用，本文 件只声明
+# 启动链），可执行标签由 07_build_vendor 步骤 6b 按本文件的 seclabel 自动补 _exec 规则。
+service vendor.perf2-default /vendor/bin/hw/vendor.qti.hardware.perf2-hal-service
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_sensors_default:s0
+    interface aidl vendor.qti.hardware.perf2.IPerf/default
+    disabled
+
+on post-fs-data
+    start vendor.perf2-default
+```
+
+## 三、与仓库自己的切分口径冲突
+
+`engine/vendor/build/README.md`（改动前）「放什么、不放什么」表：
+
+```
+| `etc/init/*.rc`（服务定义）、`etc/vintf/manifest/*.xml`（接口声明）、
+  `etc/seccomp_policy/*` | 模块 `vendor/` | 设备无关，随服务/源码走；
+  gold 的 17 个声明模块均已就位 |
+```
+
+这份 rc 里**没有任何机型数值**：无通道号、无设备节点、无实例名差异，服务名
+`vendor.perf2-default` 与二进制名都是引擎侧约定，`seclabel` 复用的是底座标准域
+`hal_sensors_default`。按上表口径它属「设备无关」，放在机型静态树是唯一例外。
+
+## 四、「在哪些机型上注册」并不需要靠机型 rc 来门控
+
+07 步骤 4 只复制 `device.json` 声明模块的 `Targets` + `VendorTree`，
+`engine/build/07_build_vendor/assemble.go`：
+
+```go
+files := make([]string, 0, len(build.Targets)+len(build.VendorTree))
+...
+for _, rel := range build.VendorTree {
+```
+
+未声明 perf2 的机型（gold）根本拿不到这份 rc；声明了才拿。所以机型静态树里那份副本
+对「上不上机」没有任何门控作用，只是重复来源。

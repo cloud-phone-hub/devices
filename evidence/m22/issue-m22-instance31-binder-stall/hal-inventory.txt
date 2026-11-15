@@ -1,0 +1,90 @@
+# m22 云机 HAL 接入盘点（实例 31，2026-10-29 21:40 guest 时钟）
+
+## 0. 取证方法（全部只读，adb shell 即可）
+
+```
+adb -s 127.0.0.1:5919 shell "service list"                      -> 339 条 binder 服务，其中 android.hardware.*/实例 40 条
+adb -s 127.0.0.1:5919 shell "lshal list"                        -> 0 条 HIDL 服务（本机型全部走 AIDL）
+adb -s 127.0.0.1:5919 shell "ls /vendor/bin/hw/"                -> 19 个 HAL 服务二进制
+adb -s 127.0.0.1:5919 shell "cat /vendor/etc/vintf/manifest/*.xml /system/etc/vintf/manifest/*.xml"
+adb -s 127.0.0.1:5919 shell "cat /system/etc/vintf/compatibility_matrix.202404.xml ..."   -> 172 条 hal / 88 个 name
+adb -s 127.0.0.1:5919 shell "logcat -d -b all | grep -oE 'Waited one second for [^ ]+' | sort | uniq -c"
+```
+
+## 1. framework 明确在等、但完全没有实现（每秒重试，约 20 分钟 1472 次）
+
+```
+1472  android.hardware.nfc.INfc/default
+1472  android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual
+1472  android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual
+```
+
+- `ServiceManagerCppClient: Waited one second for …`，同步等待且**永不超时**；
+- 调用方：system_server 的两个线程 + **com.android.nfc 主线程**（该主线程被永久阻塞 →
+  `ANR in com.android.nfc (Broadcast … BOOT_COMPLETED)`）；
+- 注意这三个是 `*virtualhal*` 名字，在 `/system/etc/vintf` 的 FCM 与机型 manifest 里
+  **grep 不到**（各 0 命中）→ 由 Flyme framework/库直接按名 getService。
+
+## 2. 已接入（service list 有实例）
+
+| 域 | 服务实例 |
+| :--- | :--- |
+| 音频 | `android.hardware.audio.core.IConfig/IModule`、`audio.effect.IFactory` |
+| 显示 | `graphics.composer3.IComposer`、`graphics.allocator.IAllocator`（mapper 走 passthrough `libmapper.minigbm`） |
+| 媒体 | `media.c2.IComponentStore`（mediatek + v4l2 + dolby 三套） |
+| 蓝牙 | `bluetooth.IBluetoothHci` |
+| GNSS | `gnss.IGnss` |
+| WiFi | `wifi.IWifi` |
+| 蜂窝 | `radio.{config,data,messaging,modem,network,sim,voice}` 7 个（实测已注册中国联通 LTE） |
+| 传感器 | `sensors.ISensors`（实测 `dumpsys sensorservice`：29 个硬件传感器在跑，含 lsm6dso_acc / qmc6308 等真机型号） |
+| 电源/健康 | `power.IPower`、`health.IHealth`、`thermal.IThermal` |
+| 灯/振动/红外 | `light.ILights`、`vibrator.IVibrator` + `IVibratorManager`、`ir.IConsumerIr` |
+| 安全 | `security.keymint.IKeyMintDevice`、`IRemotelyProvisionedComponent`、`security.secureclock.ISecureClock`、`security.sharedsecret.ISharedSecret` |
+| CAS/SE | `cas.IMediaCasService`、`android.se.omapi.ISecureElementService` |
+| 其它 | `graphics.composer3`、`vendor.mediatek.hardware.mtkradioex.sim` |
+
+`/vendor/bin/hw/` 19 个二进制：audio.effect / audio / bluetooth / composer.hwc3 / gnss /
+allocator.minigbm / health / ir / lights / media.c2-mediatek / media.c2@1.2-v4l2 / power /
+radio / security.keymint / sensors / thermal / vibrator / wifi / vendor.dolby.media.c2。
+
+## 3. 未接入（FCM 必需但 service list 无实例，且与真机硬件相关）
+
+| 域 | 缺失接口 | 运行态旁证 |
+| :--- | :--- | :--- |
+| 相机 | `camera.provider.ICameraProvider` | `cameraserver` 在跑（pid 618）但无 provider；`dumpsys media.camera` → `FAILED_TRANSACTION` |
+| 指纹 | `biometrics.fingerprint.IFingerprint` | framework `fingerprint` 服务在，HAL 缺（见第 1 节 virtualhal） |
+| 人脸 | `biometrics.face.IFace` | framework `face` 服务在，HAL 缺（见第 1 节 virtualhal） |
+| NFC | `nfc.INfc` | `Can't find service: nfc`，但 `com.android.nfc` 进程在跑并阻塞 |
+| DRM | `drm.IDrmFactory` | `drm.drmManager` 在但 `dumpsys` 无输出，Widevine 能力未确认 |
+| 安全元件 | `secure_element.ISecureElement` | 仅 framework `omapi` 侧在 |
+| 身份凭证 | `identity.IIdentityCredentialStore` | 无 |
+| Weaver | `weaver.IWeaver` | 无 |
+| Bootloader 锁 | `oemlock.IOemLock` | 仅 framework `oem_lock` 在 |
+| 分区启动控制 | `boot.IBootControl` | 无 |
+| USB | `usb.IUsb`、`usb.gadget.IUsbGadget` | 仅 framework `usb` (IUsbManager) |
+| 内存统计 | `memtrack.IMemtrack` | 仅 framework `memtrack.proxy` |
+| 电源统计 | `power.stats.IPowerStats` | 仅 framework `powerstats` |
+| 存储健康 | `health.storage.IStorage` | 无 |
+| 输入后处理 | `input.processor.IInputProcessor` | 无 |
+| 蓝牙音频 | `bluetooth.audio.IBluetoothAudioProviderFactory` | 无 |
+| 蓝牙私有 | `bluetooth.{socket,finder,lmp_event,ranging}` | 无 |
+| WiFi 用户态 | `wifi.supplicant.ISupplicant`、`wifi.hostapd.IHostapd` | 走传统 conf 路径 |
+| SoundTrigger | `soundtrigger3.ISoundTriggerHw` | 仅 `soundtrigger_middleware` 在 |
+| 设备 dumpstate | `dumpstate.IDumpstateDevice` | 仅 framework `bugreport` |
+| 网络拦截 | `net.nlinterceptor.IInterceptor` | 无 |
+| 卸载加速 | `tetheroffload.IOffload` | 无 |
+| 神经网络 | `neuralnetworks.IDevice` | 无（NNAPI 走 CPU 回退） |
+| 其它 | `contexthub`、`confirmationui`、`broadcastradio`、`macsec`、`authsecret`、`audio.sounddose`、`radio.ims`、`radio.ims.media`、`radio.sap`、`virtualization.capabilities` | 云机均不适用或无实现 |
+
+**可选/不适用（FCM 里有，但云机本就不该有）**：`automotive.*`（8 个）、`tv.*`（6 个）、
+`uwb`、`threadnetwork`、`broadcastradio`、`bluetooth.ranging`。
+
+## 4. 结论
+
+1. 真正「被请求但没接入」的只有 **3 个**：`nfc.INfc`、`fingerprint.virtualhal.IVirtualHal`、
+   `face.virtualhal.IVirtualHal`——它们是 m22 卡死（binder async 池被打满）的诱因之一；
+   治法是镜像层补空实现让它们**秒失败**（或在 VINTF/框架侧去掉引用），而不是靠禁包。
+2. 硬件域缺口里影响最大的是**相机**（cameraserver 在跑但无 provider）。
+3. 其余缺失项多为可选能力（NNAPI、soundtrigger、usb gadget、weaver 等），
+   不影响开机与界面，可按需补桩。
+4. 蜂窝/传感器/音频/显示/WiFi/蓝牙/密码学这些「云机必须能用」的 HAL 都在。

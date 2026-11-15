@@ -1,0 +1,45 @@
+# 修复后：7d10bffa4bc09406-cloud aligner.telephony_full 重采结果
+ro.vendor.radio.meid.prefix=99002158
+sim[0].ManufacturerCode=99002158
+sim[1].ManufacturerCode=99002158
+telephony.EmergencyNumberList=[
+  {
+    "key": "-1",
+    "value": [
+      "[EmergencyNumber: 110, countryIso=cn, mnc=, src=db , routing=unknown, categories=police , urns=]",
+      "[EmergencyNumber: 119, countryIso=cn, mnc=, src=db , routing=unknown, categories=fire , urns=]",
+      "[EmergencyNumber: 120, countryIso=cn, mnc=, src=db , routing=unknown, categories=ambulance , urns=]",
+      "[EmergencyNumber: 112, countryIso=, mnc=, src=mdm def , routing=unknown, categories=, urns=]",
+      "[EmergencyNumber: 911, countryIso=, mnc=, src=mdm def , routing=unknown, categories=, urns=]",
+      "[EmergencyNumber: 000, countryIso=, mnc=, src=mdm , routing=unknown, categories=, urns=]",
+      "[EmergencyNumber: 08, countryIso=, mnc=, src=mdm , routing=unknown, categories=, urns=]",
+      "[EmergencyNumber: 110, countryIso=, mnc=, src=mdm , routing=unknown, categories=police , urns=]",
+      "[EmergencyNumber: 118, countryIso=, mnc=, src=mdm , routing=unknown, categories=, urns=]",
+      "[EmergencyNumber: 119, countryIso=, mnc=, src=mdm , routing=unknown, categories=fire , urns=]",
+      "[EmergencyNumber: 120, countryIso=, mnc=, src=mdm , routing=unknown, categories=ambulance , urns=]",
+      "[EmergencyNumber: 122, countryIso=, mnc=, src=mdm , routing=unknown, categories=, urns=]",
+      "[EmergencyNumber: 999, countryIso=, mnc=, src=mdm , routing=unknown, categories=, urns=]"
+    ]
+  },
+  {
+    "key": "1",
+    "value": [
+      "[EmergencyNumber: 110, countryIso=cn, mnc=, src=db , routing=unknown, categories=police , urns=]",
+      "[EmergencyNumber: 119, countryIso=cn, mnc=, src=db , routing=unknown, categories=fire , urns=]",
+      "[EmergencyNumber: 120, countryIso=cn, mnc=, src=db , routing=unknown, categories=ambulance , urns=]",
+      "[EmergencyNumber: 112, countryIso=cn, mnc=00, src=mdm def , routing=unknown, categories=, urns=]",
+      "[EmergencyNumber: 911, countryIso=cn, mnc=00, src=mdm def , routing=unknown, categories=, urns=]",
+      "[EmergencyNumber: 000, countryIso=cn, mnc=00, src=mdm , routing=unknown, categories=, urns=]",
+      "[EmergencyNumber: 08, countryIso=cn, mnc=00, src=mdm , routing=unknown, categories=, urns=]",
+      "[EmergencyNumber: 110, countryIso=cn, mnc=00, src=mdm , routing=unknown, categories=police , urns=]",
+      "[EmergencyNumber: 118, countryIso=cn, mnc=00, src=mdm , routing=unknown, categories=, urns=]",
+      "[EmergencyNumber: 119, countryIso=cn, mnc=00, src=mdm , routing=unknown, categories=fire , urns=]",
+      "[EmergencyNumber: 120, countryIso=cn, mnc=00, src=mdm , routing=unknown, categories=ambulance , urns=]",
+      "[EmergencyNumber: 122, countryIso=cn, mnc=00, src=mdm , routing=unknown, categories=, urns=]",
+      "[EmergencyNumber: 999, countryIso=cn, mnc=00, src=mdm , routing=unknown, categories=, urns=]"
+    ]
+  }
+]
+
+summary(new): {"identity": 2, "capability": 115, "state": 0, "availability": 0, "fatal": 117}
+remaining Emergency/Manufacturer diffs: []

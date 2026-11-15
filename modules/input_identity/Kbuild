@@ -1,0 +1,5 @@
+# Copyright (c) 2025-2026 fei_cong(https://github.com/feicong/feicong-course)
+# 机型差异全部在基线清单 modules.input_identity，08 渲染为伴随数据文件，
+# 运行时由 config.o 读取解析；执行侧 main.o 泛化注册，零机型分支。
+obj-m += cdh_input_identity.o
+cdh_input_identity-y := main.o config.o

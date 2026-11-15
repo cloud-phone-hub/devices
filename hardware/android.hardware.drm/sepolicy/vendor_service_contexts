@@ -1,0 +1,12 @@
+# cdh：DRM AIDL HAL 的服务名映射（由 07_build_vendor 并入装配树的
+# etc/selinux/vendor_service_contexts）。
+#
+# 平台侧 plat_service_contexts 只登记了 android.hardware.drm.IDrmFactory/clearkey，
+# 未登记 /widevine 实例。若无此映射，IDrmFactory/widevine 会落到 default_android_service，
+# 导致 Enforcing 下的客户端（App / mediadrmserver / rkpdapp 等 hal_drm_client）因无权
+# find default_android_service 而被 servicemanager 拒绝。
+# 这里显式映射 widevine 与 clearkey 实例，使 IDrmFactory / ICryptoFactory 均落入 hal_drm_service。
+android.hardware.drm.IDrmFactory/widevine       u:object_r:hal_drm_service:s0
+android.hardware.drm.ICryptoFactory/widevine    u:object_r:hal_drm_service:s0
+android.hardware.drm.IDrmFactory/clearkey       u:object_r:hal_drm_service:s0
+android.hardware.drm.ICryptoFactory/clearkey    u:object_r:hal_drm_service:s0

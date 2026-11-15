@@ -1,0 +1,73 @@
+# 通过证据：oriole (AP2A.240905.003.F1, kernel 5.10.270-4k-cdh) 改用 netif_rx_ni(skb) 后验证
+# 采样时间：2026-11-04 12:06（实例 1：out/core/daemon/runtime/oriole_AP2A.240905.003.F1/1）
+
+# ==============================================================================
+# 1. 模块符号校验：out/kernel/5.10/modules/mac80211_hwsim.ko 已无 netif_receive_skb
+# ==============================================================================
+$ strings /Volumes/work/cloud-phone-hub/engine/out/kernel/5.10/modules/mac80211_hwsim.ko | grep -E "^netif_(rx|receive_skb)"
+netif_rx_ni
+netif_rx
+netif_rx
+netif_rx_ni
+
+# ==============================================================================
+# 2. 四棵内核树补丁校验
+# ==============================================================================
+$ for v in 5.10 6.1 6.6 6.12; do git -C engine/kernels/$v apply --check engine/kernels/patches/$v/*.patch && echo "OK ($v)"; done
+OK (5.10)
+OK (6.1)
+OK (6.6)
+OK (6.12)
+
+# ==============================================================================
+# 3. 宿主与实例运行状态（冷启动 28 s 进桌面，QEMU %CPU=84.2%，STAT=S）
+# ==============================================================================
+$ ps aux | grep "[q]emu-system-aarch64" | awk '{print "PID="$2, "%CPU="$3, "%MEM="$4, "STAT="$8}'
+PID=23218 %CPU=84.2 %MEM=24.6 STAT=S
+
+$ adb -s 127.0.0.1:5911 shell "getprop sys.boot_completed; getprop init.svc.bootanim; uname -a; cat /proc/uptime; cat /proc/loadavg"
+1
+stopped
+Linux localhost 5.10.270-4k-cdh #3 SMP PREEMPT Wed Nov 4 04:03:43 UTC 2026 aarch64 Toybox
+87.70 407.49
+9.65 3.67 1.33 4/4462 9433
+
+$ adb -s 127.0.0.1:5911 shell "dumpsys window | grep -E 'mCurrentFocus|mFocusedApp'"
+  mCurrentFocus=Window{bbfb249 u0 com.android.settings/com.android.settings.SubSettings}
+  mFocusedApp=ActivityRecord{b1aec51 u0 com.android.settings/.SubSettings t10}
+
+# ==============================================================================
+# 4. Wi-Fi 数据面与 per-CPU NAPI backlog (softnet_stat)
+#    8 个 CPU 均正常收包（首列 processed 0x1a23~0x2cf6，合计 >74,000 帧），第 2 列 dropped 全 0
+# ==============================================================================
+$ adb -s 127.0.0.1:5911 shell "cmd wifi status | head -n 10; ip -4 addr show wlan0"
+Wifi is enabled
+Wifi scanning is only available when wifi is enabled
+==== Primary ClientModeManager instance ====
+Wifi is connected to "CDH-A"
+WifiInfo: SSID: "CDH-A", BSSID: 02:00:00:00:00:11, MAC: <none>, IP: /192.168.60.100, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: 1, RSSI: -46, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 54Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: 54Mbps, Frequency: 2437MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"CDH-A"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>
+successfulTxPackets: 20274
+successfulTxPacketsPerSecond: 519.8831109831549
+retriedTxPackets: 0
+retriedTxPacketsPerSecond: 0.0
+lostTxPackets: 0
+16: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    inet 192.168.60.100/24 brd 192.168.60.255 scope global wlan0
+       valid_lft forever preferred_lft forever
+
+$ adb -s 127.0.0.1:5911 shell "cat /proc/net/softnet_stat"
+00001a23 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+000027d7 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000001
+000025d4 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000002
+00002225 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000003
+0000250f 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000004
+00002cf6 00000000 00000002 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000005
+000028f1 00000000 00000001 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000006
+00002620 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000007
+
+# ==============================================================================
+# 5. dmesg 死锁/软锁死检查：全 0
+# ==============================================================================
+$ adb -s 127.0.0.1:5911 shell "dmesg | grep -c -E 'soft lockup|rcu_preempt|tcp_delack_timer' || true"
+0
+

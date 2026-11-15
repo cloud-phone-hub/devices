@@ -1,0 +1,24 @@
+{
+  "module": "device_info",
+  "outputs": ["cdh_device_info.ko"],
+  "inject": "vendor-dlkm",
+  "kernel": ["5.10", "5.15", "6.1", "6.6", "6.12", "6.18"],
+  "assets": [
+    {
+      "source": "kernel/cdh_device_info.uts",
+      "target": "lib/modules/cdh_device_info.uts",
+      "from-manifest": "uname-version"
+    },
+    {
+      "source": "kernel/cdh_device_info.cpufreq",
+      "target": "lib/modules/cdh_device_info.cpufreq",
+      "from-manifest": "cpufreq"
+    },
+    {
+      "source": "kernel/cdh_device_info.thermal",
+      "target": "lib/modules/cdh_device_info.thermal",
+      "from-manifest": "thermal"
+    }
+  ],
+  "note": "设备信息对齐：UTS/uname、/proc/meminfo、sysinfo uptime、/proc/cpuinfo、cpufreq、cpu_topology 与 cpuN/cache。UTS 字段来自基线清单 rom.official.kernel.uname-version（from-manifest=uname-version -> /lib/modules/cdh_device_info.uts），cpufreq 频点簇来自基线清单 modules.cpufreq（from-manifest=cpufreq -> /lib/modules/cdh_device_info.cpufreq），模块加载时通过 kernel_read_file_from_path 读取；6.6+ 走 android_rvh_cpuinfo_c_show / android_vh_si_meminfo_adjust，5.10/6.1 走 cpuinfo_op.show / si_meminfo kretprobe 与 per_cpu(cpu_scale)。"
+}

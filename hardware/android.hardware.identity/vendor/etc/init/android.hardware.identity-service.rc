@@ -1,0 +1,8 @@
+# engine/vendor 自研 identity HAL（虚拟 HAL）：云机没有安全元件，服务注册
+# android.hardware.identity.IIdentityCredentialStore/default，凭据存储按不支持处理。
+service vendor.identity-default /vendor/bin/hw/android.hardware.identity-service
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_identity_default:s0
+    interface aidl android.hardware.identity.IIdentityCredentialStore/default

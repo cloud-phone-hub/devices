@@ -1,0 +1,103 @@
+复现与验收命令（oriole AP2A.240905.003.F1，2026-11-01）。
+
+# 0. 真值取证（官方 Pixel 6 vendor_a.img）
+
+```
+$ DBG=/opt/homebrew/opt/e2fsprogs/sbin/debugfs
+$ $DBG -R "dump /build.prop engine/out/tmp/oriole-a14-vendor-build.prop" \
+    engine/out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img
+$ sed -n '49p' engine/out/tmp/oriole-a14-vendor-build.prop
+ro.sf.lcd_density=420
+```
+
+# 1. 清单改动（唯一改动点）
+
+```
+$ python3 -c "import json;d=json.load(open('manifest/google/oriole/baselines/oriole-ap2a.240905.003.f1-factory-655c44e7.json'));print(len(d['vendor']['build-prop-sets']), d['vendor']['build-prop-sets']['ro.sf.lcd_density'])"
+20 420
+```
+
+# 2. 07 重装配
+
+```
+$ out/bin/cdh build-vendor --vendor google --brand oriole --version AP2A.240905.003.F1 \
+    --manifest …/oriole-ap2a.240905.003.f1-factory-655c44e7.json
+==> 厂商覆盖集合: 基线清单 vendor.replaces（1 项）
+==> 借件集合: 基线清单 vendor.lifts（15 项）
+    vendor 属性: 基线 build-prop-sets 20 项 / unsets 0 项 -> vendor/build.prop
+==> [步骤 5b] 借件（基线清单 vendor.lifts）
+==> [步骤 6] 应用基线 vendor 属性 -> out/devices/google/oriole/AP2A.240905.003.F1/vendor/build.prop
+    composer compat: 现编（sdk/ndk/29.0.14206865/…/clang++）-> …/vendor/lib64/libcdh_composer_compat.so
+EXIT=0
+
+$ grep -n lcd_density out/devices/google/oriole/AP2A.240905.003.F1/vendor/build.prop
+151:ro.sf.lcd_density=420
+
+$ grep -E 'image_sha256|recipe' out/devices/google/oriole/AP2A.240905.003.F1/img/vendor-info.txt
+image_sha256: d6be06486953bb4114e461b9b40f1f5852a878614527a8d1faaba7dac102f574
+recipe: vendor-67855d254548
+```
+
+# 3. 09 / 11 重刷盘集
+
+```
+$ out/bin/cdh build-patch --vendor google --brand oriole --version AP2A.240905.003.F1 \
+    --manifest …/oriole-ap2a.240905.003.f1-factory-655c44e7.json --refresh
+[ok] 回填 692 条目，回读 692/692 一致
+[ok] patch.img 发布完成: …/img/patch.img（402653184 字节，sha256 40786db363c7）
+
+$ out/bin/cdh pack-vda --vendor google --brand oriole --version AP2A.240905.003.F1 \
+    --lineage-zip roms/lineage/UTM-VM-lineage-21.0-20260804-UNOFFICIAL-virtio_arm64only.zip --refresh
+    [ok] patch.img -> out/dist/google/oriole/AP2A.240905.003.F1/patch.img（384.0 MiB，sha256 40786db363c7）
+    产物: out/dist/google/oriole/AP2A.240905.003.F1（vda.img 13.00 GiB，5 个分区已刷新）
+```
+
+（09/11 之前先停掉实例 7，避免重写盘集时它还以 `vda.img` 作 backing file。）
+
+# 4. 起实例 8 验收
+
+```
+$ curl -s -X POST http://127.0.0.1:9050/api/create -d '{"index":1}'
+oriole_AP2A.240905.003.F1 8 5911 5912      # spec / index / adb / vnc
+
+$ adb -s 127.0.0.1:5911 shell getprop sys.boot_completed
+1
+
+$ adb -s 127.0.0.1:5911 shell 'getprop ro.sf.lcd_density; wm size; wm density'
+420
+Physical size: 1080x2400
+Physical density: 420
+
+$ adb -s 127.0.0.1:5911 shell dumpsys display | grep -m1 DisplayDeviceInfo
+  DisplayDeviceInfo{"Built-in Screen", uniqueId="local:4632256312697818880", 1080 x 2400,
+    modeId 1, renderFrameRate 60.0, … density 420, 457.2 x 457.2 dpi, …
+    mBaseDisplayInfo=DisplayInfo{… real 1080 x 2400, largest app 1080 x 2400,
+    smallest app 1080 x 2400, …, density 420 (457.2 x 457.2) dpi, …}   # 截取关键字段
+
+$ adb -s 127.0.0.1:5911 shell 'pidof com.google.android.apps.nexuslauncher; pidof system_server; ps -A | grep -c .'
+2474
+829
+403
+```
+
+对照：
+
+| | 改造前（实例 7） | 改造后（实例 8） |
+| --- | --- | --- |
+| `ro.sf.lcd_density` | 160 | **420** |
+| `wm density` | Physical density: 160 | Physical density: 420 |
+| 可用窗口（dp） | 1080 × 2400 | **411 × 914** |
+| 布局口径 | sw=1080dp（平板） | sw=411dp（手机） |
+
+# 5. 回归（同一次起机，composer 链路未受影响）
+
+```
+$ I=out/core/daemon/runtime/oriole_AP2A.240905.003.F1/8
+$ grep -c "starting service 'vendor.hwcomposer-3'" $I/qemu.log   → 1
+$ grep -c 'CANNOT LINK' $I/qemu.log                              → 0
+$ grep -m2 -E 'hwc3-drm starting up|Using HWComposer service' $I/qemu.log
+… drmhwc  : hwc3-drm starting up
+… SurfaceFlinger: Using HWComposer service: default
+```
+
+备注：`adb shell screencap` 在 oriole 上会挂住（无 GPU readback），图标/字号观感只能看 VNC `127.0.0.1:5912`。

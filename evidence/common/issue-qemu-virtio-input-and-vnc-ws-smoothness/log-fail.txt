@@ -1,0 +1,38 @@
+# 1. 修复前：noVNC 鼠标悬停移动 (mask=0) 提前发送 ABS_MT_POSITION_X/Y 致按下 (mask=1) 时坐标被 Linux 内核去重吞掉
+
+=== adb logcat MultiTouchInputMapper 告警 ===
+03-31 12:50:12.418   741   892 W MultiTouchInputMapper: Touch event Mellon: slot 0 is not currently in use, ignoring.
+03-31 12:50:12.434   741   892 W MultiTouchInputMapper: Touch event Mellon: slot 0 is not currently in use, ignoring.
+
+=== getevent -lt /dev/input/event1 (修复前：先在 (100,200) 点击松开，再悬停移到 (500,1200) 并原地按下左键) ===
+# 阶段 1：鼠标悬停移到 (500, 1200) (button_mask=0) —— 错误地在未按下时发送了 ABS_MT_POSITION_X/Y！
+[    1420.112041] EV_ABS       ABS_MT_POSITION_X    000035b5
+[    1420.112041] EV_ABS       ABS_MT_POSITION_Y    00003c3c
+[    1420.112041] EV_SYN       SYN_REPORT           00000000
+# 阶段 2：用户在 (500, 1200) 原地按下左键 (button_mask=1) —— 内核因坐标与阶段 1 相同，直接吞掉了 ABS_MT_POSITION_X/Y！
+[    1420.215890] EV_ABS       ABS_MT_SLOT          00000000
+[    1420.215890] EV_ABS       ABS_MT_TRACKING_ID   00000009
+[    1420.215890] EV_ABS       ABS_MT_TOUCH_MAJOR   00000006
+[    1420.215890] EV_ABS       ABS_MT_PRESSURE      00000080
+[    1420.215890] EV_KEY       BTN_TOUCH            DOWN
+[    1420.215890] EV_SYN       SYN_REPORT           00000000
+# 结果：Android InputReader 将本次点击识别为上一次松手时的旧坐标 (100, 200)！
+
+# 2. 修复前：popsicle (1200x2608 全彩渐变壁纸) 与 ASUS (1088x2400 纯黑背景) 的 VNC Tight 帧耗时及 WebSocket 滑动帧率对比
+
+=== 单帧全屏 Tight 编码耗时对比 (修复前) ===
+ASUS (5912) (1088x2400):
+  Frame 0 (full): 29.82ms, 132 rects, 71190 bytes
+popsicle (5920) (1200x2608):
+  Frame 0 (full): 113.90ms, 568 rects, 1084752 bytes
+
+=== WebSocket noVNC 连续滑动 2 秒实测 (修复前) ===
+ASUS WS (5913) (1088x2400):
+  Total frames in 2.0s: 60 (30.0 FPS)
+  Frame intervals: min=8.3ms avg=31.0ms p90=41.5ms max=47.7ms
+  Avg rects/frame: 149.4, Avg bytes/frame: 60.2 KB
+
+popsicle WS (5921) (1200x2608):
+  Total frames in 2.0s: 20 (10.0 FPS)
+  Frame intervals: min=66.8ms avg=94.7ms p90=113.8ms max=121.4ms
+  Avg rects/frame: 642.5 (峰值单帧切碎达 831 个 1~2px 高碎片矩形)

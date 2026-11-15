@@ -1,0 +1,45 @@
+# 清理后现场（2026-11-15）
+
+## 1. 编译与测试
+
+    $ cd agent && go build ./...            # 通过
+    $ go vet ./...                          # 通过
+    $ go test ./...                         # 50 包 ok，无 FAIL
+
+    gofmt -l internal/llm internal/dshsdk internal/store   # 无输出
+
+## 2. 规模变化
+
+    internal/llm      1267 → 773 行
+      llm.go           115 → 55
+      openai.go        566 → 298（删 CompleteStream SSE 聚合 ~190 行 + tool 编解码）
+      router.go        397 → 287（删 CompleteModelStream/CompleteForRole/SetRole/RegisterProvider）
+      llm_test.go      189 → 133（重写为两只聚焦用例）
+    internal/dshsdk    732 → 623 行（client.go 404→308、protocol.go 173→123）
+    internal/store     删 GetCache/PutCache/cacheKey 共 21 行
+
+## 3. 模型连通性测试（走精简后的 CompleteModel）
+
+    $ curl -X POST /api/llm/test -d '{"model":"deepseek-v4.1-flash-1017"}'
+    {"model":"deepseek-v4.1-flash-1017","latencyMs":1140,"reply":"模型连通正常。",
+     "reasoning":"我们需要回答用户中文：..."}
+
+## 4. DSH SDK 链路实跑（走精简后的 Initialize/Query/Wait/Close + session.event）
+
+    $ CDH_DSH_NODE=... ./out/dist/cdha run \
+        --engine-root .../engine --agent-root .../agent \
+        --goal "这是一次 SDK 链路自检：不要调用任何工具，直接用一句话回复「DSH 链路正常」。" \
+        --max-steps 2
+
+    ==> 新建 Run: r_20261115_132735018 (机型=-, 角色=diagnose)
+    --- 第 1 轮 (已用 0 tokens) ---
+    [思考] The user's task says: ... So I should just reply without tools.
+    ==> Run 结束 [completed] (产物目录: .../out/web/runs/r_20261115_132735018)
+    DSH 链路正常
+
+## 5. 浏览器冒烟
+
+    - DSH 页签：#dsh-web-status = 已连接，iframe src=http://127.0.0.1:59898/?token=...
+    - 模型配置弹窗：#llm-config-modal 可见，模型列表 3 项
+      （qwen3.8-flash / qwen3.8-max / deepseek-v4.1-flash-1017）
+    - console：[] 无任何报错

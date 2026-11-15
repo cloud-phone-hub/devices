@@ -1,0 +1,65 @@
+== 迁移前：全仓 17 份基线的字段形态（engine/manifest/*/*/baselines/*.json）==
+# 采集于 2026-11-03 13:3x，迁移前；原件保存在 engine/out/tmp/baselines-backup-20261103-133454/
+
+flyme/m22/baselines/12.5.0.0A.json                                      sets=对象(5)      unsets=对象(0)
+google/oriole/baselines/oriole-ap2a.240905.003.f1-factory-655c44e7.json  sets=对象(20)     unsets=缺失
+google/oriole/baselines/oriole-bp1a.250505.005-factory-9fc37bcc.json     sets=数组61对     unsets=数组38项
+google/oriole/baselines/oriole-cp1a.260405.005-factory-8081a8ba.json     sets=数组186对    unsets=数组0
+google/oriole/baselines/oriole-cp3a.261005.002.a1-factory-1257b58e.json  sets=缺失         unsets=缺失
+nothing/3a/baselines/Asteroids_B4.1-260810-1153.json                     sets=数组361对    unsets=数组0
+nothing/3a/baselines/Asteroids_V3.2-251013-1406.json                     sets=数组342对    unsets=数组0
+oneplus/15r/baselines/CPH2769_16.0.10.500_EX01_A51_full.json             sets=数组2对      unsets=数组0
+oneplus/ace3/baselines/OP_ACE_3_PJE110_15.0.0.870_CN01.json              sets=缺失         unsets=缺失
+oppo/cph2797/baselines/CPH2797_16.0.8.301_EX01_A11_full.json             sets=对象(8)      unsets=对象(0)
+oppo/pme110/baselines/OPPO_FIND_X9s_PRO_PME110_17.0.0.102_CN01.json      sets=数组770对    unsets=数组0
+realme/rmx3823/baselines/1862_sign_RMX3823_11_F_OTA_2160_all_*.json      sets=缺失         unsets=缺失
+realme/rmx5112/baselines/851_sign_RMX5112_11_A_OTA_0520_all_*.json       sets=缺失         unsets=缺失
+realme/rmx6688/baselines/811_sign_RMX6688_11_A_OTA_0380_all_*.json       sets=缺失         unsets=缺失
+samsung/ss9380/baselines/SM-S9380_3_20260813083211_652iw49crl_fac.json   sets=对象(6)      unsets=对象(0)
+xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_*.json               sets=对象(15)     unsets=对象(1)
+xiaomi/popsicle/baselines/popsicle_images_OS3.0.319.0.WPBCNXM_*.json     sets=数组328对    unsets=数组1项
+
+# 合计 17 份：对象 5 / 数组 7 / 无 vendor 段 5。
+# 不含 vendor 段的 5 份确认是 cdh device sync 生成的骨架（顶层键只有
+# version-description / schema / build-id / comment / auto-sync / [modules] / rom）。
+
+
+== 数组形态的形状体检（同一批 17 份）==
+oriole-bp1a...json                       对=61  重复键=无  形状异常=0
+    unsets 非空数组 38 项 重复=0
+oriole-cp1a...json                       对=186 重复键=无  形状异常=0
+Asteroids_B4.1-260810-1153.json          对=361 重复键=无  形状异常=0
+Asteroids_V3.2-251013-1406.json          对=342 重复键=无  形状异常=0
+CPH2769_16.0.10.500_EX01_A51_full.json   对=2   重复键=无  形状异常=0
+OPPO_FIND_X9s_PRO_PME110_...json         对=770 重复键=无  形状异常=0
+popsicle_images_OS3.0.319.0.WPBCNXM...json 对=328 重复键=31 形状异常=0
+    unsets 非空数组 1 项 重复=0
+
+# popsicle 的 31 个重复键（旧读法静默取最后一次）：
+#   debug.c2.use_dmabufheaps ×5、media.c2.hal.selection ×4、debug.stagefright.ccodec ×4、
+#   debug.stagefright.c2inputsurface ×4、bluetooth.profile.* / persist.vendor.qcom.bluetooth.*
+#   等 27 个 ×2。
+#   逐键核对取值：重复键 31 个，值全同 31，值不同 0 → 折叠无损（328 对 → 288 键）。
+
+
+== 迁移前的读法（engine/build/07_build_vendor/props.go）==
+	var object map[string]string
+	if err := json.Unmarshal(raw, &object); err == nil {
+		return object, nil
+	}
+	var pairs [][]string
+	if err := json.Unmarshal(raw, &pairs); err != nil {
+		return nil, err
+	}
+	sets := make(map[string]string, len(pairs))
+	for _, pair := range pairs {
+		if len(pair) < 2 {
+			continue            // 写残的对：静默丢弃，日志无痕
+		}
+		sets[pair[0]] = pair[1]  // 重复键：静默取最后一次
+	}
+
+# 三个后果，构建期都看不出来：
+#   1. 同键多次出现 → 只保留最后一次，前值丢失且无人提示；
+#   2. 少写一个元素的 ["key"] → 整条属性不落盘；
+#   3. 一维数组 ["k","v"] → 两项都 continue，一条属性都不落，07 仍然全绿。

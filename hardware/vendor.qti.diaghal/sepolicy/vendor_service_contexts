@@ -1,0 +1,10 @@
+# vendor.qti.diaghal 的服务名标签。
+#
+# 由 07_build_vendor 以 marker
+#（# cdh-patch-begin: vendor_service_contexts@vendor.qti.diaghal）
+# 整块追加到装配树 /vendor/etc/selinux/vendor_service_contexts。
+#
+# 类型名沿原厂 vendor_hal_diaghal_service（原厂 etc/selinux/vendor_service_contexts
+# 第 71 行同名），便于与 Flyme avc 对照；类型声明与 add / find / binder 授权见
+# 同目录 vendor_sepolicy.cil。
+vendor.qti.diaghal.Idiag/default  u:object_r:vendor_hal_diaghal_service:s0

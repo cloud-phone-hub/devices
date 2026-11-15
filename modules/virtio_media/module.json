@@ -1,0 +1,8 @@
+{
+  "module": "virtio_media",
+  "outputs": ["cdh_media.ko"],
+  "inject": "vendor-dlkm",
+  "options": ["allow_userptr=1"],
+  "kernel": ["5.10", "5.15", "6.1", "6.6", "6.12", "6.18"],
+  "note": "上游 chromeos/virtio-media v0.0.8 的 Pixel6-Android15 驱动，Kbuild 把产物名固定成 cdh_media.ko（≠ 目录名，所以产物名必须由 outputs 声明而不是从目录猜）。allow_userptr=1 是 Android Codec2 走 USERPTR 队列的前提：驱动默认关闭时 V4L2 会清掉 USERPTR 能力位、DMABUF 又恒被拒，v4l2_codec2 直接拒绝启动。"
+}

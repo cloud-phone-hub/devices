@@ -1,0 +1,24 @@
+;; cdh：自研蓝牙 HCI HAL（虚拟 HAL，接管 IBluetoothHci/default）的 SELinux 授权（由
+;; 07_build_vendor 并入装配树的 etc/selinux/vendor_sepolicy.cil）。
+;;
+;; 服务见本模块 vendor/etc/init/bluetooth-service-default.rc：落基座自带的
+;; hal_bluetooth_default 域，以 H4 帧读写 /dev/hvc5（对端为宿主 channels/bt-hci.sock）。
+;;
+;; 平台 type 在 vendor CIL 中必须引用版本化影子名（plat_sepolicy_vers.txt=202504），
+;; 故用 {{vers}} 占位，由构建阶段替换。
+
+;; ---- 宿主通道 ----
+;; hvc 节点的运行时标签是 console_device（基座 vendor_file_contexts 的
+;; /dev/hvc[0-9]+ 正则），授权按类型给、不写路径：hvc 编号是板级布局，换板不吃这条。
+;; 注意这条对 console_device 是整类型授权，会让该域同时可达其它 hvc 节点。
+;;
+;; 缺这条的实测现象（m22 实例 35，首次把 bluetooth 纳入 device.json 时）：
+;;   HAL 进程活着、IBluetoothHci/default 已在 servicemanager 注册，但 framework 每次
+;;   enable 都以新进程重试，5 次全部停在
+;;     W bluetooth: hci_backend_aidl.cc:37 initializationComplete: status != AidlStatus::SUCCESS
+;;   即本模块 initialize() 的 openDevice() 失败分支（Status::UNABLE_TO_OPEN_INTERFACE），
+;;   dumpsys bluetooth_manager 恒为 state: OFF / "Bluetooth never enabled!"。
+;; 基座给 hal_bluetooth_default 的蓝牙设备授权只有 bt_device / rfkill_device 两个类型
+;; （见装配树 vendor_sepolicy.cil 的 hal_bluetooth_default.te 段），virtio-console 通道
+;; 不在其中；同族 radio(/dev/hvc4)、wifi(/dev/hvc9) 各有等价一条，本模块原先漏掉。
+(allow hal_bluetooth_default console_device_{{vers}} (chr_file (ioctl read write getattr lock append map open watch watch_reads)))

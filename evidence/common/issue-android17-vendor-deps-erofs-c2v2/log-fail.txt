@@ -1,0 +1,14 @@
+==> 编译 HAL 模块 android.hardware.audio（变体 default，待落盘 bin/hw/android.hardware.audio.service, bin/hw/android.hardware.audio.effect.service, etc/init/android.hardware.audio.service.rc 等 4 项）
+  + out/bin/cdh-vendor hal build android.hardware.audio --android 17 --out-dir /Volumes/work/cloud-phone-hub/engine/out/vendor/android17
+[err] ABI 依赖库未就绪: /Volumes/work/cloud-phone-hub/engine/out/vendor/android17/abi/system/lib64（先跑 cdh-vendor deps --android 17 --abi）
+[err] hal build 失败 (android.hardware.audio): exit status 1
+
+---
+
+==> 提取 v412 依赖: ABI 库（system 18 + swcodec APEX 9） -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android17/abi
+    system_a.img <- /Volumes/work/cloud-phone-hub/engine/out/roms/lineage/lineage-24.0/super/system_a.img
+    swcodec APEX: 內层 payload /Volumes/work/cloud-phone-hub/engine/out/roms/lineage/lineage-24.0/super/swcodec-work/apex_payload.img
+[err] 从 swcodec APEX 提取 libcodec2_vndk.so 失败: debugfs: Bad magic number in super-block while trying to open /Volumes/work/cloud-phone-hub/engine/out/roms/lineage/lineage-24.0/super/swcodec-work/apex_payload.img
+dump_inode: Filesystem not open
+: exit status 1
+

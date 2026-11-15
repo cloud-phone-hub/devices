@@ -1,0 +1,17 @@
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/libion.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/libsfplugin_ccodec_utils.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/libstagefright_aidl_bufferpool2.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/libstagefright_bufferpool@2.0.1.so（0644）
+==> [步骤 5] 厂商 vendor 原件覆盖
+    输入: out/roms/oppo/cph2797/16.0.8.301_EX01（厂商 vendor 原件）（覆盖集合 10 项）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor
+[replace] vendor/lib64/egl/libGLES_mali.so <- 厂商 vendor/lib64/egl/libGLES_mali.so（文件覆盖）
+[replace] vendor/lib64/egl/libMEOW_data.so <- 厂商 vendor/lib64/egl/libMEOW_data.so（文件覆盖）
+[replace] vendor/lib64/egl/libMEOW_gift.so <- 厂商 vendor/lib64/egl/libMEOW_gift.so（文件覆盖）
+[replace] vendor/lib64/egl/libMEOW_qt.so <- 厂商 vendor/lib64/egl/libMEOW_qt.so（文件覆盖）
+[replace] vendor/lib64/egl/libMEOW_trace.so <- 厂商 vendor/lib64/egl/libMEOW_trace.so（文件覆盖）
+[replace] vendor/lib64/libOpenCL.so <- 厂商 vendor/lib64/libOpenCL.so（文件覆盖）
+[replace] vendor/lib64/libpng.so <- 厂商 vendor/lib64/libpng.so（文件覆盖）
+[replace] vendor/etc/permissions <- 厂商 vendor/etc/permissions（目录，49 个文件，替换）
+[replace] vendor/etc/security <- 厂商 vendor/etc/security（目录，171 个文件，替换）
+[err] 阶段 build_vendor 失败: 厂商 vendor 缺少该路径: etc/md

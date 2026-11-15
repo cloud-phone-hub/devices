@@ -1,0 +1,88 @@
+# 失败 / 返工记录 —— issue-m22-omapi-vintf-common
+
+## 1. 最初的错误认知：把 omapi 声明当成 secure_element HAL 的片段
+
+用户附上 `engine/vendor/hardware/android.hardware.secure_element` 目录与
+`manifest/flyme/m22/vendor/etc/vintf/manifest/android.se.omapi.xml`，问「是不是应该放到
+`android.hardware.secure_element`」。表面看两边都带 secure_element 字样，很容易顺口答「对」。
+
+```
+$ grep -n "addService\|ISecureElement" vendor/hardware/android.hardware.secure_element/src/secure_element_service.cpp
+42:    "android.hardware.secure_element.ISecureElement/eSE1";
+105:  if (AServiceManager_addService(element->asBinder().get(),
+$ grep -n "interface" vendor/hardware/android.hardware.secure_element/vendor/etc/init/android.hardware.secure_element-service.rc
+    interface aidl android.hardware.secure_element.ISecureElement/eSE1
+$ cat manifest/flyme/m22/vendor/etc/vintf/manifest/android.se.omapi.xml
+    <name>android.se.omapi</name>
+    <fqname>ISecureElementService/default</fqname>
+```
+
+两者是**不同包、不同注册方**（vendor HAL vs system 侧 `com.android.se`），放进模块等于让框架声明
+跟着 HAL 的上树下树走。这条错误认知在最终回复与 solution.md 第 2.1 节被纠正并留证。
+
+## 2. 第二个错误认知：把它留在机型静态树「也没问题」
+
+一开始的判断是「文件本身没错，只是归属可议」，准备原样保留。复核后否掉了这个结论：
+
+```
+$ find manifest -path "*vendor/etc/vintf*" -type f
+manifest/flyme/m22/vendor/etc/vintf/manifest/android.se.omapi.xml     # 全仓仅此一份
+$ grep -rln "android.se.omapi" out/roms/lineage/lineage-23.2/super/unpack_vendor/
+（基底无来源）
+$ grep -rln "android.hardware.secure_element" out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/
+（装配树无）
+```
+
+- 内容里没有任何机型数值 → 不是机型定制件，放机型层等于每台机抄一遍。
+- 引擎侧确实缺这一层来源：基底没有、厂商合成清单不读、模块覆盖不到 → 需要新增「基底还原」层的补件步骤。
+
+## 3. 操作事故：`go build -o ../out/bin/cdh-vendor .` 把 HAL 编译器覆盖成主 CLI
+
+为了跑新代码，我在 `engine/build` 下先重编主 CLI，顺手把 `cdh-vendor` 也用同一个 `main.go` 编了一遍：
+
+```
+$ go build -o ../out/bin/cdh . && go build -o ../out/bin/cdh-vendor .
+$ ls -l out/bin/
+-rwxr-xr-x  7145426  cdh
+-rwxr-xr-x  7145426  cdh-vendor          # 两个文件同尺寸 = 同一个程序
+$ ./out/bin/cdh-vendor help
+cloud-phone-hub 引擎构建入口              # 应该是 "cdh-vendor —— engine/vendor 统一 HAL 构建入口"
+```
+
+**没有造成构建失败**：`hal.go` 的 `ensureCompiler` 用 `isVendorCompiler`（跑一次 `help`，看用法里有没有
+`cdh-vendor`）判身份，判否就自己 `go build` 重编。本次实跑日志第 205 行：
+
+```
+==> 构建 HAL 编译器: go build -o out/bin/cdh-vendor .（vendor/build）
+$ ls -l out/bin/cdh-vendor
+-rwxr-xr-x  10004898  out/bin/cdh-vendor   # 21:40 已被流水线重编为真编译器
+$ ./out/bin/cdh-vendor help
+cdh-vendor —— engine/vendor 统一 HAL 构建入口
+```
+
+教训：**主 CLI 与 HAL 编译器是两个 main 包**（`engine/build` vs `engine/vendor/build`），
+手工重编时只该编当前要跑的那一个；`out/bin/cdh-vendor` 交给 07 的 `ensureCompiler` 自愈。
+
+## 4. 过程小坑：`go vet` 在工作区根目录报无模块
+
+```
+$ cd /Volumes/work/cloud-phone-hub/engine && go vet ./build/07_build_vendor/
+go: cannot find main module, but found .git/config in /Volumes/work/cloud-phone-hub/engine
+```
+
+Go 模块根是 `engine/build/go.mod`（HAL 构建器另有 `engine/vendor/build/go.mod`），
+质量门必须在 `engine/build` 下执行：
+
+```
+$ cd engine/build && go vet ./07_build_vendor/ && go test ./07_build_vendor/
+ok   cloud-phone-hub/engine/build/07_build_vendor   14.457s
+```
+
+## 5. 有意没做的事（避免二次返工）
+
+- **没给 `android.hardware.secure_element` 补 VINTF 片段**：`issue-m22-hardware-list-align` 3.6 节已证
+  「声明不在 FCM 里的 vendor 包会把 `getService` 拖成 `waitForDeclaredService` 阻塞」，且实例 36 里
+  `ISecureElement/eSE1` 未声明也注册成功。若当时顺手「补齐」，就与既有证据结论冲突。
+- **没做重复声明**：步骤 2c 是「只补缺」，基底已声明同名片段时以基底为准，不会出现同一 fqname 两份。
+- **没改缓存配方**：`ComputeVendorRecipe` 仍只含基底哈希 / HAL 产物根 / APEX 模式；07 无「配方命中就跳过」
+  逻辑，强行加入 `vendor/vintf/common` 摘要属无消费方的改动，已记入 solution.md 遗留第 3 条。

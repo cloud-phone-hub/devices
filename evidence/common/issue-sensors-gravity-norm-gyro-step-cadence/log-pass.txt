@@ -1,0 +1,125 @@
+# 修复后：宿主 C++ 单测 + 7d10bffa4bc09406-cloud aligner.ids_full 重采结果
+# 1) 宿主单测：
+PASS test_acc_and_gyro_stats_at_50hz: n=75 norm=9.8147 minAccDiff=0.001949 minGyroDiff=0.000137
+PASS test_next_wait_and_catchup
+
+# 2) NEW_CLOUD sensorFingerprint:
+{
+  "acc": {
+    "maxRange": 78.45,
+    "mean": [
+      0.0123,
+      -0.0257,
+      9.7958
+    ],
+    "minDiff": [
+      0.00195,
+      0.00195,
+      0.001949
+    ],
+    "n": 76,
+    "name": "lsm6dso_acc",
+    "norm": 9.7958,
+    "normErr": -0.0108,
+    "resolution": 0.0012,
+    "sigma": [
+      0.009775,
+      0.013062,
+      0.006471
+    ],
+    "uncaliBias": [
+      0.012264,
+      -0.025735,
+      9.7958
+    ],
+    "uncaliBiasZero": true
+  },
+  "gyro": {
+    "minDiff": [
+      0.000137,
+      0.000137,
+      0.000137
+    ],
+    "n": 76,
+    "name": "lsm6dso_gyro",
+    "resolution": 0.0011,
+    "sigma": [
+      0.000666,
+      0.000694,
+      0.000451
+    ],
+    "staticMean": [
+      0.000414,
+      -0.000387,
+      -0.000613
+    ],
+    "uncaliBias": [
+      -0.001176,
+      0.00192,
+      0.004668
+    ],
+    "uncaliBiasSigma": [
+      0.000207,
+      0.000154,
+      0.000154
+    ],
+    "uncaliBiasZero": false
+  },
+  "mag": {
+    "maxRange": 4912.05,
+    "mean": [
+      24.823,
+      -4.715,
+      -39.52
+    ],
+    "minDiff": [
+      0.018749,
+      0.01875,
+      0.018749
+    ],
+    "n": 75,
+    "name": "mmc5603",
+    "resolution": 0.15,
+    "sigma": [
+      0.04144,
+      0.03495,
+      0.029616
+    ],
+    "uncaliBias": [
+      24.823251,
+      -4.7145,
+      -39.519751
+    ],
+    "uncaliBiasZero": true
+  },
+  "dynamic": {
+    "accNorm": 9.7958,
+    "accNormErr": -0.0108,
+    "accSigma": [
+      0.009775,
+      0.013062,
+      0.006471
+    ],
+    "gyroBias": [
+      -0.001176,
+      0.00192,
+      0.004668
+    ],
+    "gyroSigma": [
+      0.000666,
+      0.000694,
+      0.000451
+    ],
+    "gyroStaticMean": [
+      0.000414,
+      -0.000387,
+      -0.000613
+    ],
+    "magSigma": [
+      0.04144,
+      0.03495,
+      0.029616
+    ]
+  },
+  "fpStr": "sensors:1:lsm6dso_acc:InvenSense:1:0.001200:78.45:5000:80000|35:UNCALI_ACC:MTK:1:0.001200:39.23:5000:80000|4:lsm6dso_gyro:InvenSense:1:0.001100:34.91:5000:80000|16:UNCALI_GYRO:MTK:1:0.001100:34.91:5000:80000|2:mmc5603:Memsic:1:0.150000:4912.05:10000:200000|14:UNCALI_MAG:MTK:1:0.150000:4912.05:20000:200000\naq:0.001950,0.001950,0.001949,an:9.8"
+}

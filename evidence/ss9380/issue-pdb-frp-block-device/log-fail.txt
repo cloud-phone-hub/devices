@@ -1,0 +1,54 @@
+# 失败态取证：PersistentDataBlockService 在 phase 500 卡 10 s → system_server 崩
+
+# 机型：samsung/pa3qzcx/pa3q:16/BP4A.251205.006/S9380ZCSDCZH1
+# 盘集：build7（patch.img 只有 napproxyd + vold 两段）
+# 实例：index 1，adb 127.0.0.1:5911
+# 时间：2026-10-30
+
+# ---- 1) crash buffer 原文 ----
+$ adb shell logcat -b crash -d
+E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS
+E AndroidRuntime: java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+E AndroidRuntime:   at com.android.server.pdb.PersistentDataBlockService.onBootPhase(PersistentDataBlockService.java)
+# 这条异常冒泡成 system_server boot 失败 → zygote 重启循环，
+# sys.boot_completed 一直为空。
+
+# ---- 2) 反编译 services.jar 对齐等待点 ----
+# $ dump.erofs --path=/system/framework/services.jar --cat system_a.img > svc.jar
+# $ unzip -o svc.jar classes.dex; dexdump -d classes.dex > dump.txt   (604 MB)
+# 定位 Lcom/android/server/pdb/PersistentDataBlockService;
+#   onStart():
+#       SystemServerInitThreadPool.submit(lambda, "PersistentDataBlockService.onStart")
+#   onBootPhase(500 /* PHASE_ACTIVITY_MANAGER_READY */):
+#       mInitDoneSignal.await(10, SECONDS)   /* 超时 → 抛 IllegalStateException("... init timeout") */
+#   PersistentDataBlockService$$ExternalSyntheticLambda0.run() 末尾才 signalInitDone()，
+#   该 lambda 依次执行：
+#       enforceChecksumValidity()
+#         → automaticallyDeactivateFrpIfPossible()
+#         → setOldSettingForBackwardCompatibility()
+#         → publishBinderService("persistent_data_block")
+#         → signalInitDone()
+#   → lambda 里任何一步抛异常，信号就永远不来 → 10 s 超时。
+
+# ---- 3) 卡在第一步：打不开 ro.frp.pst ----
+$ adb shell getprop ro.frp.pst
+/dev/block/bootdevice/by-name/frp
+# 官方 vendor build.prop 第 144 行即此值；本盘用机型静态树
+#   vendor/etc/init/frp_symlink.rc（post-fs-data 建 by-name 目录 + symlink 到 vda3）
+#   vendor/etc/ueventd.qcom.rc（/dev/block/vda3 0660 root system）
+# 落到设备上：
+lrwxrwxrwx root root   u:object_r:block_device:s0       /dev/block/bootdevice/by-name/frp -> /dev/block/vda3
+brw-rw---- root system u:object_r:misc_block_device:s0  /dev/block/vda3
+
+# ---- 4) 为什么拒 ----
+# plat 只给 system_server 开了 frp_block_device，而本机节点的实际标签是
+# misc_block_device（ueventd 按 /dev/block/vda 命名规则打标签）。
+$ adb shell dmesg | grep -o 'avc:.*' | grep -E "system_server.*(blk_file|block_device)" | sort | uniq -c
+# 与 m22 同源：m22 缺这条时同样卡在这里，修法可复用。
+
+# ---- 5) 方向性排除（此前误判）----
+# 曾推测与 fkeymaster 有关；把 services.jar 抽 dex 后：
+# $ strings svcx/classes.dex | grep -i fkey    → 0 条
+# system_server 完全没有 fkeymaster 引用，该推测作废。
+# fkeymaster 只影响 /system/bin/fabric_crypto（每 5 s SIGABRT）：
+#   Abort message: 'Check failed: fKeymaster !@ Error : Not found Fkeymaster service'

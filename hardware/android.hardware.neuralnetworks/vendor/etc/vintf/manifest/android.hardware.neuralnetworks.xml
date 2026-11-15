@@ -1,0 +1,8 @@
+<manifest version="1.0" type="device">
+  <!-- engine 自研 neuralnetworks AIDL HAL：声明 IDevice/default。 -->
+  <hal format="aidl">
+    <name>android.hardware.neuralnetworks</name>
+    <version>4</version>
+    <fqname>IDevice/default</fqname>
+  </hal>
+</manifest>

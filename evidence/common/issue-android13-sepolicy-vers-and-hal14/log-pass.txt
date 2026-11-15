@@ -1,0 +1,35 @@
+=== 1. 单元测试 ===
+$ cd /Volumes/work/cloud-phone-hub/engine/vendor/build && go test ./...
+ok  	cloud-phone-hub/engine/vendor/build/internal/abi	0.579s
+ok  	cloud-phone-hub/engine/vendor/build/internal/aidl	1.741s
+ok  	cloud-phone-hub/engine/vendor/build/internal/compile	1.007s
+ok  	cloud-phone-hub/engine/vendor/build/internal/deps	1.321s
+ok  	cloud-phone-hub/engine/vendor/build/internal/halbuild	1.564s
+ok  	cloud-phone-hub/engine/vendor/build/internal/ndk	1.855s
+ok  	cloud-phone-hub/engine/vendor/build/internal/profile	0.920s
+ok  	cloud-phone-hub/engine/vendor/build/internal/spec	1.179s
+
+$ cd /Volumes/work/cloud-phone-hub/engine/build && go test -count=1 ./internal/device ./07_build_vendor
+ok  	cloud-phone-hub/engine/build/internal/device	0.336s
+ok  	cloud-phone-hub/engine/build/07_build_vendor	1.186s
+
+=== 2. 07_build_vendor 构建日志（ASUS_AI2205 13-TKQ1.220928.001-20240229） ===
+==> android: 14（命令行 13 -> 默认映射 android14）
+==> 产物目录: out/devices/asus/ASUS_AI2205/13-TKQ1.220928.001-20240229（out/devices）
+==> HAL 产物根: out/vendor/android14（out/vendor）
+==> [步骤 3] 编译 HAL 模块
+    输入: out/tmp/db-manifest/asus/ASUS_AI2205/device.json（hardware 18 项：android.hardware.audio@default、android.hardware.bluetooth@default、android.hardware.camera@default、android.hardware.graphics.composer@default、android.hardware.gnss@default、android.hardware.gpu@default、android.hardware.health@default、android.hardware.ir@default、android.hardware.keymint@default、android.hardware.light@default、android.hardware.media@default、android.hardware.radio@default、android.hardware.sensors@default、android.hardware.thermal@default、android.hardware.vibrator@default、android.hardware.wifi@default、android.service.daemon@default、android.hardware.media.v412@default）
+==> [步骤 6] 对齐平台 SELinux 策略版本: 202404 -> 33.0（匹配厂商固件 mapping/33.0.cil）
+    替换官方 plat_pub_versioned.cil 并补齐跨代兼容 typeattribute 266 项
+[ok] vendor.img 构建完成: out/devices/asus/ASUS_AI2205/13-TKQ1.220928.001-20240229/img/vendor.img（134545408 字节）
+
+=== 3. 实例 2 启动日志（secilc 编译通过并进入二阶段 init） ===
+[    0.377420][    T1] init: Opening SELinux policy
+[    0.379215][    T1] init: Compiling SELinux policy
+[    0.812410][    T1] selinux: SELinux: Loaded policy from /dev/selinux/policy
+[    0.815102][    T1] init:yama: /proc/sys/kernel/yama/ptrace_scope is 1
+[    1.320625][    T1] init: starting service 'exec 2 (/system/bin/vdc checkpoint markBootAttempt)'...
+[    1.324106][    T1] init: Service 'exec 2 (/system/bin/vdc checkpoint markBootAttempt)' (pid 384) exited with status 0 waiting took 0.003000 seconds
+[    1.328433][    T1] init: starting service 'vendor.dlkm_loader'...
+[    1.330983][    T1] init: processing action (post-fs) from (/vendor/etc/init/android.hardware.security.keymint-service.rc:26)
+

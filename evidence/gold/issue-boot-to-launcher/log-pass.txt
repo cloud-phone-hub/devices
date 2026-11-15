@@ -1,0 +1,151 @@
+# 通过态取证：gold 全新 data 首启直达 launcher（OOBE 已绕过）
+#
+# 设备/清单：xiaomi/gold  OS3.0.10.0.VNQCNXM（Redmi Note 13 5G）
+# 清单：gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694
+# 实例：gold_cn_OS3.0.10.0.VNQCNXM/19（daemon 9050 新建，全新 data，非复用 17）
+# 时间：2026-10-25 06:45 创建，guest RTC 显示 07-15 21:0x（随底包时钟）
+# 说明：早期版本曾用实例 18 验证同一份 vendor/system 内容；回退内核诊断提交后
+# 按第 6 节全链重建，并用全新实例 19 复验最终产物。
+#
+# 本轮修复（相对 log-fail.txt 的失败态）：
+#   1) 补回机型清单缺失的两个 provisioning 补丁文件；
+#   2) 追加 SELinux 规则，放行 system_server -> pioneer 的 binder call/transfer
+#      （cmd 的 ShellCallback 回程）。
+#
+# 最终产物（回退诊断内核后全链重建，02→04→07→09→11；从 dist 抽件复核）：
+#   engine/out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch.img
+#     sha256 b0f5231be108a30d253f739633b275be20c42f3877842474d022814d77a620bc
+#   engine/out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/vda.img
+#     sha256 a71d5c144e9dd0d19ecdc8d58c096fae7d63dc7a493473b84d1e6b61c95b1c4b
+#   device.json id = gold_cn_OS3.0.10.0.VNQCNXM
+#   boot.img sha256 4b55ff65422a216666afbb81b9931d9969ab55929e2129a724437facf486d66f
+#   内核 Image 32623104 B，release 6.6.127-4k-cdh（构建容器 565400d61405，
+#   2026-10-24 22:43:35 UTC）；配方 lineage-22-6.6-cdh-e5b709b58011
+#   （源码 HEAD 8589080b584f = 回退诊断提交后的源码）
+#
+# patch.img 内抽件（debugfs dump）与清单源文件逐字节一致：
+#   /bin/setup_display.sh                 0755 2659B system_file
+#     sha256 972528860b90d5a0d9899d7aa4f27773e5c53253c17674ee0eacc877112878c8
+#   /etc/init/cph_disable_provision.rc    0644  670B vendor_file
+#     sha256 9e7413fccd0467b0b7a5a5d3490659e3b9088adc19701f5e0d9863de237f5c83
+#   /etc/selinux/vendor_sepolicy.cil      0644 vendor_configs_file
+#     含 (allow system_server_202404 pioneer (binder (call transfer)))
+#   cdh_logcat.rc / cdh_logcat.sh 已随诊断件删除，不再出现在产物中。
+#
+# 说明：vendor 分区在 11 中由同一装配树原位刷新，实例 18 直接以新 vda.img
+# 为 writable-base 启动；下面的运行态结果表明新策略已实际加载（若未加载，
+# cmd 仍会像失败态那样永久阻塞）。
+
+## 0. 启动链结果（guest shell，经 hvc7 通道）
+
+$ getprop sys.boot_completed
+1
+$ getprop ro.build.fingerprint
+VirtIO/lineage_virtio_arm64only/virtio_arm64only:15/AP3A.240905.015.A2/OS3.0.10.0.VNQCNXM:user/release-keys
+$ getprop init.svc.auto_provision
+stopped          # oneshot 已执行完退出（init 对 oneshot 的终态即 stopped）
+$ getprop init.svc.keep_awake
+running
+
+qemu.log 中 auto_provision 两次执行均以 0 退出（第二次为 framework 稳定后的补跑）：
+[   43.276632][    T1] init: Service 'auto_provision' (pid 593) exited with status 0 oneshot service took 34.921001 seconds in background
+[   48.295411][    T1] init: Service 'auto_provision' (pid 3689) exited with status 0 oneshot service took 1.325000 seconds in background
+（首轮耗时较长，是等待 framework 完成启动期间脚本内重试所致；最终 status 0。）
+
+真实内核以串口日志与 /dev/kmsg 为准：
+[    0.000000][    T0] Linux version 6.6.127-4k-cdh ... #1 SMP PREEMPT Sat Oct 24 22:43:35 UTC 2026
+$ grep -c "cdh_sig" qemu.log
+0                # 回退 0a7728888fdb 后诊断探针已不在内核中
+说明：user 态 `uname -r` / `/proc/version` 会显示 6.6.89-android15-8-…
+，这是 cdh_device_info 模块的 uts 伪装（engine/modules/device_info/uts/uts.c
+按金实例内核串覆写 init_uts_ns），不是实际内核版本。
+
+## 1. provisioning 已落地（不再进 OOBE）
+
+$ settings get global device_provisioned
+1
+$ settings get secure user_setup_complete
+1
+
+## 2. cmd 不再挂起（根因 2 的直接判据）
+
+$ timeout -s KILL 6 cmd settings get global device_provisioned; echo rc=$?
+1
+rc=0
+
+$ timeout -s KILL 8 cmd deviceidle get deep; echo rc=$?
+ACTIVE
+rc=0
+
+失败态下同类命令均为 rc=137（被 timeout 强杀），且 avc 报：
+  avc: denied { call } for comm="binder:638_16" scontext=u:r:system_server:s0
+  tcontext=u:r:pioneer:s0 tclass=binder permissive=0
+本轮实例 19 的 qemu.log 中该模式计数为 0：
+$ grep -c "scontext=u:r:system_server:s0 tcontext=u:r:pioneer:s0 tclass=binder" qemu.log
+0
+（pioneer 自身为 permissive 域，其 avc 均 permissive=1 放行；本规则修正的是
+ enforcing 的 system_server 侧回程调用，因此只能靠策略而不是 permissive 位解决。）
+
+## 3. 窗口与 launcher
+
+$ dumpsys window | grep -E "mCurrentFocus|mFocusedApp"
+  mCurrentFocus=Window{b9c8dfc u0 com.miui.home/com.miui.home.launcher.Launcher}
+  mFocusedApp=ActivityRecord{2c371b0 u0 com.miui.home/.launcher.Launcher t3}
+（dumpsys 走同一 binder fd 通道，失败态下报 "Failed transaction (2147483646)"；
+ 本轮 logcat 中该字符串计数为 0。）
+
+$ logcat -d -t 800 | grep -c "Failed transaction (2147483646)"
+0
+$ pidof system_server
+651              # 单次启动后未再换 pid
+$ dumpsys window | grep -c com.miui.home.launcher.Launcher
+18
+
+## 4. 截图
+
+launcher.png（同目录）：1080x2400 桌面，时间 21:12（实例 19），显示 dock、图标与
+桌面小组件，无向导页、无迁移页。VNC 抓帧（RFB 003.008，1088x2400 非黑像素
+2591741）。
+
+## 5. 遗留噪声（不阻塞引导，已有独立记录）
+
+- crash buffer 仅存一条早期崩溃（RTC 同步前 01-01 08:00:08）：
+  /mnt/vendor/bin/setup_sound_card 在 findSoundCard() 中 std::stoi 抛
+  invalid_argument 后 abort。属 VM 无声卡场景的官方二进制噪声，进程为独立
+  oneshot，不影响 system_server 与 launcher。
+- pioneer 读取 /mnt/vendor/bin/setup_display.sh 时仍有 permissive=1 的
+  avc（system_file），与金实例表现一致（同域同为 permissive），未额外放宽策略。
+- framework 启动早期仍有 finddevice/provider 等待与线程级信号，launcher 起来后
+  不再复现；实例 19 的 system_server 全程同一 pid，未发生框架重启。
+
+## 6. 诊断内核回退后的最终重建与复验（2026-10-25 06:37–06:55）
+
+回退提交（内核仓库 engine/kernels/lineage-22-6.6）：
+  8589080b584f Revert "CDH 诊断：SIGKILL 全量探针 + system_server/zygote 退出码"
+保留根因修复：f377db7883de（readlink 暴露 /vendor 虚拟路径）、
+3d90bc8daa1d（readlink 注释标记修正）。
+
+全链重建 02→04→07→09→11（GOMAXPROCS=4，02 --jobs 4；带 CDH_LINEAGE_ZIP）：
+  02 内核配方 lineage-22-6.6-cdh-e5b709b58011（HEAD 8589080b584f）
+     Image 32623104 B，release 6.6.127-4k-cdh，2026-10-24 22:43:35 UTC
+  04 boot 配方 boot-c8bb861d0522，boot.img 83886080 B
+     sha256 4b55ff65422a216666afbb81b9931d9969ab55929e2129a724437facf486d66f
+  07 vendor.img sha256 011f2c6efd33a16c66b210404f09bd3afb4b3cecbee34e09d7f2fbe990c95473
+  09 patch.img sha256 b0f5231be108a30d253f739633b275be20c42f3877842474d022814d77a620bc
+  11 vda.img sha256 a71d5c144e9dd0d19ecdc8d58c096fae7d63dc7a493473b84d1e6b61c95b1c4b
+
+从最终 patch.img 抽件复核（debugfs，out/tmp/distcheck3）：
+  setup_display.sh  972528860b90…（与清单一致，0755 system_file）
+  cph_disable_provision.rc 9e7413fccd04…（与清单一致，0644 vendor_file）
+  vendor_sepolicy.cil 092ecb87bb29…，含
+    (allow system_server_202404 pioneer (binder (call transfer)))
+  /bin 下不存在 cdh_logcat 相关文件
+
+全新 data 实例 19（06:45 创建）复验：
+  sys.boot_completed=1；auto_provision 两轮均 exit 0；
+  device_provisioned=1 / user_setup_complete=1；
+  cmd settings get → rc=0；cmd deviceidle get deep → ACTIVE，rc=0；
+  Failed transaction (2147483646) 计数 0；
+  qemu.log 中 system_server→pioneer binder avc 计数 0；
+  cdh_sig 诊断输出计数 0（回退生效）；
+  mCurrentFocus=com.miui.home/.launcher.Launcher；截图 launcher.png（21:12）。

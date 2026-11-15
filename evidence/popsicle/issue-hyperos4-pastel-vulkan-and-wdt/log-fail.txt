@@ -1,0 +1,53 @@
+=== 1. HyperOS 4 桌面 (com.miui.home / hyos_spawner) 因 Vulkan 后端不可用导致全黑屏/缺图标 ===
+# (a) 默认 ro.gfx.driver.1=com.qualcomm.qti.gpudrivers.canoe.api36 时尝试打开高通 KGSL 设备失败：
+E Adreno-AppProfiles: Could not open /dev/kgsl-3d0: No such file or directory
+E vulkan  : failed to load Vulkan driver /vendor/app/com.qualcomm.qti.gpudrivers.canoe.api36/com.qualcomm.qti.gpudrivers.canoe.api36.apk!/lib/arm64-v8a/vulkan.adreno.so
+
+# (b) 切到 vulkan.virtio.so (Mesa Venus -> host MoltenVK) 时缺 VK_KHR_swapchain：
+I flutter : [IMPORTANT:flutter/impeller/renderer/backend/vulkan/capabilities_vk.cc(274)] Device does not support required Android extension: VK_KHR_swapchain
+I flutter : [IMPORTANT:flutter/impeller/renderer/backend/vulkan/context_vk.cc(292)] No valid Vulkan device found.
+E flutter : [ERROR:flutter/shell/common/shell.cc(251)] Could not setup platform view -> on_create_platform_view return null
+E hyper_os_flutter_backend: [flutter_scene.cc(290)] Create engine failed, just finish
+
+# (c) 挂载 /cust 分区后，裸跑 vulkan.pastel.so 在绘制首屏 widget_stack_4 (MiGlassV13F16) 时因未实现 OpFConvert (Float16) 触发 SIGSEGV 无限崩溃：
+11-06 15:23:39.500 14195 14266 W SwiftShader: external/swiftshader/src/Pipeline/SpirvShader.cpp:534 WARNING: UNSUPPORTED: SPIR-V Float16 or Float64 Capability (OpFConvert)
+11-06 15:23:39.963 14195 14259 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 14259 (com.miui.home), pid 14195 (com.miui.home)
+Cmdline: com.miui.home
+pid: 14195, tid: 14259, name: com.miui.home  >>> com.miui.home <<<
+      #00 pc 00000000007db38c  /mnt/vendorpatch/vendor/lib64/hw/vulkan.pastel.so (sw::SpirvEmitter::EmitCompositeConstruct(sw::Spirv::InsnIterator)+388)
+      #01 pc 00000000007dad80  /mnt/vendorpatch/vendor/lib64/hw/vulkan.pastel.so (sw::SpirvEmitter::EmitInstruction(sw::Spirv::InsnIterator)+2496)
+      #02 pc 00000000007da17c  /mnt/vendorpatch/vendor/lib64/hw/vulkan.pastel.so (sw::SpirvEmitter::EmitInstructions(sw::Spirv::InsnIterator, sw::Spirv::InsnIterator)+92)
+      #03 pc 00000000007d9ca0  /mnt/vendorpatch/vendor/lib64/hw/vulkan.pastel.so (sw::SpirvShader::emit(sw::SpirvRoutine*, rr::RValue<rr::SIMD::Int>, rr::RValue<rr::SIMD::Int>, std::__1::array<rr::SIMD::Pointer, 4ul> const&, unsigned int) const+192)
+      #04 pc 00000000007ba6e8  /mnt/vendorpatch/vendor/lib64/hw/vulkan.pastel.so (sw::PixelProgram::executeShader(rr::Int*, rr::Int*, rr::Pointer<rr::Byte> const&, rr::Int*, rr::SIMD::Int (&) [4], rr::Int (&) [4])+2152)
+      #08 pc 000000000075bb1c  /mnt/vendorpatch/vendor/lib64/hw/vulkan.pastel.so (sw::Renderer::draw(vk::GraphicsPipeline const*, vk::DynamicState const&, unsigned int, int, unsigned int, int, rr::Pointer<rr::Byte>&, int, void*, unsigned int)+412)
+      #10 pc 00000000007121b8  /mnt/vendorpatch/vendor/lib64/hw/vulkan.pastel.so (vk::CommandBuffer::submit(vk::CommandBuffer::ExecutionState&)+136)
+
+=== 2. system_server 60s Watchdog 软重启（"返回重启"）两处 Binder 阻塞链 ===
+# 取自 /data/anr/traces_SystemServer_WDT06_11_12_20_08.279_pid12829：
+Subject: Blocked in handler on foreground thread (android.fg) for 66s
+Binder Transaction Info:
+outgoing transaction from 12829(system_server):12844(android.fg) to 587(/vendor/bin/hw/android.hardware.gnss-service):587(android.hardwar) elapsed: 92.271000 s code: 14
+outgoing transaction from 587(/vendor/bin/hw/android.hardware.gnss-service):587(android.hardwar) to 12829(system_server):12844(android.fg) elapsed: 92.271000 s code: 2
+outgoing transaction from 12829(system_server):13030(StorageManagerS) to 12753(/system/bin/mediaserver64):0(unknown) elapsed: 94.870000 s code: 7
+outgoing transaction from 12753(/system/bin/mediaserver64):12753(mediaserver64) to 895(/system/bin/mediacodeclist_generator):901(binder:895_1) elapsed: 96.527000 s code: 1
+outgoing transaction from 12829(system_server):13401(GnssDfs thread) to 587(/vendor/bin/hw/android.hardware.gnss-service):0(unknown) elapsed: 92.271000 s code: 23
+
+"android.fg" prio=5 tid=11 Blocked
+  at com.android.server.location.listeners.ListenerMultiplexer.deliverToListeners(ListenerMultiplexer.java:617)
+  - waiting to lock <0x02fec1c5> (a java.lang.Object) held by thread 365
+  at com.android.server.location.gnss.GnssStatusProvider.onReportStatus(GnssStatusProvider.java:151)
+  at com.android.server.location.gnss.hal.GnssNative.reportStatus(GnssNative.java:1175)
+  at com.android.server.location.gnss.hal.GnssNative.native_start(Native method)
+  at com.android.server.location.gnss.hal.GnssNative$GnssHal.start(GnssNative.java:1472)
+  - locked <@addr=0x18ccc4f0> (a com.android.server.location.gnss.hal.GnssNative$GnssHal)
+  at com.android.server.location.gnss.GnssLocationProvider.startNavigating(GnssLocationProvider.java:1392)
+
+"GnssDfs thread" prio=5 tid=365 Native
+  native: #04 pc 0005ab50  /system/lib64/android.hardware.gnss-V7-cpp.so (android::hardware::gnss::BpGnss::startSvStatus+532)
+  native: #05 pc 0003da84  /system/lib64/libservices.core-gnss.so (android::gnss::GnssHal::startSvStatus+92)
+  at com.android.server.location.gnss.hal.GnssNative.native_start_sv_status_collection(Native method)
+  at com.android.server.location.gnss.GnssStatusProvider.registerWithService(GnssStatusProvider.java:76)
+  at com.android.server.location.listeners.ListenerMultiplexer.updateService(ListenerMultiplexer.java:447)
+  - locked <0x02fec1c5> (a java.lang.Object)
+  at com.android.server.location.gnss.dfs.GnssDfsManagerImpl.setGnssStart(GnssDfsManagerImpl.java:208)
+

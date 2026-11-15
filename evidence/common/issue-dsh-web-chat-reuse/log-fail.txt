@@ -1,0 +1,34 @@
+# 失败现场（2026-11-15，修复前）
+
+## 1. web 会话无工作区（浏览器实测）
+
+页面提示：「选择一个工作区开始」
+- 「选择工作区」下拉为空，无可选项；
+- 「添加工作区」按钮禁用；点击/快捷键 Alt+Meta+O 无创建对话框；
+- `POST /api/directoryPicker/pick`（原生目录选择器）无返回结果（无头环境拿不到系统对话框）。
+
+## 2. 默认模型路由无密钥（浏览器实测）
+
+用户消息：「你好，请用一句话回复」
+助手回复：处理失败
+
+    llm-deepseek: no API key for provider route "deepseek-official";
+    store DEEPSEEK_API_KEY through the credentials service
+    状态码: MISSING_CREDENTIAL
+
+## 3. dump-config 中的默认路由（根因定位）
+
+    - id: agent-default-model
+      name: '@deepseek-ai/dsh-agent-default-model'
+      config:
+        provider: deepseek-official
+        model: deepseek-flash
+
+## 4. workspace/create 首次调用参数报错（协议试错）
+
+    {"type":"server-response","rpcId":"cdha-ws-1","result":{"ok":false,
+     "error":{"code":"gateway/arguments-invalid",
+     "message":"typert gateway: workspace/create: args fields do not match
+     the descriptor: missing \"request\"; unexpected \"path\""}}}
+
+→ 正确形状是 payload.args.request.path（多包一层 request）。

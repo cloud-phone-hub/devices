@@ -1,0 +1,21 @@
+# note13-5G-15：B 方案 —— ADB 由 guest-daemon 的 hvc2 ADBKEY1 握手注入宿主
+# 公钥后，fork 子进程 exec APEX adbd（监听 TCP 5555），host 经 net0 SLIRP
+# hostfwd <ADBPort>→5555 连接。
+# adbd 的 netns 由 netmgr 决定：/mnt/run/adb_net 现指向 **init 主 netns**
+# （不再隔离），因此 adbd 与 adb shell 都在主 netns —— 与真机一致，普通
+# app/shell 能看到 ccmni2/wlan0 等网卡。
+# 自研 Rust adbd 已删除（不再走 /dev/hvc8），平台 /system/bin/adbd 不启用
+# （其一旦 running 即 stop，避免抢 5555）。
+#
+# service.adb.tcp.port 不在 init 阶段全局常驻设置，改为由 service_daemon 的
+# adbd_launch 在每次 fork APEX adbd 前设置瞬态启动端口，待子进程完成 TCP 5555
+# 监听绑定后及时清理，保持运行期属性表与标准设备一致。
+# 不再全局设置 persist.security.adbinput / persist.security.adbinstall（普通 App 可读，
+# 会暴露调试开关特征）；管理侧装包通过 root 通道执行 pm install 完成。
+
+on post-fs-data
+    mkdir /data/misc/adb 2750 system shell
+    restorecon /data/misc/adb
+
+on property:init.svc.adbd=running
+    stop adbd

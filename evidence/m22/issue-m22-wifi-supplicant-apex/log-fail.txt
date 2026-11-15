@@ -1,0 +1,59 @@
+# issue-m22-wifi-supplicant-apex · 失败现场
+# 采集时间: 2026-10-30 11:20（实例 44，m22 修完 SELinux domain 后的盘集）
+# 现场: out/core/daemon/runtime/m22_12.5.0.0A/44/qemu.log
+# 现象: 设置里的 WiFi 开关打不开（打开又自动弹回），扫不到也连不上任何 AP
+
+== 1) 框架侧的第一道报错：VINTF 里根本没有 ISupplicant ==
+06-25 12:52:11.165  servicemanager: Caller(pid=935,uid=1000,sid=u:r:system_server:s0)
+    Could not find android.hardware.wifi.supplicant.ISupplicant/default in the VINTF manifest.
+    No alternative instances declared in VINTF.
+（同一条在实例 44 日志里出现 2 次，对应开机与用户手动开 WiFi 各一次）
+
+== 2) 于是 supplicant 的 AIDL 客户端建不出来 ==
+06-25 20:52:32.789  935  1045 I am_wtf: [0,935,system_server,-1,SupplicantStaIfaceHal,
+    Failed to get internal ISupplicantStaIfaceHal instance.]
+06-25 20:52:32.804  935  1045 I am_wtf: [0,935,system_server,-1,SupplicantP2pIfaceHal,
+    Failed to get internal ISupplicantP2pIfaceHal instance.]
+06-25 20:55:08.374  935  2162 E SupplicantStaIfaceHal:
+    Internal ISupplicantStaIfaceHal instance does not exist.
+06-25 20:55:08.374  935  2162 E WifiNative: Failed to start supplicant
+（`Failed to start supplicant` 共 2 次，与上面对齐）
+
+== 3) ClientModeManager 起不来 → 开关打不开 ==
+06-25 20:55:08.393  935  2162 E WifiActiveModeWarden:
+    ClientModeManager start failed! ConcreteClientModeManager{id=64368 iface=wlan0 role=ROLE_CLIENT_SCAN_ONLY}
+06-25 21:06:49.640  935  2162 E WifiActiveModeWarden:
+    ClientModeManager start failed! ConcreteClientModeManager{... role=ROLE_CLIENT_SCAN_ONLY}
+
+== 4) init 侧压根没有 wpa_supplicant 这个服务 ==
+$ grep -o "init: \(starting|\.\.\. started\) service '[^']*supplicant[^']*'" 44/qemu.log | sort | uniq -c
+（空 —— 一条都没有）
+$ grep -o "init: \(starting|\.\.\. started\) service '[^']*wifi[^']*'" 44/qemu.log | sort | uniq -c
+   1 init: starting service 'vendor.wifi-vhal'
+   1 init: ... started service 'vendor.wifi-vhal'
+   1 init: starting service 'wificond'
+   1 init: ... started service 'wificond'
+（wifi-vhal 与 wificond 都在，唯独缺认证栈 wpa_supplicant）
+
+== 5) 装配树里也确实没有它的三件套 ==
+$ find out/devices/flyme/m22/12.5.0.0A/vendor -iname "*supplicant*"
+（空）
+$ ls out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/ | grep -i "supplicant\|wpa"
+（空）
+$ ls out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/ | grep -i wifi
+（空）
+
+== 6) 但底包是有的 —— 它在 vendor APEX 里，而步骤 2 不搬 apex 顶层 ==
+$ unzip -l out/roms/lineage/lineage-23.2/super/unpack_vendor/apex/\
+      com.android.hardware.wpa_supplicant.mainline_common.apex
+    apex/bin/hw/wpa_supplicant            3,451,208 B
+    apex/etc/com.android.hardware.wpa_supplicant.rc
+    apex/etc/vintf/manifest/android.hardware.wifi.supplicant.xml
+$ ls -l out/devices/flyme/m22/12.5.0.0A/vendor/apex/ | head
+（目录本身不存在：07 步骤 2 materializeVendorBase 只回填
+  bin/etc/lib/lib64/firmware_mnt 白名单，`apex` 顶层被显式丢弃）
+
+== 7) 对照：同一底包上的图形栈早就靠 2b 摊平救活了 ==
+# 修完 SELinux 之后实例 44 能进桌面，正是因为 hwc3/allocator 走了 2b 摊平；
+# 而 2b 的默认集合当时只有 graphicsApexHints（composer/gralloc/allocator/mapper），
+# wpa_supplicant 这类「认证栈」不在集合里 → 单独一路漏掉。

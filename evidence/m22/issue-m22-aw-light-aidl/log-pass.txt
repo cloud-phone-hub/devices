@@ -1,0 +1,154 @@
+# #67 aw_light 逆向 + 落地流水（可复现）
+# 环境：m22 / flyme 12.5.0.0A / android 16；NDK 29.0.14206865
+#   原厂件根：out/tmp/unpack-vendor_a/flyme-m22
+#   逆向工作区：out/tmp/rev2
+
+## 0) 定位原厂件
+
+    ls $V/bin/hw | grep aw_light
+        vendor.meizu.hardware.aw_light-service
+    ls $V/lib64 | grep aw_light
+        vendor.meizu.hardware.aw_light-V1-ndk.so          # 85,392 B
+    cat $V/etc/init/vendor.meizu.hardware.aw_light-service.rc
+        service vendor.default.aw_light /vendor/bin/hw/vendor.meizu.hardware.aw_light-service
+            class late_start
+            user user/group system …（无 interface、无 seclabel）
+    cat $V/etc/vintf/manifest/vendor.meizu.hardware.aw_light-service.xml
+        <manifest version="1.0"> … <fqname>IAwLight/default</fqname>
+
+## 1) 取 descriptor 与接口 hash
+
+    strings -a $V/lib64/vendor.meizu.hardware.aw_light-V1-ndk.so | grep -E '^[0-9a-f]{40}$'
+        85068d518464045ded39e579da9fca8b416eb2c5
+    → vendor/hardware/vendor.meizu.hardware.aw_light/aidl/vendor.meizu.hardware.aw_light/1/.hash
+
+## 2) 事务表（反汇编，脚本 out/tmp/rev2/rev_any.py）
+
+    TC=~/Library/Android/sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/bin
+    $TC/llvm-objdump -d --no-show-raw-insn aw.so > aw.dis
+    python3 rev_any.py aw.dis
+
+    AwLight  aw_color_set_phase          code=1   flags=0x10000000 写[Int32 Int32 Int32] 读[StatusHeader Bool]
+    AwLight  aw_get_duration_time        code=2   flags=0x10000000 写[Int32]           读[StatusHeader Int32]
+    AwLight  aw_light_init               code=3   flags=0x10000000 写[]                读[StatusHeader Bool]
+    AwLight  aw_light_start              code=4   flags=0x10000000 写[]                读[StatusHeader Bool]
+    AwLight  aw_light_stop               code=5   flags=0x10000000 写[]                读[StatusHeader Bool]
+    AwLight  aw_light_switchEffect       code=6   flags=0x10000000 写[Int32]           读[StatusHeader Bool]
+    AwLight  aw_music_phase              code=7   flags=0x10000000 写[Int32Array]      读[StatusHeader Bool]
+    AwLight  aw_set_Semaphore_letter     code=8   flags=0x10000000 写[Byte]            读[StatusHeader Bool]
+    AwLight  aw_set_cl_brightness_phase  code=9   flags=0x10000000 写[Int32]           读[StatusHeader Bool]
+    AwLight  aw_set_light_over_callback  code=10  flags=0x10000000 写[IAwLightCallback::writeToParcel] 读[StatusHeader Bool]
+    AwLight  aw_set_progress             code=11  flags=0x10000000 写[Int32]           读[StatusHeader Bool]
+    AwLightCallback  onStopNotify        code=1   flags=0x10000000 写[Int32]           读[StatusHeader]
+
+    （方法名以 llvm-nm -D aw.so | c++filt 原表为准，见 log-fail.txt 坑 1）
+
+## 3) 原厂策略事实
+
+    grep -E 'aw_light' $V/etc/selinux/vendor_file_contexts
+        /(vendor|system/vendor)/bin/hw/vendor\.meizu\.hardware\.aw_light-service   u:object_r:hal_aw_light_default_exec:s0
+        /dev/rgb_led                                                              u:object_r:aw_light_device:s0
+        /sys/devices/platform/soc/8c0000.qcom,qupv3_2_geni_se/88c000.i2c/(.*?)/leds/rgb_led/light  u:object_r:aw_light_sysfs:s0
+        …（effect / all_light / alone_light 同）
+    grep -oE '\(type [a-z_]*aw_light[a-z_]*\)' $V/etc/selinux/vendor_sepolicy.cil
+        (type hal_aw_light_service) (type hal_aw_light_hwservice) (type hal_aw_light_default_exec) (type hal_aw_light_default) …
+
+## 4) 模块落地
+
+    engine/vendor/hardware/vendor.meizu.hardware.aw_light/
+      aidl/vendor.meizu.hardware.aw_light/1/.hash                    1 行
+      aidl/…/vendor/meizu/hardware/aw_light/IAwLight.aidl            11 方法
+      aidl/…/vendor/meizu/hardware/aw_light/IAwLightCallback.aidl    1 方法
+      src/aw_light_service.cpp                                       128 行，全 no-op
+      vendor/etc/init/vendor.meizu.hardware.aw_light-service.rc      原厂 + interface + seclabel
+      vendor/etc/vintf/manifest/vendor.meizu.hardware.aw_light-service.xml   原厂逐字
+      sepolicy/vendor_sepolicy.cil                                  域 + exec + 服务名 + binder 双向
+      sepolicy/vendor_service_contexts                              IAwLight/default
+    engine/vendor/build/modules/vendor.meizu.hardware.aw_light.json  kind=aidl / v1 / workSubdir=aw-light-ndk-work
+    manifest/flyme/m22/device.json                                  hardware 32 → 33 项
+
+    机型层同批下放：
+      sepolicy/vendor_service_contexts   删 IAwLight/default 一行（4 → 3 个未实现名）
+      sepolicy/vendor_sepolicy.cil       删 hal_aw_light_service 的 type/roletype/attributeset/allow 四段
+
+## 5) hal build
+
+    ./out/bin/cdh-vendor hal list | grep aw_light
+        vendor.meizu.hardware.aw_light     aidl -> vendor.meizu.hardware.aw_light-service
+
+    ./out/bin/cdh-vendor hal build vendor.meizu.hardware.aw_light --android 16 --out-dir out/vendor/android16
+        ==> AIDL 代码生成
+            vendor.meizu.hardware.aw_light (v1, hash 85068d518464)
+        ==> 编译 2+1 个源文件到 .o
+        ==> 链接服务二进制
+            写 bin/hw/vendor.meizu.hardware.aw_light-service
+        [ok] … 构建完成：codegen + 编译 + 链接 -> out/vendor/android16/bin/hw
+            写 etc/init/vendor.meizu.hardware.aw_light-service.rc（0644）
+            写 etc/vintf/manifest/vendor.meizu.hardware.aw_light-service.xml（0644）
+        [ok] … 合并 vendor 静态树：新增 2，已存在同内容 0
+
+    产物：
+        -rwxr-xr-x  140,584 B  1acb1aaeb4654308a1f6b710e84c69ccb828ecfc0e84a6195039aee26e331d9d
+
+    strings -a <产物> | grep -E 'vendor\.meizu\.hardware\.aw_light|^85068d51'
+        85068d518464045ded39e579da9fca8b416eb2c5
+        vendor.meizu.hardware.aw_light.IAwLight
+        vendor.meizu.hardware.aw_light.IAwLightCallback
+        vendor.meizu.hardware.aw_light.IAwLight/default
+
+    llvm-readelf -d <产物> | grep NEEDED
+        libc++.so / libbinder_ndk.so / liblog.so / libdl.so / libm.so / libc.so
+        （没有任何原厂 aw_light so）
+
+## 6) wire 回放（自研产物 vs 原厂 .so，按 code 对方法名）
+
+    $TC/llvm-objdump -d --no-show-raw-insn <产物> > aw-new.dis
+    # 逐 code 比对（脚本内联，见本节末命令）
+    OK  1  aw_color_set_phase            OK  7  aw_music_phase
+    OK  2  aw_get_duration_time          OK  8  aw_set_Semaphore_letter
+    OK  3  aw_light_init                 OK  9  aw_set_cl_brightness_phase
+    OK  4  aw_light_start                OK 10  aw_set_light_over_callback
+    OK  5  aw_light_stop                 OK 11  aw_set_progress
+    OK  6  aw_light_switchEffect         OK 16777214/16777215  getInterfaceHash/getInterfaceVersion
+
+## 7) 07 装配 + 打包
+
+    eval "$(./out/bin/cdh env manifest/flyme/m22/baselines/12.5.0.0A.json --env)"
+    ./out/bin/cdh build-vendor --android 16 --manifest "$CDH_MANIFEST" \
+        --vendor flyme --brand m22 --version 12.5.0.0A            # exit=0
+
+    关键行：
+        HAL 模块 vendor.meizu.hardware.aw_light（…产物齐全但源码/配置已变 -> 重编）
+        编译产物 vendor.meizu.hardware.aw_light@default: 写入 3，已存在同内容 0
+        写 …/vendor/bin/hw/vendor.meizu.hardware.aw_light-service（0755）
+        追加 …/vendor_sepolicy.cil <- …/aw_light/sepolicy/vendor_sepolicy.cil（2897 字节）
+        追加 …/vendor_service_contexts <- …/aw_light/sepolicy/vendor_service_contexts（530 字节）
+        vendor.meizu.hardware.aw_light-service -> hal_aw_light_default_exec      # 步骤 6b
+        输入 out/devices/flyme/m22/12.5.0.0A/vendor（661 条目：文件 430 / 链接 199 / 目录 32）
+        输出 vendor.img（mke2fs -d -> 元数据回写 -> e2fsck -> resize2fs -M）
+
+## 8) 镜像回读
+
+    D=/opt/homebrew/opt/e2fsprogs/sbin/debugfs
+    IMG=out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+    ls -l $IMG            → 206,295,040 B
+    shasum -a 256 $IMG    → 237ebf6167342a1b…（sha 不作一致性判据）
+
+    debugfs dump 后 sha 对照（镜像 vs out/vendor/android16）
+        /bin/hw/vendor.meizu.hardware.aw_light-service          1acb1aae…   SAME
+        /etc/init/vendor.meizu.hardware.aw_light-service.rc     b3f929d3…   SAME
+        /etc/vintf/manifest/…aw_light-service.xml               cfefc9f2…   SAME
+        /etc/selinux/vendor_service_contexts                    967c1305…
+        /etc/selinux/vendor_sepolicy.cil                        aa49e214…
+        /etc/selinux/vendor_file_contexts                       4167ae1e…
+
+    debugfs ea_list /bin/hw/vendor.meizu.hardware.aw_light-service
+        security.selinux (39) = "u:object_r:hal_aw_light_default_exec:s0"
+    debugfs stat 同名
+        Mode 0755  User 0  Group 2000  Size 140584
+
+    内容核对：
+        grep aw_light vendor_service_contexts → 只在 marker @vendor.meizu.hardware.aw_light 块内
+        grep hal_aw_light_service vendor_sepolicy.cil → 机型层块 0 条声明，只在模块块（4608-4654 行）
+        grep aw_light vendor_file_contexts → 1 行，/bin/hw 路径 + hal_aw_light_default_exec
+        {{vers}} 残留 0（已替换为 202504）

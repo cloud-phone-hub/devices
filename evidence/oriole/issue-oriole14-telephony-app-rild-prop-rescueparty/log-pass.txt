@@ -1,0 +1,49 @@
+# oriole_14-AP2A.240905.003.F1-20240815 实例 2（干净盘重建），2026-11-12 20:35 起机，修复后
+
+## 装配树复核（07 产物）
+$ grep vendor_rild_prop vendor/etc/selinux/vendor_property_contexts
+# vendor_rild_prop 前缀，逐行对齐官方 gs101 vendor_property_contexts 第 138~144 行。
+# ro.vendor.build.svn（官方同属 vendor_rild_prop）是只读身份属性，不在此改标签。
+persist.vendor.debug_level       u:object_r:vendor_rild_prop:s0
+persist.vendor.ril.              u:object_r:vendor_rild_prop:s0
+persist.vendor.radio.            u:object_r:vendor_rild_prop:s0
+vendor.radio.ril.                u:object_r:vendor_rild_prop:s0
+vendor.sys.rild_reset            u:object_r:vendor_rild_prop:s0
+vendor.ril.                      u:object_r:vendor_rild_prop:s0
+vendor.radio.                    u:object_r:vendor_rild_prop:s0
+$ grep -E "vendor_rild_prop|radio_prop_" vendor/etc/selinux/vendor_sepolicy.cil
+(type vendor_rild_prop)
+(roletype object_r vendor_rild_prop)
+(typeattributeset property_type (vendor_rild_prop))
+(typeattributeset vendor_property_type (vendor_rild_prop))
+(allow priv_app_202404 vendor_rild_prop (property_service (set)))
+(allow priv_app_202404 vendor_rild_prop (file (read getattr map open)))
+(allow priv_app_202404 radio_prop_202404 (property_service (set)))
+(allow priv_app_202404 radio_prop_202404 (file (read getattr map open)))
+(allow radio_202404 vendor_rild_prop (property_service (set)))
+(allow radio_202404 vendor_rild_prop (file (read getattr map open)))
+(allow hal_radio_default vendor_rild_prop (file (read getattr map open)))
+
+## 运行态（起机后约 4.5 min）
+$ cat /proc/uptime
+298.14 1941.98
+$ getprop sys.boot_completed / sys.boot.reason / persist.sys.boot.reason.history
+1
+reboot,factory_reset
+reboot,factory_reset,1794486999
+reboot,1794486963
+$ getprop | grep -E "vendor.radio.allowed|call_waiting"
+[persist.vendor.radio.call_waiting_for_sync_0]: [0]
+[vendor.radio.allowed_types_loaded0]: [1]
+$ getprop -Z persist.vendor.radio.call_waiting_for_sync_0
+u:object_r:vendor_rild_prop:s0
+$ ps -AZ | grep -E "oemril|imsservice"
+u:r:radio:s0                   radio         2479   720   16302324 105288 0                   0 S com.samsung.slsi.telephony.oem.oemrilhookservice
+u:r:priv_app:s0:c512,c768      u0_a230       2580   720   16884012 134340 0                   0 S com.shannon.imsservice
+u:r:priv_app:s0:c512,c768      u0_a224       2593   720   16372952 110756 0                   0 S com.samsung.slsi.telephony.oemril
+u:r:priv_app:s0:c512,c768      u0_a173       4640   720   16322368 109796 0                   0 S com.android.imsserviceentitlement
+$ dumpsys dropbox --print system_app_crash | grep ^Process:
+Process: com.google.android.apps.camera.services
+Process: com.android.chrome
+$ logcat -d | grep -c RescueParty
+0

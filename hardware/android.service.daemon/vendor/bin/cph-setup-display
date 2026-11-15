@@ -1,0 +1,225 @@
+#!/system/bin/sh
+# headless 云机显示/电源防呆与首启设置对齐：全程不注入按键（避免误触用户操作）。
+# - SettingsProvider 可能晚于 sys.boot_completed 置位就绪，重试直到能写入；
+# - 屏永不自动关（screen_off_timeout 超长）+ 对齐真机插电常亮位（stay_on=3）+ 禁 Doze
+#   + 仅用 dismiss-keyguard 解锁而保持 lockscreen.disabled=0（与真机出厂一致，不暴露锁屏禁用标记）。
+i=0
+while [ "$i" -lt 20 ]; do
+    if settings put system screen_off_timeout 2147483647 2>/dev/null; then
+        break
+    fi
+    i=$((i + 1))
+    sleep 1
+done
+was_provisioned="$(settings get global device_provisioned 2>/dev/null)"
+settings put global stay_on_while_plugged_in 3 2>/dev/null
+settings put secure lockscreen.disabled 0 2>/dev/null
+# 仅首次冷启动 provisioning 时按真机默认值幂等写入（不覆盖运行后的人工调整）
+if [ "$was_provisioned" != "1" ]; then
+    settings put system time_12_24 24 2>/dev/null
+    settings put system accelerometer_rotation 1 2>/dev/null
+    if [ -n "$(getprop ro.miui.ui.version.name)" ]; then
+        settings put system long_press_power_key launch_voice_assistant 2>/dev/null
+        settings put secure color_scheme 1 2>/dev/null
+        settings put global hide_gesture_line 0 2>/dev/null
+    fi
+fi
+# 华硕 ROG Phone 桌面（AsusLauncher）在检测到 user_setup_complete=1 且
+# haslaunched_ArAppWelcomeActivity=0 时会自动拉起横屏 AR 欢迎页（com.asus.ar.welcome/.ArAppWelcome），
+# 导致开机进入桌面后被强制横屏（ROTATION_90）；需在置位 user_setup_complete 前先行标记已展示并禁用该引导包。
+settings put system haslaunched_ArAppWelcomeActivity 1 2>/dev/null
+pm disable com.asus.ar.welcome 2>/dev/null || true
+am force-stop com.asus.ar.welcome 2>/dev/null || true
+settings put secure user_setup_complete 1 2>/dev/null
+settings put global device_provisioned 1 2>/dev/null
+
+# ---- OPPO/ColorOS 屏幕分辨率档位（先例 devices/oppo/findx9-16）----
+# ColorOS 的 secure 键 oplus_customize_screen_resolution_adjust：0=智能、1=高分辨率、
+# 2=低分辨率，出厂默认 2。真机「低档」映射到面板的第二档物理分辨率；云机模式表来自
+# QEMU EDID（1256x2760 / 1024x768 / 800x600 / 640x480），低档只能落到最小的 640x480，
+# 于是 SF/HWC/WM 全链路按 640x480 走，桌面版式挤压。wm size 不是修复路径：
+# 它会被 AOSP config_maxDisplayHeight=1920 钳成 1256x1920，且 override 不改变 HWC 模式。
+# 钉 1（高分辨率档）后 OPlus 显示服务异步切档，~15s 内 wm size/HWC 模式回到 1256x2760。
+if [ -n "$(getprop ro.build.version.oplusrom)" ]; then
+    settings put secure oplus_customize_screen_resolution_adjust 1 2>/dev/null
+fi
+
+# ---- 蜂窝数据首启补齐（对齐 gold 真机 /data 的两个键）----
+# AOSP15 双卡机型的"用户移动数据开关"按 subId 存 Global.MOBILE_DATA<subId>，缺省值取
+# ro.com.android.mobiledata（gold/本机均为 false）；"默认数据卡"存
+# Global.multi_sim_data_call。gold /data 镜像里这两个键缺失时：电话进程
+# DataSettingsManager 判定"用户关闭移动数据"（reason=USER,enabled=false），且
+# SubscriptionManagerService 的默认数据卡为 INVALID → PhoneSwitcher 对无 specifier
+# 的网络请求 shouldApply=false → DNC 收不到任何请求 → 框架永不发起 SetupDataCall
+# （移动数据开关、PS 域注册都正常也照样无数据）。二者只在电话进程初始化时读取，
+# 故补齐后需重启电话进程让框架重读（SIGKILL 由 AMS 自动拉起持久进程）。
+seeded=0
+if [ "$(settings get global multi_sim_data_call)" = "null" ]; then
+    settings put global multi_sim_data_call 1 2>/dev/null && seeded=1
+fi
+for k in mobile_data0 mobile_data1; do
+    if [ "$(settings get global $k)" = "null" ]; then
+        settings put global $k 1 2>/dev/null && seeded=1
+    fi
+done
+if [ "$seeded" = "1" ]; then
+    log -t cdh_provision "seed cellular data settings (mobile_data<slot>/multi_sim_data_call)"
+    kill -9 "$(pidof com.android.phone)" 2>/dev/null
+    i=0
+    while [ "$i" -lt 30 ]; do
+        sleep 2
+        i=$((i + 1))
+        [ -n "$(pidof com.android.phone)" ] && break
+    done
+    log -t cdh_provision "phone restarted pid=$(pidof com.android.phone)"
+fi
+
+# ---- 蓝牙默认适配器名称与地址首启补齐 ----
+# 真机开机向导会将 Settings.Secure.bluetooth_name 写入市场机型名（如 "Redmi Note 13 5G"）
+# 并完成首次控制器地址初始化（bluetooth_addr_valid=1）；跳过开机向导后若未初始化，
+# BluetoothManagerService 在蓝牙关闭态下 getName() 恒返回 null。此处幂等补齐，若内存态仍
+# 为空或旧型号名则短暂拉起再关闭一次蓝牙服务以刷新缓存。
+wait_bt_state() {
+    target="$1"
+    max_tries="$2"
+    cmd bluetooth_manager "wait-for-state:$target" >/dev/null 2>&1 || true
+    tries=0
+    while [ "$tries" -lt "$max_tries" ]; do
+        dump_out="$(dumpsys bluetooth_manager 2>/dev/null | head -n 12)"
+        if [ "$target" = "STATE_ON" ]; then
+            if printf '%s\n' "$dump_out" | grep -Eq 'state:[[:space:]]*(ON|STATE_ON)|enabled:[[:space:]]*true'; then
+                return 0
+            fi
+        else
+            if printf '%s\n' "$dump_out" | grep -Eq 'state:[[:space:]]*(OFF|STATE_OFF)' &&
+               printf '%s\n' "$dump_out" | grep -Eq 'enabled:[[:space:]]*false'; then
+                return 0
+            fi
+        fi
+        tries=$((tries + 1))
+        sleep 0.5 2>/dev/null || sleep 1
+    done
+    return 1
+}
+
+write_bt_config_adapter_name() {
+    target_name="$1"
+    cfg="/data/misc/bluedroid/bt_config.conf"
+    if [ ! -f "$cfg" ] || ! grep -q '^\[Adapter\]' "$cfg" 2>/dev/null; then
+        return 1
+    fi
+    tmp_cfg="${cfg}.cdh_tmp"
+    if awk -v val="$target_name" '
+        /^\[/ {
+            if (in_adapter && !wrote) {
+                print "Name = " val
+                wrote = 1
+            }
+            in_adapter = ($0 == "[Adapter]")
+            print
+            next
+        }
+        in_adapter && /^Name[[:space:]]*=/ {
+            if (!wrote) {
+                print "Name = " val
+                wrote = 1
+            }
+            next
+        }
+        { print }
+        END {
+            if (in_adapter && !wrote) {
+                print "Name = " val
+            }
+        }
+    ' "$cfg" > "$tmp_cfg"; then
+        mv "$tmp_cfg" "$cfg"
+        chown bluetooth:bluetooth "$cfg" 2>/dev/null || true
+        chmod 0660 "$cfg" 2>/dev/null || true
+        restorecon "$cfg" 2>/dev/null || true
+        return 0
+    fi
+    rm -f "$tmp_cfg" 2>/dev/null || true
+    return 1
+}
+
+poll_bt_adapter_name() {
+    target_name="$1"
+    max_tries="$2"
+    tries=0
+    while [ "$tries" -lt "$max_tries" ]; do
+        bt_cur_name="$(dumpsys bluetooth_manager 2>/dev/null | head -n 15 | sed -n 's/^[[:space:]]*name:[[:space:]]*//p' | head -n 1)"
+        if [ "$bt_cur_name" = "$target_name" ]; then
+            return 0
+        fi
+        tries=$((tries + 1))
+        sleep 0.3 2>/dev/null || sleep 1
+    done
+    return 1
+}
+
+sync_bt_name_once() {
+    target_name="$1"
+    settings put secure bluetooth_name "$target_name" 2>/dev/null || true
+    settings put global device_name "$target_name" 2>/dev/null || true
+
+    log -t cdh_provision "initialize bluetooth adapter cache name=${target_name}"
+    cmd bluetooth_manager enable >/dev/null 2>&1 || true
+    wait_bt_state STATE_ON 30 || true
+
+    # 小米 AdapterProperties.onBluetoothReady() 等定制逻辑在进入 STATE_ON 后会自动同步系统名并回调 storeNameAndAddress；
+    # 轮询最多 15×0.3s 等待内存态 name 落定。
+    if ! poll_bt_adapter_name "$target_name" 15; then
+        # 跨 ROM 兜底（无 MiuiSettings 的原生 AOSP/Lineage）：先关闭蓝牙，直接刷新 bt_config.conf 的 [Adapter] Name 并二次轻拍触发加载。
+        cmd bluetooth_manager disable >/dev/null 2>&1 || true
+        wait_bt_state STATE_OFF 20 || true
+        if write_bt_config_adapter_name "$target_name"; then
+            cmd bluetooth_manager enable >/dev/null 2>&1 || true
+            wait_bt_state STATE_ON 30 || true
+            poll_bt_adapter_name "$target_name" 10 || true
+        fi
+    fi
+
+    cmd bluetooth_manager disable >/dev/null 2>&1 || true
+    wait_bt_state STATE_OFF 20 || true
+    if [ "$(settings get secure bluetooth_name 2>/dev/null)" != "$target_name" ]; then
+        settings put secure bluetooth_name "$target_name" 2>/dev/null || true
+    fi
+}
+
+bt_default_name="$(getprop bluetooth.device.default_name)"
+if [ -z "$bt_default_name" ]; then
+    bt_default_name="$(getprop ro.product.marketname)"
+fi
+if [ -z "$bt_default_name" ]; then
+    bt_default_name="$(getprop ro.product.model)"
+fi
+if [ -n "$bt_default_name" ]; then
+    cur_sec_bt="$(settings get secure bluetooth_name 2>/dev/null)"
+    model_prop="$(getprop ro.product.model)"
+    if [ -z "$cur_sec_bt" ] || [ "$cur_sec_bt" = "null" ] || [ "$cur_sec_bt" = "$model_prop" ]; then
+        settings put secure bluetooth_name "$bt_default_name" 2>/dev/null || true
+    fi
+    cur_glb_dev="$(settings get global device_name 2>/dev/null)"
+    if [ -z "$cur_glb_dev" ] || [ "$cur_glb_dev" = "null" ]; then
+        settings put global device_name "$bt_default_name" 2>/dev/null || true
+    fi
+    bt_dump="$(dumpsys bluetooth_manager 2>/dev/null | head -n 12)"
+    if printf '%s\n' "$bt_dump" | grep -Eq 'name:[[:space:]]*(null|'"$model_prop"')$'; then
+        if [ "$bt_default_name" != "$model_prop" ] || printf '%s\n' "$bt_dump" | grep -Eq 'name:[[:space:]]*null$'; then
+            sync_bt_name_once "$bt_default_name"
+            bt_after="$(dumpsys bluetooth_manager 2>/dev/null | head -n 12 | sed -n 's/^[[:space:]]*name:[[:space:]]*//p' | head -n 1)"
+            if [ "$bt_after" != "$bt_default_name" ]; then
+                log -t cdh_provision "retry bluetooth adapter cache name=${bt_default_name} (saw=${bt_after})"
+                sync_bt_name_once "$bt_default_name"
+            fi
+        fi
+    fi
+fi
+cmd deviceidle disable 2>/dev/null
+pm disable com.android.provision 2>/dev/null || true
+pm disable com.miui.bugreport 2>/dev/null || true
+am force-stop com.android.provision 2>/dev/null || true
+# 解锁兜底（非按键；已解锁时为无副作用 no-op）
+cmd window dismiss-keyguard 2>/dev/null
+exit 0

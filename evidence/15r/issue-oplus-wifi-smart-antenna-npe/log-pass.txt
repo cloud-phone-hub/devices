@@ -1,0 +1,46 @@
+# 修复后日志（15R / CPH2769，实例 8，2026-11-03 09:18 启动）
+#
+# vda：patch.img 里新增 /odm/build.prop（顶层 123 行 + abilist 段，wifi.wsa=none），
+#      cdh_redirect.rules 新增 `file /odm/build.prop -> /mnt/vendorpatch/odm/build.prop`。
+# 取样：out/core/daemon/runtime/15r_16.0.10.500_EX01/8/qemu.log
+#       adb -s 127.0.0.1:5911（daemon 实例 8：console 5910 / adb 5911 / vnc 5912）
+
+## 1) 属性实际值
+$ adb -s 127.0.0.1:5911 shell getprop ro.oplus.wifi.wsa
+none
+$ adb -s 127.0.0.1:5911 shell getprop ro.oplus.wifi.wsa.disMrc
+true
+$ adb -s 127.0.0.1:5911 shell getprop ro.boot.hardware
+canoe
+
+## 2) OplusWifiSmartAntenna 走「无方案」分支：所有回调 no-op
+$ grep -a 'OplusWifiSmartAntenna' qemu.log | head -5
+11-02 20:23:04.512   956  2599 D OplusWifiSmartAntenna: invalid solution
+11-02 20:23:13.515   956  2599 D OplusWifiSmartAntenna: invalid solution
+11-02 20:23:52.542   956  2599 D OplusWifiSmartAntenna: invalid solution
+11-02 20:23:55.545   956  2599 D OplusWifiSmartAntenna: invalid solution
+11-02 20:24:25.559   956  2599 D OplusWifiSmartAntenna: invalid solution
+（validateWsaSolution() 返回 false -> handleBootCompleted()/onRotationChange()/updateHeadSarState() 全部跳过）
+
+## 3) 关键计数（修复前实例 7 -> 修复后实例 8）
+FATAL EXCEPTION IN SYSTEM PROCESS : 4 -> 0
+OplusWifiStbcMrcSolution          : 8 -> 0
+smart-antenna 回调 NPE            : 6 -> 0
+
+## 4) 启动与稳定性
+$ adb -s 127.0.0.1:5911 shell getprop sys.boot_completed
+1
+$ adb -s 127.0.0.1:5911 shell pidof system_server
+956                       # boot_completed 时与 10 分钟后同一 PID（未重启）
+$ adb -s 127.0.0.1:5911 shell uptime
+ 20:29:12 up 10 min,  0 users,  load average: 5.84, 5.15, 2.95
+
+## 5) 属性加载顺序：odm/etc 那份仍被拒（已无用），顶层值已由 init 主域生效
+693:[    0.569054][    T1] init: Do not have permissions to set 'ro.oplus.wifi.wsa' to 'none' in property file '/odm/etc/build.prop': SELinux permission check failed
+694:[    0.569591][    T1] init: Do not have permissions to set 'ro.oplus.wifi.wsa.disMrc' to 'true' in property file '/odm/etc/build.prop': SELinux permission check failed
+4293:[   11.300821][    T1] init: processing action (ro.oplus.wifi.wsa=*) from (/system_ext/etc/init/init.sys.oplus.connectivity.rc:94)
+
+## 6) 镜像内实测（patch.img）
+$ debugfs -R 'cat /odm/build.prop' out/devices/oneplus/15r/16.0.10.500_EX01/img/patch.img | grep -n '^ro.oplus.wifi.wsa'
+69:ro.oplus.wifi.wsa=none
+70:ro.oplus.wifi.wsa.disMrc=true

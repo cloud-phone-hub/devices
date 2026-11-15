@@ -1,0 +1,272 @@
+=== [修复前] #190 gold 最后 5 项精细字段对齐（输入键盘类型 / GPU 上限与 ARM 扩展 / Audio 音效模式与 17 阶音量 / Wi-Fi P2P & 5GHz 11ac 433Mbps / 屏幕 xDpi·yDpi·EDID） ===
+取样基线: engine/out/tmp/gold10_20261111_final_verify.json
+修复前云机 ID: 0b7cd3333759d674-cloud  |  同版本真机 ID: ec519c7d513a3ad3
+
+1. 输入设备 mtk-kpd keyboardType 与 Configuration (修复前 keyboardType=2 QWERTY, reqKeyboardType=2, reqInputFeatures=1):
+CLOUD mtk-kpd & deviceConfigInfo:
+{
+  "mtk-kpd": {
+    "descriptor": "9a244e01c90550ca2eb2798ffe20d8731e811765",
+    "hasMicrophone": false,
+    "isExternal": false,
+    "isVirtual": false,
+    "keyboardType": 2,
+    "motionRanges": [],
+    "motionRangesCount": 0,
+    "name": "mtk-kpd",
+    "productId": 0,
+    "sources": 257,
+    "sourcesHex": "0x101",
+    "vendorId": 0
+  },
+  "deviceConfigInfo": {
+    "glEsVersion": "3.2",
+    "reqGlEsVersionHex": "0x30002",
+    "reqInputFeatures": 1,
+    "reqKeyboardType": 2,
+    "reqNavigation": 1,
+    "reqTouchScreen": 3
+  }
+}
+REAL mtk-kpd & deviceConfigInfo:
+{
+  "mtk-kpd": {
+    "descriptor": "9a244e01c90550ca2eb2798ffe20d8731e811765",
+    "hasMicrophone": false,
+    "isExternal": false,
+    "isVirtual": false,
+    "keyboardType": 1,
+    "motionRanges": [],
+    "motionRangesCount": 0,
+    "name": "mtk-kpd",
+    "productId": 0,
+    "sources": 257,
+    "sourcesHex": "0x101",
+    "vendorId": 0
+  },
+  "deviceConfigInfo": {
+    "glEsVersion": "3.2",
+    "reqGlEsVersionHex": "0x30002",
+    "reqInputFeatures": 0,
+    "reqKeyboardType": 1,
+    "reqNavigation": 1,
+    "reqTouchScreen": 3
+  }
+}
+
+2. GPU glGetIntegerv 6 项上限对普通 App 生效情况与 GL_ARM_* 扩展 (修复前 ro.vendor.cdh.gpu.* 被 vendor_default_prop 拦截回退 16384/16/32/192):
+CLOUD gles.limits & armExtensions:
+{
+  "limits": {
+    "maxCombinedTextureImageUnits": 160,
+    "maxCubeMapTextureSize": 16384,
+    "maxRenderbufferSize": 16384,
+    "maxTextureImageUnits": 32,
+    "maxTextureSize": 16384,
+    "maxVertexAttribs": 16
+  },
+  "armExtensions": [
+    "GL_ARM_mali_program_binary",
+    "GL_ARM_mali_shader_binary",
+    "GL_ARM_rgba8"
+  ]
+}
+REAL gles.limits & armExtensions:
+{
+  "limits": {
+    "maxCombinedTextureImageUnits": 96,
+    "maxCubeMapTextureSize": 16383,
+    "maxRenderbufferSize": 16383,
+    "maxTextureImageUnits": 16,
+    "maxTextureSize": 16383,
+    "maxVertexAttribs": 32
+  },
+  "armExtensions": [
+    "GL_ARM_rgba8",
+    "GL_ARM_mali_shader_binary",
+    "GL_ARM_debug_assert",
+    "GL_ARM_shader_framebuffer_fetch",
+    "GL_ARM_shader_framebuffer_fetch_depth_stencil",
+    "GL_ARM_mali_program_binary",
+    "GL_ARM_shader_core_properties",
+    "GL_ARM_texture_unnormalized_coordinates"
+  ]
+}
+
+3. Audio 23 项音效 connectMode/UUID 与 MIUI 流音量上限 (修复前 5 项 connectMode 误为 Insert、ExtensionEffect UUID 尾字节 ..0001、music/ring/notification maxVolume=15、alarm minVolume=5):
+CLOUD streamVolumeRanges & sample diff effects:
+{
+  "streamVolumeRanges": {
+    "accessibility": {
+      "maxVolume": 15,
+      "minVolume": 1
+    },
+    "alarm": {
+      "maxVolume": 15,
+      "minVolume": 5
+    },
+    "dtmf": {
+      "maxVolume": 15,
+      "minVolume": 0
+    },
+    "music": {
+      "maxVolume": 15,
+      "minVolume": 0
+    },
+    "notification": {
+      "maxVolume": 15,
+      "minVolume": 0
+    },
+    "ring": {
+      "maxVolume": 15,
+      "minVolume": 0
+    },
+    "system": {
+      "maxVolume": 15,
+      "minVolume": 0
+    },
+    "voice_call": {
+      "maxVolume": 11,
+      "minVolume": 1
+    }
+  },
+  "sampleEffects": {
+    "Acoustic Echo Canceler_bb392ec0-8d4d-11e0-a896-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "Acoustic Echo Canceler",
+      "type": "7b491460-8d4d-11e0-bd61-0002a5d5c51b",
+      "uuid": "bb392ec0-8d4d-11e0-a896-0002a5d5c51b"
+    }
+  }
+}
+REAL streamVolumeRanges & corresponding effects:
+{
+  "streamVolumeRanges": {
+    "accessibility": {
+      "maxVolume": 15,
+      "minVolume": 1
+    },
+    "alarm": {
+      "maxVolume": 15,
+      "minVolume": 6
+    },
+    "dtmf": {
+      "maxVolume": 15,
+      "minVolume": 0
+    },
+    "music": {
+      "maxVolume": 17,
+      "minVolume": 0
+    },
+    "notification": {
+      "maxVolume": 17,
+      "minVolume": 0
+    },
+    "ring": {
+      "maxVolume": 17,
+      "minVolume": 0
+    },
+    "system": {
+      "maxVolume": 15,
+      "minVolume": 0
+    },
+    "voice_call": {
+      "maxVolume": 11,
+      "minVolume": 1
+    }
+  },
+  "sampleEffects": {
+    "Acoustic Echo Canceler_bb392ec0-8d4d-11e0-a896-0002a5d5c51b": {
+      "connectMode": "Pre Processing",
+      "implementor": "The Android Open Source Project",
+      "name": "Acoustic Echo Canceler",
+      "type": "7b491460-8d4d-11e0-bd61-0002a5d5c51b",
+      "uuid": "bb392ec0-8d4d-11e0-a896-0002a5d5c51b"
+    }
+  }
+}
+
+4. Wi-Fi Direct (isP2pSupported) 与 5GHz 11ac 433Mbps 连接态 (修复前 isP2pSupported=false, 2437MHz, 18Mbps):
+CLOUD wifi:
+{
+  "connected": true,
+  "connectedBssid": "74:39:89:0b:24:63",
+  "connectedFrequencyMhz": 2437,
+  "connectedLinkSpeedMbps": 18,
+  "connectedRssi": -47,
+  "connectedSsid": "TP-LINK_2464",
+  "frequencyPositive": true,
+  "hasValidNonHwsimBssid": true,
+  "hasValidSsid": true,
+  "hwsimBssidApCount": 0,
+  "is5GHzBandSupported": true,
+  "is6GHzBandSupported": false,
+  "isEnhancedOpenSupported": true,
+  "isP2pSupported": false,
+  "isTdlsSupported": true,
+  "isWifiEnabled": true,
+  "isWpa3SaeSupported": true,
+  "isWpa3SuiteBSupported": true,
+  "linkSpeedPositive": true,
+  "noSuspiciousConnectedSsid": true,
+  "noVirtWifiOrHwsimInScan": true,
+  "scanResultCount": 4,
+  "std11acSupported": true,
+  "std11axSupported": false,
+  "std11nSupported": true,
+  "suspiciousScanAps": [],
+  "wifiState": 3
+}
+REAL wifi:
+{
+  "connected": true,
+  "connectedBssid": "74:39:89:0b:24:64",
+  "connectedFrequencyMhz": 5180,
+  "connectedLinkSpeedMbps": 433,
+  "connectedRssi": -56,
+  "connectedSsid": "TP-LINK_JIJIA_1",
+  "frequencyPositive": true,
+  "hasValidNonHwsimBssid": true,
+  "hasValidSsid": true,
+  "hwsimBssidApCount": 0,
+  "is5GHzBandSupported": true,
+  "is6GHzBandSupported": false,
+  "isEnhancedOpenSupported": true,
+  "isP2pSupported": true,
+  "isTdlsSupported": true,
+  "isWifiEnabled": true,
+  "isWpa3SaeSupported": true,
+  "isWpa3SuiteBSupported": true,
+  "linkSpeedPositive": true,
+  "noSuspiciousConnectedSsid": true,
+  "noVirtWifiOrHwsimInScan": true,
+  "scanResultCount": 21,
+  "std11acSupported": true,
+  "std11axSupported": false,
+  "std11nSupported": true,
+  "suspiciousScanAps": [],
+  "wifiState": 3
+}
+
+5. 屏幕精确物理 xDpi / yDpi 与 EDID DeviceProductInfo (修复前 xdpi=440, ydpi=440, DeviceProductInfo=null, uniqueId="local:0"):
+CLOUD display.realMetrics:
+{
+  "density": 2.75,
+  "densityDpi": 440,
+  "heightPixels": 2400,
+  "scaledDensity": 2.75,
+  "widthPixels": 1080,
+  "xdpi": 391.886,
+  "ydpi": 391.886
+}
+REAL display.realMetrics:
+{
+  "density": 2.75,
+  "densityDpi": 440,
+  "heightPixels": 2400,
+  "scaledDensity": 2.75,
+  "widthPixels": 1080,
+  "xdpi": 394.41,
+  "ydpi": 393.392
+}

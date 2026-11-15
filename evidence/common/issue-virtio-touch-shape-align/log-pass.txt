@@ -1,0 +1,228 @@
+=== 修复后 daemon 启动参数摘录（qemu.log） ===
+-device virtio-multitouch-pci,input-name=goodix_ts,input-bus=2,input-vendor=10182,input-product=1,input-version=256,abs-to-mt=on,abs-x-max=17280,abs-y-max=38400,mt-slots=10,mt-pressure=off,abs-xy=on,touch-keys=116:143:354
+
+=== 修复后云机 getevent -lp 摘录（/dev/input/event1 goodix_ts） ===
+  name:     "goodix_ts"
+  events:
+    KEY (0001): KEY_POWER KEY_WAKEUP BTN_TOOL_FINGER BTN_TOUCH KEY_GOTO
+    ABS (0003): ABS_X (0..17280), ABS_Y (0..38400), ABS_MT_SLOT (0..9), ABS_MT_TOUCH_MAJOR (0..255),
+                ABS_MT_POSITION_X (0..17280), ABS_MT_POSITION_Y (0..38400), ABS_MT_TRACKING_ID (0..65535)
+  input props: INPUT_PROP_DIRECT
+
+=== 修复后 compare_align.py 对账结果（07cf5fc1784783d5 vs run-00110） ===
+=== aligner 全量对比  domain=inputs  base=07cf5fc1784783d5  target=4503ac70a1c898f3-cloud
+汇总: identity=0 capability=0 state=0 availability=0 → 已对齐
+EXIT=0
+
+=== 修复后云机 goodix_ts 采集详情（run-00110） ===
+{
+  "controllerNumber": 0,
+  "descriptor": "c63c3be2de98f10e6bbd97f78684d819a6c862b9",
+  "extraGetters": {
+    "getBatteryState": {
+      "__class": "android.hardware.input.InputManagerGlobal$LocalBatteryState"
+    },
+    "getLightsManager": {
+      "__class": "android.hardware.input.InputDeviceLightsManager"
+    },
+    "getSensorManager": {
+      "__class": "android.hardware.input.InputDeviceSensorManager$InputSensorManager"
+    },
+    "getStability": 0
+  },
+  "fields": {},
+  "hasMicrophone": false,
+  "id": 3,
+  "isEnabled": true,
+  "isExternal": false,
+  "isVirtual": false,
+  "keyCharacterMap": {
+    "available": true,
+    "extraGetters": {
+      "getModifierBehavior": 0,
+      "getStability": 0
+    },
+    "keyLabels": [
+      {
+        "code": 26,
+        "label": null,
+        "number": null
+      },
+      {
+        "code": 224,
+        "label": null,
+        "number": null
+      }
+    ],
+    "keyboardType": 4,
+    "supportedKeyCodes": [
+      26,
+      224
+    ]
+  },
+  "keyboardType": 1,
+  "keyboardTypeName": "KEYBOARD_TYPE_NON_ALPHABETIC",
+  "motionRanges": [
+    {
+      "axis": 0,
+      "axisName": "AXIS_X",
+      "flat": 0,
+      "fuzz": 0,
+      "max": 1079.9375,
+      "min": 0,
+      "range": 1079.9375,
+      "resolution": 0,
+      "source": 4098,
+      "sourceNames": [
+        "SOURCE_CLASS_POINTER",
+        "SOURCE_TOUCHSCREEN"
+      ]
+    },
+    {
+      "axis": 1,
+      "axisName": "AXIS_Y",
+      "flat": 0,
+      "fuzz": 0,
+      "max": 2399.9375,
+      "min": 0,
+      "range": 2399.9375,
+      "resolution": 0,
+      "source": 4098,
+      "sourceNames": [
+        "SOURCE_CLASS_POINTER",
+        "SOURCE_TOUCHSCREEN"
+      ]
+    },
+    {
+      "axis": 2,
+      "axisName": "AXIS_PRESSURE",
+      "flat": 0,
+      "fuzz": 0,
+      "max": 1,
+      "min": 0,
+      "range": 1,
+      "resolution": 0,
+      "source": 4098,
+      "sourceNames": [
+        "SOURCE_CLASS_POINTER",
+        "SOURCE_TOUCHSCREEN"
+      ]
+    },
+    {
+      "axis": 3,
+      "axisName": "AXIS_SIZE",
+      "flat": 0,
+      "fuzz": 0,
+      "max": 1,
+      "min": 0,
+      "range": 1,
+      "resolution": 0,
+      "source": 4098,
+      "sourceNames": [
+        "SOURCE_CLASS_POINTER",
+        "SOURCE_TOUCHSCREEN"
+      ]
+    },
+    {
+      "axis": 4,
+      "axisName": "AXIS_TOUCH_MAJOR",
+      "flat": 0,
+      "fuzz": 0,
+      "max": 2631.8054,
+      "min": 0,
+      "range": 2631.8054,
+      "resolution": 0,
+      "source": 4098,
+      "sourceNames": [
+        "SOURCE_CLASS_POINTER",
+        "SOURCE_TOUCHSCREEN"
+      ]
+    },
+    {
+      "axis": 5,
+      "axisName": "AXIS_TOUCH_MINOR",
+      "flat": 0,
+      "fuzz": 0,
+      "max": 2631.8054,
+      "min": 0,
+      "range": 2631.8054,
+      "resolution": 0,
+      "source": 4098,
+      "sourceNames": [
+        "SOURCE_CLASS_POINTER",
+        "SOURCE_TOUCHSCREEN"
+      ]
+    },
+    {
+      "axis": 6,
+      "axisName": "AXIS_TOOL_MAJOR",
+      "flat": 0,
+      "fuzz": 0,
+      "max": 2631.8054,
+      "min": 0,
+      "range": 2631.8054,
+      "resolution": 0,
+      "source": 4098,
+      "sourceNames": [
+        "SOURCE_CLASS_POINTER",
+        "SOURCE_TOUCHSCREEN"
+      ]
+    },
+    {
+      "axis": 7,
+      "axisName": "AXIS_TOOL_MINOR",
+      "flat": 0,
+      "fuzz": 0,
+      "max": 2631.8054,
+      "min": 0,
+      "range": 2631.8054,
+      "resolution": 0,
+      "source": 4098,
+      "sourceNames": [
+        "SOURCE_CLASS_POINTER",
+        "SOURCE_TOUCHSCREEN"
+      ]
+    }
+  ],
+  "name": "goodix_ts",
+  "productId": 1,
+  "sourceNames": [
+    "SOURCE_CLASS_BUTTON",
+    "SOURCE_CLASS_POINTER",
+    "SOURCE_KEYBOARD",
+    "SOURCE_TOUCHSCREEN"
+  ],
+  "sources": 4355,
+  "sourcesHex": "0x1103",
+  "supportsSource": {
+    "SOURCE_ANY": false,
+    "SOURCE_BLUETOOTH_STYLUS": false,
+    "SOURCE_CLASS_BUTTON": true,
+    "SOURCE_CLASS_JOYSTICK": false,
+    "SOURCE_CLASS_MASK": false,
+    "SOURCE_CLASS_NONE": false,
+    "SOURCE_CLASS_POINTER": true,
+    "SOURCE_CLASS_POSITION": false,
+    "SOURCE_CLASS_TRACKBALL": false,
+    "SOURCE_DPAD": false,
+    "SOURCE_GAMEPAD": false,
+    "SOURCE_HDMI": false,
+    "SOURCE_JOYSTICK": false,
+    "SOURCE_KEYBOARD": true,
+    "SOURCE_MOUSE": false,
+    "SOURCE_MOUSE_RELATIVE": false,
+    "SOURCE_ROTARY_ENCODER": false,
+    "SOURCE_SENSOR": false,
+    "SOURCE_STYLUS": false,
+    "SOURCE_TOUCHPAD": false,
+    "SOURCE_TOUCHSCREEN": true,
+    "SOURCE_TOUCH_NAVIGATION": false,
+    "SOURCE_TRACKBALL": false,
+    "SOURCE_UNKNOWN": false
+  },
+  "vendorId": 10182,
+  "vibrator": {
+    "hasVibrator": false,
+    "vibratorIds": []
+  }
+}

@@ -1,0 +1,13 @@
+# 修复前：gold 15-OS3.0.11.0.VNQCNXM 云机（4503ac70a1c898f3-cloud）aligner.build_props_full 对比真机 07cf5fc1784783d5
+# 提取来源：engine/out/tmp/p0_fail_extract.txt
+
+=== P0-3 fail (4503ac70a1c898f3-cloud build_props init.svc.* cloud-only) ===
+  cloud[init.svc.android-hardware-media-c2-v4l2-hal-1-2] = 'running'  real = None
+  cloud[init.svc.auto_provision] = 'stopped'  real = None
+  cloud[init.svc.cph_storage_align] = 'stopped'  real = None
+  cloud[init.svc.cph_wifi_bootstrap] = 'stopped'  real = None
+  cloud[init.svc.keep_awake] = 'running'  real = None
+  cloud[init.svc.logcat_dump] = 'running'  real = None
+  cloud[init.svc.mdnsd] = 'running'  real = None
+  cloud[init.svc.seriallogging] = 'running'  real = None
+  cloud[init.svc.suspend_blocker] = 'running'  real = None

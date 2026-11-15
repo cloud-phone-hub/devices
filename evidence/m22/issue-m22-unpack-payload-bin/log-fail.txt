@@ -1,0 +1,20 @@
+$ unzip -l engine/roms/devices/flyme/m22/12.5.0.0A.zip
+Archive:  roms/devices/flyme/m22/12.5.0.0A.zip
+signed by SignApk
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+      271  01-01-2009 00:00   META-INF/com/android/metadata
+     1042  01-01-2009 00:00   META-INF/com/android/metadata.pb
+     1312  01-01-2009 00:00   apex_info.pb
+     1040  01-01-2009 00:00   care_map.pb
+8244669808  01-01-2009 00:00   payload.bin
+      156  01-01-2009 00:00   payload_properties.txt
+    10168  01-01-2009 00:00   META-INF/build.prop
+       11  01-01-2009 00:00   META-INF/sw_version
+---------                     -------
+8244671589                     8 files
+
+# 结论：包内没有 super.img，01_unpack 的 zip 分支无从下手。
+
+$ grep -rn "payload" engine/build/01_unpack/*.go
+（无命中：payload 支持尚不存在）

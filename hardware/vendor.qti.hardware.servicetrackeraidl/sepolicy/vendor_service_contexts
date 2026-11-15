@@ -1,0 +1,10 @@
+# vendor.qti.hardware.servicetrackeraidl 的服务名标签。
+#
+# 由 07_build_vendor 以 marker
+#（# cdh-patch-begin: vendor_service_contexts@vendor.qti.hardware.servicetrackeraidl）
+# 整块追加到装配树 /vendor/etc/selinux/vendor_service_contexts。
+#
+# 类型名沿用原厂（vendor_hal_srvctracker_service），便于与 Flyme 原厂 avc 对照；
+# 类型声明与 find / add / binder 授权见同目录 vendor_sepolicy.cil。
+
+vendor.qti.hardware.servicetrackeraidl.IServicetracker/default	u:object_r:vendor_hal_srvctracker_service:s0

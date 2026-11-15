@@ -1,0 +1,9 @@
+# engine/vendor 自研 nfc HAL（虚拟 HAL）：云机没有 NFC 控制器，服务注册
+# android.hardware.nfc.INfc/default 后 open() 立刻返回不支持，NfcService 依此
+# 判 HAL 不可用并停止等待（此前是每秒一条 ServiceManagerCppClient 等待）。
+service vendor.nfc-default /vendor/bin/hw/android.hardware.nfc-service
+    class hal
+    user nfc
+    group nfc
+    seclabel u:r:hal_nfc_default:s0
+    interface aidl android.hardware.nfc.INfc/default

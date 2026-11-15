@@ -1,0 +1,48 @@
+# log-pass：hardware.inputs 按 name 配对——descriptor/sources 7/7 全匹配 + id 序跨重启确定
+# 服务端 http://101.33.73.101（SKILL.md 记载真实地址）；云机 4503ac70a1c898f3-cloud / 真机 ec519c7d513a3ad3
+# 检查源码 core/development/device-checker/checks/java/hardware/inputs.js（采 id/name/descriptor/sources）
+
+===== 第 1 段：run-00028 按 name 配对（descriptor / sources 逐字一致，仅 id 异）=====
+云机 count=7  真机 count=7
+
+  [Virtual] desc✓ src✓
+      真 id=-1  src=0x301        desc=a718a782d34bc767f4689c232d64d527998ea7fd
+      云 id=-1  src=0x301        desc=a718a782d34bc767f4689c232d64d527998ea7fd
+  [uinput-fpc] desc✓ src✓
+      真 id=0   src=0x501        desc=8136f1e77728f603ac0ec0e545d338eba3cbcbc0
+      云 id=0   src=0x501        desc=8136f1e77728f603ac0ec0e545d338eba3cbcbc0
+  [mtk-kpd] desc✓ src✓
+      真 id=2   src=0x101        desc=9a244e01c90550ca2eb2798ffe20d8731e811765
+      云 id=3   src=0x101        desc=9a244e01c90550ca2eb2798ffe20d8731e811765
+  [fpc_irq@fingerprint] desc✓ src✓
+      真 id=3   src=0x101        desc=dad8bc819b573998ec22ca3952b1006fc1aa1a82
+      云 id=4   src=0x101        desc=dad8bc819b573998ec22ca3952b1006fc1aa1a82
+  [mtk-pmic-keys] desc✓ src✓
+      真 id=4   src=0x101        desc=485d69228e24f5e46da1598745890b214130dbc4
+      云 id=6   src=0x101        desc=485d69228e24f5e46da1598745890b214130dbc4
+  [mt6833-mt6359 Headset Jack] desc✓ src✓
+      真 id=5   src=0x80000101   desc=393bc96fab9421f9d6a6059cfe79e8b042c8755d
+      云 id=5   src=0x80000101   desc=393bc96fab9421f9d6a6059cfe79e8b042c8755d
+  [goodix_ts] desc✓ src✓
+      真 id=6   src=0x1103       desc=c63c3be2de98f10e6bbd97f78684d819a6c862b9
+      云 id=2   src=0x1103       desc=c63c3be2de98f10e6bbd97f78684d819a6c862b9
+
+结论：descriptor（身份哈希）与 sources（源掩码）7/7 逐字一致；唯一差异是 id（动态分配序号）。
+
+===== 第 2 段：id 序跨重启确定性（run-00028 重启前 vs run-00031 重启后）=====
+重启云机（adb reboot，55s boot=1）后重发 hardware.inputs：
+  id=-1  Virtual                      src=0x301
+  id=0   uinput-fpc                   src=0x501
+  id=2   goodix_ts                    src=0x1103
+  id=3   mtk-kpd                      src=0x101
+  id=4   fpc_irq@fingerprint          src=0x101
+  id=5   mt6833-mt6359 Headset Jack   src=0x80000101
+  id=6   mtk-pmic-keys                src=0x101
+与 run-00028 重启前 id 序逐字一致 → id 序由固定启动时序决定（确定性），非随机抖动。
+
+===== 第 3 段：完整对比无回归（aligner_xiaomi_gold.all）=====
+云机 run-00024：goldScorecard 32/32（failedItems 空）
+真机 run-00025：goldScorecard 32/32（failedItems 空）
+13 个 ultimate.* 单项：11 个命中计数完全一致；云机仅 2 处独有命中（均虚拟化产物，与 input 无关）：
+  U-BINDER-TRANSACT（deadly）：云机基线 14ms / 真机 38ms，SUI 事务码比值 1.741 略超阈值 1.7，QEMU IPC 计时假阳
+  U-LOGCAT-ROOT（warn）：云机 logcat 含 magisk SELinux AVC 拒绝（云策略带 magisk 上下文），真机 logcat 空

@@ -1,0 +1,18 @@
+窗口采集（实例 38 / m22_12.5.0.0A，adb 127.0.0.1:5919）
+
+窗口起点 20:55:57（logcat -b all 已清空），时长 480 s
+窗口终点 21:04:05（实际跨度 8 min 8 s）
+触发轮次 24（am force-stop + monkey -c LAUNCHER + KEYCODE_HOME，轮转 settings / browser / calendar / camera）
+采集行数 12971
+
+窗口起点时的服务状态：
+  init.svc.vendor.perf2-default = running
+  pidof vendor.qti.hardware.perf2-hal-service = 510
+  sys.boot_completed = 1
+
+窗口内统计（logcat ring buffer）：
+  avc: 行 608
+  含 perf2 的行 0
+  perf2 denied { find } 0
+  perf2 tclass=service_manager 0
+  Could not find … perf2 … VINTF manifest 0（本窗口没有新的查询，见 solution.md §5.4）

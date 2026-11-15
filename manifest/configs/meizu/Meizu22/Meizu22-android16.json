@@ -1,0 +1,555 @@
+{
+  "id": 9,
+  "deviceId": 9,
+  "name": "Meizu22-android16",
+  "androidVersion": "16",
+  "lineageVersion": "lineage-23.2",
+  "unpack": {
+    "lineage": [
+      "vendor_a.img",
+      "vendor_dlkm_a.img"
+    ],
+    "official": [
+      "system.img",
+      "system_ext.img",
+      "product.img",
+      "odm.img",
+      "vendor.img",
+      "vendor_dlkm.img",
+      "system_dlkm.img",
+      "vendor_boot.img"
+    ]
+  },
+  "buildKernel": {
+    "lineageKernel": {
+      "config-note": "2026-10-29 起撤销机型片段，统一用 build/02_build_kernel/lineage-kernel.config（全机型共用；两份片段实质只差 CONFIG_DMIID 一项，统一后 m22 反而继承了 DMIID 关闭，避免 /sys/class/dmi/id 泄 QEMU/EDK II）。回退理由与实测见证据 #48 的「回退」一节。",
+      "measured-from": "out/roms/lineage/lineage-23.2/super/vendor_dlkm_a.img 内 9pnet_fd.ko 的 vermagic 段。云机跑底包内核（6.12.81），官方 ROM 内核是 6.6.66-android15（见 rom.official.kernel），两者不同代，镜像标签与源码目录名跟底包走。",
+      "source": "git@github.com:cloud-phone-hub/android_kernel_virt_virtio.git lineage-23.2 @4f6bf47200d9",
+      "vermagic": "6.12.81-4k-g4f6bf47200d9 SMP preempt mod_unload modversions aarch64",
+      "version": "6.12.81"
+    },
+    "uname": "Linux localhost 6.6.66-android15-8-maybe-dirty-4k #1 SMP PREEMPT Tue Jan 27 19:19:43 UTC 2026 aarch64 Toybox",
+    "version": "6.12"
+  },
+  "buildModules": {
+    "external": [
+      "cdh_redirect",
+      "device_info",
+      "input_identity",
+      "virtio_media"
+    ],
+    "input_identity": {
+      "touch_major": true,
+      "goodix_fp": true,
+      "devices": [
+        {
+          "name": "uinput-fpc",
+          "bus": 6,
+          "vendor": 1638,
+          "product": 2184,
+          "version": 0,
+          "keys": [
+            "KEY_UP",
+            "KEY_LEFT",
+            "KEY_RIGHT",
+            "KEY_DOWN"
+          ],
+          "abs": [
+            {
+              "axis": "ABS_Z",
+              "min": 0,
+              "max": 255,
+              "fuzz": 0,
+              "flat": 0
+            }
+          ]
+        },
+        {
+          "name": "fpc_irq@fingerprint",
+          "keys": [
+            "KEY_POWER",
+            "KEY_WAKEUP"
+          ],
+          "msc": [
+            "MSC_SCAN"
+          ]
+        },
+        {
+          "name": "swtp",
+          "keys": [
+            249,
+            250
+          ]
+        },
+        {
+          "name": "mt6833-mt6359 Headset Jack",
+          "bus": 25,
+          "phys": "ALSA",
+          "keys": [
+            "KEY_PLAYPAUSE",
+            "BTN_1",
+            "BTN_2",
+            "KEY_VOICECOMMAND"
+          ],
+          "switches": [
+            "SW_HEADPHONE_INSERT",
+            "SW_MICROPHONE_INSERT",
+            "SW_LINEOUT_INSERT",
+            "SW_JACK_PHYSICAL_INSERT"
+          ]
+        },
+        {
+          "name": "mtk-pmic-keys",
+          "bus": 25,
+          "vendor": 1,
+          "product": 1,
+          "version": 1,
+          "keys": [
+            "KEY_VOLUMEUP",
+            "KEY_POWER"
+          ]
+        }
+      ],
+      "aligns": [
+        {
+          "name": "mtk-kpd",
+          "keys": [
+            "KEY_VOLUMEDOWN"
+          ]
+        }
+      ]
+    },
+    "input": {
+      "keyboard": {},
+      "tablet": false,
+      "touch": {
+        "abs-to-mt": true,
+        "bus": 28,
+        "name": "fts",
+        "product": 2,
+        "vendor": 1,
+        "version": 256
+      }
+    },
+    "redirect": [
+      {
+        "from": "/vendor/etc",
+        "to": "/mnt/vendorpatch/vendor/etc",
+        "type": "dir"
+      },
+      {
+        "from": "/vendor/bin",
+        "to": "/mnt/vendorpatch/vendor/bin",
+        "type": "dir"
+      },
+      {
+        "from": "/vendor/lib",
+        "to": "/mnt/vendorpatch/vendor/lib",
+        "type": "dir"
+      },
+      {
+        "from": "/vendor/lib64",
+        "to": "/mnt/vendorpatch/vendor/lib64",
+        "type": "dir"
+      },
+      {
+        "from": "/vendor/build.prop",
+        "to": "/mnt/vendorpatch/vendor/build.prop",
+        "type": "file"
+      },
+      {
+        "from": "/vendor/ueventd.rc",
+        "to": "/mnt/vendorpatch/vendor/ueventd.rc",
+        "type": "file"
+      },
+      {
+        "from": "/vendor_dlkm/lib",
+        "to": "/mnt/vendorpatch/vendor_dlkm/lib",
+        "type": "dir"
+      },
+      {
+        "from": "/odm/etc/build.prop",
+        "to": "/mnt/vendorpatch/odm/etc/build.prop",
+        "type": "file"
+      },
+      {
+        "from": "/odm/etc/selinux/odm_sepolicy.cil",
+        "to": "/mnt/vendorpatch/odm/etc/selinux/odm_sepolicy.cil",
+        "type": "file"
+      },
+      {
+        "from": "/system/lib/modules",
+        "to": "/mnt/vendorpatch/vendor_dlkm/lib/modules",
+        "type": "dir"
+      },
+      {
+        "from": "/odm/etc/selinux/precompiled_sepolicy",
+        "to": "/mnt/vendorpatch/odm/etc/selinux/precompiled_sepolicy",
+        "type": "file"
+      },
+      {
+        "from": "/system/bin/update_verifier",
+        "to": "/mnt/vendorpatch/system/bin/update_verifier",
+        "type": "file"
+      }
+    ]
+  },
+  "buildVendorBoot": {
+    "fstab": "qcom"
+  },
+  "buildOdm": {
+    "build-prop-sets": {},
+    "build-prop-unsets": [],
+    "buildProp": "/etc/build.prop",
+    "img": "odm_a.img",
+    "note": "odm 是 super 逻辑分区：01_unpack 解出 super/odm_a.img，属性件在镜像内 /etc/build.prop（30 行，md5 40415616a73d1ec1439dc6e50ec229fc，2026-11-03 实测，见 evidence/m22/issue-m22-unpack-payload-bin）。官方原件已满足 ABI 口径（abilist32 为空、abilist64=arm64-v8a），故 sets/unsets 为空：06 只做「取原件 -> 校验 ABI -> 落 odm/etc/build.prop」，不做增量。原先手抄的 odm/etc/build.prop 与本段取到的原件逐字节相同（同 md5），已按 manifest/README 的约束删除。若换版后官方 abilist32 变成非空，06 会在 ABI 校验处直接失败，届时把三条 abilist 写进本段 sets。"
+  },
+  "buildVendor": {
+    "build-prop-sets": {
+      "persist.radio.multisim.config": "dsda",
+      "ro.hardware.egl": "mesa",
+      "ro.hwui.use_vulkan": "false",
+      "ro.opengles.version": "196608"
+    },
+    "build-prop-unsets": [],
+    "fileTrees": {
+      "etc/battery_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  m22（MEIZU 22）电池口径 —— 供健康 HAL\n  /vendor/bin/hw/android.hardware.health-service 启动时读取（env BATTERY_CONFIG_XML 可\n  覆盖路径）。各段与属性均可缺省，缺省即用 HAL 内置默认值；枚举属性值必须是\n  health_service.cpp 中枚举表对应的 AIDL 名字（如 GOOD / FULL / INVALID）。\n\n  取值来源：本机无电池硬件（/sys/class/power_supply 为空、内核无电池驱动），\n  上报值为构建期固化的模拟口径：容量 6000000 µAh（标称值，镜像内无取证来源），\n  charge_counter 恒 5960000 µAh，电压/温度恒定（补电与静置相位取同值，\n  HAL 的 lerp 模拟退化为常量，行为等同于静态上报）。\n-->\n<battery>\n  <!-- 身份与电量：level=100、health=GOOD、capacity_level=FULL、\n       charging_state=INVALID、present=1、cycle_count=0 -->\n  <identity technology=\"Li-poly\" cycle_count=\"0\" level=\"100\" health=\"GOOD\"\n            capacity_level=\"FULL\" charging_state=\"INVALID\" present=\"1\"/>\n\n  <!-- 充电器状态：health.json 的 acOnline/usbOnline 均为 true，充电上限 0（不限制） -->\n  <charger ac=\"1\" usb=\"1\" wireless=\"0\" dock=\"0\"\n           max_current_ua=\"0\" max_voltage_uv=\"0\"/>\n\n  <!-- 容量：fullChargeUah / designCapacityUah = 6000000，chargeCounterUah = 5960000 -->\n  <capacity full_uah=\"6000000\" counter_min=\"5960000\" counter_max=\"5960000\"/>\n\n  <!-- 动态模拟区间：两相位同值（4389 mV / 29.0°C），周期沿用 HAL 默认 600s -->\n  <cycle full_mv=\"4389\" charge_mv=\"4389\" temperature_full_decic=\"290\"\n         temperature_charge_decic=\"290\" seconds=\"600\"/>\n\n  <!-- HealthInfo 扩展档案（getBatteryHealthData）：本机无电池档案，serial_number 不下发 -->\n  <health_data state_of_health=\"99\" part_status=\"UNSUPPORTED\"\n               manufacturing_date_seconds=\"0\" first_usage_seconds=\"0\"/>\n</battery>\n",
+      "etc/excluded-input-devices.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  m22 云机的输入设备排除表（InputReader 读 /vendor/etc/excluded-input-devices.xml）。\n\n  只排除 ACPI 电源键：QEMU 提供的 Power Button 对云机无用，留着只会在\n  dumpsys input 里多一台 KEYBOARD 类设备。\n\n  触摸设备**不能**排除。它的 guest 侧名字是 `fts`（device.json 的 `input.touch.name`，\n  对齐魅族真机 ST FTS），`abs-to-mt=on` 让 QEMU 把单点 ABS 直接以 MT-B 上报，\n  不依赖 idc（静态树里的 3 份 idc 已于 2026-10-29 删除，见 m22 README 与证据 #63）。\n-->\n<devices>\n    <device name=\"Power Button\"/>\n</devices>\n",
+      "etc/gnss_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  gnss 设备值（设备独有，随机型 vendor 镜像下发）。\n\n  本 HAL 是虚拟 GNSS：默认 fix 由本文件提供，运行时可用 control-file 指向的\n  行式文件（/data/vendor/gps/fix，key=value）临时覆盖单个定位字段。\n  改值不需要重编 HAL，缺属性一律回退编码内默认（见 gnss_service.cpp 的 GnssConfig）。\n\n  取值来源：官方 vendor.img 的 GNSS 配置实测（本机高通 sun 平台）。systemInfoName 取\n  \"Qualcomm,SM8750,QC_GNSS_1.0\"；真机 dumpsys location 的 Hardware Model Name 未采集，\n  该串沿用同 QTI GNSS 栈的实测值。\n    control-file                            = 运行时 fix 覆盖文件（空/缺省则只用本文件默认值）\n    system-info-name                        = IGnss getGnssCapabilities 应答的 systemInfo 串\n    default-longitude / default-latitude    = 无 fix 时的默认经纬度（杭州）\n    default-altitude-meters                 = 默认海拔\n    default-speed-meters-per-second         = 默认速度\n    default-horizontal-accuracy-meters      = 默认水平精度\n    default-satellites                      = 默认卫星数（1..64）\n    gnss-capabilities                       = GnssCapabilities 位集（1 = HAS_GNSS_CAPABILITIES）\n    power-capabilities                      = GnssPowerCapabilities 位集\n    measurement-corrections-capabilities    = MeasurementCorrectionsCapabilities 位集\n    year-of-hw                              = IGnssDebug 的 yearOfHw\n-->\n<gnss-config control-file=\"/data/vendor/gps/fix\"\n             system-info-name=\"Qualcomm,SM8750,QC_GNSS_1.0\"\n             default-longitude=\"120.008549\"\n             default-latitude=\"30.289452\"\n             default-altitude-meters=\"15.5\"\n             default-speed-meters-per-second=\"3.2\"\n             default-horizontal-accuracy-meters=\"1\"\n             default-satellites=\"7\"\n             gnss-capabilities=\"1\"\n             power-capabilities=\"1\"\n             measurement-corrections-capabilities=\"0\"\n             year-of-hw=\"0\"/>\n",
+      "etc/init/frp_symlink.rc": "# FRP 分区路径补建：让 PersistentDataBlockService 找得到 ro.frp.pst 指向的节点。\n#\n# 真机 Flyme 的 vendor build.prop 写 ro.frp.pst=/dev/block/bootdevice/by-name/frp\n# （见厂商 vendor_a.img:/build.prop，机型目录不放副本），framework 的\n# com.android.server.pdb.PersistentDataBlockService 据此打开 FRP 分区。本盘 GPT 来自\n# lineage 底座，没有 frp 分区，QTI 风格的 bootdevice/by-name 路径也不存在 →\n#   E PersistentDataBlockService: partition not available?\n#   E PersistentDataBlockService: java.io.FileNotFoundException:\n#       /dev/block/bootdevice/by-name/frp: open failed: ENOENT\n# 该异常发生在 onStart 的初始化线程里，waitForInitDoneSignal 等不到信号，20s 后\n#   \"Service PersistentDataBlockService init timeout\" →\n#   \"Failed to boot service com.android.server.pdb.PersistentDataBlockService:\n#    onBootPhase threw an exception during phase 500\" → system_server FATAL 重启循环\n# （instance 24 实测 2026-10-28 12:54:44）。\n#\n# 处置：把 QTI 路径建出来，软链到本盘未被使用的 misc 分区（vda3，1 MiB）。本盘由\n# GRUB 引导，不消费 Android 的 misc/BCB，故用它承载 FRP 数据块，语义上等价于真机把\n# FRP 放在独立小分区。post-fs-data 早于 system_server 启动，时序足够。\n#\n# 配套：\n#   * DAC —— /dev/block/vda3 默认 0600 root:root，需 0660 root system，\n#     见 vendor/etc/ueventd.qcom.rc；\n#   * SELinux —— 节点标签是 misc_block_device（plat 只给 system_server 开\n#     frp_block_device），见 sepolicy/vendor_sepolicy.cil 第 6 段。\non post-fs-data\n    mkdir /dev/block/bootdevice 0755 root root\n    mkdir /dev/block/bootdevice/by-name 0755 root root\n    symlink /dev/block/vda3 /dev/block/bootdevice/by-name/frp\n",
+      "etc/light_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  lights 灯清单（设备独有，随机型 vendor 镜像下发）。\n\n  本 HAL 是虚拟 lights HAL：颜色/闪烁模式只记录不驱动硬件，灯清单决定\n  framework LightsService 能枚举出哪些灯（getLights 的返回值）。改清单不需要重编 HAL。\n\n  取值来源：9 条灯清单，与官方 QTI lights 二进制的 strings 对齐（\n  L_BATTERY/L_BLUETOOTH/L_BUTTONS/L_KEYBOARD/L_NOTIFY/L_WIFI/ATTENTION/MICROPHONE\n  + lcd-backlight，即 AOSP LightType 0..8；本机真机 dumpsys lights 未采集）。\n    id      = getLights 返回的 id（可随意但需唯一）\n    ordinal = 同类型灯的序号（同 type 多灯时区分；本机单一灯/类型，全 0）\n    type    = BACKLIGHT / KEYBOARD / BUTTONS / BATTERY / NOTIFICATIONS / ATTENTION /\n              BLUETOOTH / WIFI / MICROPHONE / CAMERA\n-->\n<lights-config>\n    <light id=\"0\" ordinal=\"0\" type=\"BACKLIGHT\"/>\n    <light id=\"1\" ordinal=\"0\" type=\"KEYBOARD\"/>\n    <light id=\"2\" ordinal=\"0\" type=\"BUTTONS\"/>\n    <light id=\"3\" ordinal=\"0\" type=\"BATTERY\"/>\n    <light id=\"4\" ordinal=\"0\" type=\"NOTIFICATIONS\"/>\n    <light id=\"5\" ordinal=\"0\" type=\"ATTENTION\"/>\n    <light id=\"6\" ordinal=\"0\" type=\"BLUETOOTH\"/>\n    <light id=\"7\" ordinal=\"0\" type=\"WIFI\"/>\n    <light id=\"8\" ordinal=\"0\" type=\"MICROPHONE\"/>\n</lights-config>\n",
+      "etc/media_codecs_c2.xml": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<!--\n  m22 云机的 C2 组件能力声明（CDH 增量，不是原厂文件）。\n\n  来源：本机官方 vendor.img:/etc **没有** media_codecs_c2.xml；本文件只为引擎侧\n  的 v4l2 codec2 store（`android.hardware.media.v412`，二进制\n  android.hardware.media.c2@1.2-service-v4l2-64）补三条 c2.v4l2.* 的 limits/features。\n\n  消费方：AOSP `Codec2InfoBuilder`（frameworks/av/media/codec2/sfplugin）单独解析\n  本文件名，与 media_codecs.xml 并列；厂商组件（c2.qti.*，16 条）仍在\n  media_codecs.xml 内，本文件不重复声明，避免覆盖面偏移。\n\n  关键 limit：`<Limit name=\"size\">` 必须给。缺它时框架\n  MediaCodecList::codecHandlesFormat 拿不到 \"size-range\" detail，直接判 false，\n  v4l2 组件永不被选中（m22 实测过一次的坑）；上下界取宿主 virtio-video 上报的\n  stepwise 16..4096。编码器另给 bitrate/bitrate-modes，与解码器分开列。\n-->\n<MediaCodecs>\n    <Decoders>\n        <MediaCodec name=\"c2.v4l2.avc.decoder\" type=\"video/avc\">\n            <Limit name=\"size\" min=\"2x2\" max=\"4096x4096\" />\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Feature name=\"adaptive-playback\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.v4l2.hevc.decoder\" type=\"video/hevc\">\n            <Limit name=\"size\" min=\"2x2\" max=\"4096x4096\" />\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Feature name=\"adaptive-playback\" />\n        </MediaCodec>\n    </Decoders>\n    <Encoders>\n        <MediaCodec name=\"c2.v4l2.avc.encoder\" type=\"video/avc\">\n            <Limit name=\"size\" min=\"32x32\" max=\"1920x1088\" />\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"bitrate\" range=\"1-40000000\" />\n            <Feature name=\"bitrate-modes\" value=\"VBR,CBR\" />\n        </MediaCodec>\n    </Encoders>\n</MediaCodecs>\n",
+      "etc/media_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  media codec2 store 实例与组件表（设备独有，随机型 vendor 镜像下发）。\n\n  真机每个 vendor 二进制只注册一个 C2 store 实例（rc 不传参，由二进制名选实例）；\n  本文件声明「二进制 basename → 实例名」与「实例 → 组件表」。改表不需要重编 HAL，\n  缺文件则实例/组件均为空（服务照起，framework 看不到任何 vendor 编解码器）。\n\n  取值来源：官方 vendor.img 的 /etc/media_codecs.xml（c2.qti.* 16 条视频）与\n  /etc/media_codecs_c2_audio.xml（13 条音频），共 29 条。官方不含\n  c2.qti.apv.{decoder,encoder}，故不登记。\n    instance.binary   = /vendor/bin/hw/ 下的 C2 store 二进制名\n    instance.store    = 该二进制注册的 store 实例名（等于 rc 里的 interface suffix）\n                        注意：实例名跟的是引擎模块 android.hardware.media 的 vendor/etc/init/*.rc\n                        与 vintf/manifest/*.xml（固定 default1 视频 / default9 音频），\n                        不是官方 MEIZU 22 的 default / default2；改这里必须同步改那两处。\n    component.store   = 归属实例；name/kind/domain/media-type/rank 与 C2 登记一致\n    component.aliases = 逗号分隔的旧 OMX 名（framework 需要别名转接）\n    component.profiles/levels = 逗号分隔的 C2 profile/level 整数；\n                        当前留空（官方 XML 只给 SDK 侧 <ProfileLevels>，反查 C2 枚举\n                        需额外映射），\n                        留空时 framework 走 mime 默认上限\n-->\n<media-c2-config>\n    <instance binary=\"android.hardware.media.c2-mediatek\" store=\"default1\"/>\n    <instance binary=\"vendor.dolby.media.c2-default-service-dax\" store=\"default9\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.qti.avc.decoder\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/avc\"\n        rank=\"512\"\n        aliases=\"OMX.qcom.video.decoder.avc\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.qti.avc.decoder.low_latency\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/avc\"\n        rank=\"512\"\n        aliases=\"OMX.qcom.video.decoder.avc.low_latency\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.qti.avc.decoder.secure\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/avc\"\n        rank=\"512\"\n        aliases=\"OMX.qcom.video.decoder.avc.secure\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.qti.hevc.decoder\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/hevc\"\n        rank=\"512\"\n        aliases=\"OMX.qcom.video.decoder.hevc\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.qti.hevc.decoder.low_latency\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/hevc\"\n        rank=\"512\"\n        aliases=\"OMX.qcom.video.decoder.hevc.low_latency\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.qti.hevc.decoder.secure\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/hevc\"\n        rank=\"512\"\n        aliases=\"OMX.qcom.video.decoder.hevc.secure\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.qti.vp9.decoder\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/x-vnd.on2.vp9\"\n        rank=\"512\"\n        aliases=\"OMX.qcom.video.decoder.vp9\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.qti.vp9.decoder.low_latency\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/x-vnd.on2.vp9\"\n        rank=\"512\"\n        aliases=\"OMX.qcom.video.decoder.vp9.low_latency\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.qti.vp9.decoder.secure\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/x-vnd.on2.vp9\"\n        rank=\"512\"\n        aliases=\"OMX.qcom.video.decoder.vp9.secure\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.qti.av1.decoder\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/av01\"\n        rank=\"512\"\n        aliases=\"\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.qti.av1.decoder.low_latency\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/av01\"\n        rank=\"512\"\n        aliases=\"\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.qti.av1.decoder.secure\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/av01\"\n        rank=\"512\"\n        aliases=\"\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.qti.avc.encoder\"\n        kind=\"encoder\"\n        domain=\"video\"\n        media-type=\"video/avc\"\n        rank=\"512\"\n        aliases=\"OMX.qcom.video.encoder.avc\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.qti.hevc.encoder\"\n        kind=\"encoder\"\n        domain=\"video\"\n        media-type=\"video/hevc\"\n        rank=\"512\"\n        aliases=\"OMX.qcom.video.encoder.hevc\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.qti.hevc.encoder.cq\"\n        kind=\"encoder\"\n        domain=\"video\"\n        media-type=\"video/hevc\"\n        rank=\"512\"\n        aliases=\"OMX.qcom.video.encoder.hevc.cq\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.qti.heic.encoder\"\n        kind=\"encoder\"\n        domain=\"video\"\n        media-type=\"image/vnd.android.heic\"\n        rank=\"512\"\n        aliases=\"OMX.qcom.video.encoder.heic\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default9\"\n        name=\"c2.qti.alac.sw.decoder\"\n        kind=\"decoder\"\n        domain=\"audio\"\n        media-type=\"audio/alac\"\n        rank=\"8\"\n        aliases=\"\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default9\"\n        name=\"c2.qti.ape.sw.decoder\"\n        kind=\"decoder\"\n        domain=\"audio\"\n        media-type=\"audio/x-ape\"\n        rank=\"8\"\n        aliases=\"\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default9\"\n        name=\"c2.qti.flac.sw.decoder\"\n        kind=\"decoder\"\n        domain=\"audio\"\n        media-type=\"audio/flac\"\n        rank=\"8\"\n        aliases=\"\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default9\"\n        name=\"c2.qti.dsd.sw.decoder\"\n        kind=\"decoder\"\n        domain=\"audio\"\n        media-type=\"audio/dsd\"\n        rank=\"8\"\n        aliases=\"\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default9\"\n        name=\"c2.qti.aac.hw.decoder\"\n        kind=\"decoder\"\n        domain=\"audio\"\n        media-type=\"audio/mp4a-latm\"\n        rank=\"8\"\n        aliases=\"\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default9\"\n        name=\"c2.qti.alac.hw.decoder\"\n        kind=\"decoder\"\n        domain=\"audio\"\n        media-type=\"audio/alac\"\n        rank=\"8\"\n        aliases=\"\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default9\"\n        name=\"c2.qti.wma.hw.decoder\"\n        kind=\"decoder\"\n        domain=\"audio\"\n        media-type=\"audio/x-ms-wma\"\n        rank=\"8\"\n        aliases=\"\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default9\"\n        name=\"c2.qti.ape.hw.decoder\"\n        kind=\"decoder\"\n        domain=\"audio\"\n        media-type=\"audio/x-ape\"\n        rank=\"8\"\n        aliases=\"\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default9\"\n        name=\"c2.qti.amrwbplus.hw.decoder\"\n        kind=\"decoder\"\n        domain=\"audio\"\n        media-type=\"audio/amr-wb-plus\"\n        rank=\"8\"\n        aliases=\"\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default9\"\n        name=\"c2.qti.amrwb+.hw.decoder\"\n        kind=\"decoder\"\n        domain=\"audio\"\n        media-type=\"audio/amr-wb+\"\n        rank=\"8\"\n        aliases=\"\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default9\"\n        name=\"c2.qti.amrnb.hw.encoder\"\n        kind=\"encoder\"\n        domain=\"audio\"\n        media-type=\"audio/3gpp\"\n        rank=\"8\"\n        aliases=\"\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default9\"\n        name=\"c2.qti.amrwb.hw.encoder\"\n        kind=\"encoder\"\n        domain=\"audio\"\n        media-type=\"audio/amr-wb\"\n        rank=\"8\"\n        aliases=\"\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default9\"\n        name=\"c2.qti.aac.hw.encoder\"\n        kind=\"encoder\"\n        domain=\"audio\"\n        media-type=\"audio/mp4a-latm\"\n        rank=\"8\"\n        aliases=\"\"\n        profiles=\"\"\n        levels=\"\"/>\n</media-c2-config>\n",
+      "etc/sensors_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  sensors 传感器清单（设备独有，随机型 vendor 镜像下发）。\n\n  本 HAL 是虚拟 sensors HAL：上报的清单决定 framework SensorManager 能看到的传感器。\n  改清单不需要重编 HAL，缺文件则清单为空（framework 认为设备无传感器）。\n\n  取值来源：note13-5G-15 真机 dumpsys sensorservice 基线（本机无同型号真机可采，\n  未做本机取证），29 条中 9 个 wake-up 版，各字段已与本文件逐条比对一致；\n  条目里的 vendor 字符串（InvenSense / QST / MTK 等）是基线原始厂商标识，不代表本机身份。\n    handle/name/vendor/version/type-id/type 与 SensorInfo 字段一一对应\n    max-range/resolution/power 为浮点；min-delay/max-delay 单位 us\n    fifo-reserved/fifo-max 为 FIFO 事件数；wake-up/reporting 为 flags 两段\n-->\n<sensors-config>\n    <sensor\n        handle=\"1\"\n        name=\"lsm6dso_acc\"\n        vendor=\"InvenSense\"\n        version=\"1\"\n        type-id=\"1\"\n        type=\"android.sensor.accelerometer\"\n        max-range=\"78.453605652\"\n        resolution=\"0.0012\"\n        power=\"0.001\"\n        min-delay=\"2500\"\n        fifo-reserved=\"3000\"\n        fifo-max=\"4500\"\n        max-delay=\"80000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"2\"\n        name=\"qmc6308\"\n        vendor=\"QST\"\n        version=\"1\"\n        type-id=\"2\"\n        type=\"android.sensor.magnetic_field\"\n        max-range=\"4912.05029296875\"\n        resolution=\"0.15000000596046448\"\n        power=\"0.001\"\n        min-delay=\"10000\"\n        fifo-reserved=\"600\"\n        fifo-max=\"4500\"\n        max-delay=\"200000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"3\"\n        name=\"ORIENTATION\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"3\"\n        type=\"android.sensor.orientation\"\n        max-range=\"360.0\"\n        resolution=\"0.00390625\"\n        power=\"0.001\"\n        min-delay=\"5000\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"20000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"4\"\n        name=\"lsm6dso_gyro\"\n        vendor=\"InvenSense\"\n        version=\"1\"\n        type-id=\"4\"\n        type=\"android.sensor.gyroscope\"\n        max-range=\"34.906299591\"\n        resolution=\"0.0011\"\n        power=\"0.001\"\n        min-delay=\"2500\"\n        fifo-reserved=\"3000\"\n        fifo-max=\"4500\"\n        max-delay=\"80000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"5\"\n        name=\"tcs3701_l\"\n        vendor=\"AMS\"\n        version=\"1\"\n        type-id=\"5\"\n        type=\"android.sensor.light\"\n        max-range=\"65535.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"0\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"1000000\"\n        wake-up=\"false\"\n        reporting=\"1\"/>\n    <sensor\n        handle=\"8\"\n        name=\"tcs3701_p\"\n        vendor=\"AMS\"\n        version=\"1\"\n        type-id=\"8\"\n        type=\"android.sensor.proximity\"\n        max-range=\"5.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"0\"\n        fifo-reserved=\"100\"\n        fifo-max=\"4500\"\n        max-delay=\"1000000\"\n        wake-up=\"true\"\n        reporting=\"1\"/>\n    <sensor\n        handle=\"9\"\n        name=\"GRAVITY\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"9\"\n        type=\"android.sensor.gravity\"\n        max-range=\"39.226802826\"\n        resolution=\"0.0012\"\n        power=\"0.001\"\n        min-delay=\"5000\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"20000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"10\"\n        name=\"LINEARACCEL\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"10\"\n        type=\"android.sensor.linear_acceleration\"\n        max-range=\"39.226802826\"\n        resolution=\"0.0012\"\n        power=\"0.001\"\n        min-delay=\"5000\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"20000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"11\"\n        name=\"ROTATION_VECTOR\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"11\"\n        type=\"android.sensor.rotation_vector\"\n        max-range=\"1.0\"\n        resolution=\"5.960464477539063e-08\"\n        power=\"0.001\"\n        min-delay=\"5000\"\n        fifo-reserved=\"300\"\n        fifo-max=\"4500\"\n        max-delay=\"20000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"14\"\n        name=\"UNCALI_MAG\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"14\"\n        type=\"android.sensor.magnetic_field_uncalibrated\"\n        max-range=\"4912.050292969\"\n        resolution=\"0.150000006\"\n        power=\"0.001\"\n        min-delay=\"20000\"\n        fifo-reserved=\"600\"\n        fifo-max=\"4500\"\n        max-delay=\"200000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"15\"\n        name=\"GAME_ROTATION_VECTOR\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"15\"\n        type=\"android.sensor.game_rotation_vector\"\n        max-range=\"1.0\"\n        resolution=\"5.960464477539063e-08\"\n        power=\"0.001\"\n        min-delay=\"5000\"\n        fifo-reserved=\"300\"\n        fifo-max=\"4500\"\n        max-delay=\"20000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"16\"\n        name=\"UNCALI_GYRO\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"16\"\n        type=\"android.sensor.gyroscope_uncalibrated\"\n        max-range=\"34.906299591\"\n        resolution=\"0.0011\"\n        power=\"0.001\"\n        min-delay=\"2500\"\n        fifo-reserved=\"3000\"\n        fifo-max=\"4500\"\n        max-delay=\"80000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"17\"\n        name=\"SIGNIFICANT_MOTION\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"17\"\n        type=\"android.sensor.significant_motion\"\n        max-range=\"1.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"-1\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"0\"\n        wake-up=\"true\"\n        reporting=\"2\"/>\n    <sensor\n        handle=\"18\"\n        name=\"STEP_DETECTOR\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"18\"\n        type=\"android.sensor.step_detector\"\n        max-range=\"1.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"0\"\n        fifo-reserved=\"100\"\n        fifo-max=\"4500\"\n        max-delay=\"0\"\n        wake-up=\"false\"\n        reporting=\"3\"/>\n    <sensor\n        handle=\"19\"\n        name=\"STEP_COUNTER\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"19\"\n        type=\"android.sensor.step_counter\"\n        max-range=\"2147483648.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"0\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"1000000\"\n        wake-up=\"false\"\n        reporting=\"1\"/>\n    <sensor\n        handle=\"20\"\n        name=\"GEOMAGNETIC_ROTATION_VECTOR\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"20\"\n        type=\"android.sensor.geomagnetic_rotation_vector\"\n        max-range=\"1.0\"\n        resolution=\"5.960464477539063e-08\"\n        power=\"0.001\"\n        min-delay=\"5000\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"20000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"22\"\n        name=\"TILT_DETECTOR\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"22\"\n        type=\"android.sensor.tilt_detector\"\n        max-range=\"1.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"0\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"0\"\n        wake-up=\"true\"\n        reporting=\"3\"/>\n    <sensor\n        handle=\"25\"\n        name=\"pickup  Wakeup\"\n        vendor=\"xiaomi\"\n        version=\"1\"\n        type-id=\"33171036\"\n        type=\"xiaomi.sensor.pick_up\"\n        max-range=\"255.0\"\n        resolution=\"1.0\"\n        power=\"1.0\"\n        min-delay=\"10000\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"1000000\"\n        wake-up=\"true\"\n        reporting=\"3\"/>\n    <sensor\n        handle=\"27\"\n        name=\"DEVICE_ORIENTATION\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"27\"\n        type=\"android.sensor.device_orientation\"\n        max-range=\"3.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"0\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"1000000\"\n        wake-up=\"false\"\n        reporting=\"1\"/>\n    <sensor\n        handle=\"35\"\n        name=\"UNCALI_ACC\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"35\"\n        type=\"android.sensor.accelerometer_uncalibrated\"\n        max-range=\"39.226802826\"\n        resolution=\"0.0012\"\n        power=\"0.001\"\n        min-delay=\"2500\"\n        fifo-reserved=\"3000\"\n        fifo-max=\"4500\"\n        max-delay=\"80000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"76\"\n        name=\"prox_factory_strm\"\n        vendor=\"xiaomi\"\n        version=\"1\"\n        type-id=\"33171005\"\n        type=\"xiaomi.sensor.ps_factory_strm\"\n        max-range=\"255.0\"\n        resolution=\"1.0\"\n        power=\"1.0\"\n        min-delay=\"10000\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"1000000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"77\"\n        name=\"als_factory_str\"\n        vendor=\"xiaomi\"\n        version=\"1\"\n        type-id=\"33171007\"\n        type=\"xiaomi.sensor.als_factory_strm\"\n        max-range=\"65535.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"10000\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"1000000\"\n        wake-up=\"false\"\n        reporting=\"1\"/>\n    <sensor\n        handle=\"80\"\n        name=\"Aod  Wakeup\"\n        vendor=\"xiaomi\"\n        version=\"1\"\n        type-id=\"33171029\"\n        type=\"xiaomi.sensor.aod\"\n        max-range=\"255.0\"\n        resolution=\"1.0\"\n        power=\"1.0\"\n        min-delay=\"10000\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"1000000\"\n        wake-up=\"true\"\n        reporting=\"3\"/>\n    <sensor\n        handle=\"85\"\n        name=\"sar_algo\"\n        vendor=\"xiaomi\"\n        version=\"1\"\n        type-id=\"33171028\"\n        type=\"xiaomi.sensor.sar_algo\"\n        max-range=\"1.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"10000\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"1000000\"\n        wake-up=\"true\"\n        reporting=\"1\"/>\n    <sensor\n        handle=\"86\"\n        name=\"sar_algo_1\"\n        vendor=\"xiaomi\"\n        version=\"1\"\n        type-id=\"33171059\"\n        type=\"xiaomi.sensor.sar_algo_1\"\n        max-range=\"1.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"10000\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"1000000\"\n        wake-up=\"true\"\n        reporting=\"1\"/>\n    <sensor\n        handle=\"87\"\n        name=\"sar_algo_2\"\n        vendor=\"xiaomi\"\n        version=\"1\"\n        type-id=\"33171109\"\n        type=\"xiaomi.sensor.sar_algo_2\"\n        max-range=\"1.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"10000\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"1000000\"\n        wake-up=\"true\"\n        reporting=\"1\"/>\n    <sensor\n        handle=\"92\"\n        name=\"cct_factory_str\"\n        vendor=\"xiaomi\"\n        version=\"1\"\n        type-id=\"33171089\"\n        type=\"xiaomi.sensor.front_cct_factory_strm\"\n        max-range=\"65535.0\"\n        resolution=\"1.0\"\n        power=\"1.0\"\n        min-delay=\"10000\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"1000000\"\n        wake-up=\"false\"\n        reporting=\"1\"/>\n    <sensor\n        handle=\"218\"\n        name=\"STEP_DETECTOR_WAKEUP\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"18\"\n        type=\"android.sensor.step_detector\"\n        max-range=\"1.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"0\"\n        fifo-reserved=\"100\"\n        fifo-max=\"4500\"\n        max-delay=\"0\"\n        wake-up=\"true\"\n        reporting=\"3\"/>\n    <sensor\n        handle=\"16777217\"\n        name=\"Touch Sensor\"\n        vendor=\"Xiaomi Large Area Detect\"\n        version=\"1\"\n        type-id=\"33171031\"\n        type=\"xiaomi.sensor.large_area_detect\"\n        max-range=\"5.0\"\n        resolution=\"1.0\"\n        power=\"1.0\"\n        min-delay=\"20\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"1000000\"\n        wake-up=\"false\"\n        reporting=\"1\"/>\n</sensors-config>\n",
+      "etc/thermal_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  thermal 温度模型与传感器清单（设备独有，随机型 vendor 镜像下发）。\n\n  本 HAL 是虚拟 thermal HAL：温度由「基线 + 加热/冷却模型」合成，不发真实热量。\n  改值不需要重编 HAL，缺文件则回退编码内默认模型（见 thermal_service.cpp）。\n\n  取值来源：m22 温区清单（温度与阈值、SKIN 基线、模型参数按本机采集；\n  thresholds 用分号分隔，nan 表示无该级）。\n    skin-name/skin-celsius  = 皮肤温度传感器名与基线\n    model-*                 = 加热/冷却速率模型参数\n    <sensor id name value thresholds shutdown>  = CPU/GPU/... 各温区\n    coolingDevices 为空     = 本机无已知真实风扇/散热节点，不虚报冷却设备\n-->\n<thermal-config skin-name=\"SKIN\" skin-celsius=\"27.843\" model-maximum-celsius=\"50\"\n                model-heating-seconds=\"20\" model-cooling-seconds=\"45\" model-sample-interval-ms=\"1000\">\n    <sensor id=\"0\" name=\"CPU\" value=\"29.174\"\n            thresholds=\"nan;nan;nan;85;90;100;117\"\n            shutdown=\"nan;nan;nan;nan;nan;nan;nan\"/>\n    <sensor id=\"1\" name=\"GPU\" value=\"29.174\"\n            thresholds=\"nan;nan;nan;85;90;100;117\"\n            shutdown=\"nan;nan;nan;nan;nan;nan;nan\"/>\n    <sensor id=\"2\" name=\"BATTERY\" value=\"26.0\"\n            thresholds=\"nan;nan;nan;50;55;59;60\"\n            shutdown=\"nan;nan;nan;nan;nan;nan;nan\"/>\n    <sensor id=\"3\" name=\"SKIN\" value=\"27.843\"\n            thresholds=\"nan;43;45;50;70;80;90\"\n            shutdown=\"nan;nan;nan;nan;nan;nan;nan\"/>\n    <sensor id=\"5\" name=\"POWER_AMPLIFIER\" value=\"28.128\"\n            thresholds=\"nan;nan;nan;68;90;100;110\"\n            shutdown=\"nan;nan;nan;nan;nan;nan;nan\"/>\n    <sensor id=\"9\" name=\"NPU\" value=\"29.174\"\n            thresholds=\"nan;nan;nan;85;90;100;117\"\n            shutdown=\"nan;nan;nan;nan;nan;nan;nan\"/>\n    <sensor id=\"10\" name=\"TPU\" value=\"29.174\"\n            thresholds=\"nan;nan;nan;85;90;100;117\"\n            shutdown=\"nan;nan;nan;nan;nan;nan;nan\"/>\n    <sensor id=\"13\" name=\"SOC\" value=\"29.174\"\n            thresholds=\"nan;nan;nan;85;90;100;117\"\n            shutdown=\"nan;nan;nan;nan;nan;nan;nan\"/>\n</thermal-config>\n",
+      "etc/ueventd.qcom.rc": "# CDH：virtio-console 通道节点的权限位。\n#\n# QEMU virtconsole 通道分配（v3 布局）：\n#   hvc0/hvc1  固件 console 与 seriallogging（cmdline androidboot.console=hvc0）\n#   hvc2       空置预留（adbkey 通道历史上走这里）\n#   hvc3       Remote KeyMint 的 host 通道\n#   hvc4       radio    hvc5/hvc6 蓝牙与马达    hvc7 event    hvc9/hvc10 wifi 控制面/数据面\n#\n# 为什么需要本文件：lineage-23.2 基底的 /vendor/etc/ueventd.rc 里没有 /dev/hvc* 规则，\n# ueventd 建出的节点是默认的 0600 root:root；而 Remote KeyMint HAL 以 `user nobody`\n# 运行，open(\"/dev/hvc3\", O_RDWR) 直接 EACCES——实测日志里是\n#   android.hardware.security.keymint-service.remote: Could not connect to keymaster: Permission denied\n# 且没有对应的 avc denied（说明卡在权限位，不是 SELinux 判定）。\n# 注意与「节点不存在」区分：模块没加载起来时报的是 No such file or directory。\n#\n# gold 的官方 vendor ueventd.rc 自带 `/dev/hvc* 0666 system system`（note13-5G-15 实测\n# crw-rw-rw- system system u:object_r:keymaster_device:s0），本机型按同口径补；\n# 节点 SELinux 标签由机型层 vendor_file_contexts 的 `/dev/hvc3 u:object_r:keymaster_device:s0`\n# 负责，与本文件无关。\n#\n# 文件名取自基底 ueventd.rc 的 `import /vendor/etc/ueventd.${ro.hardware}.rc`，\n# 本机型 cmdline 为 androidboot.hardware=qcom。\n\n/dev/hvc*    0666    system  system\n\n# FRP 承载分区：vda3（misc）被 frp_symlink.rc 软链成\n# /dev/block/bootdevice/by-name/frp 交给 PersistentDataBlockService；该服务以\n# system 身份读写，而 ueventd 建块设备默认 0600 root:root → open 直接 EACCES\n# （表现与「节点不存在」不同：这里是 Permission denied）。\n/dev/block/vda3    0660    root    system\n",
+      "etc/vibrator_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  vibrator 能力清单（设备独有，随机型 vendor 镜像下发）。\n\n  改值不需要重编 HAL：vibrator 服务启动时读本文件；缺文件/缺属性一律回退\n  编码内默认（见 vibrator_service.cpp 的 VibratorConfig）。\n\n  取值来源：m22 实测能力（vibratorIds=[1]、iVibratorCapability=0、\n  iVibratorManagerCapabilities=0、supportedEffects 5 条、compositionDelayMax=1000、\n  compositionSizeMax=256）。\n    register-manager        = 是否注册 IVibratorManager（false 时只注册 IVibrator）\n    capabilities            = IVibrator.getCapabilities() 位集（0 = 仅 on/off）\n    manager-capabilities    = IVibratorManager.getCapabilities() 位集\n    composition-delay-max   = 组合振动最大延迟 ms\n    composition-size-max    = 组合振动最大步数\n    <vibrator id>           = getVibratorIds() 暴露的 vibrator 编号\n    <effect name>           = getSupportedEffects() 支持的原语\n-->\n<vibrator-config register-manager=\"true\"\n                 capabilities=\"0\"\n                 manager-capabilities=\"0\"\n                 composition-delay-max=\"1000\"\n                 composition-size-max=\"256\">\n    <vibrator id=\"1\"/>\n    <effect name=\"CLICK\"/>\n    <effect name=\"DOUBLE_CLICK\"/>\n    <effect name=\"TICK\"/>\n    <effect name=\"HEAVY_CLICK\"/>\n    <effect name=\"TEXTURE_TICK\"/>\n</vibrator-config>\n",
+      "etc/wifi_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  wifi 宿主通道参数（设备独有，随机型 vendor 镜像下发）。\n\n  6 个运行参数（通道 / 扫描剖面 / 帧上限 / 重连间隔 / 读超时 / 协议版本）；\n  改值不需要重编 HAL：wifi 服务启动时读本文件，缺失一律回退编码内默认。\n\n  取值来源：m22 宿主通道实测（/dev/hvc9 与 guest 驱动、协议版本成对），\n  scan-profile 指向 mac80211_hwsim 的参数文件。\n    channel           = 与 guest 侧 wpa_supplicant/驱动对接的 virtio 通道\n    scan-profile      = mac80211_hwsim 扫描剖面（宿主侧可调，回显给 framework）\n    frame-max         = 单帧上限字节数（1 MiB）\n    reconnect-delay-ms= 通道断链重连间隔\n    read-timeout-ms   = 读帧超时\n    protocol-version  = 宿主通道协议版本（与 guest 驱动约定，改这个要同步改 guest）\n-->\n<wifi-config channel=\"/dev/hvc9\"\n             scan-profile=\"/sys/module/mac80211_hwsim/parameters/scan_profile\"\n             frame-max=\"1048576\"\n             reconnect-delay-ms=\"1000\"\n             read-timeout-ms=\"30000\"\n             protocol-version=\"1\"/>\n"
+    },
+    "files": [
+      {
+        "from": "official",
+        "note": "libpng 不在 LLNDK 名单，vendor 进程取不到 /system/lib64 的那份，必须保留官方 vendor 自带件。",
+        "source": "lib64/libpng.so"
+      },
+      {
+        "from": "official",
+        "mode": "replace",
+        "note": "官方目录 80 个文件；整目录替换（非 merge），否则会残留 lineage 的 *_prebuilt.xml 幽灵特性（如 FEATURE_CONSUMER_IR 有声明无 HAL → system_server 自杀）。",
+        "source": "etc/permissions"
+      },
+      {
+        "from": "official",
+        "note": "media_codecs 闭包 8 件与官方 vendor_a.img:/etc 逐字节一致（md5 见机型 README），按 manifest/README 的约束不进静态树、直取官方件。lineage 基座 unpack_vendor/etc 不含任何 media_codecs*.xml，不从官方取则 MediaCodecList 看不到 vendor 编解码器。带 CDH 增量的 etc/media_codecs_c2.xml 留在静态树，不在本表出现（否则 replace 会把它盖回官方原件）。",
+        "source": "etc/media_codecs.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_c2_audio.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_vendor_audio.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_google_audio.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_google_telephony.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_google_c2.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_google_c2_video.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_google_c2_audio.xml"
+      }
+    ],
+    "hardware": [
+      {
+        "android.hardware.audio": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.authsecret": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.biometrics": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.bluetooth": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.boot": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.camera": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.confirmationui": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.drm": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.gnss": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.health": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.identity": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.ir": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.keymint": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.light": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.media": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.media.v412": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.memtrack": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.nfc": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.power": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.power.stats": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.radio": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.secure_element": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.sensors": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.thermal": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.usb": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.vibrator": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.weaver": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.wifi": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.service.daemon": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "vendor.awa.reality": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "vendor.meizu.hardware.aw_light": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "vendor.meizu.hardware.meizu_charging": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "vendor.meizu.sensor_aux": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "vendor.qti.diaghal": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "vendor.qti.hardware.perf2": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "vendor.qti.hardware.servicetrackeraidl": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      }
+    ],
+    "note": "build-prop-sets 由 07_build_vendor 的属性收口步骤（props.go）写进装配树的 vendor/build.prop，本文件是这五条属性的唯一真值。\n\nro.vendor.boot_security_patch=2025-12-05：Remote KeyMint 必需（RemoteKeymaster::Initialize() 对它做 std::stoi(strip('-'))，属性缺失 → stoi(\"\") 抛 std::invalid_argument → SIGABRT，keymint 起即崩、keystore2 无 HAL、vold 死等 IKeystoreService）。取值用官方 OTA 的平台安全补丁（system build.prop 的 ro.build.version.security_patch=2025-12-05）；vendor 侧官方值为 2025-04-05（QSSI 分区的 vendor patch，见 ota-metadata.security_patch_vendor），基座 /build.prop 内**没有** ro.vendor.build.security_patch 行。属性上下文由 keymint 模块层的 vendor_property_contexts 放行（exact string），机型层不再重复声明。\n\nro.soc.model **不覆盖**（其他机型曾设为 vsoc_arm64，本机不预套用）：那类机型的根因是 ColorOS QPerformance 经 libqti_performance.so 的 native_perf_get_feedback_extn JNI 分支在 ro.hardware=virtio 下不预载 → UnsatisfiedLinkError → system_server 反复重启。m22 官方 vendor.img:/lib64 实测**没有** libqti_performance.so（只有 libqti-perfd-client.so / libqti-perfd.so / vendor.qti.hardware.perf2-*），且官方各分区均未声明 ro.soc.model（只有 ro.soc.manufacturer=QTI）——该崩溃面在本机不存在，保留基座的 virtio_arm64only。若 bring-up 出现同类 perf/JNI 崩溃，再按实测固证补入。\n\npersist.radio.multisim.config=dsda：官方 vendor.img:/build.prop 第 288 行实有此行（可用 dump.erofs 随时复核），lineage virtio 基座无此行 → 电话进程按单卡建 PhoneFactory（实测 dumpsys telephony.registry 只有 `Phone Id=0`，而 ro.telephony.sim_slots.count=2、radio HAL 注册 slot1+slot2 两套接口）→ Flyme 侧 MzSignalStrengthController.mzSignalSmooth:152 对另一槽取 Phone.getState() 得 null → NPE 崩溃循环（首启 90 s 内 4 次 am_crash）。属性上下文是 plat 精确项 `persist.radio.multisim.config u:object_r:radio_control_prop:s0 exact string`，plat 策略实有 `(allow vendor_init radio_control_prop (property_service (set)))`（guest 内 grep /system/etc/selinux/plat_sepolicy.cil 命中），故 vendor build.prop 可直接落，不需追加策略。\n\nro.opengles.version=196608（ES 3.0）：本机 GL 栈天花板是 ES 3.0（guest 内 SF 自报 `RenderEngine: version : OpenGL ES 3.0 Mesa 25.3.3`），但 `ro.opengles.version` 被**三处**声明成 196610（ES 3.2）：官方 `/system/build.prop`（第一声明方，装载最早）、基座 `/vendor/etc/init/hw/init.virtio.rc:57`（`on property:ro.vendor.graphics.gpu=virtio_gpu && property:ro.vendor.graphics=mesa` → :59 setprop 196610）、`init.virt.rc:37`（`mesa_swrast` 分支同值，只有 `swiftshader` 分支给 196609）。后果是能力声明说谎：`pm list features` 报 `reqGlEsVersion=0x30002`。放在 vendor /build.prop 而非改 rc：init 按 system→system_ext→product→vendor→vendor_dlkm→odm 顺序装载各分区 build.prop（**该阶段允许覆盖 `ro.`**，printk 形态 `Overriding previous property`），装载完即上锁，所以 vendor 落 196608 既压过官方 system 的 196610，也让 rc 的 setprop 以 `PROP_ERROR_READ_ONLY_PROPERTY` 失败。**状态：已实机验证（四阶段 rc=0 + 开机：getprop=196608、reqGlEsVersion=0x30000、两条 printk 均如预期）**。**订正**：原先写的「`com.flyme.alivewallpaper:wallpaper` 据此编译 `#version 320 es` → 崩溃循环」**因果不成立** —— 声明降到 0x30000 后该应用仍提交 320 着色器，因为 GLSL 硬编码在 APK assets（`/system/app/AliveWallPaper/AliveWallPaper.apk` 内 `assets/shader/cosmic/*`、`phoenix/cosmicPhoenix_*` 共 6 件 `#version 320 es`，另有 2 件 310）；崩溃实测**有界**（开机 9 s 内 6 次后不再拉起，非稳定性卡点），本条改动只解决「声明与驱动不符」本身。\n\nro.hardware.egl=mesa（覆盖官方 adreno）：官方 vendor build.prop 写的是 ro.hardware.egl=adreno（真机骁龙 GPU），但本机 patch 的 /vendor/lib64/egl 只有 mesa 三件套（libEGL_mesa.so / libGLESv2_mesa.so / libGLESv1_CM_mesa.so），**没有** libEGL_adreno.so。基座本有两条兜底而本机都不成立：(1) init.virt.rc 的 `on property:ro.vendor.graphics=mesa → setprop ro.hardware.egl mesa` —— m22 的 ro.vendor.graphics 从未被置位（cmdline 无 androidboot.graphics；init.sun.rc:47 只在 ro.boot.graphics=mesa_swrast 时才设），该 action 全程不触发（gold 同期日志有 `processing action (ro.vendor.graphics=mesa)`，本机没有）；(2) 即便触发也只会拿到 PROP_ERROR_READ_ONLY_PROPERTY —— build.prop 在 init 装载阶段已把 ro.hardware.egl 写成 adreno 并即刻上锁（与 ro.opengles.version 同一条规则）。后果实测：surfaceflinger 每 5 s SIGABRT，logcat `libEGL: Failed to load drivers from property ro.hardware.egl with value adreno` → `couldn't find an OpenGL ES implementation` → 栈 SkiaGLRenderEngine::create → eglGetDisplay → egl_init_drivers → Loader::open，zygote/app_process64 随后同样 abort（system_server 等不到 SF），整机停在开机动画前。落 mesa 与该分区实际文件集一致；ro.hardware.vulkan 暂不动（adreno 对应库同样不存在，但无组件真正加载，等于禁用 Vulkan，改 virtio 反而会引入未验证的 venus 路径）。\n\nselinux-labels 补三条 egl 库的 same_process_hal_file：改完 ro.hardware.egl=mesa 后 libEGL 真的去 dlopen /vendor/lib64/egl/libEGL_mesa.so，但 surfaceflinger（system 域）读它被 SELinux 拒 —— `avc: denied { read } name=\"libEGL_mesa.so\" scontext=u:r:surfaceflinger:s0 tcontext=u:object_r:vendor_file:s0`。根因：这三件来自 **lineage 基底**（不是 flyme 官方 vendor），07 的标签真值链是「装配树 vendor_file_contexts → 官方 vendor 镜像 inode → 基线 selinux-labels → 兜底」，而 lineage 的 vendor_file_contexts 没有 egl 规则（该规则在 plat 的 file_contexts 里），官方 flyme 镜像又没这些文件，于是落到兜底 vendor_file；基底镜像里它们本来的 inode 就是 same_process_hal_file（可用 `debugfs -R 'ea_list /lib64/egl/libEGL_mesa.so' vendor_a.img` 复核）。plat 策略只给 surfaceflinger 读 same_process_hal_file 的权限，故必须在基线里精确声明。gold 没踩到是因为它的 replaces 把整个 egl 从官方拷来、官方 inode 自带 same_process_hal_file。同目录其余图形库（libgallium_dri / libgralloctypes / hw/gralloc.default / hw/mapper.minigbm_upstream / vulkan.virtio 等）已由 vendor_file_contexts 命中，无需声明；hw/vulkan.lvp_mesa3d.so 在基底本身就是 vendor_file，保持一致。\n\nro.hwui.use_vulkan=false（覆盖官方 true）：上面 egl 那段写「ro.hardware.vulkan 暂不动…等于禁用 Vulkan」是**错的**：真正决定 HWUI 走不走 Vulkan 的是 ro.hwui.use_vulkan，不是 ro.hardware.vulkan。官方 vendor build.prop 写 ro.hwui.use_vulkan=true，而本盘 /vendor/etc/vulkan/icd.d 根本不存在（hw/ 下只有 vulkan.lvp_mesa3d / vulkan.pastel / vulkan.virtio 三个驱动，无 ICD 描述），于是每个应用进程的 RenderThread 在 preload 阶段就撞上：\n  native: VulkanManager::initialize() → LOG_ALWAYS_FATAL(\"!gpuCount\") → SIGABRT\n实测（instance 26 已sys.boot_completed=1 之后）launcher / systemui / systemuitools / com.meizu.setup 四个进程进入 RenderThread SIGABRT 循环（首分钟 500+ 次），屏幕永远停在开机后的空白，screencap 也拉不回来。落 false 后 HWUI 回到 Skia GL（与 SurfaceFlinger 的 mesa ES 3.0 一致，BootAnimation 就是这条路径跑通的），与 gold 同口径（gold 官方即 ro.hwui.use_vulkan=false，并另有 debug.hwui.initialize_gl_always=1）。ro.hardware.vulkan 仍不动（无 ICD 时它不会被真正加载）。\n\nvintf-version=9.0：取官方实测值 —— device 分区 compatibility_matrix 与 framework manifest 的根元素均为 9.0，即 Android 16 的 FCM 9.0。07_build_vendor 的 schema 收口只改写根元素版本高于基线的分件；取 9.0 对引擎侧各模块手写的 1.0 分件无改写，只是把「不降级于官方」这个上限固定下来。",
+    "selinux-labels": {
+      "lib64/egl/libEGL_mesa.so": "u:object_r:same_process_hal_file:s0",
+      "lib64/egl/libGLESv1_CM_mesa.so": "u:object_r:same_process_hal_file:s0",
+      "lib64/egl/libGLESv2_mesa.so": "u:object_r:same_process_hal_file:s0"
+    },
+    "sepolicy": {
+      "vendor_sepolicy.cil": ";; m22（MEIZU 22 / Flyme 12.6 / Android 16 / 高通 sun）机型层 SELinux 片段。\n;;\n;; 由 07_build_vendor 以 marker（;; cdh-patch-begin: vendor_sepolicy.cil）整块追加到\n;; 装配树 /vendor/etc/selinux/vendor_sepolicy.cil；同一 marker 重复执行幂等。\n;;\n;; 注意：本文件不是 m22 vendor 策略的全部。最终那份 vendor_sepolicy.cil 由三段拼成：\n;;   1) lineage 基底随附（含 virtiofs / iso9660 / udf 等版本化属性引用，不可整块替换）；\n;;   2) 本文件（07 用 marker 包住整块追加）；\n;;   3) 09_build_patch 对**基底原文**的 4 条定向改写，声明在\n;;      baselines/12.5.0.0A.json 的 patch.vendor-cil-rewrite：\n;;        ot_rcp 的 (netlink_route_socket (nlmsg))  → nlmsg_write   （1 条）\n;;        ot_rcp 的 allowx permissionx nlmsg        → 删               （2 条）\n;;        kernel_202504 → vendor_firmware_file (system (firmware_load)) → 删 （1 条）\n;;      这 4 条改的都是基底里的语句（vendor/ot_rcp.te、device/mainline/.../kernel.te），\n;;      内核 classmap 没有对应权限位；CIL 又没有「撤回上一句」的语法，追加块删不掉\n;;      它们，所以只能由 09 按 from → to 精确改写（count 不符直接构建失败）。\n;;      生效点是 patch 容器里的 /vendor 副本（09 的 overlay 盖住 vendor.img 同名文件），\n;;      故在 07 改 vendor.img 里的同一文件无效；换底包时必须重扫这 4 条的命中数。\n;;      另一个坑：本追加块里不要原样抄这 4 条语句（哪怕为了举例），追加块会让\n;;      09 的 count 从 1 变 2 → 构建直接失败。\n;;      取证：devices/evidence/m22/issue-m22-vendor-cil-resolve/solution.md（未编号条目）。\n;;\n;; 分工：模块层（devices/hardware/*/sepolicy）放「HAL 自身契约」，与机型无关\n;; ——keymint（/dev/hvc3 + kmsg）、radio（/dev/hvc4 + servicemanager）、wifi（hvc9\n;; scan_profile 与 hvc10 数据面）、media（c2 store）、daemon（pioneer 启动链）、\n;; gnss（/data/vendor/gps/fix 读），以及 perf2 / servicetracker / aw_light /\n;; meizu_charging / sensor_aux / awa.reality / diaghal 这 7 个按原厂 .so 反解的自研\n;; HAL 都在模块层，类型与授权随模块走。本文件只放「没有归属模块」的 m22 事实：\n;;\n;;   1) Flyme framework 会 add 的 1 个框架服务名 realitytap（仅剩的一个名字）。\n;;      它是 RealityTapManagerService 在 system_server 里自己 addService 的（原厂\n;;      service 段也在 system_server），vendor 侧无法实现，故标签与 add/find 授权\n;;      永久留在机型层；查它的客户端按 domain 通配放 find。缺条目时 servicemanager\n;;      兜底标 default_android_service → system_server 的 addService(realitytap)\n;;      被拒 → \"Failure starting core service\" → system_server 崩溃重启循环。\n;;      与模块层 hal_realitytap_service 区分：那是 vendor.awa.reality 的 AIDL 实例名\n;;      （原厂两个标签同时存在：system_server → realitytap_service (add find)，\n;;      system_app → hal_realitytap_default (binder call transfer)）。\n;;   2) perfservice 读 hwservicemanager.disabled：hwservicemanager 因 VINTF 无 HIDL\n;;      实例被 init 停止（ready 恒为假），perfservice 读不到该属性就落进 libhwbinder\n;;      的 hwservicemanager.ready 死等循环，占住 binder 线程 → BoostFramework 在每次\n;;      handleBindApplication 同步调 setClientBinder → 全系统 ANR 击杀循环。\n;;   3) init 执行落在 vendor_file 兜底标签的 HAL 可执行文件：可执行标签本身已由\n;;      07 步骤 6b 按各模块 rc 的 seclabel 补齐，这条只是「init 对 vendor_file 的\n;;      execute」兜底授权，属权限放大，待实机确认底座对 *_exec 的 execute 授权后删。\n;;   4) FRP 承载块设备：本盘没有 frp 分区，按 ro.frp.pst 打开的是软链到 misc(vda3)\n;;      的节点，绑的是本机 GPT 与机型静态树里的 frp_symlink.rc。\n;;\n;; 平台类型在 vendor CIL 中必须引用版本化影子名（plat_sepolicy_vers.txt=202504），\n;; 故用 {{vers}} 占位，由构建阶段按装好的 vendor/etc/selinux/plat_sepolicy_vers.txt\n;; 替换；平台版本升级时无需改本文件。vendor_file / hal_sensors_default 属 vendor\n;; 底座自带声明，不带版本后缀。\n;;\n;; vendor_perf_service / vendor_perfservice 在本基底（lineage-23.2 virtio）里\n;; **没有**声明（gold 的基底是 lineage + cdh device 树，带 MIUI 侧 perfservice 的\n;; te）。缺声明时 secilc 现场合并直接 \"Failed to resolve allow statement\"，所以在\n;; 第 1)、2) 段前面自行声明。\n;; vendor_dpmd 曾因 `allow vendor_dpmd hal_idiag_service (find)` 一并声明；diaghal\n;; 收成模块后该 find 由模块层的 `(allow domain vendor_hal_diaghal_service (find))`\n;; 覆盖，本基底也没有 vendor_dpmd 这个进程，声明随之删除。\n(type vendor_perf_service)\n(roletype object_r vendor_perf_service)\n(type vendor_perfservice)\n(roletype object_r vendor_perfservice)\n\n;; ---- 1) Flyme 查询的服务名（无实体，只发标签与最小授权）----\n;; 6 个私有 HAL 名（perf2 / servicetracker / aw_light / meizu_charging /\n;; vendor.awa.reality.IRealityTap / vendor.qti.diaghal.Idiag）不在此段：它们已有\n;; 实体，类型与 find/add 授权由各自的模块层片段给出。\n;; 类型名按 AOSP 框架服务的 *_service 风格（不带项目缩写与 hal_ 前缀，避免与模块层\n;; 的 hal_realitytap_service 撞名）：镜像里的 service_contexts 与运行期 avc 都不应\n;; 出现可辨识的改造痕迹；原厂同名同授权（vendor_sepolicy.cil 里\n;; `system_server → realitytap_service (add find)`）。\n(type realitytap_service)\n(roletype object_r realitytap_service)\n(typeattributeset service_manager_type (realitytap_service))\n;; realitytap 由 RealityTapManagerService 发布，是本段唯一需要 add 的名字。\n(allow system_server_{{vers}} realitytap_service (service_manager (add find)))\n(allow surfaceflinger_{{vers}} vendor_perf_service (service_manager (find)))\n(allow bootanim_{{vers}} vendor_perf_service (service_manager (find)))\n\n;; ---- 2) perfservice 读 hwservicemanager 属性（解除 HIDL 死等）----\n;; 权限集与基座 hal_sensors_default 对 hwservicemanager_prop 的既有规则同款。\n(allow vendor_perfservice hwservicemanager_prop_{{vers}} (file (getattr map open read)))\n\n;; ---- 3) init 执行落在 vendor_file 兜底标签的 HAL 可执行文件 ----\n;; m22 厂商 file_contexts 只给了 .qti/.example/.legacy 变体的 exec 标签\n;; （如 hal_light_default_exec），正式名 android.hardware.lights-service 等文件\n;; 落到 vendor_file 兜底标签；plat 没给 init 对 vendor_file 的 execute，init 启动这些\n;; 服务时报 \"cannot execv(...): Permission denied\"（avc { execute }，1810 次）。\n;; 后果：lights HAL 永远不来，system_server 的 LightsService$VintfHalCache.get 在\n;; waitForDeclaredService 上阻塞 66s，被 Watchdog 杀掉 → system_server 重启循环。\n;; vendor_file 属 vendor 底座自带声明，不带版本后缀。\n(allow init vendor_file (file (execute)))\n\n;; ---- 4) FRP 承载块设备（pdb 读写 misc 分区）----\n;; 本盘没有 frp 分区，PersistentDataBlockService 按 ro.frp.pst 打开的是软链到\n;; misc(vda3) 的节点（类型 misc_block_device）；plat 只给 system_server 开了\n;; frp_block_device。缺这条时 onStart 初始化线程抛 FileNotFoundException，\n;; waitForInitDoneSignal 等不到信号 → init timeout → system_server 在 boot phase\n;; 500 FATAL 重启循环。软链与 DAC 授权见 vendor/etc/init/frp_symlink.rc\n;; 与 vendor/etc/ueventd.qcom.rc。\n(allow system_server_{{vers}} misc_block_device_{{vers}} (blk_file (open read write append getattr ioctl map lock)))\n",
+      "vendor_service_contexts": "# m22（MEIZU 22 / Flyme 12.6 / Android 16）机型层 service_contexts 片段。\n#\n# 由 07_build_vendor 以 marker（# cdh-patch-begin: vendor_service_contexts）整块追加到\n# 装配树 /vendor/etc/selinux/vendor_service_contexts；类型与授权见同目录\n# vendor_sepolicy.cil 的第 1 段。\n#\n# 这些名字都是 Flyme framework 会去查询、而本云 vendor 侧（lineage-23.2 virtio 底座）\n# 没有实现的 HAL / 框架服务。缺条目时 servicemanager 兜底标 default_android_service，\n# system_server 对其无 add（realitytap）或无 find，表现为 \"Failure starting core\n# service\" 与整屏 denied 噪音。打标不代表服务存在：VINTF 未声明，框架按不可用降级。\n\n# 6 个私有 HAL 名已全部收成模块，标签随模块走（各自 sepolicy/vendor_service_contexts）：\n#   devices/hardware/vendor.qti.hardware.perf2/\n#   devices/hardware/vendor.qti.hardware.servicetrackeraidl/\n#   devices/hardware/vendor.meizu.hardware.aw_light/\n#   devices/hardware/vendor.meizu.hardware.meizu_charging/\n#   devices/hardware/vendor.awa.reality/          (IRealityTap/default)\n#   devices/hardware/vendor.qti.diaghal/          (Idiag/default)\n# 类型名均按 AOSP hal_*_service 风格，不带项目缩写。模块层两个例外：perf2 沿用原厂\n# 名；servicetracker 取 vendor_hal_srvctracker_service（与 exec 同前缀，原厂服务名是\n# vendor_hal_servicetrackeraidl_service，改名不影响功能）。\n\n# 只剩 realitytap：不是 HAL 实例名，而是 RealityTapManagerService 在 system_server\n# 里自己 addService 的框架服务（vendor 侧无法实现），标签与 add/find 授权永久留在\n# 机型层。类型名取 AOSP 框架服务的 *_service 风格，与原厂同名（不占用模块层的\n# hal_realitytap_service —— 那是 vendor.awa.reality 的 AIDL 实例标签）。\nrealitytap\tu:object_r:realitytap_service:s0\n"
+    },
+    "vintf-version": "9.0"
+  },
+  "buildVendorDlkm": {
+    "baseline-build-prop": {
+      "label": "u:object_r:vendor_configs_file:s0",
+      "length": 878,
+      "path": "/etc/build.prop",
+      "sha256": "46cce3a896249105a8f0df7a3157ec80b893f7066692070b26060781d8c6de2b"
+    },
+    "note": "build-vendor_dlkm 的 props 基线：官方 vendor_dlkm.img 内 /etc/build.prop（meizu/Meizu22/MEIZU 22/Meizu_22_CN 真实设备身份，878 B），覆盖 lineage 基座渲染的 VirtIO 版本。官方 vendor_dlkm.img 与 vendor/odm/system 一样是 EROFS，读取须用宿主 dump.erofs（erofs-utils），重建镜像须用 mkfs.erofs。"
+  },
+  "buildPatch": {
+    "note": "09_build_patch 对 /vendor/etc/selinux/vendor_sepolicy.cil 的定向改写。官方 plat 策略的 class 表取内核 classmap，没有 Android 15 起在 netlink_route_socket 上新增的 nlmsg 权限与 permissionx 的 nlmsg kind，也没有 6.13+ 才有的 system class firmware_load；lineage vendor 策略（system/sepolicy/vendor/ot_rcp.te、device/mainline/.../kernel.te）却在用它们，secilc 现场合并时报 Failed to resolve permission，整帧策略编不出来。ot_rcp 服务在 vendor 树里不存在（无 bin 也无 init rc），内核对这两类权限位同样没有，故降级/删除不影响功能。每条规则必须按 count 精确命中，否则 09 直接失败。",
+    "vendor-cil-rewrite": [
+      {
+        "count": 1,
+        "from": "(allow ot_rcp self (netlink_route_socket (nlmsg)))",
+        "to": "(allow ot_rcp self (netlink_route_socket (nlmsg_write)))"
+      },
+      {
+        "count": 1,
+        "from": "(allowx ot_rcp self (nlmsg netlink_route_socket (0x16 0x1a 0x22 0x26 0x2a 0x2e 0x32 0x3a 0x3e 0x4a 0x4e 0x52 0x56 0x5a 0x5c 0x5e 0x60 0x66 0x6a 0x72 0x76 0x7a)))",
+        "to": ";; cdh: permissionx nlmsg 内核与 plat 均不支持，已删除（ot_rcp 服务不存在）"
+      },
+      {
+        "count": 1,
+        "from": "(allowx ot_rcp self (nlmsg netlink_route_socket (0x12)))",
+        "to": ";; cdh: permissionx nlmsg 内核与 plat 均不支持，已删除（ot_rcp 服务不存在）"
+      },
+      {
+        "count": 1,
+        "from": "(allow kernel_202504 vendor_firmware_file (system (firmware_load)))",
+        "to": ";; cdh: system class 的 firmware_load 是 6.13+ 权限，内核 classmap 无此位，已删除"
+      }
+    ]
+  },
+  "buildSuper": {
+    "images": [
+      "system.img",
+      "system_ext.img",
+      "product.img",
+      "odm.img",
+      "vendor.img",
+      "vendor_dlkm.img",
+      "system_dlkm.img"
+    ]
+  },
+  "buildVda": {
+    "partitions": []
+  },
+  "extra": {},
+  "updatedAt": "2026-11-06T05:37:49Z"
+}

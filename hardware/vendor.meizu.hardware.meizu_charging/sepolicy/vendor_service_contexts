@@ -1,0 +1,9 @@
+# vendor.meizu.hardware.meizu_charging 的服务名标签。
+#
+# 由 07_build_vendor 以 marker
+#（# cdh-patch-begin: vendor_service_contexts@vendor.meizu.hardware.meizu_charging）
+# 整块追加到装配树 /vendor/etc/selinux/vendor_service_contexts。
+#
+# 类型名沿用原厂 hal_meizu_charging_service（原厂 vendor_service_contexts 同名），
+# 便于与 Flyme avc 对照；类型声明与 add / find / binder 授权见同目录 vendor_sepolicy.cil。
+vendor.meizu.hardware.meizu_charging.IMeizuCharging/default  u:object_r:hal_meizu_charging_service:s0

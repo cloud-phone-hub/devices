@@ -1,0 +1,36 @@
+$ /Volumes/work/cloud-phone-hub/engine/out/bin/cdh-vendor deps --android 17 --v412 --check
+[ok] platform-source 13 个仓库就绪: /Volumes/work/cloud-phone-hub/engine/out/vendor/android17/platform-source (android-16.0.0_r4)
+[ok] ABI 库就绪（system 4 +bootstrap 3）: /Volumes/work/cloud-phone-hub/engine/out/vendor/android17/abi/system/lib64
+[ok] v412 依赖就绪（hidl 头 219 + ABI system(18)+apex(9)）: /Volumes/work/cloud-phone-hub/engine/out/vendor/android17
+[ok] 全部 29 项 AIDL 快照就绪: /Volumes/work/cloud-phone-hub/engine/out/vendor/android17/aidl-snapshots
+
+$ /Volumes/work/cloud-phone-hub/engine/out/bin/cdh device build oriole --manifest CP3A.261005.002.A1-20260905 --only 07_build_vendor
+==> 设备: Pixel 6（google/oriole）
+==> 清单: out/tmp/db-manifest/google/oriole/baselines/CP3A.261005.002.A1-20260905.json
+==> [1/1] build_vendor  (07_build_vendor)
+...
+==> [步骤 6c] 按清单裁掉 VINTF 片段（1 个）：android.hardware.wifi-service.xml
+[vintf] 裁掉 out/devices/google/oriole/CP3A.261005.002.A1-20260905/vendor/etc/vintf/manifest/android.hardware.wifi-service.xml（官方同名声明保留，避免 fqname 冲突）
+==> [步骤 7] 打包 vendor.img
+[ok] vendor.img 构建完成: out/devices/google/oriole/CP3A.261005.002.A1-20260905/img/vendor.img（303915008 字节）
+[ok] vendor 目录树装配与 vendor.img 打包完成: out/devices/google/oriole/CP3A.261005.002.A1-20260905/vendor, out/devices/google/oriole/CP3A.261005.002.A1-20260905/img/vendor.img
+    编译产物 android.hardware.audio@default: 写入 4，已存在同内容 0
+    编译产物 android.hardware.bluetooth@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.camera@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.gnss@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.gpu@default: 写入 4，已存在同内容 0
+    编译产物 android.hardware.health@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.ir@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.keymint@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.light@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.media@default: 写入 6，已存在同内容 0
+    编译产物 android.hardware.radio@default: 写入 4，已存在同内容 0
+    编译产物 android.hardware.sensors@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.thermal@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.vibrator@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.wifi@default: 写入 3，已存在同内容 0
+    编译产物 android.service.daemon@default: 写入 14，已存在同内容 0
+    编译产物 android.hardware.media.v412@default: 写入 5，已存在同内容 0
+    编译产物 android.hardware.power@default: 写入 3，已存在同内容 0
+[ok] 已完成
+

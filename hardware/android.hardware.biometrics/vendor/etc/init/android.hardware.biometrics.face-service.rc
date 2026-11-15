@@ -1,0 +1,9 @@
+# engine/vendor 自研人脸 HAL（虚拟 HAL）：云机没有人脸传感器，服务注册
+# android.hardware.biometrics.face.IFace/default；getSensorProps 返回空列表、
+# createSession 返回 UNSUPPORTED_OPERATION，FaceService 正常降级。
+service vendor.face-default /vendor/bin/hw/android.hardware.biometrics.face-service
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_face_default:s0
+    interface aidl android.hardware.biometrics.face.IFace/default

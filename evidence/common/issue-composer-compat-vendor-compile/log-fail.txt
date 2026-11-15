@@ -1,0 +1,64 @@
+# composer compat 库改由 vendor 侧编译 —— 改造前状态（不通过项）
+#
+# 时间: 2026-11-02
+#
+# 这不是运行期报错，而是「编译动作越界」：用户的原则是
+#   「vendor 的需要三方编译都交给 vendor 编译，build 只根据配置调用 vendor 编译然后集成产物」。
+# 下面三段是改造前的实测/原文，任一条都说明 07 做了本不属于它的事。
+
+## 1. 07 自己定位 NDK、自己拼 clang 命令行（compatbuild.go，改造前原文摘录）
+
+```go
+// 编译用 NDK 的 clang++：只要一个能出 aarch64 ELF 的编译器，不链任何运行库
+// （-nostdlib），vdprintf / abort 留成未定义符号由运行期 bionic 解析
+const composerCompatTarget = "aarch64-linux-android21"
+var ndkEnvVars = []string{"CDH_NDK", "ANDROID_NDK_HOME", "ANDROID_NDK_ROOT"}
+
+func buildComposerCompatLib(plan *Plan, stdout io.Writer) error {
+	exe := filepath.Join(plan.VendorDir, filepath.FromSlash(composerServiceRel))
+	if !exists(exe) { return nil }
+	clang, err := locateNDKClang()          // ← 07 自己找编译器
+	...
+	argv := append([]string{
+		clang, "--target=" + composerCompatTarget,
+		"-shared", "-fPIC", "-nostdlib", "-fno-exceptions", "-fno-rtti", "-O2",
+		"-Wl,-soname," + composerCompatSoname,
+		"-o", built,
+	}, sources...)
+	exec.Command(argv[0], argv[1:]...).CombinedOutput()   // ← 07 自己调编译器
+}
+
+func ndkVersionsDesc(dir string) []string { ... }         // ← 连 SDK 目录扫描也在 07
+```
+
+07（09~11 阶段）的职责边界是「按配置调 `cdh-vendor`、把产物集成进装配树」；
+上面这段把「找工具链 + 编译 + 链共享库」搬进了装配段，同一类活因此有两套实现
+（vendor 侧的 `halbuild` 与这里的现编），改一边忘一边不会报错。
+
+## 2. 同一批源码有两个使用方，但两边各自成立
+
+| 使用方 | 源码位置 | 谁编 |
+| --- | --- | --- |
+| HAL 补 compat 对象（`libcxxCompatSource`） | `engine/vendor/hardware/common/libcxx-compat/` | `cdh-vendor hal build`（hidl 模块的 `compatObjects`） |
+| composer 垫片库（改造前） | 同一目录的两个 `.cc` | 07 装配段 `buildComposerCompatLib` 现编 |
+
+也就是说：仓里已经有一份「给预编译件补符号」的编译能力（vendor 侧），
+07 侧又照抄了一遍命令行。用户原话：
+**「vendor 的需要三方编译都交给 vendor 编译，build 只根据配置调用 vendor 编译然后集成产物」**。
+
+## 3. 触发判据只按文件名，漏件不会暴露
+
+改造前 `buildComposerCompatLib` / `patchComposerCompatNeeded` 的触发条件都是：
+
+```go
+exe := filepath.Join(plan.VendorDir, "bin/hw/android.hardware.composer.hwc3-service.drm")
+if !exists(exe) { return nil }
+```
+
+- m22 / cph2797 / ss9380 的装配树里 composer 是 `<…>.drm_upstream`（底包 vendor APEX 摊平），
+  名字不同 → 完全不走这段；而 `llvm-nm -D -u` 显示它们的 `_upstream` 件同样带
+  `U __libcpp_verbose_abort`（与 gold 同源），缺符号的事没人管。
+- 反过来，若哪天自编 composer（oriole 的 `@2.4-service`）被改名成同一个 `hwc3-service.drm`，
+  07 会去改写一个根本不缺符号的 ELF 的 `DT_NEEDED`，且没有任何报错。
+
+这一段属于「判据该跟着 ELF 事实走」的遗留，本次只把编译搬走，判据收紧见 solution.md 第 6 节。

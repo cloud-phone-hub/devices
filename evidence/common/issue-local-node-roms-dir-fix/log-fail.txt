@@ -1,0 +1,23 @@
+# 修复 nodes.json 的 local.romsDir #243 —— 修复前记录（2026-11-15）
+
+```
+$ cat out/agent/config/nodes.json | head -20
+[
+  {
+    "id": "local",
+    ...
+    "engineRoot": "/Volumes/work/cloud-phone-hub/engine",
+    "romsDir": "/Volumes/work/cloud-phone-hub/engine/roms",
+    "distDir": "/Volumes/work/cloud-phone-hub/engine/out/dist",
+    ...
+  },
+```
+
+```
+$ ls -d /Volumes/work/cloud-phone-hub/engine/roms
+ls: /Volumes/work/cloud-phone-hub/engine/roms: No such file or directory
+$ ls -d /Volumes/work/cloud-phone-hub/roms
+/Volumes/work/cloud-phone-hub/roms
+```
+
+`engine/` 下只剩 `out/`；#239 已把 ROM 根迁到仓库根 `roms/`，但持久化的节点表仍指向旧路径。

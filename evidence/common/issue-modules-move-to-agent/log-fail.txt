@@ -1,0 +1,52 @@
+# 搬迁后的首轮编译/测试失败记录（2026-11-15）
+
+## 1. pipeline 入口仍是平铺 package main
+
+```
+$ cd agent && go build ./...
+cmd/cdh-engine/main.go:4:8: package cloud-phone-hub/agent/modules/pipeline/cli is not in std
+    (/opt/homebrew/Cellar/go/1.26.6/libexec/src/cloud-phone-hub/agent/modules/pipeline/cli)
+```
+
+原因：`engine/build` 整目录搬到 `agent/modules/pipeline` 后，CLI 仍是模块根下的
+`main.go / cli_device.go / cli_stage_run.go / cli_stages.go`（`package main`），
+而 `cmd/cdh-engine` 按新布局引用 `modules/pipeline/cli`。
+
+## 2. daemon 链接期缺 NewHandler / BridgeWSAndTCP
+
+```
+$ cd agent && go build ./...
+# cloud-phone-hub/agent/internal/daemonctl
+internal/daemonctl/daemonctl.go:81:17: undefined: daemonrun.NewHandler
+internal/daemonctl/vnc.go:67:13: undefined: daemonrun.BridgeWSAndTCP
+internal/daemonctl/vnc.go:94:14: undefined: daemonrun.BridgeWSAndTCP
+```
+
+原因：`agent/internal/daemonctl` 已按「HTTP API + noVNC WS 隧道」写好了调用，
+但 `core/host/daemon/run` 只有 `WebServe`（自带静态控制台），既没有可内嵌的
+`NewHandler`，也没有 WS↔TCP 桥，更没有 `/api/vnc-ws` 端点。
+
+## 3. 迁移后仍写死旧目录（测试暴露）
+
+```
+--- FAIL: TestEngineModulesCatalog
+    解析 engine/modules 目录失败: 清单声明的外部模块 "cdh_redirect" 在 modules 下不存在
+--- FAIL: TestBuildKernelDryRun
+    dry-run 失败: 内核配置片段不存在: agent/modules/pipeline/stages/03_build_kernel/lineage-kernel.config
+--- FAIL: TestBuildModulesDryRun
+    dry-run 失败: 内核配置片段不存在: agent/modules/pipeline/stages/03_build_kernel/lineage-kernel.config
+--- FAIL: TestScanHardwareCatalog
+    fsx: 路径不在允许访问的白名单目录内:
+    /Volumes/work/cloud-phone-hub/agent/modules/pipeline/stages/08_build_hardware/modules
+--- FAIL: TestLoadWorkspaceChecksAndDualDeviceWSAlignment
+    expected real checks loaded from modules/devicechecker/checks, got 0
+--- FAIL: TestUnifiedPlatformRoutes
+    GET /vendor/noVNC/core/rfb.js failed (404)
+```
+
+原因分别：
+- `kmod.mustEngineRoot()` 按旧深度（`internal/kmod` → `engine/build`）向上三级，搬迁后算成了 `agent/modules`；
+- 03/04 的内核配置片段、09 的 HAL 模块目录与 `cdh-vendor` 入口仍拼 `engine.Root()/build/...` 与 `engine/vendor/build`；
+- `manifestview` 的测试 guard 只允许读 engineRoot，而模块 JSON 已随流水线移到 `agent/`；
+- `modules/devicechecker` 已改名为 `modules/checker`，cdha 与测试仍指旧名；
+- noVNC 静态资源随 daemon 的 web 目录删除后，cdha `/vendor/` 路由没有资产可投。

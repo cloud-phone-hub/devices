@@ -1,0 +1,8 @@
+# engine/vendor 自研 memtrack HAL（虚拟 HAL）：图形内存统计按 0 上报，服务注册
+# android.hardware.memtrack.IMemtrack/default，lmkd/dumpsys meminfo 不再报无 HAL。
+service vendor.memtrack-default /vendor/bin/hw/android.hardware.memtrack-service
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_memtrack_default:s0
+    interface aidl android.hardware.memtrack.IMemtrack/default

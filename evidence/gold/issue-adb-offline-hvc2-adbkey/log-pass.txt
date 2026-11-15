@@ -1,0 +1,12 @@
+# 修复现场：hvc2 恒接 ADBKEY1 握手，host 下发 /Users/cuimingqiang/.android/adbkey.pub
+# 来源：实例 1 重启后的 qemu.log（2026-10-27 10:43，镜像是 out/device/gold-15/15/os3.0.10.0.vnqcnxm）
+
+[    7.062175][  T457] adbkey: raw 模式已设置
+[    7.062346][  T457] adbkey: 已发 READY，等待宿主公钥
+[    7.065159][  T457] adbkey: 公钥已写入 adb_keys，OK
+[    7.065318][  T457] adbd: 子进程 pid=458 已拉起（/apex/com.android.adbd/bin/adbd）
+
+# 宿主侧：adb devices 为 device，shell 可用
+127.0.0.1:5919	device
+1
+uid=2000(shell) gid=2000(shell)

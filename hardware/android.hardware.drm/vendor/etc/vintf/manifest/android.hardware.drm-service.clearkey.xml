@@ -1,0 +1,8 @@
+<manifest version="1.0" type="device">
+  <!-- engine/vendor 自研 DRM HAL（clearkey）：只声明 ClearKey 工厂，无 Widevine。 -->
+  <hal format="aidl">
+    <name>android.hardware.drm</name>
+    <version>1</version>
+    <fqname>IDrmFactory/clearkey</fqname>
+  </hal>
+</manifest>

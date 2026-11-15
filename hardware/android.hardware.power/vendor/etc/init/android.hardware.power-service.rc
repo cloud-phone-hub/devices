@@ -1,0 +1,15 @@
+# engine 自研 power HAL（虚拟 HAL）：注册 android.hardware.power.IPower/default。
+# 提示/boost 全部 no-op（见 src/power_service.cpp 顶部说明），只为满足 framework 对
+# power HAL 的存在性要求，并让 getSupportInfo 返回非 null 的 SupportInfo。
+#
+# 必须真的起来：Flyme/MTK 底座在 SystemServer.startOtherServices 里启动
+# com.android.server.power.hint.HintManagerService，构造函数直接读
+# IPower.getSupportInfo().headroom，HAL 缺失时会 NPE 打死 system_server
+# （表现为 zygote/system_server 无限重启，bootanim 永远不退出）。
+service vendor.power-default /vendor/bin/hw/android.hardware.power-service
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_power_default:s0
+    interface aidl android.hardware.power.IPower/default
+    shutdown critical

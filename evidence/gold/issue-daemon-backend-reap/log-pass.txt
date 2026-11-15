@@ -1,0 +1,84 @@
+# 通过证据：daemon 回收相对路径后端（双重 wifi 网关）
+
+被测产物：`out/core/daemon/dist/darwin/daemon`
+sha256 `a7cc830a2666160d3f5c4248401da7247c0161b179dbd8cb35256b546bdbe53e`
+（含 `isBackendCommand` 对相对路径 argv[0] 按进程 cwd 解析）
+实例：gold_cn_OS3.0.10.0.VNQCNXM/5，2026-10-28 04:10~04:28
+
+## 1. 相对路径识别（临时单测，已删）
+
+用一个与事故同形态的进程做对象：在仓库根以相对路径启动网关
+
+```
+$ ./out/qemu/dist/darwin/libexec/wifi-host-service \
+    --data-socket=/tmp/wvtest.sock \
+    --aps=./out/qemu/dist/darwin/libexec/wifi-aps.json \
+    --ctrl-socket=/tmp/wvtest-ctrl.sock
+```
+
+`ps` 的 argv[0] 为相对路径：
+
+```
+$ ps -o command= -p 14631
+./out/qemu/dist/darwin/libexec/wifi-host-service --data-socket=/tmp/wvtest.sock ...
+$ lsof -a -d cwd -p 14631 -Fn
+p14631
+fcwd
+n/Volumes/work/cloud-phone-hub
+```
+
+`core/host/daemon/run/reap_relative_test.go`（临时文件，验证后删除）：
+
+```
+=== RUN   TestIsBackendCommandRelative
+--- PASS: TestIsBackendCommandRelative (0.05s)
+PASS
+ok  	cloud-phone-hub/core/daemon/run	1.095s
+```
+
+断言内容：
+
+| 用例 | 期望 | 结果 |
+| :--- | :--- | :--- |
+| `out/qemu/dist/darwin/libexec/wifi-host-service ...`（相对，cwd=仓库根） | true | true |
+| `/Volumes/.../out/qemu/dist/darwin/libexec/wifi-host-service ...`（绝对） | true | true |
+| `/usr/bin/python3 x.py` | false | false |
+| `out/elsewhere/wifi-host-service`（发布根外） | false | false |
+
+验证后删除临时测试文件与测试进程（`kill 14631`、清理 `/tmp/wvtest*.sock`），
+`pgrep -fl wifi-host-service` 为空。
+
+## 2. 重编译与重启 daemon
+
+```
+$ cd core/host/daemon && go build ./... && go vet ./run/
+$ ./build/core/host-main build
+$ shasum -a 256 out/core/daemon/dist/darwin/daemon
+a7cc830a2666160d3f5c4248401da7247c0161b179dbd8cb35256b546bdbe53e
+```
+
+旧 daemon 停掉后以 `nohup ./out/core/daemon/dist/darwin/daemon >> out/core/daemon/daemon-console.log 2>&1 &`
+重启；实例 5 停机后重新 `POST /api/start`（PID 15106，04:11:09）。
+
+## 3. 单网关与数据面无异常
+
+`out/tmp/wv-verify/restart-verify.txt`（2026-10-28 04:28）：
+
+```
+## 网关进程
+15087 /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/libexec/wifi-host-service --data-socket=/tmp/stage-007d12b0/wifi-data.sock --aps=/Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/libexec/wifi-aps.json --ctrl-socket=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/5/channels/wifi.sock
+count=1
+...
+stall_after_restart=0
+parsefail_after_restart=0
+2026/10/28 04:28:07 [stat] rx=3601(+4) tx=3498 drop=0 reset=2 队列=0/1024
+```
+
+- 只有一份网关，且是 daemon 拉起的绝对路径进程（15087）；
+- 重启后 `流控停顿` 0 条、`非法以太帧` 0 条、`drop=0`；
+- `reset=2` 是链路静默 >120s 的看门狗重置（#28 的既有设计），不是异常。
+
+## 4. 停机回收
+
+2026-10-28 04:10 停实例 5 后 `pgrep -fl wifi-host-service | wc -l` = 0
+（修复前同名场景下旧进程会残留）。

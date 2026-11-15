@@ -1,0 +1,140 @@
+# 通过记录 —— issue-m22-omapi-vintf-common
+
+时间：2026-10-29 21:40 左右（m22 / flyme 12.5.0.0A，底包 lineage-23.2）
+目录约定：命令均在 `engine/` 下执行，`DD=/opt/homebrew/opt/e2fsprogs/sbin/debugfs`。
+
+## 1. 质量门
+
+```
+$ cd engine/build
+$ gofmt -l -w 07_build_vendor/
+（无输出）
+$ go vet ./07_build_vendor/
+（无输出）
+$ go test ./07_build_vendor/
+ok      cloud-phone-hub/engine/build/07_build_vendor    14.457s
+```
+
+新增三例单测（`vintfcommon_test.go`）全绿：`TestMaterializeVintfCommon`（写入 + 只补缺 + 旁注过滤）、
+`TestMaterializeVintfCommonSkip`（目录缺失只跳过、不创建目标目录）、`TestVintfCommonInfoText`（摘要三态）。
+
+## 2. 迁移动作
+
+新建（注释重写为归属说明，片段本体逐字照搬）：
+
+```
+$ ls -l vendor/vintf/common/
+-rw-r--r--  2804  android.se.omapi.xml
+$ shasum -a 256 vendor/vintf/common/android.se.omapi.xml
+39ab9aa3eea1c64b6f8fa3bdeab29c3ab470b814764b7993d2f0473748259ca1
+```
+
+删除机型静态树那份（连同空目录）：
+
+```
+$ rm manifest/flyme/m22/vendor/etc/vintf/manifest/android.se.omapi.xml
+$ rmdir manifest/flyme/m22/vendor/etc/vintf/manifest manifest/flyme/m22/vendor/etc/vintf
+$ find manifest -path "*vendor/etc/vintf*" -type f
+（无输出）
+$ find manifest/flyme/m22/vendor -type f | wc -l
+26
+```
+
+为了走真实写入路径，先删掉装配树里上一版由静态树铺进去的副本：
+
+```
+$ rm out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.se.omapi.xml
+```
+
+## 3. 计划输出（`--dry-run`）
+
+```
+$ ./out/bin/cdh build-vendor --manifest manifest/flyme/m22/baselines/12.5.0.0A.json \
+    --manifest-dir manifest/flyme/m22 --vendor flyme --brand m22 --version 12.5.0.0A --dry-run
+    VINTF 补件:  vendor/vintf/common（1 个片段：android.se.omapi.xml）
+    计划命令 [步骤 2b]: 摊平底包 APEX（模式 graphics）…/super/unpack_vendor/apex/*.apex -> out/devices/flyme/m22/12.5.0.0A/vendor（rc 内 /apex/<名>/ 改 /vendor/）
+    计划命令 [步骤 2c]: 复制 vendor/vintf/common/*.xml（1 个）-> out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/（只补缺）
+```
+
+## 4. 实跑 07（步骤 2c 落位）
+
+```
+$ ./out/bin/cdh device build m22 --only 07_build_vendor
+==> [步骤 2c] 补引擎级公共 VINTF 片段
+    输入: vendor/vintf/common（1 个片段：android.se.omapi.xml）
+    输出: out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest（只补缺，已有同名片段不动）
+    新增 1 / 已存在跳过 0（共 1 个片段）
+==> [步骤 3] 编译 HAL 模块
+```
+
+同一次运行里 `cdh-vendor` 被 `ensureCompiler` 自愈重编（见 log-fail.txt 第 3 节）：
+
+```
+==> 构建 HAL 编译器: go build -o out/bin/cdh-vendor .（vendor/build）
+$ ls -l out/bin/cdh-vendor
+-rwxr-xr-x  10004898  out/bin/cdh-vendor
+$ ./out/bin/cdh-vendor help
+cdh-vendor —— engine/vendor 统一 HAL 构建入口
+```
+
+收尾统计（装配树 661 条目：文件 428 / 链接 199 / 目录 34；机型静态树 26 件不再含 VINTF 片段）：
+
+```
+    机型静态树: 写入 23，已存在同内容 0
+    机型 usr: 写入 3，已存在同内容 0
+    …（31 个声明模块的编译产物逐项写入，数量与上一版一致）
+[ok] vendor.img 构建完成: out/devices/flyme/m22/12.5.0.0A/img/vendor.img（205897728 字节）
+```
+
+## 5. 装配树 / 镜像回读
+
+```
+$ ls -l out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.se.omapi.xml
+-rw-r--r--  2804  …/vendor/etc/vintf/manifest/android.se.omapi.xml
+$ shasum -a 256 out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/android.se.omapi.xml
+39ab9aa3eea1c64b6f8fa3bdeab29c3ab470b814764b7993d2f0473748259ca1        # 与 vendor/vintf/common/ 同源
+
+$ $DD -R "cat /etc/vintf/manifest/android.se.omapi.xml" out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+    …
+    <manifest version="1.0" type="device">
+        <hal format="aidl">
+            <name>android.se.omapi</name>
+            <version>1</version>
+            <fqname>ISecureElementService/default</fqname>
+        </hal>
+    </manifest>
+
+$ shasum -a 256 out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+10198921364dde42e04a62b92b783090a07382ba516215996b78a259f9131d69
+$ ls -l out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+-rw-r--r--  205897728  …/img/vendor.img
+```
+
+## 6. 标签 / schema / 唯一性
+
+```
+$ grep -n "vintf/manifest/android.se.omapi.xml" out/devices/flyme/m22/12.5.0.0A/img/vendor-meta-rules.txt
+544:etc/vintf/manifest/android.se.omapi.xml   file  0644  0  0  1230768000  u:object_r:vendor_configs_file:s0  default  fallback
+
+$ grep -n "VINTF schema:" out/devices/flyme/m22/12.5.0.0A/img/vendor-log.txt
+24:    VINTF schema: schema -> 9.0（36 个片段，0 个待改写）      # 1.0 未被抬到 9.0
+396:==> VINTF schema 对齐到 9.0（系统 libvintf 上限）
+
+$ ls out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest/*.xml | wc -l
+35
+$ grep -rl "android.se.omapi" out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/ | wc -l
+1                                        # 无重复 fqname
+```
+
+## 7. 与上一版的差异
+
+| 项 | 上一版（perf2 rc 归位后） | 本版 |
+| :--- | :--- | :--- |
+| 片段来源 | 机型静态树 `manifest/flyme/m22/vendor/etc/vintf/manifest/` | 引擎级 `engine/vendor/vintf/common/`（07 步骤 2c） |
+| 片段大小 | 1,986 B | 2,804 B（仅注释重写，`<manifest>` 起的片段本体逐字相同） |
+| 机型静态树文件数 | 27 | 26 |
+| `vendor.img` | `1cc87515c5423322e42ad967f2eed6559bf1ba3ecc828c1591b70785e568e682` | `10198921364dde42e04a62b92b783090a07382ba516215996b78a259f9131d69` |
+| 镜像尺寸 | 205,897,728 B | 205,897,728 B（不变） |
+
+镜像变了但尺寸没变：装配树条目数与上一版一致（661），唯一变化是片段文件本体变长（注释），
+其余文件（含步骤 2b 摊平的 2 个图形 APEX、31 个模块产物、23 件机型静态树）逐项数量不变。

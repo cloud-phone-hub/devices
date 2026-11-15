@@ -1,0 +1,132 @@
+# log-fail —— 改造前的现场：静态树里的 16 个预编译件说不清出处
+
+> 本文件不是「构建报错」的堆栈，而是这次改造的**问题现场**：同一批字节在旧机制下既无法审阅、也无法溯源，
+> 以及本轮做的时候真实踩到的两次失败（NDK 选错、运行期缺 libui）。
+> 采集时间：2026-10-31 ~ 2026-11-01；构建树：`engine/out/devices/google/oriole/AP2A.240905.003.F1`。
+
+## A. 改造前机型静态树：18 个文件，其中 16 个是二进制（2.2 MB）
+
+```
+$ find engine/manifest/google/oriole/vendor -type f | sort
+engine/manifest/google/oriole/vendor/etc/init/hwc3-drm.rc                      1302
+engine/manifest/google/oriole/vendor/etc/vintf/manifest/hwc3-drm.xml            435
+engine/manifest/google/oriole/vendor/bin/hw/android.hardware.composer.hwc3-service.drm   242064
+engine/manifest/google/oriole/vendor/lib64/libcdh_composer_compat.so             3400
+engine/manifest/google/oriole/vendor/lib64/android.hardware.graphics.composer@2.2-resources.so   35192
+engine/manifest/google/oriole/vendor/lib64/android.hardware.graphics.composer@2.1-resources.so   36472
+engine/manifest/google/oriole/vendor/lib64/android.hardware.drm.common-V1-ndk.so   51240
+engine/manifest/google/oriole/vendor/lib64/android.hardware.graphics.common-V6-ndk.so  52056
+engine/manifest/google/oriole/vendor/lib64/android.hardware.graphics.allocator@4.0.so   84216
+engine/manifest/google/oriole/vendor/lib64/android.hardware.graphics.allocator@2.0.so   92864
+engine/manifest/google/oriole/vendor/lib64/android.hardware.graphics.allocator@3.0.so   92896
+engine/manifest/google/oriole/vendor/lib64/android.hardware.graphics.mapper@2.0.so     105960
+engine/manifest/google/oriole/vendor/lib64/android.hardware.graphics.mapper@2.1.so     107000
+engine/manifest/google/oriole/vendor/lib64/android.hardware.graphics.mapper@3.0.so     119488
+engine/manifest/google/oriole/vendor/lib64/android.hardware.graphics.composer3-V4-ndk.so  252832
+engine/manifest/google/oriole/vendor/lib64/android.hardware.graphics.composer@2.2.so   255080
+engine/manifest/google/oriole/vendor/lib64/android.hardware.graphics.composer@2.1.so   337464
+engine/manifest/google/oriole/vendor/lib64/libui.so                                   378032
+
+$ du -sh /tmp/oriole-old   # 改造前 16 件二进制的备份
+2.2M	/tmp/oriole-old
+```
+
+（右列是字节数：`etc/**` 两件是纯文本，合计 1737 字节；其余 16 件合计 2.2 MB。
+表体行由 `/tmp/oriole-old/` 的 `ls -l` 与现存两个文本文件拼成，路径前缀已省略。）
+
+## B. 旧机制下 07 把这 16 件当「静态树」逐条写进装配树
+
+来源：`engine/out/tmp/rebuild-composer-20261031.log`（2026-10-31 改造前的 07 实跑）。
+
+步骤 0 摘要第一条就把规模暴露出来，但不含任何来源信息：
+
+```
+    机型静态树: manifest/google/oriole/vendor（18 个文件）
+```
+
+步骤 4「复制编译产物到装配树」把 16 件按目标路径覆盖进去，日志只有「写」没有「从哪来」：
+
+```
+==> [步骤 4] 复制编译产物到装配树
+    ...
+    写 out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/android.hardware.graphics.allocator@4.0.so（0644）
+    写 out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/android.hardware.graphics.common-V6-ndk.so（0644）
+    写 out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/android.hardware.graphics.composer3-V4-ndk.so（0644）
+    写 out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/android.hardware.graphics.composer@2.1-resources.so（0644）
+    写 out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/android.hardware.graphics.composer@2.1.so（0644）
+    写 out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/android.hardware.graphics.composer@2.2-resources.so（0644）
+    写 out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/android.hardware.graphics.composer@2.2.so（0644）
+    写 out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/android.hardware.graphics.mapper@2.0.so（0644）
+    写 out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/android.hardware.graphics.mapper@2.1.so（0644）
+    写 out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/android.hardware.graphics.mapper@3.0.so（0644）
+    写 out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/libcdh_composer_compat.so（0644）
+    写 out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/libui.so（0644）
+```
+
+## C. 这 16 件里 7 件「哪个 ROM 都对不上」（sha256 前 12 位）
+
+```
+$ for n in libui.so android.hardware.graphics.allocator@2.0.so android.hardware.graphics.allocator@3.0.so \
+           android.hardware.graphics.allocator@4.0.so android.hardware.graphics.mapper@2.0.so \
+           android.hardware.graphics.mapper@2.1.so android.hardware.graphics.mapper@3.0.so; do ... done
+libui.so                                     旧静态树=df201104b6f9  A15(lineage-22.2)=586e4bc54a57  官方A14=683c68d98495
+android.hardware.graphics.allocator@2.0.so   旧静态树=30ebccdb31bf  A15=61644916f62e  官方A14=7ba456604acc
+android.hardware.graphics.allocator@3.0.so   旧静态树=b05f27881f45  A15=8b9c53157f3a  官方A14=d533210d34dd
+android.hardware.graphics.allocator@4.0.so   旧静态树=0625f8fbae41  A15=dafc7d039833  官方A14=6054a137db58
+android.hardware.graphics.mapper@2.0.so      旧静态树=7ad3525eef7f  A15=b716c1c59b3d  官方A14=e24ea2cfea94
+android.hardware.graphics.mapper@2.1.so      旧静态树=0e038068bfd5  A15=a1ef8baae348  官方A14=d729d5e12618
+android.hardware.graphics.mapper@3.0.so      旧静态树=56f7f109613d  A15=9c61612525fd  官方A14=f52de2accd63
+
+$ # 本机底包（lineage-21.0）根本没有这些件
+libui.so                        lineage-21.0=无此件 旧静态树=df201104b6f9
+allocator@2.0.so                lineage-21.0=无此件 旧静态树=30ebccdb31bf
+mapper@2.0.so                   lineage-21.0=无此件 旧静态树=7ad3525eef7f
+
+$ # lineage-23.2 也不同（旧件的来源在本地四份 ROM 里都找不到）
+libui.so                        lineage-23.2=11948fccc611 旧静态树=df201104b6f9
+allocator@2.0.so                lineage-23.2=4d2a054c9411 旧静态树=30ebccdb31bf
+mapper@2.0.so                   lineage-23.2=e260f2e1b35c 旧静态树=7ad3525eef7f
+mapper@3.0.so                   lineage-23.2=5c40904845e7 旧静态树=56f7f109613d
+```
+
+结论：**7 件来路不明**——静态树这条路把「哪来的」这件事彻底丢了。
+
+## D. 本轮第一次 07 实跑：现编 compat 库选中了 `ndk/magisk`
+
+来源：`/tmp/cdh-07/run.log`（第一次实跑，2026-11-01 13:52，`EXIT=0` 但产物来自非预期编译器）。
+
+```
+    composer compat: 现编（/Users/cuimingqiang/Library/Android/sdk/ndk/magisk/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++）
+        -> out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/libcdh_composer_compat.so
+    composer 依赖: DT_NEEDED android.hardware.graphics.composer@2.2-resources.so -> libcdh_composer_compat.so
+```
+
+`~/Library/Android/sdk/ndk/` 下除了 `26.0.* / 26.1.* / 28.0.* / 28.2.* / 29.0.*` 这些版本目录，还躺着一个
+`magisk/`（顺手放的目录）与 `.zip` / `.tar.xz` 安装包。第一版 `locateNDKClang` 按目录名字典序取最大，
+`magisk` 恰好排在数字版本之后 → 被选中。装配不报错、compat 库照样产出，**只有日志里那一行能看出来**。
+
+修复：`ndkVersionsDesc` 把「以数字开头」的目录排前面（新版本在前），其余排后面；重跑后选中 `29.0.14206865`。
+
+## E. 运行期原始报错（旧静态树 / 中间态的实证）
+
+这两条不是本轮产生的日志，而是驱动这次改造的运行期证据，引自本条关联条目与机型基线 `note`：
+
+1. 中间态把 libui 及其私有依赖放进临时树、`from` 还没配好时，`vendor` 命名空间取不到 `/system/lib64` 那份（libui 不在 A14 LLNDK 名单）：
+
+```
+CANNOT LINK EXECUTABLE "/vendor/bin/hw/android.hardware.composer.hwc3-service.drm":
+library "libui.so" not found: needed by main executable
+```
+
+2. 更早一轮：A15 库 `BIND_NOW`，A14 运行库缺两个符号，`dlopen` 直接失败（详见 #101 遗留与 #102；
+   下面两行是**归纳**而非本条实跑日志原文，符号名取自 `llvm-nm -D --undefined-only`）：
+
+```
+cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz"                 # 被 composer3-V4-ndk / graphics.common-V6 等引用
+cannot locate symbol "AIBinder_Class_setTransactionCodeToFunctionNameMap"    # 被 libbinder_ndk 消费方引用
+```
+
+## F. 一句话
+
+三条现场合起来说明：**「有字节、无出处」的静态树在换基座、换 NDK、换机器之后无法自证**——
+把 16 件挪进清单（15 条借件 + 1 条现编）之后，每件都能在执行计划里看到来源路径。

@@ -1,0 +1,581 @@
+{
+  "id": 1,
+  "deviceId": 1,
+  "name": "oriole-android14",
+  "androidVersion": "14",
+  "lineageVersion": "lineage-21.0",
+  "unpack": {
+    "lineage": [
+      "vendor_a.img",
+      "vendor_dlkm_a.img"
+    ],
+    "official": [
+      "system.img",
+      "system_ext.img",
+      "product.img",
+      "vendor.img",
+      "vendor_dlkm.img",
+      "vendor_boot.img"
+    ]
+  },
+  "buildKernel": {
+    "lineageKernel": {
+      "borrowed-from": "android13-5.10",
+      "borrowed-reason": "官方 Pixel 6（oriole）AP2A.240905.003.F1 固件内核 uname-version 为 5.10.198-android13-4（5.10 线），而底包 UTM-VM-lineage-21.0 镜像自带 6.12.23；云机内核按厂商固件 uname-version 主次版本匹配 kernels/5.10（AOSP android13-5.10 的 5.10.270），vendor_dlkm 由 08 全量自建。",
+      "measured-from": "产物 out/kernel/5.10/kernelrelease.txt = 5.10.270-4k-cdh。底包镜像自带内核（lineage-21.0/boot_a.img）实测 6.12.23-4k-gafb0ad713e3c-dirty：与本机不同代，属借用，见 borrowed-from。",
+      "source": "kernels/5.10（origin=https://android.googlesource.com/kernel/common，分支 android13-5.10，构建镜像 ghcr.io/feicong/droid-ddk:android13-5.10）",
+      "version": "5.10"
+    },
+    "uname": "Linux localhost 5.10.198-android13-4-00050-g12f3388846c3-ab11920634 #1 SMP PREEMPT Mon Jun 3 20:51:42 UTC 2024 aarch64 Toybox",
+    "version": "5.10"
+  },
+  "buildModules": {
+    "external": [
+      "cdh_redirect",
+      "device_info",
+      "input_identity",
+      "virtio_media"
+    ],
+    "in-tree": [
+      "virt_wifi.ko"
+    ],
+    "redirect": [
+      {
+        "from": "/vendor/etc",
+        "to": "/mnt/vendorpatch/vendor/etc",
+        "type": "dir"
+      },
+      {
+        "from": "/vendor/bin",
+        "to": "/mnt/vendorpatch/vendor/bin",
+        "type": "dir"
+      },
+      {
+        "from": "/vendor/lib",
+        "to": "/mnt/vendorpatch/vendor/lib",
+        "type": "dir"
+      },
+      {
+        "from": "/vendor/lib64",
+        "to": "/mnt/vendorpatch/vendor/lib64",
+        "type": "dir"
+      },
+      {
+        "from": "/vendor/build.prop",
+        "to": "/mnt/vendorpatch/vendor/build.prop",
+        "type": "file"
+      },
+      {
+        "from": "/vendor/ueventd.rc",
+        "to": "/mnt/vendorpatch/vendor/ueventd.rc",
+        "type": "file"
+      },
+      {
+        "from": "/vendor_dlkm/lib",
+        "to": "/mnt/vendorpatch/vendor_dlkm/lib",
+        "type": "dir"
+      },
+      {
+        "from": "/odm/etc/build.prop",
+        "to": "/mnt/vendorpatch/odm/etc/build.prop",
+        "type": "file"
+      },
+      {
+        "from": "/odm/etc/selinux/odm_sepolicy.cil",
+        "to": "/mnt/vendorpatch/odm/etc/selinux/odm_sepolicy.cil",
+        "type": "file"
+      },
+      {
+        "from": "/system/bin/update_verifier",
+        "to": "/mnt/vendorpatch/system/bin/update_verifier",
+        "type": "file"
+      }
+    ],
+    "input": {
+      "keyboard": {},
+      "tablet": false,
+      "touch": {
+        "abs-to-mt": true,
+        "bus": 28,
+        "name": "fts",
+        "product": 0,
+        "vendor": 0,
+        "version": 0
+      }
+    },
+    "cpufreq": {
+      "driver": "exynos_cpufreq",
+      "governor": "sched_pixel",
+      "available-governors": [
+        "sched_pixel",
+        "conservative",
+        "powersave",
+        "performance",
+        "schedutil"
+      ],
+      "transition-latency": 5000000,
+      "scaling-readable": true,
+      "package-per-cluster": true,
+      "bogo-mips": "49.15",
+      "policies": [
+        {
+          "id": 0,
+          "cpus": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "min-freq": 300000,
+          "max-freq": 1803000,
+          "cur-freq": 1803000,
+          "available-frequencies": [
+            300000,
+            574000,
+            738000,
+            930000,
+            1098000,
+            1197000,
+            1328000,
+            1401000,
+            1598000,
+            1704000,
+            1803000
+          ],
+          "implementer": "0x41",
+          "variant": 2,
+          "part": "0xd05",
+          "revision": 0,
+          "capacity": 160,
+          "midr": "0x00000000412fd050",
+          "revidr": "0x0000000000000000"
+        },
+        {
+          "id": 4,
+          "cpus": [
+            4,
+            5
+          ],
+          "min-freq": 400000,
+          "max-freq": 2253000,
+          "cur-freq": 2253000,
+          "available-frequencies": [
+            400000,
+            553000,
+            696000,
+            799000,
+            910000,
+            1024000,
+            1197000,
+            1328000,
+            1491000,
+            1663000,
+            1836000,
+            1999000,
+            2130000,
+            2253000
+          ],
+          "implementer": "0x41",
+          "variant": 4,
+          "part": "0xd0b",
+          "revision": 0,
+          "capacity": 498,
+          "midr": "0x00000000414fd0b0",
+          "revidr": "0x0000000000000000"
+        },
+        {
+          "id": 6,
+          "cpus": [
+            6,
+            7
+          ],
+          "min-freq": 500000,
+          "max-freq": 2802000,
+          "cur-freq": 500000,
+          "available-frequencies": [
+            500000,
+            851000,
+            984000,
+            1106000,
+            1277000,
+            1426000,
+            1582000,
+            1745000,
+            1826000,
+            2048000,
+            2188000,
+            2252000,
+            2401000,
+            2507000,
+            2630000,
+            2704000,
+            2802000
+          ],
+          "implementer": "0x41",
+          "variant": 1,
+          "part": "0xd44",
+          "revision": 0,
+          "capacity": 1024,
+          "midr": "0x00000000411fd440",
+          "revidr": "0x0000000000000001"
+        }
+      ]
+    },
+    "input_identity": {
+      "touch_major": true,
+      "goodix_fp": false,
+      "devices": [
+        {
+          "name": "goodix_fingerprint",
+          "keys": [
+            "KEY_POWER",
+            "KEY_WAKEUP"
+          ],
+          "msc": [
+            "MSC_SCAN"
+          ]
+        },
+        {
+          "name": "gpio_keys",
+          "bus": 25,
+          "vendor": 1,
+          "product": 1,
+          "version": 1,
+          "keys": [
+            "KEY_VOLUMEUP",
+            "KEY_VOLUMEDOWN",
+            "KEY_POWER"
+          ]
+        }
+      ],
+      "aligns": []
+    },
+    "display": {
+      "refresh-rates": [
+        60,
+        90
+      ],
+      "edid-native-only": true
+    }
+  },
+  "buildVendorBoot": {
+    "fstab": "oriole",
+    "cmdline": [
+      "androidboot.hardware.sku=G9S9B",
+      "androidboot.product.hardware.sku=G9S9B",
+      "androidboot.hardware.revision=MP1.0",
+      "androidboot.revision=MP1.0",
+      "androidboot.hardware.ddr=8GiB,Samsung,LPDDR5,0108",
+      "androidboot.ddr_info=Samsung",
+      "androidboot.ddr_size=8GiB",
+      "androidboot.hardware.ufs=128GB,Kioxia",
+      "androidboot.hardware.color=BLK",
+      "androidboot.hardware.coo=CN",
+      "androidboot.hardware.devcfg=G950-06929-01",
+      "androidboot.hardware.pcbcfg=G650-07838-05",
+      "androidboot.hardware.platform=gs101",
+      "androidboot.hardware.radio.subtype=0",
+      "androidboot.primary_panel_drv=panel-samsung-s6e3fc3",
+      "androidboot.bootloader=slider-14.5-12088207",
+      "androidboot.avb_version=1.3",
+      "androidboot.serialconsole=0",
+      "androidboot.secure_boot=PRODUCTION",
+      "androidboot.hw.soc.id=0a0e0ca74de0",
+      "androidboot.hw.soc.rev=3",
+      "androidboot.hw.soc.sec-ar=4294967295",
+      "androidboot.hw.soc.nonsec-ar=4294967295",
+      "androidboot.dtbo_idx=5",
+      "androidboot.load_modules_parallel=true",
+      "androidboot.debug_level=0x4948",
+      "androidboot.dpm_state=0x0000",
+      "androidboot.cdt_hwid=0x00020306000100000000000000000000",
+      "androidboot.bootdevice=14700000.ufs"
+    ],
+    "note": "cmdline 29 项为 run-00002 真机 ro.boot.* 取证（Pixel 6 bootloader 注入的硬件身份），经 11 grub kernel_cmdline_dynamic 注入 → init 派生 ro.boot.*。不含 verified-boot 状态组（flash.locked/vbmeta.device_state/verifiedbootstate/digest/size 等，真机 unlocked/orange 与云机 locked/green 是 keymint 链口径，禁动）；不含 androidboot.mode（05 rewriteCmdline 固定 normal，vendor_boot cmdline 先于动态段、ro. set-once 无法覆盖，ro.bootmode 差异记永久遗留）；不含 serialno（boardid 按实例生成）；不含 boottime/boottime_extra（两项 317 字符，加后总长 2165 超 arm64 COMMAND_LINE_SIZE=2048 会被截断，记遗留）；不含 theme（grub 动态段先传 androidboot.theme=0，ro. set-once 先值生效，注入无法覆盖，记遗留）。注入后总长 1811，留 237 字符余量。"
+  },
+  "buildOdm": {
+    "build-prop-sets": {
+      "ro.odm.product.cpu.abilist": "arm64-v8a",
+      "ro.odm.product.cpu.abilist32": "",
+      "ro.odm.product.cpu.abilist64": "arm64-v8a"
+    },
+    "build-prop-unsets": [],
+    "buildProp": "/odm/etc/build.prop",
+    "img": "vendor_a.img",
+    "note": "Pixel 6 没有独立 odm 分区：/odm 是 vendor.img 的子目录（ext4，debugfs 可取）。官方原件 30 行 / md5 df5fec0b557a53f503f54b3486146617，其中 abilist 三行包含 32 位值。CDH 纯 64 位锁口径：覆盖 abilist=arm64-v8a、abilist32=、abilist64=arm64-v8a。载体镜像 vendor_a.img（01 平铺分区落盘 super/vendor_a.img）。"
+  },
+  "buildVendor": {
+    "build-prop-sets": {
+      "dalvik.vm.dex2oat-cpu-set": "0,1,2,3,4,5,6,7",
+      "dalvik.vm.dex2oat-threads": "8",
+      "dalvik.vm.restore-dex2oat-cpu-set": "0,1,2,3,4,5,6,7",
+      "dalvik.vm.restore-dex2oat-threads": "8",
+      "gsm.version.baseband": "g5123b-135085-240517-B-11857288",
+      "gsm.version.ril-impl": "Samsung S.LSI Vendor RIL 5300 V2.3 Build 2024-08-06 14:04:21",
+      "ro.bionic.2nd_arch": "",
+      "ro.bionic.2nd_cpu_variant": "",
+      "ro.board.platform": "gs101",
+      "ro.hardware.egl": "mesa",
+      "ro.hardware.gralloc": "minigbm",
+      "ro.hardware.vulkan": "virtio",
+      "ro.hwui.use_vulkan": "false",
+      "ro.vendor.cdh.gpu.gl_extra_exts": "GL_ARM_mali_program_binary,GL_ARM_mali_shader_binary,GL_ARM_rgba8",
+      "ro.vendor.cdh.gpu.gl_extra_exts2": "GL_ARM_shader_core_properties,GL_ARM_texture_unnormalized_coordinates",
+      "ro.vendor.cdh.gpu.gl_renderer": "Mali-G78",
+      "ro.vendor.cdh.gpu.gl_sl_version": "OpenGL ES GLSL ES 3.20",
+      "ro.vendor.cdh.gpu.gl_vendor": "ARM",
+      "ro.vendor.cdh.gpu.gl_version": "OpenGL ES 3.2 v1.r47p0-01eac0.32ea38cfcac3afe9a9b43f4ca33f49a9",
+      "ro.vendor.product.cpu.abilist": "arm64-v8a",
+      "ro.vendor.product.cpu.abilist32": "",
+      "ro.vendor.product.cpu.abilist64": "arm64-v8a",
+      "ro.zygote": "zygote64",
+      "vendor.mali.base_protected_max_core_count": "3",
+      "vendor.mali.base_protected_tls_max": "67108864",
+      "vendor.mali.debug.config": "/vendor/etc/mali/debug.config",
+      "vendor.mali.platform.config": "/vendor/etc/mali/platform.config",
+      "vendor.mali.platform_agt_frequency_khz": "24576"
+    },
+    "build-prop-unsets": [
+      "ro.frp.pst"
+    ],
+    "fileTrees": {
+      "etc/sensors_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- Pixel 6 (oriole) Android 14 真机传感器清单：run-00001 hardware.sensor 取证，\n     35 台静态传感器逐字段对齐（handle/name/vendor/量程/延迟/FIFO/flags）。 -->\n<sensors-config>\n  <sensor handle=\"1\" name=\"Dynamic Sensor Manager\" vendor=\"Google\" version=\"1\" type-id=\"32\" type=\"android.sensor.dynamic_sensor_meta\" max-range=\"1.0\" resolution=\"1.0\" power=\"0.0010000000474974513\" min-delay=\"1000\" fifo-reserved=\"0\" fifo-max=\"0\" max-delay=\"1000\" wake-up=\"true\" reporting=\"3\"/>\n  <sensor handle=\"16842753\" name=\"LSM6DSR Accelerometer\" vendor=\"STMicro\" version=\"1\" type-id=\"1\" type=\"android.sensor.accelerometer\" max-range=\"156.90640258789062\" resolution=\"0.004785645287483931\" power=\"0.0010000000474974513\" min-delay=\"5000\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"615385\" wake-up=\"false\" reporting=\"0\" additional-info=\"true\" direct-report=\"1\" direct-channel=\"2\"/>\n  <sensor handle=\"16842754\" name=\"MMC56X3X Magnetometer\" vendor=\"MEMSIC\" version=\"1\" type-id=\"2\" type=\"android.sensor.magnetic_field\" max-range=\"3198.15673828125\" resolution=\"0.09759999811649323\" power=\"0.0010000000474974513\" min-delay=\"10000\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"800000\" wake-up=\"false\" reporting=\"0\" direct-report=\"1\" direct-channel=\"2\"/>\n  <sensor handle=\"16842755\" name=\"Orientation Sensor\" vendor=\"Google\" version=\"1\" type-id=\"3\" type=\"android.sensor.orientation\" max-range=\"360.0\" resolution=\"9.999999747378752e-06\" power=\"0.0010000000474974513\" min-delay=\"5000\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"200000\" wake-up=\"false\" reporting=\"0\"/>\n  <sensor handle=\"16842756\" name=\"LSM6DSR Gyroscope\" vendor=\"STMicro\" version=\"1\" type-id=\"4\" type=\"android.sensor.gyroscope\" max-range=\"34.906063079833984\" resolution=\"0.0012217304902151227\" power=\"0.0010000000474974513\" min-delay=\"5000\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"615385\" wake-up=\"false\" reporting=\"0\" additional-info=\"true\" direct-report=\"1\" direct-channel=\"2\"/>\n  <sensor handle=\"16842757\" name=\"TMD3719 Ambient Light\" vendor=\"AMS\" version=\"1\" type-id=\"5\" type=\"android.sensor.light\" max-range=\"1000000.0\" resolution=\"0.009999999776482582\" power=\"0.0010000000474974513\" min-delay=\"0\" fifo-reserved=\"100\" fifo-max=\"100\" max-delay=\"1000000\" wake-up=\"false\" reporting=\"1\"/>\n  <sensor handle=\"16842758\" name=\"ICP10101 Pressure Sensor\" vendor=\"InvenSense\" version=\"1\" type-id=\"6\" type=\"android.sensor.pressure\" max-range=\"1100.0\" resolution=\"9.999999747378752e-05\" power=\"0.0010000000474974513\" min-delay=\"20000\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"10000000\" wake-up=\"false\" reporting=\"0\"/>\n  <sensor handle=\"16842759\" name=\"TMD3719 Proximity (wake-up)\" vendor=\"AMS\" version=\"1\" type-id=\"8\" type=\"android.sensor.proximity\" max-range=\"5.0\" resolution=\"1.0\" power=\"0.0010000000474974513\" min-delay=\"0\" fifo-reserved=\"100\" fifo-max=\"100\" max-delay=\"1000000\" wake-up=\"true\" reporting=\"1\"/>\n  <sensor handle=\"16842760\" name=\"Gravity Sensor\" vendor=\"Google\" version=\"1\" type-id=\"9\" type=\"android.sensor.gravity\" max-range=\"9.8100004196167\" resolution=\"9.999999747378752e-06\" power=\"0.0010000000474974513\" min-delay=\"5000\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"200000\" wake-up=\"false\" reporting=\"0\" direct-report=\"2\" direct-channel=\"2\"/>\n  <sensor handle=\"16842761\" name=\"Linear Acceleration Sensor\" vendor=\"Google\" version=\"1\" type-id=\"10\" type=\"android.sensor.linear_acceleration\" max-range=\"156.9600067138672\" resolution=\"9.999999747378752e-06\" power=\"0.0010000000474974513\" min-delay=\"20000\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"200000\" wake-up=\"false\" reporting=\"0\"/>\n  <sensor handle=\"16842762\" name=\"Rotation Vector Sensor\" vendor=\"Google\" version=\"1\" type-id=\"11\" type=\"android.sensor.rotation_vector\" max-range=\"1.0\" resolution=\"9.999999747378752e-06\" power=\"0.0010000000474974513\" min-delay=\"5000\" fifo-reserved=\"100\" fifo-max=\"100\" max-delay=\"200000\" wake-up=\"false\" reporting=\"0\"/>\n  <sensor handle=\"16842763\" name=\"MMC56X3X Magnetometer-Uncalibrated\" vendor=\"MEMSIC\" version=\"1\" type-id=\"14\" type=\"android.sensor.magnetic_field_uncalibrated\" max-range=\"3198.15673828125\" resolution=\"0.09759999811649323\" power=\"0.0010000000474974513\" min-delay=\"10000\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"800000\" wake-up=\"false\" reporting=\"0\" direct-report=\"1\" direct-channel=\"2\"/>\n  <sensor handle=\"16842764\" name=\"Game Rotation Vector Sensor\" vendor=\"Google\" version=\"1\" type-id=\"15\" type=\"android.sensor.game_rotation_vector\" max-range=\"1.0\" resolution=\"9.999999747378752e-06\" power=\"0.0010000000474974513\" min-delay=\"5000\" fifo-reserved=\"100\" fifo-max=\"100\" max-delay=\"200000\" wake-up=\"false\" reporting=\"0\"/>\n  <sensor handle=\"16842765\" name=\"LSM6DSR Gyroscope-Uncalibrated\" vendor=\"STMicro\" version=\"1\" type-id=\"16\" type=\"android.sensor.gyroscope_uncalibrated\" max-range=\"34.906063079833984\" resolution=\"0.0012217304902151227\" power=\"0.0010000000474974513\" min-delay=\"5000\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"615385\" wake-up=\"false\" reporting=\"0\" additional-info=\"true\" direct-report=\"1\" direct-channel=\"2\"/>\n  <sensor handle=\"16842766\" name=\"Significant Motion (wake-up)\" vendor=\"Google\" version=\"1\" type-id=\"17\" type=\"android.sensor.significant_motion\" max-range=\"1.0\" resolution=\"1.0\" power=\"0.0010000000474974513\" min-delay=\"-1\" fifo-reserved=\"0\" fifo-max=\"0\" max-delay=\"0\" wake-up=\"true\" reporting=\"2\"/>\n  <sensor handle=\"16842767\" name=\"Step Detector\" vendor=\"Google\" version=\"1\" type-id=\"18\" type=\"android.sensor.step_detector\" max-range=\"1.0\" resolution=\"1.0\" power=\"0.0010000000474974513\" min-delay=\"0\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"0\" wake-up=\"false\" reporting=\"3\"/>\n  <sensor handle=\"16842768\" name=\"Step Counter\" vendor=\"Google\" version=\"1\" type-id=\"19\" type=\"android.sensor.step_counter\" max-range=\"9.223372036854776e+18\" resolution=\"1.0\" power=\"0.0010000000474974513\" min-delay=\"0\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"1000000\" wake-up=\"false\" reporting=\"1\"/>\n  <sensor handle=\"16842769\" name=\"Geomagnetic Rotation Vector Sensor\" vendor=\"Google\" version=\"1\" type-id=\"20\" type=\"android.sensor.geomagnetic_rotation_vector\" max-range=\"1.0\" resolution=\"9.999999747378752e-06\" power=\"0.0010000000474974513\" min-delay=\"5000\" fifo-reserved=\"100\" fifo-max=\"100\" max-delay=\"200000\" wake-up=\"false\" reporting=\"0\"/>\n  <sensor handle=\"16842770\" name=\"Tilt Sensor (wake-up)\" vendor=\"Google\" version=\"1\" type-id=\"22\" type=\"android.sensor.tilt_detector\" max-range=\"1.0\" resolution=\"1.0\" power=\"0.0010000000474974513\" min-delay=\"0\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"0\" wake-up=\"true\" reporting=\"3\"/>\n  <sensor handle=\"16842771\" name=\"Device Pickup Sensor (wake-up)\" vendor=\"Google\" version=\"1\" type-id=\"25\" type=\"android.sensor.pick_up_gesture\" max-range=\"1.0\" resolution=\"1.0\" power=\"0.0010000000474974513\" min-delay=\"-1\" fifo-reserved=\"0\" fifo-max=\"0\" max-delay=\"0\" wake-up=\"true\" reporting=\"2\"/>\n  <sensor handle=\"16842772\" name=\"Device Orientation\" vendor=\"Google\" version=\"1\" type-id=\"27\" type=\"android.sensor.device_orientation\" max-range=\"3.0\" resolution=\"1.0\" power=\"0.0010000000474974513\" min-delay=\"0\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"1000000\" wake-up=\"false\" reporting=\"1\"/>\n  <sensor handle=\"16842773\" name=\"LSM6DSR Accelerometer-Uncalibrated\" vendor=\"STMicro\" version=\"1\" type-id=\"35\" type=\"android.sensor.accelerometer_uncalibrated\" max-range=\"156.90640258789062\" resolution=\"0.004785645287483931\" power=\"0.0010000000474974513\" min-delay=\"5000\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"615385\" wake-up=\"false\" reporting=\"0\" additional-info=\"true\" direct-report=\"1\" direct-channel=\"2\"/>\n  <sensor handle=\"16842774\" name=\"LSM6DSR Temperature\" vendor=\"STMicro\" version=\"1\" type-id=\"65538\" type=\"com.google.sensor.gyro_temperature\" max-range=\"85.0\" resolution=\"0.00390625\" power=\"0.0010000000474974513\" min-delay=\"19231\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"615385\" wake-up=\"false\" reporting=\"0\"/>\n  <sensor handle=\"16842775\" name=\"ICP10101 Temperature\" vendor=\"InvenSense\" version=\"1\" type-id=\"65539\" type=\"com.google.sensor.pressure_temp\" max-range=\"65.0\" resolution=\"0.009999999776482582\" power=\"0.0010000000474974513\" min-delay=\"20000\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"10000000\" wake-up=\"false\" reporting=\"0\"/>\n  <sensor handle=\"16842776\" name=\"Camera V-Sync 0\" vendor=\"Google\" version=\"1\" type-id=\"65541\" type=\"com.google.sensor.camera_vsync\" max-range=\"9.223372036854776e+18\" resolution=\"0.0\" power=\"0.0010000000474974513\" min-delay=\"0\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"1000000\" wake-up=\"false\" reporting=\"1\"/>\n  <sensor handle=\"16842777\" name=\"Camera V-Sync 1\" vendor=\"Google\" version=\"1\" type-id=\"65541\" type=\"com.google.sensor.camera_vsync\" max-range=\"9.223372036854776e+18\" resolution=\"0.0\" power=\"0.0010000000474974513\" min-delay=\"0\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"1000000\" wake-up=\"false\" reporting=\"1\"/>\n  <sensor handle=\"16842778\" name=\"Camera V-Sync 2\" vendor=\"Google\" version=\"1\" type-id=\"65541\" type=\"com.google.sensor.camera_vsync\" max-range=\"9.223372036854776e+18\" resolution=\"0.0\" power=\"0.0010000000474974513\" min-delay=\"0\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"1000000\" wake-up=\"false\" reporting=\"1\"/>\n  <sensor handle=\"16842779\" name=\"Camera V-Sync 3\" vendor=\"Google\" version=\"1\" type-id=\"65541\" type=\"com.google.sensor.camera_vsync\" max-range=\"9.223372036854776e+18\" resolution=\"0.0\" power=\"0.0010000000474974513\" min-delay=\"0\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"1000000\" wake-up=\"false\" reporting=\"1\"/>\n  <sensor handle=\"16842780\" name=\"VD6282 Rear Light Sensor\" vendor=\"STMicro\" version=\"1\" type-id=\"65545\" type=\"com.google.sensor.rear_light\" max-range=\"1000000.0\" resolution=\"0.0\" power=\"0.0010000000474974513\" min-delay=\"16000\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"409600\" wake-up=\"false\" reporting=\"0\"/>\n  <sensor handle=\"16842781\" name=\"Double Twist (wake-up)\" vendor=\"Google\" version=\"1\" type-id=\"131073\" type=\"com.google.sensor.double_twist\" max-range=\"1.0\" resolution=\"1.0\" power=\"0.0010000000474974513\" min-delay=\"0\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"0\" wake-up=\"true\" reporting=\"3\"/>\n  <sensor handle=\"16842782\" name=\"Binned Brightness (wake-up)\" vendor=\"Google\" version=\"1\" type-id=\"131077\" type=\"com.google.sensor.binned_brightness\" max-range=\"255.0\" resolution=\"1.0\" power=\"0.0010000000474974513\" min-delay=\"0\" fifo-reserved=\"3000\" fifo-max=\"3000\" max-delay=\"1000000\" wake-up=\"true\" reporting=\"1\"/>\n  <sensor handle=\"16842783\" name=\"Proximity Gated Single Tap Gesture (wake-up)\" vendor=\"Google\" version=\"1\" type-id=\"131083\" type=\"com.google.sensor.single_touch\" max-range=\"1.0\" resolution=\"1.0\" power=\"0.0010000000474974513\" min-delay=\"-1\" fifo-reserved=\"0\" fifo-max=\"0\" max-delay=\"0\" wake-up=\"true\" reporting=\"2\"/>\n  <sensor handle=\"16842784\" name=\"Proximity Gated Long Press Gesture (wake-up)\" vendor=\"Google\" version=\"1\" type-id=\"131085\" type=\"com.google.sensor.long_press\" max-range=\"1.0\" resolution=\"1.0\" power=\"0.0010000000474974513\" min-delay=\"-1\" fifo-reserved=\"0\" fifo-max=\"0\" max-delay=\"0\" wake-up=\"true\" reporting=\"2\"/>\n  <sensor handle=\"16842785\" name=\"Quick Pickup Sensor (wake-up)\" vendor=\"Google\" version=\"1\" type-id=\"131087\" type=\"com.google.sensor.quick_pickup\" max-range=\"1.0\" resolution=\"1.0\" power=\"0.0010000000474974513\" min-delay=\"-1\" fifo-reserved=\"0\" fifo-max=\"0\" max-delay=\"0\" wake-up=\"true\" reporting=\"2\"/>\n  <sensor handle=\"16842786\" name=\"Auto Brightness\" vendor=\"Google\" version=\"1\" type-id=\"131088\" type=\"com.google.sensor.auto_brightness\" max-range=\"1000000.0\" resolution=\"0.0010000000474974513\" power=\"0.0010000000474974513\" min-delay=\"0\" fifo-reserved=\"100\" fifo-max=\"100\" max-delay=\"1000000\" wake-up=\"false\" reporting=\"1\"/>\n</sensors-config>\n",
+      "etc/battery_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  oriole（Google Pixel 6）Android 14 电池口径 —— 取值来自 run-00001 真机取证\n  （hardware.battery），供健康 HAL /vendor/bin/hw/android.hardware.health-service\n  启动时读取（env BATTERY_CONFIG_XML 可覆盖路径）。枚举属性值必须是\n  health_service.cpp 枚举表对应的 AIDL 名字。\n\n  真机采样快照：technology=Li-ion、cycle_count=427、level=80、health=3/OVERHEAT、\n  status=2/CHARGING、plugged=1/AC、charge_counter=3498000µAh、voltage=4128mV、\n  temperature=263(26.3°C)、max_charging_current=3000000µA、max_charging_voltage=5000000µV、\n  CHARGING_STATUS=4/LONG_LIFE。\n\n  动态模拟在「满电静置(75%) / 补电(25%)」两相位间按开机时钟交替：把真机采样值\n  (4128mV/26.3°C) 放进占空比更大的 FULL 相位，使云机多数时刻电压/温度与真机一致；\n  status 在 FULL(5)/CHARGING(2) 间交替属模拟固有遗留（真机采样恰为 CHARGING）。\n-->\n<battery>\n  <!-- 身份与电量：level=80 → capacity_level=NORMAL；health=OVERHEAT；\n       CHARGING_STATUS=LONG_LIFE；present=true -->\n  <identity technology=\"Li-ion\" cycle_count=\"427\" level=\"80\" health=\"OVERHEAT\"\n            capacity_level=\"NORMAL\" charging_state=\"LONG_LIFE\" present=\"1\"/>\n\n  <!-- 充电器：真机 plugged=AC，故 ac=1、usb=0；限流/限压实测 3A/5V -->\n  <charger ac=\"1\" usb=\"0\" wireless=\"0\" dock=\"0\"\n           max_current_ua=\"3000000\" max_voltage_uv=\"5000000\"/>\n\n  <!-- 容量：charge_counter 区间括住真机 3498000；full_uah 按 counter/level 反推\n       (3498000/0.80≈4372500，cycle 427 的老化电池，低于标称 4614mAh) -->\n  <capacity full_uah=\"4372500\" counter_min=\"3490000\" counter_max=\"3510000\"/>\n\n  <!-- 动态模拟区间：FULL 相位取真机采样 4128mV/26.3°C，补电相位略高 -->\n  <cycle full_mv=\"4128\" charge_mv=\"4180\" temperature_full_decic=\"263\"\n         temperature_charge_decic=\"280\" seconds=\"600\"/>\n\n  <!-- HealthInfo 扩展档案：真机未对外提供，按缺省口径；serial_number 缺省不下发 -->\n  <health_data state_of_health=\"99\" part_status=\"UNSUPPORTED\"\n               manufacturing_date_seconds=\"0\" first_usage_seconds=\"0\"/>\n</battery>\n",
+      "etc/excluded-input-devices.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- oriole（Pixel 6）真机仅 4 台输入设备：Virtual(合成) / goodix_fingerprint /\n     gpio_keys / fts。QEMU 自带的 Virtio Keyboard 与 Power Button 真机没有独立节点\n     （电源/音量键由 gpio_keys 统一上报），故排除；两台 QEMU Tablet 同 gold 口径排除。\n     goodix_fingerprint 与 gpio_keys 由 cdh_input_identity.ko 按清单 modules.input_identity 注册。 -->\n<devices>\n    <device name=\"QEMU QEMU USB Tablet\"/>\n    <device name=\"QEMU Virtio Tablet\"/>\n    <device name=\"QEMU Virtio Keyboard\"/>\n    <device name=\"Power Button\"/>\n</devices>\n"
+    },
+    "files": [
+      {
+        "from": "official",
+        "note": "libpng 不在 LLNDK 名单，vendor 进程取不到 /system/lib64 的那份。实测 lineage-21.0 基座 vendor_a.img 里没有 lib64/libpng.so（lib64 下无此件），官方 Pixel vendor_a.img:/lib64/libpng.so 实测存在（0644，inode 2433），取官方件；与 m22 / ss9380 同一条。",
+        "source": "lib64/libpng.so"
+      },
+      {
+        "from": "official",
+        "mode": "add",
+        "note": "借件来源收紧（2026-11-02）：只允许「官方固件」或「本机底包同版本的 vendor 分区」，不允许跨版本（lineage:22.2）也不允许跨分区（lineage:system）。本轮 12 件显示栈库均已在官方 AP2A.240905.003.F1 的 vendor_a.img 里逐件实测存在（debugfs stat：inode 2100~2479、mode 0644），source 因此从 system/lib64/… 改成 lib64/…（官方 vendor 内路径）。此前 from=lineage:system 是从本机底包 system 分区取件——同版本但跨分区，已按规则撤销；起机复验待 07→09→11 重跑。",
+        "source": "lib64/android.hardware.graphics.composer@2.1.so",
+        "target": "lib64/android.hardware.graphics.composer@2.1.so"
+      },
+      {
+        "from": "official",
+        "mode": "add",
+        "source": "lib64/android.hardware.graphics.composer@2.2.so",
+        "target": "lib64/android.hardware.graphics.composer@2.2.so"
+      },
+      {
+        "from": "official",
+        "mode": "add",
+        "source": "lib64/android.hardware.graphics.composer@2.3.so",
+        "target": "lib64/android.hardware.graphics.composer@2.3.so"
+      },
+      {
+        "from": "official",
+        "mode": "add",
+        "source": "lib64/android.hardware.graphics.composer@2.4.so",
+        "target": "lib64/android.hardware.graphics.composer@2.4.so"
+      },
+      {
+        "from": "official",
+        "mode": "add",
+        "note": "HIDL composer 2.4 服务的 DT_NEEDED 里要 libfmq，lineage-21 基座 vendor 没有这件。官方 A14 vendor_a.img:/lib64/libfmq.so 实测存在（inode 2364、0644）。",
+        "source": "lib64/libfmq.so",
+        "target": "lib64/libfmq.so"
+      },
+      {
+        "from": "official",
+        "mode": "add",
+        "note": "drm_hwcomposer 的 DT_NEEDED 里有 libui.so（GraphicBufferMapper / ui::Rect），而 libui 不在 LLNDK 名单（A14 /system/etc/llndk.libraries.txt 无此项），vendor 命名空间取不到 /system/lib64 的那份。下列 7 件取本机型官方 vendor_a.img 的原件：libui 及其私有依赖必须与运行期 libc/libbinder_ndk/系统 HAL 同源（A14），不能用 A15 的 lineage-22.2 版本（那边同名的 allocator/mapper 都是 A15 编的）。",
+        "source": "lib64/libui.so",
+        "target": "lib64/libui.so"
+      },
+      {
+        "from": "official",
+        "mode": "add",
+        "source": "lib64/android.hardware.graphics.allocator@2.0.so",
+        "target": "lib64/android.hardware.graphics.allocator@2.0.so"
+      },
+      {
+        "from": "official",
+        "mode": "add",
+        "source": "lib64/android.hardware.graphics.allocator@3.0.so",
+        "target": "lib64/android.hardware.graphics.allocator@3.0.so"
+      },
+      {
+        "from": "official",
+        "mode": "add",
+        "source": "lib64/android.hardware.graphics.allocator@4.0.so",
+        "target": "lib64/android.hardware.graphics.allocator@4.0.so"
+      },
+      {
+        "from": "official",
+        "mode": "add",
+        "source": "lib64/android.hardware.graphics.mapper@2.0.so",
+        "target": "lib64/android.hardware.graphics.mapper@2.0.so"
+      },
+      {
+        "from": "official",
+        "mode": "add",
+        "source": "lib64/android.hardware.graphics.mapper@2.1.so",
+        "target": "lib64/android.hardware.graphics.mapper@2.1.so"
+      },
+      {
+        "from": "official",
+        "mode": "add",
+        "source": "lib64/android.hardware.graphics.mapper@3.0.so",
+        "target": "lib64/android.hardware.graphics.mapper@3.0.so"
+      }
+    ],
+    "hardware": [
+      {
+        "android.hardware.audio": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.bluetooth": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.camera": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.drm": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.graphics.allocator": {
+          "variant": "default",
+          "version": "2.0"
+        }
+      },
+      {
+        "android.hardware.graphics.composer": {
+          "variant": "default",
+          "version": "2.4"
+        }
+      },
+      {
+        "android.hardware.gnss": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.gpu": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.health": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.ir": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.keymint": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.light": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.media": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.radio": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.sensors": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.thermal": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.vibrator": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.wifi": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.service.daemon": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.media.v412": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      }
+    ],
+    "note": "机型清单声明 vendor.files 即整表取代内置 builtinFileOps；本机型 13 条：lib64/libpng.so 一条取代（from: official，官方件），显示栈 12 件 mode: add 且全部 from: official（官方固件；from 只有 official / lineage 两个取值，缺省是 lineage，取官方件必须逐条显式写）。内置集合是 gold/MTK 口径（libMEOW_* 四条、libGLES_mali.so、libOpenCL.so、etc/permissions、etc/security、etc/md）：官方 Pixel vendor_a.img 实测 lib64/egl/libMEOW_data.so、/etc/security、/etc/md 全部 File not found（debugfs stat 取证），照内置跑 07 步骤 5 必报「厂商 vendor 缺少该路径」（ss9380 同类失败见该机型证据）。Pixel 的 etc/permissions 整目录也不替换：那份目录声明 nfc / fingerprint / strongbox / device_unique_attestation 等特性，而本机 device.json 的 hardware 没有 nfc、biometrics、secure_element 实现，整目录替换会造出「有特性声明、无 HAL 实现」的组合，正是 gold 上 FEATURE_CONSUMER_IR 无 HAL 让 system_server 自杀的同类脸。特性集保持 lineage-21.0 基座（tablet_core_hardware.xml），与 gold / m22 / ss9380 同一口径。\n\nselinux-labels 三条 egl 库：/vendor/lib64/egl 由 lineage-21.0 基座提供（只有 libEGL_mesa.so / libGLESv1_CM_mesa.so / libGLESv2_mesa.so，官方 Pixel 那边是 Mali 七件，本机型不搬），基座 vendor_file_contexts 没有 egl 规则（规则在 plat 的 file_contexts 里），而 07 的标签真值链第 2 级读的是官方 Pixel 镜像的 inode（这三件在里面不存在），会落到兜底 vendor_file → surfaceflinger（system 域）读它被 avc denied，与 m22 实测同一条链路。基底镜像里它们的 inode 本来就是 same_process_hal_file（debugfs ea_list /lib64/egl/libEGL_mesa.so 实测），故按基线精确声明。\n\nGPU 属性：ro.hardware.egl=mesa / ro.hardware.vulkan=virtio / ro.hardware.gralloc=minigbm 三键必须写进 build.prop，不能等 rc 的 setprop。原判「由 init.virtio.rc 的 virtgpu_detect 在 ro.vendor.graphics=mesa 分支 setprop」实测不成立：surfaceflinger 在 10.8s 就启动，而 early-boot/boot 触发链（virtgpu_detect 计数为 0）此前从未跑过，SF 拿 ro.board.platform=gs101 回落找 libEGL_gs101.so（基座 /vendor/lib64/egl 只有 mesa 三件），报 couldn't find an OpenGL ES implementation 后 LOG_ALWAYS_FATAL 自杀。ro.* 是 set-once、build.prop 在 init property_init 阶段加载，早于任何 rc 触发；同型实测见 oriole-16 基线 note。\n\ncomposer HAL：A14 基座（lineage-21.0）里没有任何 composer 服务（vendor/bin/hw 无、30 个 APEX 里也没有），但 /system/lib64 自带完整的一代 graphics 客户端栈——composer@2.1/2.2/2.3/2.4、graphics.common-V5-ndk、allocator@2.0/3.0/4.0、mapper@2.0/2.1/3.0/4.0、libfmq、libui。A14 的 SurfaceFlinger（ComposerHal.cpp）只有 AIDL composer3 与 HIDL 两条路、没有 passthrough 分支，服务端必须是 /vendor/bin/hw 下的进程；而 vendor 进程的命名空间看不到非 LLNDK 的 /system/lib64 库，所以这批件要落进 /vendor/lib64：其中 12 条 mode=add、from=official 取官方 A14 vendor_a.img 的 /vendor/lib64（2026-11-02 起不允许跨分区取件，此前 from=lineage:system 已撤销；12 件在官方镜像里逐件 debugfs stat 实测存在、0644）；服务壳 composer@2.4-service、它链接需要的 composer@2.1-resources、以及实现体 hwcomposer.gs101.so 这三件，改由 07_build_vendor 的显示栈现编从 engine/vendor/aosp/a14 的源码编出（drm_hwcomposer 27 个编译单元 + 自写服务壳 + 2.1 的 ComposerResources；源码与头文件闭包见该目录 README）。两个 adapter 与 composer@2.2-resources 随之彻底不需要：自写服务壳不走 HwcLoader::load() 的 hwc1/fbdev 回落，源码里不引用 libhwc2on1adapter / libhwc2onfbadapter；2.2 的 ComposerResources 实测 0 个导出符号，空壳没有意义。实现体不能用官方 Pixel 那份（Exynos 绑定）。为什么不能沿用 A15 的 AIDL 路线：lineage-21 是 A14，A14 的 hardware/interfaces 只有 HIDL 2.1~2.4 的 default 实现，AIDL composer3 的default 服务源码在该版本不存在。验收见 devices/evidence/oriole/issue-oriole14-hwc-drm。\n\n屏幕密度：A14 基座的 vendor/build.prop 没有 ro.sf.lcd_density，而底包 /vendor/etc/init/hw/init.virt.rc 第 22 行会 setprop ro.sf.lcd_density ${ro.boot.lcd_density:-160}；本机型 cmdline 不带 androidboot.lcd_density，于是 1080x2400 落到 160 dpi（可用宽度 1080 dp），系统按平板口径排版、桌面图标与文字整体偏小（实例 7 实测 wm size/density 均为 1080x2400 / 160）。官方 Pixel 6 的 vendor_a.img:/build.prop 第 49 行是真值 ro.sf.lcd_density=420（与本机 device.json 的 density 一致），故在 build-prop-sets 补写 420：vendor/build.prop 装载早于 rc 的 setprop，ro. 只读，init.virt.rc 那句会因属性已锁而失败，正好不吃 160 的默认值。\n\n纯 64 位锁（2026-11-04 本轮启动实测补，与本机 cp1a 基线同口径）：本基线迁移早于「按基座只有 64 位内容锁 64-only」这条规则，vendor 侧六键一直没写，实测后果是引导不通过。lineage-21.0 基座的 vendor/build.prop 第 83 行是 `ro.zygote=zygote64_32`，第 10~12 行 abilist32=armeabi-v7a,armeabi、第 33~34 行 ro.bionic.2nd_arch=arm、第 38~39 行 dalvik.vm.isa.arm.*——装载顺序 system→…→vendor 让 vendor 的 64_32 覆盖 system 的 zygote64（init 日志 `Overriding previous property 'ro.zygote':'zygote64' with new value 'zygote64_32'`），于是 init 起 `zygote_secondary`；而这份 system 里 `/system/bin/app_process32` 是占位件（`cannot execv('/system/bin/app_process32') … Exec format error`，同型还有 mediaserver/drmserver），secondary 每次 127 退出，退出即连坐 SIGKILL primary zygote（日志时序：`Service 'zygote_secondary' … exited with status 127` → 2ms 后 `Sending signal 9 to service 'zygote'`），primary 在 boot completed 前死满 4 次触发 `critical process 'zygote' exited 4 times before boot completed` → `InitFatalReboot: signal 6` → `reboot: Restarting system with command 'zygote-fatal'` 无限循环（10 分钟窗口内 3 轮）。因此补 `ro.zygote=zygote64` 关掉 secondary 服务，并按同一事实把 abilist/bionic 2nd 三对键锁成纯 64（framework 侧的 abilist 判定另见 gold 的 zygote_secondary 证据：odm 段此前已锁，vendor 段是缺口）；`dalvik.vm.isa.arm.*` 只影响 32 位 dex2oat，不改动。\n\n删除 ro.frp.pst 与锁 ro.hwui.use_vulkan=false（#150，2026-11-04）：#148 切换为以官方 vendor_a.img:/build.prop 为基底后，带入了两条真机属性：① 第 185 行 `ro.frp.pst=/dev/block/by-name/frp`（lineage-21.0 基底无此键）。本盘 GPT 来自 lineage 底座、没有 frp 分区；SystemServer 因 `ro.frp.pst` 非空而启动 PersistentDataBlockService 并绑定 LocalServices，但底层块设备不存在，导致 PHASE_ACTIVITY_MANAGER_READY（500）时 `TestHarnessModeService.onBootPhase(500)` → `PersistentDataBlockService$InternalService.readInternal` 抛 `java.lang.IllegalStateException: invalid checksum`，system_server 每 4~5s FATAL 重启、死满 4 次触发 `zygote-fatal` 并由 RescueParty 带进 recovery。与 gold 及 Template.md 同口径，在 `build-prop-unsets` 中删除 `ro.frp.pst`。② 第 45 行 `ro.hwui.use_vulkan=true`（lineage-21.0 基底为空）。削除 `ro.frp.pst` 后整机 62.2s `sys.boot_completed=1`，但 `com.android.systemui`、`com.google.android.setupwizard`、`com.android.settings` 的 RenderThread 在 `libhwui.so!VulkanManager::initialize()` 处因 `Abort message: 'Assertion failed: !gpuCount'` 循环 SIGABRT（在线 `setprop debug.hwui.renderer skiagl` 重拉进程即恢复正常桌面），故与 m22 / gold / 15r / cph2797 / ss9380 / popsicle 同口径在 `build-prop-sets` 中锁 `ro.hwui.use_vulkan=false`。",
+    "selinux-labels": {
+      "lib64/egl/libEGL_mesa.so": "u:object_r:same_process_hal_file:s0",
+      "lib64/egl/libGLESv1_CM_mesa.so": "u:object_r:same_process_hal_file:s0",
+      "lib64/egl/libGLESv2_mesa.so": "u:object_r:same_process_hal_file:s0"
+    },
+    "sepolicy": {
+      "vendor_file_contexts": "# cdh oriole：Widevine AIDL HAL（07 自建 /vendor/bin/hw 二进制）file_contexts 补丁。\n# 由 07_build_vendor 追加到 /vendor/etc/selinux/vendor_file_contexts 末尾（机型层，\n# marker 为 `# vendor_file_contexts`）。\n#\n# 与 gold #40 的差异：gold 用 com.google.android.widevine APEX，二进制在 /apex 内、\n# 标签已烘进 APEX 镜像，无需 vendor_file_contexts。本机型是 engine/vendor 编译、由 07\n# 落进 /vendor/bin/hw 的自建服务，基座 lineage-21.0 的 vendor_file_contexts 不认识它，\n# 不显式标注会落到默认 vendor_file，init 按 rc 的 seclabel 换域时缺 entrypoint。\n# 这里只标注 widevine：clearkey 服务沿用基座已有的 hal_drm_clearkey(_exec)（若基座缺失，\n# 起机 avc 复验时再补，避免与基座重复声明类型）。\n/(vendor|system/vendor)/bin/hw/android\\.hardware\\.drm-service\\.widevine  u:object_r:hal_drm_widevine_exec:s0\n",
+      "vendor_property_contexts": "# cdh oriole：Pixel 电话栈 App（OemRilService / ShannonIms / ShannonRcs / RilConfigService）写的\n# vendor_rild_prop 前缀，逐行对齐官方 gs101 vendor_property_contexts 第 138~144 行。\n# 实测崩溃源：oemril 写 vendor.radio.allowed_types_loaded、imsservice 写\n# persist.vendor.radio.call_waiting_for_sync_<slot>；基座无这些行时落 vendor_default_prop、set 被拒。\n# ro.vendor.build.svn（官方同属 vendor_rild_prop）是只读身份属性，不在此改标签。\npersist.vendor.debug_level       u:object_r:vendor_rild_prop:s0\npersist.vendor.ril.              u:object_r:vendor_rild_prop:s0\npersist.vendor.radio.            u:object_r:vendor_rild_prop:s0\nvendor.radio.ril.                u:object_r:vendor_rild_prop:s0\nvendor.sys.rild_reset            u:object_r:vendor_rild_prop:s0\nvendor.ril.                      u:object_r:vendor_rild_prop:s0\nvendor.radio.                    u:object_r:vendor_rild_prop:s0\nvendor.mali.                     u:object_r:vendor_arm_runtime_option_prop:s0 prefix\n",
+      "vendor_sepolicy.cil": ";; cdh oriole：Widevine AIDL HAL（07 自建 /vendor/bin/hw 二进制）SELinux 补丁。\n;; 由 07_build_vendor 追加到 /vendor/etc/selinux/vendor_sepolicy.cil 末尾（机型层，\n;; marker 为 `;; vendor_sepolicy.cil`）。\n;;\n;; 背景：engine/vendor 移植的 widevine 检测模拟服务（hardware/android.hardware.drm，\n;; drm_widevine_service.cpp）由 07 编进 /vendor/bin/hw、rc 带 seclabel u:r:hal_drm_widevine:s0。\n;; 基座 lineage-21.0（A14）vendor 策略自带 clearkey，但没有 hal_drm_widevine 域与\n;; hal_drm_widevine_exec 标签类型，且 07 注入的二进制不在基座 file_contexts 里。缺这些\n;; 声明时 init 会报 `Context ...hal_drm_widevine_exec... is not valid (left unmapped)`、\n;; 拒绝起服务。本片段补齐类型与启动链、注册授权、模型目录访问。\n;;\n;; 与 gold #40 的差异（gold 是 com.google.android.widevine APEX，本机型是 07 自建件）：\n;;   - 启动链：本机型二进制由 vendor_file_contexts 标注 hal_drm_widevine_exec（见同目录\n;;     vendor_file_contexts），rc 显式带 seclabel，故保留 init→exec→域 的 typetransition 与\n;;     entrypoint；不再依赖 APEX 内烘好的标签。\n;;   - 去掉 MTK Android15 才有的 base_typeattr_232_{{vers}} fd 授权（gs101/A14 无此编号属性）。\n;;   - 去掉 gold 独有的 (typepermissive crash_dump / surfaceflinger)：那是 gold 云机无 su 的\n;;     bring-up 放宽，Pixel 线历史上没标过，不跟加。\n;;   - 平台类型按 vendor CIL 约定用 {{vers}} 影子名，构建阶段按 plat_sepolicy_vers.txt 替换。\n;;\n;; 状态：本片段是移植首稿，未在本环境起机验证。域类型/注册授权/数据目录标签需装配镜像后\n;; 按 run-time avc 迭代收敛（尤其 /data/vendor/mediadrm 在 oriole 基座的实际标签，见下）。\n\n;; ---- 类型与属性 ----\n(type hal_drm_widevine)\n(roletype object_r hal_drm_widevine)\n(type hal_drm_widevine_exec)\n(roletype object_r hal_drm_widevine_exec)\n(typeattributeset domain (hal_drm_widevine))\n(typeattributeset halserverdomain (hal_drm_widevine))\n(typeattributeset halclientdomain (hal_drm_widevine))\n(typeattributeset hal_drm (hal_drm_widevine))\n(typeattributeset hal_drm_server (hal_drm_widevine))\n(typeattributeset hal_allocator_client (hal_drm_widevine))\n(typeattributeset file_type (hal_drm_widevine_exec))\n(typeattributeset exec_type (hal_drm_widevine_exec))\n(typeattributeset vendor_file_type (hal_drm_widevine_exec))\n\n;; ---- 启动链：init 读/执行 file_contexts 标注的 exec 件，按 rc seclabel 换域 ----\n(allow init_{{vers}} hal_drm_widevine_exec (file (read getattr map execute open)))\n(allow init_{{vers}} hal_drm_widevine (process (transition siginh rlimitinh noatsecure)))\n(typetransition init_{{vers}} hal_drm_widevine_exec process hal_drm_widevine)\n(allow hal_drm_widevine hal_drm_widevine_exec (file (read getattr map execute open entrypoint)))\n\n;; ---- 只读映射 vendor 侧库（NDK 运行期若回落取 /vendor/lib 私有件；libc++/libbinder_ndk 走 ldconfig 不在这里）----\n(allow hal_drm_widevine vendor_file_{{vers}} (file (read getattr map open)))\n\n;; ---- vndbinder（vendor 进程默认 binder 设备）----\n(allow hal_drm_widevine vndbinder_device_{{vers}} (chr_file (ioctl read write getattr lock append map open watch watch_reads)))\n\n;; ---- 服务注册：AIDL DRM factory 实际向 framework servicemanager 注册，实例名未在\n;; vendor_service_contexts 映射，落 default_android_service。缺 add/find 时\n;; AServiceManager_addService 返回错误、进程 CHECK 失败 abort。保留 vndservicemanager\n;; 一组以兼容按 vndbinder 注册的路径（gold 同口径，二者按实际 avc 复验可裁一）。\n(allow hal_drm_widevine servicemanager_{{vers}} (binder (call transfer)))\n(allow hal_drm_widevine hal_drm_service_{{vers}} (service_manager (add find)))\n(allow hal_drm_widevine mediaserver_service_{{vers}} (service_manager (add find)))\n(allow hal_drm_widevine default_android_service_{{vers}} (service_manager (add find)))\n(allow hal_drm_widevine pioneer (binder (call transfer)))\n(allow pioneer hal_drm_widevine (binder (call transfer)))\n(allow hal_drm_widevine vndservicemanager_{{vers}} (binder (call transfer)))\n(allow vndservicemanager_{{vers}} hal_drm_widevine (dir (search)))\n(allow vndservicemanager_{{vers}} hal_drm_widevine (file (read map open)))\n(allow vndservicemanager_{{vers}} hal_drm_widevine (process (getattr)))\n\n;; ---- 安全缓冲/分配器 fd 传递 ----\n(allow hal_drm_widevine hal_allocator_server (fd (use)))\n(allow hal_drm_widevine mediacodec (fd (use)))\n\n;; ---- 设备身份模型目录 /data/vendor/mediadrm/model（rc on post-fs-data mkdir 0700 media/mediadrm，进程 user=media group=mediadrm）----\n;; gold 上 /data/vendor/mediadrm 标签是 vendor_data_file（其盘未声明 mediadrm_vendor_data_file）。\n;; oriole 基座若声明了 mediadrm_vendor_data_file，起机 avc 复验时把它替换/补进下列两条。\n(allow hal_drm_widevine vendor_data_file_{{vers}} (dir (ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir)))\n(allow hal_drm_widevine vendor_data_file_{{vers}} (file (ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads)))\n\n;; ---- 诊断与只读设备树 ----\n(allow hal_drm_widevine debugfs_tracing_{{vers}} (file (write)))\n(allow hal_drm_widevine mnt_vendor_file_{{vers}} (dir (search)))\n(allow hal_drm_widevine block_device_{{vers}} (dir (search)))\n\n;; ---- Pixel 电话栈 App（/system_ext/priv-app：OemRilService、ShannonIms、ShannonRcs 等常驻）厂商属性 ----\n;; 官方 gs101 vendor：vendor.radio. / persist.vendor.radio. / vendor.ril. 等 → vendor_rild_prop；\n;; oemrilservice_app / vendor_ims_app / vendor_rcs_app 均 set vendor_rild_prop，ims/rcs 另 set radio_prop。\n;; lineage-21 基座既无该类型也无 vendor_seapp_contexts 条目：这些 App 落 priv_app 域、属性落\n;; vendor_default_prop，SystemProperties.set 抛 RuntimeException → 常驻进程崩溃循环 →\n;; PackageWatchdog → reboot,rescueparty（实测 oemril 写 vendor.radio.allowed_types_loaded、\n;; imsservice 写 persist.vendor.radio.call_waiting_for_sync_<slot>）。\n;; 不新造 oemrilservice_app 等域（CIL 无法继承 priv_app 全量规则），只给 priv_app 补这两类 set/read。\n(type vendor_rild_prop)\n(roletype object_r vendor_rild_prop)\n(typeattributeset property_type (vendor_rild_prop))\n(typeattributeset vendor_property_type (vendor_rild_prop))\n(allow priv_app_{{vers}} vendor_rild_prop (property_service (set)))\n(allow priv_app_{{vers}} vendor_rild_prop (file (read getattr map open)))\n(allow priv_app_{{vers}} radio_prop_{{vers}} (property_service (set)))\n(allow priv_app_{{vers}} radio_prop_{{vers}} (file (read getattr map open)))\n(allow priv_app_{{vers}} property_socket_{{vers}} (sock_file (write)))\n(allow priv_app_{{vers}} init_{{vers}} (unix_stream_socket (connectto)))\n(allow radio_{{vers}} vendor_rild_prop (property_service (set)))\n(allow radio_{{vers}} vendor_rild_prop (file (read getattr map open)))\n(allow hal_radio_default vendor_rild_prop (file (read getattr map open)))\n\n;; ---- vendor.mali.*（Mali GPU 运行时选项，真机 Pixel 6 口径）----\n;; 真机 vendor_property_contexts: vendor.mali. -> vendor_arm_runtime_option_prop(prefix)，\n;; 全域可读、仅 vendor_init 可写。云机此前缺该类型，vendor.mali.* 落 default_prop，\n;; untrusted_app 读不到（checker getprop 缺 5 键、run-as 直读 SIGSEGV）。\n(type vendor_arm_runtime_option_prop)\n(roletype object_r vendor_arm_runtime_option_prop)\n(typeattributeset property_type (vendor_arm_runtime_option_prop))\n(typeattributeset vendor_property_type (vendor_arm_runtime_option_prop))\n(typeattributeset vendor_restricted_property_type (vendor_arm_runtime_option_prop))\n(allow domain vendor_arm_runtime_option_prop (file (read getattr map open)))\n(allow vendor_init_{{vers}} vendor_arm_runtime_option_prop (property_service (set)))\n(allow vendor_init_{{vers}} vendor_arm_runtime_option_prop (file (read getattr map open)))\n"
+    },
+    "vintf-drop": [
+      "android.hardware.drm-service.widevine.xml"
+    ]
+  },
+  "buildVendorDlkm": {},
+  "buildPatch": {},
+  "buildSuper": {
+    "images": [
+      "system.img",
+      "system_ext.img",
+      "product.img",
+      "vendor.img",
+      "vendor_dlkm.img"
+    ]
+  },
+  "buildVda": {
+    "partitions": []
+  },
+  "extra": {},
+  "updatedAt": "2026-11-06T05:37:49Z"
+}

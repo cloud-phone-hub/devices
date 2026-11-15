@@ -1,0 +1,140 @@
+== 15r 起机两层堵点的原始日志（2026-11-04，engine 新流水线首轮）==
+实例: out/core/daemon/runtime/15r_16.0.10.500_EX01/1（三次起盘，分别记 run1/run2/run3）
+run1 = 基线原样（未锁 egl）；run2 = 只补 ro.hardware.egl=mesa；run3 = 再补 ro.hwui.use_vulkan=false。
+本文件收 run1、run2 的失败面；run3 的通过面见 log-pass.txt。
+
+########## 一、run1：surfaceflinger 每 ~5 s SIGABRT，整机引导不动 ##########
+--- qemu.log（首轮，共 27087 行；`Service 'surfaceflinger' ... received signal` 计 94 行）---
+[   14.402659][    T1] init: starting service 'surfaceflinger'...
+[   14.407143][    T1] init: ... started service 'surfaceflinger' has pid 634
+[   14.407657][    T1] init: service 'vold' requested start, but it is already running (flags: 2052)
+[   14.408736][    T1] init: starting service 'replace_splash_logo'...
+...
+[   14.868597][    T1] init: Service 'surfaceflinger' (pid 634) received signal 6
+[   14.868601][    T1] init: Sending signal 9 to service 'surfaceflinger' (pid 634) process group...
+[   14.868669][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/system/uid_1000/pid_634
+[   14.868688][    T1] init: Sending signal 9 to service 'zygote' (pid 574) process group...
+[   14.872329][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/system/uid_0/pid_574
+[   14.873297][    T1] init: Service 'zygote' (pid 574) received signal 9
+[   14.873299][    T1] init: Sending signal 9 to service 'zygote' (pid 574) process group...
+[   14.873313][    T1] libprocessgroup: Failed to write 1 to /sys/fs/cgroup/system/uid_0/pid_574/cgroup.kill: No such file or directory
+...
+[   19.407013][    T1] init: starting service 'surfaceflinger'...
+[   19.407988][    T1] init: ... started service 'surfaceflinger' has pid 932
+...
+[   20.192769][    T1] init: Service 'surfaceflinger' (pid 932) received signal 6
+[   20.193142][    T1] init: Sending signal 9 to service 'surfaceflinger' (pid 932) process group...
+
+--- qemu.log：同一轮里被连坐重启的服务（各 14~15 次）---
+  15 zygote / 15 vendor.audio-hal-aidl / 15 surfaceflinger / 15 netd / 15 audioserver
+  14 wificond / 14 mediaextractor / 14 media.swcodec / 14 media / 14 cameraserver
+  （统计口径：grep -oE "Service '[^']+' .*?(crashed|died|signal)" 后按服务名计数）
+
+--- logcat（adb -s 127.0.0.1:5911 logcat -d -b all -v brief，18441 行）：崩溃主体与断言 ---
+F/libc    (  634): Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 673 (surfaceflinger), pid 634 (surfaceflinger)
+F/DEBUG   (  677): Process name is /system/bin/surfaceflinger, uid is 1000
+F/DEBUG   (  677): engrave_tombstone /data/tombstones/#3825667 (deleted)
+F/DEBUG   (  677): Cmdline: /system/bin/surfaceflinger
+F/DEBUG   (  677): pid: 634, tid: 673, name: surfaceflinger  >>> /system/bin/surfaceflinger <<<
+F/DEBUG   (  677): uid: 1000
+F/DEBUG   (  677): tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+F/DEBUG   (  677): pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+F/DEBUG   (  677): signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+F/DEBUG   (  677): Abort message: 'couldn't find an OpenGL ES implementation, make sure one of persist.graphics.egl, ro.hardware.egl and ro.board.platform is set'
+F/DEBUG   (  677): 12 total frames
+F/DEBUG   (  677): backtrace:
+F/DEBUG   (  677):       #00 pc 000000000008a68c  /apex/com.android.runtime/lib64/bionic/libc.so (abort+160) (BuildId: 724d61dbc91284bfe4c5a68902c16928)
+F/DEBUG   (  677):       #01 pc 000000000000d158  /system/lib64/liblog.so (__android_log_default_aborter+16) (BuildId: fca6ece31334e682d0eb6ac8c8b9f2b3)
+F/DEBUG   (  677):       #02 pc 000000000000d2b4  /system/lib64/liblog.so (__android_log_assert+292) (BuildId: fca6ece31334e682d0eb6ac8c8b9f2b3)
+F/DEBUG   (  677):       #03 pc 000000000002c908  /system/lib64/libEGL.so (android::Loader::open(android::egl_connection_t*)+1856) (BuildId: b7186a1c019a16e67586e308a852acfc)
+F/DEBUG   (  677):       #04 pc 0000000000021e58  /system/lib64/libEGL.so (android::egl_init_drivers()+84) (BuildId: b7186a1c019a16e67586e308a852acfc)
+F/DEBUG   (  677):       #05 pc 0000000000022184  /system/lib64/libEGL.so (eglGetDisplay+28) (BuildId: b7186a1c019a16e67586e308a852acfc)
+F/DEBUG   (  677):       #06 pc 000000000070d340  /system/bin/surfaceflinger (android::renderengine::skia::SkiaGLRenderEngine::create(android::renderengine::RenderEngineCreationArgs const&)+96) (BuildId: 3ed621ccc5d14267dc403b23222b21f3)
+
+--- 属性与实现件对不上（run1 现场）---
+VM 实测: [ro.hardware.egl]: [adreno]  [ro.hardware.vulkan]: [adreno]  [ro.board.platform]: [canoe]
+官方基料 out/roms/oneplus/15r/16.0.10.500_EX01/super/unpack_vendor/build.prop:
+
+  127:ro.hardware.vulkan=adreno
+  128:ro.hardware.egl=adreno
+装配树 out/devices/oneplus/15r/16.0.10.500_EX01/vendor/build.prop 第 128 行同值（基线未覆盖，直接透传）。
+而 /vendor/lib64/egl 只有: libEGL_meow.so  libEGL_mesa.so  libGLESv1_CM_{meow,mesa}.so  libGLESv2_{meow,mesa}.so
+（无 libEGL_adreno.so）→ libEGL 的 Loader::open 按 ro.hardware.egl 拼名字找不到实现，
+  走 __android_log_assert → abort（backtrace #03 Loader::open+1856、#06 SkiaGLRenderEngine::create+96）。
+
+########## 二、run2：补 egl=mesa 后引导完成，但屏幕全黑、UI 进程崩溃循环 ##########
+--- qemu.log（第二轮，共 89109 行）：SF 崩溃 0 次、critical process 0 次、引导完成 ---
+[   52.684070][  T252] logd: LogFlowCtrl is release version
+  grep -cE "Service 'surfaceflinger'.*received signal" = 0
+  grep -cE 'critical process' = 0
+
+--- 宿主抓帧（websocket 5913）：连续三帧全零 ---
+engine/out/tmp/15r-desktop-pass.png 1280x2800 bpp=32 平均亮度=0.0 峰值=0
+engine/out/tmp/15r-shot1.png 1280x2800 bpp=32 平均亮度=0.0 峰值=0
+engine/out/tmp/15r-shot2.png 1280x2800 bpp=32 平均亮度=0.0 峰值=0
+engine/out/tmp/15r-shot3.png 1280x2800 bpp=32 平均亮度=0.0 峰值=0
+boot_check.py 判据输出：
+[shot] engine/out/tmp/15r-desktop-pass.png 1280x2800 bpp=32 平均亮度=0.0 峰值=0
+[fail] 引导完成但截图全黑（平均亮度=0.0 峰值=0）
+
+--- logcat（第二轮，22962 行）：崩溃主体全是 UI 进程，断言只有一条 ---
+Abort message 计数: 257 × "Assertion failed: !gpuCount"
+崩溃主体计数:     105 × com.oplus.battery / 84 × com.android.launcher / 67 × com.android.systemui
+ActivityManager 侧（节选）:
+15000:I/ActivityManager(  895): Process com.android.launcher (pid 26075) has died: fg  BFGS
+15171:I/ActivityManager(  895): Process com.android.systemui (pid 26003) has died: pers PERU
+14337:I/ActivityManager(  895): Process com.oplus.battery (pid 25901) has died: vis IMPF
+
+--- 断言现场（第一条，logcat 行 5~30）---
+--------- beginning of crash
+F/DEBUG   (27005): tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+F/DEBUG   (27005): Abort message: 'Assertion failed: !gpuCount'
+F/DEBUG   (27005):       #00 pc 000000000008a68c  /apex/com.android.runtime/lib64/bionic/libc.so (abort+160) (BuildId: 724d61dbc91284bfe4c5a68902c16928)
+F/DEBUG   (27005):       #01 pc 00000000008fdfc0  /apex/com.android.art/lib64/libart.so (art::Runtime::Abort(char const*)+1004) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+F/DEBUG   (27005):       #02 pc 000000000001654c  /apex/com.android.art/lib64/libbase.so (android::base::SetAborter(std::__1::function<void (char const*)>&&)::$_0::__invoke(char const*)+80) (BuildId: 4d7605789d21176764345a0353194396)
+F/DEBUG   (27005):       #03 pc 000000000000d2b4  /system/lib64/liblog.so (__android_log_assert+292) (BuildId: fca6ece31334e682d0eb6ac8c8b9f2b3)
+F/DEBUG   (27005):       #04 pc 00000000005cc160  /system/lib64/libhwui.so (void std::__1::__call_once_proxy[abi:nn200000]<std::__1::tuple<android::uirenderer::renderthread::VulkanManager::initialize()::$_0&&>>(void*) (.__uniq.192405051647925496281077346275335259674.llvm.4419004653634841480)+3696) (BuildId: 58996ec5ec70a88004de37ccc56d0f93)
+F/DEBUG   (27005):       #05 pc 000000000008cc00  /system/lib64/libc++.so (std::__1::__call_once(unsigned long volatile&, void*, void (*)(void*))+180) (BuildId: ada37e5198285720b02f7d77fd27626c7782fe29)
+F/DEBUG   (27005):       #06 pc 000000000041fea8  /system/lib64/libhwui.so (android::uirenderer::renderthread::RenderThread::requireVkContext()+160) (BuildId: 58996ec5ec70a88004de37ccc56d0f93)
+F/DEBUG   (27005):       #07 pc 00000000005c7bfc  /system/lib64/libhwui.so (android::uirenderer::skiapipeline::SkiaVulkanPipeline::setSurface(ANativeWindow*, android::uirenderer::renderthread::SwapBehavior)+100) (BuildId: 58996ec5ec70a88004de37ccc56d0f93)
+F/DEBUG   (27005):       #08 pc 00000000003817c8  /system/lib64/libhwui.so (android::uirenderer::renderthread::CanvasContext::setupPipelineSurface()+76) (BuildId: 58996ec5ec70a88004de37ccc56d0f93)
+F/DEBUG   (27005):       #09 pc 00000000003816e0  /system/lib64/libhwui.so (android::uirenderer::renderthread::CanvasContext::setSurface(ANativeWindow*, bool)+188) (BuildId: 58996ec5ec70a88004de37ccc56d0f93)
+
+--- HWC 侧：SF 每轮只交给 composer 空图层集（40 次）---
+I/drmhwc  (  618): No layers to present.
+I/drmhwc  (  618): No layers to present.
+I/drmhwc  (  618): No layers to present.
+I/drmhwc  (  618): No layers to validate.
+I/drmhwc  (  618): No layers to validate.
+
+--- guest 侧 screencap 挂死（hvc7 事件通道回显，节选自 channels/event.sock.log）---
+{"data":"screencap /data/local/tmp/sc.raw; ls -l /data/local/tmp/sc.raw\r\r\n","type":"shell_output"}
+{"detail":"","for":"shell","ok":true,"type":"ack"}   ← 之后无任何输出，命令一直不返回
+（SF 侧对应线程：/proc/628/task 里有 ScreenShotThrea、presentFence；Scheduler 每帧报
+  `E/Scheduler: trackPendingFrame: Invalid present fence`）
+
+--- 属性现场（第二轮 VM 内实测）---
+[ro.hardware.vulkan]: [adreno]      [ro.hwui.use_vulkan]: [true]
+[init.svc.vendor.graphics.allocator.minigbm_upstream]: [running]
+[init.svc.vendor.hwcomposer-3.drm_upstream]: [running]
+官方 vendor build.prop 第 45 行: ro.hwui.use_vulkan=true
+本树 /vendor/lib64/hw 的 Vulkan 模块只有: vulkan.lvp_mesa3d.so  vulkan.mali.so  vulkan.pastel.so  vulkan.virtio.so
+（无 vulkan.adreno.so）→ libhwui 的 SkiaVulkanPipeline 取不到 GPU，ColorOS 的
+  VulkanManager::initialize() 直接 __android_log_assert("!gpuCount")。
+
+--- 免重编旁证：同一实例上把 hwui 切回 GL 立刻出画 ---
+$ adb -s 127.0.0.1:5911 shell 'setprop debug.hwui.renderer skiagl; getprop debug.hwui.renderer; am kill com.android.launcher'
+skiagl
+$ python3 core/host/daemon/tools/vnc_grab.py 5913 engine/out/tmp/15r-skiagl.png 25
+engine/out/tmp/15r-skiagl.png 1280x2800 bpp=32 平均亮度=0.6 峰值=255
+$ python3 core/host/daemon/tools/vnc_grab.py 5913 engine/out/tmp/15r-skiagl2.png 25   # 20 s 后再抓
+engine/out/tmp/15r-skiagl2.png 1280x2800 bpp=32 平均亮度=64.2 峰值=255
+（0.6 那一帧是 launcher 刚被杀、桌面尚未重绘的中间态；64.2 已是完整桌面。）
+
+--- 取证通路（与 oriole #150 的关键差别）---
+本机 hvc7 与 adb 都可用：adb connect 127.0.0.1:5911 后必须带 -s 127.0.0.1:5911。
+不带 -s 会读到宿主机 USB 上挂着的真机 gold（`adb devices -l` 显示 product:gold model:2312DRAABC），
+本轮一度把它的 sys.boot_completed=1 当成 VM 的引导结论，已纠正。
+
+--- 附图 ---
+desktop-black-run2.png = run2 的全黑帧（1280x2800，平均亮度 0.0/峰值 0，与 15r-shot1.png 同一帧）。

@@ -1,0 +1,74 @@
+# log-fail.txt — 一条「漏查分区就下结论」的完整记录
+
+本条目第一版给错了结论，这里是失败路径与反证，供后续同类排查直接对照。
+
+## 错误结论（2026-11-02 第一版，已被推翻）
+
+> 「这台固件的 `/product/data-app` 只有 40 项，镜像里本来就没有拼多多/快手/淘宝；
+> 真机上它们是小米应用商店联网装的，云机缺的是「联网 + 小米账号 + 从商店下载」这一步。」
+
+**错在取样范围**：只扫了 `super.img` 内的 8 个逻辑分区（system / system_ext / product /
+vendor / odm / vendor_dlkm / odm_dlkm / mi_ext）和 `images/userdata.img`，
+**完全没有想到厂商固件还有 `cust.img` 这种 super 之外的独立镜像**。
+
+## 导致误判的三个假信号
+
+1. **`/product/data-app` 正好 40 项，且 `preinstall_history` 也是 40 行**
+   → 看起来「预装名单=40，机制跑通，名单里没有」。实际这是 **product 分区的那一套预装**
+   （MIUI 自家可卸载应用），与 cust 分区那一套**互不相干**，是两套并行机制。
+2. **真机上这些包 `installerPackageName=com.xiaomi.market`**
+   → 看起来「是用户从商店装的」。实际 `PreInstallApp` 调 PackageInstaller 时装源就标成
+   market，**预装与商店下载在这个字段上无法区分**。
+3. **`codePath=/data/app/~~xxx` + `firstInstallTime=2010-01-01 08:06:2x`**
+   → 与 `com.miui.home` 的 `08:06:13` 同批。第一版把「同批」解释成「首启时联网批量下载」，
+   实际正是「首启时从 cust 分区批量安装」，反而支持「内置」——**证据读反了**。
+
+## 反证：`cust.img` 一直躺在固件包里
+
+```
+$ tar -tzvf gold_images_*.tgz | grep "images/cust.img"
+-rw-r--r--  0 builder builder 1446093152  7 15 23:18 .../images/cust.img
+$ file cust.img
+Android sparse image, version: 1.0, Total of 353280 4096-byte output blocks in 27 input chunks.
+```
+
+`01_unpack` 的产出只列了两项（`out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/.unpacked.json`）：
+
+```
+"files": ["super.img", "vendor_boot.img", "super/mi_ext_a.img", "super/odm_dlkm_a.img",
+          "super/product_a.img", "super/system_a.img", "super/system_dlkm_a.img",
+          "super/system_ext_a.img", "super/vendor_a.img", "super/vendor_dlkm_a.img"]
+```
+
+**cust.img 不在其中** —— 它从解包阶段就被丢掉了，后面所有阶段自然都不认识它。
+
+## 云机 vs 真机的硬对比
+
+```
+真机: cust -> /dev/block/sdc56
+      /dev/block/sdc56 on /cust type erofs (ro,seclabel,relatime,…)
+      /cust/app/customized/  15 个 partner-*.apk
+云机: /dev/block/by-name/   BIOS_a BIOS_b EFI EFI_a EFI_b boot_a boot_b firmware
+                            grub_boot_a grub_boot_b metadata misc persist super vdc
+                            ↑ 没有 cust
+      ls /cust             （空）
+```
+
+## 教训（写进流程）
+
+1. **「镜像里有没有」的判据必须覆盖固件包里的每一个 `images/*.img`**，
+   先 `tar -tzvf | grep images/` 列全，再逐个定性（super 内的逻辑分区只是其中一部分）；
+2. **`.unpacked.json` 是「我们取了什么」，不是「固件有什么」**——排查缺失必须回到 tgz 清单；
+3. `installerPackageName=com.xiaomi.market` **不能**区分「预装」与「商店下载」
+   （`PreInstallApp` 也走这个 installer），要结合 `cust`/`data-app` 名单一起判；
+4. 预装是**两套并行机制**：`/product/data-app`（MIUI 自家，`preinstall_history` 记账）
+   与 `/cust/app/customized`（partner 推广应用，`/cust/cn/customized_applist` 记账），
+   查一套查不到就去查另一套。
+
+## 附：本次踩到的工具坑
+
+- 本机没有 `simg2img`；`cust.img` 是 sparse（`0xED26FF3A`），
+  用自写的 `out/tmp/cust/unsparse.py`（28 字节 file header + 12 字节 chunk header，
+  处理 RAW/FILL/DONT_CARE/CRC32 四种 chunk）转 raw，1 446 934 880 字节，结果可被
+  `dump.erofs` 正常识别；
+- `file` 对 EROFS 报 `data`，不报文件系统类型，别据此判「不是文件系统」。

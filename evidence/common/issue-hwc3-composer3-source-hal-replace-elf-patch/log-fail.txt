@@ -1,0 +1,23 @@
+=== 改造前：07_build_vendor/assemble.go 与 elfcompat.go 对预编译 hwc3-service.drm 硬编码 9 段 AArch64 机器码补丁 ===
+
+[engine/build/stages/07_build_vendor/assemble.go:200-205]
+	// HWC3 (drm_hwcomposer) 显示模式与广色域收口：过滤 virtio-gpu 冗余 VESA 桌面分辨率，
+	// 合成 60Hz/120Hz/90Hz 同组高刷配置并消除运行态 KMS modeset 阻塞，同时补齐
+	// NATIVE/SRGB/DISPLAY_P3 广色域模式上报。
+	if err := reconcileVendorHwcDisplayModes(plan, stdout); err != nil {
+		return nil, err
+	}
+
+[engine/build/stages/07_build_vendor/elfcompat.go:1263-1505]
+// patchDrmHwc3DisplayConfig 按 vendorDisplayConfig 原地修补 android.hardware.composer.hwc3-service.drm。
+func patchDrmHwc3DisplayConfig(path string, cfg vendorDisplayConfig) (bool, error) {
+    // 1. HwcDisplay::GetColorModes: 硬编码替换 8 条 AArch64 指令
+    // 2. HwcDisplay::GetRenderIntents: 硬编码替换 9 条 AArch64 指令
+    // 3. ComposerClient::getDataspaceSaturationMatrix: 硬编码替换 5 条 AArch64 指令
+    // 4. DrmConnector::UpdateModes: 硬编码替换 29 条 AArch64 指令（仅限最多 3 档刷新率、写死寄存器 x24/w9/w10/w11/w12）
+    // 5. DrmAtomicStateManager::CommitFrame: 硬编码替换 8 条 AArch64 指令
+    // 6. HwcDisplay::QueueConfig: 硬编码替换 10 条 AArch64 指令
+    // 7. ComposerClient::setActiveConfigWithConstraints: 硬编码替换 6 条 AArch64 指令
+    // 8a/8b. ComposerClient::getDisplayConfigurations / getDisplayAttribute: 硬编码栈偏移 [sp, #0xc] / [sp, #0x14] 注入 float32 DPI
+    // 9. HwcDisplay::GetDisplayIdentificationData: 硬编码结构体偏移 [x0, #0x98] + 20 条无栈汇编 stub + 128B EDID + 22 条 nop 覆盖原函数 74 条指令
+}

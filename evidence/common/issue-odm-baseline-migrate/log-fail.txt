@@ -1,0 +1,130 @@
+# 改前观测（#145：ss9380 / cph2797 / popsicle 的 odm 属性件仍是手抄副本）
+
+日期：2026-11-03
+环境：macOS 15.3.2 / engine 仓库 HEAD（#144 之后）；`dump.erofs` = erofs-utils，临时件落
+`engine/out/tmp/`（AGENTS.md 第 7 条）。
+
+以下命令的输出就是「改前状态」的可复跑证据。注意：#145 已把三份手抄副本删掉、基线加上
+`odm` 段，所以下面第 1 节要用 `git show HEAD:…`（HEAD 仍是改前提交）来复现。
+
+## 1. 三台的手抄副本与「基线没有 odm 段」
+
+```bash
+cd /Volumes/work/cloud-phone-hub/engine
+for p in oppo/cph2797 samsung/ss9380 xiaomi/popsicle; do
+  echo "--- $p"
+  git show HEAD:manifest/$p/odm/etc/build.prop | wc -l
+  git show HEAD:manifest/$p/odm/etc/build.prop | md5
+done
+```
+
+```
+--- oppo/cph2797
+     144
+fb4f67b29d2fcdc34993aaff881805a9
+--- samsung/ss9380
+      30
+bca0651007108c025720340ca4f19d76
+--- xiaomi/popsicle
+     500
+8ba9d7f1a1ed1293266023d551dc0da9
+```
+
+```bash
+for p in oppo/cph2797/baselines/CPH2797_16.0.8.301_EX01_A11_full.json \
+         samsung/ss9380/baselines/SM-S9380_3_20260813083211_652iw49crl_fac.json \
+         xiaomi/popsicle/baselines/popsicle_images_OS3.0.319.0.WPBCNXM_20260824.0000.00_16.0_cn_9d8daa8b5b.json; do
+  git show HEAD:manifest/$p | python3 -c "import json,sys;print(json.load(sys.stdin).get('odm'))"
+done
+```
+
+```
+None
+None
+None
+```
+
+改前 06 的取件链（`build/06_build_odm/plan.go` 的 `officialOdmProp`）是三级：
+`UnpackDir` 整树留档 → 逐件解留档 → **退回机型静态副本 + `[warn]`** → 都没有才报错。
+基线没有 `odm` 段 ⇒ 第一级不成立（`readOdmBaseline` 返回空）⇒ 永远走静态副本，
+所以三台的产物实际上就是这三份手抄件，任何人改厂商镜像都不会让构建变红。
+
+## 2. 「只抽 odm」这条路当时还不通：popsicle 的 keeps 写错就硬失败
+
+`RunVendor{Keeps:["odm.img"]}` 直接传清单里的镜像名，01 的 `requireKeeps` 会把它理解成
+「固件包里必须存在的物理镜像」：
+
+```bash
+cd /Volumes/work/cloud-phone-hub/engine/build
+go run ./tmp_probe_odm \
+  /Volumes/work/cloud-phone-hub/engine/roms/devices/xiaomi/popsicle/popsicle_images_OS3.0.319.0.WPBCNXM_20260824.0000.00_16.0_cn_9d8daa8b5b.tgz \
+  /Volumes/work/cloud-phone-hub/engine/out/tmp/probe-popsicle odm.img
+```
+
+```
+==> 保留镜像: super.img、vendor_boot.img、odm.img（命令行指定）
+...
+  super.img  100.0%  9.97 GiB
+ERR: 清单 rom.vendor.images 声明的 odm.img 不在固件包里: popsicle_images_OS3.0.319.0.WPBCNXM_20260824.0000.00_16.0_cn_9d8daa8b5b.tgz（清单写错，或换包后镜像改名）
+exit status 1
+```
+
+（`odm` 在 super 里是**逻辑分区**，tgz 里只有 `super.img`；改成 `Keeps:["super.img"]`
+让 `splitOnly()==nil` 全拆 liblp 才拿到 `super/odm_a.img`。这条坑写进了证据正文第三节。）
+
+## 3. cph2797 的「包残缺」假象：拿错了同名文件
+
+改前结论一度是「cph2797 固件包残缺、odm 取不到原件」。复跑一下当时用的那份：
+
+```bash
+python3 - <<'PY'
+import zipfile,os
+p='/Volumes/work/cloud-phone-hub/core/development/downloader/downloads/CPH2797_16.0.8.301_EX01_A11_full.zip'
+print('size',os.path.getsize(p))
+try: zipfile.ZipFile(p).infolist()
+except Exception as e: print('ERR',type(e).__name__,e)
+PY
+unzip -l "/Volumes/work/cloud-phone-hub/core/development/downloader/downloads/CPH2797_16.0.8.301_EX01_A11_full.zip"
+```
+
+```
+size 5726808020
+ERR BadZipFile File is not a zip file
+
+unzip:  cannot find zipfile directory in one of .../CPH2797_16.0.8.301_EX01_A11_full.zip or
+        .../CPH2797_16.0.8.301_EX01_A11_full.zip.zip, and cannot find ...zip.ZIP, period.
+```
+
+而 `engine/roms/devices/oppo/cph2797/` 下同名文件是完整的：
+
+```bash
+python3 - <<'PY'
+import zipfile,os
+p='/Volumes/work/cloud-phone-hub/engine/roms/devices/oppo/cph2797/CPH2797_16.0.8.301_EX01_A11_full.zip'
+print('size',os.path.getsize(p))
+for i in zipfile.ZipFile(p).infolist(): print('entry',i.filename,i.file_size,i.compress_type)
+PY
+```
+
+```
+size 9250896259
+entry payload.bin 9250889865 0
+entry payload_properties.txt 457 0
+entry care_map.pb 652 0
+entry META-INF/com/android/metadata.pb 989 0
+entry META-INF/com/android/metadata 1189 0
+```
+
+`payload.bin` 声明 9,250,889,865 B、实际长度一致 ⇒ 完整包。改前那次是把下载器目录里
+**中断下载**的 5.33 GiB 半成品当成固件包，`payload.bin` 读到 5,726,807,959 B 就断了，
+按 payload manifest 算出来 odm 的数据区（5.55–8.48 GiB）整段落在截断之外——现象像「镜像
+损坏」，实际是文件不完整。
+
+## 4. 改前的性质（为什么这是「静默漂移」而不是「构建失败」）
+
+- 三台 06 的产物就是机型目录里那份副本，厂商换版后 `ro.product.odm.*` / 指纹 / `ro.odm.build.*`
+  不会跟着变；
+- 本地增量（abilist、Dolby 开关）只体现在副本正文与注释里，没有「相对原件」的表达；
+- `vendor/build.prop` 早在 #139/#144 已收敛成「07 现解厂商原件 + 套基线」，odm 成了唯一例外。
+
+改后这三件事都进基线 `odm` 段，06 自己取原件；缺原件不再有兜底（见 log-pass.txt 第 5 节）。

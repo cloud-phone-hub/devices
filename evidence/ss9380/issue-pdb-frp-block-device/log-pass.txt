@@ -1,0 +1,27 @@
+# 通过态取证：PersistentDataBlockService 不再超时（2026-10-30，改之后）
+
+# 机型：samsung/pa3qzcx/pa3q:16/BP4A.251205.006/S9380ZCSDCZH1
+# 盘集：build8（patch.img sha256 e8a9bf71183e，片段第三段
+#       `(allow system_server_202504 misc_block_device_202504 (blk_file (...)))`）
+# 实例：index 2，adb 127.0.0.1:5919
+
+# ---- 1) 崩溃栈不再出现 ----
+$ adb shell logcat -b crash -d | grep -c 'PersistentDataBlockService init timeout'
+0
+
+# ---- 2) system_server 已经跑到 phase 500 之后 ----
+# 改之前死在 onBootPhase(500)；现在同一实例上能看到更后面的初始化，
+# 也第一次暴露出下一个卡点（WiFi 属性）：
+E AndroidRuntime: !@*** FATAL EXCEPTION IN SYSTEM PROCESS: Thread-18
+E AndroidRuntime: java.lang.RuntimeException: failed to set system property
+                  "vendor.wifi.dualconcurrent.interface" to "swlan0"
+
+# ---- 3) 承载块设备与软链就位 ----
+$ adb shell getprop ro.frp.pst
+/dev/block/bootdevice/by-name/frp
+$ adb shell ls -lZ /dev/block/bootdevice/by-name/frp /dev/block/vda3
+lrwxrwxrwx root root   u:object_r:block_device:s0       /dev/block/bootdevice/by-name/frp -> /dev/block/vda3
+brw-rw---- root system u:object_r:misc_block_device:s0  /dev/block/vda3
+
+# ---- 4) 采集时间 ----
+# 2026-10-31 00:5x（实例 index 2 启动后约 8 min）

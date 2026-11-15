@@ -1,0 +1,45 @@
+;; vendor.meizu.hardware.meizu_charging（MEIZU 充电 HAL，自研实现）的 SELinux 片段，
+;; 由 07_build_vendor 步骤 6 以 marker
+;;（;; cdh-patch-begin: vendor_sepolicy.cil@vendor.meizu.hardware.meizu_charging）
+;; 整块并入装配树 /vendor/etc/selinux/vendor_sepolicy.cil；同一 marker 重复执行幂等。
+;;
+;; 为什么在模块层：域、可执行标签、服务名标签都是这个 HAL 自身的契约，换机型不重写。
+;; 机型层原本只有 hal_meizu_charging_service 的类型与 system_server 的 find 授权
+;;（"无实体的占位标签"），自研实体接入后整段搬到这里，机型层同批删除。
+;;
+;; 与原厂的差异：原厂（202404 基线）另有 hal_meizu_charging_client /
+;; hal_meizu_charging_hwservice / sysfs 一整套授权，并有 rc 里的 chmod 段。本云实现
+;; 不读不写任何 Meizu 充电节点（只做内存回显），故一条都不搬；将来真接硬件时，
+;; sysfs//dev 标签属板级事实，按下放判据留机型层。
+;; 平台域一律用 {{vers}} 占位，由构建阶段按 plat_sepolicy_vers.txt 替换。
+
+;; ---- 1) 域与可执行标签 ----
+;; 进程域必须归入 domain 属性，否则 init 的 setexeccon 报 EINVAL、服务 fork 后 signal 6
+;;（同 vendor.meizu.hardware.aw_light 的说明）。
+(type hal_meizu_charging_default)
+(typeattributeset domain (hal_meizu_charging_default))
+(roletype object_r hal_meizu_charging_default)
+(type hal_meizu_charging_default_exec)
+(roletype object_r hal_meizu_charging_default_exec)
+
+;; ---- 2) init 启动链 ----
+;; rc 的 seclabel 让 init 显式换域；exec 标签由 07 步骤 6b 按同一行派生
+;;（/(vendor|system/vendor)/bin/hw/vendor.meizu.hardware.meizu_charging-service）。
+(allow init_{{vers}} hal_meizu_charging_default_exec (file (read getattr map execute open entrypoint)))
+(allow init_{{vers}} hal_meizu_charging_default (process (transition noatsecure siginh rlimitinh)))
+(allow hal_meizu_charging_default hal_meizu_charging_default_exec (file (read getattr map execute open entrypoint)))
+(dontaudit init_{{vers}} hal_meizu_charging_default (process (noatsecure)))
+
+;; ---- 3) AIDL 服务注册与查询 ----
+;; 服务名标签走同目录 vendor_service_contexts。
+(type hal_meizu_charging_service)
+(roletype object_r hal_meizu_charging_service)
+(typeattributeset service_manager_type (hal_meizu_charging_service))
+(allow hal_meizu_charging_default servicemanager_{{vers}} (binder (call transfer)))
+(allow hal_meizu_charging_default hal_meizu_charging_service (service_manager (add find)))
+(allow system_server_{{vers}} hal_meizu_charging_service (service_manager (find)))
+
+;; ---- 4) Binder 域间调用 ----
+;; 调用方是 Flyme framework（system_server，充电设置在 Settings/电池页）。
+(allow system_server_{{vers}} hal_meizu_charging_default (binder (call)))
+(allow hal_meizu_charging_default system_server_{{vers}} (binder (call)))

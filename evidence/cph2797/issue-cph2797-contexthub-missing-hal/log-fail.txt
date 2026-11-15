@@ -1,0 +1,51 @@
+# 失败现场：实例 14（system_server 主线程在 ContextHubSystemService.onBootPhase 死等 65 s）
+# 日志全量：out/core/daemon/runtime/cph2797_16.0.8.301_EX01/14/qemu.log
+
+# 计数（14/qemu.log）：
+#   grep -c "contexthub"                            -> 1200
+#   grep -c "WATCHDOG KILLING SYSTEM PROCESS"       -> 1
+#   grep -c "sysrq: Resetting"                      -> 1
+#   grep -c "boot_progress_enable_screen"           -> 0
+
+# 1）Watchdog 判死（堆栈已换到 contexthub，power.stats 位置已过）
+W Watchdog: *** WATCHDOG KILLING SYSTEM PROCESS: Blocked in handler on main thread (main) for 65s
+W Watchdog: main annotated stack trace:
+W Watchdog:     at jdk.internal.misc.Unsafe.park(Native Method)
+W Watchdog:     at java.util.concurrent.locks.LockSupport.park(LockSupport.java:221)
+W Watchdog:     at java.util.concurrent.FutureTask.awaitDone(FutureTask.java:500)
+W Watchdog:     at java.util.concurrent.FutureTask.get(FutureTask.java:190)
+W Watchdog:     at com.android.internal.util.ConcurrentUtils.waitForFutureNoInterrupt(ConcurrentUtils.java:86)
+W Watchdog:     at com.android.server.ContextHubSystemService.onBootPhase(ContextHubSystemService.java:52)
+W Watchdog:     at com.android.server.SystemServiceManager.startBootPhase(SystemServiceManager.java:328)
+W Watchdog:     at com.android.server.SystemServer.startOtherServices(SystemServer.java:3451)
+W Watchdog:     at com.android.server.SystemServer.run(SystemServer.java:1083)
+W Watchdog:     at com.android.server.SystemServer.main(SystemServer.java:713)
+[  134.506054][  T901] sysrq: Resetting
+
+# 2）官方声明存在、实现缺失（/odm 只给了 VINTF 片段与 rc，没有二进制）
+init: Parsing file /odm/etc/vintf/... （manifest/android.hardware.contexthub-service.tinysys.xml）
+init: Parsing file /odm/etc/init/android.hardware.contexthub-service.tinysys.rc...
+init: Could not start service 'vendor.contexthub-default' as part of class 'hal':
+      Cannot find '/vendor/bin/hw/android.hardware.contexthub-service.tinysys': No such file or directory
+servicemanager: Caller(pid=767,uid=1000,sid=u:r:system_server:s0) Tried to start aidl service
+                android.hardware.contexthub.IContextHub/default as a lazy service
+# 上面两条每秒重复一次（全日志 contexthub 相关 1200 行）
+
+# 3）VINTF 片段内容（v4），以及 rc 指向的二进制在 /odm 里并不存在
+$ cat /odm/etc/vintf/manifest/android.hardware.contexthub-service.tinysys.xml
+<manifest version="1.0" type="device">
+    <hal format="aidl">
+        <name>android.hardware.contexthub</name>
+        <version>4</version>
+        <fqname>IContextHub/default</fqname>
+    </hal>
+</manifest>
+
+$ cat /odm/etc/init/android.hardware.contexthub-service.tinysys.rc
+on post-fs-data
+    mkdir /data/vendor/chre 0770 context_hub context_hub
+
+service vendor.contexthub-default /vendor/bin/hw/android.hardware.contexthub-service.tinysys
+    class hal late_start
+    user context_hub
+    ...

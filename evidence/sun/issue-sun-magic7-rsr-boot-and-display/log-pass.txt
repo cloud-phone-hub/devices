@@ -1,0 +1,99 @@
+=== [Pass] 1280x2800 @ 560dpi (sw366dp) boot_completed=1 & display verification ===
+[  177.796515][  T252] logd: Skipping entries from sqemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.1 flush=0.0 update=0.0 end=0.0 总=2.2 ms
+[  177.814929][  T252] logd: Skipping entries from slow reader, qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.0 flush=0.0 update=0.0 end=0.0 总=2.0 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.0 flush=0.0 update=0.0 end=0.0 总=2.1 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.8 flush=0.0 update=0.0 end=0.0 总=3.0 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.2 flush=0.0 update=0.0 end=0.0 总=2.2 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.1 flush=0.0 update=0.0 end=0.0 总=2.2 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.3 read=3.1 flush=0.0 update=0.0 end=0.0 总=3.5 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.4 flush=0.0 update=0.0 end=0.0 总=2.5 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.8 flush=0.0 update=0.0 end=0.0 总=2.9 ms
+[  177.968840][  T252] logd: Skipping entries froqemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.2 read=2.8 flush=0.0 update=0.0 end=0.0 总=3.0 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.2 read=3.1 flush=0.0 update=0.0 end=0.0 总=3.3 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=3.5 flush=0.0 update=0.0 end=0.0 总=3.6 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.4 flush=0.0 update=0.0 end=0.0 总=2.5 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.4 flush=0.0 update=0.0 end=0.0 总=2.5 ms
+[  179.050739][  T252] logd: Skipping entries from slow reader, pid 519, fd 12, from LogBqemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.5 flush=0.0 update=0.0 end=0.0 总=2.7 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.2 read=4.7 flush=0.0 update=0.0 end=0.0 总=4.9 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.2 flush=0.0 update=0.0 end=0.0 总=2.3 ms
+[  179.094604][qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.4 flush=0.0 update=0.0 end=0.0 总=2.4 ms
+[  179.106484][  T252] logd: Skipping entries from slow reader, pid 519, fd 12, from LogBuffer::Prune()qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.0 flush=0.0 update=0.0 end=0.0 总=2.0 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.7 flush=0.0 update=0.0 end=0.0 总=2.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.1 flush=0.0 update=0.0 end=0.0 总=2.2 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.3 flush=0.0 update=0.0 end=0.0 总=2.4 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.1 flush=0.0 update=0.0 end=0.0 总=2.2 ms
+[ qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.2 flush=0.0 update=0.0 end=0.0 总=2.3 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=3.0 flush=0.0 update=0.0 end=0.0 总=3.1 ms
+[  179.240599][  T252] loqemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.0 flush=0.0 update=0.0 end=0.0 总=2.1 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.7 flush=0.0 update=0.0 end=0.0 总=2.9 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.3 flush=0.0 update=0.0 end=0.0 总=2.4 ms
+qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.5 flush=0.0 update=0.0 end=0.0 总=2.6 ms
+[  180.322454][  T252] logd: Skipping entries from slow reader, pid 519, fd 12, from LogBuffer::Prunqemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.2 flush=0.0 update=0.0 end=0.0 总=2.3 ms
+
+1
+Physical size: 1280x2800
+Physical density: 560
+[bpf.progs_loaded]: [1]
+[dalvik.vm.heapsize]: [512m]
+[dalvik.vm.heapstartsize]: [16m]
+[debug.c2.use_dmabufheaps]: [1]
+[init.svc.apexd-snapshotde]: [stopped]
+[init.svc_debug_pid.apexd-snapshotde]: []
+[msc.camera.timelapse1_show_videotime]: [true]
+[msc.config.eapsim]: [true]
+[msc.dynamic_display.capsule_support]: [1]
+[msc.launcher_gesture_snapshot_enable]: [false]
+[persist.sys.aps.defaultWidth]: [1280]
+[persist.sys.aps.firstboot]: [0]
+[persist.sys.rog.currentratio]: [1.0]
+[persist.sys.rog.height]: [2800]
+[persist.sys.rog.width]: [1280]
+[ro.boottime.apexd-snapshotde]: [15934352924]
+[ro.config.default_screensize]: [1280,2800]
+[ro.sf.lcd_density]: [560]
+[ro.sf.real_lcd_density]: [560]
+[ro.virtual_ab.userspace.snapshots.enabled]: [true]
+[service.bootanim.progress]: [0]
+[sys.aps.power_mode]: [2]
+[sys.aps.powermodefps]: [55]
+[sys.aps.support]: [34178049]
+[sys.aps.version]: [11.0.0.4]
+[sys.aps.wechat_game_fps]: [1]
+[sys.system_server.start_elapsed]: [23177]
+WINDOW MANAGER DISPLAY CONTENTS (dumpsys window displays)
+  Display: mDisplayId=0 (organized)
+    init=1280x2800 560dpi mMinSizeOfResizeableTaskDp=220 cur=1280x2800 app=1280x2800 rng=1280x1280-2800x2800
+    deferred=false mLayoutNeeded=true
+  mLastOrientationSource=WindowedMagnification:0:31@136902590
+  deepestLastOrientationSource=ActivityRecord{205946269 u0 com.hihonor.android.launcher/.unihome.UniHomeLauncher t2}
+  overrideConfig={1.0 460mcc1mnc [zh_CN_#Hans] ldltr sw366dp w366dp h800dp 560dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1280, 2800) mAppBounds=Rect(0, 0 - 1280, 2800) mMaxBounds=Rect(0, 0 - 1280, 2800) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0 mPopOverMode=undefined} suim:1 fontWeightScale:100 changeUserFlag:0 changeUiModeFlag:0 fullScreenVideoFlag:0 splitScreenState:0 landScapeFreeformFlag:1 hoverMode:0 changeIconStyleFlag:0 changeThemeStyleFlag:0 transparentMode:2097152 s.13 fontWeightAdjustment=0}
+  ignoreOrientationRequest=false
+  mLayoutSeq=120
+  mCurrentFocus=Window{5676a4f u0 com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher}
+  mFocusedApp=ActivityRecord{205946269 u0 com.hihonor.android.launcher/.unihome.UniHomeLauncher t2}
+
+  mHoldScreenWindow=null
+  mObscuringWindow=Window{3503460 u0 com.android.systemui.wallpapers.ImageWallpaper}
+  mLastWakeLockHoldingWindow=null
+
+
+=== 7 & 8. 注入 vendorcountry=porsche/normal devmodel=PTP-N59 并屏蔽 /vendor/app 后 ===
+[    0.000000][    T0] Kernel command line: ... vendorcountry=porsche/normal devmodel=PTP-N59 androidboot.product.hardware.sku=PTP-N59
+[    8.211242][    T1] libhwcust_init: vendor_country=porsche/normal
+[    8.232424][    T1] libhwcust_init: get product name from oeminfo: PTP-N59
+[    8.262165][    T1] libhwcust_init: product_path=/product_h/hn_oem/PTP-N59
+[    8.040300][    T1] init 22: GetCfgDirRealPolicyValue: custPolicyDirs: /system/magic/base:/system/magic/oversea:/system/magic/oversea_honor:/vendor/etc:/odm/etc:/product_h/etc:/product_h/region_comm/oversea:/preas/oversea:/product_h/hn_oem/PTP-N59:/preload/PTP-N59/porsche/normal:/cust/global:/cust/def/normal:/version/cust/porsche/normal:/product_h/special_cust/PTP-N59/porsche/normal:/version/special_cust/PTP-N59/porsche/normal
+boot_completed=1
+vendor=porsche country=normal oemName=PTP-N59
+model=PTP-N59 marketing_name=PORSCHE DESIGN HONOR Magic7 RSR
+fingerprint=HONOR/PTP-N59/HNPTPX:16/HONORPTP-N59/10.0.0.166C721E8R3P3:user/release-keys
+cust_service.done=true
+total_packages=334
+package:/product_h/region_comm/oversea/app/HnCamera2/HnCamera2.apk=com.hihonor.camera
+package:/product_h/region_comm/oversea/app/Gallery2/Gallery2.apk=com.hihonor.photos
+package:/product_h/region_comm/oversea/app/HnHealthApp/HnHealthApp.apk=com.hihonor.health
+package:/product_h/region_comm/oversea/app/HonorWallet/HonorWallet.apk=com.hihonor.wallet
+package:/product_h/region_comm/oversea/app/HnRecordAssistant/HnRecordAssistant.apk=com.hihonor.recordassistant
+package:/product_h/region_comm/oversea/app/HnOffice/HnOffice.apk=com.hihonor.hnoffice
+package:/version/cust/app/HnCallRecorder/HnCallRecorder.apk=com.hihonor.phone.recorder
+package:/product_h/region_comm/oversea/app/MagicHome/MagicHome.apk=com.hihonor.magichome

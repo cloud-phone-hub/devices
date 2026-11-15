@@ -1,0 +1,21 @@
+# Wi-Fi 开机引导：sys.boot_completed=1 之后打开 Wi-Fi 并接入 CDH-A。
+#
+# 云机出厂 data 镜像里 Settings.Global.WIFI_ON=0（真机由开机向导置 1），所以
+# wlan0 恒 DOWN、"Wifi is disabled"，活动网络只剩 mgmt0(Ethernet) 或 emulated RIL
+# （ccmni2，slirp），与真机的 WIFI/wlan0 形态不一致，agent 也连不上检查服务。
+# 详见 /vendor/bin/cph-wifi-bootstrap 头部注释与
+# engine/evidence/gold/issue-gold-wifi-disabled/solution.md。
+#
+# `cmd wifi …` 走 binder 调 system_server（uid 0 即 privileged shell），不需要额外
+# capabilities；必须带 disabled，否则 init 在 main 阶段就拉起（那时 WifiService
+# 还没起），boot_completed 的再次触发会被 "already running" 忽略。
+service vendor.cph_wifi_bootstrap /system/bin/sh /vendor/bin/cph-wifi-bootstrap
+    class main
+    user root
+    group root
+    seclabel u:r:pioneer:s0
+    oneshot
+    disabled
+
+on property:sys.boot_completed=1
+    start vendor.cph_wifi_bootstrap

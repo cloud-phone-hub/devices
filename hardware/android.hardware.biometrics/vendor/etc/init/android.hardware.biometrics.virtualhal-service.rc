@@ -1,0 +1,17 @@
+# engine/vendor 自研虚拟生物识别控制平面（IVirtualHal）：Flyme 的 system_server 会
+# 按名同步取这两个 unstable 服务，取不到即每秒重试（日志里各 1472 条）。
+# 两接口不进 FCM，故只注册服务、不写 VINTF 片段；两者分进程，各自落在 plat 已预留的
+# hal_fingerprint_service / hal_face_service 服务标签对应的域里。
+service vendor.fingerprint-virtualhal /vendor/bin/hw/android.hardware.biometrics.fingerprint-virtualhal-service
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_fingerprint_default:s0
+    interface aidl android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual
+
+service vendor.face-virtualhal /vendor/bin/hw/android.hardware.biometrics.face-virtualhal-service
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_face_default:s0
+    interface aidl android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual

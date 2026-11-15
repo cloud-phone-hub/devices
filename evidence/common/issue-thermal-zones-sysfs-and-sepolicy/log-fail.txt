@@ -1,0 +1,89 @@
+=== Real Device (ec519c7d513a3ad3, run-00174) powerManager ===
+{
+  "coolingDeviceCount": 133,
+  "hasHardwareThermalZones": true,
+  "isDeviceIdleMode": false,
+  "isInteractive": true,
+  "isPowerSaveMode": false,
+  "isSustainedPerformanceModeSupported": false,
+  "thermalStatus": 1,
+  "thermalStatusNormal": true,
+  "thermalZoneCount": 31,
+  "thermalZonesSample": [
+    {
+      "node": "thermal_zone0",
+      "type": "sc-cp-standalone"
+    },
+    {
+      "node": "thermal_zone1",
+      "type": "mtk-master-charger"
+    },
+    {
+      "node": "thermal_zone10",
+      "type": "mtktspmic"
+    },
+    {
+      "node": "thermal_zone11",
+      "type": "mtktsbattery"
+    },
+    {
+      "node": "thermal_zone12",
+      "type": "mtktsAP"
+    },
+    {
+      "node": "thermal_zone13",
+      "type": "mtktsbtsmdpa"
+    },
+    {
+      "node": "thermal_zone14",
+      "type": "mtktspa"
+    },
+    {
+      "node": "thermal_zone15",
+      "type": "mtktscharger"
+    },
+    {
+      "node": "thermal_zone16",
+      "type": "tzimgs0"
+    },
+    {
+      "node": "thermal_zone17",
+      "type": "tzimgs1"
+    },
+    {
+      "node": "thermal_zone18",
+      "type": "tzimgs2"
+    },
+    {
+      "node": "thermal_zone19",
+      "type": "tzimgs3"
+    },
+    {
+      "node": "thermal_zone2",
+      "type": "mtk-slave-charger"
+    },
+    {
+      "node": "thermal_zone20",
+      "type": "tzimgs4"
+    },
+    {
+      "node": "thermal_zone21",
+      "type": "tzimgs5"
+    }
+  ]
+}
+
+=== Cloud Device Before Fix (df809591a4e085ae-cloud, run-00230) scorecard F & powerManager ===
+goldScorecard F: {"F1_battery5000MahLiPolyAndNotConstant": true, "F2_thermalZonesPresentInSysfs": false}
+{
+  "coolingDeviceCount": 0,
+  "hasHardwareThermalZones": false,
+  "isDeviceIdleMode": false,
+  "isInteractive": true,
+  "isPowerSaveMode": false,
+  "isSustainedPerformanceModeSupported": false,
+  "thermalStatus": 0,
+  "thermalStatusNormal": true,
+  "thermalZoneCount": 0,
+  "thermalZonesSample": []
+}

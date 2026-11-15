@@ -1,0 +1,19 @@
+=== [1] 构建产物加载（engine/out/tmp/batch3-build.log） ===
+==> [3/6] build_vendor (07_build_vendor)
+    编译产物: out/vendor/android15（... android.hardware.audio@default 4 项、... android.hardware.boot@default 3 项、... android.hardware.memtrack@default 3 项、android.hardware.neuralnetworks@default 3 项、android.hardware.power@default 3 项、... android.hardware.soundtrigger3@default 3 项、... android.hardware.usb@default 6 项 ...）；out/vendor/android15/mtk（android.hardware.radio@mtk 4 项）
+    vintf-drop: android.hardware.neuralnetworks.xml（配合 etc/vintf/manifest/manifest_android.hardware.neuralnetworks.xml）
+
+=== [2] 运行态服务实测（dfc3bfc1d643037a-cloud，batch3-post-runtime.txt [8] 零崩溃） ===
+# 确认：IBootControl/default、IMemtrack/default、IPower/default、ISoundTriggerHw/default、IUsb/default、IUsbGadget/default、
+# media.aaudio、android.hardware.neuralnetworks.IDevice/mtk-neuron_shim（无多余 IDevice/default）与 22/22 Radio 占位均存在（missing=0）
+
+=== [3] aligner services 域对比结果（report/xiaomi/gold-aligner-20261114/diff/services.json） ===
+summary: {'identity': 0, 'capability': 59, 'state': 1, 'availability': 0, 'fatal': 59}
+serviceList.count: base=471 -> target=419（原 390 -> 419）
+pre=90 -> post=60, gone=30, added=0:
+  - 6 个通用 HAL：IBootControl/default、IMemtrack/default、IPower/default、ISoundTriggerHw/default、IUsb/default、IUsbGadget/default
+  - media.aaudio
+  - 22 个 Radio/MtkRadioEx 占位服务（IRadioIms/slot*、IRadio*/imsSlot*、IRadio*/se*、ISap/slot*、IMtkRadioEx*/slot*）
+  - 运行态未再出现 artd
+  - onlyCloud 仅余 2 项：IComponentStore/default1、IMlipayService/default
+  - 注：IDevice/mtk-neuron_shim 已现身，仅余 App binder 描述符列表差 1 项（base=['android.hardware.neuralnetworks.IDevice'] vs target=[]）

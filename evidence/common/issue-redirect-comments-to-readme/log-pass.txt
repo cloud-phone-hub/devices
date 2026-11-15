@@ -1,0 +1,223 @@
+# modules.redirect 注释外移 —— 通过侧取证（#137）
+
+取样时间：2026-11-03
+改动范围：12 份 `device.json`（`modules.redirect` 只留规则对象）+ 12 份机型 README
+（10 新建、2 追加）+ `engine/modules/cdh_redirect/README.md` 两处口径文字。
+改动前快照：`out/tmp/devicejson-backup-20261103/`。
+
+## 第 1 节：12 份清单的改动量
+
+脚本 `out/tmp/move_redirect_comments.py`（文本级按行删除，`--apply` 才写盘）：
+
+```console
+$ python3 out/tmp/move_redirect_comments.py --apply
+manifest/flyme/m22/device.json               删注释行 51 保留规则12 README追加
+manifest/google/oriole/device.json           删注释行 34 保留规则10 README新建
+manifest/nothing/3a/device.json              删注释行 47 保留规则10 README新建
+manifest/oneplus/15r/device.json             删注释行274 保留规则13 README新建
+manifest/oneplus/ace3/device.json            删注释行 39 保留规则10 README新建
+manifest/oppo/cph2797/device.json            删注释行 51 保留规则12 README新建
+manifest/oppo/pme110/device.json             无注释，跳过
+manifest/realme/rmx3823/device.json          删注释行 39 保留规则10 README新建
+manifest/realme/rmx5112/device.json          删注释行 39 保留规则10 README新建
+manifest/realme/rmx6688/device.json          删注释行 39 保留规则10 README新建
+manifest/samsung/ss9380/device.json          删注释行 51 保留规则12 README新建
+manifest/xiaomi/gold/device.json             删注释行 39 保留规则10 README追加
+manifest/xiaomi/popsicle/device.json         删注释行 67 保留规则16 README新建
+
+共 12 个机型已修改
+```
+
+合计删除 **770** 条字符串元素（与 `log-fail.txt` 第 1 节的改造前统计相等），
+135 条规则一条未动。
+
+## 第 2 节：逐份校验（JSON 合法 + 规则序列逐条相等）
+
+脚本对每份文件做了三重断言，任一不满足即中止：① 删后 JSON 可解析且无字符串元素；
+② 规则对象序列与改动前**逐条相等**；③ 除 `modules.redirect` 外整份 JSON deep-equal。
+
+```console
+$ python3 - <<'EOF'
+import json,glob
+ok=True
+for p in sorted(glob.glob('manifest/*/*/device.json')):
+    d=json.load(open(p)); red=((d.get('modules') or {}).get('redirect')) or []
+    cm=[x for x in red if isinstance(x,str)]; ru=[x for x in red if isinstance(x,dict)]
+    bak='out/tmp/devicejson-backup-20261103/'+p.replace('manifest/','').replace('/','__')
+    bru=[x for x in (json.load(open(bak)).get('modules') or {}).get('redirect',[]) if isinstance(x,dict)]
+    if cm or bru!=ru: ok=False
+    print('%-42s 字符串%d 规则%2d 与备份一致=%s' % (p,len(cm),len(ru),bru==ru))
+print('ALL OK' if ok else 'PROBLEM')
+EOF
+manifest/flyme/m22/device.json             字符串0 规则12 与备份一致=True
+manifest/google/oriole/device.json         字符串0 规则10 与备份一致=True
+manifest/nothing/3a/device.json            字符串0 规则10 与备份一致=True
+manifest/oneplus/15r/device.json           字符串0 规则13 与备份一致=True
+manifest/oneplus/ace3/device.json          字符串0 规则10 与备份一致=True
+manifest/oppo/cph2797/device.json          字符串0 规则12 与备份一致=True
+manifest/oppo/pme110/device.json           字符串0 规则 0 与备份一致=True
+manifest/realme/rmx3823/device.json        字符串0 规则10 与备份一致=True
+manifest/realme/rmx5112/device.json        字符串0 规则10 与备份一致=True
+manifest/realme/rmx6688/device.json        字符串0 规则10 与备份一致=True
+manifest/samsung/ss9380/device.json        字符串0 规则12 与备份一致=True
+manifest/xiaomi/gold/device.json           字符串0 规则10 与备份一致=True
+manifest/xiaomi/popsicle/device.json       字符串0 规则16 与备份一致=True
+ALL OK
+```
+
+## 第 3 节：popsicle 实跑 05——规则表字节数与「只剩规则」精确对上
+
+```console
+$ ./out/bin/cdh device build popsicle --only 05_build_vendor_boot
+    first-stage 模块: [first-stage] cdh_redirect.ko（42808 B） -> lib/modules/6.12.81-4k-cdh/
+                      + lib/modules/cdh_redirect.rules（1425 B）
+    缓存配方:   vboot-677118237f0b
+    缓存状态:   需重建（配方变化: vboot-5b620c132f4a -> vboot-677118237f0b）
+[ok] vendor_boot.img 打包完成: out/devices/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/img/vendor_boot.img（22409478 字节）
+```
+
+期望字节数（16 条规则 × `<type>  <from>  <to>\n`）：
+
+```console
+$ python3 - <<'EOF'
+import json
+red=json.load(open('manifest/xiaomi/popsicle/device.json'))['modules']['redirect']
+txt=''.join('%s  %s  %s\n'%(e['type'],e['from'],e['to']) for e in red)
+print('规则条数',len(red),'期望字节',len(txt.encode()),'行数',txt.count('\n'))
+EOF
+规则条数 16 期望字节 1425 行数 16
+```
+
+**1425 = 1425**：05 生成的 `cdh_redirect.rules` 只含规则行，一条注释都没残留。
+同时配方号 `vboot-5b620c132f4a` → `vboot-677118237f0b` 自动失效重打——`cdh_redirect`
+的规则内容在配方哈希里（`modules/cdh_redirect/README.md` 第 3 节的约定）。
+
+## 第 4 节：盘集刷新
+
+```console
+$ ./out/bin/cdh device build popsicle --only pack_vda
+    [skip] patch.img 已就位（384.0 MiB，内容一致）
+    [ok] out/dist/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/vda-info.txt / vda-recipe.txt
+    产物: out/dist/xiaomi/popsicle/OS3.0.319.0.WPBCNXM（vda.img 13.50 GiB，5 个分区已刷新）
+[ok] 已完成
+```
+
+`vendor_boot.img` 是独立分区，重打后由 `pack_vda` 重新拼进 `vda.img`；`patch.img`
+内容未变（本次没动 vendor/vendor_dlkm/odm），所以走 `[skip]`。
+
+## 第 5 节：单测与 13 机型清单解析
+
+```console
+$ cd engine/build && go test -count=1 ./05_build_vendor_boot
+ok      cloud-phone-hub/engine/build/05_build_vendor_boot       0.334s
+```
+
+`TestReadAssetRedirectFromDevice`（用内存构造的 `Comment` 条目断言渲染结果）仍通过
+——渲染器对字符串元素的兼容路径保留，只是清单不再使用。
+
+```console
+$ for d in flyme/m22 google/oriole nothing/3a oneplus/15r oneplus/ace3 oppo/cph2797 \
+           oppo/pme110 realme/rmx3823 realme/rmx5112 realme/rmx6688 samsung/ss9380 \
+           xiaomi/gold xiaomi/popsicle; do
+    ./out/bin/cdh device build ${d#*/} --dry-run --only 05_build_vendor_boot >/dev/null 2>&1
+    echo "$d rc=$?"
+  done
+flyme/m22 rc=0        google/oriole rc=1     nothing/3a rc=1
+oneplus/15r rc=0      oneplus/ace3 rc=0      oppo/cph2797 rc=0
+oppo/pme110 rc=0      realme/rmx3823 rc=0    realme/rmx5112 rc=0
+realme/rmx6688 rc=0   samsung/ss9380 rc=0    xiaomi/gold rc=0
+xiaomi/popsicle rc=0
+```
+
+`oriole` / `3a` 的 rc=1 与本次改动无关：两台各有多份清单，必须 `--manifest` 指定。
+加上参数后正常：
+
+```console
+$ ./out/bin/cdh device build oriole --dry-run --only 05_build_vendor_boot --manifest cp3a.261005.002.a1
+==> 设备: Pixel 6（google/oriole）
+==> 阶段(1): build_vendor_boot
+$ ./out/bin/cdh device build 3a --dry-run --only 05_build_vendor_boot --manifest B4.1-260810-1153
+==> 设备: Nothing Phone (3a)（nothing/3a）
+==> 阶段(1): build_vendor_boot
+```
+
+## 第 6 节：README 产出（popsicle 样例）
+
+```markdown
+# xiaomi/popsicle 机型层
+
+Xiaomi 17 Pro Max（`popsicle` / `canoe`）的机型层参数与说明。
+
+## modules.redirect（cdh_redirect 规则表）
+
+`device.json` 的 `modules.redirect` **只放规则对象**：分段标题与逐段说明统一记在
+本节，不写进数组——05 会把数组里的字符串元素原样渲染进 ramdisk 的
+`lib/modules/cdh_redirect.rules`，注释混在清单里既难读，也容易被误当规则。
+规则语法（`dir` / `file`、逆变换自动派生、顺序消歧）与注入路径见
+[`engine/modules/cdh_redirect/README.md`](../../../modules/cdh_redirect/README.md)。
+
+本机型共 **16** 条规则，顺序即匹配顺序（同一路径只应用最先命中的一条）。
+
+### 规则表
+
+| # | type | from | to |
+| ---: | --- | --- | --- |
+| 1 | `dir` | `/vendor/etc` | `/mnt/vendorpatch/vendor/etc` |
+...（共 16 行）
+
+### 原说明（含分段，按原数组顺序）
+
+下面是这些说明原先在 `device.json` 数组里的样子（也是删注释前 05 渲染出的
+`.rules` 全文）。现在数组只剩规则对象，05 渲染结果只保留 `dir` / `file` 行；
+语义与取舍以本节为准。
+
+```text
+# CDH 路径重定向规则 —— xiaomi/popsicle / 16.0.0 / lineage-23.2（内核 6.12）
+...
+# ---- /vendor：整棵子树的读入口 ----
+dir  /vendor/etc  /mnt/vendorpatch/vendor/etc
+...
+```
+```
+
+其它 11 份 README 同构（`gold` / `m22` 是追加在原「机型层」文档末尾，其余 10 份新建）。
+`oneplus/15r` 的「原说明」最长（274 行），内容全部保留。
+
+## 第 7 节：12 份 README 与 12 份清单的最终一致性
+
+```console
+$ for f in flyme/m22 google/oriole nothing/3a oneplus/15r oneplus/ace3 oppo/cph2797 \
+           realme/rmx3823 realme/rmx5112 realme/rmx6688 samsung/ss9380 xiaomi/gold \
+           xiaomi/popsicle; do
+    n=$(grep -c '^## modules.redirect' manifest/$f/README.md)
+    r=$(python3 -c "import json;d=json.load(open('manifest/$f/device.json'));x=d['modules']['redirect'];print(sum(1 for i in x if isinstance(i,dict)),sum(1 for i in x if isinstance(i,str)))")
+    echo "$f  节数=$n  规则/字符串=$r"
+  done
+flyme/m22  节数=1  规则/字符串=12 0
+google/oriole  节数=1  规则/字符串=10 0
+nothing/3a  节数=1  规则/字符串=10 0
+oneplus/15r  节数=1  规则/字符串=13 0
+oneplus/ace3  节数=1  规则/字符串=10 0
+oppo/cph2797  节数=1  规则/字符串=12 0
+realme/rmx3823  节数=1  规则/字符串=10 0
+realme/rmx5112  节数=1  规则/字符串=10 0
+realme/rmx6688  节数=1  规则/字符串=10 0
+samsung/ss9380  节数=1  规则/字符串=12 0
+xiaomi/gold  节数=1  规则/字符串=10 0
+xiaomi/popsicle  节数=1  规则/字符串=16 0
+```
+
+12 份 README 各有且仅有 1 个 `## modules.redirect（cdh_redirect 规则表）` 节；
+12 份清单的规则数合计 **12+10+10+13+10+12+10+10+10+12+10+16 = 135**，与 `log-fail.txt`
+第 1 节的 135 条一致；字符串元素 0 条。（`oppo/pme110` 不在表内：它没有 `modules` 段。）
+
+顺手修了模板带出的残句：`google/oriole` 第 3 行 `` Pixel 6（`oriole` / `oriole`） ``
+→ `` Pixel 6（`oriole`） ``（`device` 与 `board` 同值时去重），以及 `oneplus/15r` /
+`oneplus/ace3` 的 `device` 字段为空时生成的空代码块（详见 `log-fail.txt` 第 3 节）。
+
+## 第 8 节：索引登记
+
+- `engine/evidence/common/README.md`：头部「11 条」→「12 条」，条目表按编号顺序追加 #137；
+  备注的 `/vendor` 重定向一条改口径——规则表已从 `kernel/cdh_redirect.rules` 迁进
+  `device.json` 的 `modules.redirect`，且数组只放规则对象、说明在机型 README。
+- `engine/evidence/README.md`：`common/` 行 `11 | … #134` → `12 | … #134、#137`。

@@ -1,0 +1,19 @@
+# cdh：v4l2_codec2 store 的执行文件标签（由 07_build_vendor 并入装配树的
+# etc/selinux/vendor_file_contexts）。
+#
+# 07 的装配兜底只按目录给标签，bin/hw/ 下的非 audio/radio 二进制一律落到
+# vendor_file（非 exec_type）。init 在 exec 前的 entrypoint/execute 检查会直接
+# 拒绝，表现为 cannot execv 与 status 127，而不是 avc 之外的任何线索。
+#
+# 基底 vendor 策略里已有同族规则（android.hardware.media.c2-default-service、
+# android.hardware.media.omx@1.0-service、dolby c2-default-service 都落在
+# mediacodec_exec），v4l2 这条路径不在基线表里，故单独补。
+#
+# 类型与授权无需新增，都在基底策略里：
+#   (allow init_202404 mediacodec_exec (file (read getattr map execute open)))
+#   (allow mediacodec mediacodec_exec (file (read getattr map execute open entrypoint)))
+# 本文件只回答「哪个路径打哪个标签」。
+#
+# 插件与运行库（lib64/ 下）保持兜底的 vendor_file：机型层 sepolicy 片段已补
+# (allow mediacodec vendor_file (file (read getattr map open execute)))，dlopen 可用。
+/(vendor|system/vendor)/bin/hw/android\.hardware\.media\.c2@1\.2-service-v4l2-64  u:object_r:mediacodec_exec:s0

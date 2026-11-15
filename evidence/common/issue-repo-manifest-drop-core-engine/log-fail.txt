@@ -1,0 +1,44 @@
+# repo manifest 移除 core/engine #240 —— 迁移前记录（2026-11-15）
+
+## 1. default.xml 仍声明已迁走的项目
+
+```
+$ grep -n 'project path' manifest/default.xml
+<project path="skills" .../>
+<project path="build" .../>
+<project path="engine" .../>
+<project path="core/host/daemon" .../>
+<project path="core/development/device-checker" .../>
+<project path="core/development/downloader" .../>
+<project path="core/development/downloader2" .../>
+```
+
+但磁盘上：
+
+```
+$ ls core
+core/development/downloader  core/host/vpn
+$ du -sh core
+14G	core
+$ ls -a engine
+.git  .gitignore  out
+$ du -sh engine/out
+980G	engine/out
+```
+
+`core/host/daemon`、`core/development/device-checker` 已迁入 `agent/modules/`；
+`engine` 只剩 `.gitignore` 与 980 GB 构建产物；`core/development/downloader` 无代码引用。
+
+## 2. kernel.xml 仍指向 engine/
+
+```
+$ grep -n 'project path' manifest/kernel.xml
+<project path="engine/kernels/5.10" .../>
+...
+<project path="engine/kernels/patches" .../>
+<project path="engine/modules/kernelsu/source" .../>
+```
+
+内核源码与补丁集已随 #238 迁到 `devices/kernels`、KernelSU 源码在
+`devices/modules/kernelsu/source`；继续按 engine/ 声明会让 `repo sync` 把内容
+拉回旧路径，与现有目录结构冲突。

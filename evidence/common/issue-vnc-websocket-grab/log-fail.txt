@@ -1,0 +1,93 @@
+# log-fail：宿主侧「截图非黑」判据无可用工具（2026-11-04，逐机验收第 1 台 gold 时撞出）
+
+判据是「qemu.log 出现 sys.boot_completed=1 + websocket 抓帧非全黑」。gold 引导已经达成，
+但抓帧这一步连着失败四轮。以下都是当轮实际输出（临时脚本 `engine/out/tmp/ws_shot.py`）。
+
+--------------------------------------------------------------------------
+## 失败 0：仓库里根本没有可复用的抓帧脚本
+
+    $ grep -rn "RFB 003" --include=*.py --include=*.sh . | grep -v /out/
+    （无结果）
+
+唯一线索是 `core/host/daemon/Display.md:215`：
+
+    | M1 darwin 截图 | 历史尝试均失败（根因见 §2.5 修正），**已随 M2.2 一并解决**——VNC 帧缓存即可截图（out/tmp/vnc_grab.py） | ✅ |
+
+那份 `out/tmp/vnc_grab.py` 随 `out/tmp` 清理丢了——结论留下了，手段没留下。
+
+--------------------------------------------------------------------------
+## 失败 1：直连 TCP 5912（不走 websocket）拿到全黑
+
+`-display cgl-headless,gl=on,readback=on` 的帧只在 GL scanout 路径出，裸 TCP VNC 口
+连上后 ServerInit 正常、帧恒为 0。改走 websocket 口（vnc+1 = 5913）。
+
+--------------------------------------------------------------------------
+## 失败 2：误以为 `binary` 子协议每帧带 4 字节长度前缀
+
+首帧原样 dump 出来是 `\x82\x0c` + `RFB 003.008\n`——WS 帧载荷就是裸 RFB 字节，
+按「先读 4 字节长度再剥」去解析会把版本串吃掉：
+
+    RuntimeError: 不是 RFB: b'\x82\x0cRFB 003.00'
+
+--------------------------------------------------------------------------
+## 失败 3：WS 字节与 RFB 字节共用一个缓冲
+
+`Reader` 只有一个 `self.buf`：`read(12)` 在 buf 里已有 14 字节（2 字节帧头 + 12 字节载荷）
+时直接把前 12 字节当载荷返回，帧头漏进 RFB 流。
+
+--------------------------------------------------------------------------
+## 失败 4：RFB 初始化全过，但服务端一帧不回（本轮定位到的真卡点）
+
+`boot_wait.py` 的表象只是「截图失败」：
+
+    实例: /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/1  adb=5911 vnc=5912 ws=5913
+    日志: /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/1/qemu.log
+    [shot 重试 1] Traceback (most recent call last):
+      File "/Volumes/work/cloud-phone-hub/engine/out/tmp/ws_shot.py", line 225, in <module>
+        main()
+      File "/Volumes/work/cloud-phone-hub/engine/out/tmp/ws_shot.py", line 209, i
+    [shot 重试 2] Traceback (most recent call last):
+      File "/Volumes/work/cloud-phone-hub/engine/out/tmp/ws_shot.py", line 225, in <module>
+      File "/Volumes/work/cloud-phone-hub/engine/out/tmp/ws_shot.py", line 209, i
+    [shot 重试 3] Traceback (most recent call last):
+      File "/Volumes/work/cloud-phone-hub/engine/out/tmp/ws_shot.py", line 220, in <module>
+        main()
+        ~~~~^^
+      File "/Volumes/work/cloud-phone-hub/engine/out/tmp/ws
+    [fail] 截图失败
+
+修掉失败 2/3 之后，卡点变成 recv 超时（`read_raw_frame` 等第一条服务端消息）：
+
+    $ python3 ws_shot.py 5913 gold-probe.png 30
+    Traceback (most recent call last):
+      File ".../ws_shot.py", line 211, in main
+        pixels = read_raw_frame(r, width, height, bpp)
+      File ".../ws_shot.py", line 140, in read_raw_frame
+        msg = r.read(1)[0]
+      ...
+      File ".../ws_shot.py", line 57, in _fill_raw
+        chunk = self.sock.recv(65536)
+    TimeoutError: timed out
+
+逐帧探针（`engine/out/tmp/ws_probe.py`）打出握手全程，问题暴露在最后一行——
+`FramebufferUpdateRequest` 之后 15 秒 0 帧：
+
+    server 帧 opcode=2 len=12 payload=b'RFB 003.008\n'
+    securityTypes len=2 payload=0101
+    securityResult len=4 payload=00000000
+    serverInit len=28 payload=044009602018000100ff00ff00ff10080000000000000004
+    尺寸 1088x2400 bpp=32 depth=24 shift=[8, 0, 0]
+    名称 len=4，剩余缓冲=4
+    已发送 FramebufferUpdateRequest(full)，等待推帧…
+    recv 超时/错误：TimeoutError，重试
+    recv 超时/错误：TimeoutError，重试
+    recv 超时/错误：TimeoutError，重试
+    共 0 帧 / 0 字节
+
+两处错在同一行代码里：
+
+1. `struct.pack("!BBHHHH", 0, ...)` 的消息类型写成 **0**——0 是服务端方向的
+   `FramebufferUpdate`，客户端该发 **3**；QEMU 收到未知客户端消息不回。
+2. `shift=[8, 0, 0]` 是错的：`PIXEL_FORMAT` 里 trueColourFlag 之后**没有** 3 字节 pad，
+   `redMax` 紧跟其后，三个 shift 在整包第 14~16 字节（上面 hex 的 `10 08 00` = 16/8/0）。
+   按 `init[15:18]` 读会取到 `08 00 00`，通道索引随之错位。

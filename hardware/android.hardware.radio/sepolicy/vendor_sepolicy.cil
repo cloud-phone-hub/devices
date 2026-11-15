@@ -1,0 +1,36 @@
+;; cdh：自研 radio HAL（虚拟 RIL，dsds 双槽）的 SELinux 授权（由 07_build_vendor
+;; 并入装配树的 etc/selinux/vendor_sepolicy.cil）。
+;;
+;; 服务见本模块 vendor/etc/init/android.hardware.radio-service.rc：落基座自带的
+;; hal_radio_default 域，经 /dev/hvc4 与 host 侧 radio provider 收发快照/命令/短信，
+;; 为 slot1/slot2 注册 IRadio* + IRadioConfig/default。
+;;
+;; 平台 type 在 vendor CIL 中必须引用版本化影子名（plat_sepolicy_vers.txt=202404），
+;; 故用 {{vers}} 占位，由构建阶段替换；vendor_file / vendor_default_prop 是本文件
+;; 所在的 vendor 策略自有类型，直接引用。
+
+;; ---- 1) init 侧启动链 ----
+;; 基座只给了服务侧两条规则（exec entrypoint 与 hwservice find），缺 init 侧的
+;; domain transition：init 以 seclabel u:r:hal_radio_default:s0 起服务时无法换域，
+;; 进程以 127 退出（实测 permissive 下可 running，enforcing 下必崩）。
+(allow init_{{vers}} hal_radio_default_exec (file (read getattr map execute open entrypoint)))
+(allow init_{{vers}} hal_radio_default (process (transition noatsecure siginh rlimitinh)))
+
+;; ---- 2) AIDL 服务注册 ----
+;; 自研 radio HAL 要为 slot1/slot2 注册 IRadio* AIDL 服务（/dev/binder）。
+(allow hal_radio_default servicemanager_{{vers}} (binder (call transfer)))
+(allow hal_radio_default default_android_service_{{vers}} (service_manager (add find)))
+(allow hal_radio_default hal_radio_service_{{vers}} (service_manager (add find)))
+
+;; ---- 3) 运行库与厂商属性 ----
+;; vendor.ril.* 等由 host provider 在启动时下发。
+(allow hal_radio_default vendor_file (file (read getattr map open execute)))
+(allow hal_radio_default vendor_default_prop (file (read getattr map open)))
+
+;; ---- 4) 宿主通道 ----
+;; 虚拟 RIL 经 /dev/hvc4 与 host provider 收发（rc 注释里的「设备集成层遗留项」）。
+;; hvc 节点的运行时标签是 console_device（基座 vendor_file_contexts 的
+;; /dev/hvc[0-9]+ 正则），授权按类型给、不写路径：hvc 编号是板级布局，换板不吃这条。
+;; 注意这条对 console_device 是整类型授权，会让该域同时可达其它 hvc 节点。
+;; 实测 avc：denied { read write } name="hvc4" tcontext=u:object_r:console_device:s0
+(allow hal_radio_default console_device_{{vers}} (chr_file (ioctl read write getattr lock append map open watch watch_reads)))

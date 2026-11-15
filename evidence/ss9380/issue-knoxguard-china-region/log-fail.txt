@@ -1,0 +1,48 @@
+# 失败态：云机开机即被 KnoxGuard 锁屏（8135）
+
+## 1. guest 属性（adb 127.0.0.1:5911，实例 ss9380_S9380ZCSDCZH1 / index 4，boot 2026-08-12 17:08；停止实例前采集）
+  $ adb shell getprop ro.csc.country_code    -> （空行，属性未定义）
+  $ adb shell getprop knox.kg.state          -> Error
+  $ adb shell getprop sys.locksecured        -> true
+  $ adb shell getprop sys.boot_completed     -> 1
+  $ adb shell getprop ro.factory.factory_binary -> user
+  $ adb shell getprop ro.product.first_api_level -> 35
+
+## 2. 窗口焦点与锁屏
+  $ adb shell dumpsys window | grep mCurrentFocus
+    mCurrentFocus=Window{48e53df u0 Bouncer}
+
+## 3. KG 关键日志（从 runtime/.../4/qemu.log 原样摘录；行内混入的内核日志已去除）
+  08-12 17:07:55.457   720   720 E KG.IntegritySeUtil: Client Notfound : android.content.pm.PackageManager$NameNotFoundException: com.samsung.android.kgclient
+  08-12 17:08:26.315   720   720 I KG.SystemSeReceiver: onReceive android.intent.action.PACKAGE_CHANGED
+  08-12 17:08:26.331   720  5688 I KG.SystemIntentProcessor: handling package replaced or removed
+  08-12 17:08:26.346   720  5688 D KG.KGEventQueue: @queueIdle called
+  08-12 17:08:26.413   720   720 I KG.SystemSeReceiver: onReceive android.intent.action.PACKAGE_CHANGED
+  08-12 17:08:26.459   720  5718 I KG.SystemIntentProcessor: handling package replaced or removed
+  08-12 17:08:26.465   720  5718 D KG.KGEventQueue: @queueIdle called
+  08-12 17:08:33.526   720   720 I KG.SystemSeReceiver: onReceive android.intent.action.BOOT_COMPLETED
+  08-12 17:08:33.527   720  7288 I KG.SystemIntentProcessor: handling boot completed
+  08-12 17:08:33.536   720  7288 D KG.Utils: getStateAndSetToKGSystemProperty - knox.kg.state : Error
+  08-12 17:08:33.536   720  7288 D KG.SystemIntentProcessor: isSetupWizardFinished : true
+  08-12 17:08:33.537   720  7288 D KG.Utils: isOtpBitFusedWithActive - false
+  08-12 17:08:33.537   720  7288 D KG.Utils: isSingleOtpBitFused - false
+  08-12 17:08:33.537   720  7288 D KG.Utils: isSingleOtpBitFused - false
+  08-12 17:08:33.537   720  7288 I KG.IntegritySeUtil: checkKGClientIntegrity()
+  08-12 17:08:33.537   720  7288 I KG.IntegritySeUtil: kgState() : 5
+  08-12 17:08:33.540   720  7288 E KG.IntegritySeUtil: checkKGClientIntegrity Exception. android.content.pm.PackageManager$NameNotFoundException: com.samsung.android.kgclient
+  08-12 17:08:33.540   720  7288 E KG.IntegritySeUtil: isSystemApp NameNotFoundException : android.content.pm.PackageManager$NameNotFoundException: com.samsung.android.kgclient
+  08-12 17:08:33.540   720  7288 E KG.IntegritySeUtil: isEnabled NameNotFoundException : android.content.pm.PackageManager$NameNotFoundException: com.samsung.android.kgclient
+  08-12 17:08:33.540   720  7288 E KG.IntegritySeUtil: Client Notfound : android.content.pm.PackageManager$NameNotFoundException: com.samsung.android.kgclient
+  08-12 17:08:33.546   720  7288 D KG.IntegritySeUtil: checkSignatures : false
+  08-12 17:08:33.546   720  7288 D KG.IntegritySeUtil: isSystemApp : false
+  08-12 17:08:33.546   720  7288 D KG.IntegritySeUtil: isEnabled : false
+  08-12 17:08:33.546   720  7288 D KG.IntegritySeUtil: isValidVersion : true
+  08-12 17:08:33.552   720  7288 E KG.IntegritySeUtil: isKGComponentsEnabled error: com.samsung.android.kgclient
+  08-12 17:08:33.552   720  7288 D KG.IntegritySeUtil: isComponentEnabled : false
+  08-12 17:08:33.552   720  7288 D KG.Utils: getKGPolicyCompany
+  08-12 17:08:33.566   720  7288 I KG.KnoxGuardSeService: call registerUserPresentReceiver
+  08-12 17:08:33.566   720  7288 I KG.KnoxGuardSeService: call unregisterUserPresentReceiver
+  08-12 17:08:33.799   720  7288 D KG.KGEventQueue: @queueIdle called
+
+## 4. 截图
+  lock-screen-8135.png（VNC 直采，1440x3120："手机已锁定 (8135) / 由于Device Services在未经授权的情况下被卸载"）

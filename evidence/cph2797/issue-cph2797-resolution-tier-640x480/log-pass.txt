@@ -1,0 +1,36 @@
+# 通过现场：实例 16（全新 userdata，首开机 rc 自动钉分辨率档位 = 1）
+# 实例目录：out/core/daemon/runtime/cph2797_16.0.8.301_EX01/16/
+# 日志全量：同目录 qemu.log；以下命令输出取自 guest root shell
+
+# 1）置备脚本已跑完，并把档位写成 1（出厂默认是 2）
+$ getprop init.svc.auto_provision
+stopped
+$ settings get secure oplus_customize_screen_resolution_adjust
+1
+
+# 2）整机尺寸回到原生，且没有 override
+$ getprop sys.boot_completed
+1
+$ wm size
+Physical size: 1256x2760
+$ dumpsys display | grep -m1 mActiveModeId
+    mActiveModeId=1
+
+# 3）DRM 真正切到了 preferred 模式（不是上层 override）
+$ mount -t debugfs none /sys/kernel/debug
+$ grep -m1 crtc-pos /sys/kernel/debug/dri/0/state
+        crtc-pos=1256x2760+0+0
+
+# 4）焦点回到 launcher
+$ input keyevent 3
+$ dumpsys window | grep -m1 mCurrentFocus
+  mCurrentFocus=Window{ecc1731 u0 com.android.launcher/com.android.launcher.Launcher}
+
+# 5）VNC 取帧：满分辨率、桌面版式正常（画布宽按 16 对齐，1256 -> 1264）
+$ python3 .tmp/rfb_shot.py 127.0.0.1 5912 .tmp/cph16-home3.ppm 40
+ok 1264x2760 covered=3488640 px -> .tmp/cph16-home3.ppm
+
+# 对照失败现场（实例 15，同一套镜像、同一台机器，只差档位值）：
+#   wm size            640x480   -> 1256x2760
+#   mActiveModeId      4         -> 1
+#   crtc-pos           640x480   -> 1256x2760

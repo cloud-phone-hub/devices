@@ -1,0 +1,49 @@
+# 修复前日志（15R / CPH2769，实例 7，2026-11-03 08:41 启动、08:49 停止）
+#
+# vda：super 里 odm 仍是官方 1.99 GB 镜像，官方顶层 /odm/build.prop 未被任何覆盖件改写；
+#      06 的覆盖件只落在 /odm/etc/build.prop（patch.img）。
+# 取样：out/core/daemon/runtime/15r_16.0.10.500_EX01/7/qemu.log
+
+## 1) system_server 每 ~80 秒自杀一轮，4 轮全是同一个线程
+$ grep -n 'FATAL EXCEPTION IN SYSTEM PROCESS' qemu.log
+77040:01-01 00:02:10.792   969  2645 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: OplusWifiCPUThread
+156982:01-01 00:03:51.087  6013  6854 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: OplusWifiCPUThread
+229142:01-01 00:05:26.058 10577 11116 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: OplusWifiCPUThread
+299559:01-01 00:07:01.205 14140 14515 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: OplusWifiCPUThread
+
+## 2) 栈顶：converter 为 null（每轮一致）
+01-01 00:02:10.792   969  2645 E AndroidRuntime: java.lang.NullPointerException: Attempt to invoke virtual method 'void com.oplus.server.wifi.antswap.OplusWifiTxRxCodecCoverter.handleBootCompleted()' on a null object reference
+01-01 00:02:10.792   969  2645 E AndroidRuntime:        at com.oplus.server.wifi.antswap.OplusWifiStbcMrcSolution.handleBootCompleted(OplusWifiStbcMrcSolution.java:824)
+01-01 00:02:10.792   969  2645 E AndroidRuntime:        at com.oplus.server.wifi.antswap.OplusWifiSmartAntenna.handleBootCompleted(OplusWifiSmartAntenna.java:112)
+01-01 00:02:10.792   969  2645 E AndroidRuntime:        at com.oplus.server.wifi.common.OplusWifiInjector.handleBootCompletedInternal(OplusWifiInjector.java:655)
+01-01 00:02:10.792   969  2645 E AndroidRuntime:        at com.oplus.server.wifi.common.OplusWifiInjector.lambda$handleBootCompleted$2(OplusWifiInjector.java:549)
+77594:01-01 00:02:10.901   969  2645 I am_crash: [969,0,system_server,-1,java.lang.NullPointerException,Attempt to invoke virtual method 'void com.oplus.server.wifi.antswap.OplusWifiTxRxCodecCoverter.handleBootCompleted()' on a null object reference,OplusWifiStbcMrcSolution.java,824,0]
+
+## 3) 属性来源：官方顶层 /odm/build.prop 生效；我们的 /odm/etc 覆盖件被 SELinux 拒
+$ dump.erofs --cat --path=/build.prop odm_a.img | grep wifi.wsa
+ro.oplus.wifi.wsa=StbcMrc
+ro.oplus.wifi.wsa.disMrc=true
+
+$ grep -n "wifi\.wsa" qemu.log
+693:[    0.563283][    T1] init: Do not have permissions to set 'ro.oplus.wifi.wsa' to 'StbcMrc' in property file '/odm/etc/build.prop': SELinux permission check failed
+694:[    0.563811][    T1] init: Do not have permissions to set 'ro.oplus.wifi.wsa.disMrc' to 'true' in property file '/odm/etc/build.prop': SELinux permission check failed
+4293: init: processing action (ro.oplus.wifi.wsa=*) from (/system_ext/etc/init/init.sys.oplus.connectivity.rc:94)
+
+## 4) 平台判定输入：ro.boot.hardware = canoe（不以 qcom/mt/ums 开头）
+653:[    0.535897][    T1] init: Init cannot set 'ro.boot.hardware' to 'canoe': Read-only property was already set
+
+## 5) 反编译取证（jadx -d /tmp/wifi-jadx /system_ext/framework/oplus-wifi-service.jar）
+PlatformUtils:
+    sIsQcomPlatform = SystemProperties.get("ro.boot.hardware","oplus").toLowerCase().startsWith("qcom")
+    sIsMTKPlatform  = ...startsWith("mt");  sIsUNIPlatform = ...startsWith("ums")
+    getProductPlatform() -> 1(QCOM) / 2(MTK) / 3(UNI) / 0(其它)
+OplusWifiStbcMrcSolution.<init>:
+    if (isMtkPlatform()) { mStbcCoverter = new OplusWifiTxRxCodecCoverter(context, new MtkTxStbcCoverter()); ... }
+    else if (isQcomPlatform()) { mStbcCoverter = ...QcomTxStbcCoverter(); mMrcCoverter = ...QcomRxMrcCoverter(); }
+    // 平台为 0 时两个 converter 都不创建
+OplusWifiSmartAntenna.<init>:
+    HashSet h = new HashSet(Arrays.asList(getSmartAntennaSolution().split("\\|")));   // 属性默认 "q"
+    if (h.contains("q") || h.contains("o")) ... else if (h.contains("m")) ... else if (h.contains("qcom_v2")) ... else if (h.contains("icc")) ...
+    if (h.contains("StbcMrc")) mWsaSolutions.add(OplusWifiStbcMrcSolution.getInstance(context));
+OplusWifiSmartAntenna.handleBootCompleted():
+    if (validateWsaSolution())   // mWsaSolutions 非空才逐个回调

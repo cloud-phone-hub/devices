@@ -1,0 +1,48 @@
+# 证据根迁移 #237 —— 迁移前的事实记录（2026-11-15）
+
+## 1. 证据仍在 engine/ 下，但内容已跨设备与 agent
+
+```
+$ ls engine/evidence
+15r  common  cph2797  g1170  gold  m22  oriole  popsicle  rmx6688  ss9380  sun
+
+$ find engine/evidence -type f | wc -l
+767
+
+$ du -sh engine/evidence
+ 62M	engine/evidence
+
+$ ls devices
+（空目录）
+```
+
+证据内容按机型分组（15r / gold / m22 / oriole / …）与 common 跨机型条目，
+但根目录却挂在 engine 数据目录下；#236 之后构建流水线已迁到
+`agent/modules/pipeline`，engine/ 只剩 manifest / out / hardware / kernels / modules / roms。
+
+## 2. 代码里三处硬编码
+
+```
+$ cd agent && grep -rn 'EngineRoot, "evidence"\|EngineRoot(), "evidence"' internal
+internal/tools/evidence_tools.go:87:  evRoot := filepath.Join(t.env.EngineRoot, "evidence")
+internal/tools/evidence_tools.go:406: ... CreateEvidenceEntry(t.env.Guard, filepath.Join(t.env.EngineRoot, "evidence"), in)
+internal/server/server.go:1211:       evRoot := filepath.Join(s.eng.EngineRoot(), "evidence")
+internal/agent/context_pack.go:55:    evRoot := filepath.Join(engineRoot, "evidence")
+```
+
+若只把目录搬到 `devices/evidence` 而不改这三处，`evidence.search` / `ev.new` /
+`POST /api/runs/{id}/evidence` 会继续读写一个不存在的 `engine/evidence`：
+检索返回 0 条、写入报目录不存在；cdha 启动时的 writeRoots 也仍指向旧目录。
+
+## 3. 文档与清单注释里的旧路径
+
+```
+$ grep -rl "engine/evidence" agent engine report skills TODO.md AGENTS.md | wc -l
+（除证据树内部引用外还有 30+ 文件；其中 7 个是模块 README / 清单 note / report / skill）
+$ grep -n "engine/evidence" AGENTS.md
+28: 解决一个卡点后，先在 `engine/evidence/<分组>/issue-<slug>/` 写六段式
+35:  `common/`。分组判据与总览见 `engine/evidence/README.md`
+...
+```
+
+`AGENTS.md` 第 2 条是证据落点的规则源，必须与目录同时改，否则后续条目会按旧路径写回。

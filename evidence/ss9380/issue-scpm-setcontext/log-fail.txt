@@ -1,0 +1,38 @@
+# 失败态：scpm 的 uid 5009 匹配不到 SELinux 用户（index 3）
+
+- 日志：`out/core/daemon/runtime/ss9380_S9380ZCSDCZH1/3/qemu.log`（修复前 build）
+- 首次出现：guest 08-12 17:08:21.577；整份日志累计 `JNI FatalError` 206 条，
+  其中 scpm 166 条
+
+## 1. 用户解析失败
+
+```
+08-12 17:08:21.577  4113  4113 E SELinux : seapp_context_lookup_internal:  No match for app with uid 5009, seinfo platform:privapp:targetSdkVersion=35:partition=system:complete, name com.samsung.android.scpm  username oem_5009 appid 5009
+08-12 17:08:21.577  4113  4113 E SELinux : selinux_android_setcontext:  Error setting context for app with uid 5009, seinfo platform:privapp:targetSdkVersion=35:partition=system:complete: Success
+```
+
+## 2. zygote 致命错误
+
+```
+08-12 17:08:21.577  4113  4113 F zygote64: jni_internal.cc:824] JNI FatalError called: (com.samsung.android.scpm) frameworks/base/core/jni/com_android_internal_os_Zygote.cpp:2195: selinux_android_setcontext(5009, 0, "platform:privapp:targetSdkVersion=35:partition=system:complete", "com.samsung.android.scpm") failed
+08-12 17:08:21.589  4113  4113 F zygote64: runtime.cc:714] Runtime aborting...
+08-12 17:08:21.589  4113  4113 F zygote64: runtime.cc:714] Dumping all threads without mutator lock held
+08-12 17:08:21.985  4139  4139 F DEBUG   : Abort message: 'JNI FatalError called: (com.samsung.android.scpm) ... selinux_android_setcontext(5009, ...) failed'
+```
+
+同一段日志里 scpm 被反复拉起后再次 abort，第二个 pid 4139、第三个 pid 6686 …
+每次都是同一条 `username oem_5009`。
+
+## 3. 计数（整份 qemu.log）
+
+```
+JNI FatalError called（全部）                    = 206
+JNI FatalError called: (com.samsung.android.scpm) = 166
+com.samsung.android.scpm 相关日志行                = 192
+```
+
+## 4. 基线侧对照
+
+- 修复前 lineage 基座 `/vendor/etc/passwd`、`/etc/group` 实测 0 字节；
+- 官方三星 vendor 同名文件为 1439 B / 37 条、884 B / 37 条，含
+  `vendor_samsungcloud::5009:5009::/:/bin/sh`。

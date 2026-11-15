@@ -1,0 +1,15 @@
+# 修前现场：云机磁力计名称/厂商与真机不符（gold）
+
+## ① device-checker run-00034（17:09）云机 hardware.sensor handle=2
+  methodValue: {"Handle": 2, "Name": "qmc6308", "Vendor": "QST", "StringType": "android.sensor.magnetic_field", ...}
+
+## ② 真机同一字段（dumpsys sensorservice）
+0x00000002) mmc5603                   | Memsic          | ver: 1 | type: android.sensor.magnetic_field(2)
+
+## ③ 后果
+名称/厂商是 device-checker 逐字段比对项，qmc6308/QST 与真机 mmc5603/Memsic 不一致，
+hardware.sensor 的 handle=2 记录永远差两项（其余 28 个传感器本就一致）。
+
+## ④ 清单来源
+engine/manifest/xiaomi/gold/vendor/etc/sensors_config.xml 里 handle=2 的 name/vendor
+取自另一批次样机，与 07cf5fc1784783d5 这台 gold 不符。

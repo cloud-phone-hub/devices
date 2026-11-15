@@ -1,0 +1,103 @@
+# #133 失败侧日志：集成自研 AOSP NFC HAL + 解除 NfcNci 屏蔽后 com.android.nfc 仍崩
+#
+# 取样：out/core/daemon/runtime/15r_16.0.10.500_EX01/17/qemu.log（实例 17，12:15:25 起，12:18:40 停）
+# 说明：guest 串口输出与 qemu 自身的帧日志同行交错（这是本机日志形态，不是拼接错误）；
+#       guest 时钟在开机 60 s 左右同步一次，所以 12:16–12:18（宿主）与 13:00–13:01（guest）
+#       是两个时间轴，按出现顺序读。
+
+## 1. 集成本身成功：自研服务被 init 拉起，AIDL 实例已注册
+
+    [    0.764883][    T1] init: Parsing file /vendor/etc/init/android.hardware.nfc-service.rc...
+    [   10.217200][    T1] init: starting service 'vendor.nfc-default'...
+    [   10.222085][    T1] init: ... started service 'vendor.nfc-default' has pid 624
+    12-31 19:00:10.203   624   624 W android.hardware.nfc-service: Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: android.hardware.nfc.INfc/default
+
+adb 侧（本条目制作时的人工查询）：
+
+    init.svc.vendor.nfc-default          = running
+    service check android.hardware.nfc.INfc/default = found
+    pm list packages | grep nfc          = package:com.android.nfc（nfcPkg=1，屏蔽已解除）
+
+## 2. 崩点不在 INfc 上：NfcChipManager 类初始化就失败
+
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime: Process: com.android.nfc, PID: 4966
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime: java.lang.ExceptionInInitializerError
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at com.android.nfc.VendorNfcService.newVendorNfcService(VendorNfcService.java:393)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at com.android.nfc.NfcService.<init>(NfcService.java:1299)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at com.android.nfc.NfcApplication.onCreate(NfcApplication.java:65)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at android.app.Instrumentation.callApplicationOnCreate(Instrumentation.java:1401)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at android.app.ActivityThread.handleBindApplication(ActivityThread.java:8666)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2816)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at android.os.Handler.dispatchMessage(Handler.java:116)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at android.os.Looper.loopOnce(Looper.java:306)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at android.os.Looper.loop(Looper.java:416)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at android.app.ActivityThread.main(ActivityThread.java:10001)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at java.lang.reflect.Method.invoke(Native Method)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:613)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1074)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime: Caused by: java.util.NoSuchElementException
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at android.os.HwBinder.getService(Native Method)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at android.os.HwBinder.getService(HwBinder.java:93)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at vendor.oplus.hardware.nfc.V1_0.IOplusNfc.getService(IOplusNfc.java:88)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at vendor.oplus.hardware.nfc.V1_0.IOplusNfc.getService(IOplusNfc.java:95)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at com.android.nfc.NfcChipManager.getChipVersion(NfcChipManager.java:200)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        at com.android.nfc.NfcChipManager.<clinit>(NfcChipManager.java:25)
+    01-01 13:00:56.937  4966  4966 E AndroidRuntime:        ... 14 more
+    01-01 13:00:56.941   943  2863 I am_crash: [4966,0,com.android.nfc,281722445,java.util.NoSuchElementException,NULL,HwBinder.java,-2,0]
+
+## 3. 云机没有 hwservicemanager：HIDL 这条分支恒不可达
+
+    [    1.461026][  T267] HidlServiceManagement: hwservicemanager is not supported on the device.
+    12-31 19:00:01.027  248  248 W HidlServiceManagement: hwservicemanager is not supported on the device.
+    12-31 19:00:01.027  248  248 I HidlServiceManagement: Trying to get transport of vendor.qti.hardware.perf@2.2::IPerf/default without hwservicemanager
+
+（同一句对 `vendor.oplus.hardware.nfc@1.0::IOplusNfc/default` 也成立。它是 AIDL-only 系统，
+ HIDL 侧 `HwBinder.getService()` 抛的正是 `NoSuchElementException`，不是 `RemoteException`。）
+
+## 4. 反向确认：AIDL 分支也没服务，且 SELinux 连 find 都不给
+
+    [   56.173076][  T249] SELinux: avc:  denied  { find } for pid=4966 uid=1027 name=vendor.oplus.hardware.nfc.IOplusNfc/default scontext=u:r:nfc:s0 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0
+    [   58.931544][  T249] SELinux: avc:  denied  { find } for pid=6398 uid=1027 name=vendor.oplus.hardware.nfc.IOplusNfc/default scontext=u:r:nfc:s0 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0
+    [   61.078484][  T249] SELinux: avc:  denied  { find } for pid=7009 uid=1027 name=vendor.oplus.hardware.nfc.IOplusNfc/default scontext=u:r:nfc:s0 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0
+
+（uid=1027 = AID_NFC，`scontext=u:r:nfc:s0`。同名 avc 全量 1888 条，每个崩溃进程一条。）
+
+## 5. 崩溃频率与量级
+
+    am_crash:  [*,*,com.android.nfc,...]   829 条
+    am_proc_start: [*,*,1027|10225,com.android.nfc,...]  829 条（一条 crash 立刻被重拉）
+    avc denied { find } name=vendor.oplus.hardware.nfc.IOplusNfc/default  1888 条
+    首条 01-01 13:00:56.941（guest，开机 ~56 s）
+    末条 11-03 12:18:35.856（宿主，实例被 stop 前 5 秒）
+
+按宿主分钟聚合（guest 时钟未同步的段）：
+
+    12:16   12 次
+    12:17  456 次
+    12:18  356 次
+
+即稳定态约 **7 次/秒**；同时段 `uptime` 的 1 分钟 load 为 **14.02**，`am_proc_start` 与
+`am_crash` 1:1 配对——与 #131 实例 11 的形态完全一致，只是这次包是我们主动放回来的。
+
+## 6. 静态核查：三处依赖云机都没有
+
+    # 云机 /odm 是 06 从清单目录重建的，只有 build.prop
+    out/devices/oneplus/15r/16.0.10.500_EX01/img/odm-log.txt:
+        [步骤 1b] 同步 odm 覆盖件: 1 个落盘，5 个空目录已清理
+        odm.img 构建完成（8388608 字节，3 条目）
+    => /odm/bin/hw/vendor.oplus.hardware.nfc_aidl-service、/odm/bin/hw/
+       android.hardware.nfc-service.nxp 都不在云机上（#130 的 /odm 整棵重定向）
+
+    # 云机 /vendor 是 07 装配树，lib64 里没有任何 NFC native 库
+    out/devices/oneplus/15r/16.0.10.500_EX01/vendor/lib64 | grep -i nfc  => 空
+    out/devices/oneplus/15r/16.0.10.500_EX01/vendor/bin/hw | grep -i nfc
+        => android.hardware.nfc-service（只有我们自编的 AIDL HAL）
+
+    # 厂商镜像里也确实没有 HIDL V1_0 的服务（odm 三件套全是 AIDL）
+    super/odm_a/bin/hw: android.hardware.nfc-service.nxp(V2 AIDL)、
+                        vendor.oplus.hardware.nfc_aidl-service(AIDL IOplusNfc)、
+                        vendor.oplus.hardware.nfcExtns-service(AIDL INfcExtns)
+    super/odm_a/lib64: 没有 vendor.oplus.hardware.nfc@1.0.so
+    strings super/odm_a/bin/hw/vendor.oplus.hardware.nfc_aidl-service:
+        _ZN4aidl6vendor5oplus8hardware3nfc9IOplusNfc10descriptorE   ← AIDL，不是 HIDL
+        vendor.oplus.hardware.nfc_aidl-V2-ndk.so

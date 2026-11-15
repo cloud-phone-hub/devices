@@ -1,0 +1,8 @@
+# 修复后：cdh_gl_shader_patch.h 宿主单测 + 实机重打包高德定位权限弹窗实测
+# 1) 宿主 C 单元测试：
+$ cc -std=c11 -Wall -Wextra engine/vendor/hardware/android.hardware.gpu/src/cdh_gl_strings_test.c -o $TMPDIR/cdh_gl_strings_test && $TMPDIR/cdh_gl_strings_test
+[pass] cdh_gl_strings_test: 4/4 passed
+
+# 2) gold_15-OS3.0.11.0.VNQCNXM 实例 2（adb 127.0.0.1:5911）实机验证：
+- 启动高德地图（com.autonavi.minimap）触发 com.lbe.security.miui/...GrantPermissionsActivity 定位权限弹窗，截图见 popup-after.png：圆角白色背景底板与按钮恢复实体填充。
+- logcat -d 检查 Skia fma / SkSL Error 编译报错数为 0（仅 adbd ShellService 回显自身命令行）。

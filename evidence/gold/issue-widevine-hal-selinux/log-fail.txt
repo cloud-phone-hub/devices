@@ -1,0 +1,96 @@
+# 失败态证据：Widevine HAL 无法启动
+
+设备/清单：xiaomi/gold  OS3.0.10.0.VNQCNXM（Redmi Note 13 5G）
+实例：`gold_cn_OS3.0.10.0.VNQCNXM/5`
+时间：2026-10-28 03:12–04:03
+
+## 1. 修复前：APEX 已在但服务根本起不来
+
+APEX `com.google.android.widevine` 已预装并激活（versionCode 190240725，
+`/vendor/apex/com.google.android.widevine.nonupdatable.apex`，isActive=true），
+rc/VINTF/二进制齐全：
+
+```console
+$ adb shell 'grep -o "<apex[^>]*widevine[^>]*>" /apex/apex-info-list.xml'
+<apex-info moduleName="com.google.android.widevine"
+ modulePath="/vendor/apex/com.google.android.widevine.nonupdatable.apex"
+ preinstalledModulePath="/vendor/apex/com.google.android.widevine.nonupdatable.apex"
+ versionCode="190240725" versionName="" isFactory="true" isActive="true"
+ lastUpdateMillis="1230768000" provideSharedApexLibs="false">
+
+$ adb shell 'ls -Z /apex/com.google.android.widevine/bin/hw/'
+u:object_r:unlabeled:s0 android.hardware.drm-service.widevine
+$ adb shell 'ls -Z /apex/com.google.android.widevine/etc/*.rc'
+u:object_r:vendor_configs_file:s0 /apex/com.google.android.widevine/etc/com.google.android.widevine.rc
+```
+
+服务不存在，框架侧只有 Java DRM 管理服务：
+
+```console
+$ adb shell 'getprop init.svc.vendor.drm-widevine-hal'     # 空
+$ adb shell 'service list | grep -i drm'
+141	drm.drmManager: [drm.IDrmManagerService]
+```
+
+## 2. 修复前串口：exec 标签 unmapped，init 拒绝启动
+
+`out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/5/qemu-20261028-014035.log:2802-2803`
+
+```
+[   16.814070][    T1] SELinux:  Context u:object_r:hal_drm_widevine_exec:s0 is not valid (left unmapped).
+[   16.815111][    T1] init: Could not start service 'vendor.drm-widevine-hal' as part of class 'hal': File /apex/com.google.android.widevine/bin/hw/android.hardware.drm-service.widevine(labeled "u:object_r:unlabeled:s0") has incorrect label or no domain transition from u:r:init:s0 to another SELinux domain defined. Have you configured your service correctly? ...
+```
+
+APEX 镜像内 inode 的 xattr 本身是对的（avc 的 `trawcon` 可见），只是策略里没有该类型：
+
+```
+type=1400 audit(...): avc:  denied  { getattr } for  comm="ls"
+ path="/apex/com.google.android.widevine@190240725/bin/hw/android.hardware.drm-service.widevine"
+ scontext=u:r:pioneer:s0 tcontext=u:object_r:unlabeled:s0 tclass=file permissive=1
+ trawcon="u:object_r:hal_drm_widevine_exec:s0"
+```
+
+## 3. 第一版补丁（仅补类型/域转换/vndbinder）：能起进程，但注册服务被拒 → abort
+
+`qemu-20261028-040303.log:2833,2853`
+
+```
+[   16.342073][    T1] init: starting service 'vendor.drm-widevine-hal'...
+[   16.345661][    T1] init: ... started service 'vendor.drm-widevine-hal' has pid 537
+[   16.389138][  T196] SELinux: avc:  denied  { add } for pid=537 uid=1013
+ name=android.hardware.drm.IDrmFactory/widevine scontext=u:r:hal_drm_widevine:s0
+ tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0
+[   16.440598][    T1] init: Service 'vendor.drm-widevine-hal' (pid 537) received signal 6 from uid 1013 pid 537
+```
+
+guest logcat 对应进程内 abort 原因：
+
+```
+Abort message: 'Check failed: status == STATUS_OK Failed to  Widevine Factory HAL, status=-'
+```
+
+init 状态反复 `restarting`，服务名在 `service list` 里始终不出现
+（注册失败 → `AServiceManager_addService` 返回 -1 → CHECK 失败 SIGABRT）。
+
+## 4. 对照：基座里同类 vendor HAL 的注册授权
+
+`engine/out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil`
+（本次修复前的装配树）：
+
+```
+(allow mediacodec servicemanager_202404 (binder (call transfer)))
+(allow mediacodec default_android_service_202404 (service_manager (add find)))
+(allow hal_audio_default default_android_service_202404 (service_manager (add)))
+(allow hal_radio_default servicemanager_202404 (binder (call transfer)))
+```
+
+即：向 servicemanager 注册的 AIDL HAL 需要
+`servicemanager binder call/transfer` + 目标服务标签的 `service_manager add`；
+第一版 widevine 片段只复制了真机的 vndbinder/vndservicemanager 规则，
+漏了这两条，遂出现上面的 add 拒绝。
+
+## 5. 功能面
+
+修复前 `service list` 里没有任何 `android.hardware.drm.IDrmFactory/*`，
+框架无法枚举到任何厂商 DRM 工厂（修复后的探针结果见 `log-pass.txt` 第 6 节；
+ClearKey 至今仍为 false，因为云机没有 clearkey HAL，不在本卡点范围）。

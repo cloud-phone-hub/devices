@@ -1,0 +1,150 @@
+# log-pass.txt — issue-m22-nfc-watchdog-loop 通过态证据
+# 采集：2026-10-29，m22（flyme 12.5.0.0A / Android 16）
+# 构建：engine/build 下 `cdh device build m22 --from build_vendor
+#       --skip build_vendor_dlkm --skip pack_super`（/tmp/m22-round7.log，EXIT=0）
+#       随后 `--only build_vendor` 复跑验增量（/tmp/m22-round7b-skip.log）
+# 实例：37（daemon `/api/create {"index":0}`，console 5918 / adb 5919 / vnc 5920）
+# 注意：产物根在 engine/out（cdh 在 engine/build 里跑），不是仓库根的 out/
+
+## A. 07：源码指纹让「改过的 HAL」真的重编
+
+$ grep -ac '模块源码或配置已变（指纹不一致）' /tmp/m22-round7.log
+31            ← 31 个模块全部判定为「源码/配置变了」
+$ grep -ac '^\[skip\]' /tmp/m22-round7.log
+0             ← 旧判据下这里会是 31（见 log-fail.txt 第 E 节）
+
+$ ls engine/out/devices/flyme/m22/12.5.0.0A/hal-src/android16/ | wc -l
+31
+$ ls engine/out/devices/flyme/m22/12.5.0.0A/hal-src/android16/ | head -4
+android.hardware.audio@default.sha256
+android.hardware.authsecret@default.sha256
+android.hardware.biometrics@default.sha256
+android.hardware.bluetooth@default.sha256
+
+$ cat engine/out/devices/flyme/m22/12.5.0.0A/hal-src/android16/android.hardware.nfc@default.sha256
+1512ea4307977f7caccec2fddee5177165e3f497936310d90f9809a09dd338e0
+
+$ find engine/out/vendor/android16 -maxdepth 2 -name '*.sha256' | wc -l
+0             ← 指纹故意不落 HalRoot：那棵树整棵并进 vendor.img，落进去等于往镜像塞垃圾
+
+$ ls -l engine/out/vendor/android16/bin/hw/android.hardware.nfc-service
+-rwxr-xr-x@ 1 cuimingqiang  staff  186624 10 29 15:00 …/android.hardware.nfc-service
+$ md5 engine/out/vendor/android16/bin/hw/android.hardware.nfc-service
+MD5 (…) = fc8d0d03eca7a856c5c392a69c9c06a4
+# 对照 log-fail.txt 第 E 节：旧件 154,584 B / md5 493cdcf6…，本轮换上的是新写的桩
+
+## B. 07 增量复跑：不动源码就一个都不编
+
+$ cdh device build m22 --only build_vendor > /tmp/m22-round7b-skip.log   # EXIT=0
+$ grep -ac '^\[skip\]' /tmp/m22-round7b-skip.log
+31
+$ grep -ac '源码指纹一致' /tmp/m22-round7b-skip.log
+62            ← 31 条 [skip] + 31 条「复用已编译产物 …（源码指纹一致）」报告行
+$ grep -an 'cdh-vendor' /tmp/m22-round7b-skip.log
+16:    HAL 编译器: out/bin/cdh-vendor      ← 只出现这一次（配置行），没有任何一次实际调用
+
+$ grep -a '^\[skip\] android.hardware.nfc' /tmp/m22-round7b-skip.log
+[skip] android.hardware.nfc 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全， 源码指纹一致）
+
+## C. 单测
+
+$ cd engine/build && go build ./... && go vet && go test ./07_build_vendor/...
+ok      cloud-phone-hub/engine/build/07_build_vendor   16.460s
+    --- PASS: TestModuleVendorTree
+    --- PASS: TestNeedsBuildIncludesVendorTree
+    --- PASS: TestNeedsBuildFollowsSourceDigest
+        # 改 .cpp → 重编；recordSourceDigest 后 → 复用；再改 → 重编；
+        # 改 modules/<m>.json → 重编；--refresh → 无条件重编
+
+## D. 镜像
+
+$ cat engine/out/devices/flyme/m22/12.5.0.0A/img/SHA256SUMS | grep -E 'patch|vendor\.img|boot\.img'
+d691deed587bc322b636cd64c6831133dde9fe2a67f5b4b0b0b1f5622b159e63  patch.img
+b429f472ee0b96043d5f36ab1e0bd67621a7e83ee7ec413ea923909a90260590  vendor.img
+414801a6d238ae3c371b6ce135727f09a00b8509559bc119ac54115de7e92844  boot.img
+
+$ ls -l engine/out/devices/flyme/m22/12.5.0.0A/img/{patch,vendor}.img
+402653184  10 29 15:04  patch.img
+206680064  10 29 15:08  vendor.img
+
+$ ls -l engine/out/bin/cdh
+7216818  10 29 14:56  engine/out/bin/cdh      ← 带新判据的构建器
+
+## E. 实例 37：HAL 自己把「开不了」说清楚，进程不再被 Watchdog 打死
+
+# 场景：m22 起机后 com.android.nfc（pid 1326）一直停在 OFF。
+# 触发 enable 的三条路都有障碍（见 solution.md 第 6 节），改用 root 通道重启进程，
+# 让它在正常启动流程里自己走一遍 enableInternal：
+
+$ SPEC=m22_12.5.0.0A INDEX=0 python3 .tmp/root_shell.py 'kill -9 1326'
+$ adb -s 127.0.0.1:5919 logcat -d -b all -v threadtime | grep -iE 'nfc|Watchdog'
+06-25 20:59:05.328   799   836 I ActivityManager: Start proc 6839:com.android.nfc/1027 for restart com.android.nfc
+06-25 20:59:05.365  6839  6839 I NfcService: Starting NFC service
+06-25 20:59:05.366  6839  6839 I com.android.nfc: NfcAdaptation::InitializeHalDeviceContext: INfc::getService()
+06-25 20:59:05.367  6839  6839 I com.android.nfc: NfcAdaptation::InitializeHalDeviceContext: INfcAidl::fromBinder returned ver(1)
+06-25 20:59:05.393  6839  6858 I NfcService: Enabling NFC
+06-25 20:59:05.397   569   569 I         : open: no nfc controller, reply OPEN_CPLT(FAILED) asynchronously
+06-25 20:59:05.419  6839  6862 E libnfc_nci: nfc_free_conn_cb: invalid conn_id
+06-25 20:59:05.419  6839  6858 E libnfc_nci: nfcManager_doInitialize: fail nfa enable; error=0x0
+06-25 20:59:05.427  6839  6860 W libnfc_nci: gki_task_entry: task_id=4 terminating
+06-25 20:59:05.428  6839  6858 W NfcService: enableInternal: Error enabling NFC
+
+# 三处关键差异（与 log-fail.txt 第 B 节逐行对照）：
+#   1. 20:59:05.397 那一行空 tag 的日志来自 HAL 进程 569 ——
+#      `ps -A -o PID,PPID,NAME | grep nfc` → `569 1 android.hardware.nfc-service`，
+#      即我们重写的桩（ALOGI 未设 LOG_TAG，所以 tag 列是空的）。
+#   2. 距 `Enabling NFC` 只有 4 ms，开不了这件事当场就报出来了；
+#      22 ms 后（20 ms 延迟 + 2 ms 传递）栈侧收到 OPEN_CPLT=FAILED，
+#      打 `nfc_free_conn_cb: invalid conn_id` + `fail nfa enable` 并立刻返回。
+#   3. 全窗口没有 `HalOpenInternal: Open Error=OK`，没有 `Watchdog triggered, aborting`，
+#      没有 `JNI FatalError`，没有 `Start proc … for restart` 的第二次。
+
+$ adb -s 127.0.0.1:5919 logcat -d -b all | grep -cE 'Watchdog triggered, aborting|JNI FatalError'
+0
+
+## F. 长稳窗口：8 min 13 s 内零 abort
+
+# 抓法：20:59:05 之后不再做任何操作，先 dump 全缓冲，再 `logcat -v threadtime -b all` 持续追写，两份合并去重后按时间戳截取窗口。
+$ python3 … # 合并 /tmp/m22-nfc-snapshot-2100.log + /tmp/m22-nfc-tail.log
+窗口行数(去重): 1051 范围 06-25 20:59:05.300 → 06-25 21:07:18.149
+Enabling NFC                               1
+open: no nfc controller                    1
+Open Error=                                0
+Watchdog triggered                         0
+JNI FatalError                             0
+Abort message                              0
+nfcManager_doAbort                         0
+Starting NFC service                       1
+enableInternal: Error enabling NFC         1
+for restart com.android.nfc                1        ← 就是 kill -9 的那一次
+Fatal signal                               0
+
+# 对照 log-fail.txt 第 A 节：旧件在 13 min 32 s 里 abort 了 10 次（间隔严格 90 s），
+# 8 min 13 s 里应当是 5~6 次（493 s / 90 s），实测 0 次。
+# 窗口内的 NFC 相关原始行已随书落盘为同目录 logcat-nfc-pass.txt（76 行）。
+
+$ adb -s 127.0.0.1:5919 shell 'pidof com.android.nfc; getprop init.svc.vendor.nfc-default'
+6839
+running
+# pid 就是 20:59:05 那次重启起出来的那个，7 分钟内没被换过（旧件早就 pid 变了 10 次）
+
+$ adb -s 127.0.0.1:5919 shell 'settings get global nfc_on'
+1
+# 开关停在 ON：失败后 NfcService 把 adapter 置回 OFF，但设置项保留 ON，
+# 而进程只在「启动」与「用户点开关」两个时机调 enable —— 失败立即返回后没有
+# 第三次触发的入口，循环自然断掉。
+
+## G. 旁证：本实例唯一一份 tombstone 不是 com.android.nfc
+
+$ adb -s 127.0.0.1:5919 shell 'ls -l /data/tombstones/ | tail -4'
+-rw-rw-r-- 1 tombstoned system 361992 2026-06-25 20:54 tombstone_00
+-rw-rw-r-- 1 tombstoned system 208873 2026-06-25 20:54 tombstone_00.pb
+
+$ adb -s 127.0.0.1:5919 shell 'head -12 /data/tombstones/tombstone_00'
+Timestamp: 2026-06-25 20:54:52.687269577+0800
+Cmdline: app_process /system/bin com.android.commands.svc.Svc nfc enable
+pid: 6343, tid: 6358, name: RenderThread  >>> app_process <<<
+signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+# 是「用 svc nfc enable 从命令行开 NFC」那个一次性命令进程自己崩的
+# （Choreographer 初始化失败），与 com.android.nfc 无关；
+# 命令行这条路本就不通，见 solution.md 第 6 节的触发方式说明。

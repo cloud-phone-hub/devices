@@ -1,0 +1,41 @@
+# 通过现场：实例 15（early-init 里 stop 掉 OPPO 的 power.stats 实现）
+# 日志全量：out/core/daemon/runtime/cph2797_16.0.8.301_EX01/15/qemu.log
+
+# 计数（15/qemu.log -> 与 13/qemu.log 对照）：
+#   grep -c "WATCHDOG KILLING SYSTEM PROCESS"        -> 0   （实例 13：1）
+#   grep -c "sysrq: Resetting"                       -> 0   （实例 13：2）
+#   grep -c "power.stats-impl.oplus"                 -> 0   （实例 13：567）
+#   grep -c "Check failed: s == STATUS_OK"           -> 0   （实例 13：281）
+#   grep -c "received signal 6"                      -> 0   （实例 13：151）
+#   grep -c "starting service 'vendor.power.stats'"  -> 0   （实例 13：每 boot 1 次）
+#   grep -c "boot_progress_enable_screen"            -> 1   （实例 13：0）
+#   grep -c "Bad state"                              -> 0
+
+# 1）init 侧：我们的空实现照旧在 post-fs-data 起来，OPPO 的进程一次都没起
+init: processing action (post-fs-data) from (/vendor/etc/init/android.hardware.power.stats-service.rc:17)
+init: starting service 'vendor.power.stats-default'...
+init: ... started service 'vendor.power.stats-default' has pid 533
+# 此后 class_start hal（23.3 s）没有再启动 vendor.power.stats
+
+# 2）运行态：实例名在我们手里，OPPO 服务是 stopped
+$ service check android.hardware.power.stats.IPowerStats/default
+Service android.hardware.power.stats.IPowerStats/default: found        # 实例 13 此处是 not found
+$ getprop init.svc.vendor.power.stats-default
+running
+$ getprop init.svc.vendor.power.stats
+stopped
+
+# 3）主线程不再卡在 PowerStatsService，boot phase 继续推进直到开机完成
+I boot_progress_start: 22761
+I boot_progress_enable_screen: 68564
+init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:2268)
+$ getprop sys.boot_completed
+1
+
+# 4）桌面可用（VNC 截图 .tmp/cph15-desktop.png / cph15-settings.png）
+$ dumpsys activity activities | grep -m1 topResumedActivity
+      topResumedActivity=ActivityRecord{... u0 com.android.launcher/.Launcher t4}
+$ am start -a android.settings.SETTINGS
+Starting: Intent { act=android.settings.SETTINGS }
+$ dumpsys activity activities | grep -m1 topResumedActivity
+      topResumedActivity=ActivityRecord{... u0 com.android.settings/com.oplus.settings.feature.homepage.OplusSettingsHomepageActivity t5}

@@ -1,0 +1,8 @@
+# engine/vendor 自研 confirmationui HAL（虚拟 HAL）：云机没有可信显示通道，服务
+# 注册 android.hardware.confirmationui.IConfirmationUI/default，提示一律按不支持返回。
+service vendor.confirmationui-default /vendor/bin/hw/android.hardware.confirmationui-service
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_confirmationui_default:s0
+    interface aidl android.hardware.confirmationui.IConfirmationUI/default

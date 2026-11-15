@@ -1,0 +1,64 @@
+# 1. engine/build 全量 Go 单元测试通过记录
+ok  	cloud-phone-hub/engine/build	0.272s
+ok  	cloud-phone-hub/engine/build/internal/device	1.270s
+ok  	cloud-phone-hub/engine/build/internal/engine	0.689s
+ok  	cloud-phone-hub/engine/build/internal/env	0.935s
+ok  	cloud-phone-hub/engine/build/internal/fsimg	1.679s
+ok  	cloud-phone-hub/engine/build/internal/kmod	1.988s
+ok  	cloud-phone-hub/engine/build/internal/manifest	2.224s
+ok  	cloud-phone-hub/engine/build/internal/pipeline	2.430s
+ok  	cloud-phone-hub/engine/build/internal/stagekit	3.112s
+ok  	cloud-phone-hub/engine/build/internal/task	3.375s
+?   	cloud-phone-hub/engine/build/internal/testkit	[no test files]
+ok  	cloud-phone-hub/engine/build/internal/toolfind	3.498s
+ok  	cloud-phone-hub/engine/build/stages/01_unpack	3.637s
+ok  	cloud-phone-hub/engine/build/stages/02_build_kernel	5.562s
+ok  	cloud-phone-hub/engine/build/stages/03_build_modules	3.885s
+ok  	cloud-phone-hub/engine/build/stages/04_build_boot	3.204s
+ok  	cloud-phone-hub/engine/build/stages/05_build_vendor_boot	5.105s
+ok  	cloud-phone-hub/engine/build/stages/06_build_odm	3.341s
+ok  	cloud-phone-hub/engine/build/stages/07_build_vendor	3.034s
+ok  	cloud-phone-hub/engine/build/stages/08_build_vendor_dlkm	4.418s
+ok  	cloud-phone-hub/engine/build/stages/09_build_patch	2.620s
+ok  	cloud-phone-hub/engine/build/stages/10_pack_super	2.929s
+ok  	cloud-phone-hub/engine/build/stages/11_pack_vda	5.941s
+ok  	cloud-phone-hub/engine/build/web	1.894s
+
+# 2. 修复后全新实例运行时核验（/Volumes/work/cloud-phone-hub/engine/out/tmp/batch4-post-runtime.txt 相关行）
+getenforce=Enforcing
+service_list_count=464 (raw_lines=465, note line 0 header 'Found N services:')
+placeholders_total=44 present=44 missing=0
+forbidden_found=[]
+keep_missing=[]
+props:
+  sys.boot_completed=1
+  init.svc.bootanim=stopped
+  init.svc.vndservicemanager=running
+  init.svc.connsyslogger=running
+  init.svc.aee_aed=running
+  init.svc.aee_aed64=running
+  init.svc.aee-reinit=stopped
+  init.svc.update_verifier=stopped
+  init.svc.boringssl_self_test32=
+  init.svc.boringssl_self_test32_vendor=
+  init.svc.boringssl_self_test_apk32=
+  init.svc.zygote_secondary=
+qemu.log Multiple different specifications count=0, Service 'servicemanager' count=0
+
+
+# 3. 修复后 19 域重采 services.json 摘要（IDevice/mtk-neuron_shim 描述符差异已清零）
+services summary = {"identity": 0, "capability": 14, "state": 1, "availability": 0, "fatal": 14}
+  serviceList.count | base=471 | target=463
+  serviceList.names | base={'missing': ['android.hardware.media.c2.IComponentStore/default1', 'vendor.xiaomi.hardware.mlipay.IMlipayService/default'], 'count': 471} | target={'extra': ['android.hardware.gatekeeper.IGatekeeper/default', 'gsiservice', 'miui.powerkeeper.PowerMillet', 'mtkIms', 'mwis', 'vendor.mediatek.hardware.camera.atms.IATMs/default', 'vendor.mediatek.hardware.composer_ext.IComposerExt/default', 'vendor.mediatek.hardware.nps.nos.fastswitch.INativeFastSwitch/default', 'vendor.mediatek.hardware.pq_aidl.IPictureQuality_AIDL/default', 'vow_bridge'], 'count': 463}
+  serviceList.services.android.hardware.gatekeeper.IGatekeeper/default | base=[] | target=<缺>
+  serviceList.services.android.hardware.media.c2.IComponentStore/default1 | base=<缺> | target=[android.hardware.media.c2.IComponentStore]
+  serviceList.services.gsiservice | base=[] | target=<缺>
+  serviceList.services.miui.powerkeeper.PowerMillet | base=[] | target=<缺>
+  serviceList.services.mtkIms | base=[com.mediatek.ims.internal.IMtkImsService] | target=<缺>
+  serviceList.services.mwis | base=[com.mediatek.wfo.IMwiService] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.camera.atms.IATMs/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.composer_ext.IComposerExt/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.nps.nos.fastswitch.INativeFastSwitch/default | base=[] | target=<缺>
+  serviceList.services.vendor.mediatek.hardware.pq_aidl.IPictureQuality_AIDL/default | base=[] | target=<缺>
+  serviceList.services.vendor.xiaomi.hardware.mlipay.IMlipayService/default | base=<缺> | target=[]
+  serviceList.services.vow_bridge | base=[com.mediatek.vow.IVoiceWakeupBridge] | target=<缺>

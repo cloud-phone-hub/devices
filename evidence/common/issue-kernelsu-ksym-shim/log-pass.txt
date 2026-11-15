@@ -1,0 +1,20 @@
+# 通过：同一 .ko 经 0003 符号 shim 后，init 首阶段装载成功、系统正常起机
+# 取样：daemon 实例 gold_cn_OS3.0.10.0.VNQCNXM/3 的 qemu.log + guest 通道（channel/cmd）回读
+
+456:[    0.157807][    T1] init: Loading module /lib/modules/6.6.127-4k-cdh/kernelsu.ko with args ''
+457:[    0.159557][    T1] KernelSU: welcome to KernelSU version 32680, package name me.weishu.kernelsu
+458:[    0.160840][    T1] KernelSU: ksym: 61 symbols resolved (56 funcs via trampoline, 5 data)
+460:[    0.161069][    T1] KernelSU: sys_call_table=0xffffffdf98720c98
+464:[    0.162211][    T1] KernelSU: dispatcher installed at slot 42
+465:[    0.162377][    T1] KernelSU: feature: feature management initialized
+508:[    0.172075][    T1] KernelSU: hook_manager: sys_enter tracepoint registered
+
+# —— guest 通道回读（root shell，非 adb）——
+$ grep kernelsu /proc/modules
+kernelsu 200704 0 - Live 0x0000000000000000 (O)
+$ getenforce
+Enforcing
+$ ls -l /data/adb/
+total 0
+$ /system/bin/su -c id
+/system/bin/sh: /system/bin/su: inaccessible or not found

@@ -1,0 +1,31 @@
+=== [修复前：2026-11-14 P1 Batch-4 基线 9f0cf68f69184fc9-cloud] ===
+# 1) vm-shell-baseline.txt：SLIRP IPv6 站点/全局地址泄露与 ethtool -i 暴露虚拟化驱动
+--- ip a ---
+6: ccmni2    inet6 fec0::c036:b4ff:fe12:3458/64 scope site dynamic mngtmpaddr \       valid_lft 86192sec preferred_lft 14192sec
+6: ccmni2    inet6 fe80::c036:b4ff:fe12:3458/64 scope link \       valid_lft forever preferred_lft forever
+19: ccmni0    inet6 240e:573:ec0:1345:18d1:1082:f180:ed50/64 scope global \       valid_lft forever preferred_lft forever
+19: ccmni0    inet6 fe80::d838:ecff:fe4d:a06e/64 scope link \       valid_lft forever preferred_lft forever
+
+--- ethtool ---
+[wlan0]
+driver: mac80211_hwsim
+version: 6.6.118-android15-8-ge56cf6b09c
+bus-info: hwsim0
+[p2p0]
+driver: mac80211_hwsim
+version: 6.6.118-android15-8-ge56cf6b09c
+bus-info: hwsim1
+[ccmni2]
+driver: virtio_net
+version: 1.0.0
+bus-info: 0000:00:08.0
+[ccmni0]
+driver: dummy
+version: 6.6.127-4k-cdh
+[dummy0]
+driver: dummy
+version: 6.6.127-4k-cdh
+
+# 2) batch4-risk-summary.txt §5：network interfaces 对比（真机 3 接口 vs 云机多出 UP 状态的 ccmni2/ccmni0）
+  real interfaces: [{"addresses": [{"host": "fe80::c82a:4eff:feea:6df5%dummy0", ...}], "name": "dummy0", "mtu": 1500, "up": true}, {"addresses": [{"host": "fe80::64ac:e8ff:fea7:3d08%wlan0", ...}, {"host": "192.168.31.159", ...}], "name": "wlan0", "mtu": 1500, "up": true}, {"addresses": [{"host": "::1", ...}, {"host": "127.0.0.1", ...}], "name": "lo", "mtu": 65536, "up": true}]
+  cloud interfaces: [..., {"addresses": [{"host": "fe80::c036:b4ff:fe12:3458%ccmni2", ...}, {"host": "fec0::c036:b4ff:fe12:3458", ...}], "name": "ccmni2", "mtu": 1400, "up": true}, {"addresses": [{"host": "fe80::d838:ecff:fe4d:a06e%ccmni0", ...}, {"host": "240e:573:ec0:1345:18d1:1082:f180:ed50", ...}], "name": "ccmni0", "mtu": 1400, "up": true}]

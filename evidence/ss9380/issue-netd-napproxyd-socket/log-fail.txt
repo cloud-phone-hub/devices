@@ -1,0 +1,63 @@
+# 失败态取证：netd 建不出 napproxyd socket → 整组 updatable 组件被杀
+
+# 机型：samsung/pa3qzcx/pa3q:16/BP4A.251205.006/S9380ZCSDCZH1
+# 盘集：build6（patch.img sha256 3ac3572d9bbf，sepolicy 第一版只有 napproxyd 的
+#       type/roletype/mlstrustedobject + init/netdomain 授权，缺 file_type 与
+#       socket_device→napproxyd_socket 的 create）
+# 实例：index 1，adb 127.0.0.1:5911
+# 时间：2026-10-30
+
+# ---- 1) init 建 socket 失败（root shell: dmesg | grep napproxyd）----
+init: Could not create socket 'napproxyd': Failed to bind socket 'napproxyd': Permission denied
+
+# 同批 dnsproxyd/mdns/fwmarkd 都建成功，只有 napproxyd 失败：
+#   adb shell ls /dev/socket
+#   ... dnsproxyd / mdns / fwmarkd ...（无 napproxyd）
+
+# ---- 2) netd 因此退出（清 buffer 后实时 logcat + setprop ctl.restart netd）----
+E Netd    : Unable to start NapProxyListener (Success)
+# 约 300 ms 后 netd 退出
+
+# ---- 3) init 按 netd.rc 的 onrestart 把整组带走（串口日志）----
+init: Service 'netd' (pid 1187) exited with status 1
+init: process with updatable components 'netd' exited 4 times before boot completed
+init: Service 'zygote' (pid 1903) received SIGKILL
+init: Service 'audioserver' (pid 1905) received SIGKILL
+init: Service 'media' (pid 1906) received SIGKILL
+init: Service 'cameraserver' (pid 1907) received SIGKILL
+init: Service 'wificond' (pid 1908) received SIGKILL
+
+# ---- 4) 第一版修复不起效时的关键反证 ----
+# (a) 补上了 file_contexts，restorecon 能查到标签：
+#   restorecon -v /dev/socket/napproxyd
+#   SELinux: Relabeling /dev/socket/napproxyd from u:object_r:socket_device:s0
+#            to u:object_r:napproxyd_socket:s0
+#   Could not set context for /dev/socket/napproxyd:  Permission denied
+#
+# (b) 但 dmesg 里没有任何 init 域的 avc（说明拒绝主体不是 init）：
+#   dmesg | grep "avc:" | grep 'comm=".init."'   → 空
+#
+# (c) 手动 touch 出来的节点继承父目录标签，印证未打标签前是 socket_device：
+#   touch /dev/socket/napproxyd; ls -Z /dev/socket/napproxyd
+#   u:object_r:socket_device:s0
+#
+# (d) plat_sepolicy 里 socket_device 只有 6 处、无任何直指 socket 类型的 allow：
+#   grep -c socket_device plat_sepolicy.cil   → 6
+#   （全是 (allow domain socket_device (dir ...)) 一类，没有 sock_file allow）
+#   → 结论：may_create 的 subject 是父目录 /dev/socket 的 sid(socket_device)，
+#     必须补 (allow socket_device napproxyd_socket (sock_file (create)))
+#     且 napproxyd_socket 必须属于 file_type 属性。
+
+# ---- 5) 官方对照（vendor_a.img 抽取）----
+# /etc/selinux/vendor_file_contexts 第 1874 行：
+#   /dev/socket/napproxyd   u:object_r:napproxyd_socket:s0
+# /etc/selinux/vendor_sepolicy.cil（napproxyd_socket 共 5 处）：
+#   1403: (typeattributeset file_type (... napproxyd_socket ...))
+#   1426: (typeattributeset mlstrustedobject (... napproxyd_socket ...))
+#   2698: (type napproxyd_socket)
+#   2699: (roletype object_r napproxyd_socket)
+#  14858: (allow netdomain napproxyd_socket (sock_file (write)))
+# plat_sepolicy.cil 里 napproxyd 出现 0 次（与本机型片段不冲突）
+
+# ---- 6) 结果 ----
+# init.svc.zygote 每 5 s 重启一次，sys.boot_completed 始终为空。

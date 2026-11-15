@@ -1,0 +1,176 @@
+#!/system/bin/sh
+# Wi-Fi 开机引导（对齐真机 gold）：打开 Wi-Fi 并接入宿主 wifi-host-service 直连 AP。
+#
+# 现象（device-checker network.connectivity / network.ifaces）：真机活动网络是
+# WIFI/wlan0（`Transports: WIFI`、默认路由走 192.168.31.1）；云机却是
+# ETHERNET-mgmt0，wlan0 恒 DOWN、`cmd wifi status` 恒 "Wifi is disabled"。
+# 数据面只能退到 emulated RIL（ccmni2，slirp）—— 那条路常年在
+# SETUP_DATA_CALL/INSUFFICIENT_RESOURCES 之间打转，agent 连不上检查服务。
+#
+# 根因不是 HAL 缺失：vendor.wifi-vhal 与 wificond 都 running，hwsim 的
+# scan_profile 里 CDH-A/B/C 三个 AP 也都在（宿主每 30 s 下发一次）；只是
+# Settings.Global.WIFI_ON 在新 data 镜像里是 0（真机由开机向导写成 1），
+# 框架于是把 Wi-Fi 关着。手工 `cmd wifi set-wifi-enabled enabled` +
+# `cmd wifi connect-network CDH-A open` 立刻能拿到 192.168.60.100/24，
+# 且 WIFI 成为 Active default network —— 见
+# engine/evidence/gold/issue-gold-wifi-disabled/solution.md。
+#
+# 所以这里只做「把真机开机本该发生的事补上」：开 Wi-Fi、接入宿主下发档位里的首个开放直连 AP
+# （wifi-aps.json 里 backend 为空的默认路由器 AP，缺省 TP-LINK_2464）。已有保存网络时
+# 框架会自己连，同时清理历史遗留的 VirtWifi/CDH-* 保存配置；全程幂等，已连上直接过。
+#
+# 时序：与 cph_storage_align 同样带 disabled，由 boot_completed=1 触发，脚本内
+# 再等一次系统属性；Wi-Fi 服务就绪（wificond running + `cmd wifi status` 有回显）
+# 另设重试，避免在 system_server 刚起时打空炮。
+set -u
+
+LOG=/data/local/tmp/cph-wifi.log
+SCAN_PROFILE=/sys/module/mac80211_hwsim/parameters/scan_profile
+DISABLE_HE_PARAM=/sys/module/mac80211_hwsim/parameters/disable_he
+DEFAULT_SSID="TP-LINK_2464"
+SECURITY="${CPH_WIFI_SECURITY:-open}"
+
+log() { /system/bin/log -t cph-wifi-bootstrap "$@"; }
+exec >>"${LOG}" 2>&1
+say() { echo "[$(/system/bin/date '+%m-%d %H:%M:%S')] $*"; log "$*"; }
+
+if [ "$(/system/bin/getprop ro.vendor.cdh.wifi.disable_he)" = "1" ] && [ -w "${DISABLE_HE_PARAM}" ]; then
+    cur_he="$(/system/bin/cat "${DISABLE_HE_PARAM}" 2>/dev/null || true)"
+    if [ "${cur_he}" != "Y" ] && [ "${cur_he}" != "1" ]; then
+        printf '1' > "${DISABLE_HE_PARAM}" 2>/dev/null || true
+        say "已按 ro.vendor.cdh.wifi.disable_he=1 关闭 hwsim HE/EHT 能力"
+    fi
+fi
+
+resolve_target_ssid() {
+    if [ -n "${CPH_WIFI_SSID:-}" ]; then
+        printf '%s' "${CPH_WIFI_SSID}"
+        return
+    fi
+    p_try=0
+    while [ "${p_try}" -lt 5 ]; do
+        raw="$(/system/bin/cat "${SCAN_PROFILE}" 2>/dev/null || true)"
+        if [ -n "${raw}" ]; then
+            old_ifs="${IFS}"
+            IFS=';'
+            for rec in ${raw}; do
+                case "${rec}" in
+                    *,open)
+                        hex_ssid="${rec%%,*}"
+                        decoded="$(printf '%s' "${hex_ssid}" | /system/bin/xxd -r -p 2>/dev/null || true)"
+                        if [ -n "${decoded}" ]; then
+                            IFS="${old_ifs}"
+                            printf '%s' "${decoded}"
+                            return
+                        fi
+                        ;;
+                esac
+            done
+            IFS="${old_ifs}"
+        fi
+        p_try=$((p_try + 1))
+        /system/bin/sleep 2
+    done
+    printf '%s' "${DEFAULT_SSID}"
+}
+
+SSID="$(resolve_target_ssid)"
+say "启动（boot_completed=$(/system/bin/getprop sys.boot_completed)，目标 AP=${SSID}）"
+
+n=0
+while [ "$(/system/bin/getprop sys.boot_completed)" != "1" ] && [ "${n}" -lt 90 ]; do
+    n=$((n + 1))
+    /system/bin/sleep 2
+done
+say "boot_completed 就绪（等待 ${n} 轮）"
+
+# WifiService 就绪判据：wificond 起来且 `cmd wifi status` 能回出 "Wifi is ..."。
+ready=0
+i=0
+while [ "${i}" -lt 30 ]; do
+    if [ "$(/system/bin/getprop init.svc.wificond)" = "running" ] &&
+       /system/bin/cmd wifi status 2>/dev/null | /system/bin/grep -q '^Wifi is '; then
+        ready=1
+        break
+    fi
+    i=$((i + 1))
+    /system/bin/sleep 2
+done
+if [ "${ready}" -ne 1 ]; then
+    say "WifiService 未就绪（${i} 轮），放弃"
+    exit 0
+fi
+say "WifiService 就绪（等待 ${i} 轮）"
+
+# 1) 开 Wi-Fi
+if /system/bin/cmd wifi status 2>/dev/null | /system/bin/grep -q 'Wifi is disabled'; then
+    say "Wi-Fi 处于关闭态，打开"
+    /system/bin/cmd wifi set-wifi-enabled enabled
+    i=0
+    while [ "${i}" -lt 30 ]; do
+        if /system/bin/cmd wifi status 2>/dev/null | /system/bin/grep -q 'Wifi is enabled'; then
+            break
+        fi
+        i=$((i + 1))
+        /system/bin/sleep 2
+    done
+fi
+
+# 1.5) 清理历史遗留的旧版虚拟热点保存项（VirtWifi / CDH-*），确保持久化 data 卷平滑切换
+/system/bin/cmd wifi list-networks 2>/dev/null | while read -r net_id net_ssid _rest; do
+    case "${net_id}" in
+        ''|*[!0-9]*) continue ;;
+    esac
+    case "${net_ssid}" in
+        VirtWifi|AndroidWifi|CDH-*)
+            say "移除旧版已保存热点 netId=${net_id} ssid=${net_ssid}"
+            /system/bin/cmd wifi forget-network "${net_id}" >/dev/null 2>&1 || true
+            ;;
+    esac
+done
+# 重新读取一次 scan_profile，防止开机早于 wifi-vhal 下发首帧
+SSID="$(resolve_target_ssid)"
+
+# 2) 接入 AP：已连上就跳过；没有保存网络时先扫一次再连。
+connected() {
+    /system/bin/cmd wifi status 2>/dev/null | /system/bin/grep -q "Wifi is connected to \"${SSID}\""
+}
+ipv4() {
+    /system/bin/ip -4 addr show wlan0 2>/dev/null | /system/bin/grep -q 'inet '
+}
+
+if connected && ipv4; then
+    say "已连上 ${SSID}，触发一次跨频扫描刷新缓存"
+    /system/bin/cmd wifi start-scan >/dev/null 2>&1 || true
+else
+    /system/bin/cmd wifi start-scan >/dev/null 2>&1 || true
+    /system/bin/sleep 3
+    i=0
+    while [ "${i}" -lt 15 ]; do
+        if connected; then
+            break
+        fi
+        say "连接 ${SSID}（第 $((i + 1)) 轮）"
+        /system/bin/cmd wifi connect-network "${SSID}" "${SECURITY}" >/dev/null 2>&1 || true
+        i=$((i + 1))
+        j=0
+        while [ "${j}" -lt 5 ]; do
+            if connected && ipv4; then
+                break
+            fi
+            j=$((j + 1))
+            /system/bin/sleep 2
+        done
+    done
+    # 关联完成后再补一次扫描，确保晚到的全频段 scan_profile（2.4G+5G）全部写入缓存
+    /system/bin/cmd wifi start-scan >/dev/null 2>&1 || true
+    /system/bin/sleep 2
+fi
+
+# 3) 收尾取证：连上与否都留一行，方便回看时序。
+say "结果：$(/system/bin/cmd wifi status 2>/dev/null | /system/bin/grep -m1 -E '^Wifi is (connected|enabled|disabled)')"
+say "wlan0：$(/system/bin/ip -br addr show wlan0 2>/dev/null)"
+if connected && ipv4; then
+    say "默认路由：$(/system/bin/ip route get 101.33.73.101 2>/dev/null | head -1)"
+fi
+exit 0

@@ -1,0 +1,28 @@
+# 共享存储对齐：sys.boot_completed=1 之后挂 emulated 卷并补齐标准媒体目录。
+#
+# 云机的 emulated;0 在 system_server 眼里一直「system locked」（见
+# /vendor/bin/cph-storage-align 头部注释与
+# engine/evidence/gold/issue-emulated-storage-unmounted/solution.md），框架不会自己挂，
+# 结果 /storage/emulated 只有 tmpfs 空壳、录屏/相册/下载全部不可用，
+# device-checker files.storage 20 个路径里 17 个 ENOENT。
+#
+# 权限：mkdir/chown/chmod 需要 CHOWN + DAC_OVERRIDE + FOWNER（/data/media/0 属
+# media_rw 0770，root 也要靠 DAC_OVERRIDE 才能写）；`sm` 走 binder，无需额外能力。
+#
+# FSETID 不能省：真机的标准目录带 setgid（2770/2771），而 chmod 想置 S_ISGID 必须
+# 有 CAP_FSETID，否则内核静默清掉该位且 chmod 仍返回 0（实测漏配时回读恒为 770）。
+#
+# 必须带 disabled：不带的话 init 在 main 阶段（实测约 18 s）就把服务拉起来，那时
+# vold/system_server 还没就绪，`sm mount` 打不进去，脚本白跑一轮（dmesg 可见
+# 「requested start, but it is already running」，boot_completed 的再次触发被忽略）。
+service vendor.cph_storage_align /system/bin/sh /vendor/bin/cph-storage-align
+    class main
+    user root
+    group root
+    seclabel u:r:pioneer:s0
+    capabilities CHOWN DAC_OVERRIDE FOWNER FSETID
+    oneshot
+    disabled
+
+on property:sys.boot_completed=1
+    start vendor.cph_storage_align

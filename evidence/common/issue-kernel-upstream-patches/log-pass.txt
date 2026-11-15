@@ -1,0 +1,296 @@
+# 验证 1：补丁打到上游基线后，与 cdh-backup-20261102 的内容逐字节一致
+
+## lineage-21-6.1 baseline 7012e868a414
+  无补丁（纯上游树）
+
+## lineage-22-6.6 baseline bf3c4b5c67f89
+  0001-selinux-pioneer-permissive.patch          可应用
+  0002-composer-fd0-ebadf.patch                  可应用
+  0003-virtio-gpu-import-damage.patch            可应用
+  0004-hwsim-fake-wifi.patch                     可应用
+  结果: 全部文件与 tag 逐字节一致
+
+## lineage-22-6.12 baseline afb0ad713e3c
+  0001-selinux-pioneer-permissive.patch          可应用
+  0002-composer-fd0-ebadf.patch                  可应用
+  0003-virtio-gpu-import-damage.patch            可应用
+  0004-hwsim-fake-wifi.patch                     可应用
+  结果: 全部文件与 tag 逐字节一致
+
+## lineage-23-6.12 baseline 4f6bf47200d9
+  0001-selinux-pioneer-permissive.patch          可应用
+  0002-virtio-gpu-vram-16k-align.patch           可应用
+  0003-hwsim-fake-wifi.patch                     可应用
+  结果: 全部文件与 tag 逐字节一致
+
+# 验证 2：四棵树状态（HEAD / 工作区 / 相对备份 tag 的差异 / CDH 代码残留）
+
+lineage-21-6.1     HEAD=7012e868a414  脏文件=0  与备份差异行=0  CDH残留=0
+lineage-22-6.6     HEAD=bf3c4b5c67f8  脏文件=0  与备份差异行=13  CDH残留=0
+lineage-22-6.12    HEAD=afb0ad713  脏文件=0  与备份差异行=17  CDH残留=0
+lineage-23-6.12    HEAD=4f6bf4720  脏文件=0  与备份差异行=5  CDH残留=0
+
+# 验证 3：02 的 Go 构建与阶段测试
+
+ok  	cloud-phone-hub/engine/build/02_build_kernel	(cached)
+
+# 验证 4：build-kernel --dry-run（gold / lineage-22-6.6）
+
+==> 内核线: 6.6（清单 kernel；与厂商固件内核同代）
+==> 内核源码: kernels/lineage-22-6.6（命令行）
+==> 配置片段: build/02_build_kernel/lineage-kernel.config（命令行）
+==> 内核补丁: 4 个（kernels/patches/lineage-22-6.6，同级 patches 目录）
+==> 产物目录: out/kernel/lineage-22-6.6（out/kernel/lineage-22-6.6）
+==> 构建镜像: ghcr.io/feicong/droid-ddk:android15-6.6（清单推导 android15-6.6）
+==> 内核基线: 未注入 lineage 解包根（CDH_LINEAGE_DIR），跳过底包内核校验
+    输入: 缓存配方 lineage-22-6.6-cdh-3ca8e19d2f59（输入哈希）
+==> [步骤 0] 解析计划
+    内核:       lineage-22-6.6（release 6.6.127-4k-cdh）
+    底包内核:   未校验（未注入 lineage 解包根）
+    源码:       kernels/lineage-22-6.6（HEAD bf3c4b5c67f8）
+    配置片段:   build/02_build_kernel/lineage-kernel.config
+    内核补丁:   4 个（0001-selinux-pioneer-permissive.patch 0002-composer-fd0-ebadf.patch 0003-virtio-gpu-import-damage.patch 0004-hwsim-fake-wifi.patch）
+    构建镜像:   ghcr.io/feicong/droid-ddk:android15-6.6
+    并行度:     12
+    LOCALVERSION: -4k-cdh
+    缓存配方:   lineage-22-6.6-cdh-3ca8e19d2f59
+    构建卷:     cdh-kernel-lineage-22-6.6-cdh-3ca8e19d2f59（保留，供 03_build_modules 复用）
+    产物目录:   out/kernel/lineage-22-6.6
+    缓存状态:   需重建（配方变化: lineage-22-6.6-cdh-72b2c01b0d4a -> lineage-22-6.6-cdh-3ca8e19d2f59）
+[dry-run] 未执行
+
+# 验证 5：删掉 composer fd0 补丁后复查（2026-11-02）
+
+# 验证 1（重跑）：补丁打到上游基线后，与 cdh-backup-20261102 的内容逐字节一致
+
+## lineage-21-6.1 baseline 7012e868a414
+  无补丁（纯上游树）
+
+## lineage-22-6.6 baseline bf3c4b5c67f89
+  0001-selinux-pioneer-permissive.patch          可应用
+  0002-virtio-gpu-import-damage.patch            可应用
+  0003-hwsim-fake-wifi.patch                     可应用
+  结果: 全部文件与 tag 逐字节一致
+
+## lineage-22-6.12 baseline afb0ad713e3c
+  0001-selinux-pioneer-permissive.patch          可应用
+  0002-composer-fd0-ebadf.patch                  可应用
+  0003-virtio-gpu-import-damage.patch            可应用
+  0004-hwsim-fake-wifi.patch                     可应用
+  结果: 全部文件与 tag 逐字节一致
+
+## lineage-23-6.12 baseline 4f6bf47200d9
+  0001-selinux-pioneer-permissive.patch          可应用
+  0002-virtio-gpu-vram-16k-align.patch           可应用
+  0003-hwsim-fake-wifi.patch                     可应用
+  结果: 全部文件与 tag 逐字节一致
+
+# 验证 2（重跑）：四棵树状态（HEAD / 工作区 / 相对备份 tag 的差异 / CDH 代码残留）
+
+lineage-21-6.1     HEAD=7012e868a414  脏文件=0  与备份差异行=0  CDH残留=0
+lineage-22-6.6     HEAD=bf3c4b5c67f8  脏文件=0  与备份差异行=13  CDH残留=0
+lineage-22-6.12    HEAD=afb0ad713  脏文件=0  与备份差异行=17  CDH残留=0
+lineage-23-6.12    HEAD=4f6bf4720  脏文件=0  与备份差异行=5  CDH残留=0
+
+    底包内核:   未校验（未注入 lineage 解包根）
+    源码:       kernels/lineage-22-6.6（HEAD bf3c4b5c67f8）
+    配置片段:   build/02_build_kernel/lineage-kernel.config
+    内核补丁:   3 个（0001-selinux-pioneer-permissive.patch 0002-virtio-gpu-import-damage.patch 0003-hwsim-fake-wifi.patch）
+    构建镜像:   ghcr.io/feicong/droid-ddk:android15-6.6
+    并行度:     12
+    LOCALVERSION: -4k-cdh
+    缓存配方:   lineage-22-6.6-cdh-fe3aded55694
+    构建卷:     cdh-kernel-lineage-22-6.6-cdh-fe3aded55694（保留，供 03_build_modules 复用）
+    产物目录:   out/kernel/lineage-22-6.6
+    缓存状态:   需重建（配方变化: lineage-22-6.6-cdh-72b2c01b0d4a -> lineage-22-6.6-cdh-fe3aded55694）
+[dry-run] 未执行
+
+# 验证 6：22-6.12 也删掉 fd0 补丁后复查（2026-11-02）
+
+# 验证 1（重跑）：补丁打到上游基线后，与 cdh-backup-20261102 的内容逐字节一致
+
+## lineage-21-6.1 baseline 7012e868a414
+  无补丁（纯上游树）
+
+## lineage-22-6.6 baseline bf3c4b5c67f89
+  0001-selinux-pioneer-permissive.patch          可应用
+  0002-virtio-gpu-import-damage.patch            可应用
+  0003-hwsim-fake-wifi.patch                     可应用
+  结果: 全部文件与 tag 逐字节一致
+
+## lineage-22-6.12 baseline afb0ad713e3c
+  0001-selinux-pioneer-permissive.patch          可应用
+  0002-virtio-gpu-import-damage.patch            可应用
+  0003-hwsim-fake-wifi.patch                     可应用
+  结果: 全部文件与 tag 逐字节一致
+
+## lineage-23-6.12 baseline 4f6bf47200d9
+  0001-selinux-pioneer-permissive.patch          可应用
+  0002-virtio-gpu-vram-16k-align.patch           可应用
+  0003-hwsim-fake-wifi.patch                     可应用
+  结果: 全部文件与 tag 逐字节一致
+
+# 验证 2（重跑）：四棵树状态（HEAD / 工作区 / 相对备份 tag 的差异 / CDH 代码残留）
+
+lineage-21-6.1     HEAD=7012e868a414  脏文件=0  与备份差异行=0  CDH残留=0
+lineage-22-6.6     HEAD=bf3c4b5c67f8  脏文件=0  与备份差异行=13  CDH残留=0
+lineage-22-6.12    HEAD=afb0ad713  脏文件=0  与备份差异行=17  CDH残留=0
+lineage-23-6.12    HEAD=4f6bf4720  脏文件=0  与备份差异行=5  CDH残留=0
+
+
+# 验证 7：21-6.1 移植 virtio-gpu / hwsim 两个补丁（2026-11-02）
+
+## 7a. 补丁应用 + 四树状态复查（verify.sh）
+
+
+## lineage-21-6.1 baseline 7012e868a414
+  0002-virtio-gpu-import-damage.patch            可应用
+  0003-hwsim-fake-wifi.patch                     可应用
+  结果: 移植补丁，备份 tag 里无对应改动，跳过 cmp（已在容器里编译验证）
+
+## lineage-22-6.6 baseline bf3c4b5c67f89
+  0001-selinux-pioneer-permissive.patch          可应用
+  0002-virtio-gpu-import-damage.patch            可应用
+  0003-hwsim-fake-wifi.patch                     可应用
+  结果: 全部文件与 tag 逐字节一致
+
+## lineage-22-6.12 baseline afb0ad713e3c
+  0001-selinux-pioneer-permissive.patch          可应用
+  0002-virtio-gpu-import-damage.patch            可应用
+  0003-hwsim-fake-wifi.patch                     可应用
+  结果: 全部文件与 tag 逐字节一致
+
+## lineage-23-6.12 baseline 4f6bf47200d9
+  0001-selinux-pioneer-permissive.patch          可应用
+  0002-virtio-gpu-vram-16k-align.patch           可应用
+  0003-hwsim-fake-wifi.patch                     可应用
+  结果: 全部文件与 tag 逐字节一致
+
+# 验证 2（重跑）：四棵树状态（HEAD / 工作区 / 相对备份 tag 的差异 / CDH 代码残留）
+
+lineage-21-6.1     HEAD=7012e868a414  脏文件=0  与备份差异行=0  CDH残留=0
+lineage-22-6.6     HEAD=bf3c4b5c67f8  脏文件=0  与备份差异行=13  CDH残留=0
+lineage-22-6.12    HEAD=afb0ad713  脏文件=0  与备份差异行=17  CDH残留=0
+lineage-23-6.12    HEAD=4f6bf4720  脏文件=0  与备份差异行=5  CDH残留=0
+
+## 7b. 容器内编译（ghcr.io/feicong/droid-ddk:android15-6.6 / arm64）
+
+$ docker run --rm -v <21-6.1>:/src -v <patches/21-6.1>:/patches:ro -v <lineage-kernel.config>:/cdh.config:ro -v <build61.sh>:/cdh-build.sh:ro -v <k61out>:/out <image> bash /cdh-build.sh
+
+==> 应用补丁
+  0002-virtio-gpu-import-damage.patch
+  0003-hwsim-fake-wifi.patch
+cfg1 rc=0
+cfg2 rc=0
+cfg3 rc=0
+  DRM_VIRTIO_GPU     y
+  MAC80211           m
+  MAC80211_HWSIM     m
+  CFG80211           m
+  DEBUG_INFO_BTF     
+==> prepare
+prepare rc=0
+==> drivers/gpu/drm/virtio/
+virtio rc=0  error=0  warning=0
+==> drivers/net/wireless/mac80211_hwsim.ko
+hwsim rc=0  error=0  warning=0
+==> 产物
+-rw-r--r--+ 1 root root 1304128 Nov  2 09:03 /out/drivers/net/wireless/mac80211_hwsim.ko
+-rw-r--r--+ 1 root root 1072 Nov  2 09:03 /out/drivers/gpu/drm/virtio/built-in.a
+==> 还原工作树
+  脏文件=0  HEAD=7012e868a414
+
+## 8. pioneer permissive 从内核搬到 sepolicy（2026-11-02）
+
+### 8a. verify.sh 重跑（四棵树）
+
+```
+# 验证 1：补丁打到上游基线后，与 cdh-backup-20261102 的内容逐字节一致
+
+## lineage-21-6.1 baseline 7012e868a414
+  0001-virtio-gpu-import-damage.patch            可应用
+  0002-hwsim-fake-wifi.patch                     可应用
+  结果: 移植补丁，备份 tag 里无对应改动，跳过 cmp（已在容器里编译验证）
+
+## lineage-22-6.6 baseline bf3c4b5c67f89
+  0001-virtio-gpu-import-damage.patch            可应用
+  0002-hwsim-fake-wifi.patch                     可应用
+  结果: 全部文件与 tag 逐字节一致
+
+## lineage-22-6.12 baseline afb0ad713e3c
+  0001-virtio-gpu-import-damage.patch            可应用
+  0002-hwsim-fake-wifi.patch                     可应用
+  结果: 全部文件与 tag 逐字节一致
+
+## lineage-23-6.12 baseline 4f6bf47200d9
+  0001-virtio-gpu-vram-16k-align.patch           可应用
+  0002-hwsim-fake-wifi.patch                     可应用
+  结果: 全部文件与 tag 逐字节一致
+
+# 验证 2：四棵树状态（HEAD / 工作区 / 相对备份 tag 的差异 / CDH 代码残留）
+
+lineage-21-6.1     HEAD=7012e868a414  脏文件=0  与备份差异行=0  CDH残留=0
+lineage-22-6.6     HEAD=bf3c4b5c67f8  脏文件=0  与备份差异行=13  CDH残留=0
+lineage-22-6.12    HEAD=afb0ad713  脏文件=0  与备份差异行=17  CDH残留=0
+lineage-23-6.12    HEAD=4f6bf4720  脏文件=0  与备份差异行=5  CDH残留=0
+```
+
+### 8b. git apply / 树状态（verify.sh 汇总见 8a；补丁编号已顺延）
+
+```
+lineage-22-6.6 : 0001-virtio-gpu-import-damage.patch  0002-hwsim-fake-wifi.patch
+lineage-22-6.12: 0001-virtio-gpu-import-damage.patch  0002-hwsim-fake-wifi.patch
+lineage-23-6.12: 0001-virtio-gpu-vram-16k-align.patch 0002-hwsim-fake-wifi.patch
+lineage-21-6.1 : 0001-virtio-gpu-import-damage.patch  0002-hwsim-fake-wifi.patch
+（三棵 22.x/23.x 树的 0001-selinux-pioneer-permissive.patch 已删除）
+```
+
+### 8c. secilc 实测：permissive 由策略落下（脚本 verify-permissive-cil.sh）
+
+```
+==> 1. 从 lineage-22.2 基底取 plat / plat_pub_versioned
+  plat_sepolicy.cil       2412881 B  sha256=81a8a08f76fceef0
+  plat_pub_versioned.cil   371390 B  sha256=f07d21e7bc4dace6
+==> 2. 取 07 产出的 vendor_sepolicy.cil（含模块层 pioneer 块）
+  vendor_before.cil      237827 B
+==> 3. 拼「改后」：gold 机型层片段里新增的两行
+  从片段取到 2 行：
+    (typepermissive crash_dump)
+    (typepermissive surfaceflinger)
+==> 4. secilc 编译两遍（-N 关 neverallow，理由见脚本头）
+  before: rc=0  760419 B
+  after: rc=0  760431 B
+==> 5. permissive 集合（seinfo 计数 + setools 列名）
+  before Permissives=3  ['pioneer', 'shell', 'su']
+  after  Permissives=5  ['crash_dump', 'pioneer', 'shell', 'su', 'surfaceflinger']
+==> 6. sediff（只应多出 crash_dump / surfaceflinger）
+    Types (0 Added, 0 Removed, 2 Modified)
+       Modified Types: 2
+          * crash_dump (Added permissive)
+          * surfaceflinger (Added permissive)
+    
+  结果: 只多了 crash_dump / surfaceflinger 两条 permissive，与内核补丁当年的三型集合一致
+```
+
+### 8d. dry-run 与 go test
+
+```
+$ CDH_MANIFEST=.../xiaomi/gold/baselines/gold_images_*.json go run . build-kernel --source ../kernels/lineage-22-6.6 --dry-run
+    内核补丁:   2 个（0001-virtio-gpu-import-damage.patch 0002-hwsim-fake-wifi.patch）
+    缓存配方:   lineage-22-6.6-cdh-b462c4518242
+    缓存状态:   需重建（配方变化: lineage-22-6.6-cdh-72b2c01b0d4a -> lineage-22-6.6-cdh-b462c4518242）
+
+$ CDH_MANIFEST=.../flyme/m22/baselines/12.5.0.0A.json go run . build-kernel --source ../kernels/lineage-23-6.12 --dry-run
+    内核补丁:   2 个（0001-virtio-gpu-vram-16k-align.patch 0002-hwsim-fake-wifi.patch）
+    缓存配方:   lineage-23-6.12-cdh-edfc30e4c8fa
+    缓存状态:   需重建（配方变化: lineage-23-6.12-cdh-0c0573720acb -> lineage-23-6.12-cdh-edfc30e4c8fa）
+
+$ CDH_MANIFEST=.../google/oriole/baselines/oriole-cp3a.*.json go run . build-kernel --source ../kernels/lineage-21-6.1 --dry-run
+==> 内核补丁: 2 个（kernels/patches/lineage-21-6.1，同级 patches 目录）
+[err] 缺少 --image（或 CDH_KERNEL_BUILDER）：无法从清单推导镜像标签（需要 android-version 与 uname-version）
+（oriole 未接流水线的已知缺口，与本改动无关）
+
+$ go test ./02_build_kernel/ ./07_build_vendor/ ./internal/kbuild/
+ok      cloud-phone-hub/engine/build/02_build_kernel    1.545s
+ok      cloud-phone-hub/engine/build/07_build_vendor    11.979s
+```

@@ -1,0 +1,11 @@
+#231 实机前（Batch-6 重建盘阶段失败记录）
+
+1. 用户反馈：
+   - 「device-checker 云app没有安装到云机」
+   - 「云机都连不上101的服务器」
+
+2. 根因现象：
+   - 干净重建云机盘 gold_15-OS3.0.11.0.VNQCNXM/3（127.0.0.1:5911）未安装 device-checker-cloud.apk，服务端 http://101.33.73.101/api/devices 中不存在云机 98a058b2b0618483-cloud。
+   - 当客户端因网络回调 onAvailable()、force-stop 重启或网关半开连接重连时：
+     * core/development/device-checker/server/src/adapter.rs 的 handle_device 在连接退出时无条件调用 devices.remove(&key)，旧连接延迟断开会误删刚上线的新连接；
+     * WsClient.kt 缺少 connectingOrConnected 保护、未设置 setSoLinger(true, 0)（半关闭滞留 3~5s），且握手后未补发幂等 hello 进行自愈。

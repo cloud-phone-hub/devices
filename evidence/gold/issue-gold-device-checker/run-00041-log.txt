@@ -1,0 +1,898 @@
+runId=run-00041  设备=['07cf5fc1784783d5', 'c46c631991f2196b-cloud']  功能点=22
+原始结果: /Volumes/work/cloud-phone-hub/out/tmp/gold-compare-run-00041.json
+
+=== 执行状态 ===
+  android.feature            真机 succeeded  
+  android.feature            云机 succeeded  
+  camera.camera_new          真机 succeeded  
+  camera.camera_new          云机 succeeded  
+  dev.test_vendor            真机 succeeded  
+  dev.test_vendor            云机 succeeded  
+  files.storage              真机 succeeded  
+  files.storage              云机 succeeded  
+  hardware.battery           真机 succeeded  
+  hardware.battery           云机 succeeded  
+  hardware.cpu               真机 succeeded  
+  hardware.cpu               云机 succeeded  
+  hardware.gles              真机 succeeded  
+  hardware.gles              云机 succeeded  
+  hardware.inputs            真机 succeeded  
+  hardware.inputs            云机 succeeded  
+  hardware.meminfo           真机 succeeded  
+  hardware.meminfo           云机 succeeded  
+  hardware.sensor            真机 failed     执行超时
+  hardware.sensor            云机 succeeded  
+  hardware.uname             真机 succeeded  
+  hardware.uname             云机 succeeded  
+  media.mediacodec           真机 succeeded  
+  media.mediacodec           云机 succeeded  
+  network.cell               真机 succeeded  
+  network.cell               云机 succeeded  
+  network.connectivity       真机 succeeded  
+  network.connectivity       云机 succeeded  
+  network.ifaces             真机 succeeded  
+  network.ifaces             云机 succeeded  
+  properties.build           真机 succeeded  
+  properties.build           云机 succeeded  
+  screen.display             真机 succeeded  
+  screen.display             云机 succeeded  
+  ultimate.cloud_emulator    真机 succeeded  
+  ultimate.cloud_emulator    云机 succeeded  
+  ultimate.debug_integrity   真机 failed     "Wrapped java.lang.RuntimeException: 字段不存在: android.content.
+  ultimate.debug_integrity   云机 failed     "Wrapped java.lang.RuntimeException: 字段不存在: android.content.
+  ultimate.hook_inject       真机 succeeded  
+  ultimate.hook_inject       云机 succeeded  
+  ultimate.probe_runtime     真机 succeeded  
+  ultimate.probe_runtime     云机 succeeded  
+  ultimate.root_selinux      真机 succeeded  
+  ultimate.root_selinux      云机 succeeded  
+
+=== 差异（已剔除噪声键） ===
+
+--- android.feature: 差异 0 项 / 共 373 键
+
+--- camera.camera_new: 差异 0 项 / 共 8700 键
+
+--- dev.test_vendor: 差异 5602 项 / 共 5628 键
+    dirsVisited
+      真机: 260
+      云机: 67
+    filesSeen
+      真机: 6002
+      云机: 756
+    readableCount
+      真机: 2799
+      云机: 440
+    readable[0].path
+      真机: /vendor/etc/AbnormalDisplayLog_dynamic.ds
+      云机: /vendor/etc/media_profiles_V1_0.xml
+    readable[0].size
+      真机: 8862
+      云机: 14082
+    readable[1000].path
+      真机: /vendor/etc/mdota/MTK_OPOTA_SBPID_291.mcfopota
+      云机: <无>
+    readable[1000].size
+      真机: 512
+      云机: <无>
+    readable[1001].path
+      真机: /vendor/etc/mdota/MTK_OPOTA_SBPID_292.mcfopota
+      云机: <无>
+    readable[1001].size
+      真机: 116
+      云机: <无>
+    readable[1002].path
+      真机: /vendor/etc/mdota/MTK_OPOTA_SBPID_293.mcfopota
+      云机: <无>
+    readable[1002].size
+      真机: 228
+      云机: <无>
+    readable[1003].path
+      真机: /vendor/etc/mdota/MTK_OPOTA_SBPID_294.mcfopota
+      云机: <无>
+    readable[1003].size
+      真机: 116
+      云机: <无>
+    readable[1004].path
+      真机: /vendor/etc/mdota/MTK_OPOTA_SBPID_295.mcfopota
+      云机: <无>
+    readable[1004].size
+      真机: 116
+      云机: <无>
+    readable[1005].path
+      真机: /vendor/etc/mdota/MTK_OPOTA_SBPID_296.mcfopota
+      云机: <无>
+    readable[1005].size
+      真机: 116
+      云机: <无>
+    readable[1006].path
+      真机: /vendor/etc/mdota/MTK_OPOTA_SBPID_297.mcfopota
+      云机: <无>
+    readable[1006].size
+      真机: 228
+      云机: <无>
+    readable[1007].path
+      真机: /vendor/etc/mdota/MTK_OPOTA_SBPID_298.mcfopota
+      云机: <无>
+    readable[1007].size
+      真机: 200
+      云机: <无>
+    readable[1008].path
+      真机: /vendor/etc/mdota/MTK_OPOTA_SBPID_299.mcfopota
+      云机: <无>
+    readable[1008].size
+      真机: 228
+      云机: <无>
+    readable[1009].path
+      真机: /vendor/etc/mdota/MTK_OPOTA_SBPID_3.mcfopota
+      云机: <无>
+    readable[1009].size
+      真机: 5808
+      云机: <无>
+
+--- files.storage: 差异 138 项 / 共 283 键
+    paths[0].stat.atime
+      真机: 2010-01-01 08:06:02.324000
+      云机: 1970-01-01 08:00:16.388000
+    paths[0].stat.ctime
+      真机: 2026-05-14 15:07:15.296000
+      云机: 2026-07-15 21:03:40.784000
+    paths[0].stat.mtime
+      真机: 2026-05-14 15:07:15.296000
+      云机: 2026-07-15 21:03:40.784000
+    paths[0].stat.st_blocks
+      真机: 7
+      云机: 8
+    paths[0].stat.st_dev
+      真机: 131
+      云机: 182
+    paths[0].stat.st_ino
+      真机: 139
+      云机: 1769473
+    paths[0].stat.st_size
+      真机: 3452
+      云机: 4096
+    paths[10].stat.atime
+      真机: 2026-05-14 15:07:19.104000
+      云机: 2026-10-31 17:38:32.604000
+    paths[10].stat.ctime
+      真机: 2026-05-14 15:07:19.140000
+      云机: 2026-10-31 18:39:09.420000
+    paths[10].stat.mtime
+      真机: 2026-05-14 15:07:19.140000
+      云机: 2026-10-31 17:44:44.236000
+    paths[10].stat.st_blocks
+      真机: 7
+      云机: 8
+    paths[10].stat.st_dev
+      真机: 131
+      云机: 182
+    paths[10].stat.st_ino
+      真机: 12118
+      云机: 1769491
+    paths[10].stat.st_size
+      真机: 3452
+      云机: 4096
+    paths[11].stat.atime
+      真机: 2026-05-14 15:07:19.120000
+      云机: 2026-10-31 17:38:32.616000
+    paths[11].stat.ctime
+      真机: 2026-05-14 15:07:19.120000
+      云机: 2026-10-31 18:39:09.448000
+    paths[11].stat.mtime
+      真机: 2026-05-14 15:07:19.120000
+      云机: 2026-10-31 17:38:32.616000
+    paths[11].stat.st_blocks
+      真机: 7
+      云机: 8
+    paths[11].stat.st_dev
+      真机: 131
+      云机: 182
+    paths[11].stat.st_ino
+      真机: 12126
+      云机: 1769492
+    paths[11].stat.st_size
+      真机: 3452
+      云机: 4096
+    paths[12].stat.atime
+      真机: 2026-05-14 15:07:19.124000
+      云机: 2026-10-31 17:38:32.628000
+    paths[12].stat.ctime
+      真机: 2026-05-14 15:07:25.916000
+      云机: 2026-10-31 18:39:09.472000
+    paths[12].stat.mtime
+      真机: 2026-05-14 15:07:25.916000
+      云机: 2026-10-31 17:44:53.400000
+    paths[12].stat.st_blocks
+      真机: 7
+      云机: 8
+
+--- hardware.battery: 差异 6 项 / 共 20 键
+    battery.charge_counter
+      真机: 4952
+      云机: 4950
+    battery.metadata
+      真机: 1AIAAEJOREwSAAAACgAAAHQAZQBjAGgAbgBvAGwAbwBnAHkAAAAAAAAAAAAHAAAATABpAC0AcABv
+AGwAeQAAAAoAAABpAGMAbwB
+      云机: 1AIAAEJOREwSAAAACgAAAHQAZQBjAGgAbgBvAGwAbwBnAHkAAAAAAAAAAAAHAAAATABpAC0AcABv
+AGwAeQAAAAoAAABpAGMAbwB
+    battery.seq
+      真机: 6805
+      云机: 23
+    battery.status
+      真机: 5
+      云机: 2
+    battery.temperature
+      真机: 360
+      云机: 318
+    battery.voltage
+      真机: 4390
+      云机: 4391
+
+--- hardware.cpu: 差异 44 项 / 共 46 键
+    cpu.cpuFreq[0].cpuinfo_max_freq
+      真机: 2400000
+      云机: <无>
+    cpu.cpuFreq[0].cpuinfo_min_freq
+      真机: 725000
+      云机: <无>
+    cpu.cpuFreq[0].policy
+      真机: policy6
+      云机: <无>
+    cpu.cpuFreq[0].scaling_available_frequencies[0]
+      真机: 2400000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_available_frequencies[10]
+      真机: 1129000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_available_frequencies[11]
+      真机: 1042000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_available_frequencies[12]
+      真机: 985000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_available_frequencies[13]
+      真机: 898000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_available_frequencies[14]
+      真机: 840000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_available_frequencies[15]
+      真机: 725000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_available_frequencies[1]
+      真机: 2306000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_available_frequencies[2]
+      真机: 2203000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_available_frequencies[3]
+      真机: 2118000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_available_frequencies[4]
+      真机: 1993000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_available_frequencies[5]
+      真机: 1837000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_available_frequencies[6]
+      真机: 1650000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_available_frequencies[7]
+      真机: 1534000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_available_frequencies[8]
+      真机: 1418000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_available_frequencies[9]
+      真机: 1274000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_cur_freq
+      真机: 1993000
+      云机: <无>
+    cpu.cpuFreq[0].scaling_max_freq
+      真机: permission-denied
+      云机: <无>
+    cpu.cpuFreq[0].scaling_min_freq
+      真机: permission-denied
+      云机: <无>
+    cpu.cpuFreq[1].cpuinfo_max_freq
+      真机: 2000000
+      云机: <无>
+    cpu.cpuFreq[1].cpuinfo_min_freq
+      真机: 500000
+      云机: <无>
+    cpu.cpuFreq[1].policy
+      真机: policy0
+      云机: <无>
+
+--- hardware.gles: 差异 2 项 / 共 6 键
+    gles.extensions
+      真机: GL_EXT_debug_marker GL_ARM_rgba8 GL_ARM_mali_shader_binary GL_ARM_debug_assert GL_OES_depth24 GL_OES
+      云机: GL_EXT_debug_marker GL_EXT_blend_minmax GL_EXT_multi_draw_arrays GL_EXT_texture_filter_anisotropic G
+    gles.shadingLanguageVersion
+      真机: OpenGL ES GLSL ES 3.20
+      云机: OpenGL ES GLSL ES 3.00
+
+--- hardware.inputs: 差异 12 项 / 共 37 键
+    devices[2].descriptor
+      真机: 9a244e01c90550ca2eb2798ffe20d8731e811765
+      云机: c63c3be2de98f10e6bbd97f78684d819a6c862b9
+    devices[2].name
+      真机: mtk-kpd
+      云机: goodix_ts
+    devices[2].sources
+      真机: 257
+      云机: 4355
+    devices[2].sourcesHex
+      真机: 0x101
+      云机: 0x1103
+    devices[3].descriptor
+      真机: dad8bc819b573998ec22ca3952b1006fc1aa1a82
+      云机: 9a244e01c90550ca2eb2798ffe20d8731e811765
+    devices[3].name
+      真机: fpc_irq@fingerprint
+      云机: mtk-kpd
+    devices[4].descriptor
+      真机: 485d69228e24f5e46da1598745890b214130dbc4
+      云机: dad8bc819b573998ec22ca3952b1006fc1aa1a82
+    devices[4].name
+      真机: mtk-pmic-keys
+      云机: fpc_irq@fingerprint
+    devices[6].descriptor
+      真机: c63c3be2de98f10e6bbd97f78684d819a6c862b9
+      云机: 485d69228e24f5e46da1598745890b214130dbc4
+    devices[6].name
+      真机: goodix_ts
+      云机: mtk-pmic-keys
+    devices[6].sources
+      真机: 4355
+      云机: 257
+    devices[6].sourcesHex
+      真机: 0x1103
+      云机: 0x101
+
+--- hardware.meminfo: 差异 1 项 / 共 2 键
+    raw
+      真机: MemTotal:        7760412 kB
+MemFree:         1862312 kB
+MemAvailable:    4683796 kB
+Buffers:        
+      云机: MemTotal:        7760724 kB
+MemFree:         4214740 kB
+MemAvailable:    5907636 kB
+Buffers:        
+
+--- hardware.sensor: 差异 699 项 / 共 699 键
+    ok
+      真机: <无>
+      云机: True
+    sensors.DynamicSensorDiscoverySupported
+      真机: <无>
+      云机: False
+    sensors.sensorsNumber
+      真机: <无>
+      云机: 139
+    sensors.sensors[0].fieldValue.mFlags
+      真机: <无>
+      云机: 0
+    sensors.sensors[0].methodValue.AdditionalInfoSupported
+      真机: <无>
+      云机: False
+    sensors.sensors[0].methodValue.DataInjectionSupported
+      真机: <无>
+      云机: False
+    sensors.sensors[0].methodValue.DynamicSensor
+      真机: <无>
+      云机: False
+    sensors.sensors[0].methodValue.FifoMaxEventCount
+      真机: <无>
+      云机: 4500
+    sensors.sensors[0].methodValue.FifoReservedEventCount
+      真机: <无>
+      云机: 3000
+    sensors.sensors[0].methodValue.Handle
+      真机: <无>
+      云机: 1
+    sensors.sensors[0].methodValue.HighestDirectReportRateLevel
+      真机: <无>
+      云机: 0
+    sensors.sensors[0].methodValue.Id
+      真机: <无>
+      云机: 0
+    sensors.sensors[0].methodValue.MaxDelay
+      真机: <无>
+      云机: 80000
+    sensors.sensors[0].methodValue.MaximumRange
+      真机: <无>
+      云机: 78.45360565185547
+    sensors.sensors[0].methodValue.MinDelay
+      真机: <无>
+      云机: 5000
+    sensors.sensors[0].methodValue.Name
+      真机: <无>
+      云机: lsm6dso_acc
+    sensors.sensors[0].methodValue.Power
+      真机: <无>
+      云机: 0.0010000000474974513
+    sensors.sensors[0].methodValue.ReportingMode
+      真机: <无>
+      云机: 0
+    sensors.sensors[0].methodValue.Resolution
+      真机: <无>
+      云机: 0.0012000000569969416
+    sensors.sensors[0].methodValue.StringType
+      真机: <无>
+      云机: android.sensor.accelerometer
+    sensors.sensors[0].methodValue.Type
+      真机: <无>
+      云机: 1
+    sensors.sensors[0].methodValue.TypeHardwareBuffer
+      真机: <无>
+      云机: False
+    sensors.sensors[0].methodValue.TypeMemoryFile
+      真机: <无>
+      云机: False
+    sensors.sensors[0].methodValue.Uuid
+      真机: <无>
+      云机: 00000000-0000-0000-0000-000000000000
+    sensors.sensors[0].methodValue.Vendor
+      真机: <无>
+      云机: InvenSense
+
+--- hardware.uname: 差异 2 项 / 共 7 键
+    raw
+      真机: Linux localhost 6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k #1 SMP PREEMPT Thu May 28 07:48:46 U
+      云机: Linux localhost 6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k #1 SMP PREEMPT Thu Jul 10 06:35:14 UT
+    uname.release
+      真机: 6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k
+      云机: 6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k
+
+--- media.mediacodec: 差异 0 项 / 共 3 键
+
+--- network.cell: 差异 30 项 / 共 31 键
+    cells[0].identity.bandwidthKhz
+      真机: <无>
+      云机: 20000
+    cells[0].identity.ci
+      真机: <无>
+      云机: 22369792
+    cells[0].identity.earfcn
+      真机: <无>
+      云机: 1650
+    cells[0].identity.mcc
+      真机: <无>
+      云机: 460
+    cells[0].identity.mnc
+      真机: <无>
+      云机: 01
+    cells[0].identity.pci
+      真机: <无>
+      云机: 100
+    cells[0].identity.tac
+      真机: <无>
+      云机: 1000
+    cells[0].registered
+      真机: <无>
+      云机: True
+    cells[0].signal.asu
+      真机: <无>
+      云机: 45
+    cells[0].signal.dbm
+      真机: <无>
+      云机: -95
+    cells[0].signal.level
+      真机: <无>
+      云机: 3
+    cells[0].type
+      真机: <无>
+      云机: LTE
+    cells[1].identity.bandwidthKhz
+      真机: <无>
+      云机: 20000
+    cells[1].identity.ci
+      真机: <无>
+      云机: 22369792
+    cells[1].identity.earfcn
+      真机: <无>
+      云机: 1650
+    cells[1].identity.mcc
+      真机: <无>
+      云机: None
+    cells[1].identity.mnc
+      真机: <无>
+      云机: None
+    cells[1].identity.pci
+      真机: <无>
+      云机: 100
+    cells[1].identity.tac
+      真机: <无>
+      云机: 1000
+    cells[1].registered
+      真机: <无>
+      云机: False
+    cells[1].signal.asu
+      真机: <无>
+      云机: 99
+    cells[1].signal.dbm
+      真机: <无>
+      云机: 2147483647
+    cells[1].signal.level
+      真机: <无>
+      云机: 1
+    cells[1].type
+      真机: <无>
+      云机: LTE
+    count
+      真机: 0
+      云机: 2
+
+--- network.connectivity: 差异 5 项 / 共 18 键
+    connectivity.link.dns[0]
+      真机: /192.168.31.1
+      云机: /192.168.60.1
+    connectivity.link.links[0]
+      真机: fe80::64ac:e8ff:fea7:3d08/64
+      云机: fe80::2c04:ddff:fe83:134b/64
+    connectivity.link.links[1]
+      真机: 192.168.31.159/24
+      云机: 192.168.60.100/24
+    connectivity.link.routes[1]
+      真机: 192.168.31.0/24 -> 0.0.0.0 wlan0 mtu 0
+      云机: 192.168.60.0/24 -> 0.0.0.0 wlan0 mtu 0
+    connectivity.link.routes[2]
+      真机: 0.0.0.0/0 -> 192.168.31.1 wlan0 mtu 0
+      云机: 0.0.0.0/0 -> 192.168.60.1 wlan0 mtu 0
+
+--- network.ifaces: 差异 42 项 / 共 74 键
+    count
+      真机: 3
+      云机: 6
+    interfaces[0].addresses[0].host
+      真机: fe80::c82a:4eff:feea:6df5%dummy0
+      云机: fe80::9c97:1eff:fe0a:9feb%dummy0
+    interfaces[1].addresses[0].host
+      真机: fe80::64ac:e8ff:fea7:3d08%wlan0
+      云机: fe80::2c04:ddff:fe83:134b%wlan0
+    interfaces[1].addresses[1].host
+      真机: 192.168.31.159
+      云机: 192.168.60.100
+    interfaces[3].addresses[0].host
+      真机: <无>
+      云机: fe80::5054:ff:fe12:3458%ccmni2
+    interfaces[3].addresses[0].loopback
+      真机: <无>
+      云机: False
+    interfaces[3].addresses[1].host
+      真机: <无>
+      云机: fec0::5054:ff:fe12:3458
+    interfaces[3].addresses[1].loopback
+      真机: <无>
+      云机: False
+    interfaces[3].displayName
+      真机: <无>
+      云机: ccmni2
+    interfaces[3].loopback
+      真机: <无>
+      云机: False
+    interfaces[3].mac
+      真机: <无>
+      云机: None
+    interfaces[3].mtu
+      真机: <无>
+      云机: 1400
+    interfaces[3].name
+      真机: <无>
+      云机: ccmni2
+    interfaces[3].pointToPoint
+      真机: <无>
+      云机: False
+    interfaces[3].up
+      真机: <无>
+      云机: True
+    interfaces[3].virtual
+      真机: <无>
+      云机: False
+    interfaces[4].addresses[0].host
+      真机: <无>
+      云机: fe80::58d3:73ff:feaa:cdee%ccmni0
+    interfaces[4].addresses[0].loopback
+      真机: <无>
+      云机: False
+    interfaces[4].addresses[1].host
+      真机: <无>
+      云机: 240e:573:ec0:1345:18d1:1082:f180:ed50
+    interfaces[4].addresses[1].loopback
+      真机: <无>
+      云机: False
+    interfaces[4].displayName
+      真机: <无>
+      云机: ccmni0
+    interfaces[4].loopback
+      真机: <无>
+      云机: False
+    interfaces[4].mac
+      真机: <无>
+      云机: None
+    interfaces[4].mtu
+      真机: <无>
+      云机: 1400
+    interfaces[4].name
+      真机: <无>
+      云机: ccmni0
+
+--- properties.build: 差异 0 项 / 共 18 键
+
+--- screen.display: 差异 17 项 / 共 89 键
+    display.AppVsyncOffsetNanos
+      真机: 1199999
+      云机: 2400001
+    display.Metrics.xdpi
+      真机: 394.4099426269531
+      云机: 391.8857116699219
+    display.Metrics.ydpi
+      真机: 393.391845703125
+      云机: 391.8857116699219
+    display.PreferredWideGamutColorSpace
+      真机: <无>
+      云机: None
+    display.PresentationDeadlineNanos
+      真机: 14800000
+      云机: 28600000
+    display.RealMetrics.xdpi
+      真机: 394.4099426269531
+      云机: 391.8857116699219
+    display.RealMetrics.ydpi
+      真机: 393.391845703125
+      云机: 391.8857116699219
+    display.RefreshRate
+      真机: 120.00000762939452
+      云机: 60
+    display.SupportedRefreshRates[1]
+      真机: 90
+      云机: <无>
+    display.SupportedRefreshRates[2]
+      真机: 120.00000762939452
+      云机: <无>
+    display.WideColorGamut
+      真机: True
+      云机: False
+    display.configuration.ScreenWideColorGamut
+      真机: True
+      云机: False
+    display.configuration.colorMode
+      真机: 6
+      云机: 5
+    display.configuration.hardKeyboardHidden
+      真机: 2
+      云机: 1
+    display.configuration.keyboard
+      真机: 1
+      云机: 2
+    display.configuration.mnc
+      真机: 3
+      云机: 1
+    display.configuration.seq
+      真机: 22
+      云机: 8
+
+--- ultimate.cloud_emulator: 差异 3 项 / 共 181 键
+    checks[9].evidence.ageDays
+      真机: 170
+      云机: 108
+    checks[9].evidence.earliestAtime
+      真机: 2026-05-14T07:07:02.000Z
+      云机: 2026-07-15T13:03:31.000Z
+    checks[9].evidence.earliestAtimeSec
+      真机: 1778742422
+      云机: 1784120611
+
+--- ultimate.debug_integrity: 差异 0 项 / 共 0 键
+
+--- ultimate.hook_inject: 差异 18 项 / 共 314 键
+    checks[15].evidence.candidates[0]
+      真机: 11595|sh
+      云机: 24514|sh
+    checks[15].evidence.candidates[1]
+      真机: 11601|sh
+      云机: 24517|sh
+    checks[16].evidence.pid
+      真机: 11632
+      云机: 24545
+    checks[24].evidence.ms[0]
+      真机: 82.2
+      云机: 75.3
+    checks[24].evidence.ms[1]
+      真机: 103.9
+      云机: 45.7
+    checks[24].evidence.ms[2]
+      真机: 118
+      云机: 53.8
+    checks[24].evidence.ms[3]
+      真机: 84.6
+      云机: 77.2
+    checks[24].evidence.ms[4]
+      真机: 97.4
+      云机: 90
+    checks[24].evidence.ratio[0]
+      真机: 1.264
+      云机: 0.607
+    checks[24].evidence.ratio[1]
+      真机: 1.436
+      云机: 0.714
+    checks[24].evidence.ratio[2]
+      真机: 1.029
+      云机: 1.025
+    checks[24].evidence.ratio[3]
+      真机: 1.185
+      云机: 1.195
+    checks[3].evidence[0]
+      真机: fd(deleted):3
+      云机: <无>
+    checks[3].hit
+      真机: True
+      云机: False
+    checks[47].evidence.deleted
+      真机: 4
+      云机: 0
+    checks[47].risk
+      真机: warn
+      云机: none
+    deadly
+      真机: 1
+      云机: 0
+    hit
+      真机: 2
+      云机: 1
+
+--- ultimate.probe_runtime: 差异 25 项 / 共 206 键
+    checks[10].evidence.am.totalMem
+      真机: 7946661888
+      云机: 7946981376
+    checks[10].evidence.procMeminfo.Dirty
+      真机: 200 kB
+      云机: 136 kB
+    checks[10].evidence.procMeminfo.Mapped
+      真机: 1024140 kB
+      云机: 972008 kB
+    checks[10].evidence.procMeminfo.MemAvailable
+      真机: 4673444 kB
+      云机: 5883656 kB
+    checks[10].evidence.procMeminfo.MemFree
+      真机: 1851104 kB
+      云机: 4190352 kB
+    checks[10].evidence.procMeminfo.MemTotal
+      真机: 7760412 kB
+      云机: 7760724 kB
+    checks[10].evidence.procMeminfo.Shmem
+      真机: 61016 kB
+      云机: 198684 kB
+    checks[10].evidence.procMeminfo.SwapFree
+      真机: 6076992 kB
+      云机: 0 kB
+    checks[13].evidence.display.mnc
+      真机: 3
+      云机: 1
+    checks[15].evidence.osVersion
+      真机: 6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k
+      云机: 6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k
+    checks[15].evidence.supportedAbis
+      真机: [arm64-v8a, armeabi-v7a, armeabi]
+      云机: [arm64-v8a]
+    checks[16].evidence.amGetConfig
+      真机: config: mcc460-mnc3-zh-rCN-ldltr-sw393dp-w393dp-h873dp-normal-long-notround-widecg-lowdr-port-notnig
+      云机: config: mcc460-mnc1-zh-rCN-ldltr-sw393dp-w393dp-h873dp-normal-long-notround-nowidecg-lowdr-port-notn
+    checks[16].evidence.dfRoot
+      真机: /dev/block/dm-33    968496 968496         0 100% /
+      云机: /dev/block/dm-2    968480 968480         0 100% /
+    checks[16].evidence.execContext
+      真机: u:r:untrusted_app:s0:c32,c257,c512,c768
+      云机: u:r:untrusted_app:s0:c13,c257,c512,c768
+    checks[16].evidence.idRaw
+      真机: uid=10288(u0_a288) gid=10288(u0_a288) groups=10288(u0_a288),3003(inet),9997(everybody),20288(u0_a288
+      云机: uid=10269(u0_a269) gid=10269(u0_a269) groups=10269(u0_a269),3003(inet),9997(everybody),20269(u0_a269
+    checks[2].evidence.phoneType
+      真机: 2
+      云机: 1
+    checks[4].evidence.sample
+      真机: {"ms":1200,"sensors":[{"type":1,"name":"lsm6dso_acc","vendor":"InvenSense","version":1,"maxRange":78
+      云机: {"ms":1200,"sensors":[{"type":1,"name":"lsm6dso_acc","vendor":"InvenSense","version":1,"maxRange":78
+    checks[5].evidence.freeMb
+      真机: 0
+      云机: 12
+    checks[5].evidence.totalMb
+      真机: 18
+      云机: 24
+    checks[6].evidence.cpu0CurFreqKHz
+      真机: 1916000
+      云机: 2000000
+    checks[7].evidence.javaHeapMb
+      真机: 18
+      云机: 12
+    checks[9].evidence.pid
+      真机: 9537
+      云机: 21870
+    checks[9].evidence.status.SigQ
+      真机: 0/28678
+      云机: 0/31569
+    checks[9].evidence.status.Threads
+      真机: 86
+      云机: 43
+    checks[9].evidence.status.VmSize
+      真机: 16418568 kB
+      云机: 15058216 kB
+
+--- ultimate.root_selinux: 差异 24 项 / 共 283 键
+    checks[12].evidence.lineageSvcs
+      真机: 0
+      云机: <无>
+    checks[12].evidence.scanned
+      真机: 28
+      云机: <无>
+    checks[12].evidence.sepolicy
+      真机: (无)
+      云机: <无>
+    checks[12].evidence[0]
+      真机: <无>
+      云机: sepolicy 含 lineage/hal_aospa:/vendor/etc/selinux/vendor_file_contexts,/vendor/etc/selinux/vendor_sep
+    checks[12].hit
+      真机: False
+      云机: True
+    checks[27].evidence.scanned
+      真机: 187
+      云机: 178
+    checks[28].evidence.drDev
+      真机: 65057
+      云机: 64770
+    checks[28].evidence.rootDev
+      真机: 65057
+      云机: 64770
+    checks[29].evidence.lastEntry.fs
+      真机: f2fs
+      云机: ext4
+    checks[29].evidence.lastEntry.source
+      真机: /dev/block/dm-81
+      云机: /dev/block/dm-48
+    checks[30].evidence.lastEntry.fs
+      真机: f2fs
+      云机: ext4
+    checks[30].evidence.lastEntry.source
+      真机: /dev/block/dm-81
+      云机: /dev/block/dm-48
+    checks[31].evidence.groups
+      真机: 72
+      云机: 67
+    checks[31].evidence.holes
+      真机: 0
+      云机: 2
+    checks[31].hit
+      真机: False
+      云机: True
+    checks[32].evidence.anonCount
+      真机: 58
+      云机: 55
+    checks[33].evidence.entries
+      真机: 187
+      云机: 178
+    checks[38].evidence[0]
+      真机: /mnt 可列 19 项 ctx=u:object_r:tmpfs:s0
+      云机: /mnt 可列 20 项 ctx=u:object_r:tmpfs:s0
+    checks[39].evidence.context
+      真机: u:r:untrusted_app:s0:c32,c257,c512,c768 
+      云机: u:r:untrusted_app:s0:c13,c257,c512,c768 
+    checks[41].evidence.peerHoles
+      真机: False
+      云机: True
+    checks[6].evidence.selfContext
+      真机: u:r:untrusted_app:s0:c32,c257,c512,c768 
+      云机: u:r:untrusted_app:s0:c13,c257,c512,c768 
+    deadly
+      真机: 2
+      云机: 3
+    hit
+      真机: 4
+      云机: 6
+    warn
+      真机: 0
+      云机: 1
+EXIT=0

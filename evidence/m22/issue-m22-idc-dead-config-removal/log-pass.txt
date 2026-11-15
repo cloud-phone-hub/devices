@@ -1,0 +1,146 @@
+# log-pass —— 删掉 m22 静态树 3 份 idc 后重跑 07_build_vendor 的通过记录
+
+命令：`./out/bin/cdh device build m22 --only 07_build_vendor`（exit=0，2026-10-29 21:59）
+完整日志：本轮实跑输出（下文摘录，行号为当日日志行号）
+
+---
+
+## 1. 改前状态（#62 那轮的收尾统计）
+
+```
+    机型静态树: 写入 26，已存在同内容 0
+    机型 usr: 写入 3
+```
+
+静态树 26 件 = 23 件常规 + `usr/idc/` 3 件。
+
+---
+
+## 2. 步骤 0 计划摘要（本轮）
+
+```
+==> [步骤 0] 解析计划
+    HAL 编译器: out/bin/cdh-vendor
+    设备清单:   manifest/flyme/m22/device.json
+    机型静态树: manifest/flyme/m22/vendor（23 个文件）
+    基底镜像:   out/roms/lineage/lineage-23.2/super/vendor_a.img（已存在，作为打包 vendor.img 基底）
+    vendor APEX: graphics（预计摊平 2/12：…composer.drm_hwcomposer_upstream / …gralloc.minigbm_upstream）
+    VINTF 补件:  vendor/vintf/common（1 个片段：android.se.omapi.xml）
+    平台覆盖层: qcom（产物根下暂无该目录，跳过）
+    厂商覆盖:   2 条（lib64/libpng.so（替换）、etc/permissions（替换））
+    VINTF schema: schema -> 9.0（37 个片段，0 个待改写）
+    镜像产物:   out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+```
+
+关键点：静态树从 26 件降到 23 件，其余输入（APEX / 补件 / 厂商覆盖 / 属性 / sepolicy）一字未动。
+
+---
+
+## 3. 步骤 2：白名单铺底 + usr 丢弃
+
+```
+==> [步骤 2] 按白名单复制到装配树
+    输出: out/devices/flyme/m22/12.5.0.0A/vendor
+    保留 bin / build.prop / etc / firmware_mnt / lib / lib64 / pci.ids（复制 446 条目：文件 219 / 链接 199 / 目录 28）
+    丢弃 apex / firmware / lost+found / odm / odm_dlkm / overlay / usr
+```
+
+基底解包树里的 `usr`（2 件全平台共用集合）照旧被丢；静态树的 `usr` 已不存在，所以不会再有任何 `usr` 来源。
+
+---
+
+## 4. 步骤 2b / 2c 未受影响
+
+```
+==> [步骤 2b] 摊平 vendor APEX（模式 graphics）
+    com.android.hardware.graphics.composer.drm_hwcomposer_upstream.apex: 新增 6 / 覆盖 22 / 跳过 2，rc 改写 1 个文件 1 行
+    org.lineageos.device.gralloc.minigbm_upstream.apex: 新增 4 / 覆盖 16 / 跳过 2，rc 改写 1 个文件 1 行
+    合计: 新增 10 / 覆盖 38 / 跳过 4，rc 改写 2 个文件 2 行（2 个 APEX）
+==> [步骤 2c] 补引擎级公共 VINTF 片段
+    输入: vendor/vintf/common（1 个片段：android.se.omapi.xml）
+    输出: out/devices/flyme/m22/12.5.0.0A/vendor/etc/vintf/manifest（只补缺，已有同名片段不动）
+    新增 1 / 已存在跳过 0（共 1 个片段）
+```
+
+---
+
+## 5. 步骤 4 收尾统计：机型 usr 层变 0
+
+```
+[ok] vendor 目录树装配与 vendor.img 打包完成: out/devices/flyme/m22/12.5.0.0A/vendor, out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+    机型静态树: 写入 23，已存在同内容 0
+    机型 usr: 跳过（源目录不存在）
+    编译产物 android.hardware.audio@default: 写入 4，已存在同内容 0
+    …（其余 30 个模块层统计不变）
+```
+
+---
+
+## 6. 步骤 7 / 8：镜像结构与校验
+
+```
+==> [步骤 7] 打包 vendor.img
+    输入: out/devices/flyme/m22/12.5.0.0A/vendor（656 条目：文件 425 / 链接 199 / 目录 32）+ 基底 …vendor_a.img（取 UUID/features）
+    输出: out/devices/flyme/m22/12.5.0.0A/img/vendor.img（mke2fs -d -> 元数据回写 -> e2fsck -> resize2fs -M）
+    装配树条目 656（文件 425 / 链接 199 / 目录 32），初始 60393 块（235 MB），inode 768
+==> 解包官方 vendor 镜像（取 SELinux 标签真值）: out/roms/flyme/m22/12.5.0.0A/super/vendor_a.img
+==> 官方镜像标签真值: 4594 条（含 297 个符号链接自身）
+==> debugfs 写入 656 个条目的元数据（权限 / 归属 / 时间 / SELinux）
+==> e2fsck 校验修复 vendor.img
+==> resize2fs -M 最小化收紧 vendor.img
+[ok] vendor.img 构建完成: out/devices/flyme/m22/12.5.0.0A/img/vendor.img（205877248 字节）
+```
+
+---
+
+## 7. 装配树与镜像回读
+
+```
+$ ls out/devices/flyme/m22/12.5.0.0A/vendor
+bin  build.prop  etc  firmware_mnt  lib  lib64  pci.ids          # 无 usr
+
+$ find out/devices/flyme/m22/12.5.0.0A/vendor | wc -l
+657                                                              # 含根目录自身，即 656 条目
+
+$ /opt/homebrew/opt/e2fsprogs/sbin/debugfs -R "ls -l /" …/img/vendor.img
+      2   40755 (2)      0      0    4096 29-Oct-2026 21:59 .
+     11   40700 (2)      0      0   16384  1-Jan-2009 08:00 lost+found
+     12   40751 (2)      0   2000    4096  1-Jan-2009 08:00 bin
+    268  100600 (1)      0      0   12966  1-Jan-2009 08:00 build.prop
+    269   40755 (2)      0   2000    4096  1-Jan-2009 08:00 etc
+    541   40755 (2)      0   2000    4096  1-Jan-2009 08:00 firmware_mnt
+    543   40755 (2)      0   2000    4096  1-Jan-2009 08:00 lib
+    545   40755 (2)      0   2000    4096  1-Jan-2009 08:00 lib64
+    667  100644 (1)      0      0 1458186  1-Jan-2009 08:00 pci.ids
+# 顶层没有 usr
+
+$ shasum -a 256 …/img/vendor.img
+94df88de3a6acbfa0e5b4e0b957c8eecf7dd94593cf06fd87cbff7c73eeafb69
+$ stat -f "%z B" …/img/vendor.img
+205877248 B
+```
+
+---
+
+## 8. 与上一版（#62）差异汇总
+
+| 项目 | #62 收尾 | 本轮 | 差异 |
+| :--- | :--- | :--- | :--- |
+| 机型静态树文件数 | 26 | 23 | −3 |
+| 「机型 usr」层 | 写入 3 | 跳过（源目录不存在） | −3 |
+| 装配树条目 | 661（428 / 199 / 34） | 656（425 / 199 / 32） | −3 文件 −2 目录 |
+| 装配树顶层 | 含 `usr` | 无 `usr` | — |
+| `vendor.img` 顶层 | 含 `usr` | 无 `usr` | — |
+| `vendor.img` 尺寸 | 205,897,728 B | 205,877,248 B | −20,480 B |
+| `vendor.img` SHA256 | `10198921…` | `94df88de…` | 仅因 −3 文件 −2 目录 |
+| 元数据回写条目 | 661 | 656 | −5 |
+| VINTF 片段 / 待改写 | 37 / 0 | 37 / 0 | 无 |
+| e2fsck | 通过 | 通过 | 无 |
+
+---
+
+## 9. 未做（本轮范围外）
+
+- 未起 m22 实例复验运行期（见 solution.md 第 6 节遗留 1）；
+- 未重跑 `09_build_patch`：现有 `patch.img`（17:33）里 `/vendor/usr/idc/` 三件仍在；
+- 未重跑 `11_pack_vda`：`out/dist` 仍是含 usr 的旧版。

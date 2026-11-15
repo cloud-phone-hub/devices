@@ -1,0 +1,25 @@
+# 官方 Pixel A14 vendor_a.img 里 oriole 13 件的实测（debugfs stat）
+# $DBG=/opt/homebrew/opt/e2fsprogs/sbin/debugfs   （本机 PATH 里没有 debugfs，e2fsprogs 装在 homebrew opt）
+# 镜像：out/roms/google/oriole/AP2A.240905.003.F1/super/vendor_a.img
+#      out/roms/lineage/lineage-21.0/super/vendor_a.img（lineage-21.0 底包）
+
+## 13 件逐件 stat（Inode / Mode）
+  /lib64/libpng.so  ->  Inode: 2433 Type: regular Mode: 0644 Flags: 0x80000
+  /lib64/android.hardware.graphics.composer@2.1.so  ->  Inode: 2112 Type: regular Mode: 0644 Flags: 0x80000
+  /lib64/android.hardware.graphics.composer@2.2.so  ->  Inode: 2114 Type: regular Mode: 0644 Flags: 0x80000
+  /lib64/android.hardware.graphics.composer@2.3.so  ->  Inode: 2115 Type: regular Mode: 0644 Flags: 0x80000
+  /lib64/android.hardware.graphics.composer@2.4.so  ->  Inode: 2116 Type: regular Mode: 0644 Flags: 0x80000
+  /lib64/libfmq.so  ->  Inode: 2364 Type: regular Mode: 0644 Flags: 0x80000
+  /lib64/libui.so  ->  Inode: 2479 Type: regular Mode: 0644 Flags: 0x80000
+  /lib64/android.hardware.graphics.allocator@2.0.so  ->  Inode: 2100 Type: regular Mode: 0644 Flags: 0x80000
+  /lib64/android.hardware.graphics.allocator@3.0.so  ->  Inode: 2101 Type: regular Mode: 0644 Flags: 0x80000
+  /lib64/android.hardware.graphics.allocator@4.0.so  ->  Inode: 2102 Type: regular Mode: 0644 Flags: 0x80000
+  /lib64/android.hardware.graphics.mapper@2.0.so  ->  Inode: 2117 Type: regular Mode: 0644 Flags: 0x80000
+  /lib64/android.hardware.graphics.mapper@2.1.so  ->  Inode: 2118 Type: regular Mode: 0644 Flags: 0x80000
+  /lib64/android.hardware.graphics.mapper@3.0.so  ->  Inode: 2119 Type: regular Mode: 0644 Flags: 0x80000
+
+## 对照：lineage-21.0 底包 vendor/lib64 里没有这批件
+## （条目数按 `ls -l /lib64` 去掉 `.` 与 `..` 两行后统计）
+  官方 vendor_a.img /lib64 条目数: 446
+  lineage 底包 vendor_a.img /lib64 条目数: 81
+  lineage 底包里命中上述 13 件的行（应为 0）：0

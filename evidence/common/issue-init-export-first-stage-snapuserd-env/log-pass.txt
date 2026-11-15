@@ -1,0 +1,9 @@
+# 修复后：7d10bffa4bc09406-cloud zygote64 /proc/<pid>/environ 与 aligner.jvm_full 重采结果
+---ZYGOTE_ENV---
+pid=485
+FIRST_STAGE_SNAPUSERD_INFO=socket
+FIRST_STAGE_SNAPUSERD_PID=274
+
+summary(new): {"identity": 0, "capability": 2, "state": 0, "availability": 0, "fatal": 2}
+diff[env.FIRST_STAGE_SNAPUSERD_INFO] = null
+diff[env.FIRST_STAGE_SNAPUSERD_PID] = null

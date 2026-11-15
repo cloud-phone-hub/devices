@@ -1,0 +1,99 @@
+# 修复后验证（2026-10-27，实例 index 4，pid 16253，adb 5911，boot 50 s）
+
+## 1. 构建（改的是 vendor 内容，必须重打 patch.img）
+
+$ cd engine && ./out/bin/cdh device build gold --from 07_build_vendor --refresh --dry-run
+==> 阶段(5): build_vendor, build_vendor_dlkm, build_patch, pack_super, pack_vda
+
+$ ./out/bin/cdh device build gold --from 07_build_vendor --refresh
+==> [1/5] build_vendor
+==> [2/5] build_vendor_dlkm
+==> [3/5] build_patch
+==> [4/5] pack_super
+==> [5/5] pack_vda
+...
+[ok] patch.img -> out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch.img（384.0 MiB，sha256 cf4ebcde6430）
+[ok] 已完成
+
+## 2. 注入核对（装配树 == patch.img 内容）
+
+$ grep -n "system_server_202404 pioneer (unix_stream_socket" \
+    out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil
+2122:(allow system_server_202404 pioneer (unix_stream_socket (getattr getopt ioctl read setopt shutdown write)))
+
+$ ls -l out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil
+223537 B
+
+$ /opt/homebrew/opt/e2fsprogs/sbin/debugfs -R "stat /vendor/etc/selinux/vendor_sepolicy.cil" \
+    out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch.img
+Size: 223537          <== 与装配树一致
+
+## 3. 重建设备
+
+$ curl -X POST http://127.0.0.1:9050/api/stop   -d '{"spec":"gold_cn_OS3.0.10.0.VNQCNXM","index":"3"}'
+{"ok":true,...}
+$ curl -X POST http://127.0.0.1:9050/api/delete -d '{"spec":"gold_cn_OS3.0.10.0.VNQCNXM","index":"3"}'
+{"ok":true,"deleted":".../gold_cn_OS3.0.10.0.VNQCNXM/3"}
+$ curl -X POST http://127.0.0.1:9050/api/create -d '{"index":0}'
+{"ok":true,"instance":{"index":"4","pid":16253,"console":5910,"adb":5911,"vnc":5912}}
+
+boot completed at 80s   (首次)
+boot completed at 50s   (复用 data 重启后)
+
+## 4. cmd 通道：五条命令全部 rc=0
+
+$ adb -s 127.0.0.1:5911 shell "cmd audio get-surround-format-supported; echo rc=$?"
+rc=0
+
+$ adb -s 127.0.0.1:5911 shell "input keyevent 3; echo rc=$?"
+rc=0
+
+$ adb -s 127.0.0.1:5911 shell "cmd notification post -S bigtext -t cdhtest tag1 hello; echo rc=$?"
+posting:
+  Notification(channel=shell_cmd shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=0 color=0x00000000 vis=PRIVATE)
+rc=0
+
+$ adb -s 127.0.0.1:5911 shell "settings get system screen_brightness; echo rc=$?"
+23
+rc=0
+
+$ adb -s 127.0.0.1:5911 shell "am get-current-user; echo rc=$?"
+0
+rc=0
+
+# 链式验证
+$ adb -s 127.0.0.1:5911 shell "input keyevent 3 && settings get system screen_brightness \
+    && am get-current-user && cmd notification post -t t tg x >/dev/null && echo ALL_OK"
+23
+0
+ALL_OK
+
+## 5. 回归：audio / 属性 / 策略
+
+$ adb -s 127.0.0.1:5911 shell "dumpsys audio | grep -E 'Devices:'"
+   Devices: speaker(2)
+   Devices: speaker(2)
+
+$ adb -s 127.0.0.1:5911 shell "getprop persist.system.powerhal.applist_enable"
+0
+$ adb -s 127.0.0.1:5911 shell "getprop debug.sf.vsync_reactor_ignore_present_fences"
+true
+
+$ adb -s 127.0.0.1:5911 logcat -d | grep -c "listAudioPorts error"
+0
+
+$ adb -s 127.0.0.1:5911 shell "dmesg | grep 'avc:' | grep 'tcontext=u:object_r:pioneer'"
+# 只有 pioneer 自己 anon_inode/userfaultfd 的 permissive=1 记录，无 system_server 为主体的拒绝
+
+## 6. 与修复前对比
+
+| 项 | 修复前（index 3） | 修复后（index 4） |
+|---|---|---|
+| `cmd audio` | rc=2 Failed transaction | **rc=0** |
+| `input keyevent 3` | rc=2 Failed transaction | **rc=0** |
+| `cmd notification post` | rc=2 Failed transaction | **rc=0 + 正常 posting** |
+| `settings get` | rc=2 Failed transaction | **rc=0，输出 23** |
+| `am get-current-user` | rc=2 Failed transaction | **rc=0，输出 0** |
+| `dumpsys audio` 的 `Devices:` | speaker(2) | speaker(2)（未回归） |
+| `listAudioPorts error` | 0 | 0 |
+| applist_enable / vsync flag | 0 / true | 0 / true |

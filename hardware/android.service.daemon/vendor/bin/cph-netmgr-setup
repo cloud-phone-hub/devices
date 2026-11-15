@@ -1,0 +1,109 @@
+#!/system/bin/sh
+# 网络初始化（对齐标准 Android 设备网络栈）。
+#
+# 管理网卡（net0 SLIRP 10.0.2.0/24）仅用于承载宿主到实例的 ADB 转发，不应留在主网络
+# 命名空间：
+#   - /mnt/run/adb_net 仍指向 init 主命名空间（/proc/1/ns/net），使 adbd 与
+#     adb shell 运行在主命名空间内，可正常访问 wlan0 / ccmni* 等业务接口；
+#   - configure 阶段仅将 MAC 52:54:00:12:34:56 的管理网卡改名为 mgmt0 并保持 DOWN
+#     且不分配地址，避免 EthernetService 接管或产生主命名空间路由/SLAAC 痕迹；
+#   - post-fs-data 阶段由 vendor.service-daemon (mgmt_bridge) 创建独立管理
+#     网络命名空间，将 mgmt0 移入其中配好 10.0.2.15/24，并在管理命名空间 5555 与
+#     主命名空间 127.0.0.1:5555 (adbd) 之间建立本地字节流桥接。
+#
+# 时序（netmgr.rc post-fs）：
+#   setup（exec）:       /mnt/run/adb_net -> init 主 netns（供 adbd_launch setns）
+#   configure（exec）:   启用主 netns lo；识别 net0 改名为 mgmt0（保持 DOWN，待隔离）
+#   fingerprint（exec）: 主 netns 内初始化蜂窝与虚拟业务接口（ccmni0..20、dummy0）
+set -eu
+case "${1:-}" in
+setup)
+    /system/bin/mkdir -p -m 0700 /mnt/run
+    /system/bin/ln -sf /proc/1/ns/net /mnt/run/adb_net
+    ;;
+configure)
+    /system/bin/ip link set lo up
+    # net0 没有显式 mac=，拿的是 QEMU 首块网卡的默认 MAC 52:54:00:12:34:56。
+    # 仅改名为 mgmt0 并保持 DOWN，不在主 netns 配置 IP 或路由；后续由
+    # vendor.service-daemon 将 mgmt0 迁入独立管理 netns 配置 10.0.2.15/24 并桥接 5555。
+    mgmt_src=""
+    for dev in /sys/class/net/*; do
+        name="${dev##*/}"
+        case "${name}" in mgmt0|ccmni0|ccmni2|lo|dummy0) continue ;; esac
+        if [ "$(cat "${dev}/address" 2>/dev/null)" = "52:54:00:12:34:56" ]; then
+            mgmt_src="${name}"
+            break
+        fi
+    done
+    if [ -n "${mgmt_src}" ]; then
+        /system/bin/ip link set "${mgmt_src}" down
+        /system/bin/ip link set "${mgmt_src}" name mgmt0
+    elif [ -d /sys/class/net/mgmt0 ]; then
+        /system/bin/ip link set mgmt0 down
+    fi
+    ;;
+fingerprint)
+    # 1) net2 真网卡（默认 MAC c2:36:b4:12:34:58，兼容旧宿主 52:54:00:12:34:58）改名 ccmni2，mtu 1400 对齐 gold；
+    #    关闭 IPv6 SLAAC/RA 避免接收 QEMU SLIRP 的 fec0::/64 路由广播，并保持初始 DOWN（对齐真机 Wi-Fi 优先时无蜂窝激活态）。
+    ccmni_src=""
+    for dev in /sys/class/net/*; do
+        name="${dev##*/}"
+        case "${name}" in ccmni2|mgmt0|lo|dummy0) continue ;; esac
+        case "$(cat "${dev}/address" 2>/dev/null)" in
+            c2:36:b4:12:34:58|52:54:00:12:34:58)
+                ccmni_src="${name}"
+                break
+                ;;
+        esac
+    done
+    if [ -n "${ccmni_src}" ]; then
+        /system/bin/ip link set "${ccmni_src}" down
+        /system/bin/ip link set "${ccmni_src}" name ccmni2
+    fi
+    if [ -d /proc/sys/net/ipv6/conf/ccmni2 ]; then
+        printf '0' > /proc/sys/net/ipv6/conf/ccmni2/accept_ra 2>/dev/null || true
+        printf '0' > /proc/sys/net/ipv6/conf/ccmni2/autoconf 2>/dev/null || true
+    fi
+    /system/bin/ip -6 addr flush scope site dev ccmni2 2>/dev/null || true
+    /system/bin/ip link set ccmni2 mtu 1400 down || true
+    # 2) dummy0：gold 常驻，up 后自带 fe80 link-local
+    if [ ! -d /sys/class/net/dummy0 ]; then
+        /system/bin/ip link add dummy0 type dummy
+    fi
+    /system/bin/ip link set dummy0 up
+    # 3) ccmni0：gold 的 MTK 数据口占位（Wi-Fi 激活无蜂窝 DataCall 时保持 DOWN，不注入硬编码 240e:: IPv6）
+    if [ ! -d /sys/class/net/ccmni0 ]; then
+        /system/bin/ip link add ccmni0 type dummy
+    fi
+    /system/bin/ip -6 addr flush dev ccmni0 2>/dev/null || true
+    /system/bin/ip link set ccmni0 mtu 1400 down || true
+    # 4) ccmni1 / ccmni3..ccmni20：gold 的 MTK 数据口全集（真机 ip link 可见
+    #    ccmni0..ccmni20 共 21 个）。ccmni2 是上面改名的真实承载网卡，跳过；
+    #    其余按 gold 造 dummy 占位：默认 DOWN、mtu 1500、NOARP（gold 数据未激活
+    #    时的形态）。幂等：已存在则跳过。
+    index=1
+    while [ "${index}" -le 20 ]; do
+        if [ "${index}" != "2" ] && [ ! -d "/sys/class/net/ccmni${index}" ]; then
+            /system/bin/ip link add "ccmni${index}" type dummy
+        fi
+        index=$((index + 1))
+    done
+    # 5) Wi-Fi 802.11ax/be (HE/EHT) 标准档位对齐（如 MT6833 仅支持至 802.11ac）：
+    #    必须在 post-fs（早于 wificond / WifiService 首次读取 NL80211_CMD_GET_WIPHY）落位。
+    if [ "$(/system/bin/getprop ro.vendor.cdh.wifi.disable_he)" = "1" ] &&
+       [ -w /sys/module/mac80211_hwsim/parameters/disable_he ]; then
+        printf '1' > /sys/module/mac80211_hwsim/parameters/disable_he 2>/dev/null || true
+    fi
+    # 6) Wi-Fi Direct (p2p0)：将 mac80211_hwsim 闲置的 phy#1 网卡 wlan1 重命名为 p2p0，
+    #    并将默认 02:00:00:00:01:00 hwsim MAC 替换为局部管理 P2P MAC（保持默认 DOWN，
+    #    既满足系统态 ip link / P2P HAL 查询，又不出现在普通 App 活跃接口枚举中）。
+    if [ -d /sys/class/net/wlan1 ] && [ ! -d /sys/class/net/p2p0 ]; then
+        /system/bin/ip link set wlan1 down || true
+        /system/bin/ip link set wlan1 address 76:39:89:0b:24:65 || true
+        /system/bin/ip link set wlan1 name p2p0 || true
+    fi
+    ;;
+*)
+    exit 2
+    ;;
+esac

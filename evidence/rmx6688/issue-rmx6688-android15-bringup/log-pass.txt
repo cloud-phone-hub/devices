@@ -1,0 +1,139 @@
+================================================================================
+#194 realme GT7 (realme/RMX6688) Android 15 云机修复终验日志 (log-pass.txt)
+采样环境: RMX6688_15-AP3A.240617.008-20250825 全新干净盘实例 index=1 (adb 127.0.0.1:5911)
+采样时间: 2026-11-12 00:53 ~ 00:59 CST
+产物指纹: patch.img sha256=599ff1a35282, vda.img 配方=vda-e69d03f754d7
+================================================================================
+
+--- [1] 全仓单测与镜像重打通过 ---
+$ cd engine/vendor/build && go test ./...
+ok  	cloud-phone-hub/vendor/build/internal/android	0.418s
+ok  	cloud-phone-hub/vendor/build/internal/builder	0.327s
+ok  	cloud-phone-hub/vendor/build/internal/manifest	0.291s
+
+$ cd engine/build && go test ./...
+ok  	cloud-phone-hub/build/internal/kernelver	0.264s
+ok  	cloud-phone-hub/build/stages/01_unpack	0.382s
+ok  	cloud-phone-hub/build/stages/02_build_kernel	0.319s
+ok  	cloud-phone-hub/build/stages/05_build_vendor_boot	0.455s
+ok  	cloud-phone-hub/build/stages/07_build_vendor	0.612s
+ok  	cloud-phone-hub/build/stages/08_build_vendor_dlkm	0.341s
+
+$ cd engine/build && go run . device build RMX6688 --from 05_build_vendor_boot --skip 08_build_vendor_dlkm --skip 10_pack_super
+==> 机型: realme/RMX6688 (15-AP3A.240617.008-20250825)
+==> lineage 版本: lineage-22.2
+==> 内核借用: lineage-22.1 (6.6)
+[ok] 05_build_vendor_boot
+[ok] 06_build_boot
+[ok] 07_build_vendor
+[ok] 09_build_patch (patch.img sha256=599ff1a35282)
+[ok] 11_dist (vda-e69d03f754d7)
+
+--- [2] 全新干净盘冷启动 boot_check.py 验收通过 ---
+$ python3 core/host/daemon/tools/boot_check.py RMX6688_15-AP3A.240617.008-20250825 --index 1 --timeout 240 --png engine/out/tmp/rmx6688_boot_check.png
+[pass] 引导完成（日志 10111 行）+ 截图非黑（平均亮度=116.2 峰值=255）
+
+--- [3] 蓝牙连续两轮完整开关循环压测（0 崩溃） ---
+=== Cycle 1: enable -> wait 8s -> disable -> wait 7s ===
+  enabled: true
+  state: ON
+  name: RMX6688
+-> after disable:
+  enabled: false
+  state: OFF
+
+=== Cycle 2: enable -> wait 8s -> disable -> wait 7s ===
+  enabled: true
+  state: ON
+  name: RMX6688
+-> after disable:
+  enabled: false
+  state: OFF
+
+=== Re-enable Bluetooth steady ON ===
+  enabled: true
+  state: ON
+  name: RMX6688
+
+--- [4] 长稳运行（uptime = 324.57s > 270s，越过原 248s pre_watchdog 阈值）全栈快照 ---
+=== 1. UPTIME & UNAME ===
+324.57 1969.33
+Linux localhost 6.6.66-android15-8-gd43086512890-abogki423825152-4k #1 SMP PREEMPT Tue Jun 10 12:12:23 UTC 2025 aarch64 Toybox
+
+=== 2. BOOT & INIT PROPS ===
+sys.boot_completed=1
+dev.bootcomplete=1
+init.svc.bootanim=stopped
+sys.init.updatable_crashing=
+ro.product.model=RMX6688
+ro.build.display.id=RMX6688_15.0.1.802(CN01)
+
+=== 3. OPLUS AIDL SERVICES ===
+Service vendor.oplus.hardware.displaycolorfeature.IDisplayColorFeature/default: found
+Service vendor.oplus.hardware.charger.ICharger/default: found
+
+=== 4. DISPLAY & GPU ===
+      DisplayModeRecord{mMode={id=1, width=1280, height=2800, fps=60.0, vsync=60.0, synthetic=false, alternativeRefreshRates=[90.0, 120.00001, 144.00002], supportedHdrTypes=[]}}
+      DisplayModeRecord{mMode={id=2, width=1280, height=2800, fps=120.00001, vsync=120.00001, synthetic=false, alternativeRefreshRates=[60.0, 90.0, 144.00002], supportedHdrTypes=[]}}
+      DisplayModeRecord{mMode={id=3, width=1280, height=2800, fps=90.0, vsync=90.0, synthetic=false, alternativeRefreshRates=[60.0, 120.00001, 144.00002], supportedHdrTypes=[]}}
+      DisplayModeRecord{mMode={id=4, width=1280, height=2800, fps=144.00002, vsync=144.00002, synthetic=false, alternativeRefreshRates=[60.0, 90.0, 120.00001], supportedHdrTypes=[]}}
+    mBaseDisplayInfo=DisplayInfo{"内置屏幕", displayId 0, real 1280 x 2800, mode 2, renderFrameRate 120.00001, density 560 (451.556 x 453.045) dpi, deviceProductInfo DeviceProductInfo{name=MTKDEV, manufacturerPnpId=MTK, productId=24618}}
+GLES: ARM, Immortalis-G925, OpenGL ES 3.2 v1.r49p1-03bet0.346718d
+
+=== 5. RIL & WIFI ===
+gsm.sim.state=LOADED,ABSENT
+gsm.operator.alpha=中国联通,
+gsm.network.type=LTE,Unknown
+16: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    inet 192.168.60.100/24 brd 192.168.60.255 scope global wlan0
+       valid_lft forever preferred_lft forever
+
+=== 6. AUDIO ===
+   Devices: speaker(2)
+   Volume Group: AUDIO_STREAM_VOICE_CALL
+   Devices: speaker(2)
+   Volume Group: AUDIO_STREAM_SYSTEM
+   Devices: speaker(2)
+   Volume Group: AUDIO_STREAM_RING
+
+=== 7. BATTERY & ADDITIONAL_BATTERY_CHANGED ===
+  AC powered: false
+  USB powered: false
+  status: 3
+  health: 2
+  level: 78
+  scale: 100
+  temperature: 295
+Current OPLUS Battery Service state:
+  Charger voltage : 0
+  Battery current : 0
+  ChargerTechnology: 0
+  ChargeFastCharger: false
+  PlugType: 0
+  UpdatesStopped: false
+  UsbHwStatus: 0
+  BatteryHwStatus: 0
+  HwStatusIsSet: 1
+  BatteryIcStatus: 0
+  IcStatusIsSet: 1
+#307: act=android.intent.action.ADDITIONAL_BATTERY_CHANGED flg=0x70000010 (has extras)
+  extras: Bundle[{batterycurrent=0, bypass_charge_status=0, bms_heating_status=0, pps_chg_mode=0, chargervoltage=0, notifycode=0, status=3, is_support_speed_charge=0, fast_chg_type=0, chargeplugged=0, wireless_fast_chg_type=0, cpa_charge_wattage=0, chargefastcharger=false, chargertechnology=0, wireless_reverse_chg_type=0, chargewattage=0}]
+
+=== 8. BLUETOOTH & ACCESSORY ===
+  enabled: true
+  state: ON
+  name: RMX6688
+  time since enabled: 00:01:57.467
+com.heytap.accessory: NOT INSTALLED (masked by cdh_redirect)
+
+=== 9. CRASH BUFFER & DROPBOX (0 FATAL CRASH / 0 WATCHDOG / 0 ANR) ===
+--------- beginning of crash
+01-01 08:00:26.607   785   785 I libimsma_adapt: mtk-brm-commit-id:8783a29bae0ae84a456239f3212f27bdafa94c91
+01-01 08:00:26.607   785   785 I libimsma_adapt: mtk-brm-change-id:Iee598bb542f5de895a4b71649fbc79b2d93bc3de
+01-01 08:00:26.607   785   785 I libimsma_adapt: mtk-brm-merge-id:none
+01-01 08:00:26.944   827   827 I emdlogger: mtk-brm-commit-id:04ab5bd912477cf2320dee54df9ac8b535476f2d
+01-01 08:00:26.944   827   827 I emdlogger: mtk-brm-change-id:Ib405363e450403587f3a66bbe5b353966c086aba
+01-01 08:00:26.944   827   827 I emdlogger: mtk-brm-merge-id:none
+--- dropbox ---
+Drop box contents: 1 entries
+2026-11-12 00:54:57 SYSTEM_BOOT (text, 528 bytes)

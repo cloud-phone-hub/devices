@@ -1,0 +1,18 @@
+# 撤下 boot HAL 并重跑 07/09/11 后：实例 34 正常引导
+# 源: ../../out/core/daemon/runtime/m22_12.5.0.0A/34/qemu.log
+
+## 1. vold 侧退回「找不到 → 回退 HIDL」的单句（不再 waitForService）
+1243:[   21.821104][  T260] servicemanager: Caller(pid=273,uid=0,sid=u:r:vold:s0) Could not find android.hardware.boot.IBootControl/default in the VINTF manifest. No alternative instances declared in VINTF.
+2762:01-01 00:00:00.552     1     1 W /system/bin/init: type=1107 audit(0.0:5): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=ro.adb.secure pid=1 uid=0 gid=0 scontext=u:r:vendor_init:s0 tcontext=u:object_r:build_prop:s0 tclass=property_service permissive=0'[   31.050602][  T260] servicemanager: Caller(pid=955,uid=0,sid=u:r:update_engine:s0) Could not find android.hardware.boot.IBootControl/default in the VINTF manifest. No alternative instances declared in VINTF.
+5278:01-01 00:00:21.812   273   273 I vold    : AIDL IBootControl not available, falling back to HIDL.
+IBootControl waitForService 计数: 0
+
+## 2. init 消息队列不再打满
+Too many pending control messages 计数: 0
+
+## 3. 开机完成
+25692:[   71.736135][    T1] init: processing action (sys.boot_completed=1) from (/vendor/etc/init/cph_disable_provision.rc:17)
+25702:01-01 08:00:43.357   976   976 I installer_clear_app_data_call_stack: [invoke,java.lang.reflect.Method,Method.java,-2][   71.747422][    T1] init: processing action (sys.boot_completed=1) from (/vendor/etc/init/cph_logcat_dump.rc:12)
+25707:01-01 08:00:43.357   976   976 I installer_clear_app_data_call_stack: [run,com.android.internal.os.RuntimeInit$MethodAndArgsCaller,RuntimeInit.java,593][   71.753495][    T1] init: processing action (sys.boot_completed=1) from (/vendor/etc/init/cph_start_adbd.rc:28)
+
+## 4. 桌面已起（bootanim 停止、system_server 正常）

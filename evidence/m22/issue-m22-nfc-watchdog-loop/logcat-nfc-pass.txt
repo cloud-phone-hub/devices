@@ -1,0 +1,80 @@
+# logcat-nfc-pass.txt — 实例 37 窗口内 NFC 相关原始行（去重）
+# 窗口 06-25 20:59:05.300 → 06-25 21:07:18.149；窗口总行 1051，筛出 nfc/Watchdog/Abort 相关 76 行
+# 来源：/tmp/m22-nfc-snapshot-2100.log（20:59 后的全缓冲 dump）+ /tmp/m22-nfc-tail.log（实时追写）
+
+06-25 20:59:05.300   492   492 I auditd  : type=1400 audit(0.0:3428): avc:  denied  { sigkill } for  comm="sh" scontext=u:r:pioneer:s0 tcontext=u:r:nfc:s0 tclass=process permissive=1
+06-25 20:59:05.300   492   492 I sh      : type=1400 audit(0.0:3428): avc:  denied  { sigkill } for  scontext=u:r:pioneer:s0 tcontext=u:r:nfc:s0 tclass=process permissive=1
+06-25 20:59:05.315   799  1710 I ActivityManager: Process com.android.nfc (pid 1326) has died: pers PER 
+06-25 20:59:05.315   799  1710 I am_proc_died: [0,1326,com.android.nfc,-800,0]
+06-25 20:59:05.316   799  1710 W ActivityManager: Re-adding persistent process ProcessRecord{dab7e4f 1326:com.android.nfc/1027}
+06-25 20:59:05.328   799   836 I am_proc_start: [0,6839,1027,com.android.nfc,restart,com.android.nfc]
+06-25 20:59:05.328   799   836 I ActivityManager: Start proc 6839:com.android.nfc/1027 for restart com.android.nfc
+06-25 20:59:05.334  6839  6839 I com.android.nfc: Using CollectorTypeCMC GC.
+06-25 20:59:05.335  6839  6839 E com.android.nfc: Not starting debugger since process cannot load the jdwp agent.
+06-25 20:59:05.337   799  1499 I am_proc_bound: [0,6839,com.android.nfc]
+06-25 20:59:05.346  6839  6839 I com.android.nfc: AssetManager2(0xb4000075a22128d8) locale list changing from [] to [zh-CN]
+06-25 20:59:05.344  6839  6839 I auditd  : type=1400 audit(0.0:3431): avc:  denied  { search } for  comm="com.android.nfc" name="com.meizu.customizecenter" dev="dm-51" ino=1466753 scontext=u:r:nfc:s0 tcontext=u:object_r:app_data_file:s0:c512,c768 tclass=dir permissive=0
+06-25 20:59:05.344  6839  6839 W com.android.nfc: type=1400 audit(0.0:3431): avc:  denied  { search } for  name="com.meizu.customizecenter" dev="dm-51" ino=1466753 scontext=u:r:nfc:s0 tcontext=u:object_r:app_data_file:s0:c512,c768 tclass=dir permissive=0
+06-25 20:59:05.357  6839  6853 I MzNightModeManager: F11 initNightMode pkg: com.android.nfc is application support flyme night: -1 and package is in avoid list false
+06-25 20:59:05.361  6839  6839 I com.android.nfc: AssetManager2(0xb4000075a2219f98) locale list changing from [] to [zh-CN]
+06-25 20:59:05.362  6839  6839 I com.android.nfc: AssetManager2(0xb4000075a221a8f8) locale list changing from [] to [zh-CN]
+06-25 20:59:05.362  6839  6839 I RegisteredComponentCache: ComponentInfo: ResolveInfo{19e6be2 com.android.apps.tag/.TagViewer m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef, 
+06-25 20:59:05.362  6839  6839 I RegisteredComponentCache: ComponentInfo: ResolveInfo{81efb73 com.meizu.mznfcpay/.cardlist.AddCardListActivity m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.IsoDep, 
+06-25 20:59:05.362  6839  6839 I RegisteredComponentCache: ComponentInfo: ResolveInfo{81efb73 com.meizu.mznfcpay/.cardlist.AddCardListActivity m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.NfcA, 
+06-25 20:59:05.362  6839  6839 I RegisteredComponentCache: ComponentInfo: ResolveInfo{81efb73 com.meizu.mznfcpay/.cardlist.AddCardListActivity m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.NfcB, 
+06-25 20:59:05.362  6839  6839 I RegisteredComponentCache: ComponentInfo: ResolveInfo{81efb73 com.meizu.mznfcpay/.cardlist.AddCardListActivity m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.NfcF, 
+06-25 20:59:05.362  6839  6839 I RegisteredComponentCache: ComponentInfo: ResolveInfo{81efb73 com.meizu.mznfcpay/.cardlist.AddCardListActivity m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.NfcV, 
+06-25 20:59:05.362  6839  6839 I RegisteredComponentCache: ComponentInfo: ResolveInfo{81efb73 com.meizu.mznfcpay/.cardlist.AddCardListActivity m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef, 
+06-25 20:59:05.362  6839  6839 I RegisteredComponentCache: ComponentInfo: ResolveInfo{81efb73 com.meizu.mznfcpay/.cardlist.AddCardListActivity m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.NdefFormatable, 
+06-25 20:59:05.362  6839  6839 I RegisteredComponentCache: ComponentInfo: ResolveInfo{81efb73 com.meizu.mznfcpay/.cardlist.AddCardListActivity m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.MifareClassic, 
+06-25 20:59:05.362  6839  6839 I RegisteredComponentCache: ComponentInfo: ResolveInfo{81efb73 com.meizu.mznfcpay/.cardlist.AddCardListActivity m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.MifareUltralight, 
+06-25 20:59:05.365  6839  6839 I NfcService: Starting NFC service
+06-25 20:59:05.366  6839  6839 I com.android.nfc: JNI_OnLoad: NFC Service: loading nci JNI
+06-25 20:59:05.366  6839  6839 I com.android.nfc: ConfigFile - Parsing file '/etc/libnfc-nci.conf'
+06-25 20:59:05.366  6839  6839 I com.android.nfc: ConfigFile - [NFC_DEBUG_ENABLED] = 0
+06-25 20:59:05.366  6839  6839 I com.android.nfc: ConfigFile - [NFA_STORAGE] = "/data/nfc"
+06-25 20:59:05.366  6839  6839 I com.android.nfc: ConfigFile - [PRESERVE_STORAGE] = 0x01
+06-25 20:59:05.366  6839  6839 I com.android.nfc: ConfigFile - [SCREEN_OFF_POWER_STATE] = 1
+06-25 20:59:05.366  6839  6839 I com.android.nfc: ConfigFile - [POLLING_TECH_MASK] = 0x0F
+06-25 20:59:05.366  6839  6839 I com.android.nfc: ConfigFile - [UICC_LISTEN_TECH_MASK] = 0x00
+06-25 20:59:05.366  6839  6839 I com.android.nfc: ConfigFile - [NFA_MAX_EE_SUPPORTED] = 0x01
+06-25 20:59:05.366  6839  6839 I com.android.nfc: ConfigFile - [AID_FOR_EMPTY_SELECT] = {08:A0:00:00:01:51:00:00:00}
+06-25 20:59:05.366  6839  6839 I com.android.nfc: ConfigFile - [AID_MATCHING_MODE] = 0x01
+06-25 20:59:05.366  6839  6839 I com.android.nfc: ConfigFile - [NCI_RESET_TYPE] = 0x02
+06-25 20:59:05.366  6839  6839 I com.android.nfc: ConfigFile - [PRESENCE_CHECK_RETRY_COUNT] = 0
+06-25 20:59:05.366  6839  6839 I com.android.nfc: NfcAdaptation::InitializeHalDeviceContext: INfc::getService()
+06-25 20:59:05.366  6839  6839 I HidlServiceManagement: Trying to get transport of android.hardware.nfc@1.2::INfc/default without hwservicemanager
+06-25 20:59:05.366  6839  6839 I HidlServiceManagement: Trying to get transport of android.hardware.nfc@1.1::INfc/default without hwservicemanager
+06-25 20:59:05.366  6839  6839 I HidlServiceManagement: Trying to get transport of android.hardware.nfc@1.0::INfc/default without hwservicemanager
+06-25 20:59:05.367  6839  6839 I com.android.nfc: NfcAdaptation::InitializeHalDeviceContext: INfcAidl::fromBinder returned ver(1)
+06-25 20:59:05.367  6839  6839 E com.android.nfc: NfcExtn_LibSetup: Failed to find  !!
+06-25 20:59:05.388  6839  6839 I com.android.nfc: AssetManager2(0xb4000075a221f3f8) locale list changing from [] to [zh-CN]
+06-25 20:59:05.389  6839  6839 I com.android.nfc: AssetManager2(0xb4000075a2219958) locale list changing from [] to [zh-CN]
+06-25 20:59:05.391  6839  6839 I com.android.nfc: setNfcSecure: enable= 0
+06-25 20:59:05.393  6839  6858 I NfcService: Enabling NFC
+06-25 20:59:05.396  6839  6861 W libnfc_nci: gki_task_entry: task_id=0 terminating
+06-25 20:59:05.397   569   569 I         : open: no nfc controller, reply OPEN_CPLT(FAILED) asynchronously
+06-25 20:59:05.398   260   260 I auditd  : avc:  denied  { find } for pid=6839 uid=1027 name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:nfc:s0 tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+06-25 20:59:05.419  6839  6862 E libnfc_nci: nfc_free_conn_cb: invalid conn_id
+06-25 20:59:05.419  6839  6858 E libnfc_nci: nfcManager_doInitialize: fail nfa enable; error=0x0
+06-25 20:59:05.420  6839  6862 W libnfc_nci: GKI_wait: GKI TASK_DEAD received. exit thread 3...
+06-25 20:59:05.420  6839  6862 W libnfc_nci: gki_task_entry: task_id=3 terminating
+06-25 20:59:05.420  6839  6858 W libnfc_nci: GKI_exit_task: task_id 3 was already stopped.
+06-25 20:59:05.427  6839  6860 W libnfc_nci: gki_task_entry: task_id=4 terminating
+06-25 20:59:05.427  6839  6858 I libnfc_nci: ConfigFile - Parsing file '/etc/libnfc-nci.conf'
+06-25 20:59:05.427  6839  6858 I libnfc_nci: ConfigFile - [NFC_DEBUG_ENABLED] = 0
+06-25 20:59:05.427  6839  6858 I libnfc_nci: ConfigFile - [NFA_STORAGE] = "/data/nfc"
+06-25 20:59:05.427  6839  6858 I libnfc_nci: ConfigFile - [PRESERVE_STORAGE] = 0x01
+06-25 20:59:05.427  6839  6858 I libnfc_nci: ConfigFile - [SCREEN_OFF_POWER_STATE] = 1
+06-25 20:59:05.427  6839  6858 I libnfc_nci: ConfigFile - [POLLING_TECH_MASK] = 0x0F
+06-25 20:59:05.427  6839  6858 I libnfc_nci: ConfigFile - [UICC_LISTEN_TECH_MASK] = 0x00
+06-25 20:59:05.427  6839  6858 I libnfc_nci: ConfigFile - [NFA_MAX_EE_SUPPORTED] = 0x01
+06-25 20:59:05.427  6839  6858 I libnfc_nci: ConfigFile - [AID_FOR_EMPTY_SELECT] = {08:A0:00:00:01:51:00:00:00}
+06-25 20:59:05.427  6839  6858 I libnfc_nci: ConfigFile - [AID_MATCHING_MODE] = 0x01
+06-25 20:59:05.427  6839  6858 I libnfc_nci: ConfigFile - [NCI_RESET_TYPE] = 0x02
+06-25 20:59:05.427  6839  6858 I libnfc_nci: ConfigFile - [PRESENCE_CHECK_RETRY_COUNT] = 0
+06-25 20:59:05.427  6839  6858 I libnfc_nci: NfcAdaptation::InitializeHalDeviceContext: INfc::getService()
+06-25 20:59:05.427  6839  6858 I libnfc_nci: NfcAdaptation::InitializeHalDeviceContext: INfcAidl::fromBinder returned ver(1)
+06-25 20:59:05.427  6839  6858 E libnfc_nci: NfcExtn_LibSetup: Failed to find  !!
+06-25 20:59:05.428  6839  6858 W NfcService: enableInternal: Error enabling NFC
+06-25 20:59:05.439  6839  6839 I HostEmulationManager: onServiceConnected: Payment service bound: ComponentInfo{com.meizu.mznfcpay/com.meizu.payment.PaymentServiceSMX}

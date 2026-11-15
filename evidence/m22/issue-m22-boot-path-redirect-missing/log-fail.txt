@@ -1,0 +1,68 @@
+# 12.5.0.0A 产物首次真机启动（实例 m22_12.5.0.0A/2，2026-10-28 18:41）
+# 结论：启动失败。内核进入 Android init，但 /mnt/patch 被 vold 撕掉、/vendor 未重定向，
+#       108s 内 zygote 从未启动（grep -c "init: starting service 'zygote" = 0）。
+
+## 1. 产物与实例
+dist: engine/out/dist/flyme/m22/12.5.0.0A
+      vda.img 13.00 GiB（配方 vda-ea1ccdab8136）、patch.img 384 MiB（配方 patch-cd4dbc80c01a）
+devices: engine/out/devices/flyme/m22/12.5.0.0A/img
+      boot.img 83,886,080 B（boot-aaf1fbee2753）、vendor_boot.img 22,395,140 B（vboot-629cc0d55dc0）
+      super.img 10,083,106,816 B（3eb133bbc4af，vendor_a 取自 flyme 官方 super/vendor_a.img）
+实例: out/core/daemon/runtime/m22_12.5.0.0A/2（daemon /api/create index=0，qemu 91752）
+
+## 2. 启动时间线（qemu.log 原文）
+[    0.000000][    T0] Linux version 6.12.81-4k-cdh (root@fa1eb47bf1ca) ... #1 SMP PREEMPT Wed Oct 28 10:23:53 UTC 2026
+[    0.248441][    T1] init: [libfs_mgr] __mount(source=/dev/block/vdc,target=/mnt/patch,type=ext4)=0: Success
+[    0.309840][    T1] init: [libfstab] ReadDefaultFstab(): failed to find device default fstab
+[    0.835576][  T257] servicemanager: getDeviceHalManifest: -2 VINTF parse error: Cannot read /vendor/manifest.xml: No such file or directory
+[    0.886328][    T1] init: Service 'star_core_serv' (pid 268) exited with status 1
+[    0.907648][    T1] init: Service 'qseecom-service' (pid 270) received signal 6
+[    0.919308][  T279] EXT4-fs (vdc): unmounting filesystem 85ac6f8f-3015-4dda-b01c-c8a874ae5d30.
+[    0.920919][  T279] vold: Failed to open default fstab: No such file or directory
+[   51.072578][    T1] init: Service 'vendor.boot-qti' (pid 584) received signal 6
+[   56.076318][    T1] init: Service 'vendor.boot-qti' (pid 610) received signal 6
+[   61.080632][    T1] init: Service 'vendor.boot-qti' (pid 637) received signal 6
+（T279 = vold ProcessSnapshot 线程；此后每 ~5s 一轮 qseecom-service / vendor.boot-qti signal 6）
+
+## 3. 终止时状态（108.46s，人工 /api/stop）
+$ grep -c "init: starting service 'zygote" qemu.log
+0
+$ grep -c "sys.boot_completed=1" qemu.log
+0
+
+## 4. 静态对照一：6.6 内核有 CDH_PATH_REDIRECT，6.12 一个字节都没有
+$ cd engine/kernels/lineage-22-6.6 && grep -rn "CONFIG_CDH_PATH_REDIRECT|cdh_vendor_path_to_virtual|cdh_patch_mount" --include=*.c --include=*.h --include=Kconfig .
+fs/namei.c:129       #ifdef CONFIG_CDH_PATH_REDIRECT                       （前向重定向表 + 改写）
+fs/namei.c:271       char *cdh_vendor_path_to_virtual(char *path)          （readlink 逆变换）
+fs/namei.c:412       if (strcmp(kname, "/system/bin/update_verifier")...)  （屏蔽 update_verifier）
+fs/namei.c:429       cdh_redirect_vendor_path(kname);
+fs/namespace.c:1912  #ifdef CONFIG_CDH_PATH_REDIRECT
+fs/namespace.c:1944  ksys_umount 内拦截卸载 /mnt/patch（返回 -EBUSY）
+fs/proc/base.c:1856  pathname = cdh_vendor_path_to_virtual(pathname);
+include/linux/namei.h:97  extern char *cdh_vendor_path_to_virtual(char *path);
+fs/Kconfig:408       config CDH_PATH_REDIRECT
+
+$ cd engine/kernels/lineage-23-6.12 && grep -rn "CONFIG_CDH_PATH_REDIRECT|cdh_vendor_path_to_virtual|cdh_patch_mount" \
+    --include=*.c --include=*.h --include=*.Kconfig --include=Kconfig .
+（无输出：6.12 源码里没有这三样东西）
+
+后果：m22 的 kernel.config 也没声明它（证据 #48 的注释还写着「lineage-23.2 无此符号」），
+     于是 patch.img 虽然挂到 /mnt/patch，但：
+       a) 没有任何路径把 /vendor/etc、/vendor/bin、/vendor/lib*、/vendor_dlkm/lib、
+          /vendor/build.prop、/odm/etc/build.prop、/odm/etc/selinux/odm_sepolicy.cil
+          重定向到 /mnt/patch/... —— 07/08/09 三阶段的产物等于全部不生效；
+       b) ksys_umount 没有保护，vold 启动即把 /mnt/patch 卸载（0.919s）。
+     最终 /vendor 一直是 super 里的官方 flyme/qcom vendor，/etc/vintf 在，但 qcom 真机
+     服务（qseecom、boot-qti、star_core）在 virtio 虚拟机上必然崩，vold 也读不到默认 fstab。
+
+## 5. 静态对照二：fstab 名与硬件名不匹配
+$ debugfs -R "ls -l /etc" engine/out/devices/flyme/m22/12.5.0.0A/img/vendor.img | grep fstab
+fstab.qcom                                        （官方 vendor 只有 fstab.qcom）
+$ cat engine/out/devices/flyme/m22/12.5.0.0A/img/vendor_boot-info.txt | grep -E "board|cmdline"
+board: sun
+cmdline_changes: ... (缺失) -> androidboot.hardware=sun
+$ debugfs -R "dump /build.prop /tmp/..." vendor.img; grep ro.board.platform /tmp/...
+ro.board.platform=sun                              （ro.board.platform=sun，但 fstab 后缀是 qcom）
+06/05 注入的 first_stage 片段名是 fstab.sun（源文件 fstab.qcom），cmdline 又把
+ro.hardware 顶成 sun，于是 vold 找 /vendor/etc/fstab.sun（不存在）：
+[    0.920919][  T279] vold: Failed to open default fstab: No such file or directory

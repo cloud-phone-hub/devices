@@ -1,0 +1,92 @@
+# composer compat 库改由 vendor 侧编译 —— 改造后取证
+# 时间: 2026-11-02 14:38:50 CST
+
+## 1. cdh-vendor 能列出 shared 模块
+android15 模块 43 个（HAL 根 /Volumes/work/cloud-phone-hub/engine/vendor/hardware）
+  libcdh_composer_compat             shared -> lib64/libcdh_composer_compat.so
+
+## 2. 干跑：编译单元与命令行（源码来自 @common）
+==> 编译共享库 libcdh_composer_compat.so（2 个编译单元，源码根 /Volumes/work/cloud-phone-hub/engine/vendor/hardware/common/libcxx-compat）
+[..] (dry) /Users/cuimingqiang/Library/Android/sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=aarch64-linux-android35 --sysroot=/Users/cuimingqiang/Library/Android/sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -std=c++17 -fPIC -O2 -fno-exceptions -fno-rtti -I/Volumes/work/cloud-phone-hub/engine/vendor/hardware/common/libcxx-compat -c /Volumes/work/cloud-phone-hub/engine/vendor/hardware/common/libcxx-compat/libcxx_verbose_abort.cc -o /Volumes/work/cloud-phone-hub/engine/vendor/out/android15/tmp/libcdh_composer_compat-shared-work/obj/s0_0_libcxx_verbose_abort.o
+[..] (dry) /Users/cuimingqiang/Library/Android/sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=aarch64-linux-android35 --sysroot=/Users/cuimingqiang/Library/Android/sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -std=c++17 -fPIC -O2 -fno-exceptions -fno-rtti -I/Volumes/work/cloud-phone-hub/engine/vendor/hardware/common/libcxx-compat -c /Volumes/work/cloud-phone-hub/engine/vendor/hardware/common/libcxx-compat/binder_transaction_code_name.cc -o /Volumes/work/cloud-phone-hub/engine/vendor/out/android15/tmp/libcdh_composer_compat-shared-work/obj/s0_1_binder_transaction_code_name.o
+[..] (dry) /Users/cuimingqiang/Library/Android/sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=aarch64-linux-android35 --sysroot=/Users/cuimingqiang/Library/Android/sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/sysroot --ld-path=/Users/cuimingqiang/Library/Android/sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/bin/ld.lld -nostdlib -fno-stack-protector -mno-outline-atomics -mbranch-protection=standard -std=c++17 -fPIC -shared -Wl,-soname,libcdh_composer_compat.so -o /Volumes/work/cloud-phone-hub/engine/vendor/out/_compat_probe/lib64/libcdh_composer_compat.so /Volumes/work/cloud-phone-hub/engine/vendor/out/android15/tmp/libcdh_composer_compat-shared-work/obj/s0_0_libcxx_verbose_abort.o /Volumes/work/cloud-phone-hub/engine/vendor/out/android15/tmp/libcdh_composer_compat-shared-work/obj/s0_1_binder_transaction_code_name.o -Wl,--allow-shlib-undefined
+[..] (dry) 步骤已打印，未执行
+
+## 3. 实编
+==> 编译共享库 libcdh_composer_compat.so（2 个编译单元，源码根 /Volumes/work/cloud-phone-hub/engine/vendor/hardware/common/libcxx-compat）
+    写 lib64/libcdh_composer_compat.so
+[ok] libcdh_composer_compat 构建完成 -> /Volumes/work/cloud-phone-hub/engine/vendor/out/_compat_probe
+--- 产物
+total 8
+-rwxr-xr-x@ 1 cuimingqiang  staff  3512 11  2 14:38 libcdh_composer_compat.so
+
+## 4. 产物验符号（与旧 07 现编的同名库对得上）
+--- llvm-nm -D --defined-only
+0000000000004438 T AIBinder_Class_setTransactionCodeToFunctionNameMap
+00000000000043c0 T _ZNSt3__122__libcpp_verbose_abortEPKcz
+--- llvm-nm -D -u（留给运行期 bionic）
+                 U abort
+                 U vdprintf
+--- SONAME / NEEDED
+  0x000000000000000e (SONAME)   Library soname: [libcdh_composer_compat.so]
+  0x000000000000001e (FLAGS)    BIND_NOW 
+  0x000000006ffffffb (FLAGS_1)  NOW 
+--- 架构
+  Class:                             ELF64
+  Type:                              DYN (Shared object file)
+  Machine:                           AArch64
+
+## 5. 07 侧已无编译器调用（clang / NDK 只出现在注释里）
+  build/07_build_vendor/assemble.go:143:	// libc++ / libbinder_ndk 符号（rc 的 setenv LD_PRELOAD 在本 ROM 不生效）。
+  build/07_build_vendor/composercompat.go:4:// android.hardware.composer.hwc3-service.drm 及其配套库（composer3-V4-ndk、
+  build/07_build_vendor/composercompat.go:9://	libbinder_ndk   AIBinder_Class_setTransactionCodeToFunctionNameMap
+  build/07_build_vendor/files.go:81:	// libpng 不在 LLNDK 名单里，vendor 进程不能从 /system/lib64 取，保留官方 vendor
+  （以上均为注释或库名片段；无 exec 调用）
+
+## 6. 07 干跑 gold：模块进 hardware 清单，产物进步骤 4 叠加层
+10:    编译产物:   out/vendor/android15（android.hardware.audio@default 4 项、android.hardware.bluetooth@default 3 项、android.hardware.camera@default 3 项、android.hardware.gnss@default 3 项、android.hardware.gpu@default 4 项、android.hardware.health@default 3 项、android.hardware.ir@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.media.v412@default 20 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.vibrator@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 14 项、libcdh_composer_compat@default 1 项）；out/vendor/android15/mtk（android.hardware.radio@mtk 3 项）
+124:    HAL 模块:  libcdh_composer_compat（变体 default，变体产物根 out/vendor/android15，待落盘 1/1 项（编译产物 1 + vendor 静态树 0）-> 重编）
+125:        期望产物 out/vendor/android15/lib64/libcdh_composer_compat.so
+130:    计划命令 [步骤 3]: out/bin/cdh-vendor hal build libcdh_composer_compat --android 15 --out-dir /Volumes/work/cloud-phone-hub/engine/out/vendor/android15
+131:    计划命令 [步骤 4]: 叠加 机型静态树 manifest/xiaomi/gold/vendor；编译产物 out/vendor/android15（android.hardware.audio@default 4 项、android.hardware.bluetooth@default 3 项、android.hardware.camera@default 3 项、android.hardware.gnss@default 3 项、android.hardware.gpu@default 4 项、android.hardware.health@default 3 项、android.hardware.ir@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.media.v412@default 20 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.vibrator@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 14 项、libcdh_composer_compat@default 1 项）；out/vendor/android15/mtk（android.hardware.radio@mtk 3 项）；平台覆盖层 out/vendor/android15/mtk -> out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor
+
+## 7. 两侧测试与构建
+--- cd engine/vendor/build
+go build ./... ok
+go vet ./... ok
+ok  	build/internal/halbuild	(cached)
+ok  	build/internal/spec	(cached)
+--- cd engine/build
+go build ./... ok
+go vet 07 ok
+ok  	cloud-phone-hub/engine/build/07_build_vendor	14.060s
+
+## 8. 全量测试（收尾复跑）
+--- engine/vendor/build: go test ./...
+?   	build	[no test files]
+ok  	build/internal/deps	(cached)
+ok  	build/internal/halbuild	(cached)
+ok  	build/internal/profile	(cached)
+ok  	build/internal/spec	(cached)
+ok  	build/internal/toolchain	(cached)
+--- engine/build: go test ./...
+ok  	cloud-phone-hub/engine/build/01_unpack	(cached)
+ok  	cloud-phone-hub/engine/build/02_build_kernel	(cached)
+ok  	cloud-phone-hub/engine/build/03_build_modules	(cached)
+ok  	cloud-phone-hub/engine/build/04_build_boot	(cached)
+ok  	cloud-phone-hub/engine/build/05_build_vendor_boot	(cached)
+ok  	cloud-phone-hub/engine/build/06_build_odm	(cached)
+ok  	cloud-phone-hub/engine/build/07_build_vendor	(cached)
+ok  	cloud-phone-hub/engine/build/08_build_vendor_dlkm	(cached)
+ok  	cloud-phone-hub/engine/build/09_build_patch	(cached)
+ok  	cloud-phone-hub/engine/build/10_pack_super	(cached)
+ok  	cloud-phone-hub/engine/build/11_pack_vda	(cached)
+ok  	cloud-phone-hub/engine/build/internal/carrier	(cached)
+ok  	cloud-phone-hub/engine/build/internal/e2fs	(cached)
+ok  	cloud-phone-hub/engine/build/internal/env	(cached)
+ok  	cloud-phone-hub/engine/build/internal/kernelver	(cached)
+ok  	cloud-phone-hub/engine/build/internal/manifest	(cached)
+ok  	cloud-phone-hub/engine/build/internal/modmeta	(cached)
+ok  	cloud-phone-hub/engine/build/internal/pipeline	(cached)
+ok  	cloud-phone-hub/engine/build/internal/stagekit	(cached)
+ok  	cloud-phone-hub/engine/build/internal/stagelog	(cached)

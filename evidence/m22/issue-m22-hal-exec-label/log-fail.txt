@@ -1,0 +1,46 @@
+# 实例 33（补标签之前）串口日志节选：bin/hw 二进制被标 vendor_file，entrypoint 被拒
+# 源: ../../out/core/daemon/runtime/m22_12.5.0.0A/33/qemu.log
+
+## 1. init execve 前被 SELinux 拒（permissive=0，硬失败）
+[   28.923925][  T266] type=1400 audit(28.912:245): avc:  denied  { entrypoint } for  comm="init" path="/mnt/patch/vendor/bin/hw/android.hardware.memtrack-service" dev="vdc" ino=113 scontext=u:r:hal_memtrack_default:s0 tcontext=u:object_r:vendor_file:s0 tclass=file permissive=0
+[   29.843476][  T266] type=1400 audit(29.832:323): avc:  denied  { entrypoint } for  comm="init" path="/mnt/patch/vendor/bin/hw/android.hardware.memtrack-service" dev="vdc" ino=113 scontext=u:r:hal_memtrack_default:s0 tcontext=u:object_r:vendor_file:s0 tclass=file permissive=0
+[   30.870008][  T266] type=1400 audit(30.808:336): avc:  denied  { entrypoint } for  comm="init" path="/mnt/patch/vendor/bin/hw/android.hardware.memtrack-service" dev="vdc" ino=113 scontext=u:r:hal_memtrack_default:s0 tcontext=u:object_r:vendor_file:s0 tclass=file permissive=0
+
+## 2. 服务 exec 失败 → 每秒重试
+exited with status 127 计数: 1773（其中 13 个服务逐条统计如下）
+   422  vendor.usb-gadget
+   417  vendor.memtrack-default
+    85  vendor.authsecret-default
+    85  vendor.identity-default
+    84  vendor.face-default
+    84  vendor.fingerprint-default
+    84  vendor.usb-default
+    83  vendor.fingerprint-virtualhal
+    83  vendor.face-virtualhal
+    83  vendor.cdh_gold_camera
+    83  vendor.confirmationui-default
+    83  vendor.nfc-default
+    83  vendor.weaver-default
+合计: 1759
+
+## 3. 涉及域与次数
+2104 hal_usb_gadget_default
+2098 hal_memtrack_default
+ 847 hal_face_default
+ 843 hal_fingerprint_default
+ 425 hal_nfc_default
+ 423 hal_identity_default
+ 423 hal_confirmationui_default
+ 422 hal_authsecret_default
+ 420 hal_camera_default
+ 419 hal_usb_default
+ 418 hal_weaver_default
+
+## 4. 对照：底座自带 sensors 二进制标签正常（debugfs ea_list）
+  android.hardware.sensors-service -> u:object_r:hal_sensors_default_exec:s0
+  android.hardware.memtrack-service -> u:object_r:vendor_file:s0
+  android.hardware.nfc-service      -> u:object_r:vendor_file:s0
+
+## 5. 策略侧授权其实齐备（CIL 里每个域都有 entrypoint）
+  (allow hal_memtrack_default hal_memtrack_default_exec (file (read getattr map execute open entrypoint)))
+  …… 12 个 _exec 类型均已在 vendor_sepolicy.cil 中定义

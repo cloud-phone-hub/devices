@@ -1,0 +1,113 @@
+### oriole（oriole_AP2A.240905.003.F1） 开机验证（cdh_redirect 外部模块 / 内核未打补丁）  2026-11-02 09:57:52
+实例: oriole_AP2A.240905.003.F1/24
+
+== 1. 启动完成与存活
+$ getprop sys.boot_completed; cat /proc/uptime; getprop ro.build.display.id; uname -r
+1
+69.36 372.65
+AP2A.240905.003.F1
+6.1.138-4k-cdh
+
+== 2. 内核是否干净（kallsyms 里不应有被删补丁的符号）
+$ grep -c 'cdh_redirect_vendor_path\|cdh_path_redirect' /proc/kallsyms; echo rc=$?
+0
+rc=1
+
+== 3. /proc/cdh_redirect（规则条数与计数）
+$ cat /proc/cdh_redirect
+rules: 10/32
+  dir  /vendor/etc -> /mnt/vendorpatch/vendor/etc
+  dir  /vendor/bin -> /mnt/vendorpatch/vendor/bin
+  dir  /vendor/lib -> /mnt/vendorpatch/vendor/lib
+  dir  /vendor/lib64 -> /mnt/vendorpatch/vendor/lib64
+  file /vendor/build.prop -> /mnt/vendorpatch/vendor/build.prop
+  file /vendor/ueventd.rc -> /mnt/vendorpatch/vendor/ueventd.rc
+  dir  /vendor_dlkm/lib -> /mnt/vendorpatch/vendor_dlkm/lib
+  file /odm/etc/build.prop -> /mnt/vendorpatch/odm/etc/build.prop
+  file /odm/etc/selinux/odm_sepolicy.cil -> /mnt/vendorpatch/odm/etc/selinux/odm_sepolicy.cil
+  file /system/bin/update_verifier -> /mnt/vendorpatch/system/bin/update_verifier
+forward_hits: 10131
+reverse_hits: 2730
+forward_missed: 0
+reverse_missed: 0
+readlink[proc]: entries=65757 rets=65757 hits=2730 skipped=63027
+readlink[vfs]: entries=68818 rets=68818 hits=0 skipped=68818
+
+== 4. 逆向：cwd/exe 显示虚拟路径（应无 /mnt/vendorpatch）
+$ cd /vendor/etc && pwd -P; ls -l /proc/self/cwd | sed 's/.*-> //'; ls -l /proc/1/exe | sed 's/.*-> //'; ls -l /proc/self/root | sed 's/.*-> //'
+/vendor/etc
+/vendor/etc
+/system/bin/init
+/
+
+== 5. 逆向：/vendor/lib64 下的 readlink
+$ readlink /proc/self/cwd; cd /vendor/lib64 && readlink /proc/self/cwd; cd /odm/etc && readlink /proc/self/cwd
+/
+/vendor/lib64
+/vendor/odm/etc
+
+== 6. 全进程 exe/cwd 里残留物理路径计数（应为 0）
+$ n=0; for p in /proc/[0-9]*; do e=$(readlink $p/exe 2>/dev/null); c=$(readlink $p/cwd 2>/dev/null); case "$e$c" in *vendorpatch*) n=$((n+1)); echo "$p $e $c";; esac; done; echo 残留=$n
+残留=0
+
+== 7. 前向：/vendor 与 /vendor_dlkm 读到载体内容
+$ ls /vendor; echo ---; ls /vendor/etc | head -8; echo ---; ls /vendor_dlkm/lib/modules | head -8
+apex
+bin
+build.prop
+etc
+firmware
+framework
+lib
+lib64
+lost+found
+odm
+odm_dlkm
+overlay
+---
+NOTICE.xml.gz
+aconfig_flags.pb
+aidl
+audio_effects_config.xml
+audio_policy_configuration.xml
+audio_policy_volumes.xml
+bluetooth_audio_policy_configuration_7_0.xml
+boringssl_self_test.no_zygote.rc
+---
+6lowpan.ko
+8021q.ko
+9pnet_fd.ko
+aqc111.ko
+asix.ko
+ax88179_178a.ko
+bluetooth.ko
+bsd_comp.ko
+
+== 8. /mnt/vendorpatch 挂载与载体
+$ grep vendorpatch /proc/mounts; echo ---; ls /mnt/vendorpatch
+/dev/block/vdc /mnt/vendorpatch ext4 ro,seclabel,relatime 0 0
+---
+lost+found
+odm
+vendor
+vendor_dlkm
+
+== 9. HAL 进程 exe 反查（应为虚拟 /vendor/bin/hw/...）
+$ for p in $(pidof android.hardware.audio.service 2>/dev/null) $(pidof vendor.qti.hardware.display.composer-service 2>/dev/null); do echo "pid $p -> $(readlink /proc/$p/exe 2>/dev/null)"; done
+pid 702 -> /vendor/bin/hw/android.hardware.audio.service
+
+== 宿主侧 模块装载（first stage）（命中 6 行）
+[    0.141718][    T1] init: Loading module /lib/modules/6.1.138-4k-cdh/cdh_redirect.ko with args ''
+[    0.142757][    T1] cdh_redirect: 规则来自 /lib/modules/cdh_redirect.rules：10 条
+[    0.143852][    T1] cdh_redirect: 前向钩子就绪：getname_flags（maxactive 4096）
+[    0.144703][    T1] cdh_redirect: 逆向钩子就绪：proc_pid_readlink + vfs_readlink
+[    0.144978][    T1] cdh_redirect: 已加载：10 条规则（/lib/modules/cdh_redirect.rules），内核未打补丁
+[    0.145234][    T1] init: Loaded kernel module /lib/modules/6.1.138-4k-cdh/cdh_redirect.ko
+
+== 宿主侧 update_verifier 屏蔽（命中 2 行）
+[    0.422626][    T1] init: Parsing file /system/etc/init/update_verifier.rc...
+[    7.470015][    T1] init: Command 'exec_start update_verifier' action=zygote-start (/system/etc/init/hw/init.rc:1084) took 0ms and failed: Could not start exec service: Cannot find '/system/bin/update_verifier': No such file or directory
+
+== 宿主侧 vendor_dlkm 是否重复加载 cdh_redirect（命中 0 行）
+（无）
+

@@ -1,0 +1,28 @@
+=== 实机 shell service list (batch2-pre.log) ===
+31	android.hardware.audio.core.IModule/default: [android.hardware.audio.core.IModule]
+32	android.hardware.audio.core.IModule/primary: [android.hardware.audio.core.IModule]
+33	android.hardware.audio.core.IModule/r_submix: [android.hardware.audio.core.IModule]
+=== 32bit vendor libs ===
+
+=== diff/services.json summary (pre) ===
+{"identity": 0, "capability": 91, "state": 1, "availability": 0, "fatal": 91}
+[
+ {
+  "level": "capability",
+  "path": "serviceList.count",
+  "base": 471,
+  "target": 390
+ },
+ {
+  "level": "capability",
+  "path": "serviceList.services.android.hardware.audio.core.IModule/bluetooth",
+  "base": "[]",
+  "target": "<缺>"
+ },
+ {
+  "level": "capability",
+  "path": "serviceList.services.android.hardware.audio.core.IModule/primary",
+  "base": "<缺>",
+  "target": "[]"
+ }
+]

@@ -1,0 +1,66 @@
+# 失败证据：双重 wifi 网关（相对路径后端未被 daemon 回收）
+
+被测产物：`out/core/daemon/dist/darwin/daemon`（修复前）、
+`out/qemu/dist/darwin/libexec/wifi-host-service`
+sha256 `83759fef020633b03d0ef210c693fab8dcfd7c4c1773294722bf56589a3f3737`
+实例：gold_cn_OS3.0.10.0.VNQCNXM/5，2026-10-28 04:09~04:10
+
+## 1. 数据面「坏掉」的表现
+
+`out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/5/runtime/wifi/wifi-host-service.log`：
+
+```
+2026/10/28 04:09:07 [tcp] 流控停顿 115.231.33.2:80 inflight=66412 limit=65535 win=65535 mySeq=3514816603 lastAck=3514750191
+2026/10/28 04:09:07 [tcp] 流控停顿 115.231.33.2:80 inflight=66124 limit=65535 win=65535 mySeq=4152920794 lastAck=4152854670
+2026/10/28 04:09:08 [stat] rx=1831(+23) tx=1895 drop=0 reset=0 队列=0/1024
+2026/10/28 04:09:12 [tcp] 流控停顿 115.231.33.2:80 inflight=66124 limit=65535 win=65535 mySeq=4152920794 lastAck=4152854670
+2026/10/28 04:09:12 [tcp] 流控停顿 115.231.33.2:80 inflight=66412 limit=65535 win=65535 mySeq=3514816603 lastAck=3514750191
+2026/10/28 04:09:18 [tcp] 流控停顿 115.231.33.2:80 inflight=66412 limit=65535 win=65535 mySeq=3514816603 lastAck=3514750191
+2026/10/28 04:09:18 [tcp] 流控停顿 115.231.33.2:80 inflight=66124 limit=65535 win=65535 mySeq=4152920794 lastAck=4152854670
+2026/10/28 04:09:23 [tcp] 流控停顿 115.231.33.2:80 inflight=66124 limit=65535 win=65535 mySeq=4152920794 lastAck=4152854670
+2026/10/28 04:09:23 [tcp] 流控停顿 115.231.33.2:80 inflight=66412 limit=65535 win=65535 mySeq=3514816603 lastAck=3514750191
+2026/10/28 04:09:28 [tcp] 流控停顿 115.231.33.2:80 inflight=66412 limit=65535 win=65535 mySeq=3514816603 lastAck=3514750191
+2026/10/28 04:09:28 [tcp] 流控停顿 115.231.33.2:80 inflight=66124 limit=65535 win=65535 mySeq=4152920794 lastAck=4152854670
+2026/10/28 04:09:33 [tcp] 流控停顿 115.231.33.2:80 inflight=66124 limit=65535 win=65535 mySeq=4152920794 lastAck=4152854670
+2026/10/28 04:09:33 [tcp] 流控停顿 115.231.33.2:80 inflight=66412 limit=65535 win=65535 mySeq=3514816603 lastAck=3514750191
+2026/10/28 04:09:38 [tcp] 流控停顿 115.231.33.2:80 inflight=66412 limit=65535 win=65535 mySeq=3514816603 lastAck=3514750191
+2026/10/28 04:09:38 [tcp] 流控停顿 115.231.33.2:80 inflight=66124 limit=65535 win=65535 mySeq=4152920794 lastAck=4152854670
+2026/10/28 04:09:38 [stat] rx=1832(+1) tx=1895 drop=0 reset=0 队列=0/1024
+```
+
+判读：
+
+- 两条流**成对**出现、ISN 不同（`3514816603` / `4152920794`），30s 内未见任何 ACK 推进；
+- `inflight` 钉死在 64KB 上限、`drop=0`、队列为空 —— 不是链路丢帧或队列溢出，
+  而是 guest 收不到/不认其中一路的段；
+- 同一时间段 `ps` 里有两个 `wifi-host-service`：旧 92706（手工相对路径启动）+
+  daemon 新拉起的进程，两者都往 `/tmp/stage-007d12b0/wifi-data.sock` 写帧。
+
+## 2. 回收失灵的现场
+
+发现时 `ps` 里同时列出两个 `wifi-host-service`：
+
+- 92706：当日为验证 WiFi 修复，在仓库根以**相对路径**手工启动
+  （`./out/qemu/dist/darwin/libexec/wifi-host-service ...`）；
+- 另一份由 daemon 拉起（绝对路径）。
+
+92706 不在实例目录的 `backend-pids` 清单里（清单只记 daemon 自己的子进程），
+进程表扫描也没命中它，于是 daemon 重启 / 实例停止都回收不到它，它一直占着
+`/tmp/stage-007d12b0/wifi-data.sock`。
+
+处置：先 `kill -TERM 92706` 清掉旧网关，再修 `reap.go` 后重编译并重启 daemon。
+
+## 3. 反证（修复前逻辑）
+
+旧代码只用 `fields[0]` 与发布根做前缀比较：
+
+```go
+exe := fields[0]
+if !strings.HasPrefix(exe, qemuRoot+string(filepath.Separator)) {
+    return false
+}
+```
+
+相对路径 `out/qemu/dist/darwin/libexec/wifi-host-service` 不以
+`/Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/` 开头 → 直接 false →
+`listBackendProcesses` 漏掉 → 不回收。

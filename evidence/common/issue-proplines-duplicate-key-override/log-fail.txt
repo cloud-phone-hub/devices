@@ -1,0 +1,55 @@
+== proplines 对「sets 命中的同名多行」只改第一处：清单写了、产物没生效（2026-11-04，cph2797 首轮起机）==
+
+盘集:   engine/out/dist/oppo/cph2797/16.0.8.301_EX01
+构建:   engine/out/bin/cdh device build cph2797 --from build_vendor -> engine/out/tmp/cph2797-build.log
+判定:   engine/out/tmp/cph2797-boot-check.log
+        [fail] 超时 600s 未出现 sys.boot_completed=1（当前日志 71314 行）
+实例:   out/core/daemon/runtime/cph2797_16.0.8.301_EX01/1
+
+
+## 1. 厂商原件（07 步骤 1b 整树解包的 vendor build.prop）里同键两行
+
+$ grep -n '^ro.hwui.use_vulkan=\|^ro.vendor.build.security_patch=' \
+    out/roms/oppo/cph2797/16.0.8.301_EX01/super/unpack_vendor/build.prop
+42:ro.vendor.build.security_patch=2026-06-01
+45:ro.hwui.use_vulkan=
+240:ro.vendor.build.security_patch=2026-06-01
+243:ro.hwui.use_vulkan=true
+
+（917 行的厂商件里同名多行是常态，不只是这两条：
+ `grep -oE '^[a-z0-9_.]+=' $V | sort | uniq -d` 出 30+ 个键，dalvik.vm.heapsize、
+ debug.sf.* 等都在列。基线 sets 命中这类键时才会暴露问题。）
+
+
+## 2. 修复前 Apply 只产出「覆盖」，没有任何「删除重复」
+
+$ grep -n '\[prop\]' engine/out/tmp/cph2797-build.log | sed -n '/^12[0-9][0-9]:/p'
+1220:    [prop] 覆盖 ro.hardware.egl=mesa
+1221:    [prop] 覆盖 ro.hardware.hwcomposer=drm
+1222:    [prop] 覆盖 ro.hwui.use_vulkan=false        ← 只改了第 45 行
+1223:    [prop] 覆盖 ro.opengles.version=196608
+1224:    [prop] 追加 ro.soc.model=vsoc_arm64
+1225:    [prop] 追加 ro.vendor.boot_security_patch=2026-06-01
+1226:    [prop] 追加 vendor.oplus.dalvik.vm.done=1
+
+产物落位后该键仍是两行：45 行 = 基线要的 false，243 行 = 厂商原值 true。
+
+
+## 3. 运行时 init 按「后读覆盖先读」把厂商真值盖回去
+
+$ grep -n "Overriding previous property" engine/out/tmp/cph2797-fail-qemu.log | head
+645:[    0.542688][    T1] init: Overriding previous property 'ro.hwui.use_vulkan':'false' with new value 'true'
+（全文 22 条同类留痕。逐条比对后，只有本条是「前值 = 基线收口值、后值 = 厂商原值」，
+即收口被盖回；其余要么是厂商件自身两段同名行（dalvik.vm.*、debug.sf.*、
+ro.board.platform 等），要么是「前值 = 厂商原值、后值 = 基线收口值」，
+例如同一轮的 `ro.opengles.version:'196610' with new value '196608'`，方向相反、
+收口生效。）
+
+后果链：本轮（run1）的引导在更早的 FRP 卡点上就死了（system_server phase 500 崩，
+见 engine/evidence/cph2797/issue-cph2797-frp-block-device-missing/），所以这份 logcat
+里 `couldn't find an OpenGL ES implementation` / surfaceflinger / vulkan 计数均为 **0**，
+use_vulkan 被盖回的渲染侧后果在本机型没有直接现场；该后果的崩溃形态见同链条的
+#151（15r：`ro.hwui.use_vulkan=true` → SkiaVulkanPipeline → 无 vulkan.adreno.so →
+`gpuCount` assert，battery/launcher/systemui 三进程自杀）。
+本条的证据只到「产物有两行、运行时读到最后那行、清单的收口没生效」这一层——
+这已经足以判定「按清单装配」这个口径被破坏。

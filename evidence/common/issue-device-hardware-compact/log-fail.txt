@@ -1,0 +1,108 @@
+# hardware 段统一 —— 失败侧取证（#138）
+
+取样时间：2026-11-03
+取样环境：`engine/`，改动前快照 `out/tmp/devicejson-backup-hw-20261103/`（13 份原样 device.json）。
+本文记录**改造前的形态**、**被否掉的做法**与**本轮自己踩的坑**，正向结果见 `log-pass.txt`。
+
+## 第 1 节：改造前同一种声明有两种写法
+
+`manifest/flyme/m22/device.json`（展开式，36 条占 219 行）：
+
+```console
+$ sed -n '52,62p' manifest/flyme/m22/device.json
+    "hardware": [
+        {
+            "android.hardware.audio": {
+                "variant": "default",
+                "version": "1.0"
+            }
+        },
+        {
+            "android.hardware.authsecret": {
+                ...
+```
+
+`manifest/oneplus/15r/device.json`（紧凑式，20 条占 23 行）：
+
+```console
+$ sed -n '41,45p' manifest/oneplus/15r/device.json
+    "hardware": [
+        { "android.hardware.audio":          { "variant": "default", "version": "1.0" } },
+        { "android.hardware.bluetooth":      { "variant": "default", "version": "1.0" } },
+        { "android.hardware.camera":         { "variant": "default", "version": "1.0" } },
+        { "android.hardware.gnss":           { "variant": "default", "version": "1.0" } },
+```
+
+两种写法解析结果完全相同（`07_build_vendor` 读的是 `HardwareSpec{Module, Variant,
+Version}`），所以差异只在人读——36 条要翻 219 行，横向比对某台有没有声明某个 HAL 时
+很容易看漏。另有两处明显的缩进笔误：
+
+```console
+$ sed -n '50p' manifest/flyme/m22/device.json        # 3 空格
+   "hardware-platform": "qcom",
+$ sed -n '42p' manifest/oppo/cph2797/device.json     # 5 空格
+     "hardware-platform": "mtk",
+```
+
+## 第 2 节：为什么不能用 `json.dump` 收口
+
+被否掉的做法：`json.load` → `json.dump(indent=4, ensure_ascii=False)` 一把梭。
+
+- 会把**整份清单**重排：`modules.redirect` 的一条一行、`vendor.files` 的紧凑对象、
+  空行的分组边界全部被抹平，13 份文件产生几千行无效 diff，评审无法确认「只动了
+  hardware」；
+- `json.dump` 不保留键内对齐，`{ "variant"` 的列对齐一定丢失，等于把基准也改坏；
+- 中文键值会被 `ensure_ascii` 转义（`\u9973` 之类），diff 更难读。
+
+所以改成**只替换 `hardware` 的 `[` … `]` 区间**：前缀只允许 `"hardware-platform"`
+行缩进变化，后缀逐字节不变，其余字节一个不动。
+
+## 第 3 节：本轮踩的四个坑
+
+1. **`indent` 取成了 `"hardware": ` 这一整段**：第一版
+   `indent = len(old[line_start:start])` 会把键名和冒号一起算进去（16 而不是 4），
+   条目缩进直接变成 20 空格。改成只量行首空白
+   `re.match(r"[ \t]*", old[line_start:start])`。
+2. **`render()` 把 `"hardware": [` 也渲染了**：`array_span` 返回的是 `[` 的下标，
+   前缀里已经含键名，渲染函数却从 `"hardware": [` 开始，结果成了
+   `"hardware": "hardware": [`。修成只渲染 `[` … `]`，末行 `]` 的缩进单独给。
+3. **`fix_platform_indent` 会改变长度，导致切片对不上**：m22 的 3 空格改成 4 空格
+   （+1 字符），于是 `new[:len(old[:start])]` 切偏，断言「段前内容被改」误报。
+   改成先算 `prefix = fix_platform_indent(old[:start])`、`new = prefix + seg + tail`，
+   再用 `new.startswith(prefix)` / `new.endswith(tail)` 断言。
+4. **断言的右式写成了「本身」**：顺手补的三条断言里写成
+   `assert prefix + tail == new`，而 `new` 含 `seg`，必然不等——报「段外被多余写入」。
+   改成 `assert seg.startswith("[") and seg.endswith("]")` 才是想验的东西。
+
+另外记一个**终端渲染**的坑：`m22` 那行「m22 显式只 声明」看着空格在「只」和「声明」
+之间，用 `repr` 打出来却是「显 式只声明」——CJK 双宽字符会把后面的空格视觉上前移，
+判断空格位置要用码点打印（`U+0020`），不要靠 `sed | cat` 目测。
+
+## 第 4 节：没有 `hardware` 段的 6 台（接入时照此写）
+
+```console
+$ for f in nothing/3a oneplus/ace3 oppo/pme110 realme/rmx3823 realme/rmx5112 realme/rmx6688; do
+    printf '%-20s ' $f
+    python3 -c "import json,sys;d=json.load(open('manifest/$f/device.json'));print('hardware' in d)"
+  done
+nothing/3a           False
+oneplus/ace3         False
+oppo/pme110          False
+realme/rmx3823       False
+realme/rmx5112       False
+realme/rmx6688       False
+```
+
+这 6 台接入 HAL 装配时按同一形态写（`"hardware"` 前 4 空格、条目 8 空格、列宽按本段
+最长键 + 4 空格）：
+
+```jsonc
+    "hardware-platform": "mtk",
+    "hardware": [
+        { "android.hardware.audio":          { "variant": "default", "version": "1.0" } },
+        { "android.hardware.bluetooth":      { "variant": "default", "version": "1.0" } }
+    ]
+```
+
+**不要**用 `jq .` 回写 `device.json`：它会把上面的列对齐整段重排（`jq` 不认「按最长键
+对齐」这种约定），之后每次 diff 都会把整段当成改动。

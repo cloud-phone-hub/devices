@@ -1,0 +1,64 @@
+# 失败：su 在三种身份下的表现（改动前 / 身份差异）
+#
+# 取样：云机实例 gold_cn_OS3.0.10.0.VNQCNXM/3
+#   - 身份 A：guest 通道（daemon Web 控制台终端）→ uid 0，u:r:pioneer:s0
+#   - 身份 B：adb -s 127.0.0.1:5911（云机 guest 的 adbd，经 hostfwd 5911→5555）→ uid 2000
+# 注意：裸 `adb shell` 会打到宿主 USB 真机（4lmbvom7gifm5lbu），下面一律带 -s。
+
+## 1) 身份 A（root）里敲 su：永远 not found——这是设计，不是故障
+
+$ id
+uid=0(root) gid=0(root) groups=0(root) context=u:r:pioneer:s0
+$ su -c id; echo exit=$?
+sh: su: inaccessible or not found
+exit=127
+
+# 为什么：sucompat 的前置门是 ksu_is_allow_uid_for_current()，root(0) 被
+# kernel/policy/allowlist.c 的 forbid_system_uid() 直接判 false：
+#     return uid < SHELL_UID && uid != SYSTEM_UID;   // 0 < 2000 且 != 1000 → true
+# 于是 goto do_orig_execve，原生路径去找 /system/bin/su → 文件不存在 → ENOENT。
+# 换句话说：**root 自己不需要 su**，能在 root 里测出 su 的一律是别的东西（magisk 残留、
+# toybox 的 su 别名等），KernelSU 这条路上测不到。
+
+## 2) ksud 未部署时（改动前，/data/adb 为空）：/system/bin/su 这个路径根本不存在
+
+$ ls -l /system/bin/su /system/xbin/su /data/adb
+ls: /system/bin/su: No such file or directory
+ls: /system/xbin/su: No such file or directory
+total 0
+$ /system/bin/su -c id
+/system/bin/sh: /system/bin/su: inaccessible or not found
+
+# 为什么：sucompat 只改写**字符串精确等于** /system/bin/su 的 faccessat/newfstatat/execve
+# （feature/sucompat.c: #define SU_PATH "/system/bin/su"），而且改写目标 /data/adb/ksud
+# 必须存在（is_ksud_exists() → kern_path(KSUD_PATH)）。两边都不成立时，
+# shell 的 PATH 查找（stat/access /system/bin/su）落空，根本走不到 execve。
+
+## 3) ksud 就位但 allow_shell=0（本轮改动前的那次装载）：uid 2000 被 uid 门挡住
+
+# 本次装载（改动前，19:41 的实例 3 首启）只有：
+[    0.157807][    T1] init: Loading module /lib/modules/6.6.127-4k-cdh/kernelsu.ko with args ''
+# 且 /data/adb/ksud 尚不存在，所以 uid 2000 与 root 表现相同（not found）。
+# 这里标出来的是「即使 ksud 就位也会被挡」的那道门，代码路径（非日志）：
+
+kernel/feature/sucompat.c  ksu_handle_execve_sucompat_common()
+    if (!ksu_is_allow_uid_for_current(current_uid().val))
+        goto do_orig_execve;          // 注意：是静默走原生，不给 EPERM
+
+kernel/policy/allowlist.c  __ksu_is_allow_uid()
+    forbid_system_uid(uid)                 → uid<2000 && uid!=1000 一律 false
+    is_uid_manager(uid)                    → 只有 Manager apk id
+    allow_shell && uid == SHELL_UID(2000)  → 要 allow_shell=1
+    allow_list 里 uid == profile.curr_uid && profile.allow_su
+
+kernel/core/init.c
+    #ifdef CONFIG_KSU_DEBUG
+    bool allow_shell = true;
+    #else
+    bool allow_shell = false;      // 云机发行构建走这里
+    #endif
+    module_param(allow_shell, bool, 0);   // perm=0 → 不落 /sys/module/kernelsu/parameters/
+
+# 实测佐证（模块加载后 sysfs 里没有这个参数，不能再改）：
+$ ls /sys/module/kernelsu/parameters/
+ls: /sys/module/kernelsu/parameters/: No such file or directory

@@ -1,0 +1,32 @@
+;; engine/vendor/hardware/android.hardware.neuralnetworks 的 SELinux 片段。
+;; 由 07_build_vendor 步骤 6 合并进 /vendor/etc/selinux/vendor_sepolicy.cil。
+;; lineage-22.2 基底仅有 hal_neuralnetworks_service_{{vers}}，需显式声明域与 exec 标签
+;;（不加入 halserverdomain / hal_neuralnetworks_server 以避开 neverallow）。
+
+(type hal_neuralnetworks_default)
+(typeattributeset domain (hal_neuralnetworks_default))
+(roletype object_r hal_neuralnetworks_default)
+
+(type hal_neuralnetworks_default_exec)
+(typeattributeset file_type (hal_neuralnetworks_default_exec))
+(typeattributeset exec_type (hal_neuralnetworks_default_exec))
+(typeattributeset vendor_file_type (hal_neuralnetworks_default_exec))
+(roletype object_r hal_neuralnetworks_default_exec)
+
+(allow init_{{vers}} hal_neuralnetworks_default_exec (file (read getattr map execute open entrypoint)))
+(allow init_{{vers}} hal_neuralnetworks_default (process (transition noatsecure siginh rlimitinh)))
+(allow hal_neuralnetworks_default hal_neuralnetworks_default_exec (file (read getattr map execute open entrypoint)))
+(dontaudit init_{{vers}} hal_neuralnetworks_default (process (noatsecure)))
+
+(allow hal_neuralnetworks_default vendor_file_{{vers}} (file (read getattr map open execute)))
+(allow hal_neuralnetworks_default servicemanager_{{vers}} (binder (call transfer)))
+(allow servicemanager_{{vers}} hal_neuralnetworks_default (dir (search)))
+(allow servicemanager_{{vers}} hal_neuralnetworks_default (file (read map open)))
+(allow servicemanager_{{vers}} hal_neuralnetworks_default (process (getattr)))
+(allow hal_neuralnetworks_default hal_neuralnetworks_service_{{vers}} (service_manager (add find)))
+(allow hal_neuralnetworks_default default_android_service_{{vers}} (service_manager (add find)))
+
+(allow domain hal_neuralnetworks_service_{{vers}} (service_manager (find)))
+(allow domain hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default domain (binder (call transfer)))
+(allow hal_neuralnetworks_default domain (fd (use)))

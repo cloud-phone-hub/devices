@@ -1,0 +1,133 @@
+# 通过态取证：gold 全新 data 首启直达 launcher（hwui Vulkan SIGABRT 已闭环）
+#
+# 设备/清单：xiaomi/gold  OS3.0.10.0.VNQCNXM（Redmi Note 13 5G）
+# 清单：gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694
+# 实例：gold_cn_OS3.0.10.0.VNQCNXM/28（daemon 9050 POST /api/create {"index":0}）
+#       01:12:21 创建，daemon pid 83888，qemu pid 86735，slot 0
+#       端口 console 5910 / adb 5911 / vnc 5912（websocket 5913）
+# 说明：实例 27 复用了旧 data，启动 163.8s 时 system_server 以
+#       sys.powerctl='reboot,RescueParty' 主动重启（旧 rescue_boot_count 残留）；
+#       本轮通过态一律以全新 data 的实例 28 为准。
+#
+# 本轮修复（相对 log-fail.txt 的失败态）：
+#   1) 宿主：daemon 注入 DYLD_LIBRARY_PATH（dist/lib 前置），并让 MoltenVK
+#      ICD 不再声明 is_portability_driver（venus worker 不设 portability 位）；
+#   2) guest：ro.hwui.use_vulkan=false（venus/MoltenVK 仅 1 队列，hwui 硬要求 2）。
+#
+# 最终产物（07→08→09→10→11 重建后，01:09 发布）：
+#   engine/out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/patch.img
+#     402653184 B  sha256 9798a090184ec5d9d71db1d8c445a30b9e2edf6dbe42356075c760eb1773ddd5
+#   engine/out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/vda.img
+#     13958643712 B sha256 892202fa291bcff0518ef2ed1a244ac9d730cd86c1133f48bd157fddaffd0948
+#   engine/out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/device.json
+#     sha256 b12642ba2c4f1e74f9a4259359177035227fbedfed96609874fe1039280fd83a
+#     id = gold_cn_OS3.0.10.0.VNQCNXM
+#   engine/out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/vendor.img
+#     166207488 B  sha256 0dc64a44ddcbe0eae88414921eb94828afe1dac7584902befda66932874e64a8
+#   engine/out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/img/boot.img
+#     83886080 B   sha256 932bfb72606a91ac9789b3ba0d453b959239d5567dd4a6bb8cc5cfb47bd9231b
+#     （11 回读 boot_a/boot_b 一致；vendor_boot_a/b 回读一致）
+#   out/core/daemon/dist/darwin/daemon
+#     sha256 ce12541a018f834c93e4bc1e87dbd13c3a9701b2ac87a63f1d532b0dd6b5376c
+#   out/qemu/dist/darwin/lib/MoltenVK_icd.json
+#     sha256 2af79f0d0a44a23d42f2d6dfb94406de9f93fdc13f7ab14f9c3ad78d7fa977f8
+#     （与源 qemu/backend/gpu-host-macos/MoltenVK_icd.json 逐字节相同）
+#
+# patch.img 内抽件（debugfs dump，out/tmp/final_patch_buildprop.txt 等）：
+#   /build.prop  sha256 115459d2f75da90e86a3e07cc7050708f1ee11d24b556ceaaa63b3b77feca713
+#     line 50  ro.hwui.use_vulkan=false
+#     line 177 ro.hardware.vulkan=mali；line 182 同名行
+#     line 583 ro.hardware.egl=meow
+#   /etc/selinux/vendor_sepolicy.cil
+#     sha256 2b018052188f37ac64be8d455154ab2defc20e3a493789168b67e84406bd2529
+#     含 (allow system_server_202404 pioneer (binder (call transfer)))  （计数 1）
+
+## 0. 启动链结果（guest shell，经 hvc7 通道）
+
+$ getprop sys.boot_completed
+1
+qemu.log 中 guest 时间 90.256788s：
+[   90.256788][    T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:113)
+（实例 01:12:21 创建，约 90s 后 boot_completed；未再出现 bootanim 常驻）
+
+$ pidof system_server
+677
+（同一 pid 从 boot_completed 观察到 01:22 复核，未发生框架重启）
+
+$ getprop ro.hwui.use_vulkan
+false
+$ getprop ro.hardware.egl
+meow
+
+## 1. provisioning 已落地（延续 boot-to-launcher 里程碑）
+
+$ settings get global device_provisioned
+1
+$ settings get secure user_setup_complete
+1
+
+## 2. cmd 不再挂起（延续判据）
+
+$ cmd -l | wc -l
+354
+（立即返回；无 timeout 强杀、无 Failed transaction）
+
+## 3. 窗口与 launcher
+
+$ dumpsys window | grep mCurrentFocus
+  mCurrentFocus=Window{da06dc5 u0 com.miui.home/com.miui.home.launcher.Launcher}
+
+$ pidof com.miui.home
+2523
+
+$ dumpsys SurfaceFlinger | grep -iE "GLES|Vulkan" | head -n 4
+ ------------RE GLES------------
+GLES: ARM, Mali-G57 MC2, OpenGL ES 3.2 v1.r49p1-03bet0.569c83bf81f68e2ce8910542c6846b7e
+vulkan_renderengine: false
+
+$ dmesg | grep -c virtio_gpu_dequeue
+0
+
+## 4. 无 RenderThread 崩溃 / 宿主 venus 无错误
+
+$ logcat -d -b crash -t 300 | grep -c Abort
+1
+$ logcat -d -b crash -t 300 | grep Abort
+01-01 08:00:09.188   446   446 F DEBUG   : Abort message: 'terminating due to uncaught exception of type St16invalid_argument: stoi: no conversion'
+（唯一崩溃为 setup_sound_card 的既有噪声；早于 RTC 同步，进程 446）
+$ logcat -d -b crash -t 300 | grep RenderThread
+（无输出，计数 0）
+
+实例 28 qemu.log 关键计数：
+  failed to open libvulkan                    0
+  failed to dispatch context op                0
+  virtio_gpu_virgl_process_cmd: ctrl           0
+  Abort message                                0
+  vkr:                                         0
+（本轮 guest 按配置不创建 Vulkan 上下文，故无 venus/vkr 流量；宿主可用性由第 5 节探针单独验证）
+
+## 5. 宿主 Vulkan 栈探针（与 guest 无关，直接验证 ICD/loader）
+
+$ VK_ICD_FILENAMES=out/tmp/MoltenVK_icd_port.json python3 out/tmp/vkprobe.py
+vkCreateInstance -> -9
+（is_portability_driver=true，且未启用 VK_KHR_portability_enumeration）
+
+$ python3 out/tmp/vkprobe.py       # 使用 dist/lib/MoltenVK_icd.json（false）
+vkCreateInstance -> 0
+vkEnumeratePhysicalDevices -> 0 count = 1
+device0: Apple M4 api=1.1.357
+
+$ python3 out/tmp/vkqueues.py
+vkCreateInstance -> 0
+queueFamilies = 4
+family[0] flags=TRANSFER|GRAPHICS|COMPUTE(0x7) queueCount=1
+family[1] flags=TRANSFER|GRAPHICS|COMPUTE(0x7) queueCount=1
+family[2] flags=TRANSFER|GRAPHICS|COMPUTE(0x7) queueCount=1
+family[3] flags=TRANSFER|GRAPHICS|COMPUTE(0x7) queueCount=1
+（即 hwui kRequestedQueueCount=2 在任何 family 上都不可能满足）
+
+## 6. 截图
+
+launcher.png（同目录）：1088x2400，完整 HyperOS 桌面（状态栏、图标、dock），
+无向导页、无黑屏。VNC 抓帧（RFB 003.008）非黑像素 2591741，
+sha256 44589dc4445af5d1272849e8de433e7415cc2bc740ab2c0d0fa95ce45d55d46f。

@@ -1,0 +1,58 @@
+# 通过态：UEventObserver 崩溃归零、SystemUI 长稳、画面首次出图
+
+# 机型：samsung/pa3qzcx/pa3q:16/BP4A.251205.006/S9380ZCSDCZH1
+# 盘集：patch.img sha256 53e483856316…（含第八段；build12 起生效，当前 dist 即该盘集）
+# 实例：ss9380_S9380ZCSDCZH1 / index 5，adb 127.0.0.1:5911
+# 时间：2026-10-31 08:14 开机，08:18 ～ 08:2x 取样
+# 复测口径：本次是叠加了第八～十段策略后的最终盘集，等于在最新产物上重新确认
+#           该卡点没有回归（build12 当次的首启出图记录见 solution.md 第五节）。
+
+# ---- 1) 策略里那条 allow 确实在位 ----
+$ adb shell 'grep -n "platform_app self (netlink_kobject_uevent_socket" /vendor/etc/selinux/vendor_sepolicy.cil'
+4977:(allow platform_app self (netlink_kobject_uevent_socket (read create bind setopt)))
+# 同时段还有 system_app 那条（同一类噪音，SystemUI 的兄弟进程用）：
+$ adb shell 'grep -c "system_app self (netlink_kobject_uevent_socket" /vendor/etc/selinux/vendor_sepolicy.cil'
+1
+
+# ---- 2) 崩溃归零 ----
+$ adb shell 'logcat -b crash -d | grep -c UEventObserver'
+0
+$ adb shell 'logcat -b crash -d | grep -c "Unable to open socket"'
+0
+
+# ---- 3) SystemUI 进程长稳（20 s × 5 次采样，同一 pid）----
+$ adb shell 'for i in 1 2 3 4 5; do pidof com.android.systemui; sleep 4; done'
+2609
+2609
+2609
+2609
+2609
+
+# ---- 4) dmesg 里 netlink 拒绝归零 ----
+$ adb shell 'dmesg | grep -c netlink_kobject_uevent_socket'
+0
+
+# ---- 5) 画面真的画出来了 ----
+$ adb shell 'dumpsys window | grep isKeyguardShowing'
+  isKeyguardShowing=false
+$ adb shell 'dumpsys activity activities | grep -m1 topResumedActivity'
+topResumedActivity=ActivityRecord{82731614 u0 com.sec.android.app.launcher/.activities.LauncherActivity t8}
+$ adb shell 'dumpsys window | grep mCurrentFocus'
+  mCurrentFocus=Window{7d0e356 u0 com.sec.android.app.launcher/com.sec.android.app.launcher.activities.LauncherActivity}
+# 同实例 08:2x 又打开过 Settings（`topResumedActivity=…SettingsHomepageActivity t13`，
+# pid 22530），说明不是“只会画一个 launcher”。
+# 截图：pass-desktop.png（OneUI 桌面，17:25 最终态：状态栏信号/电量、
+#       “点击来获取天气信息”小组件、Dock 电话/信息/三星浏览器/相机、
+#       页面指示器与三键导航栏）。这张是在把 com.qualcomm.location 的崩溃循环
+#       止住之后拍的，画面上没有任何“屡次停止运行”弹窗。
+
+# ---- 6) 触摸链路同时确认可用（旧遗留项已消）----
+# SetupWizard 全程都用 `input tap <x> <y>` 走完（Rubin 同意 → 供您审阅勾 4 项 →
+# 隐私长文 → 三星浏览器首启 → HOME），说明 RFB 指针 → virtio 输入 → 应用层的
+# 整条链路是通的；当时“锁屏上点不动”的假象，根因是 SystemUI 每秒重建窗口。
+
+# ---- 7) 计数口径提醒 ----
+# adb shell 的命令行本身会被 adbd 写进 qemu.log，凡是拿 `grep` 数崩溃/拒绝次数，
+# 都要先排除这类回显，例如：
+# 08-12 17:09:12.434   644   644 I adbd: adbd service requested 'shell,v2,...,raw:... | grep -c "Process: com.android.systemui" ...'
+# 直接 `grep -c` 会把这一行算成 1 次“崩溃”，实测很容易误判。

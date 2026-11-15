@@ -1,0 +1,104 @@
+diff --git a/source/kernel/selinux/rules.c b/source/kernel/selinux/rules.c
+index 4555911..76f38b6 100644
+--- a/source/kernel/selinux/rules.c
++++ b/source/kernel/selinux/rules.c
+@@ -91,12 +91,11 @@ void apply_kernelsu_rules()
+     ksu_typeattribute(db, KERNEL_SU_DOMAIN, "netdomain");
+     ksu_typeattribute(db, KERNEL_SU_DOMAIN, "bluetoothdomain");
+ 
+-    // Create unconstrained file type
++    // Create file type restricted to privileged system/shell domains (not app domains)
+     ksu_type(db, KERNEL_SU_FILE, "file_type");
+     ksu_typeattribute(db, KERNEL_SU_FILE, "mlstrustedobject");
+-    ksu_allow(db, "domain", KERNEL_SU_FILE, ALL, ALL);
+ 
+-    // allow all!
++    // allow all from ksu domain itself
+     ksu_allow(db, KERNEL_SU_DOMAIN, ALL, ALL, ALL);
+ 
+     // allow us do any ioctl
+@@ -110,48 +109,58 @@ void apply_kernelsu_rules()
+     // our ksud triggered by init
+     ksu_allow(db, "init", KERNEL_SU_DOMAIN, ALL, ALL);
+ 
+-    // copied from Magisk rules
+-    // suRights
++    // suRights & allowLog & bootctl
+     ksu_allow(db, "servicemanager", KERNEL_SU_DOMAIN, "dir", "search");
+     ksu_allow(db, "servicemanager", KERNEL_SU_DOMAIN, "dir", "read");
+     ksu_allow(db, "servicemanager", KERNEL_SU_DOMAIN, "file", "open");
+     ksu_allow(db, "servicemanager", KERNEL_SU_DOMAIN, "file", "read");
+     ksu_allow(db, "servicemanager", KERNEL_SU_DOMAIN, "process", "getattr");
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "process", "sigchld");
+ 
+-    // allowLog
+     ksu_allow(db, "logd", KERNEL_SU_DOMAIN, "dir", "search");
+     ksu_allow(db, "logd", KERNEL_SU_DOMAIN, "file", "read");
+     ksu_allow(db, "logd", KERNEL_SU_DOMAIN, "file", "open");
+     ksu_allow(db, "logd", KERNEL_SU_DOMAIN, "file", "getattr");
+ 
+-    // dumpsys, send fd
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "fd", "use");
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "fifo_file", "write");
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "fifo_file", "read");
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "fifo_file", "open");
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "fifo_file", "getattr");
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "unix_stream_socket", "read");
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "unix_stream_socket", "write");
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "unix_stream_socket", "connectto");
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "unix_stream_socket", "getopt");
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "unix_stream_socket", "getattr");
+-
+-    // use memfd created by su domain
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "memfd_file", "execute");
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "memfd_file", "getattr");
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "memfd_file", "map");
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "memfd_file", "read");
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "memfd_file", "write");
+-
+-    // bootctl
+     ksu_allow(db, "hwservicemanager", KERNEL_SU_DOMAIN, "dir", "search");
+     ksu_allow(db, "hwservicemanager", KERNEL_SU_DOMAIN, "file", "read");
+     ksu_allow(db, "hwservicemanager", KERNEL_SU_DOMAIN, "file", "open");
+     ksu_allow(db, "hwservicemanager", KERNEL_SU_DOMAIN, "process", "getattr");
+ 
+-    // Allow all binder transactions
+-    ksu_allow(db, "domain", KERNEL_SU_DOMAIN, "binder", ALL);
++    {
++        static const char *const ksu_priv_domains[] = {
++            "init",
++            "shell",
++            "adbd",
++            "system_server",
++            "servicemanager",
++            "hwservicemanager",
++            "logd",
++        };
++        size_t di;
++
++        for (di = 0; di < ARRAY_SIZE(ksu_priv_domains); di++) {
++            const char *dom = ksu_priv_domains[di];
++
++            ksu_allow(db, dom, KERNEL_SU_FILE, ALL, ALL);
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "process", "sigchld");
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "fd", "use");
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "fifo_file", "write");
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "fifo_file", "read");
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "fifo_file", "open");
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "fifo_file", "getattr");
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "unix_stream_socket", "read");
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "unix_stream_socket", "write");
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "unix_stream_socket", "connectto");
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "unix_stream_socket", "getopt");
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "unix_stream_socket", "getattr");
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "memfd_file", "execute");
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "memfd_file", "getattr");
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "memfd_file", "map");
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "memfd_file", "read");
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "memfd_file", "write");
++            ksu_allow(db, dom, KERNEL_SU_DOMAIN, "binder", ALL);
++        }
++    }
+ 
+     // Allow system server kill su process
+     ksu_allow(db, "system_server", KERNEL_SU_DOMAIN, "process", "getpgid");

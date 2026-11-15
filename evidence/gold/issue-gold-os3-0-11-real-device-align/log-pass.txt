@@ -1,0 +1,81 @@
+=== 2026-11-12 修复后构建、冷启动与双机在线实测对拍（patch.img sha256 cb23c0180674） ===
+
+[1] Go 引擎单元测试（engine/build 全包）：
+  ok  cloud-phone-hub/engine/build/internal/device
+  ok  cloud-phone-hub/engine/build/stages/01_unpack .. 11_pack_vda (all passed)
+
+[2] 08_build_vendor_dlkm / 07_build_vendor 关键构建校验：
+      回收策略:   清空基座全部 .ko（vendor_dlkm 全自建，步骤 2 动态枚举后删除）
+  [ok] 工作镜像就绪: out/devices/redmi/gold/15-OS3.0.11.0.VNQCNXM/vendor_dlkm/vendor_dlkm.work.img（14147584 B）
+  ==> [步骤 2] 清空基座内核模块
+  [ok] 清空 99 个基座模块（6lowpan.ko 8021q.ko 9pnet_fd.ko aqc111.ko asix.ko ax88179_178a.ko …）
+  [ok] 回读复核: /lib/modules 已无 .ko
+  ==> [步骤 3] 收集内核模块产物
+  [ok] 模块产物已就绪: 12 个 .ko
+  [ok] 依赖闭包成立: 12 个模块的 depends/softdep 均由注入集或内核内建（671 项）提供
+  ==> [步骤 4] 生成模块索引
+  [ok] 索引已生成: load 12 项，dep 12 项，alias 7 行，options 1 行，softdep 0 行
+  [ok] 写入 20 个文件，回读 20/20 内容一致
+  [ok] e2fsck 通过（退出码 0 = 无需修复）
+  [ok] vendor_dlkm.img 构建完成: out/devices/redmi/gold/15-OS3.0.11.0.VNQCNXM/img/vendor_dlkm.img（14147584 字节，sha256 c662e686ae4c）
+  [ok] vendor_dlkm 重打包完成: out/devices/redmi/gold/15-OS3.0.11.0.VNQCNXM/img/vendor_dlkm.img
+      备注: 步骤 2 清空基座全部 .ko（vendor_dlkm 全自建，不再维护测试模块名单）
+  vendor/lib64/egl/gpu_id.cfg 行数: 25
+  vendor/build.prop 中 ro.vendor.cdh.{gpu,vulkan}.* 行数: 0
+  vendor/build.prop 中 ro.hardware.gralloc 行数: 0
+  vendor/lib64/hw/ 图形分配模块: gralloc.default.so + mapper.mediatek.so
+
+[3] 干净盘新实例冷启动（gold_15-OS3.0.11.0.VNQCNXM/1, adb 127.0.0.1:5911, ID 396654a3a70d0fab-cloud）：
+  [pass] 引导完成（日志 10461 行）+ 截图非黑（平均亮度=209.3 峰值=255）
+
+[4] aligner_xiaomi_gold.all 双机实测结果：
+  REAL  (ec519c7d513a3ad3)      scoreSummary: {"failedItems": [], "passed": 32, "total": 32}
+  CLOUD (396654a3a70d0fab-cloud) scoreSummary: {"failedItems": [], "passed": 32, "total": 32}
+  GLES renderer (REAL / CLOUD) : 'Mali-G57 MC2' / 'OpenGL ES 3.2 v1.r49p1-03bet0.569c83bf81f68e2ce8910542c6846b7e'
+  WebView WebGL (isolated_app) : {"supported": true, "webglMissing": false, "webglReadyAndMatchesMali": true, "webglVendor": "ARM", "webglRenderer": "Mali-G57 MC2", "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"}
+  GNSS hardwareModelName       : REAL='MTK_MNLD_default,MNL_VER_default' | CLOUD='MTK_MNLD_default,MNL_VER_default'
+  Canvas2D pixelMd5            : REAL='5e4abd56d6e2f12ca4eb209ffb373dc7' | CLOUD='5e4abd56d6e2f12ca4eb209ffb373dc7'
+
+[5] 属性与 SELinux 收敛复核（properties.getprop / properties.native）：
+  getprop 可见总数: real=1849, cloud=1421
+  ro.vendor.* 总数: real=229, cloud=229
+  云机独有 ro.vendor.*: 0 项 -> []
+  真机独有 ro.vendor.*: 0 项 -> []
+  全命名空间云机独有 ro.*: 0 项
+  含 cdh/virtio/qemu/cuttlefish/kvm 的公开属性: 0 项
+  含 vd* 的 dev.mnt.* 属性: 0 项
+    ro.hardware.gralloc                           real=None                      cloud=None
+    ro.hardware.hwcomposer                        real='mtk_common'              cloud='mtk_common'
+    bluetooth.device.default_name                 real=None                      cloud=None
+    ro.hw_timeout_multiplier                      real=None                      cloud=None
+    debug.sf.vsync_reactor_ignore_present_fences  real=None                      cloud=None
+    hwservicemanager.disabled                     real=None                      cloud=None
+    ro.boot.boot_devices                          real='bootdevice, soc/11230000.mmc, 11230000.mmc, soc/11230000.msdc, 11230000.msdc, soc/11270000.ufshci, 11270000.ufshci' cloud='bootdevice, soc/11230000.mmc, 11230000.mmc, soc/11230000.msdc, 11230000.msdc, soc/11270000.ufshci, 11270000.ufshci'
+    ro.boot.console                               real=None                      cloud=None
+    ro.boot.first_stage_console                   real=None                      cloud=None
+    ro.boot.partition_map                         real=None                      cloud=None
+    ro.boot.theme                                 real=None                      cloud=None
+    ro.boot.hypervisor.version                    real=None                      cloud=None
+    ro.boot.hwc                                   real='CN'                      cloud='CN'
+    ro.boot.hwlevel                               real='MP'                      cloud='MP'
+    ro.boot.hwversion                             real='6752.9.0'                cloud='6752.9.0'
+    ro.boot.slot_suffix                           real='_a'                      cloud='_a'
+    dev.mnt.blk.data                              real='sdc66'                   cloud=None
+    dev.mnt.blk.metadata                          real='sdc14'                   cloud='sdc14'
+    dev.mnt.rootdisk.data                         real='sdc'                     cloud=None
+
+[6] dev.dirty_policy 与 13 项 ultimate.* 全套风控对拍：
+  dev.dirty_policy: real hitCount=0 | cloud hitCount=0
+  ultimate.app_risk                real(hit=1,deadly=0,warn=0) | cloud(hit=1,deadly=0,warn=0) | cloud_only_hits=[]
+  ultimate.attestation_integrity   real(hit=4,deadly=1,warn=1) | cloud(hit=4,deadly=1,warn=1) | cloud_only_hits=[]
+  ultimate.boot_unlock             real(hit=3,deadly=0,warn=0) | cloud(hit=1,deadly=0,warn=0) | cloud_only_hits=[]
+  ultimate.cloud_emulator          real(hit=5,deadly=0,warn=3) | cloud(hit=5,deadly=0,warn=3) | cloud_only_hits=[]
+  ultimate.debug_integrity         real(hit=4,deadly=1,warn=2) | cloud(hit=4,deadly=1,warn=2) | cloud_only_hits=[]
+  ultimate.device_identity         real(hit=4,deadly=0,warn=1) | cloud(hit=4,deadly=0,warn=1) | cloud_only_hits=[]
+  ultimate.hardware_env            real(hit=1,deadly=0,warn=1) | cloud(hit=1,deadly=0,warn=1) | cloud_only_hits=[]
+  ultimate.hook_inject             real(hit=2,deadly=1,warn=1) | cloud(hit=2,deadly=1,warn=1) | cloud_only_hits=[]
+  ultimate.location_network        real(hit=0,deadly=0,warn=0) | cloud(hit=0,deadly=0,warn=0) | cloud_only_hits=[]
+  ultimate.native_env              real(hit=3,deadly=0,warn=3) | cloud(hit=1,deadly=0,warn=1) | cloud_only_hits=[]
+  ultimate.probe_runtime           real(hit=1,deadly=0,warn=1) | cloud(hit=1,deadly=0,warn=1) | cloud_only_hits=[]
+  ultimate.root_selinux            real(hit=3,deadly=1,warn=0) | cloud(hit=3,deadly=1,warn=0) | cloud_only_hits=[]
+  ultimate.webview_fp              real(hit=0,deadly=0,warn=0) | cloud(hit=0,deadly=0,warn=0) | cloud_only_hits=[]

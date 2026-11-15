@@ -1,0 +1,27 @@
+=== 1. 首轮启动失败（plat_sepolicy_vers.txt 未降级 + hardware 为空，0.408s InitFatalReboot） ===
+[    0.340147][    T1] init: Opening SELinux policy
+[    0.340928][    T1] init: Falling back to standard signature check. TODO implement support for fsverity SEPolicy.
+[    0.341315][    T1] init: Error: Apex SEPolicy failed signature check
+[    0.341539][    T1] init: Loading APEX Sepolicy from /system/etc/selinux/apex/SEPolicy.zip
+[    0.341838][    T1] init: Failed to open package /system/etc/selinux/apex/SEPolicy.zip: No such file or directory
+[    0.342190][    T1] init: No precompiled sepolicy at /vendor/etc/selinux/precompiled_sepolicy: No such file or directory
+[    0.342480][    T1] init: Compiling SELinux policy
+[    0.406332][    T1] init: /system/bin/secilc: linker: Warning: failed to find generated linker configuration from "/linkerconfig/ld.config.txt"
+[    0.406875][    T1] init: /system/bin/secilc: WARNING: linker: Warning: failed to find generated linker configuration from "/linkerconfig/ld.config.txt"
+[    0.407157][    T1] init: /system/bin/secilc: SELinux: Could not open file: /system/etc/selinux/mapping/202404.cil: No such file or directory
+[    0.407480][    T1] init: /system/bin/secilc exited with status 1
+[    0.407645][    T1] init: Unable to open SELinux policy
+[    0.408011][    T1] init: InitFatalReboot: signal 6
+
+=== 2. 二轮启动失败（仅改版本号 33.0 与后缀 _33_0，未替换官方 plat_pub_versioned.cil，0.507s InitFatalReboot） ===
+[    0.379438][    T1] init: Compiling SELinux policy
+[    0.506632][  T129] secilc (129) used greatest stack depth: 10544 bytes left
+[    0.506684][    T1] init: /system/bin/secilc: linker: Warning: failed to find generated linker configuration from "/linkerconfig/ld.config.txt"
+[    0.507121][    T1] init: /system/bin/secilc: WARNING: linker: Warning: failed to find generated linker configuration from "/linkerconfig/ld.config.txt"
+[    0.507436][    T1] init: /system/bin/secilc: Failed to resolve expandtypeattribute statement at /system/etc/selinux/mapping/33.0.cil:294
+[    0.507725][    T1] init: /system/bin/secilc: Failed to resolve AST
+[    0.507866][    T1] init: /system/bin/secilc: Failed to compile cildb: -2
+[    0.508053][    T1] init: /system/bin/secilc exited with status 254
+[    0.508266][    T1] init: Unable to open SELinux policy
+[    0.508552][    T1] init: InitFatalReboot: signal 6
+

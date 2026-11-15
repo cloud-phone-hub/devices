@@ -1,0 +1,135 @@
+# log-pass：m22 perf2 服务名 find 授权迁到模块层（实例 38）
+
+## A. 采集环境
+
+- 设备/实例：MEIZU 22（`m22_12.5.0.0A`），实例 **38**（新建，非复用 37），adb
+  `127.0.0.1:5919`，宿主 startup `2026-10-29 16:13:45`。
+- 镜像（本轮 07→09→10→11 重打）：
+  - `vendor.img` sha256 `ab98e99973624b7a02031f803795d408fe9f122d5796cffbb3646ea0b1a85854`
+  - `super.img` sha256 `3eb133bbc4afd07dc8e78a1654caccb72b9fbe0d21a7d62796aad8269bfbbaf9`
+  - `patch.img` sha256 `6c8d3628de514539291e14b421f52bf6f402453ff642416473e0237319188376`
+  - vda 配方 `vda-9011ef633636`
+- 静态编译实证跑在**实例 37 停机前**的 guest 上（root 通道 hvc7），因为要用
+  guest 内的 `/system/bin/secilc` 与它的 plat/mapping 版本；运行期证据全部取自
+  实例 38。两者镜像的差异只有本条改动（37 的 vendor 来自迁移前 dist）。
+- `guest` 平台策略版本：`plat_sepolicy_vers.txt` = `202504`，
+  `genfs_labels_version.txt` = `202504`，`/odm/etc/selinux/odm_sepolicy.cil` 不存在
+  （odm 只有 `precompiled_sepolicy`，见 #31）。
+
+## B. 策略编译实证（按 init 同序，guest 内 secilc）
+
+编译参数与 `cuttlefish/source/system-core/init/selinux.cpp:341-380` 一致：
+`plat_sepolicy.cil -m -M true -G -N -c 30 -o <out> -f /sys/fs/selinux/null
+plat mapping → system_ext → system_ext mapping → product → product mapping →
+plat_pub_versioned → vendor_sepolicy.cil → (odm，缺则跳) → plat_sepolicy_genfs_202504.cil`。
+
+| 试验 | 输入 vendor_sepolicy.cil | 结果 |
+| :--- | :--- | :--- |
+| 基线 | 机上旧策略（迁移前，机型层声明 perf2） | **RC=0**，869,038 B，sha256 `e84ee82f4ece057c…` |
+| 中间态 | 本轮装配树原文件（含新模块块） | **RC=254**：`Failed to resolve permission nlmsg`，`Failed to resolve allow statement at …:2423` |
+| 最终 | 装配树 + 清单 `patch.vendor-cil-rewrite` 四条规则改写（= 09 之后镜像里的文件） | **RC=0**，869,026 B，sha256 `db2b9f65b91a8651…` |
+
+中间态的失败**不是** perf2 引起的：报错行 2423 是 lineage 自带的
+`(allow ot_rcp self (netlink_route_socket (nlmsg)))`。本项目对它的处理是 09
+`patch.vendor-cil-rewrite`（4 条规则，`from`/`to`/`count` 精确命中）：
+
+```
+#1 命中 1 次  (allow ot_rcp self (netlink_route_socket (nlmsg)))            -> nlmsg_write
+#2 命中 1 次  (allowx ot_rcp self (nlmsg netlink_route_socket (0x16 …)))   -> 注释删除
+#3 命中 1 次  (allowx ot_rcp self (nlmsg netlink_route_socket (0x12)))     -> 注释删除
+#4 命中 1 次  (allow kernel_202504 vendor_firmware_file (system (firmware_load))) -> 注释删除
+```
+
+结论：**静态编译校验必须用 09 改写后的文件**，用装配树原文件会把「基底不可编译项」
+误判成本条引入的问题（这条已写进 `solution.md` §6）。
+
+## C. 装配树里的 marker 与落点（`engine/out/devices/flyme/m22/12.5.0.0A/vendor`）
+
+```
+vendor/etc/selinux/vendor_sepolicy.cil
+  4583: ;; cdh-patch-begin: vendor_sepolicy.cil@vendor.qti.hardware.perf2
+  4606: (type cdh_perf2_service)
+  4607: (roletype object_r cdh_perf2_service)
+  4608: (typeattributeset service_manager_type (cdh_perf2_service))
+  4611: (allow hal_sensors_default cdh_perf2_service (service_manager (add find)))
+  4614: (allow domain cdh_perf2_service (service_manager (find)))
+  4615: ;; cdh-patch-end: vendor_sepolicy.cil@vendor.qti.hardware.perf2
+  4617: ;; cdh-patch-begin: vendor_sepolicy.cil        ← 机型层块（块内已无 cdh_perf2_service）
+
+vendor/etc/selinux/vendor_service_contexts
+  51: # cdh-patch-begin: vendor_service_contexts@vendor.qti.hardware.perf2
+  59: vendor.qti.hardware.perf2.IPerf/default      u:object_r:cdh_perf2_service:s0
+  60: # cdh-patch-end: vendor_service_contexts@vendor.qti.hardware.perf2
+  62: # cdh-patch-begin: vendor_service_contexts    ← 机型层块（块内无 perf2 条目）
+```
+
+- 全文件 `cdh_perf2_service` 只出现 6 次，全在模块层块内 → 没有重复 `(type …)`。
+- `grep -c '{{vers}}'` = **0** → 版本占位符已被 07 替换。
+- 装配树 `vendor_sepolicy.cil` 4733 行 / `vendor_service_contexts` 89 行。
+
+## D. 设备侧（实例 38，`/vendor` 来自本轮 `vendor.img`）
+
+```
+# 同一个文件在设备上的落点
+4583: ;; cdh-patch-begin: vendor_sepolicy.cil@vendor.qti.hardware.perf2
+4606: (type cdh_perf2_service)
+4611: (allow hal_sensors_default cdh_perf2_service (service_manager (add find)))
+4614: (allow domain cdh_perf2_service (service_manager (find)))
+vendor_service_contexts:59  vendor.qti.hardware.perf2.IPerf/default  u:object_r:cdh_perf2_service:s0
+
+init.svc.vendor.perf2-default = running
+pidof vendor.qti.hardware.perf2-hal-service = 510
+service check vendor.qti.hardware.perf2.IPerf/default = found
+sys.boot_completed = 1（宿主 16:15:22）
+```
+
+开机日志：`init: Compiling SELinux policy` **1 次**（tsc 0.268719 s），
+`InitFatalReboot` / `Failed to resolve` 均 **0 次** → 迁移后的策略在真机 init 里
+编译通过并成功装载。
+
+## E. 同口径运行期对照（QEMU 串口全量流水，开机起）
+
+取两边实例各自的 `out/core/daemon/runtime/m22_12.5.0.0A/<index>/qemu.log`，
+按「结构完整的 avc 记录」统计（口径与 `log-fail.txt` D 段同一套：kernel `SELinux: avc:`
+与 logd `auditd` 两路上报都算），统计时刻两份日志已用 sha256 钉住：
+37 = `62e9ab4aad3cd84b…`（已停机）、38 = `e9754a00b2e658a9…`。
+
+| 实例 | 策略 | `denied { find }`（tclass=service_manager） | `Could not find … in the VINTF manifest`（= 查询被放行） | 日志跨度（kernel tsc） |
+| :--- | :--- | ---: | ---: | :--- |
+| 37 | 迁移前（机型层只有 system_server/lmkd） | **1554**（kernel 454 + auditd 1100，跨 19 个域） | 830 | 0.000 → 3162.535 s（52.7 min） |
+| 38 | 迁移后（模块层 + `domain` 通配） | **0** | **1219** | 0.000 → 1091.164 s（18.2 min） |
+
+- 提示数 1219 > 830 说明迁移后**查询量更大**（新镜像开机阶段 app 冷启更多），
+  在这种更高的查询量下 denied 仍为 0 —— 不是「没人查」的假绿。
+- 提示本身是 servicemanager 正常回话：名字有标签、find 通过、但 VINTF 未声明
+  实例，所以按「不可用」降级。它是「查询确实发生且被允许」的正向证据。
+- 两列数字随实例运行会缓慢增长（38 在写文档时仍在跑），本文用「同一时刻两份文件」
+  作对照；宽松同行匹配（`grep -a -c`）同一时刻为 837 / 1232，量级关系一致。
+- **口径更正**：此前 E 段写作 1600 / 0（行级 `scontext` 归属），会把串口拼接进来的
+  别的 avc 的域算给 perf2，已改为记录级抽取；也不再声称「`grep` 不带 `-a` 会大幅
+  漏计」——复测未能复现，带 `-a` 仅为规避控制字节的稳妥写法。
+- **为什么 38 不是「没东西可查」**：38 的日志里仍有 24 行同时含 `perf2.IPerf` 与
+  `avc:`，逐条看全是 `pioneer` 跑 `pidof` 时被拒的 `{ read }` / `{ search }`
+  （另一些 avc 与它拼在同一行），与 perf2 服务名无关；按记录级正则一条也不匹配，
+  所以 `denied { find }` 为 0 是真的没有发现拒绝，而不是筛选条件把它们排除了。
+
+## F. 事后窗口（logcat ring buffer，验证「无回归」）
+
+- 窗口：guest `20:55:57.528` → `21:04:05.212`（**8 min 8 s**），logcat 先清空。
+- 触发：24 轮 `am force-stop` + `monkey -p <pkg> -c LAUNCHER` + `KEYCODE_HOME`，
+  覆盖 settings / browser / calendar / camera。
+- 采集：12,971 行，其中 `avc:` **608** 行；含 `perf2` 的行 **0** 行
+  （`denied { find }` 0、`tclass=service_manager` 0）。
+- 同一窗口内 `Could not find … perf2 … VINTF manifest` 也是 **0** 条：说明这批
+  `monkey` 触发并没有再走 perf2 查询路径（框架侧已按「不可用」缓存），所以本窗口
+  只作为「无新增 denied」的补充，查询侧结论以 E 段为准。
+
+## G. 构建与测试
+
+- `cd engine/build && go build ./...` PASS。
+- `go test ./07_build_vendor/... ./09_build_patch/...` PASS。
+- 幂等性依据代码而非复跑：`applySepolicyPatches` 用 `mergeSepolicyBlock` 按 marker
+  （`<文件名>@<模块名>`）整块替换，同 marker 不会重复追加。本轮未再单独复跑 07
+  验证幂等——重跑会重打 `vendor.img` 并改动已部署实例 38 的 backing 链。
+- 09 改写规则四条、本地按清单 `from`/`count` 模拟改写时命中各 1 次（B 段命令输出），
+  未因 perf2 迁移而失效。

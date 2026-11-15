@@ -1,0 +1,9 @@
+# wifi 模块的 file_contexts 片段（由 07_build_vendor 追加）。
+#
+# 只放绑定具体路径的事实。类型与授权见同目录 vendor_sepolicy.cil。
+
+# 数据面通道 /dev/hvc10。基底用正则 /dev/hvc[0-9]+ 把全部 virtio 串口标成
+# console_device；file_contexts 字面量优先于正则，追加这一行只把 hvc10 划给
+# wifi_hvc_data，其余 hvc*（固件 console、wifi 控制面 hvc9、keymint hvc3、
+# radio hvc4 等）保持原标签。hvc 编号是板级布局事实，换板会变，不随 HAL 复用。
+/dev/hvc10  u:object_r:wifi_hvc_data:s0

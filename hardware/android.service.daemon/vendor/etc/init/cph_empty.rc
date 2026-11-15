@@ -1,0 +1,1 @@
+# 空 init 配置：由 cdh_redirect 供 init (uid=0) 屏蔽无需在云机注册的系统调试服务（如 mdnsd）。

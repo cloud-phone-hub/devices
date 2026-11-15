@@ -1,0 +1,81 @@
+# 修复后（gold 15-OS3.0.10.0.VNQCNXM run-00166 & oriole 14-AP2A.240905.003.F1-20240815）
+
+## 1. cdh_redirect 加载与 d_path 逆向钩子就绪（gold dmesg）
+```text
+[    0.144956] [    T1] cdh_redirect: 规则来自 /lib/modules/cdh_redirect.rules：10 条
+[    0.145541] [    T1] cdh_redirect: 前向钩子就绪：getname_flags（maxactive 4096）
+[    0.148231] [    T1] cdh_redirect: 逆向钩子就绪：proc_pid_readlink + vfs_readlink + d_path
+[    0.148495] [    T1] cdh_redirect: 已加载：10 条规则（/lib/modules/cdh_redirect.rules），内核未打补丁
+```
+
+## 2. dev.checker (uid=10286 > 10000) 进程 /proc/<pid>/maps 实测（gold）
+```text
+7472248000-7472253000 r--p 00000000 fe:20 750  /vendor/lib64/hw/mapper.mediatek.so
+7472254000-7472269000 r-xp 0000c000 fe:20 750  /vendor/lib64/hw/mapper.mediatek.so
+74f30d8000-74f30e1000 r--p 00000000 fe:20 784  /vendor/lib64/libgralloc_extra.so
+74f30e4000-74f30ef000 r-xp 0000c000 fe:20 784  /vendor/lib64/libgralloc_extra.so
+74f3123000-74f3125000 r--p 00000000 fe:20 748  /vendor/lib64/hw/gralloc.mediatek.so
+74f3127000-74f3129000 r-xp 00004000 fe:20 748  /vendor/lib64/hw/gralloc.mediatek.so
+```
+
+## 3. device-checker run-00166 实测输出（86213baaa20d964b-cloud）
+```json
+{
+  "mapsAudit": {
+    "gpuSoCount": 23,
+    "hasRealMaliDriverSo": false,
+    "hasRealMtkMapperSo": true,
+    "mesaOrMinigbmLeaks": [
+      "/vendor/lib64/egl/libEGL_mesa.so",
+      "/vendor/lib64/egl/libGLESv1_CM_mesa.so",
+      "/vendor/lib64/egl/libGLESv2_mesa.so",
+      "/vendor/lib64/libgallium_dri.so",
+      "/vendor/lib64/libglapi.so"
+    ],
+    "noMesaOrMinigbmInMaps": false,
+    "suspiciousPathLeaks": [],
+    "totalMapLines": 3798,
+    "vendorSoCount": 35
+  },
+  "vendorPartitionAudit": {
+    "cdhOrVirtualModuleLeaks": [],
+    "noCdhModuleNameLeak": true,
+    "vendorBuildPropExists": true,
+    "vendorBuildPropReadable": false,
+    "vendorDlkmModulesListable": true,
+    "modulesCount": 193
+  },
+  "socketsAudit": {
+    "logdwExists": true,
+    "tombstonedCrashExists": true
+  },
+  "uptimeCrossCheck": {
+    "consistent": true,
+    "elapsedRealtimeSec": 284.7,
+    "procUptimeSec": 284.7
+  },
+  "B6_vendorDlkmNoCdhModuleNameLeak": true,
+  "scoreSummary": {
+    "passed": 15,
+    "total": 32
+  }
+}
+```
+
+## 4. oriole (Pixel 6, Android 14) 07_build_vendor 自适应伪装日志
+```text
+[fix] vendor/lib64/hw/mapper.minigbm.so -> hw/mapper.pixel.so（对齐厂商 Gralloc/Mapper 库名）
+[fix] vendor/lib64/hw/gralloc.minigbm.so -> hw/gralloc.pixel.so（对齐厂商 Gralloc/Mapper 库名）
+[fix] vendor/lib64/libminigbm_gralloc.so -> libdrmresource.so（对齐厂商 Gralloc/Mapper 库名）
+[fix] vendor/lib64/libminigbm_gralloc4_utils.so -> libgralloccore.so（对齐厂商 Gralloc/Mapper 库名）
+[fix] vendor/bin/hw/android.hardware.graphics.allocator-service.minigbm: .dynstr 替换 libminigbm_gralloc* -> libdrmresource.so
+[fix] vendor/bin/hw/android.hardware.graphics.allocator-service.minigbm: IAllocator::getIMapperLibrarySuffix() minigbm -> pixel
+[fix] vendor/lib64/hw/gralloc.pixel.so: .dynstr 替换 libminigbm_gralloc* -> libdrmresource.so
+[fix] vendor/lib64/hw/mapper.pixel.so: .dynstr 替换 libminigbm_gralloc* -> libdrmresource.so
+[fix] vendor/lib64/libdrmresource.so: .dynstr 替换 libminigbm_gralloc* -> libdrmresource.so
+[fix] vendor/lib64/libgralloccore.so: .dynstr 替换 libminigbm_gralloc* -> libdrmresource.so
+[fix] vendor/etc/vintf/manifest/mapper.pixel.xml（替换 @5.0/minigbm -> @5.0/pixel）
+[fix] vendor/build.prop: ro.hardware.gralloc=minigbm -> pixel
+[fix] vendor/etc/selinux/vendor_service_contexts: mapper/minigbm -> mapper/pixel
+[fix] vendor/etc/selinux/vendor_file_contexts: 补齐 mapper.pixel.so / libdrmresource.so same_process_hal_file 标签
+```

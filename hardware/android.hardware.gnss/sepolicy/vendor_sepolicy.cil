@@ -1,0 +1,19 @@
+;; android.hardware.gnss（自研虚拟 GNSS HAL）的 SELinux 片段，由 07_build_vendor
+;; 步骤 6 以 marker（;; cdh-patch-begin: vendor_sepolicy.cil@android.hardware.gnss）
+;; 整块并入装配树的 etc/selinux/vendor_sepolicy.cil。
+;;
+;; 为什么放模块层：控制文件 /data/vendor/gps/fix 是本模块自己的对外契约 —— 目录由
+;; 本模块 rc 的 `mkdir /data/vendor/gps 0770 system shell` 建立，读它的是本模块的
+;; HAL 进程（写入即强制下发一次 fix）。与机型、板级布局无关，换机型不必重写。
+;;
+;; 为什么需要授权：plat 的 /data/vendor(/.*)? 正则把 fix 标成 vendor_data_file，但
+;; plat 只给了 gnss_device 的读写，没给 vendor_data_file → HAL 读 fix 被拒。
+;;
+;; vendor rc 的 mkdir 跑在 vendor_init 域，plat 已给 vendor_init 对
+;; file_type-data_file_type 的 dir create，故这里只补 HAL 侧的 dir/file 读。
+;;
+;; 平台类型在 vendor CIL 中必须引用版本化影子名，故用 {{vers}} 占位，由构建阶段按
+;; 装好的 vendor/etc/selinux/plat_sepolicy_vers.txt 替换；hal_gnss_default 属 vendor
+;; 底座自带声明，不带版本后缀。
+(allow hal_gnss_default vendor_data_file_{{vers}} (dir (search getattr)))
+(allow hal_gnss_default vendor_data_file_{{vers}} (file (read open getattr)))

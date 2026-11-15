@@ -1,0 +1,38 @@
+# oriole_14-AP2A.240905.003.F1-20240815 实例 2（#197 修复后干净盘），2026-11-12 20:41~20:44，旧 5.10 0002 补丁
+$ adb shell 'ip -br addr | grep wlan0; ip route; cmd wifi status | sed -n 3,4p; ping -c1 -W3 101.33.73.101'
+wlan0            DOWN
+（ip route 为空）
+Wifi is not connected
+connect: Network is unreachable
+
+$ adb shell cmd wifi list-scan-results
+  74:39:89:0b:24:64       5180        -47   TP-LINK_5G_2464   [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  28:6c:07:51:a4:90       5220        -53   Xiaomi_A490_5G    [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  c8:3a:35:4c:8f:3a       2412        -66   ChinaNet-8F3A     [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  74:39:89:0b:24:63       5180        -48   TP-LINK_2464      [ESS]
+$ adb shell cmd wifi list-networks
+0            TP-LINK_2464                     open
+
+# qemu/backend/wifi-host-service/wifi-aps.json（gold #190 起默认开放 AP 改在 5 GHz ch36）
+    { "ssid": "TP-LINK_2464", "bssid": "74:39:89:0b:24:63", "channel": 36, "security": "open", "ipSubnet": "192.168.60.0/24", ... }
+
+# cmd wifi set-verbose-logging enabled 后
+D WifiNetworkSelector:   "TP-LINK_2464":0 reason=NETWORK_SELECTION_DISABLED_NETWORK_NOT_FOUND, count=2;
+D WifiClientModeImpl[507284:wlan0]: CMD_START_CONNECT  my state DisconnectedState nid=0 roam=false
+D WifiClientModeImpl[507284:wlan0]: setTargetBssid set to 74:39:89:0b:24:63 key="TP-LINK_2464"NONE
+D wpa_supplicant: wlan0: 3: 74:39:89:0b:24:63 ssid='TP-LINK_2464' wpa_ie_len=0 rsn_ie_len=0 caps=0x1 level=-35 freq=5180
+D wpa_supplicant: wlan0:    allow in non-WPA/WPA2
+D wpa_supplicant: wlan0:    hardware does not support required rate 1.0 Mbps (freq=5180 mode==2 num_rates=8)
+D wpa_supplicant: wlan0:    skip - rate sets do not match
+
+# kernels/patches/5.10/0002-hwsim-fake-wifi.patch（修复前）：beacon 与 assoc resp 都只有 2.4G 速率集
++static int hwsim_fake_build_beacon(...)
++	static const u8 rates[] = { 0x82, 0x84, 0x8b, 0x96,      <- 0x82 = 1 Mbps Basic（CCK）
++				    0x0c, 0x12, 0x18, 0x24 };
++	/* Supported rates */
++	*pos++ = WLAN_EID_SUPP_RATES;
++	*pos++ = sizeof(rates);
+# 对照 kernels/patches/6.6/0002-hwsim-fake-wifi.patch（gold 线已修）
++	static const u8 rates_5g[] = { 0x8c, 0x12, 0x98, 0x24,
++				       0xb0, 0x48, 0x60, 0x6c };
++	/* Supported rates & DS parameter set（5G 仅发纯 OFDM 速率，禁发 CCK Basic Rate） */

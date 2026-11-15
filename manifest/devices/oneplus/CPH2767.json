@@ -1,0 +1,33 @@
+{
+  "id": 19,
+  "official": "OPPO",
+  "brand": "oneplus",
+  "model": "OnePlus 15R",
+  "device": "CPH2767",
+  "platform": "qcom",
+  "resolution": "1272x2800",
+  "inch": "72x158",
+  "density": 560,
+  "smp": 8,
+  "memory": [
+    8192
+  ],
+  "storage": [
+    128000,
+    256000
+  ],
+  "extra": {
+    "board": "canoe",
+    "hasReadme": true,
+    "hostHvc": {
+      "host-hvc-adbkey": "hvc2",
+      "host-hvc-daemon": "hvc7",
+      "host-hvc-keymint": "hvc3",
+      "host-hvc-radio": "hvc4",
+      "host-hvc-wifi": "hvc9",
+      "host-hvc-wifi-data": "hvc10"
+    },
+    "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
+  },
+  "updatedAt": "2026-11-05T04:33:32Z"
+}

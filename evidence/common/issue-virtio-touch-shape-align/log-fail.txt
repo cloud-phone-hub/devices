@@ -1,0 +1,202 @@
+=== 修复前 aligner.inputs_full 对比（run-00087 真机 07cf5fc1784783d5 vs run-00086 云机 4503ac70a1c898f3-cloud） ===
+summary: {'identity': 0, 'capability': 17, 'state': 0, 'availability': 0, 'fatal': 17}
+capability 差异列表（#204 修复 Headset Jack/Virtual 10 条后剩 #6~#12 goodix_ts 7 条）：
+
+=== 修复前云机 goodix_ts 采集详情（run-00086） ===
+{
+  "controllerNumber": 0,
+  "descriptor": "c63c3be2de98f10e6bbd97f78684d819a6c862b9",
+  "extraGetters": {
+    "getBatteryState": {
+      "__class": "android.hardware.input.InputManagerGlobal$LocalBatteryState"
+    },
+    "getLightsManager": {
+      "__class": "android.hardware.input.InputDeviceLightsManager"
+    },
+    "getSensorManager": {
+      "__class": "android.hardware.input.InputDeviceSensorManager$InputSensorManager"
+    },
+    "getStability": 0
+  },
+  "fields": {},
+  "hasMicrophone": false,
+  "id": 2,
+  "isEnabled": true,
+  "isExternal": false,
+  "isVirtual": false,
+  "keyCharacterMap": {
+    "available": true,
+    "extraGetters": {
+      "getModifierBehavior": 0,
+      "getStability": 0
+    },
+    "keyLabels": [],
+    "keyboardType": 4,
+    "supportedKeyCodes": []
+  },
+  "keyboardType": 1,
+  "keyboardTypeName": "KEYBOARD_TYPE_NON_ALPHABETIC",
+  "motionRanges": [
+    {
+      "axis": 0,
+      "axisName": "AXIS_X",
+      "flat": 0,
+      "fuzz": 0,
+      "max": 1079.967,
+      "min": 0,
+      "range": 1079.967,
+      "resolution": 0,
+      "source": 4098,
+      "sourceNames": [
+        "SOURCE_CLASS_POINTER",
+        "SOURCE_TOUCHSCREEN"
+      ]
+    },
+    {
+      "axis": 1,
+      "axisName": "AXIS_Y",
+      "flat": 0,
+      "fuzz": 0,
+      "max": 2399.9268,
+      "min": 0,
+      "range": 2399.9268,
+      "resolution": 0,
+      "source": 4098,
+      "sourceNames": [
+        "SOURCE_CLASS_POINTER",
+        "SOURCE_TOUCHSCREEN"
+      ]
+    },
+    {
+      "axis": 2,
+      "axisName": "AXIS_PRESSURE",
+      "flat": 0,
+      "fuzz": 0,
+      "max": 1,
+      "min": 0,
+      "range": 1,
+      "resolution": 0,
+      "source": 4098,
+      "sourceNames": [
+        "SOURCE_CLASS_POINTER",
+        "SOURCE_TOUCHSCREEN"
+      ]
+    },
+    {
+      "axis": 3,
+      "axisName": "AXIS_SIZE",
+      "flat": 0,
+      "fuzz": 0,
+      "max": 1,
+      "min": 0,
+      "range": 1,
+      "resolution": 0,
+      "source": 4098,
+      "sourceNames": [
+        "SOURCE_CLASS_POINTER",
+        "SOURCE_TOUCHSCREEN"
+      ]
+    },
+    {
+      "axis": 4,
+      "axisName": "AXIS_TOUCH_MAJOR",
+      "flat": 0,
+      "fuzz": 0,
+      "max": 2631.8054,
+      "min": 0,
+      "range": 2631.8054,
+      "resolution": 0,
+      "source": 4098,
+      "sourceNames": [
+        "SOURCE_CLASS_POINTER",
+        "SOURCE_TOUCHSCREEN"
+      ]
+    },
+    {
+      "axis": 5,
+      "axisName": "AXIS_TOUCH_MINOR",
+      "flat": 0,
+      "fuzz": 0,
+      "max": 2631.8054,
+      "min": 0,
+      "range": 2631.8054,
+      "resolution": 0,
+      "source": 4098,
+      "sourceNames": [
+        "SOURCE_CLASS_POINTER",
+        "SOURCE_TOUCHSCREEN"
+      ]
+    },
+    {
+      "axis": 6,
+      "axisName": "AXIS_TOOL_MAJOR",
+      "flat": 0,
+      "fuzz": 0,
+      "max": 2631.8054,
+      "min": 0,
+      "range": 2631.8054,
+      "resolution": 0,
+      "source": 4098,
+      "sourceNames": [
+        "SOURCE_CLASS_POINTER",
+        "SOURCE_TOUCHSCREEN"
+      ]
+    },
+    {
+      "axis": 7,
+      "axisName": "AXIS_TOOL_MINOR",
+      "flat": 0,
+      "fuzz": 0,
+      "max": 2631.8054,
+      "min": 0,
+      "range": 2631.8054,
+      "resolution": 0,
+      "source": 4098,
+      "sourceNames": [
+        "SOURCE_CLASS_POINTER",
+        "SOURCE_TOUCHSCREEN"
+      ]
+    }
+  ],
+  "name": "goodix_ts",
+  "productId": 1,
+  "sourceNames": [
+    "SOURCE_CLASS_BUTTON",
+    "SOURCE_CLASS_POINTER",
+    "SOURCE_KEYBOARD",
+    "SOURCE_TOUCHSCREEN"
+  ],
+  "sources": 4355,
+  "sourcesHex": "0x1103",
+  "supportsSource": {
+    "SOURCE_ANY": false,
+    "SOURCE_BLUETOOTH_STYLUS": false,
+    "SOURCE_CLASS_BUTTON": true,
+    "SOURCE_CLASS_JOYSTICK": false,
+    "SOURCE_CLASS_MASK": false,
+    "SOURCE_CLASS_NONE": false,
+    "SOURCE_CLASS_POINTER": true,
+    "SOURCE_CLASS_POSITION": false,
+    "SOURCE_CLASS_TRACKBALL": false,
+    "SOURCE_DPAD": false,
+    "SOURCE_GAMEPAD": false,
+    "SOURCE_HDMI": false,
+    "SOURCE_JOYSTICK": false,
+    "SOURCE_KEYBOARD": true,
+    "SOURCE_MOUSE": false,
+    "SOURCE_MOUSE_RELATIVE": false,
+    "SOURCE_ROTARY_ENCODER": false,
+    "SOURCE_SENSOR": false,
+    "SOURCE_STYLUS": false,
+    "SOURCE_TOUCHPAD": false,
+    "SOURCE_TOUCHSCREEN": true,
+    "SOURCE_TOUCH_NAVIGATION": false,
+    "SOURCE_TRACKBALL": false,
+    "SOURCE_UNKNOWN": false
+  },
+  "vendorId": 10182,
+  "vibrator": {
+    "hasVibrator": false,
+    "vibratorIds": []
+  }
+}

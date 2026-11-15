@@ -1,0 +1,101 @@
+# 改造前 / 改造中的失败证据（issue-m22-hal-gap-fill）
+
+- 采集时间：2026-10-29
+- 运行期样本：m22 云机实例 31（console 5918 / adb 5919 / vnc 5920）
+- 构建侧环境：`engine/vendor`（darwin，NDK r27+ / `build-tools/36.1.0/aidl`）
+
+---
+
+## 1. 运行期：三个 HAL 被同步等待，20 分钟各 1472 次（改造前）
+
+`adb -s 127.0.0.1:5919 shell "logcat -d -b all | grep -oE 'Waited one second for [^ ]+' | sort | uniq -c"`：
+
+```
+1472  android.hardware.nfc.INfc/default
+1472  android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual
+1472  android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual
+```
+
+- 调用方：system_server 的两个线程 + `com.android.nfc` 主线程；后者被永久阻塞，直接导致
+  `ANR in com.android.nfc (Broadcast ... BOOT_COMPLETED)`。
+- 这三个名字在 `/system/etc/vintf`（FCM）与机型 manifest 里 **grep 0 命中**
+  —— 是 Flyme framework/库按名 `getService` 取的，不走 VINTF 解析。
+
+（原始盘点见 `../issue-m22-instance31-binder-stall/hal-inventory.txt` 第 1 节。）
+
+## 2. 运行期：相机 / NFC 侧旁证（改造前）
+
+```
+$ adb shell dumpsys media.camera
+... FAILED_TRANSACTION            # cameraserver 在跑（pid 618），但无 provider 实现
+
+$ adb shell cmd -w nfc ...        # 或 dumpsys nfc
+Can't find service: nfc
+
+$ adb shell ls /vendor/bin/hw/ | wc -l
+19                               # 无 nfc / 无 camera provider / 无 *virtualhal*
+```
+
+## 3. 构建面：改造前 `engine/vendor` 现状
+
+```
+$ cd engine && ./out/bin/cdh-vendor hal list --android 16
+# 改造前 31 个模块，其中没有 android.hardware.nfc
+# biometrics 只有两个服务：
+#   android.hardware.biometrics.fingerprint-service
+#   android.hardware.biometrics.face-service
+```
+
+- `out/android{15,16,17}/aosp/aidl/` 下无 `nfc/` 快照 → 即便写源码也编不过。
+- 10 个现成模块（authsecret / boot / confirmationui / drm / identity / memtrack / usb /
+  weaver + biometrics 的 fp/face）**缺 `vendor/` 静态树**：07 只按白名单复制编译产物到
+  `vendor/bin/hw`，没有 rc 与 VINTF 片段 → 二进制进镜像但 init 不拉、framework 查不到。
+- `engine/manifest/flyme/m22/device.json` 的 `hardware` 仅 **15** 条
+  （audio/gnss/health/ir/keymint/light/media/media.v412/power/radio/sensors/thermal/vibrator/wifi/service.daemon）。
+
+## 4. 改造中第一次编译失败：AIDL 缺 VINTF 稳定性（已复现，原文）
+
+virtualhal 是 `hardware/interfaces` 的 **unstable** AIDL；引擎统一以 `--stability=vintf`
+生成 NDK 绑定，首次编译即报（用 cuttlefish 原始未改动的源复现，可重复）：
+
+```
+$ aidl --lang=ndk --structured --stability=vintf --min_sdk_version=35 --version=1 \
+    -I <biometrics/fingerprint/aidl> ... \
+    <...>/virtualhal/*.aidl
+
+ERROR: .../virtualhal/AcquiredInfoAndVendorCode.aidl:24.6-32: android.hardware.biometrics.fingerprint.virtualhal.AcquiredInfoAndVendorCode does not have VINTF level stability (marked @VintfStability), but this interface requires it in ndk
+ERROR: (derived from).../AcquiredInfoAndVendorCode.aidl:24.6-32: ...AcquiredInfoAndVendorCode.Tag does not have VINTF level stability (marked @VintfStability), but this interface requires it in ndk
+```
+
+→ 处置：只在**本仓副本**（`engine/vendor/hardware/android.hardware.biometrics/aidl/`）里
+给 8 个 `.aidl` 的 parcelable / interface 声明补 `@VintfStability`（cuttlefish 源保持原样）。
+
+## 5. 改造中第二次编译失败：C++ override 签名不匹配
+
+首版把手写的 `setSensorLocation` 写成了 `fp::SensorLocation /*in_loc*/`（按值），
+与 AIDL 声明不一致（`engine/vendor/hardware/android.hardware.biometrics/aidl/.../fingerprint/virtualhal/IVirtualHal.aidl:316`）：
+
+```aidl
+void setSensorLocation(in SensorLocation loc);
+```
+
+→ 生成的 NDK 纯虚函数是 `setSensorLocation(const fp::SensorLocation&)`，按值版本隐藏了
+基类纯虚函数 ⇒ `BnVirtualHal` 仍为抽象类，链接报 `undefined reference to vtable` /
+`cannot instantiate abstract class`。改为 `const fp::SensorLocation& /*in_loc*/` 后通过。
+
+## 6. 改造中第三次失败：单进程注册两个服务会跨 SELinux 域
+
+最初用一个 `virtualhal_service.cpp` 在同一进程里注册 fp + face 两个名字。但底座
+`plat_service_contexts` 把两个名字分派到**不同**标签：
+
+```
+android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual  u:object_r:hal_fingerprint_service:s0
+android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual         u:object_r:hal_face_service:s0
+```
+
+同进程只能有一个 `seclabel`，第二个 `addService` 会因跨域注册被 servicemanager 拒绝。
+
+→ 处置：拆成 `fingerprint_virtualhal_service.cpp` / `face_virtualhal_service.cpp` 两个二进制，
+rc 里分别 `seclabel u:r:hal_fingerprint_default:s0` 与 `u:r:hal_face_default:s0`；
+旧的合体产物 `android.hardware.biometrics.virtualhal-service` 已从
+`engine/out/vendor/android16/bin/hw/` 移出（避免陈旧二进制被打进镜像）。

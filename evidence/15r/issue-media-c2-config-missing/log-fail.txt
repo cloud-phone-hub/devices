@@ -1,0 +1,94 @@
+# 失败侧证据：实例 9（2026-11-03 09:42 启停）
+# 取样：out/core/daemon/runtime/15r_16.0.10.500_EX01/9/qemu.log
+# 环境：patch.img sha256 d293eb0594bd 之前的版本（manifest/oneplus/15r/vendor/etc/ 下无 media_config.xml）
+
+## 1. 服务永远处于 restarting
+$ adb -s 127.0.0.1:5911 shell getprop init.svc.android-hardware-media-c2-hal
+restarting
+$ adb -s 127.0.0.1:5911 shell getprop init.svc.vendor-dolby-media-c2-hal
+restarting
+
+## 2. 服务表里只有 v4l2 与软解两个 store（default1 / default9 缺失）
+$ adb -s 127.0.0.1:5911 shell service list | grep media.c2
+41      android.hardware.media.c2.IComponentStore/default: [android.hardware.media.c2.IComponentStore]
+42      android.hardware.media.c2.IComponentStore/software: [android.hardware.media.c2.IComponentStore]
+
+## 3. 手动跑二进制：直接指到缺失的文件
+#    两个 store 二进制都读同一份配置；mediatek 版读到空配置就以 status 1 退出
+$ adb -s 127.0.0.1:5911 shell /vendor/bin/hw/android.hardware.media.c2-mediatek 2>&1 | head -3
+I/O warning : failed to load "/vendor/etc/media_config.xml": No such file or directory
+$ adb -s 127.0.0.1:5911 shell "/vendor/bin/hw/android.hardware.media.c2-mediatek; echo EXIT=$?"
+I/O warning : failed to load "/vendor/etc/media_config.xml": No such file or directory
+EXIT=1
+$ adb -s 127.0.0.1:5911 shell "/vendor/bin/hw/vendor.dolby.media.c2-default-service-dax 2>&1 | head -3"
+I/O warning : failed to load "/vendor/etc/media_config.xml": No such file or directory
+
+## 4. init 每 ~5 s 重新拉起一轮，pid 每轮换（首 8 轮）
+$ grep -o "init: \.\.\. started service 'android-hardware-media-c2-hal' has pid [0-9]*" 9/qemu.log | head -8
+init: ... started service 'android-hardware-media-c2-hal' has pid 623      [ 11.947122]
+init: ... started service 'android-hardware-media-c2-hal' has pid 1032     [ 16.950018]
+init: ... started service 'android-hardware-media-c2-hal' has pid 1209     [ 22.016371]
+init: ... started service 'android-hardware-media-c2-hal' has pid 1419     [ 27.018284]
+init: ... started service 'android-hardware-media-c2-hal' has pid 1764     [ 32.019084]
+init: ... started service 'android-hardware-media-c2-hal' has pid 2258     [ 37.030581]
+init: ... started service 'android-hardware-media-c2-hal' has pid 2528     [ 42.042201]
+init: ... started service 'android-hardware-media-c2-hal' has pid 2549     [ 47.045718]
+
+init: ... started service 'vendor-dolby-media-c2-hal' has pid 628          [ 11.991744]
+init: ... started service 'vendor-dolby-media-c2-hal' has pid 1033         [ 16.993568]
+init: ... started service 'vendor-dolby-media-c2-hal' has pid 1210         [ 22.035116]
+init: ... started service 'vendor-dolby-media-c2-hal' has pid 1421         [ 27.049992]
+init: ... started service 'vendor-dolby-media-c2-hal' has pid 1765         [ 32.039799]
+init: ... started service 'vendor-dolby-media-c2-hal' has pid 2259         [ 37.039401]
+
+## 5. 每轮都以 status 1 结束
+[   12.152155][    T1] init: Service 'android-hardware-media-c2-hal' (pid 623) exited with status 1
+[   12.158184][    T1] init: Service 'vendor-dolby-media-c2-hal' (pid 628) exited with status 1
+[   16.955929][    T1] init: Service 'android-hardware-media-c2-hal' (pid 1032) exited with status 1
+[   16.999688][    T1] init: Service 'vendor-dolby-media-c2-hal' (pid 1033) exited with status 1
+[   27.050825][    T1] init: Service 'android-hardware-media-c2-hal' (pid 1419) exited with status 1
+[   32.040158][    T1] init: Service 'android-hardware-media-c2-hal' (pid 1764) exited with status 1
+
+## 6. 计数（全程）
+$ grep -c "Service 'android-hardware-media-c2-hal' (pid .*) exited with status 1" 9/qemu.log
+352
+$ grep -c "Service 'vendor-dolby-media-c2-hal' (pid .*) exited with status 1" 9/qemu.log
+74
+$ grep -c "starting service 'android-hardware-media-c2-hal'" 9/qemu.log
+353
+$ grep -c "starting service 'vendor-dolby-media-c2-hal'" 9/qemu.log
+78
+
+## 7. 副作用：init 的 updatable 崩溃状态一直被点亮
+$ adb -s 127.0.0.1:5911 shell getprop sys.init.updatable_crashing_process_name
+android-hardware-media-c2-hal
+$ adb -s 127.0.0.1:5911 shell getprop sys.init.updatable_crashing
+1
+$ grep -c "sys.init.updatable_crashing" 9/qemu.log
+503          # 每 5 s 一轮 flags_health_check 都被触发
+
+## 8. 一个曾经被误判的关联：zygote 被 SIGKILL 不是 media c2 连坐
+[   12.587453][    T1] init: Service 'surfaceflinger' (pid 652) received signal 6
+[   12.596446][    T1] init: Service 'zygote' (pid 577) received signal 9
+# 实例 10（media c2 已修好）同样是 SF 先死、zygote 后 11 ms 被杀：
+#   [   11.465297] Service 'surfaceflinger' (pid 647) received signal 6
+#   [   11.476292] Service 'zygote' (pid 579) received signal 9
+# => 触发者是 surfaceflinger 首启 abort，与 media c2 无关。
+
+## 9. 官方 vendor 侧对照：15r 的 /vendor 里没有 media_config.xml
+#    官方 codec2 是 media_codecs*.xml + qcom c2.qti.* 那套，与 AOSP 的 media_config.xml 不同源
+$ R=engine/out/roms/oneplus/15r/16.0.10.500_EX01/super
+$ find $R -maxdepth 4 -name media_config.xml
+                # 空：vendor_a / odm_a / system_ext 全树都没有
+$ ls $R/vendor_a/etc | wc -l
+197
+$ ls $R/vendor_a/etc/media_codecs*.xml | wc -l
+34              # 官方只有 codec 清单，没有 store 登记表
+
+# 引擎侧的 vendor 静态树（修复前只有 ueventd + init，本条目新增 media_config.xml）：
+$ ls -R /Volumes/work/cloud-phone-hub/engine/manifest/oneplus/15r/vendor/etc/
+init:
+frp_symlink.rc
+.:
+ueventd.canoe.rc
+media_config.xml          # 本条新增（3592 B）

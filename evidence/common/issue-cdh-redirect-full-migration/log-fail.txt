@@ -1,0 +1,69 @@
+### 本轮的三个失败态（cdh_redirect 从 oriole 单机推广到其余四台）2026-11-02
+
+以下均为原始日志摘录，出处写在每段标题后。修好之后的对照见 log-pass-*.txt
+与各机型的 log-build-*-r2.txt。
+
+---
+
+## ① 08_build_vendor_dlkm 把第一次阶段模块重复塞进 vendor_dlkm
+
+出处：`out/core/daemon/runtime/m22_12.5.0.0A/47/qemu.log:473,1025`、
+`m22_12.5.0.0A/48/qemu.log:466,473,1033`
+
+首次阶段（SELinux 策略加载之前）由 init 从 vendor_ramdisk 加载，成功：
+
+```
+[    0.220392][    T1] init: Loaded kernel module /lib/modules/6.12.81-4k-cdh/cdh_redirect.ko
+```
+
+不到 1 s 后，late-init 的 dlkm_loader 又从 /vendor_dlkm 里加载同一份 `.ko`：
+
+```
+[    0.877579][  T262] dlkm_loader_mainline: Loading module /vendor_dlkm/lib/modules/cdh_redirect.ko with args ''
+```
+
+关键不对称：这一行**没有**对应的 `Loaded kernel module /vendor_dlkm/...cdh_redirect.ko`
+（同名模块已在内核里，模块加载器返回 EEXIST，dlkm_loader 静默跳过）。所以在
+"模块来自哪里" 上极易误判成 /vendor_dlkm，实际生效的是 vendor_ramdisk 那份。
+`grep -c 'dlkm_loader.*cdh_redirect'` 在这两个实例上是 1（实例 47）与 1（实例 48）。
+
+gold 的早期实例同样命中：`gold_cn_OS3.0.10.0.VNQCNXM/3/qemu.log`、`/4/qemu.log`
+（当时 gold 的规则还是 9 条，说明重复注入与规则条数无关，是 08 的通用行为）。
+
+---
+
+## ② 修掉注入集以后 08 的配方没有失效，`.ko` 集合改了却命中旧缓存
+
+出处：`.tmp/build-m22-2.txt:15,37,39`（第一轮重跑，EXIT=0 但什么都没重建）
+
+```
+    输入: 缓存配方 dlkm-7910035d54f4（输入哈希）
+    缓存配方:   dlkm-7910035d54f4
+[skip] vendor_dlkm.img 可复用（dlkm-7910035d54f4）：配方、清单与校验和均未变
+```
+
+`ComputeDlkmRecipe` 原来的输入是 `baseSHA + kbuild.HashTree(modulesDir) + props`。
+`HashTree` 是**整棵目录树**的哈希：cdh_redirect.ko 仍在产物目录里（只是不再注入），
+目录树不变 → 配方不变 → 整阶段跳过。于是 `discoverModules` 里新加的
+`firstStageModules` 排除逻辑第一轮完全没生效，构建还报 EXIT=0。
+
+判据：`log-build-m22-r1.txt` 的 `注入模块:` 是 7 个（含 cdh_redirect.ko），配方
+`dlkm-7910035d54f4`；改完 `discoverModules` 立刻重跑的那轮（`.tmp/build-m22-2.txt`）
+注入清单已变 6 个，配方号却仍是 `dlkm-7910035d54f4` → 命中缓存；补上 `inject:` 行、
+配方升到 `dlkm-v2` 后才是 6 个 + `dlkm-6065dd9209aa`（`log-build-m22-r2.txt`）。
+
+---
+
+## ③ 实例创建后 QEMU 秒退（media 端点与 chardev 的启动竞态）
+
+出处：`out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/5/qemu.log:2`
+
+```
+qemu-system-aarch64: -chardev socket,id=stage-media-dec,path=/tmp/stage-007d12b0/media-decoder.sock:
+    Failed to connect to '/tmp/stage-007d12b0/media-decoder.sock': Connection refused
+```
+
+表现：`/api/create` 成功，但 `getprop sys.boot_completed` 一直等不到，SSE 通道
+返回 502。属 daemon 侧 `backend.StartMediaEndpoint` 与 QEMU `-chardev socket` 的
+启动顺序竞态，与 cdh_redirect 无关；同一镜像重建实例（索引 6）即正常起来。
+本轮把它记为遗留，未改代码。

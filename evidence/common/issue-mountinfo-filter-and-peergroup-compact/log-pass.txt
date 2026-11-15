@@ -1,0 +1,42 @@
+# P0-2 (B7) 修复后验证证据 (log-pass.txt)
+# 采样时间: 2026-11-10
+# 设备: Xiaomi Redmi Note 13 5G (gold / 2312DRAABC, OS3.0.10.0.VNQCNXM)
+# 真机 ID: ec519c7d513a3ad3 (USB: fmvwkrheonugvgjb)
+# 云机实例: gold_15-OS3.0.10.0.VNQCNXM/1 (df809591a4e085ae-cloud, ADB: 127.0.0.1:5911)
+# 镜像产物: modules (6.6-cdh-097ba3bc0835), vendor_boot.img (vboot-1d1c98aa0ddf), patch.img (sha256 d1394d82efde), vda.img (vda-379023fbed1b)
+# 测试批次: run-00220
+
+=== 1. qemu.log 模块加载与挂载表视图钩子日志 ===
+[    0.128170][    T1] cdh_redirect: 规则来自 /lib/modules/cdh_redirect.rules：10 条
+[    0.128740][    T1] cdh_redirect: 前向钩子就绪：getname_flags（maxactive 4096）
+[    0.130121][    T1] cdh_redirect: 逆向钩子就绪：proc_pid_readlink + vfs_readlink + d_path
+[    0.132426][    T1] cdh_redirect: 挂载表视图钩子就绪：mountinfo=1 mounts=1 mountstats=1
+[    0.132655][    T1] cdh_redirect: 已加载：10 条规则（/lib/modules/cdh_redirect.rules），内核未打补丁
+
+=== 2. /proc/cdh_redirect 计数器实测 ===
+max_uid: 10000
+forward_hits: 10396
+reverse_hits: 3760
+uid_skipped: 1710
+forward_missed: 0
+reverse_missed: 0
+mount_hidden: 9
+peergroup_rewrites: 430
+
+=== 3. boot_check.py 启动亮屏验收 ===
+[shot] /Volumes/work/cloud-phone-hub/engine/out/tmp/gold_boot_174.png 1088x2400 bpp=32 平均亮度=121.6 峰值=255
+[pass] 引导完成（日志 5225 行）+ 截图非黑（平均亮度=121.6 峰值=255）
+
+=== 4. device-checker 双机对比批次 run-00220 ===
+[REAL ] aligner_xiaomi_gold.cpu_memory_storage:
+  mountinfoAudit={"highMntIdCount": 188, "overlayMountCount": 24, "peerGroupCount": 73, "peerGroupHoles": 0, "suspiciousMountMarks": [], "totalMounts": 188}
+[CLOUD] aligner_xiaomi_gold.cpu_memory_storage:
+  mountinfoAudit={"highMntIdCount": 178, "overlayMountCount": 24, "peerGroupCount": 65, "peerGroupHoles": 0, "suspiciousMountMarks": [], "totalMounts": 178}
+
+[REAL ] aligner_xiaomi_gold.all: passed=32/32 B6=True B7=True
+[CLOUD] aligner_xiaomi_gold.all: passed=17/32 B6=True B7=True
+
+[CLOUD] ultimate.root_selinux:
+  U-PEERGROUP-HOLE: hit=false (peerHoles=False, minorHole=False, mntidHole=False, statfsCross=False, mountinfoMarks=0)
+[CLOUD] proc.mountinfo: has_vendorpatch=False
+[CLOUD] proc.mounts   : has_vendorpatch=False

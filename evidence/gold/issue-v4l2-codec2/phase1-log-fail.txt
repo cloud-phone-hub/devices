@@ -1,0 +1,82 @@
+# 失败态取证：点击 1.3 秒黑屏 / 8.5 秒才出内容，v4l2 HAL 崩溃循环带崩 system_server
+#
+# 设备/清单：xiaomi/gold  OS3.0.10.0.VNQCNXM（Redmi Note 13 5G）
+# 实例：gold_OS3.0.10.0.VNQCNXM/34（2026-10-26 14:00 前一轮构建的镜像，SELinux enforcing）
+# 现象：VNC 里点桌面图标，先整屏黑 1.3 秒，8.5 秒后才出内容；状态栏/桌面偶发闪回。
+#
+# 说明：本文件是修复前的实测片段汇总（guest 内经 hvc7 事件通道采集）。
+#       行首时间戳为 guest logcat / dmesg 原样输出。
+
+## 1. v4l2 HAL 崩溃循环：6 分钟 727 次，init 判「4 分钟崩 4 次」
+
+dmesg | grep -c "media-c2-v4l2-hal-1-2. exited"
+727
+
+init: Service 'android-hardware-media-c2-v4l2-hal-1-2' (pid …) exited 4 times in 4 minutes
+sys.init.updatable_crashing=1
+sys.init.updatable_crashing_process_name=android-hardware-media-c2-hal
+
+# 同一时期另两个 HAL 也在崩：
+sys.init.updatable_crashing_process_name = vendor.cdh_gold_radio
+sys.init.updatable_crashing_process_name = vendor-dolby-media-c2-hal
+
+## 2. system_server 被 Watchdog 杀掉后反复重启
+
+getprop init.svc.zygote / pidof system_server（每 2 分钟换一次 pid）
+SSC=7        # 6 分钟内 zygote/system_server 重启 6 次
+
+# 对照组：完全不点击、静置 100 秒，SSC 从 3 涨到 5 —— 重启与点击无关，是周期性发生。
+
+# /data/anr 里的 CriticalEventLog：
+half_watchdog: subject: "Blocked in monitor com.android.server.Watchdog$BinderThreadMonitor
+  on monitor thread (watchdog.monitor) for 30s, Blocked in handler on foreground thread
+  (android.fg) for 30s, Blocked in handler on main thread (main) for 30s, Blocked in handler
+  on ActivityManager (ActivityManager) for 30s"
+
+Subject: Process ProcessRecord{fcb479f 15209:com.android.phone/1001} failed to complete startup
+Subject: Broadcast of Intent { act=android.intent.action.SIM_STATE_CHANGED flg=0x15000010
+  cmp=com.android.phone/.vvm.VvmSimStateTracker (has extras) }
+
+outgoing transaction from 9977(system_server):10125(StorageManagerS) to
+  9885(/system/bin/mediaserver):9917(binder:9885_1) elapsed: 118.029000 s code: 7
+
+## 3. 根因 A：three-layer 缺失，v4l2 / mtk c2 / dolby c2 / radio 都起不来
+
+# 3.1 只加 disabled 拦不住：rc 里声明了 interface aidl，init 按 lazy HAL 语义按需拉起
+#     （加了 disabled 后 init.svc.* 仍是 restarting，dmesg 里 "starting service" 继续出现）
+
+# 3.2 整体注释 rc + 清空 vintf 声明后服务停住，但 tv4l2 的 codec 声明还留在
+#     /vendor/etc/media_codecs_c2.xml（357/360/365 行），MediaCodecList 仍列出 c2.v4l2.*
+
+grep -c "c2.v4l2" /vendor/etc/media_codecs_c2.xml
+3
+
+# 3.3 SELinux：patch 里的文件 xattr 带厂商策略的类型，基座 vendor_sepolicy.cil 没定义
+
+avc: denied { entrypoint execute map read } for comm="init"
+  path="/mnt/patch/vendor/bin/hw/android.hardware.media.c2-mediatek"
+  scontext=u:r:init:s0 tcontext=u:object_r:unlabeled:s0
+  trawcon="u:object_r:mtk_hal_c2_exec:s0" tclass=file permissive=0
+
+avc: denied { add } for comm="android.hardware.media.c2-mediatek"
+  name="android.hardware.media.c2.IComponentStore/default9"
+  scontext=u:r:mediacodec:s0 tcontext=u:object_r:default_android_service:s0
+  tclass=service_manager permissive=0
+
+avc: denied { read write } for comm="android.hardwar" name="hvc4"
+  scontext=u:r:hal_radio_default:s0 tcontext=u:object_r:console_device:s0
+  tclass=chr_file permissive=0
+
+# permissive 实验（setenforce 0）：三个服务全部 running —— 排除缺库，确认是纯 SELinux。
+
+## 4. 点击延迟原始测量（vnc_probe_change.py，强制全屏逐轮比对哈希）
+
+点「文件管理」(141,302)：
+  变化#1: t_click+1340.0ms (抓帧耗时 18.4ms) hash=0e0d71cb3576   # 全黑
+  变化#2: t_click+8477.3ms (抓帧耗时 19.1ms) hash=32886c69e791   # 1.3% 非黑，内容才出来
+
+# 期间 dmesg 里 v4l2 服务又在重启（exited 计数继续增长）。
+
+## 5. 采集时刻
+
+2026-10-26 14:00 ~ 14:20（guest 侧 07-15 21:0x）

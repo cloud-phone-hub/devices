@@ -1,0 +1,111 @@
+;; cdh gold：android.service.daemon 模块的 SELinux 片段（由 07_build_vendor 追加到
+;; /vendor/etc/selinux/vendor_sepolicy.cil 末尾，marker 为
+;; `;; vendor_sepolicy.cil@android.service.daemon`）。
+;;
+;; 只放 service_daemon / pioneer 这条启动链与反向授权。Remote KeyMint 的类型与授权在
+;; engine/vendor/hardware/android.hardware.keymint/sepolicy/vendor_sepolicy.cil，
+;; 两份片段各自成块、互不替换。
+;;
+;; 平台类型在 vendor CIL 中必须引用版本化影子名（见 plat_sepolicy_vers.txt），
+;; 故用 {{vers}} 占位，由构建阶段按装好的 vendor/etc/selinux/plat_sepolicy_vers.txt
+;; 替换；版本号变化时无需改本文件。
+
+;; ---- pioneer 域与可执行类型声明 ----
+;; v1 gold 的 vendor 基底（lineage + cdh device 树）自带这两对声明，本模块只补
+;; allow；m22 的基底是纯 lineage-23.2 virtio，没有它们，init 现场合并策略时
+;; secilc 直接报 "Failed to resolve allow statement at /vendor/etc/selinux/
+;; vendor_sepolicy.cil:NNNN"（对应下面的 allow 行），整帧策略编不出来。
+;; 内核侧 CDH_PIONEER_PERMISSIVE 已移除（2026-11-02，四棵内核树同步删补丁）：permissive 的
+;; 唯一来源就是下面这条 `(typepermissive pioneer)`。启动期 secilc 接受该语句（已用 secilc 3.9
+;; 拿 gold 真实的 plat + plat_pub_versioned + 07 产出的 vendor CIL 实测：编过，permissive
+;; 集合为 ['pioneer','shell','su']），不需要内核再改 permissive_map。
+(type pioneer)
+(roletype object_r pioneer)
+(typepermissive pioneer)
+(type pioneer_exec)
+(roletype object_r pioneer_exec)
+;; pioneer 必须同时进 domain 属性，否则它只是“一个类型”，不是可切换的进程域：
+;; init 对 `seclabel u:r:pioneer:s0` 的服务调 setexeccon() 会拿到 EINVAL，只打一行
+;; "init: cannot setexeccon('u:r:pioneer:s0') for <svc>: Invalid argument" 就照旧在
+;; u:r:init:s0 里把进程拉起来（实测 m22 实例 11 的 logcat_dump_early）。后果是所有
+;; 声明了 seclabel u:r:pioneer:s0 的服务（service_daemon / adb shell / logcat 取证
+;; 通道）统统跑在 init 域，授权与“pioneer permissive”全部落空。
+;; gold 的成品 /vendor/etc/selinux/vendor_sepolicy.cil 第 84 行 `(typeattributeset
+;; domain (... pioneer ...))` 即此写法；本基底是现场合并，得自己补这一条。
+(typeattributeset domain (pioneer))
+;; ---- pioneer 启动链（service_daemon）----
+;; 基底只声明了 init_{{vers}} -> pioneer 的 process transition，缺执行文件授权：
+;; init 以 seclabel u:r:pioneer:s0 起 /vendor/bin/service_daemon 时被
+;; avc denied { execute } ... tcontext=u:object_r:pioneer_exec:s0 拒绝，服务
+;; 以 127 退出。运行时 init 的实际域是 u:r:init:s0，基底用版本化影子名
+;; init_{{vers}} 引用（同文件里 HAL 服务的启动链同样写法，实跑有效），此处沿用。
+(allow init_{{vers}} pioneer_exec (file (ioctl read open execute getattr map)))
+;; transition 同基底重复一条，补上换域前的 process 噪声权限（noatsecure 等）。
+(allow init_{{vers}} pioneer (process (transition noatsecure siginh rlimitinh)))
+
+;; ---- pioneer 反向授权：宿主 shell 的 stdio fd ----
+;; /system/bin/cmd 与 dumpsys 把 stdin/stdout/stderr 作为 ParcelFileDescriptor
+;; 交给 system_server 里的 cmd/dump 服务执行，随后命令才落到目标服务。PTY 由
+;; service_daemon（pioneer）创建，fd 的 SID 是 pioneer；system_server 对 pioneer
+;; fd 缺 use 时 binder_transfer_file 失败，调用方只看到
+;; "Failed transaction (2147483646)"，dumpsys/cmd input 全线不可用。
+(allow system_server_{{vers}} pioneer (fd (use)))
+;; dumpsys 的输出端是 pioneer 创建的 pipe；system_server 要写入该 fifo，
+;; 否则 binder translate fd 失败（同一 FAILED_TRANSACTION 表现）。
+(allow system_server_{{vers}} pioneer (fifo_file (write)))
+;; cmd 的 ShellCallback：/system/bin/cmd 在 pioneer 进程内注册回调 binder 节点，
+;; 框架在命令结束时回程调用 onCommandFinished。此处主角是 system_server
+;; （enforcing），内核给的 pioneer permissive 位管不到反向调用；缺规则时
+;; cmd 打印完结果后永远等不到回调、进程不退出（实测 avc denied { call }
+;; comm="binder:638_16" scontext=system_server tcontext=pioneer permissive=0）。
+;; 连锁表现：auto_provision 的第一条 settings put 即挂住，provisioned 永远是 0。
+(allow system_server_{{vers}} pioneer (binder (call transfer)))
+
+;; cmd 的 stdio fd 是 adbd(pioneer) 建的 unix socket（pty 场景才是 devpts）。
+;; 内核 selinux_binder_transfer_file 对传入 fd 做**两段**检查：
+;;   1) avc_has_perm(system_server, pioneer, fd, use)          <- 上面的 fd use
+;;   2) avc_has_perm(system_server, pioneer, isec->sclass, file_to_av(file))
+;; 第二段的 tclass 取自 fd 所在 inode 的 sclass：unix socket 是 unix_stream_socket，
+;; 不是 file。只补第一段时第二段仍被 enforcing 的 system_server 拒绝，
+;; binder_translate_fd 返回 -EPERM -> BR_FAILED_REPLY -> 调用方只见
+;; "Failed transaction (2147483646)"。因为 Android 13+ 的 input/settings/am/
+;; notification 全是 cmd 的软链，SHELL_COMMAND_TRANSACTION 一律带 stdio fd，
+;; 表现为整条 cmd 通道全灭（dumpsys 反而正常：它传的是 pipe，走 fifo_file 那段）。
+;; 对照 gold-15 原厂策略，同名规则权限集正是这一组。
+(allow system_server_{{vers}} pioneer (unix_stream_socket (getattr getopt ioctl read setopt shutdown write)))
+
+;; ---- pioneer 网络 socket 基础授权（lineage 基底未展开 net_domain）----
+;; engine 的 vendor_sepolicy.cil 基底取自 lineage（与 plat_pub_versioned.cil 同源，
+;; 见 07_build_vendor/replace.go），只声明 pioneer 类型、不含 MIUI 策略里 net_domain
+;; 展开出的 socket 权限。实测 vnd_gold 镜像：adbd(pioneer) 接受连接即关闭、guest 内
+;; 任意 TCP connect 返回 EMSGSIZE；setenforce 0 后立刻恢复。这里显式补齐，不依赖
+;; (typepermissive pioneer) 兜底。
+(allow pioneer pioneer (tcp_socket (create bind connect listen accept getopt setopt shutdown read write ioctl getattr setattr append lock map)))
+(allow pioneer pioneer (udp_socket (create bind connect getopt setopt shutdown read write ioctl getattr setattr append lock map)))
+(allow pioneer pioneer (unix_stream_socket (create bind connect listen accept getopt setopt shutdown read write ioctl getattr setattr append lock map)))
+(allow pioneer pioneer (unix_dgram_socket (create bind connect getopt setopt shutdown read write ioctl getattr setattr append lock map)))
+
+;; ---- fwmarkd 注册：bionic libnetd_client 把 socket fd 交给 netd 设 mark ----
+;; 缺授权时 pioneer 连不上 /dev/socket/fwmarkd、netd 也无权操作 pioneer 的 socket，
+;; netd 报 "control message was truncated when receiving file descriptors"，socket
+;; 拿不到 fwmark，宿主 adb 恒 offline。
+(allow pioneer fwmarkd_socket_{{vers}} (sock_file (write)))
+(allow pioneer netd_{{vers}} (unix_stream_socket (connectto)))
+(allow netd_{{vers}} pioneer (fd (use)))
+;; netd 的 FwmarkServer / 连接信息查询要对 pioneer 的 socket 调 setsockopt/getsockopt；
+;; 平台域是 enforcing，缺一条即真拒绝（实测 avc 落在 adbd 的 10.0.2.15:5555 连接上）。
+(allow netd_{{vers}} pioneer (tcp_socket (read write ioctl getattr setattr setopt getopt)))
+(allow netd_{{vers}} pioneer (udp_socket (read write ioctl getattr setattr setopt getopt)))
+(allow netd_{{vers}} pioneer (unix_stream_socket (read write ioctl getattr setattr setopt getopt)))
+(allow netd_{{vers}} pioneer (unix_dgram_socket (read write ioctl getattr setattr setopt getopt)))
+
+;; ---- ashmem_libcutils_device 兼容授权（system/sepolicy/vendor/ashmem/ashmem_allow.te）----
+;; 从平台策略 202604（Android 16 QPR2 / Android 17）起，AOSP plat_sepolicy.cil 移除了
+;; 对全体 domain 打开 /dev/ashmem<boot_id>（ashmem_libcutils_device）的默认授权，改为由
+;; 厂商策略按需通过 ashmem_allow.te 声明。lineage-24.0 基底（Cuttlefish 202704）未编入
+;; 该规则，而云机内核无 /sys/fs/selinux/policy_capabilities/memfd_class（或机型
+;; ro.vendor.api_level < 202604）时 libcutils use_memfd() 返回 false，system_server 与
+;; audioserver 仍走 /dev/ashmem<boot_id>，缺本条会导致 ApplicationSharedMemory.nativeCreate
+;; 报 Permission denied 并使 zygote/system_server 无限重启。
+(allow domain ashmem_libcutils_device_{{vers}} (chr_file (open)))
+

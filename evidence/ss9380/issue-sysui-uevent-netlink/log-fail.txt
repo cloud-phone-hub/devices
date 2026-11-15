@@ -1,0 +1,66 @@
+# 失败态取证：SystemUI 死于 UEventObserver → 锁屏永远画不出来
+
+# 机型：samsung/pa3qzcx/pa3q:16/BP4A.251205.006/S9380ZCSDCZH1
+# 盘集：build11（第八段策略还没加；hwui 已修，能起进程但画面全黑）
+# 实例：build10 那台（index 2 之前），adb 127.0.0.1:5911
+# 时间：2026-10-30 00:45 ～ 00:55
+#
+# 取证来源说明：那台实例的 qemu.log 已被 daemon 轮转覆盖（现 runtime 目录只剩
+# index 1～5，且轮转日志最早只保留到 00:12），所以第 1、2、5 段是从当时
+# `logcat -b crash -d` / `dmesg` 直接拷出的原文；第 3、4 段是根因判定，
+# 2026-10-31 在最终盘集（patch.img 53e483856316…）上做了只读复核，结论一致。
+
+# ---- 1) crash buffer：同一栈刷了 82 次 ----
+$ adb shell 'logcat -b crash -d | grep -c UEventObserver'
+82
+$ adb shell 'logcat -b crash -d | head -20'
+FATAL EXCEPTION: UEventObserver
+Process: com.android.systemui, PID: 23638
+java.lang.RuntimeException: Unable to open socket for UEventObserver
+	at android.os.UEventObserver.nativeSetup(Native Method)
+	at android.os.UEventObserver.init(UEventObserver.java:99)
+	at android.os.UEventObserver.startObserving(UEventObserver.java:151)
+	at com.android.systemui.util.settings.SecSettingsHelper$1.<init>(...)
+	at com.android.systemui.util.settings.SecSettingsHelper.create(...)
+	...
+# 抛在 UEventObserver 这个线程上 → 直接把 SystemUI 整个进程带走。
+
+# ---- 2) 对应的 avc（init 侧 dmesg）----
+$ adb shell 'dmesg | grep -m2 platform_app'
+avc: denied { create } for pid=19136 comm="UEventObserver"
+     scontext=u:r:platform_app:s0:c512,c768
+     tcontext=u:r:platform_app:s0:c512,c768
+     tclass=netlink_kobject_uevent_socket permissive=0
+# scontext 与 tcontext 都是 platform_app —— 即“自己给自己开 netlink socket 被拒”。
+
+# ---- 3) 为什么是 platform_app：OneUI 把 SystemUI 放在 platform_app 域 ----
+# （2026-10-31 同盘集复核）
+$ adb shell 'ps -A -Z -o NAME,LABEL | grep systemui'
+u:r:platform_app:s0:c512,c768  com.android.systemui        u:r:platform_app:s0:c512,c768
+$ adb shell 'cat /proc/2609/attr/current'
+u:r:platform_app:s0:c512,c768
+# AOSP 的 systemui 域在这里完全没用上，plat 侧的 systemui 授权也帮不到它。
+
+# ---- 4) plat 里没有等价条目，这条只在官方 vendor 策略里 ----
+# （2026-10-31 同盘集复核）
+$ adb shell 'grep -c netlink_kobject_uevent_socket /system/etc/selinux/plat_sepolicy.cil'
+67                                   # 有很多条，都是 audioserver/gpsd/... 等
+$ adb shell 'grep netlink_kobject_uevent_socket /system/etc/selinux/plat_sepolicy.cil | grep -c platform_app'
+0                                    # 但 platform_app 一条都没有
+# 官方 vendor_sepolicy.cil 里才有（第 15175 / 16676 行）：
+#   (allow platform_app_202404 self (netlink_kobject_uevent_socket (read create bind setopt)))
+#   (allow system_app_202404  self (netlink_kobject_uevent_socket (read create bind setopt)))
+# 我们换成 lineage 的 vendor 策略，这两条就一起丢了。
+
+# ---- 5) 表象：进程每 1～4 s 换一次 pid，锁屏窗口反复重建 ----
+$ adb shell pidof com.android.systemui
+31683
+$ adb shell pidof com.android.systemui
+3513
+$ adb shell 'dumpsys window | grep isKeyguardShowing'
+  isKeyguardShowing=true
+$ adb shell 'dumpsys window | grep mCurrentFocus'
+  mCurrentFocus=null
+# 于是 `wm dismiss-keyguard` 和 `input swipe` 全都“无效”——不是输入没进去，
+# 而是窗口刚建好就随着下一个周期的崩溃重建了。
+# 当时的画面（未留存 png）：全黑 + 右下角一个返回箭头。

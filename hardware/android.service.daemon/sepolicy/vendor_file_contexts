@@ -1,0 +1,23 @@
+# cdh gold：android.service.daemon 模块的 file_contexts 片段（由 07_build_vendor 追加）。
+#
+# 只放「绑定具体路径」的事实：设备节点标签与可执行文件标签。类型与授权分居各自的模块
+# sepolicy（keymaster_device → android.hardware.keymint/sepolicy/vendor_sepolicy.cil，
+# pioneer → 本模块同目录的 vendor_sepolicy.cil）。
+#
+# 这里同时带着 Remote KeyMint 的通道标签：07 的片段来源只有模块层与机型层两处，gold 的
+# 机型层 sepolicy 目录已撤销，标签只能落在模块层。
+
+# Remote KeyMint 通道 /dev/hvc3。基底用正则 /dev/hvc[0-9]+ 把全部 virtio 串口标成
+# console_device；file_contexts 的字面量优先于正则，追加这一行只把 hvc3 划给
+# keymint，其余 hvc*（固件 console 等）保持原标签。hvc 编号是板级布局事实
+# （hvc0/hvc1 = 固件 console、hvc2 预留、keymint = hvc3），换板子会变，不随 HAL 复用。
+/dev/hvc3  u:object_r:keymaster_device:s0
+
+# cdh gold：guest 值守进程。init 以 seclabel u:r:pioneer:s0 起它，执行文件
+# 必须落在 pioneer_exec，否则启动链的 entrypoint 检查不通过。
+/vendor/bin/service_daemon  u:object_r:pioneer_exec:s0
+
+# cdh gold：netmgr 由 init 直接 exec（service ... /vendor/bin/cph-netmgr-setup），
+# 服务 seclabel 同为 pioneer；执行文件不落在 pioneer_exec 时 init 的 exec 检查
+# 直接 127，/mnt/run/adb_net 与 mgmt0 都不会创建，adbd 随之 setns 失败。
+/vendor/bin/cph-netmgr-setup  u:object_r:pioneer_exec:s0

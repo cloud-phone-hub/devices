@@ -1,0 +1,18 @@
+[package]
+name = "service_daemon"
+description = "Guest-side daemon for cloud-phone-hub VMs (property fixups, host channel)"
+edition = "2021"
+
+[[bin]]
+name = "service_daemon"
+path = "src/main.rs"
+
+[dependencies]
+resetprop = { path = "../resetprop" }
+serde_json = "1"
+# quickjs 嵌入脚本引擎（C 源码随 crate 编译，交叉编译复用 guest-main 的
+# CC_aarch64_linux_android 环境）。default-features 关闭 macros/parallel 等
+# 非必需组件，保持二进制最小。
+# bindgen：rquickjs-sys 未预置 aarch64-linux-android 绑定，需构建期生成
+# （宿主 libclang + BINDGEN_EXTRA_CLANG_ARGS 指向 NDK sysroot）。
+rquickjs = { version = "0.9", default-features = false, features = ["bindgen"] }

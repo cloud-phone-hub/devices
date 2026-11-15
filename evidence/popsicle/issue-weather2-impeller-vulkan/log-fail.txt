@@ -1,0 +1,225 @@
+# 失败侧证据：popsicle 天气 Impeller/Vulkan 无可用设备（实例 21）
+
+采集手段：宿主 `out/qemu/dist/darwin/bin/adb -s 127.0.0.1:5911`（会话期可用），
+长输出走 `engine/out/tmp/chsh.sh '<cmd>'`（`/api/channel/cmd` 的 root shell）。
+原始全量日志 2829 行，本文件只保留判定链所需的连续片段。
+
+---
+
+## 1. 天气失败链（2026-11-03 19:36，从桌面图标启动；pid 31440）
+
+```
+11-03 19:36:27.871 I/flutter (31440): [IMPORTANT:flutter/shell/common/shell.cc(427)]  debug info in CreateWithSnapshot
+...
+11-03 19:36:27.899 E/flutter (31440): [ERROR:flutter/impeller/renderer/backend/vulkan/capabilities_vk.cc(274)] Impeller validation: Device does not support required extension: VK_KHR_swapchain
+11-03 19:36:27.899 E/flutter (31440): [ERROR:flutter/impeller/renderer/backend/vulkan/capabilities_vk.cc(310)] Impeller validation: Device not suitable since required extensions are not supported.
+11-03 19:36:27.899 E/flutter (31440): [ERROR:flutter/impeller/renderer/backend/vulkan/capabilities_vk.cc(393)] Impeller validation: Device doesn't support the required queues.
+11-03 19:36:27.899 E/flutter (31440): [ERROR:flutter/impeller/renderer/backend/vulkan/context_vk.cc(292)] Impeller validation: No valid Vulkan device found.
+11-03 19:36:27.906 I/flutter (31440): [IMPORTANT:flutter/impeller/renderer/backend/vulkan/context_vk.cc(146)] DestroyThreadLocalPools begin
+11-03 19:36:27.906 I/flutter (31440): [IMPORTANT:flutter/impeller/renderer/backend/vulkan/context_vk.cc(148)] DestroyThreadLocalPools end
+11-03 19:36:27.912 I/flutter (31440): [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(70)] Using the Impeller rendering backend (Vulkan).
+11-03 19:36:27.912 E/flutter (31440): [ERROR:flutter/shell/platform/android/platform_view_android.cc(168)] Could not create surface from invalid Android context.
+11-03 19:36:27.912 E/flutter (31440): [ERROR:flutter/shell/platform/android/android_shell_holder.cc(136)] Created PlatformViewAndroid is invalid
+11-03 19:36:27.912 E/flutter (31440): [ERROR:flutter/shell/common/shell.cc(251)] on_create_platform_view return null
+11-03 19:36:27.912 I/flutter (31440): [IMPORTANT:flutter/shell/common/shell.cc(533)] Shell Destory begin
+11-03 19:36:27.912 I/flutter (31440): [IMPORTANT:flutter/shell/common/shell.cc(553)] Shell Destory platiso_latch end
+11-03 19:36:27.913 I/flutter (31440): [IMPORTANT:flutter/shell/common/shell.cc(562)] Shell Destory ui_latch end
+11-03 19:36:27.913 I/flutter (31440): [IMPORTANT:flutter/shell/common/shell.cc(573)] Shell Destory gpu_latch end
+11-03 19:36:27.914 I/flutter (31440): [IMPORTANT:flutter/shell/common/shell.cc(588)] Shell Destory io_latch end
+11-03 19:36:27.914 I/flutter (31440): [IMPORTANT:flutter/shell/common/shell.cc(609)] Shell Destory all end
+11-03 19:36:27.916 E/weather2(31440): <m.miui.weather2-hyper_os_flutter_backend::flutter_scene:290>: Create engine failed, just finish
+11-03 19:36:27.916 D/hyos_spawner(31440): hyper_os_ui_private::scene::ui_delegate: finish_activity_v1() called with: token 12970367464694153424, result_code 0, result_data Intent { action: None, ... }, finish_task 0
+```
+
+同一时刻任务栈侧确认「起来过又退出」（`Recents` 拿到的 task 21，`numActivities=1`）：
+
+```
+11-03 19:36:27.912 W/RecentsModel( 3714): getRunningTask   taskInfo=TaskInfo{userId=0 taskId=21 effectiveUid=10295
+  baseIntent=Intent { flg=0x10200000 cmp=com.miui.weather2/.ActivityWeatherMain }
+  baseActivity=ComponentInfo{com.miui.weather2/com.miui.weather2.ActivityWeatherMain}
+  topActivity=ComponentInfo{com.miui.weather2/com.miui.weather2.ActivityWeatherMain} ... numActivities=1 ...}
+```
+
+进程侧没有 tombstone、没有 ANR——只有上面这条主动 `finish`。
+
+---
+
+## 2. 当前图形属性快照（2026-11-03 21:0x，冷启动后）
+
+```
+P: sw=0 egl=mesa vk=virtio gfx=mesa gpu=virtio_gpu ogles=196610 usevk=false
+172:persist.sys.force_sw_gles=1
+```
+
+（`sw=0` 是本轮实验值，`/system/build.prop:172` 的 `1` 才是基座口径；收尾已把运行时值改回 `1`。）
+
+| 键 | 值 | 出处 |
+| :--- | :--- | :--- |
+| `persist.sys.force_sw_gles` | `1`（运行时被本轮实验改成过 `0`） | lineage 基座 `/system/build.prop:172` 写死 |
+| `ro.hardware.egl` | `mesa` | 清单 `vendor.build-prop-sets`（例外新增三件图形选择键之一） |
+| `ro.hardware.vulkan` | `virtio` | 同上 |
+| `ro.vendor.graphics` / `.gpu` | `mesa` / `virtio_gpu` | 官方 vendor build.prop |
+| `ro.opengles.version` | `196610`（3.2） | 官方 vendor build.prop |
+| `ro.hwui.use_vulkan` | `false` | 清单 `vendor.build-prop-sets`（沿用 gold 的结论） |
+
+清单现状（`baselines/popsicle_images_OS3.0.319.0.WPBCNXM_*.json`）：
+
+```
+vendor.build-prop-sets.ro.hwui.use_vulkan = 'false'
+vendor.build-prop-sets.ro.hardware.egl     = 'mesa'
+```
+
+`forced` 置 `0` 后冷启动，天气失败链**逐字不变**——说明与 GLES 走硬/走软无关。
+
+---
+
+## 3. EGL / Mesa 加载现象（21:02，`debug.egl.trace=1`，起 `com.android.settings`）
+
+```
+11-03 21:02:41.113  9353 10361 I [minigbm:virtgpu_init(50)]: virtgpu backend not enabling VIRTGPU_PARAM_CREATE_GUEST_HANDLE
+11-03 21:02:41.113  9353 10361 I [minigbm:virgl_get_caps(606)]: Supported CAPSET IDs: 22.
+11-03 21:02:41.113  9353 10361 I [minigbm:virgl_add_combination(399)]: Skipping unsupported combination format:540422468
+11-03 21:02:41.113  9353 10361 I [minigbm:init_try_node_path(110)]: Loaded driver virtgpu_virgl on path /dev/dri/renderD128
+W/EGL-MAIN( 9353): failed to get driver name for fd -1
+W/EGL-MAIN( 9353): MESA-LOADER: failed to retrieve device information
+W/EGL-MAIN( 9353): failed to get driver name for fd -1
+I/libEGL  ( 9353): shader cache num entries: 30
+```
+
+同一进程里加载的图形库（`/proc/9353/maps`）——**mesa 三件套来自 patch 层，不是 lineage 基座**：
+
+```
+/mnt/vendorpatch/vendor/lib64/egl/libEGL_mesa.so
+/mnt/vendorpatch/vendor/lib64/egl/libGLESv1_CM_mesa.so
+/mnt/vendorpatch/vendor/lib64/egl/libGLESv2_mesa.so
+/mnt/vendorpatch/vendor/lib64/libgallium_dri.so
+/system/lib64/libEGL.so
+/system/lib64/libGLESv1_CM.so
+/system/lib64/libGLESv2.so
+/system/lib64/libGLESv3.so
+```
+
+**注意**：这几行 `MESA-LOADER` 曾被读成「回落 llvmpipe」，本案实测**不成立**：
+
+```
+== pid 9353 (com.android.settings)   llvmpipe/swrast 线程=0   libLLVM 映射=0
+lrwx------ 1 root root 64 21:02 167 -> /dev/dri/renderD128
+lrwx------ 1 root root 64 21:02 168 -> /dev/dri/renderD128
+lrwx------ 1 root root 64 21:02 169 -> /dev/dri/renderD128
+lrwx------ 1 root root 64 21:02 170 -> /dev/dri/renderD128
+== pid 603 (surfaceflinger)          llvmpipe/swrast 线程=0   libLLVM 映射=0   线程数=36
+   9 RenderEngine / 2 passBlur / ... （无 llvmpipe-*）
+```
+
+即：进程确实拿到了 render 节点 fd、驱动也加载了，只是 `loader` 那次探测的 fd 是 `-1`。
+
+---
+
+## 4. 宿主侧探针
+
+### 4.1 MoltenVK 的扩展清单（没有 fd 语义）
+
+```
+$ M=out/qemu/dist/darwin/lib/libMoltenVK.dylib && ls -l $M
+-rw-r--r--  1 cuimingqiang  staff  5328032 10 27 22:22 out/qemu/dist/darwin/lib/libMoltenVK.dylib
+
+$ strings -a $M | grep -c '^VK_[A-Za-z0-9_]*_[a-z0-9_]*$'
+158
+
+$ strings -a $M | grep -E '^VK_.*_fd$' | sort -u
+（空 —— VK_KHR_external_semaphore_fd / _fence_fd / _memory_fd 一个都没有）
+
+$ strings -a $M | grep -E '^VK_(EXT_external_memory_metal|EXT_metal_objects|EXT_metal_surface|EXT_headless_surface)$' | sort -u
+VK_EXT_external_memory_metal
+VK_EXT_headless_surface
+VK_EXT_metal_objects
+VK_EXT_metal_surface
+```
+
+### 4.2 QEMU 图形设备参数（实例 21）
+
+```
+-device virtio-gpu-gl-pci,blob=on,hostmem=256M,venus=on,edid=on,xres=1200,yres=2608,xmax=1200,ymax=2608,...
+-display cgl-headless,gl=on,readback=on
+-vnc 127.0.0.1:12,websocket=5913,share=force-shared
+```
+
+即 GL(virgl) 由 QEMU 进程内的 cgl-headless GL 上下文执行；`virgl_render_server` 只服务 venus。
+
+### 4.3 宿主 CPU 账（不能用来判断 GL 软硬）
+
+```
+== render server ==
+  PID ELAPSED      TIME  %CPU COMMAND
+91824   23:47   0:00.09   0.0 .../virgl_render_server --socket-fd 71
+
+== qemu ==
+  PID ELAPSED      TIME  %CPU
+91822   23:48  15:29.53 361.6
+```
+
+`virgl_render_server` 23 分钟只 0.09 s → **venus 没被用过**（与 GL 无关）。
+qemu 361% 里既有 guest 计算也可能有 host GL，二者不可分辨。
+
+### 4.4 venus 服务端日志噪声
+
+```
+Nov  3 20:46:32  virgl_render_server[91824] <Debug>: failed to receive framed message: truncated or empty
+Nov  3 20:47:15  ...  （20:46–21:02 共 8 次）
+```
+
+---
+
+## 5. 源码级判据
+
+### 5.1 guest Mesa 25.3.3 `src/virtio/vulkan/vn_physical_device.c`
+
+```c
+/* 1099-1117：只有 renderer 宣告 KHR_external_semaphore_fd 才去问 host */
+if (physical_dev->renderer_extensions.KHR_external_semaphore_fd) {
+   ...
+   vn_call_vkGetPhysicalDeviceExternalSemaphoreProperties(...);
+   physical_dev->renderer_sync_fd.semaphore_exportable = ...
+   physical_dev->renderer_sync_fd.semaphore_importable = ...
+}
+
+/* 1163-1165：ANDROID_native_buffer 需要 semaphore import + fence export */
+if (physical_dev->renderer_sync_fd.semaphore_importable &&
+    physical_dev->renderer_sync_fd.fence_exportable)
+   exts->ANDROID_native_buffer = true;
+
+/* 1175-1181：整套 WSI 只要 semaphore_importable */
+if (physical_dev->renderer_sync_fd.semaphore_importable) {
+   exts->KHR_incremental_present = true;
+   exts->KHR_present_id = true;
+   ...
+   exts->KHR_swapchain = true;
+   ...
+}
+```
+
+### 5.2 venus 服务端 `/Volumes/work/cloud-droid-hub/third-party/virglrenderer/src/venus`
+
+```c
+/* vkr_common.c:17 静态表里确实写了 true（119-121 行） */
+.KHR_external_fence_fd = true,
+.KHR_external_memory_fd = true,
+.KHR_external_semaphore_fd = true,
+
+/* 但 vkr_common.c:241 vkr_extension_table_init() 是按 host 枚举结果置位 */
+memset(table, 0, sizeof(*table));
+for (uint32_t i = 0; i < count; i++) {
+   const int32_t index = vn_info_extension_index(exts[i]);
+   if (index >= 0)
+      table->enabled[index] = true;
+}
+```
+
+host 枚举（MoltenVK）里没有 `*_fd` → venus 不转告 guest → guest `semaphore_importable=false`
+→ `KHR_swapchain` 永不出现。
+
+### 5.3 队列要求（第二道闸）
+
+`VulkanManager.cpp:234-245` `LOG_ALWAYS_FATAL_IF(queueProps[i].queueCount < kRequestedQueueCount)`，
+`kRequestedQueueCount=2`；venus/MoltenVK 每 family 只有 1 队列（gold 实测，见
+`../../gold/issue-boot-to-launcher-vulkan/log-fail.txt` 的 `vkqueues.py` 输出）。

@@ -1,0 +1,90 @@
+=== 实机 shell 改后验证 (batch2-post.log) ===
+=== boot & sys ===
+sys.boot_completed=[1]
+tombstones=[0]
+=== stat -f /data ===
+  File: "/data"
+    ID: 0000fd3000000000 Namelen: 255    Type: f2fs
+Block Size: 4096    Fundamental block size: 4096
+Blocks: Total: 28079608	Free: 24459021	Available: 24324804
+Inodes: Total: 13511677	Free: 13495824
+=== /proc/mounts (data / metadata / tmpfs) ===
+tmpfs /dev tmpfs rw,seclabel,nosuid,relatime,size=3863628k,nr_inodes=965907,mode=755 0 0
+tmpfs /mnt tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755,gid=1000 0 0
+tmpfs /mnt/installer tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755,gid=1000 0 0
+tmpfs /mnt/androidwritable tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755,gid=1000 0 0
+tmpfs /apex tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755 0 0
+tmpfs /bootstrap-apex tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755 0 0
+tmpfs /linkerconfig tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755 0 0
+tmpfs /bootstrap-apex/apex-info-list.xml tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755 0 0
+tmpfs /tmp tmpfs rw,seclabel,relatime,size=3863628k,nr_inodes=965907 0 0
+/dev/block/vda5 /metadata ext4 rw,seclabel,nosuid,nodev,noatime,discard 0 0
+tmpfs /storage tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755,gid=1000 0 0
+/dev/block/dm-48 /data f2fs rw,lazytime,seclabel,nosuid,nodev,noatime,background_gc=on,gc_merge,discard,discard_unit=block,user_xattr,inline_xattr,acl,inline_data,inline_dentry,noflush_merge,barrier,extent_cache,mode=adaptive,active_logs=6,reserve_root=134217,reserve_node=0,resuid=0,resgid=1065,alloc_mode=default,checkpoint_merge,fsync_mode=nobarrier,memory=normal,errors=continue,lookup_mode=perf 0 0
+tmpfs /linkerconfig tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755 0 0
+tmpfs /data_mirror tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=700,gid=1000 0 0
+tmpfs /apex/apex-info-list.xml tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,size=3863628k,nr_inodes=965907,mode=755 0 0
+=== props ===
+vold.has_compress=[0]
+dalvik.vm.background-dex2oat-threads=[4]
+init.svc.cppreopts=[]
+
+=== diff/storage.json summary (post) ===
+{"identity": 31, "capability": 0, "state": 88, "availability": 0, "fatal": 31}
+remaining .blocks/.files/.totalMb count: 0
+remaining /data fsType diffs in proc: 1
+remaining vold.has_compress in build_props: []
+=== /metadata & /data superOptions (post proc diff) ===
+[
+ {
+  "level": "state",
+  "path": "mountinfo.entries[mountPoint=/data].dev",
+  "base": "254:81",
+  "target": "253:48"
+ },
+ {
+  "level": "identity",
+  "path": "mountinfo.entries[mountPoint=/data].source",
+  "base": "/dev/block/dm-81",
+  "target": "/dev/block/dm-48"
+ },
+ {
+  "level": "capability",
+  "path": "mountinfo.entries[mountPoint=/data].superOptions",
+  "base": "rw,lazytime,seclabel,background_gc=on,gc_merge,discard,discard_unit=block,user_xattr,inline_xattr,acl,inline_data,inline_dentry,noflush_merge,barrier,extent_cache,mode=adaptive,active_logs=6,reserve_root=134217,reserve_node=0,resuid=0,resgid=1065,inlinecrypt,alloc_mode=default,checkpoint_merge,fsync_mode=nobarrier,memory=normal,errors=continue,lookup_mode=perf",
+  "target": "rw,lazytime,seclabel,background_gc=on,gc_merge,discard,discard_unit=block,user_xattr,inline_xattr,acl,inline_data,inline_dentry,noflush_merge,barrier,extent_cache,mode=adaptive,active_logs=6,reserve_root=134217,reserve_node=0,resuid=0,resgid=1065,alloc_mode=default,checkpoint_merge,fsync_mode=nobarrier,memory=normal,errors=continue,lookup_mode=perf"
+ },
+ {
+  "level": "state",
+  "path": "mountinfo.entries[mountPoint=/metadata].dev",
+  "base": "8:46",
+  "target": "254:5"
+ },
+ {
+  "level": "identity",
+  "path": "mountinfo.entries[mountPoint=/metadata].source",
+  "base": "/dev/block/sdc14",
+  "target": "/dev/block/vda5"
+ }
+]
+=== partitionFsid (post ids diff) ===
+[
+ {
+  "level": "capability",
+  "path": "partitionFsid.cache",
+  "base": "65105",
+  "target": "64816"
+ },
+ {
+  "level": "capability",
+  "path": "partitionFsid.data",
+  "base": "65105",
+  "target": "64816"
+ },
+ {
+  "level": "capability",
+  "path": "partitionFsid.system",
+  "base": "65057",
+  "target": "64770"
+ }
+]

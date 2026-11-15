@@ -1,0 +1,80 @@
+# 通过证据 1：最终镜像（r2d）稳定，gsm 两键经纯 property_service 通道写入（qemu.log）
+# Kernel panic 次数: 0（冷启动 + adb reboot 全程；对照直写版单日志 32 次）
+# daemon kmsg（svc 通道，无 reset/重建）：
+3183:[   14.429010][  T693] gsm.version.baseband=g5123b-135085-240517-B-11857288（property_service）
+3188:[   14.429102][  T693] gsm.version.ril-impl=Samsung S.LSI Vendor RIL 5300 V2.3 Build 2024-08-06 14:04:21（property_service）
+
+# 通过证据 2：guest shell getprop 实测（adb -s 127.0.0.1:5911，2026-11-13）
+$ getprop sys.boot_completed / gsm.version.baseband / gsm.version.ril-impl / ro.boot.hardware.sku / ro.boot.bootloader / ro.boot.chipid / ro.boot.cpuid / ro.boot.boot_devices / persist.sys.locale / ro.boot.theme
+1
+g5123b-135085-240517-B-11857288
+Samsung S.LSI Vendor RIL 5300 V2.3 Build 2024-08-06 14:04:21
+G9S9B
+slider-14.5-12088207
+
+
+14700000.ufs
+en-US
+1
+# chipid/cpuid 为空行 = MTK 闸门生效（gs101 不注入）
+
+# vendor.mali.* 5 键（shell 视角）：
+[vendor.mali.base_protected_max_core_count]: [3]
+[vendor.mali.base_protected_tls_max]: [67108864]
+[vendor.mali.debug.config]: [/vendor/etc/mali/debug.config]
+[vendor.mali.platform.config]: [/vendor/etc/mali/platform.config]
+[vendor.mali.platform_agt_frequency_khz]: [24576]
+
+# 通过证据 3：checker（app 身份）视角 mali 可见性（run-00004-merged properties.getprop）
+# b8f75582353b320a（真机）: mali键数 5, gsm.baseband=g5123b-135085-240517-B-11857288
+# 02f9d9f965732349-cloud（云机）: mali键数 5, gsm.baseband=g5123b-135085-240517-B-11857288
+
+# 通过证据 4：同批 63 项×2 设备复测收敛（run-00004-merged，126/126 succeeded）
+# 第一轮 25291/41898 → 第二轮 24213/41871，净 -1078
+总差异键: 24213 / 41871
+按功能点（差异>0）:
+  android.feature: 113/569
+  android.services: 370/664
+  android.systemservice: 1/216
+  app.list: 1909/3112
+  camera.camera_new: 11248/12570
+  camera.camera_old: 122/132
+  dev.native_so: 1/8
+  dev.test_mount: 1094/1557
+  dev.test_vendor: 1080/1177
+  files.app_paths: 3552/9072
+  files.storage: 151/283
+  files.vendor_file: 2985/4392
+  hardware.battery: 6/20
+  hardware.gles: 1/6
+  hardware.inputs: 10/22
+  hardware.meminfo: 1/2
+  id.android_id: 1/2
+  id.drm_uuid: 1/2
+  id.gaid: 1/2
+  id.gsf_android_id: 1/2
+  id.partition_fsid: 2/6
+  id.settings_android_id: 1/2
+  id.systemui_maps: 1/2
+  jvm.debugmemory: 126/340
+  jvm.env: 2/21
+  jvm.memory: 1/4
+  network.bluetooth: 1/4
+  network.cell: 9/19
+  network.connectivity: 5/18
+  network.ifaces: 35/69
+  network.wifi: 6/10
+  network.wifilist: 214/216
+  proc.maps: 1/2
+  proc.mountinfo: 1/2
+  proc.mounts: 1/2
+  proc.mountstats: 1/2
+  properties.build: 1/18
+  properties.getprop: 410/897
+  properties.native: 489/1271
+  screen.display: 10/88
+  screen.resource: 2/14
+  settings.cmd: 3/5
+  settings.provider: 140/392
+  sim.subscription: 39/43
+  sim.telephony: 64/1133

@@ -1,0 +1,63 @@
+=== 1. 修复前 05_build_vendor_boot 阶段日志（merge-v9 未按 super 实际分区集过滤） ===
+==> 板级名: mt6991
+    生成: 2026-11-11 21:02，算法 fstab-rev: merge-v9
+    厂商 fstab: first_stage_ramdisk/fstab.mt6991（out/roms/realme/RMX6688/15-AP3A.240617.008-20250825/vendor_boot.img）
+    lineage fstab: first_stage_ramdisk/system/etc/fstab.virtio（out/roms/lineage/lineage-22.2/vendor_boot_a.img）
+    合并: 厂商 112 行、lineage 28 行；保留 46、覆盖 12、追加 14、丢弃 54、跳过逻辑分区 14
+    云机分区集: 9 个（BIOS, EFI, boot_a, firmware, metadata, misc, persist, super, vendor_boot_a）
+==> fstab: out/devices/realme/RMX6688/15-AP3A.240617.008-20250825/vendor_boot/fstab.mt6991（vendor_boot 提取合并）
+
+=== 2. 官方 OTA super/.super-layout.json 实际包含的 16 个逻辑分区（无 my_company_a / my_preload_a） ===
+Partitions in .super-layout.json:
+  - my_bigball_a
+  - my_carrier_a
+  - my_engineering_a
+  - my_heytap_a
+  - my_manifest_a
+  - my_product_a
+  - my_region_a
+  - my_stock_a
+  - odm_a
+  - odm_dlkm_a
+  - product_a
+  - system_a
+  - system_dlkm_a
+  - system_ext_a
+  - vendor_a
+  - vendor_dlkm_a
+
+=== 3. 修复前合并出的 fstab.mt6991（残留缺失逻辑分区 my_company / my_preload 及其 bind 行） ===
+# fstab-rev: merge-v9
+...
+my_engineering /mnt/vendor/my_engineering ext4 ro,barrier=1 wait,slotselect,logical,first_stage_mount
+my_engineering /mnt/vendor/my_engineering erofs ro wait,slotselect,logical,first_stage_mount
+my_company /mnt/vendor/my_company ext4 ro,barrier=1 wait,slotselect,logical,first_stage_mount
+my_company /mnt/vendor/my_company erofs ro wait,slotselect,logical,first_stage_mount
+...
+my_stock /mnt/vendor/my_stock ext4 ro,barrier=1 wait,slotselect,logical,first_stage_mount
+my_stock /mnt/vendor/my_stock erofs ro wait,slotselect,logical,first_stage_mount
+my_preload /mnt/vendor/my_preload ext4 ro,barrier=1 wait,slotselect,logical,first_stage_mount
+my_preload /mnt/vendor/my_preload erofs ro wait,slotselect,logical,first_stage_mount
+...
+/mnt/vendor/my_company /my_company none ro,bind wait,nofail
+...
+/mnt/vendor/my_preload /my_preload none ro,bind wait,nofail
+
+=== 4. 修复前实例冷启动 qemu.log（first_stage_mount 在 1.15s~1.17s 触发 InitFatalReboot） ===
+[    0.957769][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-3,target=/system,type=erofs)=0: Success
+[    0.964691][    T1] init: Switching root to '/system'
+[    0.982043][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-4,target=/system_ext,type=erofs)=0: Success
+[    1.000850][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-6,target=/vendor,type=erofs)=0: Success
+[    1.013757][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-2,target=/product,type=erofs)=0: Success
+[    1.031791][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-5,target=/odm,type=erofs)=0: Success
+[    1.047530][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-1,target=/vendor_dlkm,type=erofs)=0: Success
+[    1.069681][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-7,target=/odm_dlkm,type=erofs)=0: Success
+[    1.095442][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-0,target=/system_dlkm,type=erofs)=0: Success
+[    1.108646][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-8,target=/mnt/vendor/my_product,type=erofs)=0: Success
+[    1.145160][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-9,target=/mnt/vendor/my_engineering,type=erofs)=0: Success
+[    1.150598][    T1] init: DM_DEV_STATUS failed for my_company_a: No such device or address
+[    1.151479][    T1] init: Failed to mount /mnt/vendor/my_company: No such device or address
+[    1.160358][    T1] init: Failed to mount required partitions early ...
+[    1.179472][    T1] init: InitFatalReboot: signal 6
+[    1.232556][    T1] init: Reboot ending, jumping to kernel
+[    1.847217][    T1] reboot: Restarting system with command 'bootloader'

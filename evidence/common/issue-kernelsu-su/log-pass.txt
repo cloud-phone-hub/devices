@@ -1,0 +1,69 @@
+# 通过：allow_shell=1（经 modules.options）+ /data/adb/ksud 就位后，adb shell(uid 2000) 可 su 到 root
+#
+# 取样：云机实例 gold_cn_OS3.0.10.0.VNQCNXM/3（2026-11-02 20:06 重启，pid 1958）
+#   - 05 重打 vendor_boot（20:04）→ 11 原位刷新 vendor_boot_a/b → /data 走实例 writable 层不变
+#   - adb 一律 -s 127.0.0.1:5911（hostfwd 5911→guest 5555）
+
+## 一、装载参数（qemu.log）
+
+[    0.152519][    T1] init: Loading module /lib/modules/6.6.127-4k-cdh/kernelsu.ko with args 'allow_shell=1'
+[    0.155118][    T1] KernelSU: welcome to KernelSU version 32680, package name me.weishu.kernelsu
+[    0.156957][    T1] KernelSU: ksym: 61 symbols resolved (56 funcs via trampoline, 5 data)
+[    0.157204][    T1] KernelSU: shell is allowed at init!
+[    0.157217][    T1] KernelSU: sys_call_table=0xffffffecd6e60c98
+[    0.159070][    T1] KernelSU: dispatcher installed at slot 42
+[    0.169148][    T1] KernelSU: hook_manager: sys_enter tracepoint registered
+
+## 二、05 的注入口径（模块参数走 modules.options，不是 modules.load 行内）
+
+$ cdh device build gold --only 05_build_vendor_boot   # 实跑节选
+==> first-stage 模块: [first-stage] cdh_redirect.ko（39736 B） + kernelsu.ko（366552 B）
+    -> lib/modules/6.6.127-4k-cdh/（加载参数：options kernelsu allow_shell=1）
+    + lib/modules/cdh_redirect.rules（2900 B）
+    fragment0 platform: 4295032 B -> 4429511 B（删 fstab 3 项，注入 first_stage_ramdisk/system/etc/fstab.mt6833，
+    注入模块 6.6.127-4k-cdh、6.6.127-4k-cdh/cdh_redirect.ko、6.6.127-4k-cdh/kernelsu.ko、
+    6.6.127-4k-cdh/modules.load、6.6.127-4k-cdh/modules.dep、6.6.127-4k-cdh/modules.options、cdh_redirect.rules）
+    缓存配方: vboot-ab64d08b8d7d -> vboot-e3d0c0f93d14（参数进配方，不命中旧产物）
+
+## 三、sucompat 内核日志（同一个 qemu.log，按 su 触发时刻）
+
+[   99.007779][ T9435] KernelSU: faccessat su->ksud!        # PATH 查找 /system/bin/su
+[   99.008324][ T9438] KernelSU: sys_execve su found        # 真要 exec 了 → 改写成 /data/adb/ksud
+[  119.224688][T10472] KernelSU: newfstatat su->ksud!       # command -v su
+[  119.224830][T10472] KernelSU: faccessat su->ksud!
+[  119.225276][T10474] KernelSU: sys_execve su found
+
+## 四、实测：adb shell（uid 2000）
+
+$ adb -s 127.0.0.1:5911 shell 'id; echo ---; command -v su; echo ---; su -c id; echo exit=$?'
+uid=2000(shell) gid=2000(shell) groups=2000(shell),1004(input),1007(log),1011(adb),... context=u:r:pioneer:s0
+---
+/system/bin/su          # 注意：这个文件在盘上并不存在，是 sucompat 把 stat 改写到了 /data/adb/ksud
+---
+uid=0(root) gid=0(root) groups=0(root) context=u:r:ksu:s0
+exit=0
+
+$ adb -s 127.0.0.1:5911 shell 'su -c "id; getenforce; ls /data/adb; grep -c . /proc/modules"'
+uid=0(root) gid=0(root) groups=0(root) context=u:r:ksu:s0
+Enforcing
+ksu
+ksud
+9
+
+$ adb -s 127.0.0.1:5911 shell 'su 10123 -c id'      # su 到指定 uid
+uid=10123(u0_a123) gid=10123(u0_a123) groups=10123(u0_a123) context=u:r:ksu:s0
+
+## 五、userspace 半边：ksud（自建，v3.3.1，uapi 5，与模块同源）
+
+$ /data/adb/ksud --version
+ksud 3.3.1 (uapi: 5)
+
+$ ls -lZ /data/adb/ksud
+-rwxr-xr-x 1 root root u:object_r:ksu_file:s0 4937464 /data/adb/ksud
+
+# ksud_file 是内核 apply_kernelsu_rules() 建的「无约束 file_type」：
+#   ksu_type(db, KERNEL_SU_FILE=ksu_file, "file_type");
+#   ksu_allow(db, "domain", KERNEL_SU_FILE, ALL, ALL);
+# 所以任何域都能用它；但直接 exec 仍会被拒（不经文件名改写时落不到这个 cred 上）：
+$ adb -s 127.0.0.1:5911 shell '/data/adb/ksud --version'
+/system/bin/sh: /data/adb/ksud: inaccessible or not found

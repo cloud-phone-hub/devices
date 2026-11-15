@@ -1,0 +1,83 @@
+# log-fail — 变更前实测（2026-11-03）
+
+设备：xiaomi/gold，build-id `OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694`
+旧副本保留在 `out/tmp/manifest-backup-20261103-125146/xiaomi/gold/vendor/build.prop`
+（已被原件覆盖，未纳入版本库）。
+
+## 1) 机型静态树副本 vs 厂商原件
+
+```console
+$ cd /Volumes/work/cloud-phone-hub/engine
+$ wc -l out/tmp/manifest-backup-20261103-125146/xiaomi/gold/vendor/build.prop
+     774 out/tmp/manifest-backup-20261103-125146/xiaomi/gold/vendor/build.prop
+$ md5 -q out/tmp/manifest-backup-20261103-125146/xiaomi/gold/vendor/build.prop
+c44f5ee2f0aec9c0c6a838bc3805e91b
+
+$ dump.erofs --cat --path=/build.prop \
+    out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/super/vendor_a.img > out/tmp/vbp-gold-official.prop
+$ wc -l out/tmp/vbp-gold-official.prop ; md5 -q out/tmp/vbp-gold-official.prop
+     767 out/tmp/vbp-gold-official.prop
+a23c86172e099926e54bf537ff302173
+
+$ diff --unified=1 out/tmp/vbp-gold-official.prop \
+    out/tmp/manifest-backup-20261103-125146/xiaomi/gold/vendor/build.prop
+--- out/tmp/vbp-gold-official.prop      2026-11-03 21:06:10
++++ .../manifest-backup-20261103-125146/xiaomi/gold/vendor/build.prop      2026-11-03 12:51:46
+@@ -10,4 +10,4 @@
+ ro.product.vendor.name=vnd_gold
+-ro.vendor.product.cpu.abilist=arm64-v8a,armeabi-v7a,armeabi
+-ro.vendor.product.cpu.abilist32=armeabi-v7a,armeabi
++ro.vendor.product.cpu.abilist=arm64-v8a
++ro.vendor.product.cpu.abilist32=
+ ro.vendor.product.cpu.abilist64=arm64-v8a
+@@ -49,3 +49,3 @@
+ ro.board.platform=mt6833
+-ro.hwui.use_vulkan=true
++ro.hwui.use_vulkan=false
+ ro.build.ab_update=true
+@@ -762,2 +762,9 @@
+ persist.sys.miui.camera.boost.killAdj_threshold=400:250:100:50
++
++# cdh: 本机跑在 QEMU 上（无 ro.kernel.qemu，Build.isEmulator() 为 false），
++# Watchdog 的 30s 硬超时太紧 —— 一次 IO 抖动（实测 StorageManagerS 调
++# mediaserver 的事务卡 118s）就会触发 BinderThreadMonitor 超时，杀掉
++# system_server，表现为周期性黑屏与点击卡顿。AOSP 官方 emulator 产品同样
++# 在 system.prop 里设 10。仅放大超时阈值，不改变业务逻辑。
++ro.hw_timeout_multiplier=10
+ # end of file
+```
+
+## 2) 基线台账里没有这些改动
+
+```console
+$ python3 - <<'EOF'
+import json
+f='out/tmp/manifest-backup-20261103-125146/xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.json'
+v=json.load(open(f))['vendor']; s=v['build-prop-sets']
+print('sets', len(s), 'unsets', len(v['build-prop-unsets']), 'note', v.get('note'))
+for k in ['ro.vendor.product.cpu.abilist','ro.vendor.product.cpu.abilist32',
+          'ro.vendor.product.cpu.abilist64','ro.hwui.use_vulkan','ro.hw_timeout_multiplier']:
+    print(' ', k, '->', s.get(k))
+EOF
+sets 15 unsets 1 note None
+  ro.vendor.product.cpu.abilist -> None
+  ro.vendor.product.cpu.abilist32 -> None
+  ro.vendor.product.cpu.abilist64 -> None
+  ro.hwui.use_vulkan -> None
+  ro.hw_timeout_multiplier -> None
+```
+
+## 3) 旧路径：副本就是装配基底
+
+```go
+// assemble.go（变更前）
+allowedVendorFiles = map[string]bool{
+    "build.prop": true,   // ← 静态树副本会进装配树，覆盖步骤 2 从 lineage 带出的那份
+    "pci.ids":    true,
+}
+...
+applyVendorBuildProps(plan, stdout)   // ← 步骤 6 直接在被覆盖后的文件上打补丁
+```
+
+结论：`manifest/<vendor>/<device>/vendor/build.prop` 同时承担「厂商原件留档」与「装配基底」，
+本地改动写进去就生效、台账里查不到；一旦有人重新摘一遍原件，这些改动静默消失。

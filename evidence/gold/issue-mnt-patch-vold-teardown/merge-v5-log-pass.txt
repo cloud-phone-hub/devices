@@ -1,0 +1,80 @@
+# merge-v5 实测：patch 直接挂在 /mnt/vendor，boot 92.96 s
+
+> 说明：实例 38 的 runtime 目录（`out/core/daemon/runtime/gold_OS3.0.10.0.VNQCNXM/38/`）
+> 已清理，本文数据摘自当时的测量汇总。可复现路径见第 6 节（需先复活 merge-v5）。
+
+## 1. 产物身份
+
+patch.img  md5 f2a80ff1aac58a00c562bc749c2206e0
+           384 MiB（402653184 B）
+实例        gold_OS3.0.10.0.VNQCNXM/38（21:10 版）
+
+## 2. 挂载关系
+
+$ adb shell "cat /proc/self/mountinfo | grep -E ' /mnt/vendor| /vendor'"
+48 47 254:32 / /mnt/vendor ro,relatime - ext4 /dev/block/vdc
+
+# 解读：
+#   48            <- 本挂载的 mount ID
+#   47            <- 父挂载 ID（/mnt，first_stage tmpfs）
+#   254:32        <- 主:次设备号（vdc）
+#   /             <- 该 ext4 的根挂到 /mnt/vendor（没有子目录偏移）
+#   /dev/block/vdc<- 来源正是 patch.img
+
+$ adb shell "cat /proc/self/mountinfo | grep mi_ext"
+... /mnt/vendor/mi_ext ... parent 48
+
+# /mnt/vendor/mi_ext 的父挂载 ID = 48，即 patch 载体本身
+# —— 与 gold-15 的父子关系一致（mi_ext 以 vendor 为父）。
+
+## 3. 内核重定向目标已切到 /mnt/vendor
+
+$ adb shell "strings /dev/block/by-name/boot | grep -c '/mnt/vendor/vendor/etc'"
+1
+$ adb shell "strings /dev/block/by-name/boot | grep -c '/mnt/vendor/odm/etc/build.prop'"
+1
+# 当时只数了这两条（未数 /mnt/patch 的残留数）；因此「内核是否彻底不含旧前缀」
+# 没有直接证据，只能由 namei.c 源码侧（rules 表 target 全改）间接支撑。
+
+## 4. vendor 内容对齐 gold-15
+
+$ adb shell "ls /vendor/lib64/egl"
+（11 项）
+$ adb shell "ls /vendor/lib64/egl | grep -c libGLES_meow"
+0
+
+# 与 gold-15 的 egl 目录逐项一致：engine 不再带入自家 EGL 实现，
+# 完全使用 patch 内的 gold 图形栈。
+
+## 5. 起机
+
+sys.boot_completed = 1  @ 92.96 s
+
+$ adb shell "getprop ro.hardware.hwcomposer"
+drm
+$ adb shell "getprop ro.hardware.egl"
+meow
+$ adb shell "getprop ro.hardware.vulkan"
+mali
+
+显示栈：hwcomposer=drm + minigbm + mesa/virgl + vulkan.virtio
+# 注意此时仍然是 AIDL hwc3-service.drm
+
+## 6. 复现步骤（需先复活 merge-v5）
+
+# 1) fstab 合并版本递增并把 vdc 行前移：
+#    engine/build/05_build_vendor_boot/fstab.go
+#      fstabMergeRevision = "# fstab-rev: merge-v5"
+#      lineVdc = "/dev/block/vdc /mnt/vendor ext4 ro first_stage_mount"
+#      插入位置改为「第一个 logical first_stage_mount 之前」
+# 2) 内核 fs/namei.c rules 表 target 全部 /mnt/patch/... -> /mnt/vendor/...
+# 3) 删掉旧内核产物重编（增量构建会复用，见遗留 4）
+# 4) 重跑 05 -> 07 -> 09 -> 10 -> 11，核对 patch.img md5
+
+## 7. 遗留（当时未解决）
+
+# (a) /mnt/vendor/shared 挂载失败：QEMU 无 virtiofs/9p 后端
+# (b) adbd 仍偶发 offline（与 adbkey / pioneer 网络问题同源）
+# (c) ksys_umount() -EBUSY 保护保留（第二道防线）
+# (d) 内核增量构建会复用旧 boot.img，必须显式删产物
+# (e) boot 92.96 s 偏慢，未做单变量归因（两实例 8 GB 并发是主要嫌疑）

@@ -1,0 +1,17 @@
+{
+  "id": 28,
+  "buildId": "17-BP2A.250605.015-20260923",
+  "deviceId": 22,
+  "configId": 22,
+  "osVersion": "17-BP2A.250605.015-20260923",
+  "buildDate": "20260923",
+  "securityPatch": "2026-09-01",
+  "factoryTgz": "OPPO_FIND_X9s_PRO_PME110_17.0.0.102_CN01.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "与 ROM 版本强相关的官方/基线清单（vendor 重打包的属性与注入件标签来源）。build-prop-sets 逐条取自官方 vendor.img /build.prop（OPPO Find X9s Pro PME110 / MT6993 / ColorOS V17.0.0，erofs 分区 dump.erofs 直读），剔除图形栈选择/调优键与 trusty HAL 选择键，锁 64-only；selinux-labels = 注入树 security.selinux 标签（键 = 注入树内相对路径）。；cdh device sync 迁移自旧工作区基线，vendor 属性段保留原实测值。",
+    "osVersion": "17-BP2A.250605.015-20260923"
+  },
+  "updatedAt": "2026-11-06 02:47:41"
+}

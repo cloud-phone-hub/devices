@@ -1,0 +1,41 @@
+### popsicle 实例 7（成功态）取证 2026-11-03 06:43:21
+--- getprop ---
+1
+stopped
+canoe
+16
+
+--- topResumedActivity ---
+Failed to write while dumping service activity: Broken pipe
+      topResumedActivity=ActivityRecord{110598703 u0 com.miui.home/.launcher.Launcher t9}
+--- HAL service 注册（grep IHealth/IConsumerIr/IPower/IKeyMint） ---
+46	android.hardware.health.IHealth/default: [android.hardware.health.IHealth]
+47	android.hardware.ir.IConsumerIr/default: [android.hardware.ir.IConsumerIr]
+52	android.hardware.power.IPower/default: [android.hardware.power.IPower]
+53	android.hardware.security.keymint.IKeyMintDevice/default: [android.hardware.security.keymint.IKeyMintDevice]
+115	consumer_ir: [android.hardware.IConsumerIrService]
+159	healthconnect: [android.health.connect.aidl.IHealthConnectService]
+269	power: [android.os.IPowerManager]
+270	powerstats: [android.os.IPowerStatsService]
+--- keymint 通道与 FRP 节点权限 ---
+$ adb -s 127.0.0.1:5911 shell 'ls -lZ /dev/hvc3 /dev/hvc5 /dev/hvc7'
+crw-rw-rw- 1 system system u:object_r:keymaster_device:s0  229,   3 2026-11-03 06:37 /dev/hvc3
+crw-rw-rw- 1 system system u:object_r:console_device:s0    229,   5 2026-11-03 06:47 /dev/hvc5
+crw-rw-rw- 1 system system u:object_r:console_device:s0    229,   7 1970-01-01 08:00 /dev/hvc7
+(0666 来自 import /vendor/etc/ueventd.virt.rc：base ueventd.rc 只 import
+ ueventd.{board.platform,ro.hardware}.rc，不 import ueventd.virt.rc —— 缺入口时这三行
+ 回落内核默认 0600 root:root，keymint（user nobody）open 即 EACCES。
+ hvc3 已换上 keymaster_device 标签；hvc5/hvc7 仍是 console_device，属标签层面遗留，
+ 不影响开机（蓝牙走 hvc5 的 0666 打开）
+
+--- frp 节点 ---
+
+brw-rw---- 1 root system u:object_r:misc_block_device:s0  254,   3 2026-08-24 10:19 /dev/block/vda3
+
+/dev/block/bootdevice/by-name:
+total 0
+lrwxrwxrwx 1 root root u:object_r:block_device:s0  15 1970-01-01 08:00 frp -> /dev/block/vda3
+--- FATAL / PDB 计数 ---
+FATAL EXCEPTION IN SYSTEM PROCESS = 0
+PersistentDataBlock 异常 = 0
+keymint Permission denied = 0

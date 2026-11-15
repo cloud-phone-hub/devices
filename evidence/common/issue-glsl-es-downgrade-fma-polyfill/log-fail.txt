@@ -1,0 +1,8 @@
+# 修复前：Skia/HWUI GLSL ES 320/310 -> 300 降级未补充 fma() 导致编译失败与权限弹窗透明
+# 来源：engine/vendor/hardware/android.hardware.gpu/src/cdh_gl_strings.c（降级修改 #version 300 es 未注入 fma 宏）
+# 运行日志与现网表现（logcat -s skia:* & popup-before.jpg）：
+SkSL / GLSL ES 3.00 编译报错：
+  0:17(6): error: no function with name 'fma'
+  0:22(6): error: no function with name 'fma'
+触发进程：com.lbe.security.miui:ui（GrantPermissionsActivity 高德地图定位权限弹窗）、com.android.systemui
+视觉表现：Skia Elliptical RRect 圆角背景与底部按钮着色器编译失败被跳过，弹窗背景完全透明仅保留文字与位置示意方图，见 popup-before.jpg。

@@ -1,0 +1,93 @@
+# log-pass：m22 顶层 `kernel` 改 6.12 后 02 正常选树并编完（2026-11-04）
+
+改动只有一行数据：`manifest/flyme/m22/baselines/12.5.0.0A.json`
+`"kernel": "6.6"` → `"kernel": "6.12"`（另两台同口径错值一并改，见 solution §四）。
+
+--------------------------------------------------------------------------
+## 1. 02 选树与底包校验（`engine/out/tmp/m22-build.log` 第 186~194 行）
+
+    ==> [2/11] build_kernel  (02_build_kernel)
+      + 进程内调用 build_kernel
+    ==> 内核线: 6.12（清单 kernel；厂商固件内核 6.6，不同代）
+    ==> 内核源码: kernels/lineage-23-6.12（清单推导 lineage-23-6.12）
+    ==> 配置片段: build/02_build_kernel/lineage-kernel.config（本阶段默认）
+    ==> 内核基线: 底包 6.12.81-4k-g4f6bf47200d9（out/roms/lineage/lineage-23.2/boot_a.img），与本机 6.12.81-4k-cdh 同代
+        输入: 缓存配方 lineage-23-6.12-cdh-0531d3a1f739（输入哈希）
+        内核:       lineage-23-6.12（release 6.12.81-4k-cdh）
+
+对照改前同一行的输出：`==> 内核线: 6.6（清单 kernel；与厂商固件内核同代）` +
+`[err] … 无法确定内核源码 …`（第 121~122 行，见 log-fail.txt）。
+「不同代」这条分支本来就是为这种机型准备的，改前它被顶层字段挡在了外面。
+
+--------------------------------------------------------------------------
+## 2. 容器内全量编译通过（第 220~5968 行）
+
+    输入: ghcr.io/feicong/droid-ddk:android16-6.12，-j10，全量（重新配置），release 6.12.81-4k-cdh
+    ...
+    输出: out/kernel/.lineage-23-6.12.new.2905331009（release / 配方 / SHA256SUMS 逐项校验）
+    [ok] 内核构建完成: out/kernel/lineage-23-6.12
+
+`android16-6.12` builder 与 6.12 树配对，与宿主上已有的三份 droid-ddk 镜像一致（无需拉新镜像）。
+
+--------------------------------------------------------------------------
+## 3. 03 模块按同一 vermagic 通过（第 5980~6837 行）
+
+    输入: 缓存配方 lineage-23-6.12-cdh-32bd82070267（输入哈希）
+    内核产物:   out/kernel/lineage-23-6.12（release 6.12.81-4k-cdh）
+    内核配方:   lineage-23-6.12-cdh-0531d3a1f739
+    输入: ghcr.io/feicong/droid-ddk:android16-6.12，-j10，5 个外部模块（5 个产物）+ 8 个 in-tree，release 6.12.81-4k-cdh
+    [ok] 模块构建完成: out/kernel/lineage-23-6.12/modules（13 个 .ko）
+
+外部 5 = 基线 `modules.external`（`cdh_redirect` / `device_info` / `goodix_fingerprint` /
+`input_identity` / `virtio_media`），in-tree 8 = `kbuild.CloudInTreeModules` 公共集
+（m22 基线未声明 `in-tree`，走公共集，与 #146 里 gold 的 `[]` 写法不同但结果一致）。
+**这一步能过本身就是选树正确的证明**：模块按 `6.12.81-4k-cdh` 的 vermagic 与符号版本编译，
+若还按 6.6 的树走，02 就已经报错，根本到不了这里。
+
+--------------------------------------------------------------------------
+## 4. 后续阶段（同轮连续跑过，非本条验证目标，仅记事实）
+
+    ==> [4/11] build_boot        缓存配方 boot-9ccadac92575    （os_version 0x200001a8 保留基底值）
+    ==> [5/11] build_vendor_boot 缓存配方 vboot-be01ad9fda1c   （板级名 qcom）
+    ==> [6/11] build_odm         配方 odm-a03793389fbf
+    ==> [7/11] build_vendor      缓存配方 vendor-870fdca5e18c  （步骤 3 编译 HAL 模块 141+10 源文件）
+
+--------------------------------------------------------------------------
+## 5. 口径注释改动过单测
+
+    $ cd engine/build && go test ./internal/manifest/
+    ok      cloud-phone-hub/engine/build/internal/manifest        1.043s
+
+--------------------------------------------------------------------------
+## 6. 未实跑的两台（诚实记状态）
+
+`samsung/ss9380`（`6.6` → `6.12`）与 `google/oriole` ap2a（`5.10` → `6.1`）本轮只做了静态
+一致性核对（基线 `rom.lineage.kernel.version` + 机型 README + `kernels/` 实际树名三者一致），
+**没有实跑 02**。按逐机验收顺序轮到它们时各自复核。
+
+--------------------------------------------------------------------------
+## 7. 第 3 台 oriole（ap2a，`5.10` → `6.1`）同轮实跑（`engine/out/tmp/oriole-build.log`）
+
+    ==> 内核线: 6.1（清单 kernel；厂商固件内核 5.10，不同代）
+    ==> 内核源码: kernels/lineage-21-6.1（清单推导 lineage-21-6.1）
+    ==> 配置片段: build/02_build_kernel/lineage-kernel.config（本阶段默认）
+    ==> 内核补丁: 2 个（kernels/patches/lineage-21-6.1，同级 patches 目录）
+    ==> 构建镜像: ghcr.io/feicong/droid-ddk:android14-6.1（清单推导 android14-6.1）
+    ==> 内核借用: lineage-21（底包 out/roms/lineage/lineage-21.0/boot_a.img 是 6.12.23-4k-gafb0ad713e3c-dirty，本机 6.1.138-4k-cdh）
+        借用理由: 底包 UTM-VM-lineage-21.0 镜像自带内核是 6.12.23（与 22.2 镜像同一颗），
+                  而 virtio 源码线 kernels/lineage-21-6.1 是 LineageOS linea…（原文第 144 行）
+
+    [ok] 内核构建完成: out/kernel/lineage-21-6.1                                   （第 6486 行）
+    [ok] 模块构建完成: out/kernel/lineage-21-6.1/modules（10 个 .ko）                （第 7038 行）
+    ...
+    [ok] 已完成                                                                    （第 7928 行）
+        产物: out/dist/google/oriole/AP2A.240905.003.F1（vda.img 13.00 GiB，5 个分区已刷新）
+
+这台走的是**借用分支**（`verifyKernelBase` 的 `KernelBorrow` 路径）：底包 6.12.23 与本机
+6.1.138 不同代，但基线 `rom.lineage.kernel` 已登记 `borrowed-from` / `borrowed-reason`，
+于是打 `[ok]` 而不是报错——正好证明 #148 改的只是「顶层 `kernel` 该填哪条线」，
+借用机制本身没问题。03 注入 `/lib/modules` 的 9 个 `.ko` vermagic 全是
+`6.1.138-4k-cdh SMP preempt mod_unload modversions aarch64`，含基线声明的
+`virt_wifi.ko`（6.1 线用它，与 gold 的 6.6 线用 hwsim 不同，见 #146）。
+
+`samsung/ss9380` 同口径已改（`6.6` → `6.12`），**尚未实跑**。

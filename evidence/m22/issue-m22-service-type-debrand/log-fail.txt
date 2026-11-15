@@ -1,0 +1,153 @@
+# 改名前证据：`cdh_*_service` 前缀的可观测暴露
+
+采集时间：2026-10-29 16:20–16:40（改名前的产物与实例）
+关联：`solution.md`、`log-pass.txt`、`engine/evidence/issue-m22-perf2-find-grant/`
+
+## A. 运行期：类型名直接出现在 avc 的 tcontext 里
+
+取证对象：实例 37 的串口日志（#58 用的同一份，改名前的最后一份完整日志）
+
+```
+文件: out/core/daemon/runtime/m22_12.5.0.0A/37/qemu.log
+大小: 29,377,845 B
+行数: 213,606
+sha256: 62e9ab4aad3cd84bbe6c91a4fdff3fe877ee4eaac6b4926daa182d8cb35916ac
+```
+
+按旧名做全文计数（`grep -ac`）：
+
+| 旧名 | 次数 |
+| :--- | ---: |
+| `cdh_perf2_service` | 1653 |
+| `cdh_realitytap_service` | 9 |
+| `cdh_sensor_aux_service` | 6 |
+| `cdh_servicetracker_service` | 0 |
+| `cdh_meizu_charging_service` | 0 |
+| `cdh_aw_light_service` | 0 |
+| `cdh_awa_reality_service` | 0 |
+| `cdh_idiag_service` | 0 |
+
+后 5 个为 0 不代表「没写进镜像」：它们只声明了类型与最小 find 授权，服务实体本身
+不存在（VINTF 未声明），没有客户端被拒就没人把标签打进日志。静态面见 B/C 段。
+
+旧名的实际样子（前两条为 kernel console 记录，加 `-a` 是因为日志里有二进制字节）：
+
+```
+[   67.373060][  T260] SELinux: avc:  denied  { find } for pid=2032 uid=10187 \
+  name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:permissioncontroller_app:s0:c187,c256,c512,c768 \
+  tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+
+[   67.595429][  T260] SELinux: avc:  denied  { find } for pid=2107 uid=1073 \
+  name=vendor.qti.hardware.perf2.IPerf/default scontext=u:r:network_stack:s0 \
+  tcontext=u:object_r:cdh_perf2_service:s0 tclass=service_manager permissive=0
+```
+
+要点：`tcontext=u:object_r:cdh_perf2_service:s0` 是**明文**。任何人拿到串口日志或
+`dmesg`，都能从 `cdh_` 看出这套镜像被改造过、以及改造者的项目缩写。
+
+## B. 静态：旧名在源码片段里的落点
+
+改名前 8 个类型的原始写法（4 个文件，均为 07 的 marker 注入片段）：
+
+### B.1 模块层 perf2（2 个文件）
+
+`engine/vendor/hardware/vendor.qti.hardware.perf2/sepolicy/vendor_sepolicy.cil`
+
+```cil
+(type cdh_perf2_service)
+(roletype object_r cdh_perf2_service)
+(typeattributeset service_manager_type (cdh_perf2_service))
+(allow hal_sensors_default cdh_perf2_service (service_manager (add find)))
+(allow domain cdh_perf2_service (service_manager (find)))
+```
+
+`.../perf2/sepolicy/vendor_service_contexts`
+
+```
+vendor.qti.hardware.perf2.IPerf/default	u:object_r:cdh_perf2_service:s0
+```
+
+### B.2 机型层（2 个文件，7 个类型）
+
+`engine/manifest/flyme/m22/sepolicy/vendor_sepolicy.cil`：第 2) 段 5 个 vendor HAL 名
++ `realitytap`，第 4) 段 `sensor_aux`，每个类型 3 行声明（`type` / `roletype` /
+`typeattributeset`）+ 1~2 条 `allow`，全部带 `cdh_` 前缀。
+
+`engine/manifest/flyme/m22/sepolicy/vendor_service_contexts`：对应 7 行标签
+（`u:object_r:cdh_*_service:s0`）。
+
+### B.3 装配后的成品分区
+
+`cdh_` 在成品 vendor 分区里的分布（改名前的同一个 `vendor_sepolicy.cil` 里，
+服务类型 8 个 + wifi 类型 12 行都在）：
+
+```
+/etc/selinux/vendor_sepolicy.cil        (type cdh_perf2_service) … (type cdh_sensor_aux_service)
+/etc/selinux/vendor_service_contexts    u:object_r:cdh_*_service:s0  ×7
+```
+
+## C. 为什么算「特征」而不是内部细节
+
+1. `vendor_sepolicy.cil` 是**明文文本**，随镜像分发；`grep cdh_ vendor/etc/selinux/`
+   一次就能把 8 个服务类型和 2 个 wifi 类型全部筛出来。
+2. 类型名会进 `ls -Z` / `ps -Z` / `avc` 三个运行期出口（A 段已实测）。
+3. 与 AOSP 命名惯例不符：AOSP 的 HAL 服务类型一律 `hal_<name>_service`，
+   `cdh_` 这种短前缀在底座里没有任何同类，属于「凭空长出来的一族」。
+
+## D. 改名前置条件（不满足就不能改）
+
+改名的唯一技术风险是 duplicate type（重复定义 → secilc 失败 → init
+`InitFatalReboot`）。因此先在 guest 内绕开我们自己的 marker 块，统计 **base 策略**
+（plat / system_ext / product + vendor 的非片段部分）里 8 个新名的出现次数：
+
+```sh
+adb shell 'for t in hal_perf2_service hal_servicetracker_service hal_meizu_charging_service \
+  hal_aw_light_service hal_awa_reality_service hal_idiag_service \
+  hal_realitytap_service hal_sensor_aux_service; do \
+  n=$(for f in /system/etc/selinux/*.cil /system_ext/etc/selinux/*.cil \
+             /product/etc/selinux/*.cil /vendor/etc/selinux/vendor_sepolicy.cil; do \
+        awk "/cdh-patch-begin/{s=1} !s{print} /cdh-patch-end/{s=0}" $f 2>/dev/null; \
+      done | grep -ow "$t" | wc -l); \
+  printf "%-34s base_hits=%s\n" "$t" "$n"; done'
+```
+
+实测输出（`awk` 把 07 注入的 marker 块整段剥掉，剩下的就是底座自带策略）：
+
+```
+hal_perf2_service                  base_hits=0
+hal_servicetracker_service         base_hits=0
+hal_meizu_charging_service         base_hits=0
+hal_aw_light_service               base_hits=0
+hal_awa_reality_service            base_hits=0
+hal_idiag_service                  base_hits=0
+hal_realitytap_service             base_hits=0
+hal_sensor_aux_service             base_hits=0
+```
+
+即底座四处策略里既没有同名 `(type hal_x_service)`，也没有别处引用这 8 个名字
+（AOSP 的 `hal_attribute_service` 宏只对它自己声明的模块生成类型族，perf2 不在其中）。
+故可以整族改名，且不需要额外兼容声明。
+
+同时确认标记注入锚点没有跟着改：`cdh-patch-begin/end` 是 07 的常量
+（`engine/build/07_build_vendor/sepolicy.go:30-31`），改名不涉及它。
+
+## E. 复现命令
+
+```sh
+# 1) 旧名在运行期日志里的暴露（实例 37 已完成，日志仍在）
+L=out/core/daemon/runtime/m22_12.5.0.0A/37/qemu.log
+shasum -a 256 "$L"; wc -l < "$L"
+grep -ac cdh_perf2_service       "$L"
+grep -ac cdh_realitytap_service  "$L"
+grep -ac cdh_sensor_aux_service  "$L"
+grep -a  cdh_perf2_service       "$L" | head -3
+
+# 2) 旧名在源码片段里的落点（本仓）
+grep -rn 'cdh_[a-z0-9_]*_service' \
+  engine/vendor/hardware/vendor.qti.hardware.perf2/sepolicy/ \
+  engine/manifest/flyme/m22/sepolicy/
+```
+
+（改名后重跑第 2 条：命中 0；旧链路脚本
+`devices/flyme/m22/build/vendor/build/sepolicy.py` 仍有 15 处，engine 未引用，
+见 `solution.md` §6.4。）

@@ -1,0 +1,73 @@
+# issue-m22-abi-deps-regenerate · 修复与验证
+# 采集时间: 2026-10-30 11:00
+# 日志: out/tmp/m22-rebuild-from-vendor.log
+
+== 修复动作（唯一一步，运行态，无代码改动）==
+$ cd engine && ./out/bin/cdh-vendor deps --android 16 --abi
+[..] 从 lineage 镜像提取 ABI 库: /Volumes/work/cloud-phone-hub/lineage-rom/lineage-23.2/super/system_a.img
+[..] 从 lineage vendor 提取模块专属运行库: /Volumes/work/cloud-phone-hub/lineage-rom/lineage-23.2/super/vendor_a.img
+[ok] ABI 依赖就绪: /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/abi/system/lib64（4 库，专属 3 库）
+
+== 从失败阶段续跑 ==
+$ ./out/bin/cdh device build m22 --from build_vendor
+==> [1/5] build_vendor  (07_build_vendor)
+==> [步骤 3] 编译 HAL 模块 ... 36/36 全部通过（含 android.hardware.audio 首例）
+    装配树条目 654（文件 423 / 链接 199 / 目录 32），初始 59213 块（231 MB），inode 768
+[ok] vendor.img 构建完成: out/devices/flyme/m22/12.5.0.0A/img/vendor.img（201883648 字节）
+[ok] vendor 目录树装配与 vendor.img 打包完成
+==> [2/5] build_vendor_dlkm  (08_build_vendor_dlkm)
+[ok] vendor_dlkm.img 构建完成: out/devices/flyme/m22/12.5.0.0A/img/vendor_dlkm.img（15831040 字节，sha256 5af7dd961cd6）
+==> [3/5] build_patch  (09_build_patch)
+    out/.../vendor_dlkm.img: 读回 197 条目
+[ok] patch.img 发布完成: out/devices/flyme/m22/12.5.0.0A/img/patch.img（402653184 字节，sha256 6fe7ff700faf）
+==> [4/5] pack_super  (10_pack_super)
+[ok] super.img 构建完成: out/devices/flyme/m22/12.5.0.0A/img/super.img（9.39 GiB，sha256 3eb133bbc4af）
+==> [5/5] pack_vda  (11_pack_vda)
+    [ok] super.img 9.39 GiB / patch.img 384.0 MiB
+[ok] 已完成
+EXIT=0
+
+== 产物清单 ==
+$ ls -l out/devices/flyme/m22/12.5.0.0A/img/
+ 83886080   boot.img            2026-10-30 10:48
+ 8388608    odm.img             2026-10-30 10:48
+ 402653184  patch.img           2026-10-30 10:56
+10083106816 super.img           2026-10-30 10:56
+ 201883648  vendor.img          2026-10-30 10:56
+ 22395141   vendor_boot.img     2026-10-30 10:48
+ 15831040   vendor_dlkm.img     2026-10-30 10:56
+$ ls -l out/dist/flyme/m22/12.5.0.0A/
+ 198376      data.qcow2          2026-10-30 10:57
+ 586         device.json         2026-10-30 10:57
+ 402653184   patch.img           2026-10-30 10:57
+ 13958643712 vda.img             2026-10-30 10:57
+
+== 文件系统校验（全绿）==
+$ e2fsck -fn img/vendor.img       -> vendor: 665/768 文件（0.5% 不连续），49269/49288 块
+$ e2fsck -fn img/patch.img        -> patch: 869/98304 文件（0.2% 不连续），65416/98304 块
+$ e2fsck -fn img/odm.img          -> odm: 14/512 文件（7.1% 不连续），1100/2048 块
+$ e2fsck -fn img/vendor_dlkm.img  -> vendor_dlkm: 112/144 文件（1.8% 不连续），2931/3865 块
+
+== 镜像回读（关键项与机型层最新改动一致）==
+$ debugfs -R "ls -l /etc/init/hw" img/vendor.img
+    351  100644      0      0    1416  init.low_performance.rc
+    352  100644      0      0     307  init.mainline.rc
+    353  100644      0      0    2164  init.qcom.rc        # #70 的板级入口，2164 B
+    354  100644      0      0    2080  init.virt.rc
+$ debugfs -R "stat /etc/init/cph_logcat_dump.rc" img/vendor.img
+Inode: 345   Type: regular    Mode:  0644     Size: 1981       # #71 把 early 合并进来后的唯一服务
+$ debugfs -R "ls -l /" img/vendor.img
+     12  40751  0 2000  bin
+    273  100600 0    0  build.prop      # 12966 B
+    274  40755  0 2000  etc
+    554  40755  0 2000  firmware_mnt
+    556  40755  0 2000  lib
+    558  40755  0 2000  lib64
+    665  100644 0    0  pci.ids
+
+== 装配树分层计数 ==
+bin 216（含 bin/hw 44）/ etc 54 / etc/init 57 / etc/init/hw 4 /
+etc/vintf/manifest 40 / etc/selinux 14 / lib 1 / lib64 84 / firmware_mnt 1
+$ ls vendor/etc/init | grep -c early   -> 0（early 版已下线）
+
+== SHA256SUMS 覆盖 07–09 全部产物（19 行，含 vendor/patch/odm/vendor_dlkm 及各自 -info/-recipe）==

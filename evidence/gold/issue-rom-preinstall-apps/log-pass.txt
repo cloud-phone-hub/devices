@@ -1,0 +1,351 @@
+# log-pass.txt — cust 分区证据链（2026-11-02）
+# 云机: console 5910 / adb 127.0.0.1:5911 / MIUI V816 / OS3.0.10.0.VNQCNXM
+# 真机: 4lmbvom7gifm5lbu / 2312DRAABC / OS3.0.11.0.VNQCNXM
+
+## 1. 固件包里 cust.img 一直都在（01_unpack 没取）
+$ tar -tzvf roms/devices/xiaomi/gold/gold_images_OS3.0.10.0.VNQCNXM_*.tgz | grep -E "images/(cust|rescue|pi_img|userdata)\.img"
+-rw-r--r--  0 builder builder      5776  7 15 23:18 .../images/pi_img.img
+-rw-r--r--  0 builder builder     41036  7 15 23:18 .../images/rescue.img
+-rw-r--r--  0 builder builder 1446093152  7 15 23:18 .../images/cust.img       ← 1.35 GiB
+-rw-r--r--  0 builder builder   2400556  7 15 23:18 .../images/userdata.img
+$ cat out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/.unpacked.json
+{ "files": ["super.img", "vendor_boot.img", "super/mi_ext_a.img", …] }   ← 无 cust.img
+
+## 2. cust.img 是 sparse → raw EROFS
+$ file cust.img
+Android sparse image, version: 1.0, Total of 353280 4096-byte output blocks in 27 input chunks.
+$ python3 unsparse.py cust.img cust-raw.img
+sparse v1.0: blk_sz=4096 total_blks=353280 total_chunks=27 预期 raw=1447034880 字节
+完成: 写出 1447034880 字节 -> cust-raw.img
+$ dump.erofs -s cust-raw.img
+Filesystem magic number: 0xE0F5E1E2
+Filesystem blocksize:  4096
+Filesystem blocks:     347539
+
+## 3. cust 里的预装内容
+$ dump.erofs --ls --path=/ cust-raw.img
+app  app_legacy_install_list  cust  cust_variant  etc
+
+$ dump.erofs --ls --path=/app/customized cust-raw.img      # 15 个目录 + 15 个 .channel
+partner-com.autonavi.minimap_12          partner-com.autonavi.minimap_12.channel
+partner-com.baidu.searchbox_9            partner-com.baidu.searchbox_9.channel
+partner-com.dragon.read_104              partner-com.dragon.read_104.channel
+partner-com.eg.android.AlipayGphone_23   partner-com.eg.android.AlipayGphone_23.channel
+partner-com.phoenix.read_302             partner-com.phoenix.read_302.channel
+partner-com.quark.browser_271            partner-com.quark.browser_271.channel
+partner-com.sankuai.meituan_21           partner-com.sankuai.meituan_21.channel
+partner-com.sina.weibo_16                partner-com.sina.weibo_16.channel
+partner-com.smile.gifmaker_13            partner-com.smile.gifmaker_13.channel
+partner-com.ss.android.article.news_76   partner-com.ss.android.article.news_76.channel
+partner-com.ss.android.ugc.aweme_15      partner-com.ss.android.ugc.aweme_15.channel
+partner-com.taobao.idlefish_274          partner-com.taobao.idlefish_274.channel
+partner-com.taobao.taobao_24             partner-com.taobao.taobao_24.channel
+partner-com.tencent.qqlive_20            partner-com.tencent.qqlive_20.channel
+partner-com.xiaomi.tinygame_243          partner-com.xiaomi.tinygame_243.channel
+
+$ dump.erofs --ls --path=/app/customized/partner-com.taobao.taobao_24 cust-raw.img
+partner-com.taobao.taobao_24.apk
+
+$ dump.erofs --cat --path=/cust/cn/customized_applist cust-raw.img      # 17 行
+partner-com.taobao.taobao_24.apk
+partner-com.ss.android.ugc.aweme_15.apk
+partner-com.taobao.idlefish_274.apk
+partner-com.phoenix.read_302.apk
+partner-com.dragon.read_104.apk
+partner-com.tencent.qqlive_20.apk
+partner-com.quark.browser_271.apk
+partner-com.xs.fm_270.apk                    ← 名单有，apk 未随包
+partner-com.ss.android.article.news_76.apk
+partner-com.autonavi.minimap_12.apk
+partner-com.xunmeng.pinduoduo_19.apk         ← 拼多多：名单有，apk 未随包
+partner-com.eg.android.AlipayGphone_23.apk
+partner-com.smile.gifmaker_13.apk
+partner-com.sankuai.meituan_21.apk
+partner-com.xiaomi.tinygame_243.apk
+partner-com.sina.weibo_16.apk
+partner-com.baidu.searchbox_9.apk
+
+$ dump.erofs --ls --path=/etc cust-raw.img
+business.prop  business_prop_white_keys_list  cust_apps_config
+cust_apps_request_config  pre_install.appsflyer
+$ dump.erofs --cat --path=/app_legacy_install_list cust-raw.img
+com.cmcc.cmvideo
+
+## 4. 真机：cust 分区存在、已挂载、15 个包全部安装
+$ adb -s 4lmbvom7gifm5lbu shell 'ls -l /dev/block/by-name/ | grep cust'
+lrwxrwxrwx 1 root root 16 2026-10-29 05:09 cust -> /dev/block/sdc56
+$ adb -s 4lmbvom7gifm5lbu shell 'mount | grep cust'
+/dev/block/sdc56 on /cust type erofs (ro,seclabel,relatime,user_xattr,acl,cache_strategy=readaround)
+$ adb -s 4lmbvom7gifm5lbu shell 'ls /cust'
+app  app_legacy_install_list  cust  cust_variant  etc
+$ adb -s 4lmbvom7gifm5lbu shell 'pm list packages | grep -iE "taobao|gifmaker|meituan|AlipayGphone|autonavi|quark|weibo|qqlive|aweme"'
+package:com.sina.weibo
+package:com.eg.android.AlipayGphone
+package:com.xiaomi.tinygame
+package:com.taobao.idlefish
+package:com.taobao.taobao
+package:com.quark.browser
+package:com.sankuai.meituan
+package:com.phoenix.read
+package:com.autonavi.minimap
+package:com.tencent.qqlive
+package:com.dragon.read
+package:com.smile.gifmaker
+package:com.ss.android.article.news
+
+## 5. 云机：GPT 里没有 cust，/cust 为空
+$ adb -s 127.0.0.1:5911 shell 'su -c "ls /dev/block/by-name/"'
+BIOS_a BIOS_b EFI EFI_a EFI_b boot_a boot_b firmware grub_boot_a grub_boot_b
+metadata misc persist super vdc                       ← 无 cust
+$ adb -s 127.0.0.1:5911 shell 'su -c "ls /cust"'
+（空）
+$ adb -s 127.0.0.1:5911 shell 'su -c "mount | grep cust"'
+（只有 opcust / precust_theme 两条 overlay，无 /cust 挂载）
+
+## 6. 盘集 GPT：11 个分区、128 槽位、尾部仅余 ~357 MiB
+$ gpt 解析 out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/vda.img
+sig b'EFI PART' entry_lba 2 count 128 entry_size 128
+usable LBA 34 - 27262942 = 13.00 GiB
+slot  0  EFI            LBA       2048
+slot  1  super          LBA     264192
+slot  2  misc           LBA   25430016
+slot  3  persist        LBA   25432064
+slot  4  metadata       LBA   25464832
+slot  5  firmware       LBA   25530368
+slot  6  vendor_boot_a  LBA   25792512
+slot  7  vendor_boot_b  LBA   25997312
+slot  8  boot_a         LBA   26202112
+slot  9  boot_b         LBA   26365952
+slot 10  BIOS           LBA   26529792
+$ grep 分区表 out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/vda-log.txt
+    分区表: 11 个分区、扇区 512 B（EFI/super/misc/persist/metadata/firmware/
+            vendor_boot_a/vendor_boot_b/boot_a/boot_b/BIOS）
+
+## 7. /cust 的挂载不来自 fstab（两边都没有 cust 行）
+$ adb -s 4lmbvom7gifm5lbu shell 'cat /vendor/etc/fstab.mt6833 | grep -i cust'
+overlay /product/opcust overlay ro,lowerdir=/mnt/vendor/mi_ext/product/opcust/:/product/opcust check,nofail
+overlay /product/etc/precust_theme overlay ro,lowerdir=/mnt/vendor/mi_ext/product/etc/precust_theme:/product/etc/precust_theme check,nofail
+（无 /cust 条目 → 由 init 按 by-name/cust 自行挂载）
+
+## 8. 两套预装机制并存（product/data-app 那套云机是好的）
+$ adb -s 127.0.0.1:5911 shell 'su -c "wc -l < /data/app/preinstall_history"'   → 40
+$ adb -s 127.0.0.1:5911 shell 'su -c "grep -ciE \"pinduoduo|kuaishou|smile|taobao\" /data/app/preinstall_history"' → 0
+说明：preinstall_history 只记 /product/data-app（MIUI 自家可卸载应用），
+      partner 推广应用的账本是 /cust/cn/customized_applist，两者互不相干。
+
+## 9. 修复：清单驱动 + 追加 GPT 分区（本地验证，2026-11-02）
+
+### 9.1 清单解析闸门（含反例）
+$ cd engine/build && go test -count=1 ./internal/manifest/ -run 'TestVDA' -v
+=== RUN   TestVDAPartitions                 `cust.img` -> 分区名 `cust`（只去后缀）
+--- PASS: TestVDAPartitions (0.00s)
+=== RUN   TestVDAAbsent                      未声明 vda 段时零附加分区
+--- PASS: TestVDAAbsent (0.00s)
+=== RUN   TestVDARequiresVendorImage         vda 写了但不在 rom.vendor.images → 解析期报错
+--- PASS: TestVDARequiresVendorImage (0.00s)
+=== RUN   TestVDARejectsBarePartition        写裸分区名 `cust`（缺 .img）→ 报错
+--- PASS: TestVDARejectsBarePartition (0.00s)
+=== RUN   TestVDARejectsReservedImages       super/boot/vendor_boot → 报错（步骤 3/4 已有专门替换）
+--- PASS: TestVDARejectsReservedImages (0.00s)
+ok  cloud-phone-hub/engine/build/internal/manifest
+
+### 9.2 01_unpack：按清单抽出 cust.img 并转 raw
+$ go test -count=1 ./01_unpack/ -run 'TestExtractTarKeepsCust|TestUnsparseKeepsConvertsCust|TestImageTarget|TestSetKeeps' -v
+=== RUN   TestExtractTarKeepsCust            合成 tgz 的 images/cust.img → 落解包根（不进 firmware/）
+--- PASS: TestExtractTarKeepsCust (0.02s)
+=== RUN   TestUnsparseKeepsConvertsCust      sparse cust.img → raw（复用 image.unsparse）
+--- PASS: TestUnsparseKeepsConvertsCust (0.00s)
+=== RUN   TestImageTarget                    未声明时 cust.img 不抽（默认集只有 super+vendor_boot）
+--- PASS: TestImageTarget (0.00s)
+=== RUN   TestImageTargetKeeps               清单声明后 cust.img 抽取且落解包根
+--- PASS: TestImageTargetKeeps (0.00s)
+=== RUN   TestSetKeepsEmptyFallsBack        "images": [] 等同未声明 → 走默认集
+--- PASS: TestSetKeepsEmptyFallsBack (0.00s)
+ok  cloud-phone-hub/engine/build/01_unpack
+
+### 9.3 11_pack_vda：GPT 追加与整段 Run
+$ go test -count=1 ./11_pack_vda/ -run 'TestEnsurePartition|TestRunAppendsVDAPartition|TestRunRejectsMissingVDAImage|TestRunDryRunToleratesMissingVDAImage|TestRunRebuildsWhenVDAImageChanges' -v
+=== RUN   TestEnsurePartitionAppends        新建条目、1 MiB 对齐、扩盘、主/备 CRC 自洽
+--- PASS: TestEnsurePartitionAppends (0.02s)
+=== RUN   TestEnsurePartitionReuseExisting   已有分区容量够 → 不动 GPT、不改盘长
+--- PASS: TestEnsurePartitionReuseExisting (0.00s)
+=== RUN   TestEnsurePartitionRejectsOversize 已有分区装不下 → 报错（不自动挪动）
+--- PASS: TestEnsurePartitionRejectsOversize (0.00s)
+=== RUN   TestRunAppendsVDAPartition         6 分区底盘 → 7 分区，cust 内容回读一致、super 未损、底盘只读
+--- PASS: TestRunAppendsVDAPartition (0.07s)
+=== RUN   TestRunRejectsMissingVDAImage     清单声明 cust.img 但源缺失 → 报错（不静默跳过）
+--- PASS: TestRunRejectsMissingVDAImage (0.00s)
+=== RUN   TestRunDryRunToleratesMissingVDAImage  --dry-run 宽容并打印附加分区计划
+--- PASS: TestRunDryRunToleratesMissingVDAImage (0.01s)
+=== RUN   TestRunRebuildsWhenVDAImageChanges cust.img 同大小改 mtime → 配方变化重建
+--- PASS: TestRunRebuildsWhenVDAImageChanges (0.11s)
+ok  cloud-phone-hub/engine/build/11_pack_vda
+
+### 9.4 全量：build / vet / gofmt / test
+$ go build ./... && go vet ./... && gofmt -l .        → 无输出
+$ go test -count=1 ./...
+ok  01_unpack / 02_build_kernel / 03_build_modules / 04_build_boot / 05_build_vendor_boot
+ok  06_build_odm / 07_build_vendor / 08_build_vendor_dlkm / 09_build_patch
+ok  10_pack_super / 11_pack_vda
+ok  internal/carrier / e2fs / env / kernelver / manifest / modmeta / pipeline / stagekit / stagelog
+
+### 9.5 真实 gold 清单：pack-vda --dry-run
+$ cd engine/build && CDH_MANIFEST=../manifest/xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.json \
+    CDH_VENDOR=xiaomi CDH_BRAND=gold CDH_OS_VERSION=15.0 go run . pack-vda --dry-run
+==> 附加分区: cust     <- out/roms/xiaomi/gold/15.0/cust.img（dry-run，源镜像未就位）
+[err] 缺少底盘：用 --base 指定 raw/qcow2，或用 CDH_LINEAGE_ZIP 指定 lineage 底包
+（清单已接受 vda.partitions；报错仅因本次未给底盘，说明取料闸门与 dry-run 宽容都生效）
+
+### 9.6 过程中发现并修掉的坑
+- 把 super.img 也写进 vda.partitions 时，Step 5 会把 super 再写一遍，info 里 super 出现两次
+  → manifest 解析期禁止 super/boot/vendor_boot 进 vda.partitions（TestVDARejectsReservedImages）；
+- 只在编排器侧读 CDH_MANIFEST 时，单跑 unpack-vendor 会退回默认集（cust 又丢）
+  → 读取下移到 RunVendor，两种入口同一条路；
+- 附加分区起初没进 recipeLabel：cust.img 换版后盘集仍被当“可复用”
+  → 加 vda-part:<name>:<size:mtime>（TestRunRebuildsWhenVDAImageChanges）。
+
+## 10. 真实 gold 链路跑通（2026-11-02 21:20-21:25）
+
+### 10.1 第一次 `--only unpack` 就撞上「标记说已解包」的坑
+$ cd engine/build && go run . device build gold --only unpack
+==> 清单保留镜像: super.img、vendor_boot.img、cust.img（manifest/xiaomi/gold/baselines/gold_images_...json）
+==> 保留镜像: super.img、cust.img、vendor_boot.img（清单 rom.vendor.images）
+[..] super.img 已就绪，补拆逻辑分区（--force 可重解）
+[ok] 已解出 super.img（8.50 GiB）+ 8 个逻辑分区 + vendor_boot.img（64.00 MiB）
+→ 清单加了 cust.img，01 却走了「补拆」短路：解包根里根本没有 cust.img。
+  根因：完成标记只比 包路径/大小/类型，对「同一包里还要多抽一个镜像」一无所知。
+  修法：标记记 keeps + 缺一项即判未解包 + 已解包时按 only 补抽（extractKeepsInto）。
+
+### 10.2 第二次 `--only unpack`：补抽 cust，super.img 不动
+$ go run . device build gold --only unpack
+[..] super.img 已就绪，补抽清单保留镜像 cust.img（--force 可重解）
+  + gold_images_OS3.0.10.0.VNQCNXM_15.0/images/cust.img（1379.10 MiB）
+$ ls -la engine/out/roms/xiaomi/gold/OS3.0.10.0.VNQCNXM/
+-rw-r--r--  1 cuimingqiang  staff  1447034880 11  2 21:23 cust.img      ← raw，sparse 已展开
+-rw-r--r--  1 cuimingqiang  staff  9126805504 10 22 21:49 super.img     ← mtime 未变，没被重写
+$ cat .unpacked.json | tail -6
+  "keeps": ["super.img", "cust.img", "vendor_boot.img"]
+
+### 10.3 `--only pack_vda`：扩盘 + 追加 cust 分区
+$ go run . device build gold --only pack_vda
+==> [步骤 5] 装配附加分区（清单 vda.partitions，1 个）
+    [grow] 追加分区 cust     容量 1.35 GiB（LBA 26537984-29364223），backup GPT 已重建
+    [ok] cust            1.35 GiB @ 12.65 GiB（容量 1.35 GiB，余量 0 B），回读一致
+    [grow] 盘大小 13.00 GiB -> 14.00 GiB
+==> [步骤 6] 固化 EFI grub.cfg（固定 _a + 菜单零等待 + vbmeta + 设备 cmdline）
+==> [步骤 7] 发布盘集（patch.img / data.qcow2 / device.json）
+    产物: out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM（vda.img 14.00 GiB，6 个分区已刷新）
+
+### 10.4 独立脚本复核 GPT 主/备与 cust 内容（verify-vda-gpt.py）
+$ python3 verify-vda-gpt.py
+盘大小 15035531264 B = 29366272 扇区 = 14.00 GiB
+主头: 头CRC ok alternate=29366271 lastUsable=29366238 entriesLBA=2 count=128 esize=128
+备头: 头CRC ok alternate=1 lastUsable=29366238 entriesLBA=29366239 count=128 esize=128
+主表CRC ok；备份表与主表 字节一致
+分区 12 个:
+  [ 0] EFI            LBA 2048-264191 (128.00 MiB)
+  [ 1] super          LBA 264192-25430015 (12288.00 MiB)
+  [ 2] misc           LBA 25430016-25432063 (1.00 MiB)
+  [ 3] persist        LBA 25432064-25464831 (16.00 MiB)
+  [ 4] metadata       LBA 25464832-25530367 (32.00 MiB)
+  [ 5] firmware       LBA 25530368-25792511 (128.00 MiB)
+  [ 6] vendor_boot_a  LBA 25792512-25997311 (100.00 MiB)
+  [ 7] vendor_boot_b  LBA 25997312-26202111 (100.00 MiB)
+  [ 8] boot_a         LBA 26202112-26365951 (80.00 MiB)
+  [ 9] boot_b         LBA 26365952-26529791 (80.00 MiB)
+  [10] BIOS           LBA 26529792-26537983 (4.00 MiB)
+  [11] cust           LBA 26537984-29364223 (1380.00 MiB)          ← 新增
+cust: LBA 26537984-29364223，容量 1447034880 B，起始偏移 13587447808
+分区内容 sha256 14f88c8873fd7faca39a1e3e2ac2531fa713f4b646cc7f962ce4a0ee19c11845
+源镜像   sha256 14f88c8873fd7faca39a1e3e2ac2531fa713f4b646cc7f962ce4a0ee19c11845
+cust 内容逐字节一致
+
+### 10.5 幂等：再跑一次 pack_vda
+$ go run . device build gold --only pack_vda
+    分区表:     12 个分区、扇区 512 B（EFI/super/.../BIOS/cust）
+    缓存配方:   记录为 vda-10e847766a28，实跑时重新计算比对
+[skip] 盘集可复用: out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM
+    配方与底盘、4 个来源镜像均未变（vda-10e847766a28）
+
+### 10.6 全量回归
+$ cd engine/build && gofmt -l . && go build ./... && go vet ./... && go test -count=1 ./...
+（gofmt/build/vet 无输出；20 个包全 ok：01 12.7s / 04 31.0s / 07 35.7s / 11 2.9s …）
+
+### 10.7 本轮新发现并修掉的坑
+- 完成标记没记 keeps：清单加镜像后 01 仍打印「已解包」，cust 永远不落地
+  → 标记加 keeps 字段（TestAlreadyUnpackedTracksKeeps）；
+- 已解包时「补拆」短路不补新镜像 → 加 extractKeepsInto/only 收窄补抽
+  （TestExtractKeepsIntoBackfillsCust：补抽后 super.img 内容必须是旧的）；
+- 清单声明的镜像缺件原先是告警 → 改为硬失败（TestExtractTarRejectsMissingDeclaredKeep）；
+- patchGrub 的日志固定写「步骤 5」，与新增的附加分区撞号
+  → 签名加 step，execute 传 6（日志实测已变成「[步骤 6] 固化 EFI grub.cfg」）。
+
+## 11. 云机复验：/cust 由 first_stage fstab 挂载（2026-11-02）
+
+背景：分区补上后旧实例里 /cust 仍为空——厂商 first_stage fstab（161 行）里没有 cust，
+/dev/block/by-name/cust 也不在 init 的静态 symlink 表里；内核只给了 SoC 展开路径
+/dev/block/pci/pci0000:00/0000:00:04.0/by-name/cust。故改为写 fstab（清单对象 mount）。
+
+### 11.1 清单：vda.partitions 由字符串数组改为对象
+
+  "vda": { "partitions": [ { "image": "cust.img", "mount": "/cust" } ] }
+
+  $ go test -count=1 ./internal/manifest ./05_build_vendor_boot ./11_pack_vda ./07_build_vendor
+  ok  internal/manifest        2.726s
+  ok  05_build_vendor_boot     3.097s
+  ok  11_pack_vda              3.956s
+  ok  07_build_vendor          17.804s
+  （新增：TestVDARejectsStringItem / TestMergeCloudFstabVDAExtras）
+
+### 11.2 05：合并出的 fstab 末尾（merge-v9）
+
+  # patch.img补丁
+  /dev/block/vdc /mnt/vendorpatch ext4 ro first_stage_mount
+  # vda.partitions补丁（清单声明的独立分区，first_stage 与 super 同批挂载）
+  /dev/block/by-name/cust /cust erofs ro wait,first_stage_mount,nofail
+
+  来源记录（.fstab.mt6833.src）：
+    生成: 2026-11-02 21:55，算法 fstab-rev: merge-v9
+    厂商 89 行、lineage 28 行；保留 40、覆盖 7、追加 14、丢弃 42、跳过逻辑分区 14
+    清单 vda.partitions: cust -> /cust（erofs，first_stage 与 super 同批挂载）
+
+### 11.3 11：vendor_boot 刷新 + cust 分区复用
+
+  ==> [步骤 4] 替换 boot / vendor_boot 分区（A/B 双槽）
+      [ok] vendor_boot_a   20.7 MiB @ 12.30 GiB（容量 100.0 MiB，余量 79.3 MiB），回读一致
+  ==> [步骤 5] 装配附加分区（清单 vda.partitions，1 个）
+      [ok] 复用已有分区 cust    （容量 1.35 GiB）
+      [ok] cust            1.35 GiB @ 12.65 GiB（容量 1.35 GiB，余量 0 B），回读一致
+  [ok] 已完成  vda.img 14.00 GiB，6 个分区已刷新
+
+### 11.4 云机：新实例（fresh data）首启
+
+  $ POST /api/create {"index":4} → instance 5, pid 77472, adb 5911
+  $ getprop sys.boot_completed → 1（约 130 s）
+
+  $ ls -l /dev/block/by-name/cust
+  lrwxrwxrwx 1 root root 16 1970-01-01 08:00 /dev/block/by-name/cust -> /dev/block/vda12
+  $ grep cust /proc/mounts
+  /dev/block/vda12 /cust erofs ro,seclabel,relatime,user_xattr,acl,cache_strategy=readaround 0 0
+  $ ls /cust/app/customized | wc -l
+  34          # 17 目录 + 17 .channel
+  $ wc -l /cust/cust/cn/customized_applist
+  17
+  $ pm list packages | grep -cE "<17 个包名>"
+  17（+1 系统包 com.android.quicksearchbox 为 grep 误命中）
+
+  $ dmesg | grep -iE "cust_variant|init_hook_E"
+  [ 0.593196] init_hook_I: cust prop white key: ro.miui.cust_variant
+  [ 0.597039] init_hook_I: cust prop white key: ro.vendor.miui.cust_variant
+  （旧实例同一位置是 [0.528681] init_hook_E: Could not find /cust/cust_variant）
+  $ getprop ro.miui.cust_variant → cn ; ro.miui.cust_erofs → 1
+
+结论：first_stage 的 fs_mgr 会按 fstab 建出 /dev/block/by-name/cust（by-name/super、
+by-name/vdc 同源），/cust 在 0.5 s 前的 first stage 已挂好；17 个预装包全部安装。
+
+### 11.5 被撤销的方案（勿复活）
+
+曾实现 /vendor/bin/cph-vda-extra + /vendor/etc/init/cph_vda_extra.rc（post-fs-data 扫
+PARTNAME 建链接再 mount）+ 07 的 placeVDAExtraConf：晚于 kernel init_hook 读
+/cust/cust_variant，且多一个服务要维护。现全部删除，07 侧回到只用 05 写的 fstab。
+

@@ -1,0 +1,91 @@
+== popsicle 基线 vendor.selinux-labels 清理：清理后复测 ==
+复测时间: 2026-11-03
+命令: cd engine && ./out/bin/cdh device build popsicle --only 07_build_vendor
+结果: exit=0
+
+-- 1. 构建输出（节选）----------------
+    vendor 属性: 基线 build-prop-sets 288 项 / unsets 1 项 -> vendor/build.prop
+==> [步骤 6] 应用基线 vendor 属性 -> out/devices/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/vendor/build.prop
+[ok] 补充 HAL 可执行标签 8 条（…/vendor/etc/selinux/vendor_file_contexts）:
+[ok] vendor.img 构建完成: out/devices/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/img/vendor.img（200048640 字节）
+[ok] 已完成
+
+  产物: 200048640 字节
+  sha256: d10e3c0f9ffa291c6debdcb1564f196b2c1488ff2d2aa313847812a5709eeef7
+
+-- 2. 元数据表逐路径对比（before: out/tmp/popsicle-meta-before/vendor-meta-rules.txt
+--    after : out/devices/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/img/vendor-meta-rules.txt）--
+条目数                       557 -> 557
+仅 before 有、after 没有的路径   （空）
+仅 after 有、before 没有的路径   （空）
+selinux_source=baseline 行数  12 -> 3
+SELinux 值变化条数             0
+uid / gid / mode / mtime 变化  0
+
+  来源标记变化 9 条（值完全相同，只是不再由基线提供，改为规则/兜底给出）：
+    etc/init/android.hardware.security.keymint-service.rc        baseline -> default  vendor_configs_file
+    etc/init/dlkm_loader_mainline.rc                             baseline -> default  vendor_configs_file
+    etc/init/hw/init.virt.rc                                     baseline -> default  vendor_configs_file
+    etc/init/tablet2multitouch.rc                                baseline -> default  vendor_configs_file
+    etc/primary_audio_policy_configuration.xml                   baseline -> default  vendor_configs_file
+    etc/vintf/manifest/android.hardware.security.keymint-service.xml  baseline -> default  vendor_configs_file
+    etc/vintf/manifest/android.hardware.vibrator-service.xml     baseline -> default  vendor_configs_file
+    etc/vintf/manifest/mapper.minigbm_upstream.xml                baseline -> default  vendor_configs_file
+    lib64/libtablet2multitouch.so                                baseline -> default  vendor_file
+
+-- 3. 保留下来的 3 条（after 表里 selinux_source=baseline 的全部行）----------------
+etc/init/cph_disable_provision.rc   u:object_r:vendor_file:s0        baseline
+etc/init/cph_logcat_dump.rc         u:object_r:vendor_file:s0        baseline
+etc/init/cph_start_adbd.rc          u:object_r:vendor_file:s0        baseline
+
+  这 3 条必须留：etc/ 兜底是 vendor_configs_file，而它们要 vendor_file，删了就改值。
+
+-- 4. keymint 可执行已回到「规则给值」----------------
+bin/hw/android.hardware.security.keymint-service  file 0755 0 2000 1230768000
+  u:object_r:hal_keymint_default_exec:s0   rule   fallback
+  清理前后这一行完全一致；基线里那条同值声明纯属重复。
+
+-- 5. 镜像内 xattr 直读（不经元数据表，直接看 vendor.img 的 security.selinux）----------------
+DBG=/opt/homebrew/opt/e2fsprogs/sbin/debugfs
+IMG=out/devices/xiaomi/popsicle/OS3.0.319.0.WPBCNXM/img/vendor.img
+$DBG -R "ea_list <path>" $IMG | grep -i selinux
+
+  /etc/init/cph_start_adbd.rc                     security.selinux (25) = "u:object_r:vendor_file:s0"
+  /bin/hw/android.hardware.security.keymint-service security.selinux (38) = "u:object_r:hal_keymint_default_exec:s0"
+  /etc/init/android.hardware.security.keymint-service.rc security.selinux (33) = "u:object_r:vendor_configs_file:s0"
+
+  第一行是保留下来的基线条目（镜像里确实是 vendor_file，不是 etc/ 兜底的
+  vendor_configs_file）；后两行分别是「基线删掉后由规则给值」与「基线删掉后由兜底给值」，
+  值与清理前一致。
+
+-- 6. 第三轮：整表清空（用户决定，连 3 条 cph_*.rc 也不留）----------------
+改动: vendor.selinux-labels: 3 条 -> 0 条（"selinux-labels": {}）
+命令: cd engine && ./out/bin/cdh device build popsicle --from build_vendor（07→11，exit=0）
+
+  与第三轮同轮完成的另两件事（外部模块补齐、cust 核对）：见 ../issue-popsicle-external-modules/。
+
+  元数据表逐路径对比（对照仍为 out/tmp/popsicle-meta-before/）：
+    条目数                        557 -> 557
+    SELinux 值变化                 3
+      etc/init/cph_disable_provision.rc   vendor_file -> vendor_configs_file
+      etc/init/cph_logcat_dump.rc         vendor_file -> vendor_configs_file
+      etc/init/cph_start_adbd.rc          vendor_file -> vendor_configs_file
+    其余 554 条标签               零变化
+    selinux_source=baseline 行数   12 -> 0
+
+  镜像内 xattr 直读（vendor.img / patch.img）：
+    /etc/init/cph_start_adbd.rc                    vendor_configs_file
+    /etc/init/cph_disable_provision.rc             vendor_configs_file
+    /etc/init/cph_logcat_dump.rc                   vendor_configs_file
+    /etc/init/android.hardware.security.keymint-service.rc  vendor_configs_file（官方邻居，对照）
+  → 这 3 个 rc 现在与同目录官方 rc 同标签，而不是模板搬来的 vendor_file。
+
+  构建产物：
+    [ok] vendor.img（200048640 字节）、vendor_dlkm.img（15831040 字节）
+    [ok] patch.img 384.0 MiB（sha256 a241df03630f）-> out/dist
+    [ok] 盘集 5 个分区已刷新
+
+-- 7. 结论----------------
+69 条配置全部删完（整表清空）：557 条路径里只有 3 条标签发生变化（都是 `vendor_file` →
+`vendor_configs_file`，落回 `etc/` 兜底、与官方邻居对齐），其余全部零变化；uid/gid/mode/mtime
+一个没动。这份表对这台机型没有一条是必须的。

@@ -1,0 +1,10 @@
+LIBBINDER_NDK35 {
+  global:
+    APersistableBundle_new;
+    APersistableBundle_delete;
+    APersistableBundle_dup;
+    APersistableBundle_readFromParcel;
+    APersistableBundle_writeToParcel;
+  local:
+    *;
+};

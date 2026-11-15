@@ -1,0 +1,58 @@
+== cph2797 首轮起机：system_server 每 ~31 s 崩在 PHASE_ACTIVITY_MANAGER_READY（500）（2026-11-04）==
+
+盘集:  engine/out/dist/oppo/cph2797/16.0.8.301_EX01（改动前的 vendor 三件未入树）
+构建:  engine/out/bin/cdh device build cph2797 --from build_vendor -> engine/out/tmp/cph2797-build.log
+实例:  out/core/daemon/runtime/cph2797_16.0.8.301_EX01/1
+判定:  engine/out/tmp/cph2797-boot-check.log
+       [fail] 超时 600s 未出现 sys.boot_completed=1（当前日志 71314 行）
+
+
+## 1. 崩溃栈原文（engine/out/tmp/cph2797-logcat-crash.txt 109~122 行）
+
+$ grep -c 'PersistentDataBlockService init timeout' engine/out/tmp/cph2797-logcat-crash.txt
+18
+
+12-31 19:01:13.688   762   762 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+12-31 19:01:13.688   762   762 E AndroidRuntime: java.lang.RuntimeException: Failed to boot service com.android.server.pdb.PersistentDataBlockService: onBootPhase threw an exception during phase 500
+12-31 19:01:13.688   762   762 E AndroidRuntime: 	at com.android.server.SystemServiceManager.startBootPhase(SystemServiceManager.java:331)
+12-31 19:01:13.688   762   762 E AndroidRuntime: 	at com.android.server.SystemServer.startOtherServices(SystemServer.java:3451)
+12-31 19:01:13.688   762   762 E AndroidRuntime: Caused by: java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+12-31 19:01:13.688   762   762 E AndroidRuntime: 	at com.android.server.pdb.PersistentDataBlockService.waitForInitDoneSignal(PersistentDataBlockService.java:319)
+12-31 19:01:13.688   762   762 E AndroidRuntime: 	at com.android.server.pdb.PersistentDataBlockService.onBootPhase(PersistentDataBlockService.java:308)
+12-31 19:01:44.652  3467  3467 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main   ← 同一栈，pid 762 → 3467，
+                                                     间隔 ~31 s：system_server 崩溃 → zygote 重启 → 再崩，循环到超时
+
+
+## 2. ro.frp.pst 指向的节点在本盘不存在
+
+厂商 vendor 原件（07 步骤 1b 解包件）里同键两行、值一致，走的是 MTK 口径（无 bootdevice 前缀）：
+
+$ grep -n '^ro.frp.pst=' out/roms/oppo/cph2797/16.0.8.301_EX01/super/unpack_vendor/build.prop
+374:ro.frp.pst=/dev/block/by-name/frp
+445:ro.frp.pst=/dev/block/by-name/frp
+
+run1 运行态（adb，非 root）：
+$ adb -s 127.0.0.1:5911 shell ls -l /dev/block/by-name/frp
+ls: /dev/block/by-name/frp: No such file or directory
+
+底盘 GPT 里没有 frp 分区（11_pack_vda 不动分区表，只写数据区）：
+$ grep -ic frp engine/out/dist/oppo/cph2797/16.0.8.301_EX01/vda-info.txt
+0
+
+
+## 3. 等待链（反编译口径，与 15r / m22 / ss9380 / popsicle 同一条）
+
+PersistentDataBlockService：
+- onStart() 把初始化丢进 SystemServerInitThreadPool，末尾才 signalInitDone()；
+- lambda 第一步 enforceChecksumValidity() 打开 ro.frp.pst 做校验和读写，
+  节点不存在 → open() 抛 → 信号永不来；
+- onBootPhase(500) mInitDoneSignal.await(10, SECONDS) 超时 → IllegalStateException
+  → system_server FATAL → zygote 重启循环 → sys.boot_completed 永不置位。
+
+
+## 4. 为什么「只补软链」不够（同链条机型的既有结论）
+
+补软链后节点标签由 ueventd 按 `/dev/block/vda*` 命名规则给成 `misc_block_device`，
+而 plat 只给 system_server 开了 `frp_block_device`；vda3 出厂是 0600 root:root，
+system_server 以 system 身份跑，DAC 也过不去。两道缺任何一道都是同一条 10 s 超时链，
+所以本次三件一起补（照抄 15r / m22 / ss9380 / popsicle 的范式）。

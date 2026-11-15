@@ -1,0 +1,4 @@
+# cdh：neuralnetworks AIDL HAL 按完整服务名精确映射到 hal_neuralnetworks_service
+# （libselinux service_contexts 为 strcmp 精确匹配，不支持前缀匹配；
+#  mtk-neuron_shim 等机型扩展实例由 07_build_vendor 从官方 vendor_service_contexts 同步）。
+android.hardware.neuralnetworks.IDevice/default        u:object_r:hal_neuralnetworks_service:s0

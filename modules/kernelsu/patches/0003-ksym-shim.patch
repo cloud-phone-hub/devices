@@ -1,0 +1,750 @@
+diff --git a/source/kernel/Kbuild b/source/kernel/Kbuild
+index c5eae70..f58d6e5 100644
+--- a/source/kernel/Kbuild
++++ b/source/kernel/Kbuild
+@@ -11,6 +11,7 @@ kernelsu-objs += hook/syscall_event_bridge.o
+ kernelsu-objs += hook/syscall_hook_manager.o
+ kernelsu-objs += hook/tp_marker.o
+ ifeq ($(CONFIG_ARM64),y)
++kernelsu-objs += infra/ksym_tramp.o
+ kernelsu-objs += hook/arm64/patch_memory.o
+ kernelsu-objs += hook/arm64/syscall_hook.o
+ else ifeq ($(CONFIG_X86_64),y)
+@@ -26,6 +27,7 @@ kernelsu-objs += infra/event_queue.o
+ kernelsu-objs += infra/seccomp_cache.o
+ kernelsu-objs += infra/su_mount_ns.o
+ kernelsu-objs += infra/symbol_resolver.o
++kernelsu-objs += infra/ksym.o
+ 
+ ifneq ($(CONFIG_KSU_DISABLE_MANAGER),y)
+ kernelsu-objs += manager/apk_sign.o
+@@ -78,7 +80,7 @@ ccflags-y += -I$(objtree)/security/selinux -include $(srctree)/include/uapi/asm-
+ ifneq ($(KBUILD_EXTMOD),)
+ # 6.18 exports the external module source as srcroot when M/MO are used.
+ ifneq ($(srcroot),)
+-KSU_KERNEL_DIR := $(srcroot)
++KSU_KERNEL_DIR := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
+ endif
+ endif
+ ifndef KSU_KERNEL_DIR
+diff --git a/source/kernel/core/init.c b/source/kernel/core/init.c
+index 412b0e3..a6add5e 100644
+--- a/source/kernel/core/init.c
++++ b/source/kernel/core/init.c
+@@ -28,6 +28,7 @@
+ #include "feature/module_blacklist.h"
+ #include "feature/shell_su_adb_only.h"
+ #include "infra/symbol_resolver.h"
++#include "infra/ksym.h"
+ 
+ #if defined(__x86_64__) && !defined(CONFIG_KSU_X86_PATCH_SYSCALL_DISPATCHER)
+ #include <asm/cpufeature.h>
+@@ -89,6 +90,13 @@ module_param_named(bundled, ksu_bundled, bool, 0);
+ int __init kernelsu_init(void)
+ {
+     pr_info("welcome to KernelSU version " __stringify(KERNEL_SU_VERSION) ", package name " KSU_PACKAGE_NAME "\n");
++
++    // 未导出符号必须最先解析：后面所有 trampoline 与数据指针都依赖它。
++    // 解析失败就直接退出，避免带着空指针跑下去。
++    if (ksu_ksym_init()) {
++        pr_err("ksym init failed, abort\n");
++        return -ENOENT;
++    }
+ #if defined(__x86_64__) && !defined(CONFIG_KSU_X86_PATCH_SYSCALL_DISPATCHER)
+     // If the kernel has the hardening patch, X86_FEATURE_INDIRECT_SAFE must be set
+     if (!boot_cpu_has(X86_FEATURE_INDIRECT_SAFE)) {
+diff --git a/source/kernel/feature/selinux_hide.c b/source/kernel/feature/selinux_hide.c
+index 459f99f..f136122 100644
+--- a/source/kernel/feature/selinux_hide.c
++++ b/source/kernel/feature/selinux_hide.c
+@@ -30,6 +30,7 @@
+ #include "ksu.h"
+ #include "policy/feature.h"
+ #include "hook/lsm_hook.h"
++#include "infra/ksym.h" // 未导出数据符号（selinux_state 等）的接入层
+ 
+ static DEFINE_MUTEX(selinux_hide_mutex);
+ static bool ksu_selinux_hide_enabled __read_mostly = false;
+diff --git a/source/kernel/hook/arm64/patch_memory.c b/source/kernel/hook/arm64/patch_memory.c
+index c344bd5..6ca9742 100644
+--- a/source/kernel/hook/arm64/patch_memory.c
++++ b/source/kernel/hook/arm64/patch_memory.c
+@@ -13,6 +13,7 @@
+ #include "linux/stop_machine.h"
+ #include "asm/cacheflush.h"
+ #include "asm-generic/fixmap.h"
++#include "infra/ksym.h" // 未导出数据符号（selinux_state 等）的接入层
+ 
+ // https://github.com/fuqiuluo/ovo/blob/f7da411458e87d32438dc14fce5a3313ed0c967e/ovo/mmuhack.c#L21
+ 
+diff --git a/source/kernel/hook/syscall_hook_manager.c b/source/kernel/hook/syscall_hook_manager.c
+index 58277e7..e03cf47 100644
+--- a/source/kernel/hook/syscall_hook_manager.c
++++ b/source/kernel/hook/syscall_hook_manager.c
+@@ -19,6 +19,7 @@
+ #include "hook/setuid_hook.h"
+ #include "hook/syscall_hook.h"
+ #include "hook/syscall_event_bridge.h"
++#include "infra/ksym.h" // 未导出数据符号（selinux_state 等）的接入层
+ #if defined(__riscv)
+ #include "hook/riscv64/syscall_regs.h"
+ #endif
+@@ -147,11 +148,15 @@ void __init ksu_syscall_hook_manager_init(void)
+ #endif
+ 
+ #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
++    /* 不走 register_trace_*_sys_enter()：那是头文件里的 inline，会在预编译期就把
++     * __tracepoint_sys_enter 固化成未定义符号，模块加载阶段解不出来。
++     * 改用导出的 tracepoint_probe_register*，tp 指针从 ksym 解析结果拿。 */
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 9, 0)
+-    /* register_trace_prio_* 是 6.9 才有的入口，6.9 之前只能注册普通 tracepoint。 */
+-    ret = register_trace_prio_sys_enter(ksu_sys_enter_handler, NULL, INT_MIN);
++    ret = tracepoint_probe_register_prio((struct tracepoint *)ksu_sym___tracepoint_sys_enter,
++                                         (void *)ksu_sys_enter_handler, NULL, INT_MIN);
+ #else
+-    ret = register_trace_sys_enter(ksu_sys_enter_handler, NULL);
++    ret = tracepoint_probe_register((struct tracepoint *)ksu_sym___tracepoint_sys_enter,
++                                    (void *)ksu_sys_enter_handler, NULL);
+ #endif
+ #ifndef CONFIG_KRETPROBES
+     ksu_mark_running_process_locked();
+@@ -172,7 +177,8 @@ void __exit ksu_syscall_hook_manager_exit(void)
+     pr_info("hook_manager: ksu_hook_manager_exit called\n");
+     ksu_mark_stop();
+ #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
+-    unregister_trace_sys_enter(ksu_sys_enter_handler, NULL);
++    tracepoint_probe_unregister((struct tracepoint *)ksu_sym___tracepoint_sys_enter,
++                                (void *)ksu_sys_enter_handler, NULL);
+     tracepoint_synchronize_unregister();
+     pr_info("hook_manager: sys_enter tracepoint unregistered\n");
+ #endif
+diff --git a/source/kernel/include/infra/ksym.h b/source/kernel/include/infra/ksym.h
+new file mode 100644
+index 0000000..72ab0ba
+--- /dev/null
++++ b/source/kernel/include/infra/ksym.h
+@@ -0,0 +1,38 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * 未导出内核符号的运行时接入层（外部模块形态）。
++ *
++ * 内核没有 EXPORT_SYMBOL 的符号，普通 insmod 会在 simplify_symbols() 阶段报
++ * "Unknown symbol" 并导致装载失败；这里沿用 cdh_redirect 的思路：只用导出 API
++ * （register_kprobe 是导出的），在模块 init 最早阶段把符号解析成地址，
++ * 再让模块内部引用落到本地 trampoline / 指针上：
++ *
++ *  - 函数符号 -> infra/ksym_tramp.S 里同名的 4 条指令跳板（br 到真实地址）
++ *  - 数据符号 -> 下面的宏，解引用到真实地址（本文件须在使用处的内核头之后包含）
++ *
++ * 两个例外（宏在头文件里的 inline 函数就被引用，宏换不到）：
++ *  - selinux_blob_sizes：ksym.c 里定义同名变量，init 时从真实地址快照一份
++ *    （LSM blob 大小在 init 之后不再变，快照语义等价）；
++ *  - __tracepoint_sys_enter：注册处改用 tracepoint_probe_register* 直接拿指针，
++ *    不再走 register_trace_sys_enter() 这类头内 inline。
++ */
++#ifndef __KSU_INFRA_KSYM_H
++#define __KSU_INFRA_KSYM_H
++
++#include <linux/types.h>
++
++/* 由 infra/ksym.c 在模块 init 最早阶段填充；返回 0 表示全部解析成功。 */
++int ksu_ksym_init(void);
++
++extern void *ksu_sym___tracepoint_sys_enter;
++extern void *ksu_sym_init_mm;
++extern void *ksu_sym_mntns_operations;
++extern void *ksu_sym_selinux_blob_sizes;
++extern void *ksu_sym_selinux_state;
++
++#define __tracepoint_sys_enter (*((struct tracepoint *)ksu_sym___tracepoint_sys_enter))
++#define init_mm (*((struct mm_struct *)ksu_sym_init_mm))
++#define mntns_operations (*((const struct proc_ns_operations *)ksu_sym_mntns_operations))
++#define selinux_state (*((struct selinux_state *)ksu_sym_selinux_state))
++
++#endif /* __KSU_INFRA_KSYM_H */
+diff --git a/source/kernel/infra/file_wrapper.c b/source/kernel/infra/file_wrapper.c
+index 7372df0..56e647b 100644
+--- a/source/kernel/infra/file_wrapper.c
++++ b/source/kernel/infra/file_wrapper.c
+@@ -20,6 +20,7 @@
+ #include "selinux/selinux.h"
+ 
+ #include "infra/file_wrapper.h"
++#include "infra/ksym.h" // 未导出数据符号（selinux_state 等）的接入层
+ 
+ struct ksu_file_wrapper {
+     struct file *orig;
+diff --git a/source/kernel/infra/ksym.c b/source/kernel/infra/ksym.c
+new file mode 100644
+index 0000000..16125c7
+--- /dev/null
++++ b/source/kernel/infra/ksym.c
+@@ -0,0 +1,224 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * 未导出内核符号解析：kprobe 取 kallsyms_lookup_name 地址，再逐个查表。
++ *
++ * 为什么走 kprobe：kallsyms_lookup_name 本身没有 EXPORT_SYMBOL，模块拿不到；
++ * 而 register_kprobe() 是导出的，kprobe 会把目标符号地址填进 kp.addr。
++ * 拿到它之后，其余符号（含 static 的数据符号，CONFIG_KALLSYMS_ALL=y 时可查）
++ * 全部经它解析，模块的未定义符号表里就一条都不剩。
++ */
++#include <linux/kallsyms.h>
++#include <linux/kprobes.h>
++#include <linux/lsm_hooks.h>
++#include <linux/module.h>
++#include <linux/string.h>
++#include <linux/version.h>
++
++#include "klog.h"
++#include "infra/ksym.h"
++
++static typeof(kallsyms_lookup_name) *ksu_ksym_lookup;
++
++/*
++ * selinux_blob_sizes 的本地快照：security/selinux 的 inline（selinux_cred() 等）
++ * 在头文件里就引用了该符号，宏替换拦不住。LSM blob 大小在 security_init() 之后
++ * 不再变化，所以拿一份快照语义等价。
++ */
++struct lsm_blob_sizes selinux_blob_sizes;
++
++void *ksu_sym___arm64_sys_close;
++void *ksu_sym___arm64_sys_setns;
++void *ksu_sym___hashtab_insert;
++void *ksu_sym___set_fixmap;
++void *ksu_sym___tracepoint_sys_enter;
++void *ksu_sym_alloc_uid;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 16, 0) && LINUX_VERSION_CODE < KERNEL_VERSION(6, 8, 0)
++void *ksu_sym_anon_inode_getfile_secure;
++#endif
++void *ksu_sym_avc_has_perm;
++void *ksu_sym_avc_ss_reset;
++void *ksu_sym_avtab_alloc;
++void *ksu_sym_avtab_destroy;
++void *ksu_sym_avtab_insert_nonunique;
++void *ksu_sym_avtab_search_node;
++void *ksu_sym_avtab_search_node_next;
++void *ksu_sym_change_pid;
++void *ksu_sym_cond_compute_av;
++void *ksu_sym_copy_to_kernel_nofault;
++void *ksu_sym_current_is_single_threaded;
++void *ksu_sym_dcache_clean_inval_poc;
++void *ksu_sym_ebitmap_cmp;
++void *ksu_sym_ebitmap_contains;
++void *ksu_sym_ebitmap_destroy;
++void *ksu_sym_ebitmap_get_bit;
++void *ksu_sym_ebitmap_set_bit;
++void *ksu_sym_ext4_unregister_sysfs;
++void *ksu_sym_init_mm;
++void *ksu_sym_kallsyms_lookup;
++void *ksu_sym_kallsyms_lookup_name;
++void *ksu_sym_kallsyms_lookup_size_offset;
++void *ksu_sym_kallsyms_on_each_symbol;
++void *ksu_sym_ksys_unshare;
++void *ksu_sym_mls_compute_context_len;
++void *ksu_sym_mls_context_to_sid;
++void *ksu_sym_mls_sid_to_context;
++void *ksu_sym_mntns_operations;
++void *ksu_sym_ns_get_path;
++void *ksu_sym_path_mount;
++void *ksu_sym_path_umount;
++void *ksu_sym_policydb_context_isvalid;
++void *ksu_sym_policydb_destroy;
++void *ksu_sym_policydb_filenametr_search;
++void *ksu_sym_policydb_load_isids;
++void *ksu_sym_policydb_read;
++void *ksu_sym_policydb_write;
++void *ksu_sym_seccomp_filter_release;
++void *ksu_sym_security_bounded_transition;
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 16, 0)
++void *ksu_sym_security_inode_init_security_anon;
++#endif
++void *ksu_sym_selinux_blob_sizes;
++void *ksu_sym_selinux_state;
++void *ksu_sym_selinux_status_update_policyload;
++void *ksu_sym_selnl_notify_policyload;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 14, 0)
++void *ksu_sym_set_cred_ucounts;
++#endif
++void *ksu_sym_set_fs_pwd;
++void *ksu_sym_sidtab_context_to_sid;
++void *ksu_sym_sidtab_destroy;
++void *ksu_sym_sidtab_search_entry;
++void *ksu_sym_sidtab_sid2str_get;
++void *ksu_sym_sidtab_sid2str_put;
++void *ksu_sym_strncpy_from_user_nofault;
++void *ksu_sym_symtab_insert;
++void *ksu_sym_symtab_search;
++void *ksu_sym_task_work_add;
++
++static const struct ksu_ksym_desc {
++    const char *name;
++    void **slot;
++} ksu_ksym_table[] = {
++    { "__arm64_sys_close", &ksu_sym___arm64_sys_close },
++    { "__arm64_sys_setns", &ksu_sym___arm64_sys_setns },
++    { "__hashtab_insert", &ksu_sym___hashtab_insert },
++    { "__set_fixmap", &ksu_sym___set_fixmap },
++    { "__tracepoint_sys_enter", &ksu_sym___tracepoint_sys_enter },
++    { "alloc_uid", &ksu_sym_alloc_uid },
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 16, 0) && LINUX_VERSION_CODE < KERNEL_VERSION(6, 8, 0)
++    { "anon_inode_getfile_secure", &ksu_sym_anon_inode_getfile_secure },
++#endif
++    { "avc_has_perm", &ksu_sym_avc_has_perm },
++    { "avc_ss_reset", &ksu_sym_avc_ss_reset },
++    { "avtab_alloc", &ksu_sym_avtab_alloc },
++    { "avtab_destroy", &ksu_sym_avtab_destroy },
++    { "avtab_insert_nonunique", &ksu_sym_avtab_insert_nonunique },
++    { "avtab_search_node", &ksu_sym_avtab_search_node },
++    { "avtab_search_node_next", &ksu_sym_avtab_search_node_next },
++    { "change_pid", &ksu_sym_change_pid },
++    { "cond_compute_av", &ksu_sym_cond_compute_av },
++    { "copy_to_kernel_nofault", &ksu_sym_copy_to_kernel_nofault },
++    { "current_is_single_threaded", &ksu_sym_current_is_single_threaded },
++    { "dcache_clean_inval_poc", &ksu_sym_dcache_clean_inval_poc },
++    { "ebitmap_cmp", &ksu_sym_ebitmap_cmp },
++    { "ebitmap_contains", &ksu_sym_ebitmap_contains },
++    { "ebitmap_destroy", &ksu_sym_ebitmap_destroy },
++    { "ebitmap_get_bit", &ksu_sym_ebitmap_get_bit },
++    { "ebitmap_set_bit", &ksu_sym_ebitmap_set_bit },
++    { "ext4_unregister_sysfs", &ksu_sym_ext4_unregister_sysfs },
++    { "init_mm", &ksu_sym_init_mm },
++    { "kallsyms_lookup", &ksu_sym_kallsyms_lookup },
++    { "kallsyms_lookup_name", &ksu_sym_kallsyms_lookup_name },
++    { "kallsyms_lookup_size_offset", &ksu_sym_kallsyms_lookup_size_offset },
++    { "kallsyms_on_each_symbol", &ksu_sym_kallsyms_on_each_symbol },
++    { "ksys_unshare", &ksu_sym_ksys_unshare },
++    { "mls_compute_context_len", &ksu_sym_mls_compute_context_len },
++    { "mls_context_to_sid", &ksu_sym_mls_context_to_sid },
++    { "mls_sid_to_context", &ksu_sym_mls_sid_to_context },
++    { "mntns_operations", &ksu_sym_mntns_operations },
++    { "ns_get_path", &ksu_sym_ns_get_path },
++    { "path_mount", &ksu_sym_path_mount },
++    { "path_umount", &ksu_sym_path_umount },
++    { "policydb_context_isvalid", &ksu_sym_policydb_context_isvalid },
++    { "policydb_destroy", &ksu_sym_policydb_destroy },
++    { "policydb_filenametr_search", &ksu_sym_policydb_filenametr_search },
++    { "policydb_load_isids", &ksu_sym_policydb_load_isids },
++    { "policydb_read", &ksu_sym_policydb_read },
++    { "policydb_write", &ksu_sym_policydb_write },
++    { "seccomp_filter_release", &ksu_sym_seccomp_filter_release },
++    { "security_bounded_transition", &ksu_sym_security_bounded_transition },
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 16, 0)
++    { "security_inode_init_security_anon", &ksu_sym_security_inode_init_security_anon },
++#endif
++    { "selinux_blob_sizes", &ksu_sym_selinux_blob_sizes },
++    { "selinux_state", &ksu_sym_selinux_state },
++    { "selinux_status_update_policyload", &ksu_sym_selinux_status_update_policyload },
++    { "selnl_notify_policyload", &ksu_sym_selnl_notify_policyload },
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 14, 0)
++    { "set_cred_ucounts", &ksu_sym_set_cred_ucounts },
++#endif
++    { "set_fs_pwd", &ksu_sym_set_fs_pwd },
++    { "sidtab_context_to_sid", &ksu_sym_sidtab_context_to_sid },
++    { "sidtab_destroy", &ksu_sym_sidtab_destroy },
++    { "sidtab_search_entry", &ksu_sym_sidtab_search_entry },
++    { "sidtab_sid2str_get", &ksu_sym_sidtab_sid2str_get },
++    { "sidtab_sid2str_put", &ksu_sym_sidtab_sid2str_put },
++    { "strncpy_from_user_nofault", &ksu_sym_strncpy_from_user_nofault },
++    { "symtab_insert", &ksu_sym_symtab_insert },
++    { "symtab_search", &ksu_sym_symtab_search },
++    { "task_work_add", &ksu_sym_task_work_add },
++};
++
++/* 先试直接查；kprobe 只用来拿 kallsyms_lookup_name 的地址。 */
++static int ksu_ksym_bootstrap(void)
++{
++    struct kprobe kp = { .symbol_name = "kallsyms_lookup_name" };
++    unsigned long addr;
++    int rc;
++
++    rc = register_kprobe(&kp);
++    if (rc) {
++        pr_err("ksym: register kprobe on kallsyms_lookup_name failed: %d\n", rc);
++        return rc;
++    }
++    addr = (unsigned long)kp.addr;
++    unregister_kprobe(&kp);
++
++    if (!addr) {
++        pr_err("ksym: kprobe got null addr for kallsyms_lookup_name\n");
++        return -ENOENT;
++    }
++    ksu_ksym_lookup = (typeof(kallsyms_lookup_name) *)addr;
++    return 0;
++}
++
++int __init ksu_ksym_init(void)
++{
++    size_t i, missing = 0;
++    int rc;
++
++    rc = ksu_ksym_bootstrap();
++    if (rc)
++        return rc;
++
++    for (i = 0; i < ARRAY_SIZE(ksu_ksym_table); i++) {
++        const struct ksu_ksym_desc *d = &ksu_ksym_table[i];
++
++        *d->slot = (void *)ksu_ksym_lookup(d->name);
++        if (!*d->slot) {
++            pr_err("ksym: unresolved: %s\n", d->name);
++            missing++;
++        }
++    }
++
++    if (missing) {
++        pr_err("ksym: %zu/%zu symbols unresolved\n", missing, ARRAY_SIZE(ksu_ksym_table));
++        return -ENOENT;
++    }
++
++    /* 本地快照：让 security/selinux 的 inline 拿到真实的 blob 大小。 */
++    memcpy(&selinux_blob_sizes, ksu_sym_selinux_blob_sizes, sizeof(selinux_blob_sizes));
++    pr_info("ksym: %zu symbols resolved (%zu funcs via trampoline, %zu data)\n",
++            ARRAY_SIZE(ksu_ksym_table), ARRAY_SIZE(ksu_ksym_table) - 5, (size_t)5);
++    return 0;
++}
+diff --git a/source/kernel/infra/ksym_tramp.S b/source/kernel/infra/ksym_tramp.S
+new file mode 100644
+index 0000000..48b9bdb
+--- /dev/null
++++ b/source/kernel/infra/ksym_tramp.S
+@@ -0,0 +1,302 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * 未导出函数符号的跳板：模块内对同名符号的调用落到这里，
++ * 再由 ksym.c 在 init 阶段填入的地址跳过去。br 是尾跳转，
++ * kCFI 只校验间接调用（blr），不校验 br，因此不需要类型 hash。
++ * 由 /tmp/gen_ksym.py 生成，勿手改。
++ */
++#include <linux/linkage.h>
++#include <linux/version.h>
++
++	.text
++SYM_FUNC_START(__arm64_sys_close)
++	adrp	x16, ksu_sym___arm64_sys_close
++	ldr	x16, [x16, :lo12:ksu_sym___arm64_sys_close]
++	br	x16
++SYM_FUNC_END(__arm64_sys_close)
++SYM_FUNC_START(__arm64_sys_setns)
++	adrp	x16, ksu_sym___arm64_sys_setns
++	ldr	x16, [x16, :lo12:ksu_sym___arm64_sys_setns]
++	br	x16
++SYM_FUNC_END(__arm64_sys_setns)
++SYM_FUNC_START(__hashtab_insert)
++	adrp	x16, ksu_sym___hashtab_insert
++	ldr	x16, [x16, :lo12:ksu_sym___hashtab_insert]
++	br	x16
++SYM_FUNC_END(__hashtab_insert)
++SYM_FUNC_START(__set_fixmap)
++	adrp	x16, ksu_sym___set_fixmap
++	ldr	x16, [x16, :lo12:ksu_sym___set_fixmap]
++	br	x16
++SYM_FUNC_END(__set_fixmap)
++SYM_FUNC_START(alloc_uid)
++	adrp	x16, ksu_sym_alloc_uid
++	ldr	x16, [x16, :lo12:ksu_sym_alloc_uid]
++	br	x16
++SYM_FUNC_END(alloc_uid)
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 16, 0) && LINUX_VERSION_CODE < KERNEL_VERSION(6, 8, 0)
++SYM_FUNC_START(anon_inode_getfile_secure)
++	adrp	x16, ksu_sym_anon_inode_getfile_secure
++	ldr	x16, [x16, :lo12:ksu_sym_anon_inode_getfile_secure]
++	br	x16
++SYM_FUNC_END(anon_inode_getfile_secure)
++#endif
++SYM_FUNC_START(avc_has_perm)
++	adrp	x16, ksu_sym_avc_has_perm
++	ldr	x16, [x16, :lo12:ksu_sym_avc_has_perm]
++	br	x16
++SYM_FUNC_END(avc_has_perm)
++SYM_FUNC_START(avc_ss_reset)
++	adrp	x16, ksu_sym_avc_ss_reset
++	ldr	x16, [x16, :lo12:ksu_sym_avc_ss_reset]
++	br	x16
++SYM_FUNC_END(avc_ss_reset)
++SYM_FUNC_START(avtab_alloc)
++	adrp	x16, ksu_sym_avtab_alloc
++	ldr	x16, [x16, :lo12:ksu_sym_avtab_alloc]
++	br	x16
++SYM_FUNC_END(avtab_alloc)
++SYM_FUNC_START(avtab_destroy)
++	adrp	x16, ksu_sym_avtab_destroy
++	ldr	x16, [x16, :lo12:ksu_sym_avtab_destroy]
++	br	x16
++SYM_FUNC_END(avtab_destroy)
++SYM_FUNC_START(avtab_insert_nonunique)
++	adrp	x16, ksu_sym_avtab_insert_nonunique
++	ldr	x16, [x16, :lo12:ksu_sym_avtab_insert_nonunique]
++	br	x16
++SYM_FUNC_END(avtab_insert_nonunique)
++SYM_FUNC_START(avtab_search_node)
++	adrp	x16, ksu_sym_avtab_search_node
++	ldr	x16, [x16, :lo12:ksu_sym_avtab_search_node]
++	br	x16
++SYM_FUNC_END(avtab_search_node)
++SYM_FUNC_START(avtab_search_node_next)
++	adrp	x16, ksu_sym_avtab_search_node_next
++	ldr	x16, [x16, :lo12:ksu_sym_avtab_search_node_next]
++	br	x16
++SYM_FUNC_END(avtab_search_node_next)
++SYM_FUNC_START(change_pid)
++	adrp	x16, ksu_sym_change_pid
++	ldr	x16, [x16, :lo12:ksu_sym_change_pid]
++	br	x16
++SYM_FUNC_END(change_pid)
++SYM_FUNC_START(cond_compute_av)
++	adrp	x16, ksu_sym_cond_compute_av
++	ldr	x16, [x16, :lo12:ksu_sym_cond_compute_av]
++	br	x16
++SYM_FUNC_END(cond_compute_av)
++SYM_FUNC_START(copy_to_kernel_nofault)
++	adrp	x16, ksu_sym_copy_to_kernel_nofault
++	ldr	x16, [x16, :lo12:ksu_sym_copy_to_kernel_nofault]
++	br	x16
++SYM_FUNC_END(copy_to_kernel_nofault)
++SYM_FUNC_START(current_is_single_threaded)
++	adrp	x16, ksu_sym_current_is_single_threaded
++	ldr	x16, [x16, :lo12:ksu_sym_current_is_single_threaded]
++	br	x16
++SYM_FUNC_END(current_is_single_threaded)
++SYM_FUNC_START(dcache_clean_inval_poc)
++	adrp	x16, ksu_sym_dcache_clean_inval_poc
++	ldr	x16, [x16, :lo12:ksu_sym_dcache_clean_inval_poc]
++	br	x16
++SYM_FUNC_END(dcache_clean_inval_poc)
++SYM_FUNC_START(ebitmap_cmp)
++	adrp	x16, ksu_sym_ebitmap_cmp
++	ldr	x16, [x16, :lo12:ksu_sym_ebitmap_cmp]
++	br	x16
++SYM_FUNC_END(ebitmap_cmp)
++SYM_FUNC_START(ebitmap_contains)
++	adrp	x16, ksu_sym_ebitmap_contains
++	ldr	x16, [x16, :lo12:ksu_sym_ebitmap_contains]
++	br	x16
++SYM_FUNC_END(ebitmap_contains)
++SYM_FUNC_START(ebitmap_destroy)
++	adrp	x16, ksu_sym_ebitmap_destroy
++	ldr	x16, [x16, :lo12:ksu_sym_ebitmap_destroy]
++	br	x16
++SYM_FUNC_END(ebitmap_destroy)
++SYM_FUNC_START(ebitmap_get_bit)
++	adrp	x16, ksu_sym_ebitmap_get_bit
++	ldr	x16, [x16, :lo12:ksu_sym_ebitmap_get_bit]
++	br	x16
++SYM_FUNC_END(ebitmap_get_bit)
++SYM_FUNC_START(ebitmap_set_bit)
++	adrp	x16, ksu_sym_ebitmap_set_bit
++	ldr	x16, [x16, :lo12:ksu_sym_ebitmap_set_bit]
++	br	x16
++SYM_FUNC_END(ebitmap_set_bit)
++SYM_FUNC_START(ext4_unregister_sysfs)
++	adrp	x16, ksu_sym_ext4_unregister_sysfs
++	ldr	x16, [x16, :lo12:ksu_sym_ext4_unregister_sysfs]
++	br	x16
++SYM_FUNC_END(ext4_unregister_sysfs)
++SYM_FUNC_START(kallsyms_lookup)
++	adrp	x16, ksu_sym_kallsyms_lookup
++	ldr	x16, [x16, :lo12:ksu_sym_kallsyms_lookup]
++	br	x16
++SYM_FUNC_END(kallsyms_lookup)
++SYM_FUNC_START(kallsyms_lookup_name)
++	adrp	x16, ksu_sym_kallsyms_lookup_name
++	ldr	x16, [x16, :lo12:ksu_sym_kallsyms_lookup_name]
++	br	x16
++SYM_FUNC_END(kallsyms_lookup_name)
++SYM_FUNC_START(kallsyms_lookup_size_offset)
++	adrp	x16, ksu_sym_kallsyms_lookup_size_offset
++	ldr	x16, [x16, :lo12:ksu_sym_kallsyms_lookup_size_offset]
++	br	x16
++SYM_FUNC_END(kallsyms_lookup_size_offset)
++SYM_FUNC_START(kallsyms_on_each_symbol)
++	adrp	x16, ksu_sym_kallsyms_on_each_symbol
++	ldr	x16, [x16, :lo12:ksu_sym_kallsyms_on_each_symbol]
++	br	x16
++SYM_FUNC_END(kallsyms_on_each_symbol)
++SYM_FUNC_START(ksys_unshare)
++	adrp	x16, ksu_sym_ksys_unshare
++	ldr	x16, [x16, :lo12:ksu_sym_ksys_unshare]
++	br	x16
++SYM_FUNC_END(ksys_unshare)
++SYM_FUNC_START(mls_compute_context_len)
++	adrp	x16, ksu_sym_mls_compute_context_len
++	ldr	x16, [x16, :lo12:ksu_sym_mls_compute_context_len]
++	br	x16
++SYM_FUNC_END(mls_compute_context_len)
++SYM_FUNC_START(mls_context_to_sid)
++	adrp	x16, ksu_sym_mls_context_to_sid
++	ldr	x16, [x16, :lo12:ksu_sym_mls_context_to_sid]
++	br	x16
++SYM_FUNC_END(mls_context_to_sid)
++SYM_FUNC_START(mls_sid_to_context)
++	adrp	x16, ksu_sym_mls_sid_to_context
++	ldr	x16, [x16, :lo12:ksu_sym_mls_sid_to_context]
++	br	x16
++SYM_FUNC_END(mls_sid_to_context)
++SYM_FUNC_START(ns_get_path)
++	adrp	x16, ksu_sym_ns_get_path
++	ldr	x16, [x16, :lo12:ksu_sym_ns_get_path]
++	br	x16
++SYM_FUNC_END(ns_get_path)
++SYM_FUNC_START(path_mount)
++	adrp	x16, ksu_sym_path_mount
++	ldr	x16, [x16, :lo12:ksu_sym_path_mount]
++	br	x16
++SYM_FUNC_END(path_mount)
++SYM_FUNC_START(path_umount)
++	adrp	x16, ksu_sym_path_umount
++	ldr	x16, [x16, :lo12:ksu_sym_path_umount]
++	br	x16
++SYM_FUNC_END(path_umount)
++SYM_FUNC_START(policydb_context_isvalid)
++	adrp	x16, ksu_sym_policydb_context_isvalid
++	ldr	x16, [x16, :lo12:ksu_sym_policydb_context_isvalid]
++	br	x16
++SYM_FUNC_END(policydb_context_isvalid)
++SYM_FUNC_START(policydb_destroy)
++	adrp	x16, ksu_sym_policydb_destroy
++	ldr	x16, [x16, :lo12:ksu_sym_policydb_destroy]
++	br	x16
++SYM_FUNC_END(policydb_destroy)
++SYM_FUNC_START(policydb_filenametr_search)
++	adrp	x16, ksu_sym_policydb_filenametr_search
++	ldr	x16, [x16, :lo12:ksu_sym_policydb_filenametr_search]
++	br	x16
++SYM_FUNC_END(policydb_filenametr_search)
++SYM_FUNC_START(policydb_load_isids)
++	adrp	x16, ksu_sym_policydb_load_isids
++	ldr	x16, [x16, :lo12:ksu_sym_policydb_load_isids]
++	br	x16
++SYM_FUNC_END(policydb_load_isids)
++SYM_FUNC_START(policydb_read)
++	adrp	x16, ksu_sym_policydb_read
++	ldr	x16, [x16, :lo12:ksu_sym_policydb_read]
++	br	x16
++SYM_FUNC_END(policydb_read)
++SYM_FUNC_START(policydb_write)
++	adrp	x16, ksu_sym_policydb_write
++	ldr	x16, [x16, :lo12:ksu_sym_policydb_write]
++	br	x16
++SYM_FUNC_END(policydb_write)
++SYM_FUNC_START(seccomp_filter_release)
++	adrp	x16, ksu_sym_seccomp_filter_release
++	ldr	x16, [x16, :lo12:ksu_sym_seccomp_filter_release]
++	br	x16
++SYM_FUNC_END(seccomp_filter_release)
++SYM_FUNC_START(security_bounded_transition)
++	adrp	x16, ksu_sym_security_bounded_transition
++	ldr	x16, [x16, :lo12:ksu_sym_security_bounded_transition]
++	br	x16
++SYM_FUNC_END(security_bounded_transition)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 16, 0)
++SYM_FUNC_START(security_inode_init_security_anon)
++	adrp	x16, ksu_sym_security_inode_init_security_anon
++	ldr	x16, [x16, :lo12:ksu_sym_security_inode_init_security_anon]
++	br	x16
++SYM_FUNC_END(security_inode_init_security_anon)
++#endif
++SYM_FUNC_START(selinux_status_update_policyload)
++	adrp	x16, ksu_sym_selinux_status_update_policyload
++	ldr	x16, [x16, :lo12:ksu_sym_selinux_status_update_policyload]
++	br	x16
++SYM_FUNC_END(selinux_status_update_policyload)
++SYM_FUNC_START(selnl_notify_policyload)
++	adrp	x16, ksu_sym_selnl_notify_policyload
++	ldr	x16, [x16, :lo12:ksu_sym_selnl_notify_policyload]
++	br	x16
++SYM_FUNC_END(selnl_notify_policyload)
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 14, 0)
++SYM_FUNC_START(set_cred_ucounts)
++	adrp	x16, ksu_sym_set_cred_ucounts
++	ldr	x16, [x16, :lo12:ksu_sym_set_cred_ucounts]
++	br	x16
++SYM_FUNC_END(set_cred_ucounts)
++#endif
++SYM_FUNC_START(set_fs_pwd)
++	adrp	x16, ksu_sym_set_fs_pwd
++	ldr	x16, [x16, :lo12:ksu_sym_set_fs_pwd]
++	br	x16
++SYM_FUNC_END(set_fs_pwd)
++SYM_FUNC_START(sidtab_context_to_sid)
++	adrp	x16, ksu_sym_sidtab_context_to_sid
++	ldr	x16, [x16, :lo12:ksu_sym_sidtab_context_to_sid]
++	br	x16
++SYM_FUNC_END(sidtab_context_to_sid)
++SYM_FUNC_START(sidtab_destroy)
++	adrp	x16, ksu_sym_sidtab_destroy
++	ldr	x16, [x16, :lo12:ksu_sym_sidtab_destroy]
++	br	x16
++SYM_FUNC_END(sidtab_destroy)
++SYM_FUNC_START(sidtab_search_entry)
++	adrp	x16, ksu_sym_sidtab_search_entry
++	ldr	x16, [x16, :lo12:ksu_sym_sidtab_search_entry]
++	br	x16
++SYM_FUNC_END(sidtab_search_entry)
++SYM_FUNC_START(sidtab_sid2str_get)
++	adrp	x16, ksu_sym_sidtab_sid2str_get
++	ldr	x16, [x16, :lo12:ksu_sym_sidtab_sid2str_get]
++	br	x16
++SYM_FUNC_END(sidtab_sid2str_get)
++SYM_FUNC_START(sidtab_sid2str_put)
++	adrp	x16, ksu_sym_sidtab_sid2str_put
++	ldr	x16, [x16, :lo12:ksu_sym_sidtab_sid2str_put]
++	br	x16
++SYM_FUNC_END(sidtab_sid2str_put)
++SYM_FUNC_START(strncpy_from_user_nofault)
++	adrp	x16, ksu_sym_strncpy_from_user_nofault
++	ldr	x16, [x16, :lo12:ksu_sym_strncpy_from_user_nofault]
++	br	x16
++SYM_FUNC_END(strncpy_from_user_nofault)
++SYM_FUNC_START(symtab_insert)
++	adrp	x16, ksu_sym_symtab_insert
++	ldr	x16, [x16, :lo12:ksu_sym_symtab_insert]
++	br	x16
++SYM_FUNC_END(symtab_insert)
++SYM_FUNC_START(symtab_search)
++	adrp	x16, ksu_sym_symtab_search
++	ldr	x16, [x16, :lo12:ksu_sym_symtab_search]
++	br	x16
++SYM_FUNC_END(symtab_search)
++SYM_FUNC_START(task_work_add)
++	adrp	x16, ksu_sym_task_work_add
++	ldr	x16, [x16, :lo12:ksu_sym_task_work_add]
++	br	x16
++SYM_FUNC_END(task_work_add)
+diff --git a/source/kernel/infra/su_mount_ns.c b/source/kernel/infra/su_mount_ns.c
+index 1b1ab1d..c1c792c 100644
+--- a/source/kernel/infra/su_mount_ns.c
++++ b/source/kernel/infra/su_mount_ns.c
+@@ -20,6 +20,7 @@
+ #include "ksu.h"
+ #include "infra/su_mount_ns.h"
+ #include "util.h"
++#include "infra/ksym.h" // 未导出数据符号（selinux_state 等）的接入层
+ 
+ extern int path_mount(const char *dev_name, struct path *path, const char *type_page, unsigned long flags,
+                       void *data_page);
+diff --git a/source/kernel/selinux/rules.c b/source/kernel/selinux/rules.c
+index 768b9a2..4555911 100644
+--- a/source/kernel/selinux/rules.c
++++ b/source/kernel/selinux/rules.c
+@@ -14,6 +14,7 @@
+ #include "ss/services.h"
+ #include "linux/lsm_audit.h" // IWYU pragma: keep
+ #include "xfrm.h"
++#include "infra/ksym.h" // 未导出数据符号（selinux_state 等）的接入层
+ 
+ struct selinux_policy *backup_sepolicy;
+ 
+diff --git a/source/kernel/selinux/selinux.c b/source/kernel/selinux/selinux.c
+index e5dcc4d..2b8b4b5 100644
+--- a/source/kernel/selinux/selinux.c
++++ b/source/kernel/selinux/selinux.c
+@@ -5,6 +5,7 @@
+ #include "linux/version.h"
+ #include "klog.h" // IWYU pragma: keep
+ #include "ksu.h"
++#include "infra/ksym.h" // 未导出数据符号（selinux_state 等）的接入层
+ 
+ /*
+  * Cached SID values for frequently checked contexts.

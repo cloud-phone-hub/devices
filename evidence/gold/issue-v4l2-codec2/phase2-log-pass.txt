@@ -1,0 +1,101 @@
+# 通过态（实例 35，patch.img sha256 3e0e69c2cf96）
+
+## 1) hal build media-v412：ABI 就绪 + 闭包落盘 15 个，EXIT=0
+
+$ cd engine && ./out/bin/cdh-vendor hal build android.hardware.media.v412 --android 15 \
+    --out-dir /Volumes/work/cloud-phone-hub/engine/out/vendor/android15 \
+    --abi-dir out/vendor/android15/abi/media-v412/system/lib64 \
+    --abi-dir out/vendor/android15/abi/media-v412/apex/media-swcodec/lib64 \
+    --vendor-lib64 out/roms/lineage/lineage-22.0/super/unpack_vendor/lib64
+
+[..] v412 ABI 已就绪: /Volumes/work/cloud-phone-hub/engine/out/vendor/android15/abi/media-v412
+==> 编译业务源
+==> 链接 plugin 共享库
+==> libyuv 编译 + llvm-ar 归档
+==> 链接服务 PIE
+    写 bin/hw/android.hardware.media.c2@1.2-service-v4l2-64
+    写 bin/hw/android.hardware.media.c2-service-v4l2-64
+    写 lib64/libc2plugin_store.so
+    运行期闭包落盘 15 个库 -> lib64/（android.hardware.graphics.bufferqueue@2.0.so, android.hardware.media.bufferpool2-V2-ndk.so, android.hardware.media.bufferpool@2.0.so, android.hardware.media.c2-V1-ndk.so, 等 15 个）
+[ok] android.hardware.media.v412 构建完成 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android15
+    更新 etc/init/android.hardware.media.c2@1.2-service-v4l2-64.rc（0644）
+    更新 etc/vintf/manifest/android.hardware.media.c2@1.2-service-v4l2.xml（0644）
+EXIT=0
+
+## 2) 07 build-vendor：片段并入 + 20 项产物齐全，EXIT=0
+
+    SELinux 补丁: 模块层 android.hardware.media.v412 vendor/hardware/android.hardware.media.v412/sepolicy（2 个文件）
+    追加 .../vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.media.v412/sepolicy/vendor_sepolicy.cil（1131 字节）
+    追加 .../vendor/etc/selinux/vendor_file_contexts <- vendor/hardware/android.hardware.media.v412/sepolicy/vendor_file_contexts（1244 字节）
+[skip] android.hardware.media.v412 已编译（17 个编译产物 + 3 个 vendor 静态树文件齐全）
+    编译产物 android.hardware.media.v412@default: 写入 20，已存在同内容 0
+[ok] patch.img 发布完成: .../img/patch.img（402653184 字节，sha256 3e0e69c2cf96）
+EXIT=0
+
+## 3) 镜像层核对（debugfs 直查 vendor.img）
+
+$ debugfs -R "ea_list /bin/hw/android.hardware.media.c2@1.2-service-v4l2-64" vendor.img
+Extended attributes:
+  security.selinux (29) = "u:object_r:mediacodec_exec:s0"
+
+$ debugfs -R "ea_list /lib64/libc2plugin_store.so" vendor.img
+  security.selinux (35) = "u:object_r:same_process_hal_file:s0"
+
+$ debugfs -R "ea_list /lib64/libcodec2.so" vendor.img
+  security.selinux (25) = "u:object_r:vendor_file:s0"
+
+$ debugfs -R "cat /etc/selinux/vendor_file_contexts" vendor.img | grep v4l2
+/(vendor|system/vendor)/bin/hw/android\.hardware\.media\.c2@1\.2-service-v4l2-64  u:object_r:mediacodec_exec:s0
+
+$ debugfs -R "cat /etc/selinux/vendor_sepolicy.cil" vendor.img | grep -n "allow mediacodec"
+(allow mediacodec same_process_hal_file_202404 (file (read getattr map open execute)))
+(allow mediacodec vendor_file (file (read getattr map open execute)))
+
+15 个运行期库的 stat（节选）：
+libcodec2.so                    Inode: 736  Mode: 0644  User: 0  Group: 0  Size: 35160
+libcodec2_aidl.so               Inode: 737  Mode: 0644  User: 0  Group: 0  Size: 290072
+libcodec2_hal_common.so         Inode: 738  Mode: 0644  User: 0  Group: 0  Size: 119552
+libcodec2_vndk.so               Inode: 739  Mode: 0644  User: 0  Group: 0  Size: 806360
+libchrome.so                    Inode: 734  Mode: 0644  User: 0  Group: 0  Size: 1242848
+libsfplugin_ccodec_utils.so     Inode: 777  Mode: 0644  User: 0  Group: 0  Size: 570320
+libstagefright_bufferpool@2.0.1.so  Inode: 782  Mode: 0644  User: 0  Group: 0  Size: 219160
+android.hardware.media.c2-V1-ndk.so  Inode: 688  Mode: 0644  User: 0  Group: 0  Size: 285000
+android.hardware.graphics.bufferqueue@2.0.so  Inode: 672  Mode: 0644  User: 0  Group: 0  Size: 220712
+
+## 4) 运行层（实例 35，qemu.log）
+
+    0.487834][    T1] init: Parsing file /vendor/etc/init/android.hardware.media.c2@1.2-service-v4l2-64.rc...
+   16.740965][    T1] init: starting service 'android-hardware-media-c2-v4l2-hal-1-2'...
+   16.743771][    T1] init: ... started service 'android-hardware-media-c2-v4l2-hal-1-2' has pid 565
+   16.782223][  T189] servicemanager: Caller(pid=565,uid=1013,sid=u:r:mediacodec:s0) Found android.hardware.media.c2.IComponentStore/default in device VINTF manifest.
+01-01 08:00:16.771   565   565 D android.hardware.media.c2-service-v4l2: Service starting...
+01-01 08:00:16.772   565   565 I android.hardware.media.c2-service-v4l2: Codec2's AIDL IComponentStore service created.
+
+全文计数：
+  cannot execv                        0
+  same_process_hal_file 相关 avc      0
+  starting service ... v4l2 ...       1（全程未重启）
+
+## 5) 运行层（daemon hvc7 shell 通道，guest 内实测）
+
+:/ # getprop init.svc.android-hardware-media-c2-v4l2-hal-1-2
+running
+
+:/ # ps -A | grep -iE v4l2; echo PS_END
+media          565     1   11322372  24472 binder_thread_read  0 S android.hardware.media.c2@1.2-service-v4l2-64
+PS_END
+
+:/ # ls /dev/video* 2>&1; echo DEV_END
+ls: /dev/video*: No such file or directory
+DEV_END
+
+:/ # dumpsys media.codec > /data/local/tmp/codec.txt 2>&1; grep -icE c2.v4l2 /data/local/tmp/codec.txt; echo DONE
+0
+DONE
+
+## 6) 宿主侧 QEMU 能力核对（解释第 5 段为什么是 0）
+
+$ out/qemu/dist/darwin/bin/qemu-system-aarch64 --version | head -1
+QEMU emulator version 11.0.4
+$ out/qemu/dist/darwin/bin/qemu-system-aarch64 -device help | grep -i "video\|v4l2"
+（无输出：该构建没有 virtio-video / v4l2 设备）

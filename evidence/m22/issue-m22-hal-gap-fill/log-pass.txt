@@ -1,0 +1,235 @@
+== 1) 模块清单（cdh-vendor hal list --android 16，构建后 32 个）==
+android16 模块 32 个（HAL 根 /Volumes/work/cloud-phone-hub/engine/vendor/hardware）
+  android.hardware.audio             aidl -> android.hardware.audio.service, android.hardware.audio.effect.service
+  android.hardware.authsecret        aidl -> android.hardware.authsecret-service
+  android.hardware.biometrics        aidl -> android.hardware.biometrics.fingerprint-service, android.hardware.biometrics.face-service, android.hardware.biometrics.fingerprint-virtualhal-service, android.hardware.biometrics.face-virtualhal-service
+  android.hardware.bluetooth         aidl -> android.hardware.bluetooth-service
+  android.hardware.boot              aidl -> android.hardware.boot-service.default
+  android.hardware.camera            aidl -> android.hardware.camera-service
+  android.hardware.confirmationui    aidl -> android.hardware.confirmationui-service
+  android.hardware.drm               aidl -> android.hardware.drm-service.clearkey
+  android.hardware.fastboot          aidl -> android.hardware.fastboot-service
+  android.hardware.gnss              aidl -> android.hardware.gnss-service
+  android.hardware.gpu               gpu
+  android.hardware.health            aidl -> android.hardware.health-service
+  android.hardware.identity          aidl -> android.hardware.identity-service
+  android.hardware.ir                aidl -> android.hardware.ir-service
+  android.hardware.keymint           aidl -> android.hardware.security.keymint-service
+  android.hardware.light             aidl -> android.hardware.lights-service
+  android.hardware.media             aidl -> android.hardware.media.c2-mediatek, vendor.dolby.media.c2-default-service-dax
+  android.hardware.media.v412        v412 -> android.hardware.media.c2@1.2-service-v4l2-64, libc2plugin_store.so
+  android.hardware.memtrack          aidl -> android.hardware.memtrack-service
+  android.hardware.neuralnetworks    aidl -> android.hardware.neuralnetworks-service
+  android.hardware.nfc               aidl -> android.hardware.nfc-service
+  android.hardware.power             aidl -> android.hardware.power-service
+  android.hardware.radio             aidl -> android.hardware.radio-service（变体: mtk）
+  android.hardware.security          aidl -> android.hardware.security-service, android.hardware.security.authgraph-service
+  android.hardware.sensors           aidl -> android.hardware.sensors-service
+  android.hardware.thermal           aidl -> android.hardware.thermal-service
+  android.hardware.usb               aidl -> android.hardware.usb-service, android.hardware.usb.gadget-service
+  android.hardware.vibrator          aidl -> android.hardware.vibrator-service
+  android.hardware.weaver            aidl -> android.hardware.weaver-service
+  android.hardware.wifi              aidl -> android.hardware.wifi-service
+  android.service.daemon             cargo -> bin/service_daemon
+  vendor.qti.hardware.perf2          aidl -> vendor.qti.hardware.perf2-hal-service
+
+== 2) 新增/启用的 11 个模块逐个编译（--android 16）==
+----- android.hardware.nfc
+==> 编译 8+1 个源文件到 .o
+==> 链接服务二进制
+    写 bin/hw/android.hardware.nfc-service
+[ok] android.hardware.nfc 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+[ok] android.hardware.nfc 合并 vendor 静态树：新增 0，已存在同内容 2
+----- android.hardware.biometrics
+==> 编译 54+4 个源文件到 .o
+==> 链接服务二进制
+    写 bin/hw/android.hardware.biometrics.fingerprint-service
+    写 bin/hw/android.hardware.biometrics.face-service
+    写 bin/hw/android.hardware.biometrics.fingerprint-virtualhal-service
+    写 bin/hw/android.hardware.biometrics.face-virtualhal-service
+[ok] android.hardware.biometrics 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+[ok] android.hardware.biometrics 合并 vendor 静态树：新增 0，已存在同内容 5
+----- android.hardware.camera
+==> 编译 179+1 个源文件 + 2 个 C 源到 .o
+==> 链接服务二进制
+    写 bin/hw/android.hardware.camera-service
+[ok] android.hardware.camera 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+[ok] android.hardware.camera 合并 vendor 静态树：新增 0，已存在同内容 2
+----- android.hardware.drm
+==> 编译 41+1 个源文件到 .o
+==> 链接服务二进制
+    写 bin/hw/android.hardware.drm-service.clearkey
+[ok] android.hardware.drm 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+[ok] android.hardware.drm 合并 vendor 静态树：新增 0，已存在同内容 2
+----- android.hardware.identity
+==> 编译 20+1 个源文件到 .o
+==> 链接服务二进制
+    写 bin/hw/android.hardware.identity-service
+[ok] android.hardware.identity 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+[ok] android.hardware.identity 合并 vendor 静态树：新增 0，已存在同内容 2
+----- android.hardware.weaver
+==> 编译 4+1 个源文件到 .o
+==> 链接服务二进制
+    写 bin/hw/android.hardware.weaver-service
+[ok] android.hardware.weaver 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+[ok] android.hardware.weaver 合并 vendor 静态树：新增 0，已存在同内容 2
+----- android.hardware.boot
+==> 编译 2+1 个源文件到 .o
+==> 链接服务二进制
+    写 bin/hw/android.hardware.boot-service.default
+[ok] android.hardware.boot 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+[ok] android.hardware.boot 合并 vendor 静态树：新增 0，已存在同内容 2
+----- android.hardware.memtrack
+==> 编译 4+1 个源文件到 .o
+==> 链接服务二进制
+    写 bin/hw/android.hardware.memtrack-service
+[ok] android.hardware.memtrack 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+[ok] android.hardware.memtrack 合并 vendor 静态树：新增 0，已存在同内容 2
+----- android.hardware.usb
+==> 编译 24+2 个源文件到 .o
+==> 链接服务二进制
+    写 bin/hw/android.hardware.usb-service
+    写 bin/hw/android.hardware.usb.gadget-service
+[ok] android.hardware.usb 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+[ok] android.hardware.usb 合并 vendor 静态树：新增 0，已存在同内容 4
+----- android.hardware.authsecret
+==> 编译 1+1 个源文件到 .o
+==> 链接服务二进制
+    写 bin/hw/android.hardware.authsecret-service
+[ok] android.hardware.authsecret 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+[ok] android.hardware.authsecret 合并 vendor 静态树：新增 0，已存在同内容 2
+----- android.hardware.confirmationui
+==> 编译 7+1 个源文件到 .o
+==> 链接服务二进制
+    写 bin/hw/android.hardware.confirmationui-service
+[ok] android.hardware.confirmationui 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+[ok] android.hardware.confirmationui 合并 vendor 静态树：新增 0，已存在同内容 2
+
+== 3) 产物落盘（engine/out/vendor/android16）==
+ 
+6611256 android.hardware.audio.effect.service
+8057184 android.hardware.audio.service
+100712 android.hardware.authsecret-service
+1049816 android.hardware.biometrics.face-service
+1053872 android.hardware.biometrics.face-virtualhal-service
+1049920 android.hardware.biometrics.fingerprint-service
+1056096 android.hardware.biometrics.fingerprint-virtualhal-service
+98272 android.hardware.boot-service.default
+1339672 android.hardware.camera-service
+159024 android.hardware.confirmationui-service
+687056 android.hardware.drm-service.clearkey
+1471496 android.hardware.gnss-service
+729144 android.hardware.health-service
+476368 android.hardware.identity-service
+122104 android.hardware.ir-service
+576480 android.hardware.lights-service
+1938656 android.hardware.media.c2-mediatek
+825688 android.hardware.media.c2-service-v4l2-64
+825688 android.hardware.media.c2@1.2-service-v4l2-64
+131512 android.hardware.memtrack-service
+154584 android.hardware.nfc-service
+422848 android.hardware.power-service
+4532256 android.hardware.radio-service
+1602856 android.hardware.security.keymint-service
+1003792 android.hardware.sensors-service
+827616 android.hardware.thermal-service
+334408 android.hardware.usb-service
+333456 android.hardware.usb.gadget-service
+715920 android.hardware.vibrator-service
+111872 android.hardware.weaver-service
+2527496 android.hardware.wifi-service
+1938656 vendor.dolby.media.c2-default-service-dax
+-- rc
+android.hardware.audio.service.rc
+android.hardware.authsecret-service.rc
+android.hardware.biometrics.face-service.rc
+android.hardware.biometrics.fingerprint-service.rc
+android.hardware.biometrics.virtualhal-service.rc
+android.hardware.boot-service.default.rc
+android.hardware.camera-service.rc
+android.hardware.confirmationui-service.rc
+android.hardware.drm-service.clearkey.rc
+android.hardware.gnss-service.rc
+android.hardware.health-service.rc
+android.hardware.identity-service.rc
+android.hardware.ir-service.rc
+android.hardware.lights-service.rc
+android.hardware.media.c2-mediatek.rc
+android.hardware.media.c2@1.2-service-v4l2-64.rc
+android.hardware.memtrack-service.rc
+android.hardware.nfc-service.rc
+android.hardware.power-service.rc
+android.hardware.radio-service.rc
+android.hardware.security.keymint-service.rc
+android.hardware.sensors-service.rc
+android.hardware.thermal-service.rc
+android.hardware.usb-service.rc
+android.hardware.usb.gadget-service.rc
+android.hardware.vibrator-service.rc
+android.hardware.weaver-service.rc
+android.hardware.wifi-service.rc
+cph_daemon_service.rc
+cph_disable_provision.rc
+cph_logcat_dump.rc
+cph_netmgr.rc
+cph_start_adbd.rc
+vendor.dolby.media.c2-default-service-dax.rc
+-- vintf
+android.hardware.audio.service.xml
+android.hardware.authsecret-service.xml
+android.hardware.biometrics.face-service.xml
+android.hardware.biometrics.fingerprint-service.xml
+android.hardware.boot-service.default.xml
+android.hardware.camera-service.xml
+android.hardware.confirmationui-service.xml
+android.hardware.drm-service.clearkey.xml
+android.hardware.gnss-service.xml
+android.hardware.health-service.xml
+android.hardware.identity-service.xml
+android.hardware.ir-service.xml
+android.hardware.lights-service.xml
+android.hardware.media.c2@1.2-service-v4l2.xml
+android.hardware.memtrack-service.xml
+android.hardware.nfc-service.xml
+android.hardware.power.xml
+android.hardware.radio-service.xml
+android.hardware.security.keymint-service.xml
+android.hardware.sensors-service.xml
+android.hardware.thermal-service.xml
+android.hardware.usb-service.xml
+android.hardware.usb.gadget-service.xml
+android.hardware.vibrator-service.xml
+android.hardware.weaver-service.xml
+android.hardware.wifi-service.xml
+manifest_media_c2_default.xml
+vendor.dolby.media.c2-default-service-dax.xml
+
+
+## 实机复测（2026-10-29，实例 34）
+
+构建：07→09→11 round3（build-07-09-11-round3.log，EXIT=0）
+运行：out/core/daemon/runtime/m22_12.5.0.0A/34/qemu.log
+
+  sys.boot_completed                                                         13
+  denied  { entrypoint }                                                     23
+  exited with status 127                                                     0
+  duplicate definition of service                                            0
+  Waited one second for android.hardware.nfc.INfc                            0
+  Waited one second for android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal 0
+  Waited one second for android.hardware.biometrics.face.virtualhal.IVirtualHal 0
+
+  service list（节选）:
+    android.hardware.nfc.INfc/default, android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual,
+    android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual, android.hardware.camera.provider.ICameraProvider/internal/0,
+    android.hardware.memtrack.IMemtrack/default, android.hardware.usb.gadget.IUsbGadget/default,
+    android.hardware.weaver.IWeaver/default, android.hardware.identity.IIdentityCredentialStore/default,
+    android.hardware.authsecret.IAuthSecret/default, android.hardware.confirmationui.IConfirmationUI/default,
+    nfc, memtrack.proxy, face, fingerprint, media.camera, media.camera.proxy
+
+  进程（稳定 PID）: 824 authsecret / 827 fp-virtualhal / 828 face-virtualhal / 829 camera / 830 confirmationui
+                   833 identity / 838 memtrack / 839 nfc / 846 usb.gadget / 849 weaver
+
+  NFC 功能面: libnfc_nci HalOpenInternal: Open Error=OK；INfcAidl::fromBinder returned ver(1)；NfcService: Enabling NFC
+
+  注：dumpsys nfc / dumpsys media.camera 仍 FAILED_TRANSACTION（vendor 域对 pioneer dump 管道 fd { use } 被拒），
+      按本目录 README 备注「原厂实例同样如此，不能当判据」处理。

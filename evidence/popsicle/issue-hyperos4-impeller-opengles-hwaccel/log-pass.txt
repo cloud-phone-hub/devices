@@ -1,0 +1,81 @@
+# 1. 05_build_vendor_boot 与 07_build_vendor 构建日志摘要
+
+=== out/devices/xiaomi/popsicle/16-OS4.0.5.0.XPBCN/img/vendor_boot-log.txt ===
+==> [fix] 检测到 HyperOS 4 system_ext/lib64/libhyper_os_flutter.so 锁死 Vulkan 软渲染，前置重定向 /system_ext/lib64/libhyper_os_flutter.so -> /mnt/vendorpatch/vendor/lib64/libhyper_os_flutter.sys.so
+==> first-stage 模块: [first-stage] cdh_redirect.ko（42808 B） -> lib/modules/6.12.81-4k-cdh/ + lib/modules/cdh_redirect.rules（599 B）
+    缓存配方:   vboot-f5474a5dcd78
+
+=== out/devices/xiaomi/popsicle/16-OS4.0.5.0.XPBCN/img/vendor-log.txt ===
+    [fix] vendor/lib64/libhyper_os_flutter.sys.so: 修补官方 system_ext/lib64/libhyper_os_flutter.so 启用 Impeller OpenGL ES 硬件加速渲染
+
+# 2. 全新冷启动后 cdh_redirect 规则加载与 com.miui.home 进程映射
+
+=== dmesg cdh_redirect ===
+[    0.499578][    T1] cdh_redirect: 规则来自 /lib/modules/cdh_redirect.rules：11 条
+[    0.505410][    T1] cdh_redirect: 前向钩子就绪：getname_flags（maxactive 4096）
+[    0.511543][    T1] cdh_redirect: 逆向钩子就绪：proc_pid_readlink + vfs_readlink
+[    0.511981][    T1] cdh_redirect: 已加载：11 条规则（/lib/modules/cdh_redirect.rules），内核未打补丁
+
+=== props ===
+debug.flutter.renderer=[]
+persist.sys.impeller.glass.legacy_render=[]
+ro.hardware.egl=[mesa]
+
+=== com.miui.home maps ===
+7a6654d000-7a66be2000 r--p 00000000 fe:20 606                            /mnt/vendorpatch/vendor/lib64/libhyper_os_flutter.sys.so
+7a66bf1000-7a676a3000 r-xp 00694000 fe:20 606                            /mnt/vendorpatch/vendor/lib64/libhyper_os_flutter.sys.so
+7a676b2000-7a67707000 r--p 01145000 fe:20 606                            /mnt/vendorpatch/vendor/lib64/libhyper_os_flutter.sys.so
+7a67716000-7a6771b000 rw-p 01199000 fe:20 606                            /mnt/vendorpatch/vendor/lib64/libhyper_os_flutter.sys.so
+7a76344000-7a76356000 r--p 00000000 fd:02 27330531                       /system/lib64/libGLESv3.so
+7a76358000-7a7635e000 r-xp 00014000 fd:02 27330531                       /system/lib64/libGLESv3.so
+7a76360000-7a76361000 r--p 0001c000 fd:02 27330531                       /system/lib64/libGLESv3.so
+7aa650c000-7aa651e000 r--p 00000000 fd:02 27330350                       /system/lib64/libGLESv2.so
+7aa6520000-7aa6526000 r-xp 00014000 fd:02 27330350                       /system/lib64/libGLESv2.so
+7aa6528000-7aa6529000 r--p 0001c000 fd:02 27330350                       /system/lib64/libGLESv2.so
+7aa655b000-7aa6561000 r--p 00000000 fd:02 27330342                       /system/lib64/libGLESv1_CM.so
+7aa6563000-7aa6565000 r-xp 00008000 fd:02 27330342                       /system/lib64/libGLESv1_CM.so
+7aa6567000-7aa6568000 r--p 0000c000 fd:02 27330342                       /system/lib64/libGLESv1_CM.so
+7aa658c000-7aa6596000 r--p 00000000 fe:20 560                            /mnt/vendorpatch/vendor/lib64/egl/libGLESv2_mesa.so
+7aa6598000-7aa659e000 r-xp 0000c000 fe:20 560                            /mnt/vendorpatch/vendor/lib64/egl/libGLESv2_mesa.so
+7aa65a0000-7aa65a1000 r--p 00014000 fe:20 560                            /mnt/vendorpatch/vendor/lib64/egl/libGLESv2_mesa.so
+7aa65e9000-7aa65ed000 r--p 00000000 fe:20 558                            /mnt/vendorpatch/vendor/lib64/egl/libGLESv1_CM_mesa.so
+7aa65ed000-7aa65f0000 r-xp 00004000 fe:20 558                            /mnt/vendorpatch/vendor/lib64/egl/libGLESv1_CM_mesa.so
+7aa65f1000-7aa65f2000 r--p 00008000 fe:20 558                            /mnt/vendorpatch/vendor/lib64/egl/libGLESv1_CM_mesa.so
+
+# 3. 静置与桌面连续滑动时的 CPU 占用对比
+
+=== idle top ===
+Tasks: 418 total,   1 running, 417 sleeping,   0 stopped,   0 zombie
+  Mem:  7760724K total,  7566152K used,   194572K free,    51208K buffers
+ Swap:  6291452K total, 16777216P used,  7620364K free,  5139244K cached
+800%cpu   0%user   0%nice   4%sys 792%idle   0%iow   4%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+13078 shell        20   0  10G 5.9M 5.0M R  3.8   0.0   0:00.01 top -b -n 1
+
+=== swipe top ===
+Tasks: 421 total,   5 running, 416 sleeping,   0 stopped,   0 zombie
+  Mem:  7760724K total,  7582392K used,   178332K free,    51276K buffers
+ Swap:  6291452K total, 16777216P used,  7620620K free,  5175064K cached
+800%cpu  67%user   4%nice 167%sys 470%idle  11%iow  81%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+ 3669 u0_a147      10 -10  18G 311M 139M R 48.1   4.0   0:15.73 com.miui.home
+  700 system       -3 -20  12G  85M  55M S 14.8   1.1   0:38.42 surfaceflinger
+  666 system       -3  -8  10G 8.9M 7.7M S  3.7   0.1   0:00.98 android.hardware.composer.hwc3-service.drm_upstream
+
+# 4. 单元测试输出
+$ cd /Volumes/work/cloud-phone-hub/engine/build && go test ./internal/vendorimg ./05_build_vendor_boot ./07_build_vendor
+ok  	cloud-phone-hub/engine/build/internal/vendorimg	2.492s
+ok  	cloud-phone-hub/engine/build/05_build_vendor_boot	1.281s
+ok  	cloud-phone-hub/engine/build/07_build_vendor	3.628s
+
+# 5. 追加修补多窗口 EGL_BAD_ACCESS (0x70d698) 与 PassBlurLightLayer (0x6f4514 / 0xb33000) 及权限删除顺序后的验证
+
+=== vendor-log.txt 权限剔除与 27 处指令修补 ===
+    [vendor.files] 删除 11 项（按清单）:
+      - etc/permissions/android.hardware.biometrics.face.xml
+      - etc/permissions/android.hardware.fingerprint.xml
+    [fix] vendor/lib64/libhyper_os_flutter.sys.so: 修补官方 system_ext/lib64/libhyper_os_flutter.so 启用 Impeller OpenGL ES 硬件加速渲染
+
+=== logcat EGL_BAD_ACCESS / IVirtualHal 计数 ===
+EGL_BAD_ACCESS count: 0
+IVirtualHal/virtual wait count: 0

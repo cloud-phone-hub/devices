@@ -1,0 +1,49 @@
+$ cd engine && ./out/bin/cdh device build m22 --only 07_build_vendor
+==> [步骤 4] 叠加机型静态树与编译产物
+    机型静态树: 写入 19
+    机型 usr: 写入 3
+    …（13 个 HAL 编译产物，76 项写入）
+==> [步骤 5] 厂商 vendor 原件覆盖
+    输入: out/roms/flyme/m22/12.5.0.0A（厂商 vendor 原件）（覆盖集合 2 项）
+    输出: out/devices/flyme/m22/12.5.0.0A/vendor
+[replace] vendor/lib64/libpng.so <- 厂商 vendor/lib64/libpng.so（文件覆盖）
+[replace] vendor/etc/permissions <- 厂商 vendor/etc/permissions（目录，80 个文件，替换）
+==> VINTF schema 对齐到 9.0（系统 libvintf 上限）
+    已全部是 9.0，无需改写
+==> [步骤 6] 应用基线 vendor 属性 -> out/devices/flyme/m22/12.5.0.0A/vendor/build.prop
+    [prop] 覆盖 ro.opengles.version=196608
+    [prop] 追加 ro.vendor.boot_security_patch=2025-12-05
+==> [步骤 6] fstab 收口
+    删除 out/devices/flyme/m22/12.5.0.0A/vendor/etc/fstab.virtio
+    删除 out/devices/flyme/m22/12.5.0.0A/vendor/etc/fstab.virtio.gsi.sda
+    删除 out/devices/flyme/m22/12.5.0.0A/vendor/etc/fstab.virtio.gsi.vdc
+[warn] 未找到 first_stage fstab 缓存（out/devices/flyme/m22/12.5.0.0A/vendor_boot/fstab.sun），vendor/etc 不放入 fstab
+    改名 init.virtio.rc -> init.sun.rc（init 按 ro.hardware=sun 找板级入口）
+==> [步骤 6] 注入 SELinux 策略补丁
+    输入[模块层 android.hardware.ir]: vendor/hardware/android.hardware.ir/sepolicy
+    输入[模块层 android.hardware.keymint]: vendor/hardware/android.hardware.keymint/sepolicy
+==> [步骤 7] 打包 vendor.img
+==> [步骤 8] 写清单与校验和
+[ok] vendor 目录树装配与 vendor.img 打包完成: out/devices/flyme/m22/12.5.0.0A/vendor, out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+    备注: vendor.img 由装配树经 mke2fs -d 全量生成，复刻基底 UUID/features，元数据经回查与 e2fsck 校验
+    备注: mke2fs 会在新镜像里自带一个空的 /lost+found（e2fsck 也会补回），不属于装配树，已补 0700 root:root 与 vendor_file 标签
+
+# 实际值与产物（步骤 7 之后）
+$ ls -l out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+-rw-r--r--@ 1 cuimingqiang  staff  180748288 10 28 14:19 out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+$ cat out/devices/flyme/m22/12.5.0.0A/img/vendor-meta-summary.txt
+条目 587（文件 354 / 链接 199 / 目录 34），标签 25 种
+$ grep -c '^' out/devices/flyme/m22/12.5.0.0A/img/vendor-meta-rules.txt
+587
+
+# 后续阶段对本次改动的依赖验证：09 的三棵子树都能从 vendor.img 解出
+$ ./out/bin/cdh device build m22 --only 09_build_patch
+==> [步骤 1] 解包三棵源树
+    vendor: out/devices/flyme/m22/12.5.0.0A/patch/stage/raw_vendor（588 条目：文件 354 / 链接 199 / 目录 35）
+    vendor_dlkm: …（118 条目：文件 114 / 链接 0 / 目录 4）
+    odm: …（3 条目：文件 1 / 链接 0 / 目录 2）
+[ok] 回填 823 条目，回读 823/823 一致
+
+# 反证：etc/selinux 不能纳入覆盖集合（纳入后引导在 PropertyInit 段 setxattr 失败）
+#   vendor_sepolicy.cil 与 plat_pub_versioned.cil 必须同源编译；换厂商原件会把
+#   已合并的 plat_* 类型引用带回未合并状态，故本机型 replaces 只列 libpng.so 与 etc/permissions。

@@ -1,0 +1,147 @@
+# log-pass —— cdh_redirect 模块在干净内核上跑通（实例 23，2026-11-02）
+
+设备: google/oriole AP2A.240905.003.F1（Pixel 6 / Android 14 / lineage-21.0 / 6.1.138-4k-cdh）
+产物: `cdh_redirect.ko` 41560 B sha256 `3ca9267f7294b74b…`、`vendor_boot.img` `ca17f170ffd1e310…`、
+`patch.img` `8011f6eb1113c017…`、`vda.img` `e7739b1808b48b58…`
+实例: daemon `127.0.0.1:9050`，`POST /api/create {"index":1}` → 实例 23
+
+---
+
+## 1. 构建（05 注入生效）
+
+```
+$ cd engine && ../out/bin/cdh device build oriole --manifest ap2a --from build_modules --refresh
+==> 重定向模块: out/kernel/lineage-21-6.1/modules/cdh_redirect.ko（41560 B，内核 6.1.138-4k-cdh，
+    规则 manifest/google/oriole/kernel/cdh_redirect.rules）
+    重定向模块: cdh_redirect.ko（41560 B）+ 规则 …cdh_redirect.rules（2377 B）-> lib/modules/6.1.138-4k-cdh/
+    缓存配方:   vboot-55e1253b1894
+fragment0 platform: 4281414 B -> 4296025 B（删 fstab 3 项，注入 first_stage_ramdisk/system/etc/fstab.oriole，
+    注入模块 6.1.138-4k-cdh、…/cdh_redirect.ko、…/modules.load、…/modules.dep、cdh_redirect.rules）
+…（09 build_patch / 11 pack_vda 均 [ok]，EXIT=0）
+
+$ ../out/bin/cdh device build oriole --manifest ap2a --only build_vendor_boot   # 复核注入与配方
+==> 重定向模块: out/kernel/lineage-21-6.1/modules/cdh_redirect.ko（41560 B，内核 6.1.138-4k-cdh，规则 manifest/google/oriole/kernel/cdh_redirect.rules）
+    缓存配方:   vboot-55e1253b1894
+    缓存状态:   可复用
+```
+
+## 2. first stage 加载（`…/runtime/oriole_AP2A.240905.003.F1/23/qemu.log`）
+
+```
+[    0.000000][    T0] Linux version 6.1.138-4k-cdh (root@faf34c62bc0f) … #1 SMP PREEMPT Sun Nov  1 15:51:22 UTC 2026
+[    0.162427][    T1] init: Release specific kernel module dir 6.1.138-4k-cdh found, loading modules from here with no fallbacks.
+[    0.162761][    T1] init: Loading module /lib/modules/6.1.138-4k-cdh/cdh_redirect.ko with args ''
+[    0.163025][    T1] cdh_redirect: loading out-of-tree module taints kernel.
+[    0.163976][    T1] cdh_redirect: 规则来自 /lib/modules/cdh_redirect.rules：10 条
+[    0.164650][    T1] cdh_redirect: 前向钩子就绪：getname_flags（maxactive 4096）
+[    0.165646][    T1] cdh_redirect: 逆向钩子就绪：proc_pid_readlink + vfs_readlink
+[    0.165893][    T1] cdh_redirect: 已加载：10 条规则（/lib/modules/cdh_redirect.rules），内核未打补丁
+[    0.166184][    T1] init: Loaded kernel module /lib/modules/6.1.138-4k-cdh/cdh_redirect.ko
+[    0.166408][    T1] init: Loaded 1 modules from /lib/modules/6.1.138-4k-cdh
+[    0.167707][    T1] cdh_redirect: forward /mnt/vendorpatch/vendor/etc/fstab.oriole
+[    0.192017][    T1] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64
+[    0.211339][    T1] cdh_redirect: forward /mnt/vendorpatch/vendor/etc/selinux/precompiled_sepolicy
+[    0.214130][    T1] cdh_redirect: forward /mnt/vendorpatch/vendor/etc/selinux/vendor_sepolicy.cil
+[    0.214610][    T1] cdh_redirect: forward /mnt/vendorpatch/odm/etc/selinux/odm_sepolicy.cil
+```
+
+## 3. 逆向改写（`cdh_debug=1`，`cd /vendor_dlkm/lib; readlink /proc/self/cwd`）
+
+失败态③的同一场景，修 MTE 标签后 `buf` 已剥离（`b400…` → `0000…`），改写成功：
+
+```
+[  181.976477] cdh_redirect: vfs_readlink 进入 pid=8471 comm=readlink buf=0000007ff1da70e0 buflen=4096
+[  181.978963] cdh_redirect: proc_pid_readlink 进入 pid=8471 comm=readlink buf=0000007ff1da70e0 buflen=4096
+[  181.979241] cdh_redirect: proc_pid_readlink pid=8471(readlink) ret=18 buflen=4096 读回=/system/bin/toybox
+[  181.980543] cdh_redirect: vfs_readlink 进入 pid=8471 comm=readlink buf=0000007ff1da3be0 buflen=4095
+[  181.981334] cdh_redirect: proc_pid_readlink pid=8471(readlink) ret=11 buflen=4095 读回=/system/bin
+[  182.029076] cdh_redirect: vfs_readlink 进入 pid=8471 comm=readlink buf=00000074f01a9150 buflen=64
+[  182.029564] cdh_redirect: proc_pid_readlink 进入 pid=8471 comm=readlink buf=00000074f01a9150 buflen=64
+[  182.029828] cdh_redirect: proc_pid_readlink pid=8471(readlink) ret=32 buflen=64 读回=/mnt/vendorpatch/vendor_dlkm/lib
+[  182.030123] cdh_redirect: proc_pid_readlink pid=8471 写回=/vendor_dlkm/lib len=16 err=0
+[  182.030352] cdh_redirect: vfs_readlink pid=8471(readlink) ret=16 buflen=64 读回=/vendor_dlkm/lib
+```
+
+guest 回显：`输出:/vendor_dlkm/lib`（改前是 `/mnt/vendorpatch/vendor_dlkm/lib`）。
+
+## 4. readlink 出口（全部虚拟路径）
+
+```
+$ cd /vendor/lib64;      echo A:$(readlink /proc/self/cwd)
+A:/vendor/lib64
+$ cd /vendor_dlkm/lib;   echo B:$(readlink /proc/self/cwd)
+B:/vendor_dlkm/lib
+$ cd /vendor/etc;        echo C:$(readlink /proc/self/cwd)
+C:/vendor/etc
+$ echo D:$(readlink /proc/1/exe); echo E:$(readlink /proc/1/cwd); echo F:$(readlink /proc/1/root)
+D:/system/bin/init
+E:/
+F:/
+$ cd /vendor/lib64 && ls -l /proc/self/cwd
+lrwxrwxrwx 1 root root 0 2026-11-02 01:16 /proc/self/cwd -> /vendor/lib64
+$ exec 6</vendor/build.prop; echo fd6:$(readlink /proc/$$/fd/6)
+fd6:/vendor/build.prop
+```
+
+## 5. 前向重定向
+
+```
+$ md5sum /vendor/build.prop ; md5sum /mnt/vendorpatch/vendor/build.prop
+ded146b247040c50898964ed66430872  /vendor/build.prop
+ded146b247040c50898964ed66430872  /mnt/vendorpatch/vendor/build.prop
+$ head -3 /odm/etc/build.prop
+#  start
+####################################
+# from generate-common-build-props
+$ ls -l /system/bin/update_verifier
+ls: /system/bin/update_verifier: No such file or directory
+$ ls /vendor/etc | head -3
+NOTICE.xml.gz aconfig_flags.pb aidl
+```
+
+## 6. 状态与计数
+
+```
+$ grep -c "cdh_redirect_vendor_path\|cdh_path_redirect" /proc/kallsyms
+0
+$ cat /proc/cdh_redirect
+rules: 10/32
+  dir  /vendor/etc -> /mnt/vendorpatch/vendor/etc
+  dir  /vendor/bin -> /mnt/vendorpatch/vendor/bin
+  dir  /vendor/lib -> /mnt/vendorpatch/vendor/lib
+  dir  /vendor/lib64 -> /mnt/vendorpatch/vendor/lib64
+  file /vendor/build.prop -> /mnt/vendorpatch/vendor/build.prop
+  file /vendor/ueventd.rc -> /mnt/vendorpatch/vendor/ueventd.rc
+  dir  /vendor_dlkm/lib -> /mnt/vendorpatch/vendor_dlkm/lib
+  file /odm/etc/build.prop -> /mnt/vendorpatch/odm/etc/build.prop
+  file /odm/etc/selinux/odm_sepolicy.cil -> /mnt/vendorpatch/odm/etc/selinux/odm_sepolicy.cil
+  file /system/bin/update_verifier -> /mnt/vendorpatch/system/bin/update_verifier
+forward_hits: 11395
+reverse_hits: 3010
+forward_missed: 0
+reverse_missed: 0
+readlink[proc]: entries=55805 rets=55805 hits=3010 skipped=52795
+readlink[vfs]: entries=58904 rets=58904 hits=0 skipped=58904
+```
+
+## 7. 起机与显示
+
+```
+$ getprop sys.boot_completed
+1
+$ dmesg | grep -m1 "starting service .zygote"
+[    9.944546] init: starting service 'zygote'...
+$ logcat -d -b events | grep -m1 boot_progress_enable_screen
+08-16 04:56:35.500   760   842 I boot_progress_enable_screen: 38716
+$ getprop init.svc.vendor.hwcomposer-2-4 ; pidof surfaceflinger
+running
+735
+$ dumpsys window | grep -m1 mCurrentFocus
+  mCurrentFocus=Window{3459629 u0 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}
+$ dmesg | grep -c "avc: denied.*vendorpatch" ; logcat -d -b all | grep -c "CANNOT LINK"
+0
+0
+$ logcat -d -b all | grep -c "HWC did not hotplug" ; mount | grep -c vendorpatch
+0
+1
+```

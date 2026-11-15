@@ -1,0 +1,38 @@
+# 通过态：sys.locksecured 拒绝与 SystemUI 崩溃归零（build15）
+
+- 盘集：`vendor.img 0ab16bc80f27c8dfb889f2ded5175c1827aefd2f0b2d330f142f2c68c110b833`
+  / `patch.img 2af63406bd4bf5c7982f2f86830132d09dda1e0f33697070ea1b36ffc6398624`
+- 实例：`ss9380_S9380ZCSDCZH1` / index 4，adb `127.0.0.1:5911`
+- 日志：`out/core/daemon/runtime/ss9380_S9380ZCSDCZH1/4/qemu.log`（build15 整份）
+- 取样时间：2026-10-31 06:23 ～ 06:30
+
+## 1. qemu.log 计数
+
+```
+init: Unable to set property 'sys.locksecured'            = 0
+W libc: ... "sys.locksecured" ... PERMISSION_DENIED        = 0
+Process: com.android.systemui（crash buffer）             = 0
+```
+
+（同日志里 `sys.locksecured` 只剩 1 行 adbd 命令行回显，不是拒绝，见下。）
+
+```
+08-12 17:08:33.567   648   648 I adbd: adbd service requested 'shell,v2,...: echo "locksecured=[$(getprop sys.locksecured)]"...'
+```
+
+## 2. guest 复核
+
+```
+$ adb -s 127.0.0.1:5911 shell 'for i in 1 2 3; do printf "pid=%s " $(pidof com.android.systemui); sleep 2; done'
+pid=2508 pid=2508 pid=2508
+
+$ adb ... shell 'logcat -b crash -d | grep -c "Process: com.android.systemui"'
+0
+```
+
+## 3. 运行面
+
+- `mCurrentFocus=Window{df82abd u0 com.sec.android.app.launcher/...LauncherActivity}`；
+- 桌面截图见 `../issue-knoxguard-china-region/pass-home.png`（同一 build15 实例）；
+- `sys.locksecured` 当前为空：本实例没有触发锁机流程，属性未被写入，属预期；
+  修复点是“有权限写”，不是“必须为 true”。

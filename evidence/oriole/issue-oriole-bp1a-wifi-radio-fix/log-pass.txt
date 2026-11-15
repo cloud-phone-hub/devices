@@ -1,0 +1,55 @@
+# oriole_BP1A.250505.005-20250326 Wi-Fi 与 Radio 修复后验证日志
+
+```text
+boot_completed=1 at step 8
+Module                  Size  Used by
+zram                   40960  0 
+zsmalloc               40960  1 zram
+virtio_console         40960  0 
+virt_wifi              24576  0 
+mac80211_hwsim        102400  0 
+mac80211             1052672  1 mac80211_hwsim
+libarc4                20480  1 mac80211
+cfg80211             1081344  3 virt_wifi,mac80211_hwsim,mac80211
+rfkill                 40960  1 cfg80211
+cdh_media              53248  0 
+cdh_input_identity     20480  0 
+cdh_device_info        49152  0 
+cdh_redirect           28672  0 
+=== IP ===
+16: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether b2:b0:3a:6a:b7:db brd ff:ff:ff:ff:ff:ff
+    inet 192.168.60.100/24 brd 192.168.60.255 scope global wlan0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::b0b0:3aff:fe6a:b7db/64 scope link optimistic tentative 
+       valid_lft forever preferred_lft forever
+=== WIFI ===
+Wifi is enabled
+Wifi scanning is only available when wifi is enabled
+==== Primary ClientModeManager instance ====
+Wifi is connected to "CDH-A"
+WifiInfo: SSID: "CDH-A", BSSID: 02:00:00:00:00:11, MAC: <none>, IP: /192.168.60.100, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -43, Link speed: 1Mbps, Tx Link speed: 1Mbps, Max Supported Tx Link speed: 54Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: 54Mbps, Frequency: 2437MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true
+=== RADIO ===
+feature:android.hardware.telephony
+feature:android.hardware.telephony.calling
+feature:android.hardware.telephony.data
+feature:android.hardware.telephony.euicc
+feature:android.hardware.telephony.gsm
+feature:android.hardware.telephony.messaging
+feature:android.hardware.telephony.radio.access
+feature:android.hardware.telephony.subscription
+feature:com.verizon.hardware.telephony.ehrpd
+feature:com.verizon.hardware.telephony.lte
+Service phone: found
+Service isub: found
+[gsm.network.type]: [LTE]
+[gsm.operator.alpha]: [中国联通]
+[gsm.operator.iso-country]: [cn]
+[gsm.operator.isroaming]: [false]
+[gsm.operator.numeric]: [46001]
+[gsm.sim.operator.alpha]: [China Unicom]
+[gsm.sim.operator.iso-country]: [cn]
+[gsm.sim.operator.numeric]: [46001]
+[gsm.sim.state]: [LOADED]
+```
+

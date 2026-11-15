@@ -1,0 +1,25 @@
+# 修复后：实例 gold_15-OS3.0.11.0.VNQCNXM/2（4d5128bd8ca07462-cloud）实机与 aligner 重采验证
+
+# 1) 实机 shell 校验（engine/out/tmp/p0_smoke_pass.txt）
+=== P0-6 debug props & settings ===
+NO_PERSIST_SECURITY_ADB
+global stay_on_while_plugged_in = 3
+secure lockscreen.disabled = 0
+system time_12_24 = 24
+system accelerometer_rotation = 1
+system long_press_power_key = launch_voice_assistant
+secure color_scheme = 1
+global hide_gesture_line = 0
+
+# 2) App 侧 aligner.build_props_full & aligner.settings_full 重采对拍（engine/out/tmp/p0_aligner_pass_extract.txt）
+=== P0-6: adb props & 7 settings ===
+  persist.security.adbinput in cloud props: False (None)
+  persist.security.adbinstall in cloud props: False (None)
+  build_props diffs adbinput/adbinstall: []
+  secure.lockscreen.disabled: real='0' cloud='0' match=True
+  global.stay_on_while_plugged_in: real='3' cloud='3' match=True
+  system.time_12_24: real='24' cloud='24' match=True
+  system.accelerometer_rotation: real='1' cloud='1' match=True
+  system.long_press_power_key: real='launch_voice_assistant' cloud='launch_voice_assistant' match=True
+  secure.color_scheme: real='1' cloud='1' match=True
+  global.hide_gesture_line: real='0' cloud='0' match=True

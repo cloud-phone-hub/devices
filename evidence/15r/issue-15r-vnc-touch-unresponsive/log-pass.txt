@@ -1,0 +1,1209 @@
+=== 1. 修复后 QEMU 命令行（含 virtio-multitouch-pci,input-name=touchpanel,...,abs-to-mt=on，无 virtio-tablet-pci） ===
+  501 32684 16701   0  2:27PM ttys000    6:35.37 /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/bin/qemu-system-aarch64 -L /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/share/qemu -machine virt -rtc base=localtime -m 8192 -smp 8 -accel hvf -object memory-backend-shm,id=stage-ram,size=8192M,share=on -numa node,memdev=stage-ram -chardev socket,id=stage-media-dec,path=/tmp/stage-e30ce887/media-decoder.sock -device vhost-user-media-pci,chardev=stage-media-dec,id=media-dec -chardev socket,id=stage-media-enc,path=/tmp/stage-e30ce887/media-encoder.sock -device vhost-user-media-pci,chardev=stage-media-enc,id=media-enc -device virtio-gpu-gl-pci,blob=on,hostmem=256M,venus=on,edid=on,xres=1272,yres=2800,xmax=1272,ymax=2800,refresh-rates=60,width-mm=72,height-mm=158 -display cgl-headless,gl=on,readback=on -vnc 127.0.0.1:12,websocket=5913,share=force-shared -qmp unix:/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/qmp.sock,server=on,wait=off -drive if=pflash,unit=0,file=/Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/firmware/edk2-aarch64-code.fd,file.locking=off,format=raw,readonly=on -drive if=pflash,unit=1,file=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/efi-vars.fd -drive file=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/writable-base.qcow2,if=none,id=vda,format=qcow2,node-name=stage-vda,discard=unmap,detect-zeroes=unmap -device virtio-blk-pci,drive=vda,bootindex=0 -drive file=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/writable-data.qcow2,if=none,id=vdb,format=qcow2,node-name=stage-vdb,discard=unmap,detect-zeroes=unmap -device virtio-blk-pci,drive=vdb,bootindex=1 -drive file=/Volumes/work/cloud-phone-hub/engine/out/dist/oneplus/15r/16.0.10.500_EX01/patch.img,if=none,id=vdc,format=raw,readonly=on -device virtio-blk-pci,drive=vdc,bootindex=2 -device virtio-net-pci,netdev=net0,romfile= -netdev user,id=net0,restrict=on,hostfwd=tcp::5911-:5555 -device virtio-net-pci,netdev=net2,romfile=,mac=52:54:00:12:34:58 -netdev user,id=net2,net=100.64.155.0/24,dhcpstart=100.64.155.15 -device virtio-multitouch-pci,input-name=touchpanel,input-bus=0,input-vendor=0,input-product=0,input-version=0,abs-to-mt=on -device virtio-keyboard-pci -device virtio-serial,id=stage-vserial -chardev null,id=stage-hvc0 -device virtconsole,chardev=stage-hvc0,id=stage-hvc0-console -chardev null,id=stage-hvc1 -device virtconsole,chardev=stage-hvc1,id=stage-hvc1-console -chardev socket,id=stage-adbkey,fd=3 -device virtconsole,chardev=stage-adbkey,id=stage-hvc2-adbkey -chardev socket,id=stage-keymint,fd=4,logfile=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/secure-env/keymint-wire.log,logappend=on -device virtconsole,chardev=stage-keymint,id=stage-hvc3-keymint -chardev socket,id=stage-radio,fd=5 -device virtconsole,chardev=stage-radio,id=stage-hvc4-radio -chardev null,id=stage-hvc5 -device virtconsole,chardev=stage-hvc5,id=stage-hvc5-console -chardev null,id=stage-hvc6 -device virtconsole,chardev=stage-hvc6,id=stage-hvc6-console -chardev socket,id=stage-event,path=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/channels/event.sock,server=on,wait=off,logfile=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/channels/event.sock.log,logappend=on -device virtconsole,chardev=stage-event,id=stage-hvc7-event -chardev null,id=stage-hvc8 -device virtconsole,chardev=stage-hvc8,id=stage-hvc8-console -chardev socket,id=stage-wifi,path=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/channels/wifi.sock,server=on,wait=off,logfile=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/channels/wifi.sock.log,logappend=on -device virtconsole,chardev=stage-wifi,id=stage-hvc9-wifi -chardev socket,id=stage-wifi-data,path=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/channels/wifi-data.sock,server=on,wait=off,logfile=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/channels/wifi-data.sock.log,logappend=on -device virtconsole,chardev=stage-wifi-data,id=stage-hvc10-wifi-data -device virtio-rng-pci -audiodev none,id=cdhsnd -device intel-hda -device hda-duplex,audiodev=cdhsnd -chardev stdio,mux=on,id=charconsole -serial chardev:charconsole
+  501 32688 32684   0  2:27PM ttys000    0:00.00 /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/libexec/virgl_render_server --socket-fd 71
+
+=== 2. 修复后盘集与清单 device.json ===
+vda-21205fef0615
+
+{
+  "id": "15r_16.0.10.500_EX01",
+  "verified-boot-hash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f",
+  "name": "OnePlus 15R",
+  "brand": "15r",
+  "width": 1272,
+  "height": 2800,
+  "density": 560,
+  "width-mm": 72,
+  "height-mm": 158,
+  "memory-mb": [8192],
+  "min-memory-mb": 8192,
+  "smp": 8,
+  "input": {"touch":{"name":"touchpanel","bus":0,"vendor":0,"product":0,"version":0,"abs-to-mt":true},"keyboard":{},"tablet":false},
+  "host-hvc-adbkey": "hvc2",
+  "host-hvc-keymint": "hvc3",
+  "host-hvc-radio": "hvc4",
+  "host-hvc-daemon": "hvc7",
+  "host-hvc-wifi": "hvc9",
+  "host-hvc-wifi-data": "hvc10"
+}
+
+=== 3. 官方固件触控身份取证（oplus_hbp_core.ko / oplus_bsp_tp_common.ko / vnd_touch_project_config.xml） ===
+4:	<device id="0" ic_name="synaptics-s3910">
+--- /system/usr/idc 與 /vendor/etc/excluded-input-devices.xml ---
+<?xml version="1.0" encoding="utf-8"?>
+<devices>
+    <device name="QEMU QEMU USB Tablet"/>
+    <device name="QEMU Virtio Tablet"/>
+</devices>
+
+=== 4. Guest /proc/bus/input/devices 与 getevent -lp ===
+I: Bus=0019 Vendor=0000 Product=0001 Version=0000
+N: Name="Power Button"
+P: Phys=PNP0C0C/button/input0
+S: Sysfs=/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0C:00/input/input0
+U: Uniq=
+H: Handlers=event0 
+B: PROP=0
+B: EV=3
+B: KEY=8000 10000000000000 0
+
+I: Bus=0000 Vendor=0000 Product=0000 Version=0000
+N: Name="touchpanel"
+P: Phys=virtio8/input0
+S: Sysfs=/devices/pci0000:00/0000:00:09.0/virtio8/input/input1
+U: Uniq=
+H: Handlers=event1 
+B: PROP=2
+B: EV=b
+B: KEY=30400 1f0000 0 0 0 0
+B: ABS=660800000000000
+
+I: Bus=0006 Vendor=0627 Product=0001 Version=0001
+N: Name="QEMU Virtio Keyboard"
+P: Phys=virtio9/input0
+S: Sysfs=/devices/pci0000:00/0000:00:0a.0/virtio9/input/input2
+U: Uniq=
+H: Handlers=leds event2 
+B: PROP=0
+B: EV=120003
+B: KEY=400000007 ff803078f800dfff febeffff7bcfffff fffffffffffffffe
+B: LED=7
+
+---
+add device 1: /dev/input/event0
+  name:     "Power Button"
+  events:
+    KEY (0001): KEY_POWER             KEY_WAKEUP           
+  input props:
+    <none>
+add device 2: /dev/input/event2
+  name:     "QEMU Virtio Keyboard"
+  events:
+    KEY (0001): KEY_ESC               KEY_1                 KEY_2                 KEY_3                
+                KEY_4                 KEY_5                 KEY_6                 KEY_7                
+                KEY_8                 KEY_9                 KEY_0                 KEY_MINUS            
+                KEY_EQUAL             KEY_BACKSPACE         KEY_TAB               KEY_Q                
+                KEY_W                 KEY_E                 KEY_R                 KEY_T                
+                KEY_Y                 KEY_U                 KEY_I                 KEY_O                
+                KEY_P                 KEY_LEFTBRACE         KEY_RIGHTBRACE        KEY_ENTER            
+                KEY_LEFTCTRL          KEY_A                 KEY_S                 KEY_D                
+                KEY_F                 KEY_G                 KEY_H                 KEY_J                
+                KEY_K                 KEY_L                 KEY_SEMICOLON         KEY_APOSTROPHE       
+                KEY_GRAVE             KEY_LEFTSHIFT         KEY_BACKSLASH         KEY_Z                
+                KEY_X                 KEY_C                 KEY_V                 KEY_B                
+                KEY_N                 KEY_M                 KEY_COMMA             KEY_DOT              
+                KEY_SLASH             KEY_RIGHTSHIFT        KEY_KPASTERISK        KEY_LEFTALT          
+                KEY_SPACE             KEY_CAPSLOCK          KEY_F1                KEY_F2               
+                KEY_F3                KEY_F4                KEY_F5                KEY_F6               
+                KEY_F7                KEY_F8                KEY_F9                KEY_F10              
+                KEY_NUMLOCK           KEY_SCROLLLOCK        KEY_KP7               KEY_KP8              
+                KEY_KP9               KEY_KPMINUS           KEY_KP4               KEY_KP5              
+                KEY_KP6               KEY_KPPLUS            KEY_KP1               KEY_KP2              
+                KEY_KP3               KEY_KP0               KEY_KPDOT             KEY_102ND            
+                KEY_F11               KEY_F12               KEY_RO                KEY_HIRAGANA         
+                KEY_HENKAN            KEY_KATAKANAHIRAGANA  KEY_MUHENKAN          KEY_KPENTER          
+                KEY_RIGHTCTRL         KEY_KPSLASH           KEY_SYSRQ             KEY_RIGHTALT         
+                KEY_LINEFEED          KEY_HOME              KEY_UP                KEY_PAGEUP           
+                KEY_LEFT              KEY_RIGHT             KEY_END               KEY_DOWN             
+                KEY_PAGEDOWN          KEY_INSERT            KEY_DELETE            KEY_MUTE             
+                KEY_VOLUMEDOWN        KEY_VOLUMEUP          KEY_POWER             KEY_KPEQUAL          
+                KEY_PAUSE             KEY_KPCOMMA           KEY_HANGEUL           KEY_HANJA            
+                KEY_YEN               KEY_LEFTMETA          KEY_RIGHTMETA         KEY_COMPOSE          
+                KEY_STOP              KEY_AGAIN             KEY_PROPS             KEY_UNDO             
+                KEY_FRONT             KEY_COPY              KEY_OPEN              KEY_PASTE            
+                KEY_FIND              KEY_CUT               KEY_HELP              KEY_MENU             
+                KEY_CALC              KEY_SLEEP             KEY_WAKEUP            KEY_MAIL             
+                KEY_BOOKMARKS         KEY_COMPUTER          KEY_BACK              KEY_FORWARD          
+                KEY_NEXTSONG          KEY_PLAYPAUSE         KEY_PREVIOUSSONG      KEY_STOPCD           
+                KEY_HOMEPAGE          KEY_REFRESH           KEY_F13               KEY_F14              
+                KEY_F15               KEY_F16               KEY_F17               KEY_F18              
+                KEY_F19               KEY_F20               KEY_F21               KEY_F22              
+                KEY_F23               KEY_F24               KEY_MEDIA            
+    LED (0011): LED_NUML              LED_CAPSL             LED_SCROLLL          
+  input props:
+    <none>
+add device 3: /dev/input/event1
+  name:     "touchpanel"
+  events:
+    KEY (0001): BTN_MOUSE*            BTN_RIGHT             BTN_MIDDLE            BTN_SIDE             
+                BTN_EXTRA             BTN_TOUCH*            BTN_WHEEL             BTN_GEAR_UP          
+    ABS (0003): ABS_MT_SLOT           : value 0, min 0, max 10, fuzz 0, flat 0, resolution 0
+                ABS_MT_POSITION_X     : value 0, min 0, max 32767, fuzz 0, flat 0, resolution 0
+                ABS_MT_POSITION_Y     : value 0, min 0, max 32767, fuzz 0, flat 0, resolution 0
+                ABS_MT_TRACKING_ID    : value 0, min 0, max 65535, fuzz 0, flat 0, resolution 0
+                ABS_MT_PRESSURE       : value 0, min 0, max 32767, fuzz 0, flat 0, resolution 0
+  input props:
+    INPUT_PROP_DIRECT
+
+=== 5. Guest dumpsys input（touchpanel 命中 TOUCHSCREEN / mode - DIRECT / Last Raw Touch 已更新） ===
+Input properties:
+  velocitytracker_strategy (flag value) = default
+
+Input Manager State:
+  Display not interactive: {}
+  System UI Lights Out: false
+  Pointer Speed: 0
+  Display with Mouse Scaling Disabled: {}
+  Pointer Gestures Enabled: true
+  Support Laser: false
+  Pointer Capture: Disabled, seq=0
+
+Event Hub State:
+  BuiltInKeyboardId: -2
+  Devices:
+    1: Power Button
+      Classes: KEYBOARD
+      Path: /dev/input/event0
+      Enabled: true
+      Descriptor: 26d13db3fa0f6bd5d05831266fb01ea6c500b88c
+      Location: PNP0C0C/button/input0
+      ControllerNumber: 0
+      UniqueId: 
+      Identifier: bus=0x0019, vendor=0x0000, product=0x0001, version=0x0000, bluetoothAddress=<not set>
+      KeyLayoutFile: /system/usr/keylayout/Generic.kl
+      KeyCharacterMapFile: /system/usr/keychars/Generic.kcm
+      ConfigurationFile: 
+      VideoDevice: <none>
+      SysfsDevicePath: /sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0C:00
+      KeyState (pressed): <none>
+    2: QEMU Virtio Keyboard
+      Classes: KEYBOARD | ALPHAKEY
+      Path: /dev/input/event2
+      Enabled: true
+      Descriptor: e9ac6dde47cf0ffa91b87f7b85e6f8de0933fc98
+      Location: virtio9/input0
+      ControllerNumber: 0
+      UniqueId: 
+      Identifier: bus=0x0006, vendor=0x0627, product=0x0001, version=0x0001, bluetoothAddress=<not set>
+      KeyLayoutFile: /system/usr/keylayout/Generic.kl
+      KeyCharacterMapFile: /system/usr/keychars/Generic.kcm
+      ConfigurationFile: 
+      VideoDevice: <none>
+      SysfsDevicePath: /sys/devices/pci0000:00/0000:00:0a.0/virtio9
+      KeyState (pressed): <none>
+    3: touchpanel
+      Classes: KEYBOARD | TOUCH | TOUCH_MT
+      Path: /dev/input/event1
+      Enabled: true
+      Descriptor: cda32dd32c9e529b964f707ef746a9e34b2b074f
+      Location: virtio8/input0
+      ControllerNumber: 0
+      UniqueId: 
+      Identifier: bus=0x0000, vendor=0x0000, product=0x0000, version=0x0000, bluetoothAddress=<not set>
+      KeyLayoutFile: /system/usr/keylayout/Generic.kl
+      KeyCharacterMapFile: /system/usr/keychars/Generic.kcm
+      ConfigurationFile: 
+      VideoDevice: <none>
+      SysfsDevicePath: /sys/devices/pci0000:00/0000:00:09.0/virtio8
+      KeyState (pressed): BTN_MOUSE, BTN_TOUCH
+      AbsState: ABS_MT_SLOT=0, ABS_MT_POSITION_X=20069, ABS_MT_POSITION_Y=18478, ABS_MT_TRACKING_ID=1, ABS_MT_PRESSURE=50
+    -1: Virtual
+      Classes: KEYBOARD | ALPHAKEY | DPAD | VIRTUAL
+      Path: <virtual>
+      Enabled: true
+      Descriptor: a718a782d34bc767f4689c232d64d527998ea7fd
+      Location: 
+      ControllerNumber: 0
+      UniqueId: <virtual>
+      Identifier: bus=0x0000, vendor=0x0000, product=0x0000, version=0x0000, bluetoothAddress=<not set>
+      KeyLayoutFile: /system/usr/keylayout/Generic.kl
+      KeyCharacterMapFile: /system/usr/keychars/Virtual.kcm
+      ConfigurationFile: 
+      VideoDevice: <none>
+      SysfsDevicePath: <none>
+  Unattached video devices:
+    <none>
+
+Input Reader State (Nums of device: 4):
+  Device 4: Power Button
+    EventHub Devices: [ 1 ] 
+    Generation: 34
+    IsExternal: false
+    IsWaking: false
+    AssociatedDisplayPort: <none>
+    AssociatedDisplayUniqueIdByPort: <none>
+    AssociatedDisplayUniqueIdByDescriptor: <none>
+    SysfsRootPath:     /sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0C:00
+    HasMic:     false
+    Sources: KEYBOARD
+    KeyboardType: 1
+    ControllerNum: 0
+    SupportWinMac: 0
+    SupportBacklight: 0
+    SupportPressure: 0
+    Keyboard Input Mapper:
+      Parameters:
+        OrientationAware: false
+        HandlesKeyRepeat: false
+      Orientation: Rotation0
+      KeyDowns: 0 keys currently down
+      MetaState: 0x0
+      KeyboardLayoutInfo: <not set>
+  Device 3: QEMU Virtio Keyboard
+    EventHub Devices: [ 2 ] 
+    Generation: 35
+    IsExternal: false
+    IsWaking: false
+    AssociatedDisplayPort: <none>
+    AssociatedDisplayUniqueIdByPort: <none>
+    AssociatedDisplayUniqueIdByDescriptor: <none>
+    SysfsRootPath:     /sys/devices/pci0000:00/0000:00:0a.0/virtio9
+    HasMic:     false
+    Sources: KEYBOARD
+    KeyboardType: 2
+    ControllerNum: 0
+    SupportWinMac: 0
+    SupportBacklight: 0
+    SupportPressure: 0
+    Keyboard Input Mapper:
+      Parameters:
+        OrientationAware: false
+        HandlesKeyRepeat: false
+      Orientation: Rotation0
+      KeyDowns: 0 keys currently down
+      MetaState: 0x0
+      KeyboardLayoutInfo: <not set>
+  Device 2: touchpanel
+    EventHub Devices: [ 3 ] 
+    Generation: 36
+    IsExternal: false
+    IsWaking: false
+    AssociatedDisplayPort: <none>
+    AssociatedDisplayUniqueIdByPort: <none>
+    AssociatedDisplayUniqueIdByDescriptor: <none>
+    SysfsRootPath:     /sys/devices/pci0000:00/0000:00:09.0/virtio8
+    HasMic:     false
+    Sources: KEYBOARD | TOUCHSCREEN
+    KeyboardType: 1
+    ControllerNum: 0
+    SupportWinMac: 0
+    SupportBacklight: 0
+    SupportPressure: 0
+    Motion Ranges:
+      X: source=TOUCHSCREEN, min=0.000, max=1271.961, flat=0.000, fuzz=0.000, resolution=0.000
+      Y: source=TOUCHSCREEN, min=0.000, max=2799.915, flat=0.000, fuzz=0.000, resolution=0.000
+      PRESSURE: source=TOUCHSCREEN, min=0.000, max=1.000, flat=0.000, fuzz=0.000, resolution=0.000
+    Keyboard Input Mapper:
+      Parameters:
+        OrientationAware: false
+        HandlesKeyRepeat: false
+      Orientation: Rotation0
+      KeyDowns: 0 keys currently down
+      MetaState: 0x0
+      KeyboardLayoutInfo: <not set>
+    Touch Input Mapper (mode - DIRECT):
+      Parameters:
+        GestureMode: MULTI_TOUCH
+        DeviceType: TOUCH_SCREEN
+        AssociatedDisplay: hasAssociatedDisplay=true, isExternal=false, displayId=''
+        OrientationAware: true
+        Orientation: Rotation0
+        UsiVersion: <not set>
+        EnableForInactiveViewport: false
+      Raw Touch Axes:
+        X: min=0, max=32767, flat=0, fuzz=0, resolution=0
+        Y: min=0, max=32767, flat=0, fuzz=0, resolution=0
+        Pressure: min=0, max=32767, flat=0, fuzz=0, resolution=0
+        TouchMajor: unknown range
+        TouchMinor: unknown range
+        ToolMajor: unknown range
+        ToolMinor: unknown range
+        Orientation: unknown range
+        Distance: unknown range
+        TiltX: unknown range
+        TiltY: unknown range
+        TrackingId: min=0, max=65535, flat=0, fuzz=0, resolution=0
+        Slot: min=0, max=10, flat=0, fuzz=0, resolution=0
+      Calibration:
+        touch.size.calibration: NONE
+        touch.pressure.calibration: physical
+        touch.orientation.calibration: none
+        touch.distance.calibration: none
+      Affine Transformation:
+        X scale: 1.000
+        X ymix: 0.000
+        X offset: 0.000
+        Y xmix: 0.000
+        Y scale: 1.000
+        Y offset: 0.000
+      Viewport INTERNAL: displayId=0, uniqueId=local:4632256312697818880, port=0, orientation=0, logicalFrame=[0, 0, 1272, 2800], physicalFrame=[0, 0, 1272, 2800], deviceSize=[1272, 2800], isActive=[1]
+      DisplayBounds: 1272x2800
+      PhysicalFrameInRotatedDisplay: Rect{0, 0, 1272, 2800}
+      InputDeviceOrientation: Rotation0
+      Translation and Scaling Factors:
+        RawToDisplay Transform: (ROT_0) (SCALE )
+            0.0388  0.0000  0.0000
+            0.0000  0.0854  0.0000
+            0.0000  0.0000  1.0000
+        RawRotation Transform: (ROT_0) (IDENTITY)
+        OrientedXPrecision: 25.761
+        OrientedYPrecision: 11.703
+        GeometricScale: 0.062
+        PressureScale: 0.000
+        SizeScale: 0.000
+        OrientationScale: 0.000
+        DistanceScale: 0.000
+        HaveTilt: false
+        TiltXCenter: 0.000
+        TiltXScale: 0.000
+        TiltYCenter: 0.000
+        TiltYScale: 0.000
+      Last Raw Button State: 0x00000001
+      Last Raw Touch:
+        When: 111423055000
+        Read time: 111423242218
+        Button state: 0x00000001
+        Raw pointer data:
+          1 pointers:
+            [0]: id=0, x=20069, y=18478, pressure=50, touchMajor=0, touchMinor=0, toolMajor=0, toolMinor=0, orientation=0, tiltX=0, tiltY=0, distance=0, toolType=FINGER, isHovering=0
+          ID bits: hovering = 0x00000000, touching = 0x80000000, canceled = 0x00000000
+      Last Cooked Button State: 0x00000001
+      Last Cooked Touch: pointerCount=1
+        [0]: id=0, x=779.046, y=1578.931, dx=0.000, dy=0.000, pressure=0.002, touchMajor=0.000, touchMinor=0.000, toolMajor=0.000, toolMinor=0.000, orientation=0.000, tilt=0.000, distance=0.000, toolType=FINGER, isHovering=false
+      Stylus Fusion:
+        ExternalStylusPresence: NONE
+        Fused External Stylus Pointer ID: <not set>
+        External Stylus Data Timeout: 9223372036854775807
+        External Stylus Buttons Applied: 0x00000000
+      External Stylus State:
+        When: 0
+        Pressure: <not set>
+        Button State: 0x00000000
+        Tool Type: UNKNOWN
+  Device -1: Virtual
+    EventHub Devices: [ -1 ] 
+    Generation: 30
+    IsExternal: false
+    IsWaking: false
+    AssociatedDisplayPort: <none>
+    AssociatedDisplayUniqueIdByPort: <none>
+    AssociatedDisplayUniqueIdByDescriptor: <none>
+    SysfsRootPath:     <none>
+    HasMic:     false
+    Sources: KEYBOARD | DPAD
+    KeyboardType: 2
+    ControllerNum: 0
+    SupportWinMac: 0
+    SupportBacklight: 0
+    SupportPressure: 0
+    Keyboard Input Mapper:
+      Parameters:
+        OrientationAware: false
+        HandlesKeyRepeat: false
+      Orientation: Rotation0
+      KeyDowns: 0 keys currently down
+      MetaState: 0x0
+      KeyboardLayoutInfo: <not set>
+  NextTimeout: 9223372036854775807
+  Configuration:
+    ExcludedDeviceNames: [QEMU QEMU USB Tablet, QEMU Virtio Tablet]
+    VirtualKeyQuietTime: 0.0ms
+    PointerVelocityControlParameters: scale=1.000, lowThreshold=500.000, highThreshold=3000.000, acceleration=3.000
+    WheelVelocityControlParameters: scale=1.000, lowThreshold=15.000, highThreshold=50.000, acceleration=4.000
+    PointerGesture:
+      Enabled: true
+      QuietInterval: 100.0ms
+      DragMinSwitchSpeed: 50.0px/s
+      TapInterval: 150.0ms
+      TapDragInterval: 300.0ms
+      TapSlop: 20.0px
+      MultitouchSettleInterval: 100.0ms
+      MultitouchMinDistance: 15.0px
+      SwipeTransitionAngleCosine: 0.3
+      SwipeMaxWidthRatio: 0.2
+      MovementSpeedRatio: 0.8
+      ZoomSpeedRatio: 0.3
+      TouchPadRightClickState: 0
+      Viewports:
+        Viewport INTERNAL: displayId=0, uniqueId=local:4632256312697818880, port=0, orientation=0, logicalFrame=[0, 0, 1272, 2800], physicalFrame=[0, 0, 1272, 2800], deviceSize=[1272, 2800], isActive=[1]
+ OplusInputReader mMergeEnable =  0
+ OplusInputReader mJoystickInjectActive = 0
+ OplusInputReader::MotionState:
+  sequence=0, eventTime=0, deviceId=-1, source=0x1002, displayId=0 policyFlags=0x0, actionButton=0x0, flags=0x0, metaState=0x0, buttonState=0x0, edgeFlags=0x0, actionMask=0x1, actionIndex=0, pointerCount=0, xPrecision=1.000000, yPrecision=1.000000,xCursorPosition0.000000, yCursorPosition=0.000000, downTime=0, readTime=0
+  OplusInputReader::MotionState pointers:
+
+UnwantedInteractionBlocker:
+  mPreferStylusOverTouchBlocker:
+    mActiveStyli: {}
+    mLastTouchEvents: 
+    mDevicesWithMixedToolType: {}
+    mCanceledDevices: {}
+  mEnablePalmRejection: 0
+  isPalmRejectionEnabled (flag value): 0
+  mPalmRejectors: None
+
+PointerChoreographer:
+  Show Touches Enabled: false
+  Stylus PointerIcon Enabled: true
+  Accessibility Pointer Motion Filter Enabled: false
+  MousePointerControllers:
+  TouchPointerControllers:
+  StylusPointerControllers:
+  DrawingTabletControllers:
+  DisplayTopologyGraph:
+    PrimaryDisplayId: -1
+    TopologyGraph:
+    
+    DisplaysDensity:
+    
+  mDisplaysWithPointersHidden:
+
+
+Input Processor State:
+  Motion Classifier:
+    <nullptr>
+
+InputDeviceMetricsCollector:
+  Logged device IDs: {2, 3, 4}
+  Devices with active usage sessions: {2}
+
+InputFilter:
+
+Input DispatcherExt InvalidRegion:
+[homegesture_displayid_0][0.000000,2646.000000][168.000000,2800.000000],[homegesture_displayid_0][1104.000000,2646.000000][1272.000000,2800.000000],
+
+Input DispatcherExt dispatchRegion:
+[homegesture_displayid_0][0.000000,2646.000000][168.000000,2800.000000],[homegesture_displayid_0][1104.000000,2646.000000][1272.000000,2800.000000],
+
+Input Dispatcher State:
+  DispatchEnabled: true
+  DispatchFrozen: false
+  InputFilterEnabled: false
+  FocusedDisplayId: 0
+  FocusedApplications:
+    displayId=0, name='ActivityRecord{144905336 u0 com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity t8}', dispatchingTimeout=5000ms
+  FocusedWindows:
+    displayId=0, name='5e3a51c com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity'
+  FocusRequests:
+    displayId=0, name='5e3a51c com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity' result='OK'
+  Pointer Capture Requested: false
+  Current Window with Pointer Capture: None
+  TouchStatesByDisplay:
+    0 :     Windows:
+        0 : name='5e3a51c com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity', targetFlags=FOREGROUND | SPLIT, forwardingWindowToken=0x0, mDeviceStates=2:[touchingPointers=[Pointer(id=0, FINGER)], downTimeInTarget=108964792000, hoveringPointers=[], pilferingPointerIds=<none>]
+        1 : name='[Gesture Monitor] OplusExInputReceiver1', targetFlags=SPLIT, forwardingWindowToken=0x0, mDeviceStates=2:[touchingPointers=[Pointer(id=0, FINGER)], downTimeInTarget=108964792000, hoveringPointers=[], pilferingPointerIds=<none>]
+        2 : name='[Gesture Monitor] OplusUAHInputChannel', targetFlags=SPLIT, forwardingWindowToken=0x0, mDeviceStates=2:[touchingPointers=[Pointer(id=0, FINGER)], downTimeInTarget=108964792000, hoveringPointers=[], pilferingPointerIds=<none>]
+  CursorStatesByDisplay: <no displays touched by cursor>
+  Display: 0
+    logicalSize=1272x2800
+        transform (ROT_0) (IDENTITY)
+    Windows:
+      0: name=[Gesture Monitor] swipe-up, id=97, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY | SPY, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=[Gesture Monitor] swipe-up, applicationInfo.token=<null>, touchableRegion=[-12720,-28000][12720,28000], ownerPid=3272, ownerUid=10119, dispatchingTimeout=5000ms, token=0xb4000075cf906ed0, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      1: name=[Gesture Monitor] OplusExInputReceiver1, id=84, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY | SPY, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=[Gesture Monitor] OplusExInputReceiver1, applicationInfo.token=<null>, touchableRegion=[-12720,-28000][12720,28000], ownerPid=905, ownerUid=1000, dispatchingTimeout=5000ms, token=0xb4000075c7528080, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      2: name=[Gesture Monitor] OplusUAHInputChannel, id=54, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY | SPY, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=[Gesture Monitor] OplusUAHInputChannel, applicationInfo.token=<null>, touchableRegion=[-12720,-28000][12720,28000], ownerPid=905, ownerUid=1000, dispatchingTimeout=5000ms, token=0xb40000772a5d8220, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      3: name=63351f6 NavigationBar_displayId_0, id=92, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY | SLIPPERY, alpha=1, frame=[0,2646][1272,2800], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[205,2646][1063,2800], ownerPid=2681, ownerUid=10126, dispatchingTimeout=5000ms, token=0xb4000075cf94ef10, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (TRANSLATE)
+          1.0000  0.0000  -0.0000
+          0.0000  1.0000  -2646.0000
+          0.0000  0.0000  1.0000
+      4: name=7dcc0ec StatusBar, id=96, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY, alpha=1, frame=[0,0][1272,141], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[0,0][1272,141], ownerPid=2681, ownerUid=10126, dispatchingTimeout=5000ms, token=0xb40000761f0729b0, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      5: name=3c7cc04 OplusOSEdgeFloatBar, id=117, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY, alpha=1, frame=[1244,281][1272,554], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[1244,281][1272,554], ownerPid=5030, ownerUid=10335, dispatchingTimeout=5000ms, token=0xb4000075cf888810, touchOcclusionMode=BLOCK_UNTRUSTED, canOccludePresentation
+      transform (ROT_0) (TRANSLATE)
+          1.0000  0.0000  -1244.0000
+          0.0000  1.0000  -281.0000
+          0.0000  0.0000  1.0000
+      6: name=5e3a51c com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity, id=180, displayId=0, inputConfig=TRUSTED_OVERLAY, alpha=1, frame=[0,0][1272,2800], globalScale=1, applicationInfo.name=ActivityRecord{144905336 u0 com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity t8}, applicationInfo.token=0xb40000758c16a470, touchableRegion=[0,0][1272,2800], ownerPid=2419, ownerUid=1000, dispatchingTimeout=5000ms, token=0xb4000075cf68f330, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      7: name=a7c7751 ActivityRecordInputSink com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity, id=166, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_FOCUSABLE | NOT_TOUCHABLE, alpha=1, frame=[0,0][0,0], globalScale=0, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[-12720,-28000][12720,28000], ownerPid=905, ownerUid=1000, dispatchingTimeout=0ms, token=0x0, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      8: name=e5a8c00 ActivityRecordInputSink com.android.settings/com.oplus.settings.feature.homepage.OplusSettingsHomepageActivity, id=152, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_VISIBLE | NOT_FOCUSABLE | NOT_TOUCHABLE, alpha=0.5, frame=[-382,0][-382,0], globalScale=0, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[-12720,-28000][12720,28000], ownerPid=905, ownerUid=1000, dispatchingTimeout=0ms, token=0x0, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (TRANSLATE)
+          1.0000  0.0000  381.5999
+          0.0000  1.0000  -0.0000
+          0.0000  0.0000  1.0000
+      9: name=Dim layer#71, id=71, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_VISIBLE, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=<empty>, ownerPid=2681, ownerUid=10126, dispatchingTimeout=5000ms, token=0x0, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      10: name=Dim layer#70, id=70, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_VISIBLE, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=<empty>, ownerPid=2681, ownerUid=10126, dispatchingTimeout=5000ms, token=0x0, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      11: name=d7c0911 com.google.android.googlequicksearchbox, id=132, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_VISIBLE | NOT_FOCUSABLE | NOT_TOUCHABLE | TRUSTED_OVERLAY, alpha=0, frame=[0,0][1272,2800], globalScale=1, applicationInfo.name=ActivityRecord{166938599 u0 com.android.launcher/.Launcher t7}, applicationInfo.token=0xb4000074cb8dbc30, touchableRegion=<empty>, ownerPid=7158, ownerUid=10165, dispatchingTimeout=0ms, token=0x0, touchOcclusionMode=BLOCK_UNTRUSTED, canOccludePresentation
+      transform (ROT_0) (IDENTITY)
+      12: name=e404b5e com.android.launcher/com.android.launcher.Launcher, id=118, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_VISIBLE | NOT_FOCUSABLE | NOT_TOUCHABLE | DUPLICATE_TOUCH_TO_WALLPAPER | TRUSTED_OVERLAY, alpha=1, frame=[0,0][1272,2800], globalScale=1, applicationInfo.name=ActivityRecord{166938599 u0 com.android.launcher/.Launcher t7}, applicationInfo.token=0xb4000074cb8dbc30, touchableRegion=<empty>, ownerPid=3272, ownerUid=10119, dispatchingTimeout=0ms, token=0x0, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      13: name=282f94 ActivityRecordInputSink com.android.launcher/.Launcher, id=121, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_VISIBLE | NOT_FOCUSABLE | NOT_TOUCHABLE, alpha=1, frame=[0,0][0,0], globalScale=0, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[-12720,-28000][12720,28000], ownerPid=905, ownerUid=1000, dispatchingTimeout=0ms, token=0x0, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      14: name=f9f63f2 com.android.wallpaper.livepicker.service.video.op.MacanExp1VideoWallpaper, id=57, displayId=0, inputConfig=NOT_VISIBLE | NOT_FOCUSABLE | NOT_TOUCHABLE | TRUSTED_OVERLAY, alpha=1, frame=[-127,-280][-127,-280], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=<empty>, ownerPid=2557, ownerUid=10338, dispatchingTimeout=5000ms, token=0xb4000075cf817cc0, touchOcclusionMode=BLOCK_UNTRUSTED, canOccludePresentation
+      transform (ROT_0) (SCALE TRANSLATE)
+          0.8333  -0.0000  106.0000
+          -0.0000  0.8333  233.3334
+          0.0000  0.0000  1.0000
+  mMaximumObscuringOpacityForTouch: 0.800000
+  DisplayTopologyGraph:
+    PrimaryDisplayId: -1
+    TopologyGraph:
+    
+    DisplaysDensity:
+    
+  
+  Global monitors on display 0:
+    0: 'PointerEventDispatcher0', 
+  Connections:
+    730: channelName='5e3a51c com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity', status=NORMAL, monitor=false, responsive=true
+      InputState: mMotionMementos: {deviceId=2, hovering=0, downTime=108964792000}, 
+    772: channelName='d7c0911 com.google.android.googlequicksearchbox', status=NORMAL, monitor=false, responsive=true
+    883: channelName='3c7cc04 OplusOSEdgeFloatBar', status=NORMAL, monitor=false, responsive=true
+    786: channelName='recents_animation_input_consumer', status=NORMAL, monitor=false, responsive=true
+    703: channelName='9ef6578 NotificationShade', status=NORMAL, monitor=false, responsive=true
+    702: channelName='63351f6 NavigationBar_displayId_0', status=NORMAL, monitor=false, responsive=true
+    490: channelName='[Gesture Monitor] OplusExInputReceiver1', status=NORMAL, monitor=false, responsive=true
+      InputState: mMotionMementos: {deviceId=2, hovering=0, downTime=108964792000}, 
+    655: channelName='513de99 OplusPrivacyIconTopLeft', status=NORMAL, monitor=false, responsive=true
+    879: channelName='aae07ec InputMethod', status=NORMAL, monitor=false, responsive=true
+    663: channelName='ecbdf87 OplusPrivacyIconTopRight', status=NORMAL, monitor=false, responsive=true
+    542: channelName='3483114 FlexibleDropTarget', status=NORMAL, monitor=false, responsive=true
+    929: channelName='db648f9 com.android.settings/com.android.settings.Settings', status=NORMAL, monitor=false, responsive=true
+    607: channelName='f9f63f2 com.android.wallpaper.livepicker.service.video.op.MacanExp1VideoWallpaper', status=NORMAL, monitor=false, responsive=true
+    704: channelName='[Gesture Monitor] swipe-up', status=NORMAL, monitor=false, responsive=true
+    600: channelName='[Gesture Monitor] OplusUAHInputChannel', status=NORMAL, monitor=false, responsive=true
+      InputState: mMotionMementos: {deviceId=2, hovering=0, downTime=108964792000}, 
+    706: channelName='7dcc0ec StatusBar', status=NORMAL, monitor=false, responsive=true
+    561: channelName='9fdb912 ShellDropTarget', status=NORMAL, monitor=false, responsive=true
+    882: channelName='e404b5e com.android.launcher/com.android.launcher.Launcher', status=NORMAL, monitor=false, responsive=true
+    275: channelName='PointerEventDispatcher0', status=NORMAL, monitor=true, responsive=true
+      InputState: mMotionMementos: {deviceId=2, hovering=0, downTime=108964792000}, 
+  RecentQueue: length=10
+    MotionEvent(deviceId=2, eventTime=111207650000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (788.0, 1526.0)]), policyFlags=0x62000000, age=337ms
+    MotionEvent(deviceId=2, eventTime=111225276000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (784.0, 1533.9)]), policyFlags=0x62000000, age=319ms
+    MotionEvent(deviceId=2, eventTime=111245036000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (784.0, 1542.9)]), policyFlags=0x62000000, age=299ms
+    MotionEvent(deviceId=2, eventTime=111261269000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (784.0, 1547.9)]), policyFlags=0x62000000, age=283ms
+    MotionEvent(deviceId=2, eventTime=111278184000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (784.0, 1551.9)]), policyFlags=0x62000000, age=266ms
+    MotionEvent(deviceId=2, eventTime=111296491000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (784.0, 1560.9)]), policyFlags=0x62000000, age=248ms
+    MotionEvent(deviceId=2, eventTime=111334721000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (784.0, 1565.9)]), policyFlags=0x62000000, age=209ms
+    MotionEvent(deviceId=2, eventTime=111352942000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (784.0, 1569.9)]), policyFlags=0x62000000, age=191ms
+    MotionEvent(deviceId=2, eventTime=111386027000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (784.0, 1574.9)]), policyFlags=0x62000000, age=158ms
+    MotionEvent(deviceId=2, eventTime=111423055000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (779.0, 1578.9)]), policyFlags=0x62000000, age=121ms
+  PendingEvent: <none>
+  InboundQueue: <empty>
+  CommandQueue: <empty>
+  TouchModePerDisplay:
+    Display: 0 TouchMode: 1
+  Configuration:
+    KeyRepeatDelay: 50ms
+    KeyRepeatTimeout: 400ms
+    LatencyTracker:
+      mTimelines.size() = 97
+      mEventTimes.size() = 97
+    LatencyAggregatorWithHistograms:
+     Histograms:
+      Identifier: vendor 0, product 0, sources: {15}, action: 1
+       0: 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0
+       1: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       2: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       3: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       4: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       5: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       6: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      Identifier: vendor 0, product 0, sources: {15}, action: 2
+       0: 245, 3, 2, 1, 0, 1, 0, 1, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 5
+       1: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       2: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       3: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       4: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       5: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       6: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      Identifier: vendor 0, product 0, sources: {15}, action: 3
+       0: 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       1: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       2: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       3: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       4: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       5: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       6: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      mLastSlowEventTime=0
+      mNumEventsSinceLastSlowEventReport = 0
+      mNumSkippedSlowEvents = 0
+  InputTracer: Disabled
+
+Current Java Log Level : 0
+Current Native Log Level : 0
+mMergeTouchEventEnabled : false
+mNeedMergePkglist : []
+INPUT MANAGER (dumpsys input)
+
+Input properties:
+  velocitytracker_strategy (flag value) = default
+
+Input Manager State:
+  Display not interactive: {}
+  System UI Lights Out: false
+  Pointer Speed: 0
+  Display with Mouse Scaling Disabled: {}
+  Pointer Gestures Enabled: true
+  Support Laser: false
+  Pointer Capture: Disabled, seq=0
+
+Event Hub State:
+  BuiltInKeyboardId: -2
+  Devices:
+    1: Power Button
+      Classes: KEYBOARD
+      Path: /dev/input/event0
+      Enabled: true
+      Descriptor: 26d13db3fa0f6bd5d05831266fb01ea6c500b88c
+      Location: PNP0C0C/button/input0
+      ControllerNumber: 0
+      UniqueId: 
+      Identifier: bus=0x0019, vendor=0x0000, product=0x0001, version=0x0000, bluetoothAddress=<not set>
+      KeyLayoutFile: /system/usr/keylayout/Generic.kl
+      KeyCharacterMapFile: /system/usr/keychars/Generic.kcm
+      ConfigurationFile: 
+      VideoDevice: <none>
+      SysfsDevicePath: /sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0C:00
+      KeyState (pressed): <none>
+    2: QEMU Virtio Keyboard
+      Classes: KEYBOARD | ALPHAKEY
+      Path: /dev/input/event2
+      Enabled: true
+      Descriptor: e9ac6dde47cf0ffa91b87f7b85e6f8de0933fc98
+      Location: virtio9/input0
+      ControllerNumber: 0
+      UniqueId: 
+      Identifier: bus=0x0006, vendor=0x0627, product=0x0001, version=0x0001, bluetoothAddress=<not set>
+      KeyLayoutFile: /system/usr/keylayout/Generic.kl
+      KeyCharacterMapFile: /system/usr/keychars/Generic.kcm
+      ConfigurationFile: 
+      VideoDevice: <none>
+      SysfsDevicePath: /sys/devices/pci0000:00/0000:00:0a.0/virtio9
+      KeyState (pressed): <none>
+    3: touchpanel
+      Classes: KEYBOARD | TOUCH | TOUCH_MT
+      Path: /dev/input/event1
+      Enabled: true
+      Descriptor: cda32dd32c9e529b964f707ef746a9e34b2b074f
+      Location: virtio8/input0
+      ControllerNumber: 0
+      UniqueId: 
+      Identifier: bus=0x0000, vendor=0x0000, product=0x0000, version=0x0000, bluetoothAddress=<not set>
+      KeyLayoutFile: /system/usr/keylayout/Generic.kl
+      KeyCharacterMapFile: /system/usr/keychars/Generic.kcm
+      ConfigurationFile: 
+      VideoDevice: <none>
+      SysfsDevicePath: /sys/devices/pci0000:00/0000:00:09.0/virtio8
+      KeyState (pressed): BTN_MOUSE, BTN_TOUCH
+      AbsState: ABS_MT_SLOT=0, ABS_MT_POSITION_X=20069, ABS_MT_POSITION_Y=18478, ABS_MT_TRACKING_ID=1, ABS_MT_PRESSURE=50
+    -1: Virtual
+      Classes: KEYBOARD | ALPHAKEY | DPAD | VIRTUAL
+      Path: <virtual>
+      Enabled: true
+      Descriptor: a718a782d34bc767f4689c232d64d527998ea7fd
+      Location: 
+      ControllerNumber: 0
+      UniqueId: <virtual>
+      Identifier: bus=0x0000, vendor=0x0000, product=0x0000, version=0x0000, bluetoothAddress=<not set>
+      KeyLayoutFile: /system/usr/keylayout/Generic.kl
+      KeyCharacterMapFile: /system/usr/keychars/Virtual.kcm
+      ConfigurationFile: 
+      VideoDevice: <none>
+      SysfsDevicePath: <none>
+  Unattached video devices:
+    <none>
+
+Input Reader State (Nums of device: 4):
+  Device 4: Power Button
+    EventHub Devices: [ 1 ] 
+    Generation: 34
+    IsExternal: false
+    IsWaking: false
+    AssociatedDisplayPort: <none>
+    AssociatedDisplayUniqueIdByPort: <none>
+    AssociatedDisplayUniqueIdByDescriptor: <none>
+    SysfsRootPath:     /sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0C:00
+    HasMic:     false
+    Sources: KEYBOARD
+    KeyboardType: 1
+    ControllerNum: 0
+    SupportWinMac: 0
+    SupportBacklight: 0
+    SupportPressure: 0
+    Keyboard Input Mapper:
+      Parameters:
+        OrientationAware: false
+        HandlesKeyRepeat: false
+      Orientation: Rotation0
+      KeyDowns: 0 keys currently down
+      MetaState: 0x0
+      KeyboardLayoutInfo: <not set>
+  Device 3: QEMU Virtio Keyboard
+    EventHub Devices: [ 2 ] 
+    Generation: 35
+    IsExternal: false
+    IsWaking: false
+    AssociatedDisplayPort: <none>
+    AssociatedDisplayUniqueIdByPort: <none>
+    AssociatedDisplayUniqueIdByDescriptor: <none>
+    SysfsRootPath:     /sys/devices/pci0000:00/0000:00:0a.0/virtio9
+    HasMic:     false
+    Sources: KEYBOARD
+    KeyboardType: 2
+    ControllerNum: 0
+    SupportWinMac: 0
+    SupportBacklight: 0
+    SupportPressure: 0
+    Keyboard Input Mapper:
+      Parameters:
+        OrientationAware: false
+        HandlesKeyRepeat: false
+      Orientation: Rotation0
+      KeyDowns: 0 keys currently down
+      MetaState: 0x0
+      KeyboardLayoutInfo: <not set>
+  Device 2: touchpanel
+    EventHub Devices: [ 3 ] 
+    Generation: 36
+    IsExternal: false
+    IsWaking: false
+    AssociatedDisplayPort: <none>
+    AssociatedDisplayUniqueIdByPort: <none>
+    AssociatedDisplayUniqueIdByDescriptor: <none>
+    SysfsRootPath:     /sys/devices/pci0000:00/0000:00:09.0/virtio8
+    HasMic:     false
+    Sources: KEYBOARD | TOUCHSCREEN
+    KeyboardType: 1
+    ControllerNum: 0
+    SupportWinMac: 0
+    SupportBacklight: 0
+    SupportPressure: 0
+    Motion Ranges:
+      X: source=TOUCHSCREEN, min=0.000, max=1271.961, flat=0.000, fuzz=0.000, resolution=0.000
+      Y: source=TOUCHSCREEN, min=0.000, max=2799.915, flat=0.000, fuzz=0.000, resolution=0.000
+      PRESSURE: source=TOUCHSCREEN, min=0.000, max=1.000, flat=0.000, fuzz=0.000, resolution=0.000
+    Keyboard Input Mapper:
+      Parameters:
+        OrientationAware: false
+        HandlesKeyRepeat: false
+      Orientation: Rotation0
+      KeyDowns: 0 keys currently down
+      MetaState: 0x0
+      KeyboardLayoutInfo: <not set>
+    Touch Input Mapper (mode - DIRECT):
+      Parameters:
+        GestureMode: MULTI_TOUCH
+        DeviceType: TOUCH_SCREEN
+        AssociatedDisplay: hasAssociatedDisplay=true, isExternal=false, displayId=''
+        OrientationAware: true
+        Orientation: Rotation0
+        UsiVersion: <not set>
+        EnableForInactiveViewport: false
+      Raw Touch Axes:
+        X: min=0, max=32767, flat=0, fuzz=0, resolution=0
+        Y: min=0, max=32767, flat=0, fuzz=0, resolution=0
+        Pressure: min=0, max=32767, flat=0, fuzz=0, resolution=0
+        TouchMajor: unknown range
+        TouchMinor: unknown range
+        ToolMajor: unknown range
+        ToolMinor: unknown range
+        Orientation: unknown range
+        Distance: unknown range
+        TiltX: unknown range
+        TiltY: unknown range
+        TrackingId: min=0, max=65535, flat=0, fuzz=0, resolution=0
+        Slot: min=0, max=10, flat=0, fuzz=0, resolution=0
+      Calibration:
+        touch.size.calibration: NONE
+        touch.pressure.calibration: physical
+        touch.orientation.calibration: none
+        touch.distance.calibration: none
+      Affine Transformation:
+        X scale: 1.000
+        X ymix: 0.000
+        X offset: 0.000
+        Y xmix: 0.000
+        Y scale: 1.000
+        Y offset: 0.000
+      Viewport INTERNAL: displayId=0, uniqueId=local:4632256312697818880, port=0, orientation=0, logicalFrame=[0, 0, 1272, 2800], physicalFrame=[0, 0, 1272, 2800], deviceSize=[1272, 2800], isActive=[1]
+      DisplayBounds: 1272x2800
+      PhysicalFrameInRotatedDisplay: Rect{0, 0, 1272, 2800}
+      InputDeviceOrientation: Rotation0
+      Translation and Scaling Factors:
+        RawToDisplay Transform: (ROT_0) (SCALE )
+            0.0388  0.0000  0.0000
+            0.0000  0.0854  0.0000
+            0.0000  0.0000  1.0000
+        RawRotation Transform: (ROT_0) (IDENTITY)
+        OrientedXPrecision: 25.761
+        OrientedYPrecision: 11.703
+        GeometricScale: 0.062
+        PressureScale: 0.000
+        SizeScale: 0.000
+        OrientationScale: 0.000
+        DistanceScale: 0.000
+        HaveTilt: false
+        TiltXCenter: 0.000
+        TiltXScale: 0.000
+        TiltYCenter: 0.000
+        TiltYScale: 0.000
+      Last Raw Button State: 0x00000001
+      Last Raw Touch:
+        When: 111423055000
+        Read time: 111423242218
+        Button state: 0x00000001
+        Raw pointer data:
+          1 pointers:
+            [0]: id=0, x=20069, y=18478, pressure=50, touchMajor=0, touchMinor=0, toolMajor=0, toolMinor=0, orientation=0, tiltX=0, tiltY=0, distance=0, toolType=FINGER, isHovering=0
+          ID bits: hovering = 0x00000000, touching = 0x80000000, canceled = 0x00000000
+      Last Cooked Button State: 0x00000001
+      Last Cooked Touch: pointerCount=1
+        [0]: id=0, x=779.046, y=1578.931, dx=0.000, dy=0.000, pressure=0.002, touchMajor=0.000, touchMinor=0.000, toolMajor=0.000, toolMinor=0.000, orientation=0.000, tilt=0.000, distance=0.000, toolType=FINGER, isHovering=false
+      Stylus Fusion:
+        ExternalStylusPresence: NONE
+        Fused External Stylus Pointer ID: <not set>
+        External Stylus Data Timeout: 9223372036854775807
+        External Stylus Buttons Applied: 0x00000000
+      External Stylus State:
+        When: 0
+        Pressure: <not set>
+        Button State: 0x00000000
+        Tool Type: UNKNOWN
+  Device -1: Virtual
+    EventHub Devices: [ -1 ] 
+    Generation: 30
+    IsExternal: false
+    IsWaking: false
+    AssociatedDisplayPort: <none>
+    AssociatedDisplayUniqueIdByPort: <none>
+    AssociatedDisplayUniqueIdByDescriptor: <none>
+    SysfsRootPath:     <none>
+    HasMic:     false
+    Sources: KEYBOARD | DPAD
+    KeyboardType: 2
+    ControllerNum: 0
+    SupportWinMac: 0
+    SupportBacklight: 0
+    SupportPressure: 0
+    Keyboard Input Mapper:
+      Parameters:
+        OrientationAware: false
+        HandlesKeyRepeat: false
+      Orientation: Rotation0
+      KeyDowns: 0 keys currently down
+      MetaState: 0x0
+      KeyboardLayoutInfo: <not set>
+  NextTimeout: 9223372036854775807
+  Configuration:
+    ExcludedDeviceNames: [QEMU QEMU USB Tablet, QEMU Virtio Tablet]
+    VirtualKeyQuietTime: 0.0ms
+    PointerVelocityControlParameters: scale=1.000, lowThreshold=500.000, highThreshold=3000.000, acceleration=3.000
+    WheelVelocityControlParameters: scale=1.000, lowThreshold=15.000, highThreshold=50.000, acceleration=4.000
+    PointerGesture:
+      Enabled: true
+      QuietInterval: 100.0ms
+      DragMinSwitchSpeed: 50.0px/s
+      TapInterval: 150.0ms
+      TapDragInterval: 300.0ms
+      TapSlop: 20.0px
+      MultitouchSettleInterval: 100.0ms
+      MultitouchMinDistance: 15.0px
+      SwipeTransitionAngleCosine: 0.3
+      SwipeMaxWidthRatio: 0.2
+      MovementSpeedRatio: 0.8
+      ZoomSpeedRatio: 0.3
+      TouchPadRightClickState: 0
+      Viewports:
+        Viewport INTERNAL: displayId=0, uniqueId=local:4632256312697818880, port=0, orientation=0, logicalFrame=[0, 0, 1272, 2800], physicalFrame=[0, 0, 1272, 2800], deviceSize=[1272, 2800], isActive=[1]
+ OplusInputReader mMergeEnable =  0
+ OplusInputReader mJoystickInjectActive = 0
+ OplusInputReader::MotionState:
+  sequence=0, eventTime=0, deviceId=-1, source=0x1002, displayId=0 policyFlags=0x0, actionButton=0x0, flags=0x0, metaState=0x0, buttonState=0x0, edgeFlags=0x0, actionMask=0x1, actionIndex=0, pointerCount=0, xPrecision=1.000000, yPrecision=1.000000,xCursorPosition0.000000, yCursorPosition=0.000000, downTime=0, readTime=0
+  OplusInputReader::MotionState pointers:
+
+UnwantedInteractionBlocker:
+  mPreferStylusOverTouchBlocker:
+    mActiveStyli: {}
+    mLastTouchEvents: 
+    mDevicesWithMixedToolType: {}
+    mCanceledDevices: {}
+  mEnablePalmRejection: 0
+  isPalmRejectionEnabled (flag value): 0
+  mPalmRejectors: None
+
+PointerChoreographer:
+  Show Touches Enabled: false
+  Stylus PointerIcon Enabled: true
+  Accessibility Pointer Motion Filter Enabled: false
+  MousePointerControllers:
+  TouchPointerControllers:
+  StylusPointerControllers:
+  DrawingTabletControllers:
+  DisplayTopologyGraph:
+    PrimaryDisplayId: -1
+    TopologyGraph:
+    
+    DisplaysDensity:
+    
+  mDisplaysWithPointersHidden:
+
+
+Input Processor State:
+  Motion Classifier:
+    <nullptr>
+
+InputDeviceMetricsCollector:
+  Logged device IDs: {2, 3, 4}
+  Devices with active usage sessions: {2}
+
+InputFilter:
+
+Input DispatcherExt InvalidRegion:
+[homegesture_displayid_0][0.000000,2646.000000][168.000000,2800.000000],[homegesture_displayid_0][1104.000000,2646.000000][1272.000000,2800.000000],
+
+Input DispatcherExt dispatchRegion:
+[homegesture_displayid_0][0.000000,2646.000000][168.000000,2800.000000],[homegesture_displayid_0][1104.000000,2646.000000][1272.000000,2800.000000],
+
+Input Dispatcher State:
+  DispatchEnabled: true
+  DispatchFrozen: false
+  InputFilterEnabled: false
+  FocusedDisplayId: 0
+  FocusedApplications:
+    displayId=0, name='ActivityRecord{144905336 u0 com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity t8}', dispatchingTimeout=5000ms
+  FocusedWindows:
+    displayId=0, name='5e3a51c com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity'
+  FocusRequests:
+    displayId=0, name='5e3a51c com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity' result='OK'
+  Pointer Capture Requested: false
+  Current Window with Pointer Capture: None
+  TouchStatesByDisplay:
+    0 :     Windows:
+        0 : name='5e3a51c com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity', targetFlags=FOREGROUND | SPLIT, forwardingWindowToken=0x0, mDeviceStates=2:[touchingPointers=[Pointer(id=0, FINGER)], downTimeInTarget=108964792000, hoveringPointers=[], pilferingPointerIds=<none>]
+        1 : name='[Gesture Monitor] OplusExInputReceiver1', targetFlags=SPLIT, forwardingWindowToken=0x0, mDeviceStates=2:[touchingPointers=[Pointer(id=0, FINGER)], downTimeInTarget=108964792000, hoveringPointers=[], pilferingPointerIds=<none>]
+        2 : name='[Gesture Monitor] OplusUAHInputChannel', targetFlags=SPLIT, forwardingWindowToken=0x0, mDeviceStates=2:[touchingPointers=[Pointer(id=0, FINGER)], downTimeInTarget=108964792000, hoveringPointers=[], pilferingPointerIds=<none>]
+  CursorStatesByDisplay: <no displays touched by cursor>
+  Display: 0
+    logicalSize=1272x2800
+        transform (ROT_0) (IDENTITY)
+    Windows:
+      0: name=[Gesture Monitor] swipe-up, id=97, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY | SPY, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=[Gesture Monitor] swipe-up, applicationInfo.token=<null>, touchableRegion=[-12720,-28000][12720,28000], ownerPid=3272, ownerUid=10119, dispatchingTimeout=5000ms, token=0xb4000075cf906ed0, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      1: name=[Gesture Monitor] OplusExInputReceiver1, id=84, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY | SPY, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=[Gesture Monitor] OplusExInputReceiver1, applicationInfo.token=<null>, touchableRegion=[-12720,-28000][12720,28000], ownerPid=905, ownerUid=1000, dispatchingTimeout=5000ms, token=0xb4000075c7528080, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      2: name=[Gesture Monitor] OplusUAHInputChannel, id=54, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY | SPY, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=[Gesture Monitor] OplusUAHInputChannel, applicationInfo.token=<null>, touchableRegion=[-12720,-28000][12720,28000], ownerPid=905, ownerUid=1000, dispatchingTimeout=5000ms, token=0xb40000772a5d8220, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      3: name=63351f6 NavigationBar_displayId_0, id=92, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY | SLIPPERY, alpha=1, frame=[0,2646][1272,2800], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[205,2646][1063,2800], ownerPid=2681, ownerUid=10126, dispatchingTimeout=5000ms, token=0xb4000075cf94ef10, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (TRANSLATE)
+          1.0000  0.0000  -0.0000
+          0.0000  1.0000  -2646.0000
+          0.0000  0.0000  1.0000
+      4: name=7dcc0ec StatusBar, id=96, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY, alpha=1, frame=[0,0][1272,141], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[0,0][1272,141], ownerPid=2681, ownerUid=10126, dispatchingTimeout=5000ms, token=0xb40000761f0729b0, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      5: name=3c7cc04 OplusOSEdgeFloatBar, id=117, displayId=0, inputConfig=NOT_FOCUSABLE | TRUSTED_OVERLAY, alpha=1, frame=[1244,281][1272,554], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[1244,281][1272,554], ownerPid=5030, ownerUid=10335, dispatchingTimeout=5000ms, token=0xb4000075cf888810, touchOcclusionMode=BLOCK_UNTRUSTED, canOccludePresentation
+      transform (ROT_0) (TRANSLATE)
+          1.0000  0.0000  -1244.0000
+          0.0000  1.0000  -281.0000
+          0.0000  0.0000  1.0000
+      6: name=5e3a51c com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity, id=180, displayId=0, inputConfig=TRUSTED_OVERLAY, alpha=1, frame=[0,0][1272,2800], globalScale=1, applicationInfo.name=ActivityRecord{144905336 u0 com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity t8}, applicationInfo.token=0xb40000758c16a470, touchableRegion=[0,0][1272,2800], ownerPid=2419, ownerUid=1000, dispatchingTimeout=5000ms, token=0xb4000075cf68f330, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      7: name=a7c7751 ActivityRecordInputSink com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity, id=166, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_FOCUSABLE | NOT_TOUCHABLE, alpha=1, frame=[0,0][0,0], globalScale=0, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[-12720,-28000][12720,28000], ownerPid=905, ownerUid=1000, dispatchingTimeout=0ms, token=0x0, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      8: name=e5a8c00 ActivityRecordInputSink com.android.settings/com.oplus.settings.feature.homepage.OplusSettingsHomepageActivity, id=152, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_VISIBLE | NOT_FOCUSABLE | NOT_TOUCHABLE, alpha=0.5, frame=[-382,0][-382,0], globalScale=0, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[-12720,-28000][12720,28000], ownerPid=905, ownerUid=1000, dispatchingTimeout=0ms, token=0x0, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (TRANSLATE)
+          1.0000  0.0000  381.5999
+          0.0000  1.0000  -0.0000
+          0.0000  0.0000  1.0000
+      9: name=Dim layer#71, id=71, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_VISIBLE, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=<empty>, ownerPid=2681, ownerUid=10126, dispatchingTimeout=5000ms, token=0x0, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      10: name=Dim layer#70, id=70, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_VISIBLE, alpha=1, frame=[0,0][0,0], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=<empty>, ownerPid=2681, ownerUid=10126, dispatchingTimeout=5000ms, token=0x0, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      11: name=d7c0911 com.google.android.googlequicksearchbox, id=132, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_VISIBLE | NOT_FOCUSABLE | NOT_TOUCHABLE | TRUSTED_OVERLAY, alpha=0, frame=[0,0][1272,2800], globalScale=1, applicationInfo.name=ActivityRecord{166938599 u0 com.android.launcher/.Launcher t7}, applicationInfo.token=0xb4000074cb8dbc30, touchableRegion=<empty>, ownerPid=7158, ownerUid=10165, dispatchingTimeout=0ms, token=0x0, touchOcclusionMode=BLOCK_UNTRUSTED, canOccludePresentation
+      transform (ROT_0) (IDENTITY)
+      12: name=e404b5e com.android.launcher/com.android.launcher.Launcher, id=118, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_VISIBLE | NOT_FOCUSABLE | NOT_TOUCHABLE | DUPLICATE_TOUCH_TO_WALLPAPER | TRUSTED_OVERLAY, alpha=1, frame=[0,0][1272,2800], globalScale=1, applicationInfo.name=ActivityRecord{166938599 u0 com.android.launcher/.Launcher t7}, applicationInfo.token=0xb4000074cb8dbc30, touchableRegion=<empty>, ownerPid=3272, ownerUid=10119, dispatchingTimeout=0ms, token=0x0, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      13: name=282f94 ActivityRecordInputSink com.android.launcher/.Launcher, id=121, displayId=0, inputConfig=NO_INPUT_CHANNEL | NOT_VISIBLE | NOT_FOCUSABLE | NOT_TOUCHABLE, alpha=1, frame=[0,0][0,0], globalScale=0, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=[-12720,-28000][12720,28000], ownerPid=905, ownerUid=1000, dispatchingTimeout=0ms, token=0x0, touchOcclusionMode=BLOCK_UNTRUSTED
+      transform (ROT_0) (IDENTITY)
+      14: name=f9f63f2 com.android.wallpaper.livepicker.service.video.op.MacanExp1VideoWallpaper, id=57, displayId=0, inputConfig=NOT_VISIBLE | NOT_FOCUSABLE | NOT_TOUCHABLE | TRUSTED_OVERLAY, alpha=1, frame=[-127,-280][-127,-280], globalScale=1, applicationInfo.name=, applicationInfo.token=<null>, touchableRegion=<empty>, ownerPid=2557, ownerUid=10338, dispatchingTimeout=5000ms, token=0xb4000075cf817cc0, touchOcclusionMode=BLOCK_UNTRUSTED, canOccludePresentation
+      transform (ROT_0) (SCALE TRANSLATE)
+          0.8333  -0.0000  106.0000
+          -0.0000  0.8333  233.3334
+          0.0000  0.0000  1.0000
+  mMaximumObscuringOpacityForTouch: 0.800000
+  DisplayTopologyGraph:
+    PrimaryDisplayId: -1
+    TopologyGraph:
+    
+    DisplaysDensity:
+    
+  
+  Global monitors on display 0:
+    0: 'PointerEventDispatcher0', 
+  Connections:
+    730: channelName='5e3a51c com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity', status=NORMAL, monitor=false, responsive=true
+      InputState: mMotionMementos: {deviceId=2, hovering=0, downTime=108964792000}, 
+    772: channelName='d7c0911 com.google.android.googlequicksearchbox', status=NORMAL, monitor=false, responsive=true
+    883: channelName='3c7cc04 OplusOSEdgeFloatBar', status=NORMAL, monitor=false, responsive=true
+    786: channelName='recents_animation_input_consumer', status=NORMAL, monitor=false, responsive=true
+    703: channelName='9ef6578 NotificationShade', status=NORMAL, monitor=false, responsive=true
+    702: channelName='63351f6 NavigationBar_displayId_0', status=NORMAL, monitor=false, responsive=true
+    490: channelName='[Gesture Monitor] OplusExInputReceiver1', status=NORMAL, monitor=false, responsive=true
+      InputState: mMotionMementos: {deviceId=2, hovering=0, downTime=108964792000}, 
+    655: channelName='513de99 OplusPrivacyIconTopLeft', status=NORMAL, monitor=false, responsive=true
+    879: channelName='aae07ec InputMethod', status=NORMAL, monitor=false, responsive=true
+    663: channelName='ecbdf87 OplusPrivacyIconTopRight', status=NORMAL, monitor=false, responsive=true
+    542: channelName='3483114 FlexibleDropTarget', status=NORMAL, monitor=false, responsive=true
+    929: channelName='db648f9 com.android.settings/com.android.settings.Settings', status=NORMAL, monitor=false, responsive=true
+    607: channelName='f9f63f2 com.android.wallpaper.livepicker.service.video.op.MacanExp1VideoWallpaper', status=NORMAL, monitor=false, responsive=true
+    704: channelName='[Gesture Monitor] swipe-up', status=NORMAL, monitor=false, responsive=true
+    600: channelName='[Gesture Monitor] OplusUAHInputChannel', status=NORMAL, monitor=false, responsive=true
+      InputState: mMotionMementos: {deviceId=2, hovering=0, downTime=108964792000}, 
+    706: channelName='7dcc0ec StatusBar', status=NORMAL, monitor=false, responsive=true
+    561: channelName='9fdb912 ShellDropTarget', status=NORMAL, monitor=false, responsive=true
+    882: channelName='e404b5e com.android.launcher/com.android.launcher.Launcher', status=NORMAL, monitor=false, responsive=true
+    275: channelName='PointerEventDispatcher0', status=NORMAL, monitor=true, responsive=true
+      InputState: mMotionMementos: {deviceId=2, hovering=0, downTime=108964792000}, 
+  RecentQueue: length=10
+    MotionEvent(deviceId=2, eventTime=111207650000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (788.0, 1526.0)]), policyFlags=0x62000000, age=337ms
+    MotionEvent(deviceId=2, eventTime=111225276000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (784.0, 1533.9)]), policyFlags=0x62000000, age=320ms
+    MotionEvent(deviceId=2, eventTime=111245036000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (784.0, 1542.9)]), policyFlags=0x62000000, age=300ms
+    MotionEvent(deviceId=2, eventTime=111261269000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (784.0, 1547.9)]), policyFlags=0x62000000, age=284ms
+    MotionEvent(deviceId=2, eventTime=111278184000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (784.0, 1551.9)]), policyFlags=0x62000000, age=267ms
+    MotionEvent(deviceId=2, eventTime=111296491000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (784.0, 1560.9)]), policyFlags=0x62000000, age=248ms
+    MotionEvent(deviceId=2, eventTime=111334721000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (784.0, 1565.9)]), policyFlags=0x62000000, age=210ms
+    MotionEvent(deviceId=2, eventTime=111352942000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (784.0, 1569.9)]), policyFlags=0x62000000, age=192ms
+    MotionEvent(deviceId=2, eventTime=111386027000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (784.0, 1574.9)]), policyFlags=0x62000000, age=159ms
+    MotionEvent(deviceId=2, eventTime=111423055000, source=TOUCHSCREEN, displayId=0, action=MOVE, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000001, classification=NONE, edgeFlags=0x00000000, xPrecision=25.8, yPrecision=11.7, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (779.0, 1578.9)]), policyFlags=0x62000000, age=122ms
+  PendingEvent: <none>
+  InboundQueue: <empty>
+  CommandQueue: <empty>
+  TouchModePerDisplay:
+    Display: 0 TouchMode: 1
+  Configuration:
+    KeyRepeatDelay: 50ms
+    KeyRepeatTimeout: 400ms
+    LatencyTracker:
+      mTimelines.size() = 97
+      mEventTimes.size() = 97
+    LatencyAggregatorWithHistograms:
+     Histograms:
+      Identifier: vendor 0, product 0, sources: {15}, action: 1
+       0: 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0
+       1: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       2: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       3: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       4: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       5: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       6: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      Identifier: vendor 0, product 0, sources: {15}, action: 2
+       0: 245, 3, 2, 1, 0, 1, 0, 1, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 5
+       1: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       2: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       3: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       4: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       5: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       6: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      Identifier: vendor 0, product 0, sources: {15}, action: 3
+       0: 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       1: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       2: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       3: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       4: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       5: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+       6: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      mLastSlowEventTime=0
+      mNumEventsSinceLastSlowEventReport = 0
+      mNumSkippedSlowEvents = 0
+  InputTracer: Disabled
+
+Input Manager Service (Java) State:
+  Gesture Monitors (implemented as spy windows):
+    0: name='[Gesture Monitor] swipe-up', inputChannelToken=android.os.BinderProxy@3719e26 displayId=0
+    1: name='[Gesture Monitor] OplusUAHInputChannel', inputChannelToken=android.os.BinderProxy@4620769 displayId=0
+    2: name='[Gesture Monitor] OplusExInputReceiver1', inputChannelToken=android.os.BinderProxy@82979e6 displayId=0
+  mAdditionalDisplayInputProperties:
+    <none>
+  BatteryController:
+    State: Polling = false, Interactive = true
+    Listeners: 0 battery listeners
+    Device Monitors: 0 monitors
+  KbdBacklightController: 0 keyboard backlights
+  KeyboardLedController: 0 keyboard mic mute lights
+  KeyboardLedController: 0 keyboard volume mute lights
+  KeyboardGlyphManager: 0 glyph maps
+  KeyGestureController:
+    mCurrentUserId = 0
+    mSystemPid = 905
+    mPendingMetaAction = false
+    mPendingCapsLockToggle = false
+    mPendingHideRecentSwitcher = false
+    mSearchKeyBehavior = 0
+    mSettingsKeyBehavior = 0
+    mRingerToggleChord = 1
+    mPowerVolUpBehavior = 2
+    mKeyGestureEventListenerRecords = {2681}
+    mKeyGestureHandlerRecords = {905}
+    mSupportedKeyGestures = [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 21, 22, 23, 25, 27, 28, 31, 32, 51, 52, 53, 54, 55, 56, 57, 59, 60, 61, 64, 65, 66, 67, 75, 200, 203, 204, 205, 206, 207, 208, 209, 210]
+  Last handled KeyGestureEvents: 
+  KeyCombination rules:
+    KEYCODE_VOLUME_DOWN + KEYCODE_POWER
+    KEYCODE_VOLUME_DOWN + KEYCODE_VOLUME_UP
+    KEYCODE_VOLUME_UP + KEYCODE_POWER
+  AppLaunchShortcutManager:
+    InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_E, mModifierState=65536}, action = Action[keyGestureType=51, appLaunchData=CategoryData{mCategory='android.intent.category.APP_EMAIL'}] }
+    InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_U, mModifierState=65536}, action = Action[keyGestureType=51, appLaunchData=CategoryData{mCategory='android.intent.category.APP_CALCULATOR'}] }
+    InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_B, mModifierState=65536}, action = Action[keyGestureType=51, appLaunchData=RoleData{mRole='android.app.role.BROWSER'}] }
+    InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_C, mModifierState=65536}, action = Action[keyGestureType=51, appLaunchData=CategoryData{mCategory='android.intent.category.APP_CALENDAR'}] }
+    InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_P, mModifierState=65536}, action = Action[keyGestureType=51, appLaunchData=CategoryData{mCategory='android.intent.category.APP_CONTACTS'}] }
+    InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_M, mModifierState=65536}, action = Action[keyGestureType=51, appLaunchData=CategoryData{mCategory='android.intent.category.APP_MAPS'}] }
+  InputGestureManager:
+    System Shortcuts:
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_A, mModifierState=65536}, action = Action[keyGestureType=5, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_TAB, mModifierState=65536}, action = Action[keyGestureType=2, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_DPAD_RIGHT, mModifierState=69632}, action = Action[keyGestureType=28, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_DPAD_DOWN, mModifierState=69632}, action = Action[keyGestureType=52, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_DPAD_LEFT, mModifierState=65536}, action = Action[keyGestureType=3, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_DPAD_LEFT, mModifierState=69632}, action = Action[keyGestureType=27, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_DPAD_UP, mModifierState=69632}, action = Action[keyGestureType=53, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_S, mModifierState=65536}, action = Action[keyGestureType=10, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_ESCAPE, mModifierState=65536}, action = Action[keyGestureType=3, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_SLASH, mModifierState=65536}, action = Action[keyGestureType=12, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_N, mModifierState=65536}, action = Action[keyGestureType=8, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_5, mModifierState=65538}, action = Action[keyGestureType=64, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_6, mModifierState=65538}, action = Action[keyGestureType=66, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_L, mModifierState=65536}, action = Action[keyGestureType=32, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_RIGHT_BRACKET, mModifierState=65536}, action = Action[keyGestureType=69, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_3, mModifierState=65538}, action = Action[keyGestureType=65, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_4, mModifierState=65538}, action = Action[keyGestureType=67, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_EQUALS, mModifierState=65536}, action = Action[keyGestureType=71, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_LEFT_BRACKET, mModifierState=65536}, action = Action[keyGestureType=68, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_H, mModifierState=65536}, action = Action[keyGestureType=1, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_I, mModifierState=65536}, action = Action[keyGestureType=7, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_MINUS, mModifierState=65536}, action = Action[keyGestureType=70, appLaunchData=null] }
+      InputGestureData { trigger = KeyTrigger{mKeycode=KEYCODE_ENTER, mModifierState=65536}, action = Action[keyGestureType=1, appLaunchData=null] }
+    Blocklisted Triggers:
+      KeyTrigger{mKeycode=KEYCODE_E, mModifierState=65536}
+      KeyTrigger{mKeycode=KEYCODE_C, mModifierState=4096}
+      KeyTrigger{mKeycode=KEYCODE_B, mModifierState=65536}
+      KeyTrigger{mKeycode=KEYCODE_SPACE, mModifierState=4096}
+      KeyTrigger{mKeycode=KEYCODE_C, mModifierState=65536}
+      KeyTrigger{mKeycode=KEYCODE_SPACE, mModifierState=4097}
+      KeyTrigger{mKeycode=KEYCODE_A, mModifierState=4096}
+      KeyTrigger{mKeycode=KEYCODE_TAB, mModifierState=2}
+      KeyTrigger{mKeycode=KEYCODE_TAB, mModifierState=3}
+      KeyTrigger{mKeycode=KEYCODE_Z, mModifierState=4096}
+      KeyTrigger{mKeycode=KEYCODE_Y, mModifierState=4096}
+      KeyTrigger{mKeycode=KEYCODE_Z, mModifierState=4098}
+      KeyTrigger{mKeycode=KEYCODE_X, mModifierState=4096}
+      KeyTrigger{mKeycode=KEYCODE_V, mModifierState=4096}
+      KeyTrigger{mKeycode=KEYCODE_U, mModifierState=65536}
+      KeyTrigger{mKeycode=KEYCODE_P, mModifierState=65536}
+      KeyTrigger{mKeycode=KEYCODE_M, mModifierState=65536}
+    Custom Gestures:
+    OGG_Global_Registers: 
+      Remote : 0=RemoteObserver{tag=sidebar, affinityGesture=0x10000001, validRegion=[RectF(1199.0, 280.0, 1273.0, 555.0)], observer=com.oplus.globalgesture.IOplusGlobalGestureObserver$Stub$Proxy@add366e}
+      Remote : 1=RemoteObserver{tag=GestureLog_OplusMultiGesturePolicy, affinityGesture=0x10000004, validRegion=[], observer=android.os.OplusGestureMonitorManager$OnGestureRegionObserverDelegate@cb60585}
+
+=== 6. Guest dumpsys window windows（VNC 触控已点掉充电限制弹窗并进入设置 -> 关于本机 -> 版本信息） ===
+  Window #0 Window{ecbdf87 u0 OplusPrivacyIconTopRight}:
+  Window #1 Window{513de99 u0 OplusPrivacyIconTopLeft}:
+  Window #2 Window{63351f6 u0 NavigationBar_displayId_0}:
+  Window #3 Window{9ef6578 u0 NotificationShade}:
+  Window #4 Window{7dcc0ec u0 StatusBar}:
+  Window #5 Window{3c7cc04 u0 OplusOSEdgeFloatBar}:
+  Window #6 Window{9fdb912 u0 ShellDropTarget}:
+  Window #7 Window{3483114 u0 FlexibleDropTarget}:
+  Window #8 Window{aae07ec u0 InputMethod}:
+  Window #9 Window{5e3a51c u0 com.android.settings/com.oplus.settings.OplusSettingsActivity$DeviceInfoSettingsActivity}:
+  Window #10 Window{db648f9 u0 com.android.settings/com.android.settings.Settings}:
+  Window #11 Window{d7c0911 u0 com.google.android.googlequicksearchbox}:
+  Window #12 Window{e404b5e u0 com.android.launcher/com.android.launcher.Launcher}:
+  Window #13 Window{f9f63f2 u0 com.android.wallpaper.livepicker.service.video.op.MacanExp1VideoWallpaper}:

@@ -1,0 +1,44 @@
+# 通过现场（2026-11-15，修复后）
+
+## 1. 自包含副本启动 dsh web
+
+    $ DSH_HOME=… node agent/hareness-sdk/node_modules/@deepseek-ai/dsh/lib/bin.js web --port 0 --no-open
+    dsh web: http://127.0.0.1:55015/?token=BykvP2Fk4-GgTw_OF7CIY9kEN9Vbu-tRrQX_6EHrXqo
+    (cookie 'dsh-auth-…' set; use the token URL above to open the web UI)
+
+    root-with-token: 303 → Cookie 后 200（index.html）
+    root-without-token: 401
+
+## 2. 工作区预注册（幂等）
+
+    POST /api/workspace/create  {"type":"client-request","rpcId":"cdha-ws-2","method":"workspace/create",
+      "payload":{"args":{"request":{"path":"/Volumes/work/cloud-phone-hub/engine"}}}}
+    → {"type":"server-response","rpcId":"cdha-ws-2","result":{"ok":true,"value":{
+        "workspace":{"workspaceId":"f0c5acf4-…","path":"/Volumes/work/cloud-phone-hub/engine",
+        "title":"engine","sessionIds":[]},"created":true}}}
+
+    重复调用同路径 → 同一 workspaceId，"created":false（幂等成立）
+
+## 3. 修复后的 dump-config 默认路由
+
+    - id: agent-default-model
+      config:
+        provider: cdh-maas
+        model: "deepseek-v4.1-flash-1017"
+
+## 4. 浏览器端到端（cdha 控制台 →「DSH」页签 → iframe）
+
+    - iframe#dsh-web-frame src=http://127.0.0.1:56033/?token=…，#dsh-web-status=「已连接」
+    - 工作区自动选中「engine」
+    - 发送「你好，请用一句话回复」→ 助手回复「你好！有什么可以帮你的吗？」
+      （模型 deepseek-v4.1-flash-1017，状态「已完成，用时 1 秒」，1 轮 1 步）
+    - 发送「列出你当前可用的工具名称清单」→ 47 个工具，其中 13 个 mcp__cdha__*：
+      bash_exec / cmd_run / dev_adb / ev_new / evidence_search / fs_edit / fs_grep /
+      fs_list / fs_read / fs_write / img_probe / log_slice / manifest_show
+
+## 5. 回归
+
+    go build ./... 通过
+    go vet ./... 通过
+    go test ./... 50 包全 ok（含 dsh_web_test.go 新增 3 只用例）
+    旧「对话」页 GET /api/chats → 200

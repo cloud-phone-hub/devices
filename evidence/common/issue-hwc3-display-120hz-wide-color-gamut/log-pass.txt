@@ -1,0 +1,121 @@
+{
+  "runId": "run-00245",
+  "scoreSummary": {
+    "failedItems": [
+      "H1_criticalSystemServicesAndIfaaReady"
+    ],
+    "passed": 31,
+    "total": 32
+  },
+  "C1_displayIs1080x2400Dpi440": true,
+  "C2_displaySupports120HzAndWideColorGamut": true,
+  "display": {
+    "appVsyncOffsetNanos": 1199999,
+    "colorMode": 0,
+    "densityDeviceStable": 440,
+    "displayCount": 1,
+    "displayId": 0,
+    "drmConnectors": {},
+    "hdrCapabilities": {
+      "desiredMaxAverageLuminance": 500,
+      "desiredMaxLuminance": 500,
+      "desiredMinLuminance": 0,
+      "supportedHdrTypes": []
+    },
+    "internalDisplayInfo": {
+      "logicalDensityDpi": null,
+      "logicalHeight": 2400,
+      "logicalWidth": 1080,
+      "ownerUid": null,
+      "physicalXDpi": null,
+      "physicalYDpi": null,
+      "state": null,
+      "type": null,
+      "uniqueId": null
+    },
+    "isHdr": false,
+    "isValid": true,
+    "isWideColorGamut": true,
+    "name": "内置屏幕",
+    "preferredWideGamutColorSpace": "Display P3",
+    "presentationDeadlineNanos": 14800000,
+    "realMetrics": {
+      "density": 2.75,
+      "densityDpi": 440,
+      "heightPixels": 2400,
+      "scaledDensity": 2.75,
+      "widthPixels": 1080,
+      "xdpi": 391.886,
+      "ydpi": 391.886
+    },
+    "realSize": {
+      "x": 1080,
+      "y": 2400
+    },
+    "refreshRate": 120,
+    "rotation": 0,
+    "state": 2,
+    "supportedColorModes": [],
+    "supportedModeCount": 3,
+    "supportedModes": {
+      "mode_1": {
+        "modeId": 1,
+        "physicalHeight": 2400,
+        "physicalWidth": 1080,
+        "refreshRate": 60
+      },
+      "mode_2": {
+        "modeId": 2,
+        "physicalHeight": 2400,
+        "physicalWidth": 1080,
+        "refreshRate": 120
+      },
+      "mode_3": {
+        "modeId": 3,
+        "physicalHeight": 2400,
+        "physicalWidth": 1080,
+        "refreshRate": 90
+      }
+    },
+    "supportedRefreshRates": [
+      60,
+      90,
+      120
+    ],
+    "supports120Hz": true
+  },
+  "goldScorecard": {
+    "A1_modelIsGold2312DRAABC": true,
+    "A2_socAndAbiIsMt6833Arm64": true,
+    "A3_crossPartitionIdentityConsistent": true,
+    "A4_bootSecurityAndVerityPropsComplete": true,
+    "B1_cpu8CoreBigLittle6xA55Plus2xA76": true,
+    "B2_cpufreqPoliciesVisibleToApp": true,
+    "B3_memoryAndSwapConsistent": true,
+    "B4_storageStandardDirsAllReady": true,
+    "B5_mapsHasRealMaliAndNoMesaMinigbm": true,
+    "B6_vendorDlkmNoCdhModuleNameLeak": true,
+    "B7_mountinfoNoPeerHolesAndLogSocketsExist": true,
+    "C1_displayIs1080x2400Dpi440": true,
+    "C2_displaySupports120HzAndWideColorGamut": true,
+    "C3_glesRendererIsMaliG57Mc2": true,
+    "C4_glesGlsl320AndArmExtsNoDesktopLeak": true,
+    "C5_webViewWebGlReadyAndMatchesMali": true,
+    "D1_sensorsCountIs29AndMagnetometerValid": true,
+    "D2_sensorsDynamic50HzStreamsActive": true,
+    "D3_sensorsAdcQuantizationAndGyroDriftReal": true,
+    "D4_inputsValidAndNoRiskyControlIme": true,
+    "E1_camera2AndCamera1Connectable": true,
+    "E2_mediaCodecsHasMtkAndDolbyNoV4l2Leak": true,
+    "E3_widevineVendorAndPropertiesAuthentic": true,
+    "E4_vibratorAndIrReady": true,
+    "F1_battery5000MahLiPolyAndNotConstant": true,
+    "F2_thermalZonesPresentInSysfs": true,
+    "G1_networkActiveAndNoSuspiciousIfaces": true,
+    "G2_wifiNoVirtWifiOrHwsimBssidLeak": true,
+    "G3_telephonyTacMatchesGold86717107": true,
+    "G4_bluetoothAdapterHasDeviceName": true,
+    "H1_criticalSystemServicesAndIfaaReady": false,
+    "H2_keystoreHwSignAndSepolicyClean": true
+  }
+}

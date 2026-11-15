@@ -1,0 +1,50 @@
+# log-pass.txt —— oriole 载体改挂 /mnt/vendorpatch 后的现场（实例 4）
+#
+# 日志来源：engine/out/core/daemon/runtime/oriole_AP2A.240905.003.F1/4/qemu.log
+# 判定口径只看 vold 与 vdc 挂载本身；整机 boot 另有卡点（见文末"后续卡点"）。
+
+$ grep -c 'Found map' 4/qemu.log
+0
+$ grep -c 'Tearing down stale mount' 4/qemu.log
+0
+$ grep -c 'Sending Interrupt to pid' 4/qemu.log   # vold 杀进程
+0
+$ grep -c 'avc:.*mnt_vendor_file' 4/qemu.log
+0
+
+$ grep -n 'target=/mnt/vendorpatch' 4/qemu.log | head -2
+511:[    0.269351][    T1] init: [libfs_mgr] __mount(source=/dev/block/vdc,target=/mnt/vendorpatch,type=ext4)=0: Success
+
+$ grep -c 'cdh_redirect:' 4/qemu.log   # 重定向已生效
+1250
+$ grep -n 'cdh_redirect:' 4/qemu.log | head -4
+463:[    0.223793][    T1] cdh_redirect: /mnt/vendorpatch/vendor/etc/fstab.oriole
+513:[    0.286507][    T1] cdh_redirect: /mnt/vendorpatch/vendor/lib64
+514:[    0.286904][    T1] cdh_redirect: /mnt/vendorpatch/vendor/lib64
+516:[    0.351498][    T1] cdh_redirect: /mnt/vendorpatch/vendor/etc/fstab.oriole
+
+$ grep -n 'apexd.status' 4/qemu.log | head -2   # APEX 就绪时刻
+1478:[    5.390014][  T118] init: Wait for property 'apexd.status=activated' took 1763ms
+2244:01-01 00:00:01.332   227   227 I cph-netmgr-setu: type=1400 audit(0.0:16): avc:  denied  { read } for  name="cph-netmgr-setup" dev="vdc" ino=42 scontext=u:r:pioneer:s0 tcontext=u:object_r:pioneer_exec:s0 tclass=file permissive=1[   16.765389][    T1] init: processing action (apexd.status=ready && ro.product.cpu.abilist64=*) from (/system/etc/init/hw/init.boringssl.zygote64.rc:3)
+
+$ grep -n "starting service 'zygote'" 4/qemu.log | head -2   # 正规 zygote-start 而非 onrestart 拉起
+2009:[   16.204675][    T1] init: starting service 'zygote'...
+2524:01-01 00:00:03.450   202   202 I Checkpoint: cp_prepareCheckpoint called[   17.105109][    T1] init: starting service 'zygote'...
+
+## 判定
+- vdc 在 0.269 s 以 first_stage_mount 挂到 /mnt/vendorpatch：__mount(...)=0: Success；
+- vold 的 3 个指标全为 0：Found map 0、Tearing down stale mount 0、Sending Interrupt 0
+  （对比实例 2 的 131 / 4），载体不再被当 stale mount；
+- avc mnt_vendor_file 0 条（对比实例 3 的 3924 条），落点不在 /mnt/vendor/ 之下；
+- cdh_redirect 生效 1250 次，目标全是 /mnt/vendorpatch/…；
+- apexd.status=activated 在 5.390 s 就绪（Wait 1763 ms），zygote/system_server 起来后
+  system_server 已跑到 StartActivityManager。
+
+## 后续卡点（不属于本 issue，另行闭环）
+本实例仍在 31.7 s 触发 init 的 "process with updatable components
+'vendor.hwcomposer-3' exited 4 times before boot completed" → 重启进 recovery，
+sys.boot_completed 始终为空。原因是 /vendor/bin/hw/android.hardware.composer.hwc3-service.drm
+在 Android 14 底座上找不到 std::__1::__libcpp_verbose_abort 与
+AIBinder_Class_setTransactionCodeToFunctionNameMap 两个符号，它的 rc 里
+onrestart restart surfaceflinger 又把 main 类整体拉崩。与本 issue 的载体落点无关：
+本实例下 vold 对载体的 0 次干预已经证明落点问题解决。

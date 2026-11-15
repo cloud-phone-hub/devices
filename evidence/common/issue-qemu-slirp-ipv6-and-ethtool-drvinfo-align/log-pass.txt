@@ -1,0 +1,42 @@
+=== [修复后：2026-11-15 P1 Batch-5 验证输出] ===
+# 1) 宿主机 daemon Go 单元测试：cd core/host/daemon && TMPDIR=/Volumes/work/cloud-phone-hub/engine/out/tmp go test ./run/... -v
+=== RUN   TestGpuArgRefreshRates
+--- PASS: TestGpuArgRefreshRates (0.00s)
+=== RUN   TestQemuArgsNetdevIPv6Off
+--- PASS: TestQemuArgsNetdevIPv6Off (0.00s)
+PASS
+ok  	cloud-phone-hub/core/daemon/run	1.912s
+
+# 2) vm-shell-pass.txt（61f8a3a6a912df72-cloud）：IPv6 无 fec0::/240e::、ccmni0/ccmni2 初始 DOWN、ethtool -i 对齐
+=== uname -r ===
+6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k
+=== ip -6 addr ===
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 state UNKNOWN qlen 1000
+    inet6 ::1/128 scope host 
+2: dummy0: <BROADCAST,NOARP,UP,LOWER_UP> mtu 1500 state UNKNOWN qlen 1000
+    inet6 fe80::c01a:94ff:fec4:755e/64 scope link 
+16: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 state UP qlen 1000
+    inet6 fe80::94e2:bbff:fe91:24ef/64 scope link 
+=== ip link show ccmni0 / ccmni2 ===
+19: ccmni0: <BROADCAST,NOARP> mtu 1400 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether 36:27:ef:3a:cd:64 brd ff:ff:ff:ff:ff:ff
+6: ccmni2: <BROADCAST,MULTICAST> mtu 1400 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether c2:36:b4:12:34:58 brd ff:ff:ff:ff:ff:ff
+=== ethtool -i (shell) ===
+--- wlan0 ---
+driver: wlan
+version: 6.6.118-android15-8-ge56cf6b09c
+bus-info: 
+--- ccmni0 ---
+Cannot get driver information: Operation not supported on transport endpoint
+--- ccmni2 ---
+Cannot get driver information: Operation not supported on transport endpoint
+--- p2p0 ---
+Cannot get driver information: Operation not supported on transport endpoint
+--- dummy0 ---
+driver: dummy
+version: 6.6.118-android15-8-ge56cf6b09c
+bus-info: 
+
+# 3) aligner network_full（run-00237）：network.capability 2 -> 0
+network capability: 2 -> 0 (onlyCloud 接口差异与 IPv6 地址差异全部清零)

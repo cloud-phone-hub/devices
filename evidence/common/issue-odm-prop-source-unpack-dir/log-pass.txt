@@ -1,0 +1,76 @@
+== 修复后：留档目录按镜像名推导，odm 层回到「只声明自己那 138+3 行」，vendor 收口保住（2026-11-04，实例 3）==
+
+改动: engine/build/internal/vendorimg/vendorimg.go -> UnpackDir() 按镜像名推目录名
+      （新增 UnpackDirNameFor()、unpackDirPrefix；UnpackDirName 常量仍是 unpack_vendor）
+
+
+## 1. 命名规则单测
+
+$ cd engine/build && go test ./internal/vendorimg/... -run TestUnpackDir -v -count=1
+=== RUN   TestUnpackDir
+--- PASS: TestUnpackDir (0.00s)
+PASS
+ok  	cloud-phone-hub/engine/build/internal/vendorimg	0.977s
+（TestUnpackDir 改成表驱动，5 例：
+  vendor_a.img -> unpack_vendor（历史名不变，07 与基线 img=vendor_* 的机型继续共用）；
+  vendor.img -> unpack_vendor；odm_a.img -> unpack_odm；
+  vendor_dlkm_a.img -> unpack_vendor_dlkm；"" -> ""（调用方据此判「没有解包树可用」））
+
+$ go test ./06_build_odm/... -run TestBuildODMReadsOdmUnpackDirNotVendor -v -count=1
+--- PASS: TestBuildODMReadsOdmUnpackDirNotVendor (0.06s)
+ok  	cloud-phone-hub/engine/build/06_build_odm	0.431s
+（诱饵 super/unpack_vendor/build.prop + 真件 super/unpack_odm/build.prop 同时在场，
+ 断言产物取自 unpack_odm、日志里出现 unpack_odm 且不出现 unpack_vendor；
+ 把 UnpackDir 换回旧实现后同一用例 FAIL，失败输出见 log-fail.txt 第 4 节）
+
+$ cd engine/build && go test ./...  -> 24 个包含 ok、0 个 FAIL
+
+
+## 2. 真实构建里的取件链（engine/out/tmp/cph2797-build3.log）
+
+15:    属性件原件: out/roms/oppo/cph2797/16.0.8.301_EX01/super/unpack_odm/build.prop（树里没有则按镜像逐件解留档）
+19:==> [步骤 1] 基线 odm 属性件: out/roms/oppo/cph2797/16.0.8.301_EX01/super/odm_a.img:/build.prop（sets 5 项 / unsets 0 项）
+20:    原件: out/roms/oppo/cph2797/16.0.8.301_EX01/super/unpack_odm/build.prop（按镜像逐件解，已留档）
+21:    厂商原件: out/roms/oppo/cph2797/16.0.8.301_EX01/super/unpack_odm/build.prop（138 行 / sha256 0606e97aa3aa）
+27:==> [步骤 1] 生成 odm 覆盖件 -> out/devices/oppo/cph2797/16.0.8.301_EX01/odm/etc/build.prop
+28:    abilist32="" abilist64=arm64-v8a sha256=141 行 / sha256 cfc266f70d54
+        ↑ 138 行原件 + 3 条 abilist 追加 = 141 行（run2 是 922 行）
+留档件在位：out/roms/oppo/cph2797/16.0.8.301_EX01/super/unpack_odm/build.prop（5072 B）
+
+$ grep -cE "^(ro.hardware.egl|ro.hwui.use_vulkan|ro.hardware.hwcomposer|ro.opengles.version)=" \
+    out/devices/oppo/cph2797/16.0.8.301_EX01/odm/etc/build.prop
+0     ← odm 层不再声明任何 GPU 后端键，把裁决权还给 vendor 层
+
+
+## 3. 运行时实测（实例 3 = 修复后盘集，patch.img sha256 9a82ee2261c7）
+
+VM 内（engine/out/tmp/cph2797-getprop-pass.txt）：
+[ro.hardware.egl]: [mesa]      [ro.hardware.hwcomposer]: [drm]
+[ro.hwui.use_vulkan]: [false]  [ro.opengles.version]: [196608]
+
+$ grep "Overriding previous property" engine/out/tmp/cph2797-pass-qemu.log | grep -E "egl|hwcomposer|use_vulkan|opengles"
+Overriding previous property 'ro.opengles.version':'196610' with new value '196608'
+（唯一一条，方向是「厂商原值 → 基线收口值」，收口生效；
+ run2 的 mesa→mali、drm→mtk_common、false→true 三条盖回全部消失）
+
+$ grep -c "couldn't find an OpenGL ES implementation" engine/out/tmp/cph2797-pass-qemu.log
+0        （run2 = 137）
+$ grep -c "Service 'surfaceflinger'.*received signal" engine/out/tmp/cph2797-pass-qemu.log
+0
+$ grep -c "critical process" engine/out/tmp/cph2797-pass-qemu.log
+0
+
+判定：
+[shot] engine/out/tmp/cph2797-desktop3.png 1264x2760 bpp=32 平均亮度=4.3 峰值=255
+[pass] 引导完成（日志 17248 行）+ 截图非黑（平均亮度=4.3 峰值=255）
+qemu.log:16390  [  110.993517] init: processing action (sys.boot_completed=1)
+VM 进程：surfaceflinger 663 / com.android.launcher 4620 / com.android.systemui 5017 存活
+
+
+## 4. 受本改动影响的机型面（基线 odm.img 是独立分区镜像的）
+
+按本轮 grep 基线，声明 `odm.img` 为 `odm_a.img` 的机型：15r、cph2797、ss9380、popsicle、m22；
+声明 `vendor_a.img`（odm 树随 vendor 承载）的机型：gold、oriole —— 后者的留档目录名
+仍是 unpack_vendor，行为与历史一致（表驱动单测第一例覆盖）。
+15r 本轮起机通过（#151）时 unpack_vendor 里恰好是它自己的形态，且它的 odm sets 只有
+GPU/ABILIST 数条，未触发这条盖回；ss9380 / popsicle 将在各自的起机轮次里复验。

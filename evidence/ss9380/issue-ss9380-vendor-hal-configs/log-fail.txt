@@ -1,0 +1,85 @@
+*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+Build fingerprint: 'samsung/pa3qzcx/pa3q:16/BP4A.251205.006/S9380ZCSDCZH1:user/release-keys'
+Kernel Release: '6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k'
+Revision: '0'
+ABI: 'arm64'
+Processor: '7'
+Timestamp: 1970-01-01 00:06:53.256966322+0000
+Process uptime: 172802s
+Executable: /system/bin/app_process64
+Cmdline: system_server
+pid: 15273, tid: 15273, name: system_server  >>> system_server <<<
+uid: 1000
+tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+esr: 0000000092000006 (Data Abort Exception 0x24)
+signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000 (read)
+Cause: null pointer dereference
+    x0  0000000000000000  x1  0000007ff8ed9a3c  x2  0000007ff8ed9600  x3  0000000000000004
+    x4  0000000000000000  x5  0000000000000000  x6  0000000300000000  x7  0000000000000000
+    x8  0000000000000000  x9  0000006de21f8000  x10 0000000000000000  x11 000000000000000c
+    x12 0000000000000100  x13 b400006f68e240b0  x14 0000000000000000  x15 00000000ebad6a89
+    x16 0000006de21f4b48  x17 00000071e78e2b10  x18 00000071ec0bc000  x19 0000007ff8ed9b10
+    x20 b400007098fb6ac0  x21 0000006ddd88a46a  x22 0000006ede162b7c  x23 0000007ff8ed9ae0
+    x24 b400006f78ebf090  x25 b400006f18f542b0  x26 0000007ff8ed9cac  x27 0000007ff8ed9ca0
+    x28 0000007ff8ed9ba0  x29 0000007ff8ed9a40
+    lr  0000006decba75bc  sp  0000007ff8ed9a20  pc  0000006decba75c4  pst 0000000060000000
+    esr 0000000092000006
+
+33 total frames
+backtrace:
+      #00 pc 000000000001a5c4  /system/lib64/libvibratorservice.so (android::vibrator::AidlHalWrapper::supportsHapticEngine()+48) (BuildId: 71a0914905ccdeecb0b678769abd5f01)
+      #01 pc 000000000011f074  /system/lib64/libandroid_servers.so (android::vibrator::HalResult<bool> android::vibrator::HalController::doWithRetry<bool>(std::__1::function<android::vibrator::HalResult<bool> (android::vibrator::HalWrapper*)> const&, android::vibrator::HalResult<bool>, char const*)+144) (BuildId: 8fc58f30f8f2fb16c790d9038c0b7e71)
+      #02 pc 0000000000119538  /system/lib64/libandroid_servers.so (android::vibratorSupportsHapticEngine(_JNIEnv*, _jclass*, long)+116) (BuildId: 8fc58f30f8f2fb16c790d9038c0b7e71)
+      #03 pc 00000000002c2100  /apex/com.android.art/lib64/libart.so (art_quick_generic_jni_trampoline+144) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+      #04 pc 0000000000668b6c  /apex/com.android.art/lib64/libart.so (nterp_helper+1948) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+      #05 pc 0000000000f62b7c  /system/framework/services.jar (com.android.server.vibrator.VibratorController$NativeWrapper.supportsHapticEngine+4)
+      #06 pc 0000000000669324  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+      #07 pc 0000000000f635bc  /system/framework/services.jar (com.android.server.vibrator.VibratorController.initVibratorGroup+16)
+      #08 pc 0000000000669324  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+      #09 pc 0000000000f6aba4  /system/framework/services.jar (com.android.server.vibrator.VibratorManagerService.<init>+1008)
+      #10 pc 0000000000669324  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+      #11 pc 0000000000f655d6  /system/framework/services.jar (com.android.server.vibrator.VibratorManagerService$Lifecycle.onStart+22)
+      #12 pc 0000000000669324  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+      #13 pc 0000000000241200  /system/framework/services.jar (com.android.server.SystemServiceManager.startService+88)
+      #14 pc 0000000000669324  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+--------- beginning of crash
+01-01 00:00:27.770   358   358 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 358 (binder:358_2), pid 358 (binder:358_2)
+01-01 00:00:27.790   358   358 F libc    : Crash due to signal: crash_dump helper failed to exec, or was killed
+01-01 00:01:40.408   692   692 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 692 (system_server), pid 692 (system_server)
+01-01 00:01:40.651  1165  1165 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+01-01 00:01:40.651  1165  1165 F DEBUG   : Build fingerprint: 'samsung/pa3qzcx/pa3q:16/BP4A.251205.006/S9380ZCSDCZH1:user/release-keys'
+01-01 00:01:40.651  1165  1165 F DEBUG   : Kernel Release: '6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k'
+01-01 00:01:40.651  1165  1165 F DEBUG   : Revision: '0'
+01-01 00:01:40.651  1165  1165 F DEBUG   : ABI: 'arm64'
+01-01 00:01:40.651  1165  1165 F DEBUG   : Processor: '0'
+01-01 00:01:40.651  1165  1165 F DEBUG   : Timestamp: 1970-01-01 00:01:40.469274006+0000
+01-01 00:01:40.651  1165  1165 F DEBUG   : Process uptime: 172823s
+01-01 00:01:40.651  1165  1165 F DEBUG   : Executable: /system/bin/app_process64
+01-01 00:01:40.651  1165  1165 F DEBUG   : Cmdline: system_server
+01-01 00:01:40.651  1165  1165 F DEBUG   : pid: 692, tid: 692, name: system_server  >>> system_server <<<
+01-01 00:01:40.651  1165  1165 F DEBUG   : uid: 1000
+01-01 00:01:40.651  1165  1165 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+01-01 00:01:40.651  1165  1165 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+01-01 00:01:40.651  1165  1165 F DEBUG   : esr: 0000000092000006 (Data Abort Exception 0x24)
+01-01 00:01:40.651  1165  1165 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000 (read)
+01-01 00:01:40.651  1165  1165 F DEBUG   : Cause: null pointer dereference
+01-01 00:01:40.651  1165  1165 F DEBUG   :     x0  0000000000000000  x1  0000007fded6c26c  x2  0000007fded6be30  x3  0000000000000004
+01-01 00:01:40.651  1165  1165 F DEBUG   :     x4  0000000000000000  x5  0000000000000000  x6  0000000300000000  x7  0000000000000000
+01-01 00:01:40.651  1165  1165 F DEBUG   :     x8  0000000000000000  x9  0000006fd3322000  x10 0000000000000000  x11 000000000000000c
+01-01 00:01:40.651  1165  1165 F DEBUG   :     x12 0000000000000100  x13 b400007200c1f450  x14 0000000000000000  x15 00000000ebad6a89
+01-01 00:01:40.651  1165  1165 F DEBUG   :     x16 0000006fd331eb48  x17 000000732bea2b10  x18 0000007364d6c000  x19 0000007fded6c340
+01-01 00:01:40.651  1165  1165 F DEBUG   :     x20 b400007090cd2410  x21 0000006fd08ad46a  x22 000000705e762b7c  x23 0000007fded6c310
+01-01 00:01:40.651  1165  1165 F DEBUG   :     x24 b400007220c0c850  x25 b400007140c1b1f0  x26 0000007fded6c4dc  x27 0000007fded6c4d0
+01-01 00:01:40.651  1165  1165 F DEBUG   :     x28 0000007fded6c3d0  x29 0000007fded6c270
+01-01 00:01:40.651  1165  1165 F DEBUG   :     lr  00000070566aa5bc  sp  0000007fded6c250  pc  00000070566aa5c4  pst 0000000060000000
+01-01 00:01:40.651  1165  1165 F DEBUG   :     esr 0000000092000006
+01-01 00:01:40.651  1165  1165 F DEBUG   : 33 total frames
+01-01 00:01:40.651  1165  1165 F DEBUG   : backtrace:
+01-01 00:01:40.651  1165  1165 F DEBUG   :       #00 pc 000000000001a5c4  /system/lib64/libvibratorservice.so (android::vibrator::AidlHalWrapper::supportsHapticEngine()+48) (BuildId: 71a0914905ccdeecb0b678769abd5f01)
+01-01 00:01:40.651  1165  1165 F DEBUG   :       #01 pc 000000000011f074  /system/lib64/libandroid_servers.so (android::vibrator::HalResult<bool> android::vibrator::HalController::doWithRetry<bool>(std::__1::function<android::vibrator::HalResult<bool> (android::vibrator::HalWrapper*)> const&, android::vibrator::HalResult<bool>, char const*)+144) (BuildId: 8fc58f30f8f2fb16c790d9038c0b7e71)
+01-01 00:01:40.651  1165  1165 F DEBUG   :       #02 pc 0000000000119538  /system/lib64/libandroid_servers.so (android::vibratorSupportsHapticEngine(_JNIEnv*, _jclass*, long)+116) (BuildId: 8fc58f30f8f2fb16c790d9038c0b7e71)
+01-01 00:01:40.651  1165  1165 F DEBUG   :       #03 pc 00000000002c2100  /apex/com.android.art/lib64/libart.so (art_quick_generic_jni_trampoline+144) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+01-01 00:01:40.651  1165  1165 F DEBUG   :       #04 pc 0000000000668b6c  /apex/com.android.art/lib64/libart.so (nterp_helper+1948) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)
+01-01 00:01:40.651  1165  1165 F DEBUG   :       #05 pc 0000000000f62b7c  /system/framework/services.jar (com.android.server.vibrator.VibratorController$NativeWrapper.supportsHapticEngine+4)
+01-01 00:01:40.651  1165  1165 F DEBUG   :       #06 pc 0000000000669324  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 7087b2f2160bfbf3335d54ba9779e325)

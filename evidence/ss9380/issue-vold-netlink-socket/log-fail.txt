@@ -1,0 +1,31 @@
+# 失败态取证：vold 建不出自己的 netlink socket → Exiting(13) 死循环
+
+# 机型：samsung/pa3qzcx/pa3q:16/BP4A.251205.006/S9380ZCSDCZH1
+# 盘集：build7（patch.img 只有第一段 napproxyd 授权）
+# 实例：index 1，adb 127.0.0.1:5911
+# 时间：2026-10-30
+
+# ---- 1) logcat 被 vold 刷屏（毫秒级）----
+# adb shell logcat -d | head
+I vold    : Socket created with fd:-1
+E vold    : Exiting(13)
+I vold    : Socket created with fd:-1
+E vold    : Exiting(13)
+# 频率高到把 main buffer 整块冲掉 —— 这就是此前抓不到后续
+# PersistentDataBlockService / wifi 日志的直接原因。
+
+# ---- 2) 唯一根因：dmesg 去重统计----
+# adb shell dmesg | grep -o 'avc:.*' | sed 's/ permissive=.*//' | sort | uniq -c | sort -rn
+   253 avc:  denied  { create } for  pid=290 comm="vold" scontext=u:r:vold:s0 tcontext=u:r:vold:s0 tclass=netlink_socket
+
+# ---- 3) 为什么 lineage 基底缺 ----
+# lineage 把这条写在 **plat** 的 vold.te：
+#   allow vold self:netlink_socket create_socket_perms;
+# 本机 plat 是官方 OneUI 的 plat_sepolicy（vers=202504），三星把它挪到了 vendor 侧：
+#   plat_sepolicy.cil 里 grep "vold.*netlink_socket" → 0 条
+#   官方 vendor_sepolicy.cil 第 18458 行：
+#     (allow vold_202404 self (netlink_socket (read write create bind)))
+
+# ---- 4) 后果 ----
+# vold main 返回 13，init 每 5 s 拉一次，形成死循环；storage/vold 相关
+# 属性与 /data 挂载链全部拿不到，sys.boot_completed 不置位。

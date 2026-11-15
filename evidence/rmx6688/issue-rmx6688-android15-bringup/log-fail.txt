@@ -1,0 +1,89 @@
+=== 1. 一阶段挂载缺失逻辑分区导致 1.17s InitFatalReboot ===
+[    1.145160][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-9,target=/mnt/vendor/my_engineering,type=erofs)=0: Success
+[    1.150598][    T1] init: DM_DEV_STATUS failed for my_company_a: No such device or address
+[    1.151479][    T1] init: Failed to mount /mnt/vendor/my_company: No such device or address
+[    1.160358][    T1] init: Failed to mount required partitions early ...
+[    1.179472][    T1] init: InitFatalReboot: signal 6
+
+=== 2. 二阶段 PropertyInit 缺少 vendor_engineer_prop / vendor_oplus_prop 导致 2.43s InitFatalReboot ===
+[    2.419822][    T1] init: Failed to parse /odm/etc/selinux/odm_property_contexts: Invalid context u:object_r:vendor_engineer_prop:s0 on line 2
+[    2.421004][    T1] init: Failed to parse /vendor/etc/selinux/vendor_property_contexts: Invalid context u:object_r:vendor_oplus_prop:s0 on line 198
+[    2.434510][    T1] init: InitFatalReboot: signal 6
+
+=== 3. 二阶段 19.67s engineer_vendor_shell.sh setexeccon 触发早期 init 子进程 SIGABRT ===
+[   19.674112][  T489] init: cannot setexeccon('u:r:engineer_vendor_daemon:s0') for vendor.engineer_vendor_shell: Invalid argument
+F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 489 (init), pid 489 (init)
+
+=== 4. PersistentDataBlockService 读取 /dev/block/vda3 EACCES 与 *-virtualhal updatable_crashing ===
+E PersistentDataBlockService: Failed to get block device size
+java.io.FileNotFoundException: /dev/block/by-name/frp: open failed: EACCES (Permission denied)
+init: process with updatable components 'vendor.face-virtualhal' exited 4 times in 4 minutes
+[sys.init.updatable_crashing]: [1]
+
+=== 5. SurfaceFlinger 漏调 AServiceManager_isDeclared 硬等 IDisplayColorFeature/default 致 248s pre_watchdog / 710s Watchdog 杀 system_server ===
+# (a) 反汇编 /system/bin/surfaceflinger 证实：
+# IIrisFeature (0x4f5830) 先调 AServiceManager_isDeclared 再按需获取；
+# 而 updateColorSpaceValue (0x48b0c0 -> 0x48b184) 与 handleSharpness (0x4c9e50 -> 0x4c9f8c)
+# 持 pthread_mutex_lock 直接无守卫调用无超时的 AServiceManager_waitForService("vendor.oplus.hardware.displaycolorfeature.IDisplayColorFeature/default")！
+1439 Since 'vendor.oplus.hardware.displaycolorfeature.IDisplayColorFeature/default' could not be found
+1408 Since 'vendor.oplus.hardware.location.IOplusLocation/default' could not be found
+1405 Since 'vendor.oplus.hardware.subsys_interface.subsys.ISubsys/default' could not be found
+
+"android.display" prio=5 tid=19 Native
+  native: #00 pc 00100138  /apex/com.android.runtime/lib64/bionic/libc.so (__ioctl+8)
+  native: #02 pc 00075894  /system/lib64/libbinder.so (android::IPCThreadState::talkWithDriver+196)
+  native: #04 pc 00078be4  /system/lib64/libbinder.so (android::IPCThreadState::transact+1444)
+  at android.os.BinderProxy.transactNative(Native method)
+  at android.os.BinderProxy.transact(BinderProxy.java:679)
+  at com.android.server.display.oplus.eyeprotect.manager.OplusColorSpaceManager.setColorSpaceValue(OplusColorSpaceManager.java:132)
+  at com.android.server.display.oplus.eyeprotect.manager.OplusColorSpaceManager.getAndpostColorSpaceData(OplusColorSpaceManager.java:82)
+  at com.android.server.display.oplus.eyeprotect.manager.AiEyeProtectManagerController.loadColorTempData(AiEyeProtectManagerController.java:251)
+  at com.android.server.display.oplus.eyeprotect.manager.AiEyeProtectManagerController.init(AiEyeProtectManagerController.java:202)
+  at com.android.server.display.oplus.eyeprotect.manager.AiEyeProtectManagerController.setUp(AiEyeProtectManagerController.java:141)
+  at com.android.server.display.oplus.OplusEyeProtectManager.setUp(OplusEyeProtectManager.java:81)
+  at com.android.server.display.color.ColorDisplayServiceExtImpl.onSetUp(ColorDisplayServiceExtImpl.java:101)
+  at com.android.server.display.color.ColorDisplayService.setUp(ColorDisplayService.java:522)
+
+# 248s 生成 system_server_pre_watchdog，710s Watchdog 杀掉 system_server（Blocked in handler on display thread (android.display) for 606s）
+
+=== 6. com.android.bluetooth 开启蓝牙时触发 LeAudioClient::Initialize 断言崩溃 ===
+11-11 22:31:53.310  2301  2323 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 2323 (bt_main_thread), pid 2301 (droid.bluetooth)
+11-11 22:31:53.476  2500  2500 F DEBUG   : Cmdline: com.android.bluetooth
+11-11 22:31:53.476  2500  2500 F DEBUG   : Abort message: '[client.cc:7764] Assert failed: std::move(hal_2_1_verifier).Run(). Initialize, LE Audio Client requires Bluetooth Audio HAL V2.1 at least. Either disable LE Audio Profile, or update your HAL'
+11-11 22:31:53.476  2500  2500 F DEBUG   :       #04 pc 00000000006f84f8  /system/lib64/libbluetooth_jni.so (LeAudioClient::Initialize(...)+392)
+
+=== 7. com.oplus.camera 后台每 15 秒空指针崩溃（libAPSClient-cmd-jni.so） ===
+Cmdline: com.oplus.camera
+pid: 5010, tid: 5077, name: ImageProcessThr  >>> com.oplus.camera <<<
+signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000
+Cause: null pointer dereference
+backtrace:
+      #00 pc 0000000000000000  <unknown>
+      #01 pc 000000000004ab70  /product/lib64/libAPSClient-cmd-jni.so (Java_com_oplus_ocs_camera_consumer_apsAdapter_APSClient_createClient+60)
+      #04 pc 000000000021d62c  /product/framework/com.oplus.camera.unit.sdk.jar (com.oplus.ocs.camera.consumer.apsAdapter.APSClientWrapper$Stub$Proxy.create+4)
+      #08 pc 000000000023bd04  /product/framework/com.oplus.camera.unit.sdk.jar (com.oplus.ocs.camera.consumer.apsAdapter.algorithm.FullApsImpl.connect+36)
+
+
+=== 8. com.android.bluetooth 首启 0xefd 厂商命令超时崩溃与关闭阶段 Reactor::Unregister EBADF 崩溃 ===
+# (a) 首启 Oplus 专有 HCI 0xefd (VS_OPLUS_IOTINFO_REPORT) 命令 RootCanal 不支持，触发 2s 命令超时：
+F bluetooth: system/hci/src/hci_layer.cc:329 hci_timeout_abort: Command timed out: 0xefd
+# 设 persist.vendor.bt.iotinfo.report.enable=false 后首启崩溃归零，但关闭蓝牙进入 OFF 时必现 EBADF：
+Cmdline: com.android.bluetooth
+Abort message: 'system/gd/os/linux_generic/reactor.cc:103 Unregister: Check failed: control_result == 0: system_error: Bad file descriptor (9)'
+backtrace:
+      #01 pc 0000000000598220  /system/lib64/libbluetooth_jni.so (bluetooth::os::Reactor::Unregister(bluetooth::os::Reactor::Reactable*)+...)
+      #02 pc 00000000005958a0  /system/lib64/libbluetooth_jni.so (bluetooth::os::Alarm::~Alarm()+...)
+      #03 pc 000000000060b970  /system/lib64/libbluetooth_jni.so (bluetooth::hci::LeAdvertisingManager::impl::~impl()+...)
+      #04 pc 00000000005e95a0  /system/lib64/libbluetooth_jni.so (bluetooth::hci::LeAdvertisingManager::Stop()+...)
+      #05 pc 0000000000582040  /system/lib64/libbluetooth_jni.so (bluetooth::ModuleRegistry::StopAll()+...)
+# 配合 logcat 定位残留广播持有者：
+D AdapterService: DiscoveryClient(id=accept-senseless, pkg=com.heytap.accessory)
+
+=== 9. vendor.oplus.hardware.charger.ICharger/default 缺失致 notifycode=-1 触发 com.oplus.battery 80% 充电上限弹窗 ===
+E OplusBatteryServiceFeature: failed to get ICharger service
+# dumpsys activity broadcasts 实测粘性广播：
+Sticky action android.intent.action.ADDITIONAL_BATTERY_CHANGED:
+  extras: Bundle[{batterycurrent=0, bypass_charge_status=0, bms_heating_status=0, pps_chg_mode=-1, chargervoltage=0, notifycode=-1, status=3, ...}]
+# Battery.apk SmartChargeProtectionController (Lj8/j;.b:0x1e6f48) 未判负值直接位与：
+#   (0x10000000 & 0xffffffff) != 0  ==> NOTIFY_CODE_LONG_CHARGE_LEVEL_ONE 恒成立
+# 弹出 Window{... u0 com.oplus.battery} ty=SYSTEM_ALERT (2003) 遮挡桌面与设置界面。

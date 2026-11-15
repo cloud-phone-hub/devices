@@ -1,0 +1,121 @@
+# oriole AP2A（纯 64 位锁补齐后）起机失败取证：system_server 崩溃循环 → zygote fatal → RescueParty → recovery
+# 实例 runtime/oriole_AP2A.240905.003.F1/1（pid 71837，06:32:48 起 / 06:41 停机并 /api/delete 删目录）
+# 全量日志留档 engine/out/tmp/oriole-fail2-qemu.log（   27179 行 / 6 轮引导）
+
+==== 1) 验收判据 ====
+sys.boot_completed=1 出现次数 = 0   （窗口内验收工具无 [pass] 输出：engine/out/tmp/oriole-boot-check2.log 为空）
+抓帧：$ python3 core/host/daemon/tools/vnc_grab.py 5913 engine/out/tmp/oriole-round2.png 20
+      engine/out/tmp/oriole-round2.png 1088x2400 bpp=32 平均亮度=3.9 峰值=255
+
+==== 2) 6 轮引导的终止者（4 次 zygote-fatal + 1 次 RescueParty + 末轮进 recovery）====
+3574:[   24.333495][    T1] init: starting service 'exec 17 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+3575:[   24.334007][    T1] init: ... started service 'exec 17 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 1924
+3576:[   24.334268][    T1] init: SVC_EXEC service 'exec 17 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 1924 (uid 1000 gid 1000+0 context default) started; waiting...
+3577:[   24.336418][    T1] init: Service 'exec 17 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 1924) exited with status 0 waiting took 0.002000 seconds
+3578:[   24.336740][    T1] init: Sending signal 9 to service 'exec 17 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 1924) process group...
+4560:[   29.178004][    T1] init: starting service 'exec 21 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+4561:[   29.178812][    T1] init: ... started service 'exec 21 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 2270
+4562:[   29.179264][    T1] init: SVC_EXEC service 'exec 21 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 2270 (uid 1000 gid 1000+0 context default) started; waiting...
+4563:[   29.182001][    T1] init: Service 'exec 21 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 2270) exited with status 0 waiting took 0.003000 seconds
+4564:[   29.182470][    T1] init: Sending signal 9 to service 'exec 21 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 22qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=2.8 flush=0.0 update=0.0 end=0.0 总=3.0 ms
+4574:[   29.195130][    T1] init: starting service 'exec 22 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+4575:[   29.195994][    T1] init: ... started service 'exec 22 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 2272
+4576:[   29.196460][    T1] init: SVC_EXEC service 'exec 22 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 2272 (uid 1000 gid 1000+0 context default) started; waiting...
+4578:[   29.200876][    T1] init: Service 'exec 22 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 2272) exited with status 0 waiting took 0.005000 seconds
+
+==== 3) primary zygote 这次是「活起来再被收尸」（对照 #149 的 2 ms 即死）====
+2014:[    9.018605][    T1] init: ... started service 'zygote' has pid 673
+3798:[   25.447320][    T1] init: Service 'zygote' (pid 673) received signal 9
+全量 zygote 死亡形态：24 次 signal 9、0 次自然退出
+system_server 确实在跑：
+2541:[   13.212240][    T1] init: Control message: Processed ctl.start for 'idmap2d' from pid: 835 (system_server)
+3490:[   23.402430][    T1] init: Control message: Processed ctl.stop for 'idmap2d' from pid: 835 (system_server)
+3981:[   26.449471][    T1] init: Control message: Processed ctl.start for 'idmap2d' from pid: 2072 (system_server)
+
+==== 4) 崩溃节奏与 servicemanager 侧症状（每 4~5 s 一次）====
+3798:[   25.447320][    T1] init: Service 'zygote' (pid 673) received signal 9
+4256:[   27.387499][    T1] init: Service 'zygote' (pid 2025) received signal 9
+5100:[   32.580371][    T1] init: Service 'zygote' (pid 2277) received signal 9
+6117:[   37.643574][    T1] init: Service 'zygote' (pid 2530) received signal 9
+6963:[   42.615779][    T1] init: Service 'zygote' (pid 2786) received signal 9
+9826:[    7.201835][    T1] init: Service 'zygote' (pid 465) received signal 9
+Could not find 'aidl/activity' 次数 = 85
+2280:[    9.391285][  T805] servicemanager: Tried to start aidl service activity as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+2324:[   10.401883][  T856] servicemanager: Tried to start aidl service activity as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+
+==== 5) 排除显示栈：SF 每轮 1 次且稳定 ====
+started service 'surfaceflinger' has pid 727
+started service 'surfaceflinger' has pid 518
+started service 'surfaceflinger' has pid 522
+started service 'surfaceflinger' has pid 519
+started service 'surfaceflinger' has pid 513
+21567:[   25.081002][    T1] init: Sending signal 9 to service 'surfaceflinger' (pid 519) process group...
+
+==== 6) 首要嫌疑：zygote 读 vendor_mesa_prop 被拒（本机独有）====
+2314:[    9.905533][  T199] type=1400 audit(9.900:172): avc:  denied  { read } for  comm="main" name="u:object_r:vendor_mesa_prop:s0" dev="tmpfs" ino=360 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_mesa_prop:s0 tclass=file permissive=0
+2315:[    9.911800][  T199] type=1400 audit(9.900:173): avc:  denied  { read } for  comm="main" name="u:object_r:vendor_mesa_prop:s0" dev="tmpfs" ino=360 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_mesa_prop:s0 tclass=file permissive=0
+本机拒绝条数 = 50
+同口径对照（成功起机的两台）：
+  gold  out/core/daemon/runtime/gold_cn_OS3.0.10.0.VNQCNXM/1/qemu.log  vendor_mesa_prop=0  critical process=0
+  m22   out/core/daemon/runtime/m22_12.5.0.0A/1/qemu.log              vendor_mesa_prop=0  critical process=0
+
+==== 7) 次要：APEX 内三个服务因 unlabeled 起不来 ====
+2047:[    9.085302][    T1] init: Could not start service 'edgetpu_app_service' as part of class 'hal': File /system_ext/bin/hw/vendor.google.edgetpu_app_service@1.0-service(labeled "u:object_r:unlabe
+2084:[    9.147821][    T1] init: Could not start service 'vendor.drm-widevine-hal' as part of class 'hal': File /apex/com.google.android.widevine/bin/hw/android.hardware.drm-service.widevine(labeled 
+2087:[    9.151322][    T1] init: Could not start service 'vendor.wifi_hal_legacy' as part of class 'hal': File /apex/com.google.pixel.wifi.ext/bin/hw/vendor.google.wifi_ext-service-vendor(labeled "u:
+
+==== 8) 占位件噪音（#105 遗留已记，非本轮卡点）====
+  32 cannot execv('/system/bin/drmserver')
+  27 cannot execv('/system/bin/mediaserver')
+
+==== 9) 两条 logcat 取证通路均不可用（本条无法闭环的直接原因）====
+$ out/qemu/dist/darwin/bin/adb devices
+4lmbvom7gifm5lbu   device          <- 宿主上别机的 adb，未触碰
+127.0.0.1:5911     offline
+$ engine/out/tmp/adb_grab.sh   # 60 次 x 3 s 轮询 get-state
+[fail] 60 次轮询内 adbd 未进入 device 状态
+$ python3 engine/out/tmp/guest_shell.py oriole_AP2A.240905.003.F1 1 'logcat -d -b crash -v brief' 60
+[send] {"ok":true,"queued":true}
+[ev] {"name":"event","type":"channel","up":true}
+[warn] 超时内没有任何上行帧（无 ack / 无 shell_output）
+
+
+==== 10) 2026-11-04 切 5.10 内核后 run1：在重启间隙 adb disconnect + connect 抓到 logcat -b crash 真凶 ====
+$ adb disconnect 127.0.0.1:5911 && adb connect 127.0.0.1:5911 && adb -s 127.0.0.1:5911 shell "logcat -b crash -d"
+--------- beginning of crash
+11-04 03:05:47.683   680   680 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+11-04 03:05:47.683   680   680 E AndroidRuntime: java.lang.RuntimeException: Failed to boot service com.android.server.testharness.TestHarnessModeService: onBootPhase threw an exception during phase 500
+11-04 03:05:47.683   680   680 E AndroidRuntime: 	at com.android.server.SystemServiceManager.startBootPhase(SystemServiceManager.java:303)
+11-04 03:05:47.683   680   680 E AndroidRuntime: 	at com.android.server.SystemServer.startOtherServices(SystemServer.java:2890)
+11-04 03:05:47.683   680   680 E AndroidRuntime: 	at com.android.server.SystemServer.run(SystemServer.java:977)
+11-04 03:05:47.683   680   680 E AndroidRuntime: 	at com.android.server.SystemServer.main(SystemServer.java:698)
+11-04 03:05:47.683   680   680 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+11-04 03:05:47.683   680   680 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:580)
+11-04 03:05:47.683   680   680 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:856)
+11-04 03:05:47.683   680   680 E AndroidRuntime: Caused by: java.lang.IllegalStateException: invalid checksum
+11-04 03:05:47.683   680   680 E AndroidRuntime: 	at com.android.server.pdb.PersistentDataBlockService$InternalService.readInternal(PersistentDataBlockService.java:1358)
+11-04 03:05:47.683   680   680 E AndroidRuntime: 	at com.android.server.pdb.PersistentDataBlockService$InternalService.getTestHarnessModeData(PersistentDataBlockService.java:1296)
+11-04 03:05:47.683   680   680 E AndroidRuntime: 	at com.android.server.testharness.TestHarnessModeService.getTestHarnessModeData(TestHarnessModeService.java:154)
+11-04 03:05:47.683   680   680 E AndroidRuntime: 	at com.android.server.testharness.TestHarnessModeService.setUpTestHarnessMode(TestHarnessModeService.java:109)
+11-04 03:05:47.683   680   680 E AndroidRuntime: 	at com.android.server.testharness.TestHarnessModeService.onBootPhase(TestHarnessModeService.java:91)
+11-04 03:05:47.683   680   680 E AndroidRuntime: 	at com.android.server.SystemServiceManager.startBootPhase(SystemServiceManager.java:300)
+11-04 03:05:47.683   680   680 E AndroidRuntime: 	... 6 more
+
+$ grep -n "ro.frp.pst" out/devices/google/oriole/AP2A.240905.003.F1/vendor/build.prop
+185:ro.frp.pst=/dev/block/by-name/frp
+
+==== 11) run2（仅在 build-prop-unsets 删除 ro.frp.pst）：system_server 通过（62.2s boot_completed=1），暴露出第二层 UI 进程 !gpuCount 崩溃循环 ====
+[   62.208252][    T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1218)
+--------- beginning of crash
+08-16 04:56:29.704  2393  2525 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 2525 (RenderThread), pid 2393 (oid.setupwizard)
+08-16 04:56:29.816  2061  2142 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 2142 (RenderThread), pid 2061 (ndroid.systemui)
+08-16 04:56:30.047  2579  2579 F DEBUG   : pid: 2393, tid: 2525, name: RenderThread  >>> com.google.android.setupwizard <<<
+08-16 04:56:30.047  2579  2579 F DEBUG   : Abort message: 'Assertion failed: !gpuCount'
+08-16 04:56:30.047  2579  2579 F DEBUG   :       #04 pc 000000000049702c  /system/lib64/libhwui.so (std::__1::__call_once_param<std::__1::tuple<android::uirenderer::renderthread::VulkanManager::initialize()::$_0&&> >::operator()() (.__uniq.192405051647925496281077346275335259674)+252)
+08-16 04:56:30.047  2579  2579 F DEBUG   :       #06 pc 00000000002c0a78  /system/lib64/libhwui.so (android::uirenderer::renderthread::RenderThread::requireVkContext()+168)
+
+# 免重编在线验证：
+$ adb -s 127.0.0.1:5911 shell "setprop debug.hwui.renderer skiagl; killall com.android.systemui com.google.android.setupwizard com.android.settings"
+$ adb -s 127.0.0.1:5911 shell "dumpsys window | grep -E 'mCurrentFocus|mFocusedApp'; pidof com.android.systemui com.google.android.apps.nexuslauncher system_server surfaceflinger"
+  mFocusedApp=ActivityRecord{636f08 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t271}
+763 3222 15172 15321

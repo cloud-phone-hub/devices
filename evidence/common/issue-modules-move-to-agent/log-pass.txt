@@ -1,0 +1,134 @@
+# 搬迁后验证记录（2026-11-15）
+
+## 1. 三个模块的新位置
+
+```
+$ ls agent/modules
+checker  daemon  pipeline
+
+$ ls agent/modules/pipeline
+README.md  cli  internal  stages
+
+$ ls agent/modules/daemon
+Display.md  README.md  backend  config  hvc.md  main.go  run  test  tools
+```
+
+`engine/build`、`core/host/daemon`、`core/development/device-checker` 均已不存在。
+
+## 2. Go 构建 / vet / 测试
+
+```
+$ cd agent && go build ./... && go vet ./... && go test ./...
+...
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/12_pack_super	(cached)
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/13_pack_vda	(cached)
+?   	cloud-phone-hub/agent/web	[no test files]
+BUILD_VET_TEST_OK
+```
+
+## 3. 流水线 CLI（13 阶段）
+
+```
+$ cd agent && go run ./cmd/cdh-engine device build gold --manifest 15-OS3.0.11.0.VNQCNXM --dry-run
+==> 设备: Redmi Note 13 5G（redmi/gold）
+==> 清单: out/tmp/db-manifest/redmi/gold/baselines/15-OS3.0.11.0.VNQCNXM.json
+==> 阶段(13): unpack, prepare, build_kernel, build_modules, build_boot,
+    build_vendor_boot, build_odm, build_hardware, build_vendor,
+    build_vendor_dlkm, build_patch, pack_super, pack_vda
+==> [1/13] unpack  (01_unpack)
+...
+```
+
+`go run ./cmd/cdh-engine help` 输出 13 个阶段与 `vendor-deps`，无 `cdh web`。
+
+## 4. daemon CLI（无 Web）
+
+```
+$ cd agent && go run ./cmd/host-daemon images | head -5
+[
+  {
+    "index": 0,
+    "specId": "ASUS_AI2205_13-TKQ1.220928.001-20240229",
+    ...
+
+$ cd agent && go run ./cmd/host-daemon state | head -4
+{
+  "deviceRoot": "/Volumes/work/cloud-phone-hub/engine/out/dist",
+  "runtimeRoot": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime",
+  "qemuRoot": "/Volumes/work/cloud-phone-hub/out/qemu/dist/darwin",
+```
+
+`daemon help` 列出 `serve / state / images / create / start / stop / delete`；
+`serve` 只提供 `/healthz`、`/api/*` 与 `/api/vnc-ws`，不再有 `/` 静态控制台。
+
+## 5. checker CLI（无 Web）
+
+```
+$ cd agent/modules/checker && cargo test -p checker-server
+test result: ok. 1 passed; 0 failed
+
+$ cargo run -q -p checker-server -- checks --checks checks | head -4
+[
+  {
+    "id": "aligner",
+    "name": "设备对齐 · 全量采集快照（设备无关）",
+
+$ cargo run -q -p checker-server -- run --ids aligner --checks checks
+[2026-11-15 22:21:25.022] [提醒] 未指定 --ws，使用 Mock agent 自测
+[
+  {
+    "id": "aligner",
+    "status": "succeeded",
+    "result": { "echo": {}, "mock": true },
+    ...
+]
+```
+
+## 6. cdha 静态资源
+
+noVNC 从 `modules/daemon/web/static/vendor` 迁到 `agent/web/vendor`，
+`web.Assets` 的 embed 清单加入 `vendor`；`GET /vendor/noVNC/core/rfb.js`
+在 `TestUnifiedPlatformRoutes` 中返回 200 且 Content-Type 为 javascript。
+
+## 7. cdha 端到端冒烟
+
+```
+$ cd agent && go run ./cmd/cdha serve --addr 127.0.0.1:17899 --ws-addr "" --token test123
+==> cdha 云机一体化工程与诊断平台已启动
+    Agent 根目录:  /Volumes/work/cloud-phone-hub/agent
+    Engine 根目录: /Volumes/work/cloud-phone-hub/engine
+    管理台地址:    http://127.0.0.1:17899/?token=test123
+
+$ curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:17899/?token=test123"
+200
+$ curl -s -o /dev/null -w "rfb=%{http_code} ct=%{content_type}" \
+    "http://127.0.0.1:17899/vendor/noVNC/core/rfb.js?token=test123"
+rfb=200 ct=text/javascript; charset=utf-8
+$ curl -s "http://127.0.0.1:17899/api/checker/state?token=test123" | head -c 80
+{"checks":[{"id":"aligner","name":"设备对齐 · 全量采集快照（设备无关）",...
+$ curl -s "http://127.0.0.1:17899/api/daemon/state?token=test123" | head -c 120
+{"nodeId":"local","nodeName":"本机节点 (Local)","embeddedMode":false,
+ "daemonUrl":"http://127.0.0.1:9050",...
+```
+
+## 8. 旧顶层构建入口与发布产物
+
+```
+$ bash build/core/host-main doctor
+[就绪] daemon: /Volumes/work/cloud-phone-hub/out/core/daemon/dist/darwin/daemon
+
+$ bash build/core/host-main build darwin
+==> 编译 host-daemon（darwin/arm64）
+==> 复制 firmware 到 .../dist/darwin/firmware
+==> 产物: .../dist/darwin/daemon
+
+$ agent/out/dist/host-daemon help
+daemon：云机宿主守护进程（CLI，无浏览器界面）
+  serve/state/images/create/start/stop/delete ...
+
+$ engine/out/bin/cdh help | head -3
+cloud-phone-hub 引擎构建入口
+
+用法:
+```
+

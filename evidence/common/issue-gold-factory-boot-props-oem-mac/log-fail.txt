@@ -1,0 +1,8 @@
+# 修复前：4d5128bd8ca07462-cloud diff/build_props.json 缺失 5 项出厂/引导/OEM MAC 属性
+summary(old): {"identity": 19, "capability": 0, "state": 510, "availability": 0, "fatal": 19}
+{"level": "identity", "path": "props.ro.boot.vbmeta.device", "base": "PARTUUID=d722c721-0dee-4cb8-8a83-2c63cd1393c7", "target": "<缺>"}
+{"level": "identity", "path": "props.ro.hardware.gatekeeper", "base": "mitee", "target": "<缺>"}
+{"level": "identity", "path": "props.ro.ril.factory_id", "base": "29", "target": "<缺>"}
+{"level": "identity", "path": "props.ro.ril.oem.btmac", "base": "3c:38:24:24:c3:65", "target": "<缺>"}
+{"level": "identity", "path": "props.ro.ril.oem.wifimac", "base": "3c:38:24:24:c3:64", "target": "<缺>"}
+{"level": "identity", "path": "props.ro.boot.chipid", "base": "0x63af62d056e8466522b0bdc117769c12", "target": "0x579bd09d73a8b2597a0a3f8d1cafb08c"}

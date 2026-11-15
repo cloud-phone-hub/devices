@@ -1,0 +1,34 @@
+=== [修复后：2026-11-15 P1 Batch-5 实例 gold_15-OS3.0.11.0.VNQCNXM/3 (61f8a3a6a912df72-cloud)] ===
+# 1) vm-shell-pass.txt：getprop dev.mnt 24/24 全部归一化为 sdc*（vda=0，无 mnt.vendorpatch）
+[dev.mnt.blk.cust]: [sdc56]
+[dev.mnt.blk.metadata]: [sdc14]
+[dev.mnt.blk.mnt.rescue]: [sdc57]
+[dev.mnt.blk.mnt.vendor.nvcfg]: [sdc6]
+[dev.mnt.blk.mnt.vendor.nvdata]: [sdc7]
+[dev.mnt.blk.mnt.vendor.persist]: [sdc15]
+[dev.mnt.blk.mnt.vendor.protect_f]: [sdc18]
+[dev.mnt.blk.mnt.vendor.protect_s]: [sdc19]
+[dev.mnt.dev.cust]: [sdc56]
+[dev.mnt.dev.metadata]: [sdc14]
+[dev.mnt.dev.mnt.rescue]: [sdc57]
+[dev.mnt.dev.mnt.vendor.nvcfg]: [sdc6]
+[dev.mnt.dev.mnt.vendor.nvdata]: [sdc7]
+[dev.mnt.dev.mnt.vendor.persist]: [sdc15]
+[dev.mnt.dev.mnt.vendor.protect_f]: [sdc18]
+[dev.mnt.dev.mnt.vendor.protect_s]: [sdc19]
+[dev.mnt.rootdisk.cust]: [sdc]
+[dev.mnt.rootdisk.metadata]: [sdc]
+[dev.mnt.rootdisk.mnt.rescue]: [sdc]
+[dev.mnt.rootdisk.mnt.vendor.nvcfg]: [sdc]
+[dev.mnt.rootdisk.mnt.vendor.nvdata]: [sdc]
+[dev.mnt.rootdisk.mnt.vendor.persist]: [sdc]
+[dev.mnt.rootdisk.mnt.vendor.protect_f]: [sdc]
+[dev.mnt.rootdisk.mnt.vendor.protect_s]: [sdc]
+
+# 2) core3-verify.txt：proc.mountinfo 对齐核验
+mountinfo lines=182 /dev/block/vda=0 vendorpatch=0 dm_f2fs=17 with_inlinecrypt=17
+
+# 3) aligner Batch-5 对拍收敛（run-00222 ~ run-00240）
+proc       fatal: 122 -> 92 (-30)
+native_env fatal: 225 -> 162
+build_props dev.mnt: vda* 命中清零 (0)

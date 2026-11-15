@@ -1,0 +1,46 @@
+# 失败态：SystemUI 写 sys.locksecured 被拒并反复崩溃（index 3）
+
+- 日志：`out/core/daemon/runtime/ss9380_S9380ZCSDCZH1/3/qemu.log`（修复前 build）
+- guest 时间：08-12 17:07:56 起；sample 覆盖 17:08:26 ～ 17:23:12
+
+## 1. init 侧拒绝（每次 SystemUI 尝试 set 都会打一遍）
+
+```
+[  187.232123][  T131] init: Unable to set property 'sys.locksecured' from uid:10045 gid:10045 pid:2648: SELinux permission check failed
+[  187.233665][  T131] init: Unable to set property 'sys.locksecured' from uid:10045 gid:10045 pid:2648: SELinux permission check failed
+[  187.235421][  T131] init: Unable to set property 'sys.locksecured' from uid:10045 gid:10045 pid:2648: SELinux permission check failed
+```
+
+## 2. libc 侧返回码
+
+```
+08-12 17:09:11.752  2648  2867 W libc    : Unable to set property "sys.locksecured" to "true": PROP_ERROR_PERMISSION_DENIED (0x18)
+08-12 17:09:11.753  2648  2867 W libc    : Unable to set property "sys.locksecured" to "true": PROP_ERROR_PERMISSION_DENIED (0x18)
+08-12 17:09:11.757  2648  2867 W libc    : Unable to set property "sys.locksecured" to "true": PROP_ERROR_PERMISSION_DENIED (0x18)
+```
+
+## 3. 崩溃栈
+
+```
+08-12 17:09:11.763  2648  2867 E AndroidRuntime: FATAL EXCEPTION: pool-10-thread-1
+08-12 17:09:11.763  2648  2867 E AndroidRuntime: Process: com.android.systemui, PID: 2648
+08-12 17:09:11.763  2648  2867 E AndroidRuntime: java.lang.RuntimeException: failed to set system property "sys.locksecured" to "true" (check logcat for reason)
+08-12 17:09:11.763  2648  2867 E AndroidRuntime: 	at android.os.SystemProperties.native_set(Native Method)
+08-12 17:09:11.763  2648  2867 E AndroidRuntime: 	at android.os.SystemProperties.set(SystemProperties.java:237)
+08-12 17:09:11.763  2648  2867 E AndroidRuntime: 	at com.android.systemui.keyguard.KeyguardViewMediatorHelperImpl$onSecurityPropertyUpdated$1.run(qb/113317735 6a710a455c9b6556c551e243f023f5f7f6edbf324c937daa55d1e8987b7a2672:18)
+08-12 17:09:11.763  2648  2867 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1154)
+08-12 17:09:11.763  2648  2867 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:652)
+08-12 17:09:11.763  2648  2867 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:1564)
+08-12 17:09:11.767  2648  2867 E PluginManagerImpl: System Crash; Disabling all plugins
+```
+
+## 4. 计数（整份 qemu.log）
+
+```
+init: Unable to set property 'sys.locksecured'            = 70
+W libc: ... "sys.locksecured" ... PERMISSION_DENIED        = 75
+am_crash ... com.android.systemui ... sys.locksecured      = 25
+Process: com.android.systemui（crash buffer）             = 26
+```
+
+`am_crash` 记录的最后一条在 17:23:12，说明 15 分钟后仍在循环重启。

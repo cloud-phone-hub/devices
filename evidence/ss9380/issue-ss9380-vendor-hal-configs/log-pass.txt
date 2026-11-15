@@ -1,0 +1,139 @@
+# ss9380 新增 7 个 HAL 配置文件后：开机与逐项生效验证（2026-10-31，instance 6，patch.img sha256 fb9d1b646449）
+
+## 1) 开机
+1
+running
+samsung/pa3qzcx/pa3q:16/BP4A.251205.006/S9380ZCSDCZH1:user/release-keys
+
+## 2) /vendor/etc 下发清单
+-rw-r--r-- 1 root root  2331 2009-01-01 08:00 /vendor/etc/audio_effects_config.xml
+-rw-r--r-- 1 root root  2380 2009-01-01 08:00 /vendor/etc/battery_config.xml
+-rw-r--r-- 1 root root  2266 2009-01-01 08:00 /vendor/etc/gnss_config.xml
+-rw-r--r-- 1 root root  1471 2009-01-01 08:00 /vendor/etc/light_config.xml
+-rw-r--r-- 1 root root  3327 2009-01-01 08:00 /vendor/etc/media_config.xml
+-rw-r--r-- 1 root root 10043 2009-01-01 08:00 /vendor/etc/sensors_config.xml
+-rw-r--r-- 1 root root  2558 2009-01-01 08:00 /vendor/etc/thermal_config.xml
+-rw-r--r-- 1 root root  2792 2009-01-01 08:00 /vendor/etc/vibrator_config.xml
+-rw-r--r-- 1 root root  1365 2009-01-01 08:00 /vendor/etc/wifi_config.xml
+
+## 3) HAL 服务注册
+52	android.hardware.gnss.IGnss/default: [android.hardware.gnss.IGnss]
+55	android.hardware.health.IHealth/default: [android.hardware.health.IHealth]
+57	android.hardware.light.ILights/default: [android.hardware.light.ILights]
+84	android.hardware.sensors.ISensors/default: [android.hardware.sensors.ISensors]
+85	android.hardware.thermal.IThermal/default: [android.hardware.thermal.IThermal]
+88	android.hardware.vibrator.IVibrator/default: [android.hardware.vibrator.IVibrator]
+89	android.hardware.vibrator.IVibratorManager/default: [android.hardware.vibrator.IVibratorManager]
+91	android.hardware.wifi.IWifi/default: [android.hardware.wifi.IWifi]
+220	lights: [android.hardware.lights.ILightsManager]
+
+## 4) battery_config.xml 生效（counter 4945000~4972000 / voltage 4380~4450 / ac=1）
+Current Battery Service state:
+  AC powered: true
+  USB powered: false
+  Wireless powered: false
+  Dock powered: false
+  Max charging current: 0
+ Time when the latest updated value of the Max charging current was sent via battery changed broadcast: 0
+  Max charging voltage: 0
+  Charge counter: 4963000
+  status: 2
+  health: 2
+  present: true
+  level: 100
+  scale: 100
+  voltage: 4428
+ Time when the latest updated value of the voltage was sent via battery changed broadcast: 0
+
+## 5) sensors_config.xml 生效（21 项，ST/AKM 器件名）
+0x00000001) lsm6dsv_acc               | STMicroelectronics | ver: 1 | type: android.sensor.accelerometer(1) 
+0x00000002) ak09919                   | AKM             | ver: 1 | type: android.sensor.magnetic_field(2) 
+0x00000003) ORIENTATION               | Samsung Electronics | ver: 1 | type: android.sensor.orientation(3) 
+0x00000004) lsm6dsv_gyro              | STMicroelectronics | ver: 1 | type: android.sensor.gyroscope(4) 
+0x00000005) stk3afx_l                 | STMicroelectronics | ver: 1 | type: android.sensor.light(5) 
+0x00000008) stk3afx_p                 | STMicroelectronics | ver: 1 | type: android.sensor.proximity(8) 
+0x00000009) GRAVITY                   | Samsung Electronics | ver: 1 | type: android.sensor.gravity(9) 
+0x0000000a) LINEARACCEL               | Samsung Electronics | ver: 1 | type: android.sensor.linear_acceleration(10) 
+0x0000000b) ROTATION_VECTOR           | Samsung Electronics | ver: 1 | type: android.sensor.rotation_vector(11) 
+0x0000000e) UNCALI_MAG                | Samsung Electronics | ver: 1 | type: android.sensor.magnetic_field_uncalibrated(14) 
+0x0000000f) GAME_ROTATION_VECTOR      | Samsung Electronics | ver: 1 | type: android.sensor.game_rotation_vector(15) 
+0x00000010) UNCALI_GYRO               | Samsung Electronics | ver: 1 | type: android.sensor.gyroscope_uncalibrated(16) 
+0x00000011) SIGNIFICANT_MOTION        | Samsung Electronics | ver: 1 | type: android.sensor.significant_motion(17) 
+0x00000012) STEP_DETECTOR             | Samsung Electronics | ver: 1 | type: android.sensor.step_detector(18) 
+0x00000013) STEP_COUNTER              | Samsung Electronics | ver: 1 | type: android.sensor.step_counter(19) 
+0x00000014) GEOMAGNETIC_ROTATION_VECTOR | Samsung Electronics | ver: 1 | type: android.sensor.geomagnetic_rotation_vector(20) 
+0x00000016) TILT_DETECTOR             | Samsung Electronics | ver: 1 | type: android.sensor.tilt_detector(22) 
+0x0000001b) DEVICE_ORIENTATION        | Samsung Electronics | ver: 1 | type: android.sensor.device_orientation(27) 
+0x0000001e) lps22df                   | STMicroelectronics | ver: 1 | type: android.sensor.pressure(6) 
+0x00000023) UNCALI_ACC                | Samsung Electronics | ver: 1 | type: android.sensor.accelerometer_uncalibrated(35) 
+0x000000da) STEP_DETECTOR_WAKEUP      | Samsung Electronics | ver: 1 | type: android.sensor.step_detector(18) 
+0x5f6d7273) Motion Sensor             | Samsung Electronics | ver: 1 | type:                     (65559) 
+0x79707232) Orientation Sensor        | Samsung Electronics | ver: 1 | type: android.sensor.orientation(3) 
+
+## 6) light_config.xml 生效（framework 只看到 id=0/1/2 三盏灯）
+Service: aidl (android.hardware.light.ILights$Stub$Proxy@4e1f330)
+Lights:
+  Light id=0 ordinal=0 color=ff4a4a4a
+  Light id=1 ordinal=0 color=00000000
+  Light id=2 ordinal=0 color=00000000
+Session clients:
+
+## 7) thermal_config.xml 生效（8 温区 + 阈值，无 cooling device）
+HAL Ready: true
+HAL connection:
+	ThermalHAL AIDL 3  connected: yes
+Current temperatures from HAL:
+	Temperature{mValue=29.174, mType=0, mName=CPU, mStatus=0}
+	Temperature{mValue=29.174, mType=1, mName=GPU, mStatus=0}
+	Temperature{mValue=26.0, mType=2, mName=BATTERY, mStatus=0}
+	Temperature{mValue=39.85948, mType=3, mName=SKIN, mStatus=0}
+	Temperature{mValue=28.128, mType=5, mName=POWER_AMPLIFIER, mStatus=0}
+	Temperature{mValue=29.174, mType=9, mName=NPU, mStatus=0}
+	Temperature{mValue=29.174, mType=10, mName=TPU, mStatus=0}
+	Temperature{mValue=29.174, mType=13, mName=SOC, mStatus=0}
+Current cooling devices from HAL:
+Temperature static thresholds from HAL:
+	TemperatureThreshold{mType=0, mName=CPU, mHotThrottlingThresholds=[NaN, NaN, NaN, 85.0, 90.0, 100.0, 117.0], mColdThrottlingThresholds=[NaN, NaN, NaN, NaN, NaN, NaN, NaN]}
+	TemperatureThreshold{mType=1, mName=GPU, mHotThrottlingThresholds=[NaN, NaN, NaN, 85.0, 90.0, 100.0, 117.0], mColdThrottlingThresholds=[NaN, NaN, NaN, NaN, NaN, NaN, NaN]}
+	TemperatureThreshold{mType=2, mName=BATTERY, mHotThrottlingThresholds=[NaN, NaN, NaN, 50.0, 55.0, 59.0, 60.0], mColdThrottlingThresholds=[NaN, NaN, NaN, NaN, NaN, NaN, NaN]}
+	TemperatureThreshold{mType=3, mName=SKIN, mHotThrottlingThresholds=[NaN, 43.0, 45.0, 50.0, 70.0, 80.0, 90.0], mColdThrottlingThresholds=[NaN, NaN, NaN, NaN, NaN, NaN, NaN]}
+	TemperatureThreshold{mType=5, mName=POWER_AMPLIFIER, mHotThrottlingThresholds=[NaN, NaN, NaN, 68.0, 90.0, 100.0, 110.0], mColdThrottlingThresholds=[NaN, NaN, NaN, NaN, NaN, NaN, NaN]}
+	TemperatureThreshold{mType=9, mName=NPU, mHotThrottlingThresholds=[NaN, NaN, NaN, 85.0, 90.0, 100.0, 117.0], mColdThrottlingThresholds=[NaN, NaN, NaN, NaN, NaN, NaN, NaN]}
+	TemperatureThreshold{mType=10, mName=TPU, mHotThrottlingThresholds=[NaN, NaN, NaN, 85.0, 90.0, 100.0, 117.0], mColdThrottlingThresholds=[NaN, NaN, NaN, NaN, NaN, NaN, NaN]}
+	TemperatureThreshold{mType=13, mName=SOC, mHotThrottlingThresholds=[NaN, NaN, NaN, 85.0, 90.0, 100.0, 117.0], mColdThrottlingThresholds=[NaN, NaN, NaN, NaN, NaN, NaN, NaN]}
+Temperature headroom thresholds:
+[NaN, 0.76666665, 0.8333333, 1.0, 1.6666666, 2.0, 2.3333333]
+
+## 8) vibrator_config.xml 生效（零 vibrator id → framework 不建 controller，开机不再崩）
+    vibratorIds = []
+    isVibratorControllerRegistered = false
+
+## 9) wifi_config.xml（IWifi 已注册；channel /dev/hvc9 存在）
+crw-rw-rw- 1 system system 229,   9 2026-08-12 17:09 /dev/hvc9
+Verbose logging is off
+mVerboseLoggingLevel 3
+Stay-awake conditions: 15
+mInIdleMode false
+
+## 10) gnss_config.xml（IGnss 已注册并被 framework 连接；默认 fix 需客户端请求才可观测）
+true
+system         623     1   10856656   6420 0                   0 S android.hardware.gnss-service
+system         624     1   10908384   6296 0                   0 S android.hardware.lights-service
+system         628     1   10827804   6576 0                   0 S android.hardware.sensors-service
+system         629     1   10796948   6440 0                   0 S android.hardware.thermal-service
+system         630     1   10822436   6368 0                   0 S android.hardware.vibrator-service
+wifi           633     1   11018012   6844 0                   0 S android.hardware.wifi-service
+system         726     1   10834896   6648 0                   0 S android.hardware.health-service
+
+## 11) 崩溃扫描：本轮无新增致命崩溃（sdhms / com.qualcomm.location 属 README #86 已记录既有噪音）
+614
+   1 com.sec.imsservice, PID: 2469
+   1 com.sec.android.sdhms, PID: 9977
+   1 com.sec.android.sdhms, PID: 9942
+   1 com.sec.android.sdhms, PID: 9893
+   1 com.sec.android.sdhms, PID: 9843
+   1 com.sec.android.sdhms, PID: 9797
+   1 com.sec.android.sdhms, PID: 9742
+   1 com.sec.android.sdhms, PID: 9682
+   1 com.sec.android.sdhms, PID: 9647
+   1 com.sec.android.sdhms, PID: 9606

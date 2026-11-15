@@ -1,0 +1,67 @@
+# 失败现场：实例 13（system_server 主线程在 PowerStatsService.onBootPhase 死等 65 s）
+# 日志全量：out/core/daemon/runtime/cph2797_16.0.8.301_EX01/13/qemu.log
+# 完整栈取自 guest：/data/anr/traces_SystemServer_WDT31_12_19_02_06.752_pid716
+
+# 计数（13/qemu.log）：
+#   grep -c "WATCHDOG KILLING SYSTEM PROCESS"      -> 1（实例 13 两轮 boot 各 1 次，本轮文件内 1 次完整）
+#   grep -c "sysrq: Resetting"                     -> 2
+#   grep -c "Check failed: s == STATUS_OK"         -> 281
+#   grep -c "received signal 6"                    -> 151
+#   grep -c "handlefactory"                        -> 567
+#   grep -c "power.stats-impl.oplus"               -> 567
+
+# 1）Watchdog 判死（dump 被 sysrq 打断，只剩 3 帧）
+W Watchdog: *** WATCHDOG KILLING SYSTEM PROCESS: Blocked in handler on main thread (main) for 65s
+W Watchdog:     at jdk.internal.misc.Unsafe.park(Native Method)
+W Watchdog:     at java.util.concurrent.locks.LockSupport.park(LockSupport.java:221)
+W Watchdog:     at java.util.concurrent.FutureTask.awaitDone(FutureTask.java:500)
+[  135.016479][  T928] sysrq: Resetting
+
+# 2）完整栈（guest /data/anr/traces_SystemServer_WDT31_12_19_02_06.752_pid716，第 20 行起）
+"main" prio=5 tid=1 Native
+  | sysTid=716 nice=-15 cgrp=foreground sched=0/0 handle=0x7774cd3098
+  native: #02 pc 0009bb80  libc.so (pthread_cond_clockwait+176)
+  native: #05 pc 00082644  libbinder.so (condition_variable::wait_for<...android::CppBackendShim::waitForService::$_1>+100)
+  native: #06 pc 0006189c  libbinder.so (android::CppBackendShim::waitForService+1084)
+  native: #07 pc 001ef444  libandroid_runtime.so (android::android_os_ServiceManager_waitForServiceNative+164)
+    at android.os.ServiceManager.waitForServiceNative(Native method)
+    at android.os.ServiceManager.waitForService(ServiceManager.java:334)
+    at android.os.ServiceManager.waitForDeclaredService(ServiceManager.java:353)
+    at com.android.server.powerstats.PowerStatsHALWrapper$VintfHalCache.get(PowerStatsHALWrapper.java:350)
+    at com.android.server.powerstats.PowerStatsHALWrapper$PowerStatsHAL20WrapperImpl.getPowerEntityInfo(PowerStatsHALWrapper.java:167)
+    at com.android.server.powerstats.PowerStatsService$LocalService.getPowerEntityInfo(PowerStatsService.java:455)
+    at com.android.server.powerstats.StatsPullAtomCallbackImpl.initSubsystemSleepState(StatsPullAtomCallbackImpl.java:110)
+    at com.android.server.powerstats.StatsPullAtomCallbackImpl.<init>(StatsPullAtomCallbackImpl.java:193)
+    at com.android.server.powerstats.PowerStatsService$Injector.createStatsPullerImpl(PowerStatsService.java:201)
+    at com.android.server.powerstats.PowerStatsService.onSystemServicesReady(PowerStatsService.java:334)
+    at com.android.server.powerstats.PowerStatsService.onBootPhase(PowerStatsService.java:308)
+    at com.android.server.SystemServiceManager.startBootPhase(SystemServiceManager.java:328)
+    at com.android.server.SystemServer.startOtherServices(SystemServer.java:3451)
+    at com.android.server.SystemServer.run(SystemServer.java:1083)
+    at com.android.server.SystemServer.main(SystemServer.java:713)
+
+# 3）同名实例被抢注（boot 内 2 处，这是第二次 boot 的一处）
+servicemanager: Service 'android.hardware.power.stats.IPowerStats/default'
+                originally registered from PID 536 but it is being registered again
+                from PID 649. Bad state? Late death notification? Multiple instances installed?
+
+# 4）OPPO 实现崩溃回环（每 ~5 s 一轮）
+I android.hardware.power.stats-impl.oplus: start service vendor.oplus.hardware.handlefactory.IHandleFactory/default
+E android.hardware.power.stats-impl.oplus: handlefactory()
+avc: denied { add } for pid=975 uid=1000 name=vendor.oplus.hardware.handlefactory.IHandleFactory/default
+     scontext=u:r:hal_power_stats_default:s0 tcontext=u:object_r:default_android_service:s0
+     tclass=service_manager permissive=0
+F android.hardware.power.stats-impl.oplus: Check failed: s == STATUS_OK
+F DEBUG   : Abort message: 'Check failed: s == STATUS_OK '
+init: Service 'vendor.power.stats' (pid 649) received signal 6
+init: Sending signal 9 to service 'vendor.power.stats' (pid 649) process group...
+
+# 5）我们自己的实现在跑，但名字已经不在服务表（运行态实证）
+$ getprop init.svc.vendor.power.stats-default
+running
+$ service check android.hardware.power.stats.IPowerStats/default
+Service android.hardware.power.stats.IPowerStats/default: not found
+$ service list | grep -i power
+52      android.hardware.power.IPower/default: [android.hardware.power.IPower]
+270     powerstats: [android.os.IPowerStatsService]
+# 只有框架自己的 powerstats 服务，没有 IPowerStats HAL 实例

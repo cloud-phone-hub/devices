@@ -1,0 +1,100 @@
+== 取样时间: 2026-10-31 15:20 ==
+== 对照对象: 官方 super/vendor_a.img（EROFS，dump.erofs --ls --cat）==
+== 本地对象: engine/manifest/samsung/ss9380/vendor/etc（9 份 config）==
+
+== [#1] 官方 /vendor/etc 里音频/媒体相关条目（共 182 个文件中的一部分）==
+a2dp_audio_policy_configuration.xml
+audio
+audio_effects.xml
+audio_effects_config_sec.xml
+audio_effects_haptic.xml
+audio_effects_sec.xml
+audio_effects_spatializer.xml
+audio_policy_configuration_base.xml
+audio_policy_volumes.xml
+bluetooth_audio_policy_configuration_7_0.xml
+bluetooth_qti_audio_policy_configuration.xml
+bluetooth_qti_hearing_aid_audio_policy_configuration.xml
+dax3_media_codecs_dolby_audio.xml
+hearing_aid_audio_policy_configuration.xml
+media_codecs.xml
+media_codecs_c2_audio.xml
+media_codecs_c2_sec.xml
+media_codecs_c2_sec_ape.xml
+media_codecs_c2_sec_qcp.xml
+media_codecs_dolby_audio.xml
+media_codecs_google_audio.xml
+media_codecs_google_c2.xml
+media_codecs_google_c2_audio.xml
+media_codecs_google_c2_video.xml
+media_codecs_google_telephony.xml
+media_codecs_google_video.xml
+media_codecs_google_video_le.xml
+media_codecs_performance_sun.xml
+media_codecs_performance_sun_vendor.xml
+media_codecs_sun.xml
+media_codecs_sun_vendor.xml
+media_codecs_vendor_audio.xml
+media_profiles.xml
+media_profiles_V1_0.xml
+media_profiles_sun.xml
+media_sun
+r_submix_audio_policy_configuration.xml
+sec_audio_volume_curve.xml
+situation_audio_policy_volumes_sec.xml
+
+== [#2] 本地 9 份 config 与官方同名件的 md5 对照 ==
+$ cd engine/manifest/samsung/ss9380/vendor/etc
+$ for f in ...; do md5 -q $f 与 dump.erofs --cat 出来的官方件比; done
+同  audio_effects.xml
+同  audio_effects_config_sec.xml
+同  audio_effects_haptic.xml
+同  audio_effects_sec.xml
+同  audio_effects_spatializer.xml
+异  excluded-input-devices.xml  (本地 424cf1c0fb10928f7b31d741097f14b2 / 官方 325cb3252e59fd72cebbc74af7365738)
+
+== [#3] 官方没有同名件的三份（抽取直接报错）==
+$ dump.erofs --cat --path=/etc/audio_effects_config.xml vendor_a.img
+<E> erofs: read inode failed @ /etc/audio_effects_config.xml
+$ dump.erofs --cat --path=/etc/media_config.xml vendor_a.img      -> 空（不存在）
+$ dump.erofs --cat --path=/etc/ueventd.qcom.rc vendor_a.img      -> 空（不存在）
+$ dump.erofs --ls --path=/etc vendor_a.img | grep -E "media_config|audio_effects_config|ueventd"
+audio_effects_config_sec.xml
+ueventd.rc
+
+== [#4] audio_effects_config.xml 是官方 audio_effects.xml 的逐字节副本 ==
+$ md5 -q audio_effects.xml audio_effects_config.xml
+17f7efa4bc3bb55baf16eb70559685f9
+17f7efa4bc3bb55baf16eb70559685f9
+$ grep -n kDefaultConfigName hal/android16/out/aosp/platform/hardware/interfaces/audio/aidl/default/EffectMain.cpp
+29:static const char* kDefaultConfigName = "audio_effects_config.xml";
+
+== [#5] excluded-input-devices.xml：官方 vs 本地（本地是手写版，只排 ACPI 电源键）==
+$ diff 官方 excluded-input-devices.xml 本地 excluded-input-devices.xml
+2,27c2,11
+< <!-- Copyright (c) 2018, 2020 The Linux Foundation. All rights reserved. ... -->
+> <!--
+>   ss9380 云机的输入设备排除表（InputReader 读 /vendor/etc/excluded-input-devices.xml）。
+>   只排除 ACPI 电源键：QEMU 提供的 Power Button 对云机无用 ...
+> -->
+29,30c13
+<     <device name="qti-haptics"/>
+<     <device name="qcom-hv-haptics"/>
+---
+>     <device name="Power Button"/>
+
+== [#6] 本 VM 实际输入设备里没有 "Power Button"（排除项本来就空转）==
+$ adb shell 'dumpsys input | grep -E "^ *[0-9]+: "'
+    1: mtk-pmic-keys
+    2: mt6833-mt6359 Headset Jack
+    3: swtp
+    4: fpc_irq@fingerprint
+    6: QEMU Virtio Keyboard
+    7: sec_touchscreen
+    5: uinput-fpc
+
+== [#7] 两份云机自编件在设备上确实生效 ==
+$ adb shell 'ls -l /vendor/etc/ueventd.qcom.rc; ls -l /dev/hvc0 /dev/hvc1'
+-rw-r--r-- 1 root root 1733 /vendor/etc/ueventd.qcom.rc
+crw-rw-rw- 1 system system 229,   0 /dev/hvc0      <- 不是 devtmpfs 默认的 0600 root:root
+crw-rw---- 1 system logd   229,   1 /dev/hvc1

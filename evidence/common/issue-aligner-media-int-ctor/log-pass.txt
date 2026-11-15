@@ -1,0 +1,9 @@
+# GET http://101.33.73.101/api/runs/run-00067  (aligner.media_full；07cf5fc1784783d5=gold 真机 OS3.0.11.0.VNQCNXM/Android 15，b8f75582353b320a=oriole 真机 Android 14)
+07cf5fc1784783d5 status=succeeded error=None decoderCount=59 encoderCount=25 codecListKind=ALL_CODECS regularCodecCount=77 availability={"hardwareDecoders": 22, "mediaCodecList": true} elapsedMs=7611
+  log: media_full: decoders=59 encoders=25 elapsedMs=7611
+  decoders(前5): ['OMX.MTK.VIDEO.DECODER.AVC', 'OMX.MTK.VIDEO.DECODER.AVC.secure', 'OMX.MTK.VIDEO.DECODER.H263', 'OMX.MTK.VIDEO.DECODER.HEIF', 'OMX.MTK.VIDEO.DECODER.HEVC']
+  encoders(前5): ['OMX.MTK.VIDEO.ENCODER.AVC', 'OMX.MTK.VIDEO.ENCODER.HEVC', 'OMX.google.aac.encoder', 'OMX.google.amrnb.encoder', 'OMX.google.amrwb.encoder']
+b8f75582353b320a status=succeeded error=None decoderCount=45 encoderCount=27 codecListKind=ALL_CODECS regularCodecCount=68 availability={"hardwareDecoders": 11, "mediaCodecList": true} elapsedMs=1602
+  log: media_full: decoders=45 encoders=27 elapsedMs=1602
+  decoders(前5): ['OMX.google.aac.decoder', 'OMX.google.amrnb.decoder', 'OMX.google.amrwb.decoder', 'OMX.google.flac.decoder', 'OMX.google.g711.alaw.decoder']
+  encoders(前5): ['OMX.google.aac.encoder', 'OMX.google.amrnb.encoder', 'OMX.google.amrwb.encoder', 'OMX.google.flac.encoder', 'OMX.google.h263.encoder']

@@ -1,0 +1,623 @@
+{
+  "id": 32,
+  "deviceId": 31,
+  "name": "G1170-android15",
+  "androidVersion": "15",
+  "lineageVersion": "lineage-22.2",
+  "unpack": {
+    "lineage": [
+      "vendor_a.img",
+      "vendor_dlkm_a.img"
+    ],
+    "official": [
+      "super.img",
+      "vendor_boot.img"
+    ]
+  },
+  "buildKernel": {
+    "lineageKernel": {
+      "borrowed-from": "lineage-22.1",
+      "borrowed-reason": "G1170 官方固件跑 MTK 6.6.89-android15-8 内核，而 lineage-22.2 底包自带 6.12.23；virtio 内核上游无 22.2 的 6.6 分支，故借用 lineage-22.1 的 6.6 线（kernels/lineage-22-6.6），vendor_dlkm 由 08 全自建注入 6.6 模块。",
+      "measured-from": "产物 out/kernel/lineage-22-6.6/kernelrelease.txt = 6.6.127-4k-cdh；底包 lineage-22.2/boot_a.img 自带 6.12.23-4k-gafb0ad713e3c，属跨代借用。",
+      "source": "kernels/lineage-22-6.6",
+      "version": "6.6"
+    },
+    "uname": "Linux localhost 6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k #1 SMP PREEMPT Thu Jul 10 06:35:14 UTC 2025 aarch64 Toybox",
+    "version": "6.6"
+  },
+  "buildModules": {
+    "cpufreq": {
+      "driver": "mt-cpufreq",
+      "governor": "sugov_ext",
+      "available-governors": [
+        "sugov_ext",
+        "conservative",
+        "powersave",
+        "performance",
+        "schedutil"
+      ],
+      "transition-latency": 1000,
+      "scaling-readable": false,
+      "package-per-cluster": false,
+      "bogo-mips": "26.00",
+      "policies": [
+        {
+          "policy": 0,
+          "cpus": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "min-freq": 500000,
+          "max-freq": 1800000,
+          "cur-freq": 999000,
+          "available-frequencies": [
+            1800000,
+            1625000,
+            1500000,
+            1450000,
+            1375000,
+            1325000,
+            1275000,
+            1175000,
+            1100000,
+            1050000,
+            999000,
+            950000,
+            900000,
+            850000,
+            774000,
+            500000
+          ],
+          "implementer": "0x41",
+          "variant": 1,
+          "part": "0xd05",
+          "revision": 0,
+          "capacity": 495,
+          "midr": "0x00000000411fd050",
+          "revidr": "0x0000000000000000"
+        },
+        {
+          "policy": 6,
+          "cpus": [
+            6,
+            7
+          ],
+          "min-freq": 850000,
+          "max-freq": 2000000,
+          "cur-freq": 1295000,
+          "available-frequencies": [
+            2000000,
+            1950000,
+            1900000,
+            1850000,
+            1800000,
+            1710000,
+            1621000,
+            1532000,
+            1443000,
+            1354000,
+            1295000,
+            1176000,
+            1087000,
+            998000,
+            909000,
+            850000
+          ],
+          "implementer": "0x41",
+          "variant": 3,
+          "part": "0xd0a",
+          "revision": 1,
+          "capacity": 1024,
+          "midr": "0x00000000413fd0a1",
+          "revidr": "0x0000000000000000"
+        }
+      ]
+    },
+    "external": [
+      "cdh_redirect",
+      "device_info",
+      "input_identity",
+      "kernelsu",
+      "virtio_media"
+    ],
+    "input_identity": {
+      "touch_major": true,
+      "goodix_fp": true,
+      "devices": [
+        {
+          "name": "uinput-fpc",
+          "bus": 6,
+          "vendor": 1638,
+          "product": 2184,
+          "version": 0,
+          "keys": [
+            "KEY_UP",
+            "KEY_LEFT",
+            "KEY_RIGHT",
+            "KEY_DOWN"
+          ],
+          "abs": [
+            {
+              "axis": "ABS_Z",
+              "min": 0,
+              "max": 255,
+              "fuzz": 0,
+              "flat": 0
+            }
+          ]
+        },
+        {
+          "name": "fpc_irq@fingerprint",
+          "keys": [
+            "KEY_POWER",
+            "KEY_WAKEUP"
+          ],
+          "msc": [
+            "MSC_SCAN"
+          ]
+        },
+        {
+          "name": "swtp",
+          "keys": [
+            249,
+            250
+          ]
+        },
+        {
+          "name": "mt6833-mt6359 Headset Jack",
+          "bus": 25,
+          "phys": "ALSA",
+          "keys": [
+            "KEY_PLAYPAUSE",
+            "BTN_1",
+            "BTN_2",
+            "KEY_VOICECOMMAND"
+          ],
+          "switches": [
+            "SW_HEADPHONE_INSERT",
+            "SW_MICROPHONE_INSERT",
+            "SW_LINEOUT_INSERT",
+            "SW_JACK_PHYSICAL_INSERT"
+          ]
+        },
+        {
+          "name": "mtk-pmic-keys",
+          "bus": 25,
+          "vendor": 1,
+          "product": 1,
+          "version": 1,
+          "keys": [
+            "KEY_VOLUMEUP",
+            "KEY_POWER"
+          ]
+        }
+      ],
+      "aligns": [
+        {
+          "name": "mtk-kpd",
+          "keys": [
+            "KEY_VOLUMEDOWN"
+          ]
+        }
+      ]
+    },
+    "in-tree": [],
+    "input": {
+      "keyboard": {
+        "bus": 25,
+        "name": "mtk-kpd",
+        "product": 0,
+        "vendor": 0,
+        "version": 0
+      },
+      "tablet": false,
+      "touch": {
+        "abs-to-mt": true,
+        "bus": 0,
+        "name": "gcore",
+        "product": 0,
+        "vendor": 0,
+        "version": 0
+      }
+    },
+    "redirect": [
+      {
+        "from": "/vendor/etc",
+        "to": "/mnt/vendorpatch/vendor/etc",
+        "type": "dir"
+      },
+      {
+        "from": "/vendor/bin",
+        "to": "/mnt/vendorpatch/vendor/bin",
+        "type": "dir"
+      },
+      {
+        "from": "/vendor/lib",
+        "to": "/mnt/vendorpatch/vendor/lib",
+        "type": "dir"
+      },
+      {
+        "from": "/vendor/lib64",
+        "to": "/mnt/vendorpatch/vendor/lib64",
+        "type": "dir"
+      },
+      {
+        "from": "/vendor/build.prop",
+        "to": "/mnt/vendorpatch/vendor/build.prop",
+        "type": "file"
+      },
+      {
+        "from": "/vendor/ueventd.rc",
+        "to": "/mnt/vendorpatch/vendor/ueventd.rc",
+        "type": "file"
+      },
+      {
+        "from": "/vendor_dlkm/lib",
+        "to": "/mnt/vendorpatch/vendor_dlkm/lib",
+        "type": "dir"
+      },
+      {
+        "from": "/odm/etc/build.prop",
+        "to": "/mnt/vendorpatch/odm/etc/build.prop",
+        "type": "file"
+      },
+      {
+        "from": "/system/bin/update_verifier",
+        "to": "/mnt/vendorpatch/system/bin/update_verifier",
+        "type": "file"
+      }
+    ],
+    "thermal": {
+      "zones": [
+        {
+          "type": "battery",
+          "base-temp-mc": 28000,
+          "jitter-mc": 100
+        },
+        {
+          "type": "mtk-master-charger",
+          "base-temp-mc": 25000,
+          "jitter-mc": 120
+        },
+        {
+          "type": "mtk-slave-charger",
+          "base-temp-mc": 0,
+          "jitter-mc": 0
+        },
+        {
+          "type": "mtktscpu",
+          "base-temp-mc": 33500,
+          "jitter-mc": 350
+        },
+        {
+          "type": "mtktspmic",
+          "base-temp-mc": 29200,
+          "jitter-mc": 180
+        },
+        {
+          "type": "mtktsbattery",
+          "base-temp-mc": 28000,
+          "jitter-mc": 100
+        },
+        {
+          "type": "mtktsAP",
+          "base-temp-mc": 30400,
+          "jitter-mc": 220
+        },
+        {
+          "type": "mtktsbtsmdpa",
+          "base-temp-mc": 29400,
+          "jitter-mc": 160
+        },
+        {
+          "type": "mtktspa",
+          "base-temp-mc": 31000,
+          "jitter-mc": 200
+        },
+        {
+          "type": "mtktscharger",
+          "base-temp-mc": 28700,
+          "jitter-mc": 150
+        },
+        {
+          "type": "tz6358buck1",
+          "base-temp-mc": 29000,
+          "jitter-mc": 150
+        },
+        {
+          "type": "tz6358buck2",
+          "base-temp-mc": 28800,
+          "jitter-mc": 150
+        },
+        {
+          "type": "tz6358buck3",
+          "base-temp-mc": 28600,
+          "jitter-mc": 150
+        }
+      ]
+    }
+  },
+  "buildVendorBoot": {
+    "fstab": "mt6768"
+  },
+  "buildOdm": {
+    "build-prop-sets": {
+      "ro.odm.product.cpu.abilist": "arm64-v8a",
+      "ro.odm.product.cpu.abilist32": "",
+      "ro.odm.product.cpu.abilist64": "arm64-v8a"
+    },
+    "build-prop-unsets": [],
+    "buildProp": "/odm/etc/build.prop",
+    "img": "vendor_a.img",
+    "note": "G1170 无独立 odm 分区，odm 树位于官方 vendor_a.img 的 /odm 子树；仅重定向 /odm/etc/build.prop 以保留原厂 /odm/etc/vintf/manifest_*.xml。"
+  },
+  "buildVendor": {
+    "build-prop-sets": {
+      "bluetooth.device.default_name": "BLU G75",
+      "debug.sf.vsync_reactor_ignore_present_fences": "true",
+      "drm.service.enabled": "true",
+      "persist.radio.multisim.config": "dsds",
+      "persist.system.powerhal.applist_enable": "0",
+      "persist.vendor.em.dy.debug": "1",
+      "persist.vendor.radio.msimmode": "dsds",
+      "persist.vendor.radio.mtk_dsbp_support": "2",
+      "ro.bionic.2nd_arch": "",
+      "ro.bionic.2nd_cpu_variant": "",
+      "ro.frp.pst": "/dev/block/by-name/frp",
+      "ro.hardware.egl": "meow",
+      "ro.hardware.hwcomposer": "drm",
+      "ro.hardware.vulkan": "mali",
+      "ro.hw_timeout_multiplier": "10",
+      "ro.hwui.use_vulkan": "false",
+      "ro.soc.manufacturer": "Mediatek",
+      "ro.soc.model": "MT6768",
+      "ro.vendor.boot_security_patch": "2026-02-05",
+      "ro.vendor.build.security_patch": "2026-02-05",
+      "ro.vendor.cdh.display.refresh_rates": "60,120,90",
+      "ro.vendor.cdh.display.wide_color_gamut": "true",
+      "ro.vendor.cdh.gpu.gl_extra_exts": "GL_ARM_mali_program_binary,GL_ARM_mali_shader_binary,GL_ARM_rgba8",
+      "ro.vendor.cdh.gpu.gl_renderer": "Mali-G52 MC2",
+      "ro.vendor.cdh.gpu.gl_sl_version": "OpenGL ES GLSL ES 3.20",
+      "ro.vendor.cdh.gpu.gl_vendor": "ARM",
+      "ro.vendor.cdh.gpu.gl_version": "OpenGL ES 3.2 v1.r49p1-03bet0.19498e0ae1d5dac223383c39a2e58f04",
+      "ro.vendor.cdh.vbmeta.size": "10112",
+      "ro.vendor.cdh.vulkan.name": "Mali-G52 MC2",
+      "ro.vendor.drm.widevine.oem_crypto_api_version": "18",
+      "ro.vendor.drm.widevine.security_level": "L3",
+      "ro.vendor.drm.widevine.version": "19.0.1@AV1A.240725.002",
+      "ro.vendor.mtk_widevine_drm_l3_support": "1",
+      "ro.vendor.product.cpu.abilist": "arm64-v8a",
+      "ro.vendor.product.cpu.abilist32": "",
+      "ro.vendor.product.cpu.abilist64": "arm64-v8a",
+      "ro.vendor.radio.max.multisim": "dsds",
+      "ro.vendor.soc.manufacturer": "Mediatek",
+      "ro.vendor.soc.model": "MT6768",
+      "ro.vendor.soc.model.external_name": "MT6768",
+      "ro.vendor.soc.model.part_name": "MT6768",
+      "ro.vendor.soc.model_ready": "1",
+      "ro.zygote": "zygote64"
+    },
+    "build-prop-unsets": [
+      "ro.vndk.lite"
+    ],
+    "fileTrees": {
+      "etc/audio_config.xml": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<!--\n  audio 引擎配置（设备独有，随机型 vendor 镜像下发）。\n\n  原 AOSP 布局把引擎配置拆成 4 个文件，靠 xi:include 串联；本文件是它们的合并版：\n  去掉 include，把三棵子树（ProductStrategies / volumeGroups / 默认音量曲线）直接内联。\n  HAL 是唯一解析方，audioserver 经 AIDL 取 HAL 的解析结果；换机型只替换本文件。\n\n  消费方：\n    - audio HAL（engine/vendor 线，ConfigImpl.cpp 的 kDefaultXmlPath）\n      /vendor/etc/audio_config.xml\n    - audioserver：不直接读本文件。AudioFlinger 经 IConfig.getEngineConfig\n      （AIDL）向 HAL 取引擎配置，HAL 解析本文件后回传；只有 getAudioPolicyConfig\n      整体失败时 audioserver 才回退读 XML（那时音频已不可用）。\n\n  兼容性：合并后的结构与「根 <configuration> 下三个子树」完全等价（xmlXIncludeProcess\n  展开后的形态），AOSP deserializeCollection 与 HAL collectGroups 都按子树名遍历，\n  多个 <volumes> 节点按出现顺序累加。\n-->\n<configuration version=\"1.0\">\n\n<!-- ===== ProductStrategies（原 audio_policy_engine_product_strategies.xml） ===== -->\n<!-- Copyright (C) 2018 The Android Open Source Project\n\n     Licensed under the Apache License, Version 2.0 (the \"License\");\n     you may not use this file except in compliance with the License.\n     You may obtain a copy of the License at\n\n          http://www.apache.org/licenses/LICENSE-2.0\n\n     Unless required by applicable law or agreed to in writing, software\n     distributed under the License is distributed on an \"AS IS\" BASIS,\n     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n     See the License for the specific language governing permissions and\n     limitations under the License.\n     -->\n\n<ProductStrategies>\n\n    <!-- \"hidden strategies\" like TTS, enforced audible:\n            Shall we expose them here or keep it hard coded -->\n\n    <!-- Used to identify the volume of audio streams for enforced system sounds in certain\n         countries (e.g. camera in Japan)\n         This strategy will only have higher priority than phone if force for system is set to\n         enforced. -->\n\n    <ProductStrategy name=\"STRATEGY_PHONE\">\n        <AttributesGroup streamType=\"AUDIO_STREAM_VOICE_CALL\" volumeGroup=\"voice_call\">\n            <Attributes> <Usage value=\"AUDIO_USAGE_VOICE_COMMUNICATION\"/> </Attributes>\n        </AttributesGroup>\n        <AttributesGroup streamType=\"AUDIO_STREAM_BLUETOOTH_SCO\" volumeGroup=\"bluetooth_sco\">\n            <Attributes> <Flags value=\"AUDIO_FLAG_SCO\"/> </Attributes>\n        </AttributesGroup>\n    </ProductStrategy>\n\n    <ProductStrategy name=\"STRATEGY_SONIFICATION\">\n        <AttributesGroup streamType=\"AUDIO_STREAM_RING\" volumeGroup=\"ring\">\n            <Attributes> <Usage value=\"AUDIO_USAGE_NOTIFICATION_TELEPHONY_RINGTONE\"/> </Attributes>\n        </AttributesGroup>\n        <AttributesGroup streamType=\"AUDIO_STREAM_ALARM\" volumeGroup=\"alarm\">\n            <Attributes> <Usage value=\"AUDIO_USAGE_ALARM\"/> </Attributes>\n        </AttributesGroup>\n    </ProductStrategy>\n\n    <ProductStrategy name=\"STRATEGY_ENFORCED_AUDIBLE\">\n        <AttributesGroup streamType=\"AUDIO_STREAM_ENFORCED_AUDIBLE\" volumeGroup=\"enforced_audible\">\n            <Attributes> <Flags value=\"AUDIO_FLAG_AUDIBILITY_ENFORCED\"/> </Attributes>\n        </AttributesGroup>\n    </ProductStrategy>\n\n    <ProductStrategy name=\"STRATEGY_ACCESSIBILITY\">\n        <AttributesGroup streamType=\"AUDIO_STREAM_ACCESSIBILITY\" volumeGroup=\"accessibility\">\n            <Attributes> <Usage value=\"AUDIO_USAGE_ASSISTANCE_ACCESSIBILITY\"/> </Attributes>\n        </AttributesGroup>\n    </ProductStrategy>\n\n    <ProductStrategy name=\"STRATEGY_SONIFICATION_RESPECTFUL\">\n        <AttributesGroup streamType=\"AUDIO_STREAM_NOTIFICATION\" volumeGroup=\"notification\">\n            <Attributes> <Usage value=\"AUDIO_USAGE_NOTIFICATION\"/> </Attributes>\n            <Attributes> <Usage value=\"AUDIO_USAGE_NOTIFICATION_EVENT\"/> </Attributes>\n        </AttributesGroup>\n    </ProductStrategy>\n\n    <ProductStrategy name=\"STRATEGY_MEDIA\">\n        <AttributesGroup streamType=\"AUDIO_STREAM_ASSISTANT\" volumeGroup=\"assistant\">\n            <Attributes>\n                <ContentType value=\"AUDIO_CONTENT_TYPE_SPEECH\"/>\n                <Usage value=\"AUDIO_USAGE_ASSISTANT\"/>\n            </Attributes>\n        </AttributesGroup>\n         <AttributesGroup streamType=\"AUDIO_STREAM_MUSIC\" volumeGroup=\"music\">\n            <Attributes> <Usage value=\"AUDIO_USAGE_MEDIA\"/> </Attributes>\n            <Attributes> <Usage value=\"AUDIO_USAGE_GAME\"/> </Attributes>\n            <Attributes> <Usage value=\"AUDIO_USAGE_ASSISTANT\"/> </Attributes>\n            <Attributes> <Usage value=\"AUDIO_USAGE_ASSISTANCE_NAVIGATION_GUIDANCE\"/> </Attributes>\n            <Attributes></Attributes>\n        </AttributesGroup>\n        <AttributesGroup streamType=\"AUDIO_STREAM_SYSTEM\" volumeGroup=\"system\">\n            <Attributes> <Usage value=\"AUDIO_USAGE_ASSISTANCE_SONIFICATION\"/> </Attributes>\n        </AttributesGroup>\n    </ProductStrategy>\n\n    <ProductStrategy name=\"STRATEGY_DTMF\">\n        <AttributesGroup streamType=\"AUDIO_STREAM_DTMF\" volumeGroup=\"dtmf\">\n            <Attributes> <Usage value=\"AUDIO_USAGE_VOICE_COMMUNICATION_SIGNALLING\"/> </Attributes>\n        </AttributesGroup>\n    </ProductStrategy>\n\n    <!-- Used to identify the volume of audio streams exclusively transmitted through the  speaker\n         (TTS) of the device -->\n    <ProductStrategy name=\"STRATEGY_TRANSMITTED_THROUGH_SPEAKER\">\n        <AttributesGroup streamType=\"AUDIO_STREAM_TTS\" volumeGroup=\"tts\">\n            <Attributes> <Flags value=\"AUDIO_FLAG_BEACON\"/> </Attributes>\n        </AttributesGroup>\n    </ProductStrategy>\n\n</ProductStrategies>\n\n<!-- ===== volumeGroups 流音量（原 audio_policy_engine_stream_volumes.xml） ===== -->\n<!-- Copyright (C) 2015 The Android Open Source Project\n\n     Licensed under the Apache License, Version 2.0 (the \"License\");\n     you may not use this file except in compliance with the License.\n     You may obtain a copy of the License at\n\n          http://www.apache.org/licenses/LICENSE-2.0\n\n     Unless required by applicable law or agreed to in writing, software\n     distributed under the License is distributed on an \"AS IS\" BASIS,\n     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n     See the License for the specific language governing permissions and\n     limitations under the License.\n-->\n<!-- Volume section defines a volume curve for a given use case and device category.\nIt contains a list of points of this curve expressing the attenuation in Millibels for a given\nvolume index from 0 to 100.\n<volume deviceCategory=””>\n<point>0,-9600</point>\n<point>100,0</point>\n</volume>\n-->\n\n<volumeGroups>\n    <volumeGroup>\n        <name>voice_call</name>\n        <indexMin>1</indexMin>\n        <indexMax>7</indexMax>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEADSET\">\n            <point>0,-4200</point>\n            <point>33,-2800</point>\n            <point>66,-1400</point>\n            <point>100,0</point>\n        </volume>\n        <volume deviceCategory=\"DEVICE_CATEGORY_SPEAKER\">\n            <point>0,-2400</point>\n            <point>33,-1600</point>\n            <point>66,-800</point>\n            <point>100,0</point>\n        </volume>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EARPIECE\">\n            <point>0,-2700</point>\n            <point>33,-1800</point>\n            <point>66,-900</point>\n            <point>100,0</point>\n        </volume>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EXT_MEDIA\" ref=\"DEFAULT_MEDIA_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEARING_AID\" ref=\"DEFAULT_HEARING_AID_VOLUME_CURVE\"/>\n    </volumeGroup>\n\n    <volumeGroup>\n        <name>system</name>\n        <indexMin>0</indexMin>\n        <indexMax>7</indexMax>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEADSET\">\n            <point>1,-3000</point>\n            <point>33,-2600</point>\n            <point>66,-2200</point>\n            <point>100,-1800</point>\n        </volume>\n        <volume deviceCategory=\"DEVICE_CATEGORY_SPEAKER\">\n            <point>1,-5100</point>\n            <point>57,-2800</point>\n            <point>71,-2500</point>\n            <point>85,-2300</point>\n            <point>100,-2100</point>\n        </volume>\n        <!--volume deviceCategory=\"DEVICE_CATEGORY_SPEAKER\" ref=\"DEFAULT_SYSTEM_VOLUME_CURVE\"/-->\n        <volume deviceCategory=\"DEVICE_CATEGORY_EARPIECE\" ref=\"DEFAULT_SYSTEM_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EXT_MEDIA\" ref=\"DEFAULT_DEVICE_CATEGORY_EXT_MEDIA_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEARING_AID\" ref=\"DEFAULT_HEARING_AID_VOLUME_CURVE\"/>\n    </volumeGroup>\n\n    <volumeGroup>\n        <name>ring</name>\n        <indexMin>0</indexMin>\n        <indexMax>7</indexMax>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEADSET\" ref=\"DEFAULT_DEVICE_CATEGORY_HEADSET_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_SPEAKER\" ref=\"DEFAULT_DEVICE_CATEGORY_SPEAKER_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EARPIECE\" ref=\"DEFAULT_DEVICE_CATEGORY_EARPIECE_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EXT_MEDIA\" ref=\"DEFAULT_DEVICE_CATEGORY_EXT_MEDIA_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEARING_AID\" ref=\"DEFAULT_HEARING_AID_VOLUME_CURVE\"/>\n    </volumeGroup>\n\n    <volumeGroup>\n        <name>music</name>\n        <indexMin>0</indexMin>\n        <indexMax>25</indexMax>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEADSET\" ref=\"DEFAULT_MEDIA_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_SPEAKER\" ref=\"DEFAULT_DEVICE_CATEGORY_SPEAKER_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EARPIECE\" ref=\"DEFAULT_MEDIA_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EXT_MEDIA\" ref=\"DEFAULT_MEDIA_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEARING_AID\"  ref=\"DEFAULT_HEARING_AID_VOLUME_CURVE\"/>\n    </volumeGroup>\n\n    <volumeGroup>\n        <name>alarm</name>\n        <indexMin>1</indexMin>\n        <indexMax>7</indexMax>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEADSET\" ref=\"DEFAULT_NON_MUTABLE_HEADSET_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_SPEAKER\" ref=\"DEFAULT_NON_MUTABLE_SPEAKER_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EARPIECE\" ref=\"DEFAULT_NON_MUTABLE_EARPIECE_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EXT_MEDIA\" ref=\"DEFAULT_NON_MUTABLE_EXT_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEARING_AID\" ref=\"DEFAULT_NON_MUTABLE_HEARING_AID_VOLUME_CURVE\"/>\n    </volumeGroup>\n\n    <volumeGroup>\n        <name>notification</name>\n        <indexMin>0</indexMin>\n        <indexMax>7</indexMax>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEADSET\" ref=\"DEFAULT_DEVICE_CATEGORY_HEADSET_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_SPEAKER\" ref=\"DEFAULT_DEVICE_CATEGORY_SPEAKER_SYSTEM_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EARPIECE\" ref=\"DEFAULT_DEVICE_CATEGORY_EARPIECE_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EXT_MEDIA\" ref=\"DEFAULT_DEVICE_CATEGORY_EXT_MEDIA_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEARING_AID\" ref=\"DEFAULT_DEVICE_CATEGORY_HEADSET_VOLUME_CURVE\"/>\n    </volumeGroup>\n\n    <volumeGroup>\n        <name>bluetooth_sco</name>\n        <indexMin>0</indexMin>\n        <indexMax>15</indexMax>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEADSET\">\n            <point>0,-4200</point>\n            <point>33,-2800</point>\n            <point>66,-1400</point>\n            <point>100,0</point>\n        </volume>\n        <volume deviceCategory=\"DEVICE_CATEGORY_SPEAKER\">\n            <point>0,-2400</point>\n            <point>33,-1600</point>\n            <point>66,-800</point>\n            <point>100,0</point>\n        </volume>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EARPIECE\">\n            <point>0,-4200</point>\n            <point>33,-2800</point>\n            <point>66,-1400</point>\n            <point>100,0</point>\n        </volume>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EXT_MEDIA\" ref=\"DEFAULT_MEDIA_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEARING_AID\" ref=\"DEFAULT_HEARING_AID_VOLUME_CURVE\"/>\n    </volumeGroup>\n\n    <volumeGroup>\n        <name>enforced_audible</name>\n        <indexMin>0</indexMin>\n        <indexMax>7</indexMax>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEADSET\">\n            <point>1,-3000</point>\n            <point>33,-2600</point>\n            <point>66,-2200</point>\n            <point>100,-1800</point>\n        </volume>\n        <volume deviceCategory=\"DEVICE_CATEGORY_SPEAKER\">\n            <point>1,-3400</point>\n            <point>71,-2400</point>\n            <point>100,-2000</point>\n        </volume>\n        <!--volume deviceCategory=\"DEVICE_CATEGORY_SPEAKER\" ref=\"DEFAULT_SYSTEM_VOLUME_CURVE\"/-->\n        <volume deviceCategory=\"DEVICE_CATEGORY_EARPIECE\" ref=\"DEFAULT_SYSTEM_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EXT_MEDIA\" ref=\"DEFAULT_DEVICE_CATEGORY_EXT_MEDIA_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEARING_AID\" ref=\"DEFAULT_HEARING_AID_VOLUME_CURVE\"/>\n    </volumeGroup>\n\n    <volumeGroup>\n        <name>dtmf</name>\n        <indexMin>0</indexMin>\n        <indexMax>15</indexMax>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEADSET\">\n            <point>1,-3000</point>\n            <point>33,-2600</point>\n            <point>66,-2200</point>\n            <point>100,-1800</point>\n        </volume>\n        <volume deviceCategory=\"DEVICE_CATEGORY_SPEAKER\">\n            <point>1,-4000</point>\n            <point>71,-2400</point>\n            <point>100,-1400</point>\n        </volume>\n        <!--volume deviceCategory=\"DEVICE_CATEGORY_SPEAKER\" ref=\"DEFAULT_SYSTEM_VOLUME_CURVE\"/-->\n        <volume deviceCategory=\"DEVICE_CATEGORY_EARPIECE\" ref=\"DEFAULT_SYSTEM_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EXT_MEDIA\" ref=\"DEFAULT_DEVICE_CATEGORY_EXT_MEDIA_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEARING_AID\" ref=\"DEFAULT_HEARING_AID_VOLUME_CURVE\"/>\n    </volumeGroup>\n\n    <volumeGroup>\n        <name>tts</name>\n        <indexMin>0</indexMin>\n        <indexMax>15</indexMax>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEADSET\" ref=\"SILENT_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_SPEAKER\" ref=\"FULL_SCALE_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EARPIECE\" ref=\"SILENT_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EXT_MEDIA\" ref=\"SILENT_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEARING_AID\" ref=\"SILENT_VOLUME_CURVE\"/>\n    </volumeGroup>\n\n    <volumeGroup>\n        <name>accessibility</name>\n        <indexMin>1</indexMin>\n        <indexMax>15</indexMax>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEADSET\" ref=\"DEFAULT_NON_MUTABLE_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_SPEAKER\" ref=\"DEFAULT_NON_MUTABLE_SPEAKER_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EARPIECE\" ref=\"DEFAULT_NON_MUTABLE_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EXT_MEDIA\" ref=\"DEFAULT_NON_MUTABLE_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEARING_AID\" ref=\"DEFAULT_NON_MUTABLE_HEARING_AID_VOLUME_CURVE\"/>\n    </volumeGroup>\n\n    <volumeGroup>\n        <name>assistant</name>\n        <indexMin>0</indexMin>\n        <indexMax>15</indexMax>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEADSET\" ref=\"DEFAULT_MEDIA_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_SPEAKER\" ref=\"DEFAULT_DEVICE_CATEGORY_SPEAKER_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EARPIECE\" ref=\"DEFAULT_MEDIA_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_EXT_MEDIA\" ref=\"DEFAULT_MEDIA_VOLUME_CURVE\"/>\n        <volume deviceCategory=\"DEVICE_CATEGORY_HEARING_AID\"  ref=\"DEFAULT_HEARING_AID_VOLUME_CURVE\"/>\n    </volumeGroup>\n\n</volumeGroups>\n\n<!-- ===== 默认音量曲线（原 audio_policy_engine_default_stream_volumes.xml） ===== -->\n<!-- Copyright (C) 2015 The Android Open Source Project\n\n     Licensed under the Apache License, Version 2.0 (the \"License\");\n     you may not use this file except in compliance with the License.\n     You may obtain a copy of the License at\n\n          http://www.apache.org/licenses/LICENSE-2.0\n\n     Unless required by applicable law or agreed to in writing, software\n     distributed under the License is distributed on an \"AS IS\" BASIS,\n     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n     See the License for the specific language governing permissions and\n     limitations under the License.\n-->\n<!-- Default Volume Tables included by Audio Policy Configuration file -->\n<!-- Full Default Volume table for all device category -->\n<volumes>\n    <reference name=\"FULL_SCALE_VOLUME_CURVE\">\n    <!-- Full Scale reference Volume Curve -->\n        <point>0,0</point>\n        <point>100,0</point>\n    </reference>\n    <reference name=\"SILENT_VOLUME_CURVE\">\n        <point>0,-9600</point>\n        <point>100,-9600</point>\n    </reference>\n    <reference name=\"DEFAULT_SYSTEM_VOLUME_CURVE\">\n    <!-- Default System reference Volume Curve -->\n        <point>1,-2400</point>\n        <point>33,-1800</point>\n        <point>66,-1200</point>\n        <point>100,-600</point>\n    </reference>\n    <reference name=\"DEFAULT_MEDIA_VOLUME_CURVE\">\n    <!-- Default Media reference Volume Curve -->\n        <point>1,-5800</point>\n        <point>20,-4000</point>\n        <point>60,-1700</point>\n        <point>100,0</point>\n    </reference>\n    <reference name=\"DEFAULT_DEVICE_CATEGORY_HEADSET_VOLUME_CURVE\">\n    <!--Default Volume Curve -->\n        <point>1,-4950</point>\n        <point>33,-3350</point>\n        <point>66,-1700</point>\n        <point>100,0</point>\n    </reference>\n    <reference name=\"DEFAULT_DEVICE_CATEGORY_SPEAKER_VOLUME_CURVE\">\n    <!-- Default is Speaker Media Volume Curve -->\n        <point>1,-5800</point>\n        <point>20,-4000</point>\n        <point>60,-1700</point>\n        <point>100,0</point>\n    </reference>\n    <reference name=\"DEFAULT_DEVICE_CATEGORY_SPEAKER_SYSTEM_VOLUME_CURVE\">\n    <!-- Default is Speaker System Volume Curve -->\n        <point>1,-4680</point>\n        <point>42,-2070</point>\n        <point>85,-540</point>\n        <point>100,0</point>\n    </reference>\n    <reference name=\"DEFAULT_DEVICE_CATEGORY_EARPIECE_VOLUME_CURVE\">\n    <!--Default Volume Curve -->\n        <point>1,-4950</point>\n        <point>33,-3350</point>\n        <point>66,-1700</point>\n        <point>100,0</point>\n    </reference>\n    <reference name=\"DEFAULT_DEVICE_CATEGORY_EXT_MEDIA_VOLUME_CURVE\">\n    <!-- Default is Ext Media System Volume Curve -->\n        <point>1,-5800</point>\n        <point>20,-4000</point>\n        <point>60,-2100</point>\n        <point>100,-1000</point>\n    </reference>\n    <reference name=\"DEFAULT_HEARING_AID_VOLUME_CURVE\">\n    <!-- Default Hearing Aid Volume Curve -->\n        <point>1,-12700</point>\n        <point>20,-8000</point>\n        <point>60,-4000</point>\n        <point>100,0</point>\n    </reference>\n    <!-- **************************************************************** -->\n    <!-- Non-mutable default volume curves:                               -->\n    <!--     * first point is always for index 0                          -->\n    <!--     * attenuation is small enough that stream can still be heard -->\n    <reference name=\"DEFAULT_NON_MUTABLE_VOLUME_CURVE\">\n    <!-- Default non-mutable reference Volume Curve -->\n    <!--        based on DEFAULT_MEDIA_VOLUME_CURVE -->\n        <point>0,-5800</point>\n        <point>20,-4000</point>\n        <point>60,-1700</point>\n        <point>100,0</point>\n    </reference>\n    <reference name=\"DEFAULT_NON_MUTABLE_HEADSET_VOLUME_CURVE\">\n    <!--Default non-mutable Volume Curve for headset -->\n    <!--    based on DEFAULT_DEVICE_CATEGORY_HEADSET_VOLUME_CURVE -->\n        <point>0,-4950</point>\n        <point>33,-3350</point>\n        <point>66,-1700</point>\n        <point>100,0</point>\n    </reference>\n    <reference name=\"DEFAULT_NON_MUTABLE_SPEAKER_VOLUME_CURVE\">\n    <!-- Default non-mutable Speaker Volume Curve -->\n    <!--    based on DEFAULT_DEVICE_CATEGORY_SPEAKER_VOLUME_CURVE -->\n        <point>0,-5800</point>\n        <point>20,-4000</point>\n        <point>60,-1700</point>\n        <point>100,0</point>\n    </reference>\n    <reference name=\"DEFAULT_NON_MUTABLE_EARPIECE_VOLUME_CURVE\">\n    <!--Default non-mutable Volume Curve -->\n    <!--    based on DEFAULT_DEVICE_CATEGORY_EARPIECE_VOLUME_CURVE -->\n        <point>0,-4950</point>\n        <point>33,-3350</point>\n        <point>66,-1700</point>\n        <point>100,0</point>\n    </reference>\n    <reference name=\"DEFAULT_NON_MUTABLE_EXT_VOLUME_CURVE\">\n    <!-- Default non-mutable Ext Media System Volume Curve -->\n    <!--     based on DEFAULT_DEVICE_CATEGORY_EXT_MEDIA_VOLUME_CURVE -->\n        <point>0,-5800</point>\n        <point>20,-4000</point>\n        <point>60,-2100</point>\n        <point>100,-1000</point>\n    </reference>\n    <reference name=\"DEFAULT_NON_MUTABLE_HEARING_AID_VOLUME_CURVE\">\n    <!-- Default non-mutable Hearing Aid Volume Curve -->\n    <!--     based on DEFAULT_HEARING_AID_VOLUME_CURVE -->\n        <point>0,-12700</point>\n        <point>20,-8000</point>\n        <point>60,-4000</point>\n        <point>100,0</point>\n    </reference>\n</volumes>\n\n</configuration>\n",
+      "etc/battery_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  gold（Redmi Note 13 5G）电池口径 —— 取值来自真机取证，供健康 HAL\n  /vendor/bin/hw/android.hardware.health-service 启动时读取（env BATTERY_CONFIG_XML 可\n  覆盖路径）。各段与属性均可缺省，缺省即用 HAL 内置默认值；枚举属性值必须是\n  health_service.cpp 中枚举表对应的 AIDL 名字（如 GOOD / FULL / INVALID）。\n\n  真机挂充时在两种相位间交替：\n    满电静置：status=FULL(5)、voltage≈4384mV、temperature≈31.0°C、\n              charge_counter≈4962（区间上沿 4972，缓降）\n    补电：    status=CHARGING(2)、voltage≈4450mV、temperature≈38.0°C、\n              charge_counter≈4947\n  HAL 按开机时钟在这两个区间内做连续模拟，并每 30s 向 BatteryService 推送。\n-->\n<battery>\n  <!-- 身份与电量：真机 dumpsys battery 取证（plugged=AC、level=100/100、\n       health=2/GOOD、present=true、battery_low=false） -->\n  <identity technology=\"Li-poly\" cycle_count=\"753\" level=\"100\" health=\"GOOD\"\n            capacity_level=\"FULL\" charging_state=\"INVALID\" present=\"1\"/>\n\n  <!-- 充电器状态：真机 plugged=AC，故 ac=1、usb=0；BatteryService 里 AC 优先 -->\n  <charger ac=\"1\" usb=\"0\" wireless=\"0\" dock=\"0\"\n           max_current_ua=\"0\" max_voltage_uv=\"0\"/>\n\n  <!-- 容量：charge_counter 与真机 intent extra 同口径（真机上报即 49xx 量级） -->\n  <capacity full_uah=\"5000\" counter_min=\"4947\" counter_max=\"4972\"/>\n\n  <!-- 动态模拟区间（前 25% 补电，其余满电静置） -->\n  <cycle full_mv=\"4384\" charge_mv=\"4450\" temperature_full_decic=\"310\"\n         temperature_charge_decic=\"380\" seconds=\"600\"/>\n\n  <!-- HealthInfo 扩展档案（getBatteryHealthData）；真机未对外提供该接口的数据，\n       先按缺省口径，拿到取证值再覆盖；serial_number 缺省则不下发 -->\n  <health_data state_of_health=\"99\" part_status=\"UNSUPPORTED\"\n               manufacturing_date_seconds=\"0\" first_usage_seconds=\"0\"/>\n</battery>\n",
+      "etc/excluded-input-devices.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<devices>\n    <device name=\"QEMU QEMU USB Tablet\"/>\n    <device name=\"QEMU Virtio Tablet\"/>\n    <device name=\"Power Button\"/>\n</devices>\n",
+      "etc/gnss_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  BLU G75 (blu/G1170) GNSS 设备值，system-info-name 取自官方 /vendor/bin/mnld 实测版本串。\n-->\n<gnss-config control-file=\"/data/vendor/gps/fix\"\n             system-info-name=\"MediaTek,MT,MTK_MNLD_14_1.00,MNL_VER_25031401ALPS05_8.00_00\"\n             default-longitude=\"120.008549\"\n             default-latitude=\"30.289452\"\n             default-altitude-meters=\"15.5\"\n             default-speed-meters-per-second=\"3.2\"\n             default-horizontal-accuracy-meters=\"1\"\n             default-satellites=\"7\"\n             gnss-capabilities=\"1\"\n             power-capabilities=\"1\"\n             measurement-corrections-capabilities=\"0\"\n             year-of-hw=\"2025\"/>\n",
+      "etc/init/cdh_g1170.rc": "# BLU G75 (blu/G1170) 云机收敛脚本：\n# 1. 提前停用官方 system_ext 的 netdiag（依赖真机 eBPF/netd 私有 map，云机下每 5s 崩溃触发 UPDATABLE_CRASHING）；\n# 2. 停用通用 media 模块附带的 Dolby C2 服务（G1170 真机无杜比音效，对应 VINTF 已在 vintf-drop 移除）。\non post-fs-data\n    stop netdiag\n    stop vendor-dolby-media-c2-hal\n",
+      "etc/init/frp_symlink.rc": "# FRP 分区路径补建：让 PersistentDataBlockService 与 OemLockService 找得到 ro.frp.pst 指向的节点。\non post-fs-data\n    chmod 0660 /dev/block/vda3\n    chown root system /dev/block/vda3\n    mkdir /dev/block/by-name 0755 root root\n    symlink /dev/block/vda3 /dev/block/by-name/frp\n    mkdir /dev/block/bootdevice 0755 root root\n    mkdir /dev/block/bootdevice/by-name 0755 root root\n    symlink /dev/block/vda3 /dev/block/bootdevice/by-name/frp\n",
+      "etc/light_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  lights 灯清单（设备独有，随机型 vendor 镜像下发）。\n\n  本 HAL 是虚拟 lights HAL：颜色/闪烁模式只记录不驱动硬件，灯清单决定\n  framework LightsService 能枚举出哪些灯（getLights 的返回值）。改清单不需要重编 HAL。\n\n  取值来源：gold（Redmi Note 13 5G, android15）真机 dumpsys lights 的 HwLight 列表。\n    id      = getLights 返回的 id（可随意但需唯一）\n    ordinal = 同类型灯的序号（同 type 多灯时区分）\n    type    = BACKLIGHT / KEYBOARD / BUTTONS / BATTERY / NOTIFICATIONS / ATTENTION /\n              BLUETOOTH / WIFI / MICROPHONE / CAMERA\n-->\n<lights-config>\n    <light id=\"0\" ordinal=\"0\" type=\"BACKLIGHT\"/>\n    <light id=\"1\" ordinal=\"0\" type=\"KEYBOARD\"/>\n    <light id=\"2\" ordinal=\"0\" type=\"BUTTONS\"/>\n    <light id=\"3\" ordinal=\"0\" type=\"BATTERY\"/>\n    <light id=\"4\" ordinal=\"0\" type=\"NOTIFICATIONS\"/>\n    <light id=\"5\" ordinal=\"0\" type=\"ATTENTION\"/>\n    <light id=\"6\" ordinal=\"1\" type=\"BLUETOOTH\"/>\n    <light id=\"7\" ordinal=\"1\" type=\"WIFI\"/>\n</lights-config>\n",
+      "etc/media_codecs_c2.xml": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<!-- Copyright (C) 2014 The Android Open Source Project\n\n     Licensed under the Apache License, Version 2.0 (the \"License\");\n     you may not use this file except in compliance with the License.\n     You may obtain a copy of the License at\n\n          http://www.apache.org/licenses/LICENSE-2.0\n\n     Unless required by applicable law or agreed to in writing, software\n     distributed under the License is distributed on an \"AS IS\" BASIS,\n     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n     See the License for the specific language governing permissions and\n     limitations under the License.\n-->\n\n<MediaCodecs>\n    <Settings>\n        <!-- disable TV and telephony domains by default. These must be opted in by OEMs -->\n        <Domain name=\"telephony\" enabled=\"false\" />\n        <Domain name=\"tv\" enabled=\"false\" />\n    </Settings>\n    <Decoders>\n        <MediaCodec name=\"c2.android.mp3.decoder\" type=\"audio/mpeg\">\n            <Alias name=\"OMX.google.mp3.decoder\" />\n            <Limit name=\"channel-count\" max=\"2\" />\n            <Limit name=\"sample-rate\" ranges=\"8000,11025,12000,16000,22050,24000,32000,44100,48000\" />\n            <Limit name=\"bitrate\" range=\"8000-320000\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.amrnb.decoder\" type=\"audio/3gpp\">\n            <Alias name=\"OMX.google.amrnb.decoder\" />\n            <Limit name=\"channel-count\" max=\"1\" />\n            <Limit name=\"sample-rate\" ranges=\"8000\" />\n            <Limit name=\"bitrate\" range=\"4750-12200\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.amrwb.decoder\" type=\"audio/amr-wb\">\n            <Alias name=\"OMX.google.amrwb.decoder\" />\n            <Limit name=\"channel-count\" max=\"1\" />\n            <Limit name=\"sample-rate\" ranges=\"16000\" />\n            <Limit name=\"bitrate\" range=\"6600-23850\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.aac.decoder\" type=\"audio/mp4a-latm\">\n            <Alias name=\"OMX.google.aac.decoder\" />\n            <Limit name=\"channel-count\" max=\"8\" />\n            <Limit name=\"sample-rate\" ranges=\"7350,8000,11025,12000,16000,22050,24000,32000,44100,48000\" />\n            <Limit name=\"bitrate\" range=\"8000-960000\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.g711.alaw.decoder\" type=\"audio/g711-alaw\">\n            <Alias name=\"OMX.google.g711.alaw.decoder\" />\n            <Limit name=\"channel-count\" max=\"6\" />\n            <Limit name=\"sample-rate\" ranges=\"8000-48000\" />\n            <Limit name=\"bitrate\" range=\"64000\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.g711.mlaw.decoder\" type=\"audio/g711-mlaw\">\n            <Alias name=\"OMX.google.g711.mlaw.decoder\" />\n            <Limit name=\"channel-count\" max=\"6\" />\n            <Limit name=\"sample-rate\" ranges=\"8000-48000\" />\n            <Limit name=\"bitrate\" range=\"64000\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.vorbis.decoder\" type=\"audio/vorbis\">\n            <Alias name=\"OMX.google.vorbis.decoder\" />\n            <Limit name=\"channel-count\" max=\"8\" />\n            <Limit name=\"sample-rate\" ranges=\"8000-96000\" />\n            <Limit name=\"bitrate\" range=\"32000-500000\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.opus.decoder\" type=\"audio/opus\">\n            <Alias name=\"OMX.google.opus.decoder\" />\n            <Limit name=\"channel-count\" max=\"8\" />\n            <Limit name=\"sample-rate\" ranges=\"8000,12000,16000,24000,48000\" />\n            <Limit name=\"bitrate\" range=\"6000-510000\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.raw.decoder\" type=\"audio/raw\">\n            <Alias name=\"OMX.google.raw.decoder\" />\n            <Limit name=\"channel-count\" max=\"8\" />\n            <Limit name=\"sample-rate\" ranges=\"8000-96000\" />\n            <Limit name=\"bitrate\" range=\"1-10000000\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.flac.decoder\" type=\"audio/flac\">\n            <Alias name=\"OMX.google.flac.decoder\" />\n            <Limit name=\"channel-count\" max=\"8\" />\n            <Limit name=\"sample-rate\" ranges=\"1-655350\" />\n            <Limit name=\"bitrate\" range=\"1-21000000\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.gsm.decoder\" type=\"audio/gsm\" domain=\"telephony\">\n            <Alias name=\"OMX.google.gsm.decoder\" />\n            <Limit name=\"channel-count\" max=\"1\" />\n            <Limit name=\"sample-rate\" ranges=\"8000\" />\n            <Limit name=\"bitrate\" range=\"13000\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.adpcm-ms.decoder\" type=\"audio/x-adpcm-ms\">\n            <Alias name=\"OMX.MTK.AUDIO.DECODER.ADPCM.MS\" />\n            <Limit name=\"channel-count\" max=\"8\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.adpcm-dvi-ima.decoder\" type=\"audio/x-adpcm-dvi-ima\">\n            <Alias name=\"OMX.MTK.AUDIO.DECODER.ADPCM.DVI\" />\n            <Limit name=\"channel-count\" max=\"8\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.ape.decoder\" type=\"audio/ape\">\n            <Alias name=\"OMX.MTK.AUDIO.DECODER.APE\" />\n            <Limit name=\"channel-count\" max=\"2\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.alac.decoder\" type=\"audio/alac\">\n            <Alias name=\"OMX.MTK.AUDIO.DECODER.ALAC\" />\n            <Limit name=\"channel-count\" max=\"8\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.wma.decoder\" type=\"audio/x-ms-wma\">\n            <Alias name=\"OMX.MTK.AUDIO.DECODER.WMA\" />\n            <Limit name=\"channel-count\" max=\"2\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.mp3.decoder\" type=\"audio/mpeg\" rank=\"5\">\n            <Alias name=\"OMX.MTK.AUDIO.DECODER.MP3\" />\n            <Limit name=\"channel-count\" max=\"2\" />\n            <Limit name=\"sample-rate\" ranges=\"8000,11025,12000,16000,22050,24000,32000,44100,48000\" />\n            <Limit name=\"bitrate\" range=\"8000-320000\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.mpeg4.decoder\" type=\"video/mp4v-es\" >\n            <Alias name=\"OMX.MTK.VIDEO.DECODER.MPEG4\" />\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"size\" min=\"16x16\" max=\"2048x2048\" />\n            <!-- max 2048x1088@60 -->\n            <Limit name=\"block-count\" range=\"1-8704\" />\n            <Limit name=\"blocks-per-second\" range=\"1-522240\" />\n            <Limit name=\"bitrate\" range=\"1-60000000\" />\n            <Feature name=\"adaptive-playback\"/>\n            <Limit name=\"concurrent-instances\" max=\"32\" />\n            <Limit name=\"performance-point-1920x1088\" value=\"60\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.h263.decoder\" type=\"video/3gpp\" >\n            <Alias name=\"OMX.MTK.VIDEO.DECODER.H263\" />\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <!-- max 2048x1088@60 -->\n            <Limit name=\"size\" min=\"128x96\" max=\"2048x2048\" />\n            <Limit name=\"block-count\" range=\"48-8704\" />\n            <Limit name=\"blocks-per-second\" range=\"48-522240\" />\n            <Limit name=\"bitrate\" range=\"1-60000000\" />\n            <Feature name=\"adaptive-playback\"/>\n            <Limit name=\"concurrent-instances\" max=\"32\" />\n            <Limit name=\"performance-point-1280x720\" value=\"60\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.avc.decoder\" type=\"video/avc\" >\n            <Alias name=\"OMX.MTK.VIDEO.DECODER.AVC\" />\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <!-- max 3840x2160@30 -->\n            <Limit name=\"size\" min=\"64x64\" max=\"3840x3840\" />\n            <Limit name=\"block-count\" range=\"16-32400\" />\n            <Limit name=\"blocks-per-second\" range=\"16-972000\" />\n            <Limit name=\"bitrate\" range=\"1-40000000\" />\n            <Quirk name=\"wants-NAL-fragments\" />\n            <Feature name=\"adaptive-playback\"/>\n            <Feature name=\"dynamic-color-aspects\"/>\n            <Limit name=\"concurrent-instances\" max=\"32\" />\n            <Limit name=\"performance-point-3840x2160\" value=\"30\" />\n            <Feature name=\"can-swap-width-height\"/>\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.avc.decoder.secure\" type=\"video/avc\" >\n            <Alias name=\"OMX.MTK.VIDEO.DECODER.AVC.secure\" />\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <!-- max 1920x1088@30 -->\n            <Limit name=\"size\" min=\"64x64\" max=\"1920x1920\" />\n            <Limit name=\"block-count\" range=\"16-8160\" />\n            <Limit name=\"blocks-per-second\" range=\"16-244800\" />\n            <Limit name=\"bitrate\" range=\"1-25000000\" />\n            <Quirk name=\"wants-NAL-fragments\" />\n            <Feature name=\"secure-playback\" required=\"true\" />\n            <Feature name=\"adaptive-playback\"/>\n            <Feature name=\"dynamic-color-aspects\"/>\n            <Limit name=\"concurrent-instances\" max=\"1\" />\n            <Limit name=\"performance-point-1920x1088\" value=\"30\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.hevc.decoder\" type=\"video/hevc\" >\n            <Alias name=\"OMX.MTK.VIDEO.DECODER.HEVC\" />\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <!-- max 3840x2160@30 -->\n            <Limit name=\"size\" min=\"16x16\" max=\"3840x3840\" />\n            <Limit name=\"block-count\" range=\"1-32400\" />\n            <Limit name=\"blocks-per-second\" range=\"1-972000\" />\n            <Limit name=\"bitrate\" range=\"1-40000000\" />\n            <Feature name=\"adaptive-playback\"/>\n            <Feature name=\"dynamic-color-aspects\"/>\n            <Limit name=\"concurrent-instances\" max=\"32\" />\n            <Limit name=\"performance-point-3840x2160\" value=\"30\" />\n            <Feature name=\"can-swap-width-height\"/>\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.vpx.decoder\" type=\"video/x-vnd.on2.vp8\" >\n            <Alias name=\"OMX.MTK.VIDEO.DECODER.VPX\" />\n            <Limit name=\"alignment\" value=\"1x1\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <!-- max 1920x1088@30 -->\n            <Limit name=\"size\" min=\"16x16\" max=\"1920x1920\" />\n            <Limit name=\"block-count\" range=\"1-8160\" />\n            <Limit name=\"blocks-per-second\" range=\"1-244800\" />\n            <Limit name=\"bitrate\" range=\"1-8000000\" />\n            <Feature name=\"adaptive-playback\"/>\n            <Feature name=\"dynamic-color-aspects\"/>\n            <Limit name=\"concurrent-instances\" max=\"32\" />\n            <Limit name=\"performance-point-1920x1088\" value=\"30\" />\n            <Feature name=\"can-swap-width-height\"/>\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.vp9.decoder\" type=\"video/x-vnd.on2.vp9\" >\n            <Alias name=\"OMX.MTK.VIDEO.DECODER.VP9\" />\n            <Limit name=\"alignment\" value=\"1x1\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <!-- max 3840x2160@30 -->\n            <Limit name=\"size\" min=\"16x16\" max=\"3840x3840\" />\n            <Limit name=\"block-count\" range=\"1-32400\" />\n            <Limit name=\"blocks-per-second\" range=\"1-972000\" />\n            <Limit name=\"bitrate\" range=\"1-40000000\" />\n            <Feature name=\"adaptive-playback\"/>\n            <Feature name=\"dynamic-color-aspects\"/>\n            <Limit name=\"concurrent-instances\" max=\"32\" />\n            <Limit name=\"performance-point-3840x2160\" value=\"30\" />\n            <Feature name=\"can-swap-width-height\"/>\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.vp9.decoder.secure\" type=\"video/x-vnd.on2.vp9\" >\n            <Alias name=\"OMX.MTK.VIDEO.DECODER.VP9.secure\" />\n            <Limit name=\"alignment\" value=\"1x1\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <!-- max 1920x1088@30 -->\n            <Limit name=\"size\" min=\"16x16\" max=\"1920x1920\" />\n            <Limit name=\"block-count\" range=\"1-8160\" />\n            <Limit name=\"blocks-per-second\" range=\"1-244800\" />\n            <Limit name=\"bitrate\" range=\"1-15000000\" />\n            <Quirk name=\"wants-NAL-fragments\" />\n            <Feature name=\"secure-playback\" required=\"true\" />\n            <Feature name=\"adaptive-playback\"/>\n            <Feature name=\"dynamic-color-aspects\"/>\n            <Limit name=\"concurrent-instances\" max=\"1\" />\n            <Limit name=\"performance-point-1920x1088\" value=\"30\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.mpeg2.decoder\" type=\"video/mpeg2\" >\n            <Alias name=\"OMX.MTK.VIDEO.DECODER.MPEG2\" />\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"size\" min=\"16x16\" max=\"2048x2048\" />\n            <!-- max 2048x1088@60 -->\n            <Limit name=\"block-count\" range=\"1-8704\" />\n            <Limit name=\"blocks-per-second\" range=\"1-522240\" />\n            <Limit name=\"bitrate\" range=\"1-60000000\" />\n            <Feature name=\"adaptive-playback\"/>\n            <Limit name=\"concurrent-instances\" max=\"32\" />\n            <Limit name=\"performance-point-1920x1088\" value=\"60\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.mpeg4.decoder\" type=\"video/mp4v-es\" update=\"true\">\n            <Alias name=\"OMX.google.mpeg4.decoder\" />\n            <!-- profiles and levels:  ProfileSimple : Level3 -->\n            <Limit name=\"size\" min=\"2x2\" max=\"1280x1280\" />\n            <!-- max 1280x720@30 -->\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"block-count\" range=\"1-3600\" />\n            <Limit name=\"blocks-per-second\" range=\"1-108000\" />\n            <Limit name=\"bitrate\" range=\"1-12000000\" />\n            <Feature name=\"adaptive-playback\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.h263.decoder\" type=\"video/3gpp\" update=\"true\">\n            <Alias name=\"OMX.google.h263.decoder\" />\n            <!-- profiles and levels:  ProfileBaseline : Level30, ProfileBaseline : Level45\n                    ProfileISWV2 : Level30, ProfileISWV2 : Level45 -->\n            <Limit name=\"size\" min=\"2x2\" max=\"1280x1280\" />\n            <!-- max 1280x720@30 -->\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"block-count\" range=\"1-3600\" />\n            <Limit name=\"blocks-per-second\" range=\"1-108000\" />\n            <Limit name=\"bitrate\" range=\"1-12000000\" />\n            <Feature name=\"adaptive-playback\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.avc.decoder\" type=\"video/avc\" update=\"true\">\n            <Alias name=\"OMX.google.h264.decoder\" />\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"size\" min=\"2x2\" max=\"1280x1280\" />\n            <!-- max 1280x720@30 -->\n            <!-- profiles and levels:  ProfileHigh : Level51 -->\n            <Limit name=\"block-count\" range=\"1-3600\" />\n            <Limit name=\"blocks-per-second\" range=\"1-108000\" />\n            <Limit name=\"bitrate\" range=\"1-12000000\" />\n            <Feature name=\"adaptive-playback\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.hevc.decoder\" type=\"video/hevc\" update=\"true\">\n            <Alias name=\"OMX.google.hevc.decoder\" />\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"size\" min=\"2x2\" max=\"1280x1280\" />\n            <!-- max 1280x720@30 -->\n            <!-- profiles and levels:  ProfileMain : MainTierLevel51 -->\n            <Limit name=\"block-count\" range=\"1-3600\" />\n            <Limit name=\"blocks-per-second\" range=\"1-108000\" />\n            <Limit name=\"bitrate\" range=\"1-12000000\" />\n            <Feature name=\"adaptive-playback\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.vp8.decoder\" type=\"video/x-vnd.on2.vp8\" update=\"true\">\n            <Alias name=\"OMX.google.vp8.decoder\" />\n            <Limit name=\"size\" min=\"2x2\" max=\"1280x1280\" />\n            <!-- max 1280x720@30 -->\n            <Limit name=\"alignment\" value=\"1x1\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"block-count\" range=\"1-3600\" />\n            <Limit name=\"blocks-per-second\" range=\"1-108000\" />\n            <Limit name=\"bitrate\" range=\"1-12000000\" />\n            <Feature name=\"adaptive-playback\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.vp9.decoder\" type=\"video/x-vnd.on2.vp9\" update=\"true\">\n            <Alias name=\"OMX.google.vp9.decoder\" />\n            <Limit name=\"alignment\" value=\"1x1\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"size\" min=\"2x2\" max=\"1280x1280\" />\n            <!-- max 1280x720@30 -->\n            <Limit name=\"block-count\" range=\"1-3600\" />\n            <Limit name=\"blocks-per-second\" range=\"1-108000\" />\n            <Limit name=\"bitrate\" range=\"1-12000000\" />\n            <Feature name=\"adaptive-playback\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.av1.decoder\" type=\"video/av01\" update=\"true\">\n            <Limit name=\"size\" min=\"2x2\" max=\"1280x1280\" />\n            <!-- max 1280x720@30 -->\n            <Limit name=\"alignment\" value=\"1x1\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"block-count\" range=\"1-3600\" />\n            <Limit name=\"blocks-per-second\" range=\"1-108000\" />\n            <Limit name=\"bitrate\" range=\"1-12000000\" />\n            <Feature name=\"adaptive-playback\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.mpeg2.decoder\" type=\"video/mpeg2\" domain=\"tv\" update=\"true\">\n            <Alias name=\"OMX.google.mpeg2.decoder\" />\n            <!-- profiles and levels:  ProfileMain : LevelHL -->\n            <Limit name=\"size\" min=\"16x16\" max=\"1280x1280\" />\n            <!-- max 1280x720@30 -->\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"block-count\" range=\"1-3600\" />\n            <Limit name=\"blocks-per-second\" range=\"1-108000\" />\n            <Limit name=\"bitrate\" range=\"1-12000000\" />\n            <Feature name=\"adaptive-playback\" />\n        </MediaCodec>\n    </Decoders>\n    <Encoders>\n        <MediaCodec name=\"c2.android.aac.encoder\" type=\"audio/mp4a-latm\">\n            <Alias name=\"OMX.google.aac.encoder\" />\n            <Limit name=\"channel-count\" max=\"6\" />\n            <Limit name=\"sample-rate\" ranges=\"8000,11025,12000,16000,22050,24000,32000,44100,48000\" />\n            <!-- also may support 64000, 88200  and 96000 Hz -->\n            <Limit name=\"bitrate\" range=\"8000-960000\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.amrnb.encoder\" type=\"audio/3gpp\">\n            <Alias name=\"OMX.google.amrnb.encoder\" />\n            <Limit name=\"channel-count\" max=\"1\" />\n            <Limit name=\"sample-rate\" ranges=\"8000\" />\n            <Limit name=\"bitrate\" range=\"4750-12200\" />\n            <Feature name=\"bitrate-modes\" value=\"CBR\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.amrwb.encoder\" type=\"audio/amr-wb\">\n            <Alias name=\"OMX.google.amrwb.encoder\" />\n            <Limit name=\"channel-count\" max=\"1\" />\n            <Limit name=\"sample-rate\" ranges=\"16000\" />\n            <Limit name=\"bitrate\" range=\"6600-23850\" />\n            <Feature name=\"bitrate-modes\" value=\"CBR\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.flac.encoder\" type=\"audio/flac\">\n            <Alias name=\"OMX.google.flac.encoder\" />\n            <Limit name=\"channel-count\" max=\"2\" />\n            <Limit name=\"sample-rate\" ranges=\"1-655350\" />\n            <Limit name=\"bitrate\" range=\"1-21000000\" />\n            <Limit name=\"complexity\" range=\"0-8\"  default=\"5\" />\n            <Feature name=\"bitrate-modes\" value=\"CQ\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.opus.encoder\" type=\"audio/opus\">\n            <Limit name=\"channel-count\" max=\"2\" />\n            <Limit name=\"sample-rate\" ranges=\"8000,12000,16000,24000,48000\" />\n            <Limit name=\"bitrate\" range=\"500-512000\" />\n            <Limit name=\"complexity\" range=\"0-10\"  default=\"5\" />\n            <Feature name=\"bitrate-modes\" value=\"CBR\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.avc.encoder\" type=\"video/avc\" >\n            <Alias name=\"OMX.MTK.VIDEO.ENCODER.AVC\" />\n            <Limit name=\"size\" min=\"128x128\" max=\"2560x2560\" />\n            <!-- max 2560x1440@30 -->\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"block-count\" range=\"64-14400\" />\n            <Limit name=\"blocks-per-second\" range=\"64-432000\" />\n            <Limit name=\"bitrate\" range=\"1-30000000\" />\n            <Limit name=\"concurrent-instances\" max=\"10\" />\n            <Limit name=\"performance-point-2560x1440\" value=\"30\" />\n            <Limit name=\"performance-point-1920x1080\" value=\"60\" />\n            <Limit name=\"performance-point-1280x720\" value=\"120\" />\n            <Feature name=\"can-swap-width-height\"/>\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.avc.encoder.secure\" type=\"video/avc\" >\n            <Limit name=\"size\" min=\"128x128\" max=\"1920x1920\" />\n            <!-- max 1920x1088@30 -->\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"block-count\" range=\"64-8160\" />\n            <Limit name=\"blocks-per-second\" range=\"64-244800\" />\n            <Limit name=\"bitrate\" range=\"1-30000000\" />\n            <Limit name=\"concurrent-instances\" max=\"10\" />\n            <Limit name=\"performance-point-2560x1440\" value=\"30\" />\n            <Limit name=\"performance-point-1920x1080\" value=\"60\" />\n            <Limit name=\"performance-point-1280x720\" value=\"120\" />\n            <Feature name =\"special-codec\" required=\"true\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.mtk.hevc.encoder\" type=\"video/hevc\" >\n            <Alias name=\"OMX.MTK.VIDEO.ENCODER.HEVC\" />\n            <Limit name=\"size\" min=\"128x128\" max=\"2560x2560\" />\n            <!-- max 2560x1440@30 -->\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"block-count\" range=\"64-14400\" />\n            <Limit name=\"blocks-per-second\" range=\"64-432000\" />\n            <Limit name=\"bitrate\" range=\"1-30000000\" />\n            <Limit name=\"quality\" range=\"0-100\" default=\"50\" />\n            <Limit name=\"concurrent-instances\" max=\"10\" />\n            <Feature name=\"bitrate-modes\" value=\"VBR,CBR,CQ\" />\n            <Limit name=\"performance-point-2560x1440\" value=\"30\" />\n            <Limit name=\"performance-point-1920x1080\" value=\"60\" />\n            <Limit name=\"performance-point-1280x720\" value=\"120\" />\n            <Feature name=\"can-swap-width-height\"/>\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.h263.encoder\" type=\"video/3gpp\" update=\"true\">\n            <Alias name=\"OMX.google.h263.encoder\" />\n            <!-- profiles and levels:  ProfileBaseline : Level45 -->\n            <Limit name=\"size\" min=\"176x144\" max=\"176x144\" />\n            <Limit name=\"alignment\" value=\"16x16\" />\n            <Limit name=\"bitrate\" range=\"1-128000\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.mpeg4.encoder\" type=\"video/mp4v-es\" update=\"true\">\n            <Alias name=\"OMX.google.mpeg4.encoder\" />\n            <!-- profiles and levels:  ProfileCore : Level2 -->\n            <Limit name=\"size\" min=\"16x16\" max=\"176x144\" />\n            <Limit name=\"alignment\" value=\"16x16\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"blocks-per-second\" range=\"12-1485\" />\n            <Limit name=\"bitrate\" range=\"1-64000\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.avc.encoder\" type=\"video/avc\" update=\"true\">\n            <Alias name=\"OMX.google.h264.encoder\" />\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"size\" min=\"16x16\" max=\"640x640\" />\n            <!-- max 640x480@30 -->\n            <!-- profiles and levels:  ProfileBaseline : Level3 -->\n            <Limit name=\"block-count\" range=\"1-1200\" />\n            <Limit name=\"blocks-per-second\" range=\"1-36000\" />\n            <Limit name=\"bitrate\" range=\"1-4000000\" />\n            <Feature name=\"intra-refresh\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.vp8.encoder\" type=\"video/x-vnd.on2.vp8\" update=\"true\">\n            <Alias name=\"OMX.google.vp8.encoder\" />\n            <Limit name=\"alignment\" value=\"1x1\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"size\" min=\"2x2\" max=\"640x640\" />\n            <!-- max 640x480@30 -->\n            <!-- profiles and levels:  ProfileMain : Level_Version0-3 -->\n            <Limit name=\"block-count\" range=\"1-1200\" />\n            <Limit name=\"blocks-per-second\" range=\"1-36000\" />\n            <Limit name=\"bitrate\" range=\"1-4000000\" />\n            <Feature name=\"bitrate-modes\" value=\"VBR,CBR\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.hevc.encoder\" type=\"video/hevc\" update=\"true\">\n            <!-- profiles and levels:  ProfileMain : MainTierLevel51 -->\n            <Limit name=\"size\" min=\"2x2\" max=\"640x640\" />\n            <!-- max 640x480@30 -->\n            <Limit name=\"alignment\" value=\"2x2\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"block-count\" range=\"1-1200\" />\n            <Limit name=\"blocks-per-second\" range=\"1-36000\" />\n            <Limit name=\"frame-rate\" range=\"1-300\" />\n            <Limit name=\"bitrate\" range=\"1-4000000\" />\n            <Limit name=\"complexity\" range=\"0-10\"  default=\"0\" />\n            <Limit name=\"quality\" range=\"0-100\"  default=\"80\" />\n            <Feature name=\"bitrate-modes\" value=\"VBR,CBR,CQ\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.vp9.encoder\" type=\"video/x-vnd.on2.vp9\" update=\"true\" enabled=\"false\">\n            <Alias name=\"OMX.google.vp9.encoder\" />\n            <!-- profiles and levels:  ProfileMain : Level_Version0-3 -->\n            <Limit name=\"size\" min=\"2x2\" max=\"640x640\" />\n            <!-- max 640x480@30 -->\n            <Limit name=\"alignment\" value=\"1x1\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <!-- 2016 devices can encode at about 8fps at this block count -->\n            <Limit name=\"block-count\" range=\"1-1200\" />\n            <Limit name=\"blocks-per-second\" range=\"1-36000\" />\n            <Limit name=\"bitrate\" range=\"1-4000000\" />\n            <Feature name=\"bitrate-modes\" value=\"VBR,CBR\" />\n        </MediaCodec>\n        <MediaCodec name=\"c2.android.av1.encoder\" type=\"video/av01\" update=\"true\" enabled=\"false\" minsdk=\"34\">\n            <Limit name=\"alignment\" value=\"1x1\" />\n            <Limit name=\"block-size\" value=\"16x16\" />\n            <Limit name=\"size\" min=\"2x2\" max=\"640x640\" />\n            <!-- max 640x480@30 -->\n            <Limit name=\"block-count\" range=\"1-1200\" />\n            <Limit name=\"blocks-per-second\" range=\"1-36000\" />\n            <Limit name=\"bitrate\" range=\"1-4000000\" />\n            <Limit name=\"quality\" range=\"0-100\"  default=\"80\" />\n            <Limit name=\"complexity\" range=\"0-5\"  default=\"0\" />\n            <Feature name=\"bitrate-modes\" value=\"VBR,CBR,CQ\" />\n            <Attribute name=\"software-codec\" />\n        </MediaCodec>\n    </Encoders>\n</MediaCodecs>\n",
+      "etc/media_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  BLU G75 (blu/G1170, MT6768, Android 15) media codec2 store 实例与组件表。\n  对齐官方 vendor/etc/media_codecs_c2.xml 声明的 c2.mtk.* 组件（无 Dolby 实例）。\n-->\n<media-c2-config>\n    <instance binary=\"android.hardware.media.c2-mediatek\" store=\"default1\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.adpcm-ms.decoder\"\n        kind=\"decoder\"\n        domain=\"audio\"\n        media-type=\"audio/x-adpcm-ms\"\n        rank=\"512\"\n        aliases=\"OMX.MTK.AUDIO.DECODER.ADPCM.MS\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.adpcm-dvi-ima.decoder\"\n        kind=\"decoder\"\n        domain=\"audio\"\n        media-type=\"audio/x-adpcm-dvi-ima\"\n        rank=\"512\"\n        aliases=\"OMX.MTK.AUDIO.DECODER.ADPCM.DVI\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.ape.decoder\"\n        kind=\"decoder\"\n        domain=\"audio\"\n        media-type=\"audio/ape\"\n        rank=\"512\"\n        aliases=\"OMX.MTK.AUDIO.DECODER.APE\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.alac.decoder\"\n        kind=\"decoder\"\n        domain=\"audio\"\n        media-type=\"audio/alac\"\n        rank=\"512\"\n        aliases=\"OMX.MTK.AUDIO.DECODER.ALAC\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.wma.decoder\"\n        kind=\"decoder\"\n        domain=\"audio\"\n        media-type=\"audio/x-ms-wma\"\n        rank=\"512\"\n        aliases=\"OMX.MTK.AUDIO.DECODER.WMA\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.mp3.decoder\"\n        kind=\"decoder\"\n        domain=\"audio\"\n        media-type=\"audio/mpeg\"\n        rank=\"5\"\n        aliases=\"OMX.MTK.AUDIO.DECODER.MP3\"\n        profiles=\"\"\n        levels=\"\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.hevc.decoder\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/hevc\"\n        rank=\"512\"\n        aliases=\"OMX.MTK.VIDEO.DECODER.HEVC\"\n        profiles=\"24576,24578,24577\"\n        levels=\"24835\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.mpeg4.decoder\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/mp4v-es\"\n        rank=\"512\"\n        aliases=\"OMX.MTK.VIDEO.DECODER.MPEG4\"\n        profiles=\"12297,12308\"\n        levels=\"16393\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.mpeg2.decoder\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/mpeg2\"\n        rank=\"512\"\n        aliases=\"OMX.MTK.VIDEO.DECODER.MPEG2\"\n        profiles=\"4097\"\n        levels=\"4099\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.h263.decoder\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/3gpp\"\n        rank=\"512\"\n        aliases=\"OMX.MTK.VIDEO.DECODER.H263\"\n        profiles=\"12288\"\n        levels=\"12291,12292,12293,12294,12295\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.avc.decoder\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/avc\"\n        rank=\"512\"\n        aliases=\"OMX.MTK.VIDEO.DECODER.AVC\"\n        profiles=\"20480,20481,20482,20484,20487\"\n        levels=\"20495\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.avc.decoder.secure\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/avc\"\n        rank=\"512\"\n        aliases=\"OMX.MTK.VIDEO.DECODER.AVC.secure\"\n        profiles=\"20480,20481,20482,20484,20487\"\n        levels=\"20495\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.vpx.decoder\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/x-vnd.on2.vp8\"\n        rank=\"512\"\n        aliases=\"OMX.MTK.VIDEO.DECODER.VPX\"\n        profiles=\"40960\"\n        levels=\"1\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.vp9.decoder\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/x-vnd.on2.vp9\"\n        rank=\"512\"\n        aliases=\"OMX.MTK.VIDEO.DECODER.VP9\"\n        profiles=\"28672,28673,28674\"\n        levels=\"28680\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.vp9.decoder.secure\"\n        kind=\"decoder\"\n        domain=\"video\"\n        media-type=\"video/x-vnd.on2.vp9\"\n        rank=\"512\"\n        aliases=\"OMX.MTK.VIDEO.DECODER.VP9.secure\"\n        profiles=\"28672,28673,28674\"\n        levels=\"28680\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.avc.encoder\"\n        kind=\"encoder\"\n        domain=\"video\"\n        media-type=\"video/avc\"\n        rank=\"512\"\n        aliases=\"OMX.MTK.VIDEO.ENCODER.AVC\"\n        profiles=\"20480,20482,20484\"\n        levels=\"20494\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.avc.encoder.secure\"\n        kind=\"encoder\"\n        domain=\"video\"\n        media-type=\"video/avc\"\n        rank=\"512\"\n        aliases=\"\"\n        profiles=\"20480,20482,20484\"\n        levels=\"20494\"/>\n    <component\n        store=\"default1\"\n        name=\"c2.mtk.hevc.encoder\"\n        kind=\"encoder\"\n        domain=\"video\"\n        media-type=\"video/hevc\"\n        rank=\"512\"\n        aliases=\"OMX.MTK.VIDEO.ENCODER.HEVC\"\n        profiles=\"24576\"\n        levels=\"24834\"/>\n</media-c2-config>\n",
+      "etc/primary_audio_policy_configuration.xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!-- Default Primary Audio HAL Module Audio Policy Configuration include file -->\n<!-- CDH: 在 lineage 基座基础上新增 \"Remote Submix In\" 设备，供 scrcpy/REMOTE_SUBMIX\n     捕获走 primary 模块（virtual DAC 回声），规避 r_submix 模块在 AIDL v2 policy\n     初始化时的加载差异。 -->\n<module name=\"primary\" halVersion=\"3.0\">\n    <attachedDevices>\n        <item>Speaker</item>\n        <item>Built-In Mic</item>\n        <item>Telephony Tx</item>\n        <item>Telephony Rx</item>\n        <item>FM Tuner</item>\n        <item>Remote Submix In</item>\n    </attachedDevices>\n    <defaultOutputDevice>Speaker</defaultOutputDevice>\n    <mixPorts>\n        <mixPort name=\"primary output\" role=\"source\" flags=\"AUDIO_OUTPUT_FLAG_PRIMARY\">\n            <profile name=\"\" format=\"AUDIO_FORMAT_PCM_16_BIT\"\n                     samplingRates=\"8000 11025 16000 32000 44100 48000\"\n                     channelMasks=\"AUDIO_CHANNEL_OUT_MONO AUDIO_CHANNEL_OUT_STEREO\"/>\n        </mixPort>\n        <mixPort name=\"primary input\" role=\"sink\">\n            <profile name=\"\" format=\"AUDIO_FORMAT_PCM_16_BIT\"\n                     samplingRates=\"8000 11025 16000 32000 44100 48000\"\n                     channelMasks=\"AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO\"/>\n        </mixPort>\n\n        <mixPort name=\"telephony_tx\" role=\"source\">\n            <profile name=\"\" format=\"AUDIO_FORMAT_PCM_16_BIT\"\n                     samplingRates=\"8000 11025 16000 32000 44100 48000\"\n                     channelMasks=\"AUDIO_CHANNEL_OUT_MONO AUDIO_CHANNEL_OUT_STEREO\"/>\n        </mixPort>\n        <mixPort name=\"telephony_rx\" role=\"sink\">\n            <profile name=\"\" format=\"AUDIO_FORMAT_PCM_16_BIT\"\n                     samplingRates=\"8000 11025 16000 32000 44100 48000\"\n                     channelMasks=\"AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO\"/>\n        </mixPort>\n\n        <mixPort name=\"fm_tuner\" role=\"sink\">\n            <profile name=\"\" format=\"AUDIO_FORMAT_PCM_16_BIT\"\n                     samplingRates=\"8000 11025 16000 32000 44100 48000\"\n                     channelMasks=\"AUDIO_CHANNEL_IN_MONO AUDIO_CHANNEL_IN_STEREO\"/>\n        </mixPort>\n   </mixPorts>\n   <devicePorts>\n        <devicePort tagName=\"Speaker\" type=\"AUDIO_DEVICE_OUT_SPEAKER\" role=\"sink\">\n        </devicePort>\n        <devicePort tagName=\"Telephony Tx\" type=\"AUDIO_DEVICE_OUT_TELEPHONY_TX\" role=\"sink\">\n        </devicePort>\n\n        <devicePort tagName=\"Built-In Mic\" type=\"AUDIO_DEVICE_IN_BUILTIN_MIC\" role=\"source\">\n        </devicePort>\n        <devicePort tagName=\"Telephony Rx\" type=\"AUDIO_DEVICE_IN_TELEPHONY_RX\" role=\"source\">\n        </devicePort>\n\n        <devicePort tagName=\"FM Tuner\" type=\"AUDIO_DEVICE_IN_FM_TUNER\" role=\"source\">\n        </devicePort>\n\n        <!-- CDH: REMOTE_SUBMIX 捕获端（virtual DAC 回声），挂 primary 模块 -->\n        <devicePort tagName=\"Remote Submix In\" type=\"AUDIO_DEVICE_IN_REMOTE_SUBMIX\" role=\"source\">\n            <profile name=\"\" format=\"AUDIO_FORMAT_PCM_16_BIT\"\n                     samplingRates=\"48000\"\n                     channelMasks=\"AUDIO_CHANNEL_IN_STEREO\"/>\n        </devicePort>\n    </devicePorts>\n    <routes>\n        <route type=\"mix\" sink=\"Speaker\"\n               sources=\"primary output\"/>\n        <route type=\"mix\" sink=\"primary input\"\n               sources=\"Built-In Mic\"/>\n        <!-- CDH: REMOTE_SUBMIX -> primary input mix（virtual DAC 回声流） -->\n        <route type=\"mix\" sink=\"primary input\"\n               sources=\"Remote Submix In\"/>\n\n        <route type=\"mix\" sink=\"telephony_rx\"\n               sources=\"Telephony Rx\"/>\n        <route type=\"mix\" sink=\"Telephony Tx\"\n               sources=\"telephony_tx\"/>\n\n        <route type=\"mix\" sink=\"fm_tuner\"\n               sources=\"FM Tuner\"/>\n    </routes>\n</module>\n",
+      "etc/sensors_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  BLU G75 (blu/G1170, MT6768, Android 15) 传感器清单。\n  物理芯片取自官方 scp.img 固件传感器 overlay 表（mc34x9 / mmc5603 / stk6a7x），\n  能力集合严格对齐官方 /vendor/etc/permissions（accelerometer, compass, light,\n  proximity, stepcounter, stepdetector，真机无硬件陀螺仪与气压计）。\n-->\n<sensors-config>\n    <sensor\n        handle=\"1\"\n        name=\"mc34x9\"\n        vendor=\"mCube\"\n        version=\"1\"\n        type-id=\"1\"\n        type=\"android.sensor.accelerometer\"\n        max-range=\"78.4532\"\n        resolution=\"0.0012\"\n        power=\"0.001\"\n        min-delay=\"5000\"\n        fifo-reserved=\"3000\"\n        fifo-max=\"4500\"\n        max-delay=\"200000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"2\"\n        name=\"mmc5603\"\n        vendor=\"Memsic\"\n        version=\"1\"\n        type-id=\"2\"\n        type=\"android.sensor.magnetic_field\"\n        max-range=\"4912.05029296875\"\n        resolution=\"0.15000000596046448\"\n        power=\"0.001\"\n        min-delay=\"10000\"\n        fifo-reserved=\"600\"\n        fifo-max=\"4500\"\n        max-delay=\"200000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"3\"\n        name=\"ORIENTATION\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"3\"\n        type=\"android.sensor.orientation\"\n        max-range=\"360.0\"\n        resolution=\"0.00390625\"\n        power=\"0.001\"\n        min-delay=\"5000\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"20000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"5\"\n        name=\"stk6a7x_l\"\n        vendor=\"Sensortek\"\n        version=\"1\"\n        type-id=\"5\"\n        type=\"android.sensor.light\"\n        max-range=\"65535.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"0\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"1000000\"\n        wake-up=\"false\"\n        reporting=\"1\"/>\n    <sensor\n        handle=\"8\"\n        name=\"stk6a7x_p\"\n        vendor=\"Sensortek\"\n        version=\"1\"\n        type-id=\"8\"\n        type=\"android.sensor.proximity\"\n        max-range=\"5.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"0\"\n        fifo-reserved=\"100\"\n        fifo-max=\"4500\"\n        max-delay=\"1000000\"\n        wake-up=\"true\"\n        reporting=\"1\"/>\n    <sensor\n        handle=\"9\"\n        name=\"GRAVITY\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"9\"\n        type=\"android.sensor.gravity\"\n        max-range=\"39.2266\"\n        resolution=\"0.0012\"\n        power=\"0.001\"\n        min-delay=\"5000\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"20000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"10\"\n        name=\"LINEARACCEL\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"10\"\n        type=\"android.sensor.linear_acceleration\"\n        max-range=\"39.2266\"\n        resolution=\"0.0012\"\n        power=\"0.001\"\n        min-delay=\"5000\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"20000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"11\"\n        name=\"ROTATION_VECTOR\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"11\"\n        type=\"android.sensor.rotation_vector\"\n        max-range=\"1.0\"\n        resolution=\"5.960464477539063e-08\"\n        power=\"0.001\"\n        min-delay=\"5000\"\n        fifo-reserved=\"300\"\n        fifo-max=\"4500\"\n        max-delay=\"20000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"14\"\n        name=\"UNCALI_MAG\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"14\"\n        type=\"android.sensor.magnetic_field_uncalibrated\"\n        max-range=\"4912.050292969\"\n        resolution=\"0.150000006\"\n        power=\"0.001\"\n        min-delay=\"20000\"\n        fifo-reserved=\"600\"\n        fifo-max=\"4500\"\n        max-delay=\"200000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"17\"\n        name=\"SIGNIFICANT_MOTION\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"17\"\n        type=\"android.sensor.significant_motion\"\n        max-range=\"1.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"-1\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"0\"\n        wake-up=\"true\"\n        reporting=\"2\"/>\n    <sensor\n        handle=\"18\"\n        name=\"STEP_DETECTOR\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"18\"\n        type=\"android.sensor.step_detector\"\n        max-range=\"1.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"0\"\n        fifo-reserved=\"100\"\n        fifo-max=\"4500\"\n        max-delay=\"0\"\n        wake-up=\"false\"\n        reporting=\"3\"/>\n    <sensor\n        handle=\"19\"\n        name=\"STEP_COUNTER\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"19\"\n        type=\"android.sensor.step_counter\"\n        max-range=\"2147483648.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"0\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"1000000\"\n        wake-up=\"false\"\n        reporting=\"1\"/>\n    <sensor\n        handle=\"20\"\n        name=\"GEOMAGNETIC_ROTATION_VECTOR\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"20\"\n        type=\"android.sensor.geomagnetic_rotation_vector\"\n        max-range=\"1.0\"\n        resolution=\"5.960464477539063e-08\"\n        power=\"0.001\"\n        min-delay=\"5000\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"20000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"22\"\n        name=\"TILT_DETECTOR\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"22\"\n        type=\"android.sensor.tilt_detector\"\n        max-range=\"1.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"0\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"0\"\n        wake-up=\"true\"\n        reporting=\"3\"/>\n    <sensor\n        handle=\"27\"\n        name=\"DEVICE_ORIENTATION\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"27\"\n        type=\"android.sensor.device_orientation\"\n        max-range=\"3.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"0\"\n        fifo-reserved=\"0\"\n        fifo-max=\"0\"\n        max-delay=\"1000000\"\n        wake-up=\"false\"\n        reporting=\"1\"/>\n    <sensor\n        handle=\"35\"\n        name=\"UNCALI_ACC\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"35\"\n        type=\"android.sensor.accelerometer_uncalibrated\"\n        max-range=\"78.4532\"\n        resolution=\"0.0012\"\n        power=\"0.001\"\n        min-delay=\"5000\"\n        fifo-reserved=\"3000\"\n        fifo-max=\"4500\"\n        max-delay=\"200000\"\n        wake-up=\"false\"\n        reporting=\"0\"/>\n    <sensor\n        handle=\"218\"\n        name=\"STEP_DETECTOR_WAKEUP\"\n        vendor=\"MTK\"\n        version=\"1\"\n        type-id=\"18\"\n        type=\"android.sensor.step_detector\"\n        max-range=\"1.0\"\n        resolution=\"1.0\"\n        power=\"0.001\"\n        min-delay=\"0\"\n        fifo-reserved=\"100\"\n        fifo-max=\"4500\"\n        max-delay=\"0\"\n        wake-up=\"true\"\n        reporting=\"3\"/>\n</sensors-config>\n",
+      "etc/thermal_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  thermal 温度模型与传感器清单（设备独有，随机型 vendor 镜像下发）。\n\n  本 HAL 是虚拟 thermal HAL：温度由「基线 + 加热/冷却模型」合成，不发真实热量。\n  改值不需要重编 HAL，缺文件则回退编码内默认模型（见 thermal_service.cpp）。\n\n  取值来源：gold（Redmi Note 13 5G, android15）真机 dumpsys thermalservice 的\n  Temperature 列表与多级阈值（thresholds 用分号分隔，nan 表示无该级）。\n    skin-name/skin-celsius  = 皮肤温度传感器名与基线\n    model-*                 = 加热/冷却速率模型参数\n    <sensor id name value thresholds shutdown>  = CPU/GPU/... 各温区\n    <cooling id name value>                     = 冷却设备（风扇/充电限流）\n-->\n<thermal-config skin-name=\"SKIN\" skin-celsius=\"27.843\" model-maximum-celsius=\"50\"\n                model-heating-seconds=\"20\" model-cooling-seconds=\"45\" model-sample-interval-ms=\"1000\">\n    <sensor id=\"0\" name=\"CPU\" value=\"29.174\"\n            thresholds=\"nan;nan;nan;85;90;100;117\"\n            shutdown=\"nan;nan;nan;nan;nan;nan;nan\"/>\n    <sensor id=\"1\" name=\"GPU\" value=\"29.174\"\n            thresholds=\"nan;nan;nan;85;90;100;117\"\n            shutdown=\"nan;nan;nan;nan;nan;nan;nan\"/>\n    <sensor id=\"2\" name=\"BATTERY\" value=\"26.0\"\n            thresholds=\"nan;nan;nan;50;55;59;60\"\n            shutdown=\"nan;nan;nan;nan;nan;nan;nan\"/>\n    <sensor id=\"3\" name=\"SKIN\" value=\"27.843\"\n            thresholds=\"nan;43;45;50;70;80;90\"\n            shutdown=\"nan;nan;nan;nan;nan;nan;nan\"/>\n    <sensor id=\"5\" name=\"POWER_AMPLIFIER\" value=\"28.128\"\n            thresholds=\"nan;nan;nan;68;90;100;110\"\n            shutdown=\"nan;nan;nan;nan;nan;nan;nan\"/>\n    <sensor id=\"9\" name=\"NPU\" value=\"29.174\"\n            thresholds=\"nan;nan;nan;85;90;100;117\"\n            shutdown=\"nan;nan;nan;nan;nan;nan;nan\"/>\n    <sensor id=\"10\" name=\"TPU\" value=\"29.174\"\n            thresholds=\"nan;nan;nan;85;90;100;117\"\n            shutdown=\"nan;nan;nan;nan;nan;nan;nan\"/>\n    <sensor id=\"13\" name=\"SOC\" value=\"29.174\"\n            thresholds=\"nan;nan;nan;85;90;100;117\"\n            shutdown=\"nan;nan;nan;nan;nan;nan;nan\"/>\n    <cooling id=\"3\" name=\"devfreq-13000000.mali\" value=\"0\"/>\n</thermal-config>\n",
+      "etc/ueventd.rc": "firmware_directories /vendor/firmware_mnt\n\n# Graphics\n/dev/dri/card0\t\t0666\tsystem\tgraphics\n/dev/dri/controlD64\t0660\tsystem\tgraphics\n/dev/dri/renderD128\t0666\tsystem\tgraphics\n\n# ION\n/dev/ion\t0664\tsystem\tsystem\n\n# Serial console\n/dev/hvc*\t0666\tsystem\tsystem\n/dev/ttyAMA*\t0666\tsystem\tsystem\n/dev/ttyS*\t0666\tsystem\tsystem\n\n# FRP persistent data block (misc partition vda3)\n/dev/block/vda3\t0660\troot\tsystem\n",
+      "etc/vibrator_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  vibrator 能力清单（设备独有，随机型 vendor 镜像下发）。\n\n  改值不需要重编 HAL：vibrator 服务启动时读本文件；缺文件/缺属性一律回退\n  编码内默认（见 vibrator_service.cpp 的 VibratorConfig）。\n\n  取值来源：gold（Redmi Note 13 5G, android15）真机 dumpsys vibrator_manager。\n    register-manager        = 是否注册 IVibratorManager（false 时只注册 IVibrator）\n    capabilities            = IVibrator.getCapabilities() 位集（0 = 仅 on/off）\n    manager-capabilities    = IVibratorManager.getCapabilities() 位集\n    composition-delay-max   = 组合振动最大延迟 ms\n    composition-size-max    = 组合振动最大步数\n    <vibrator id>           = getVibratorIds() 暴露的 vibrator 编号\n    <effect name>           = getSupportedEffects() 支持的原语\n-->\n<vibrator-config register-manager=\"true\"\n                 capabilities=\"0\"\n                 manager-capabilities=\"0\"\n                 composition-delay-max=\"1000\"\n                 composition-size-max=\"256\">\n    <vibrator id=\"1\"/>\n    <effect name=\"CLICK\"/>\n    <effect name=\"DOUBLE_CLICK\"/>\n    <effect name=\"TICK\"/>\n    <effect name=\"HEAVY_CLICK\"/>\n    <effect name=\"TEXTURE_TICK\"/>\n</vibrator-config>\n",
+      "etc/wifi_config.xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  wifi 宿主通道参数（设备独有，随机型 vendor 镜像下发）。\n\n  对应原设备树 config/wifi.json 编译期 wifi_target.inc 的 6 个运行参数；\n  改值不需要重编 HAL：wifi 服务启动时读本文件，缺失一律回退编码内默认。\n\n  channel           = 与 guest 侧 wpa_supplicant/驱动对接的 virtio 通道\n  scan-profile      = mac80211_hwsim 扫描剖面（宿主侧可调，回显给 framework）\n  frame-max         = 单帧上限字节数（1 MiB）\n  reconnect-delay-ms= 通道断链重连间隔\n  read-timeout-ms   = 读帧超时\n  protocol-version  = 宿主通道协议版本（与 guest 驱动约定，改这个要同步改 guest）\n-->\n<wifi-config channel=\"/dev/hvc9\"\n             scan-profile=\"/sys/module/mac80211_hwsim/parameters/scan_profile\"\n             frame-max=\"1048576\"\n             reconnect-delay-ms=\"1000\"\n             read-timeout-ms=\"30000\"\n             protocol-version=\"1\"/>\n"
+    },
+    "files": [
+      {
+        "from": "official",
+        "source": "lib64/egl/libGLES_mali.so"
+      },
+      {
+        "from": "official",
+        "source": "lib64/egl/libMEOW_data.so"
+      },
+      {
+        "from": "official",
+        "source": "lib64/egl/libMEOW_gift.so"
+      },
+      {
+        "from": "official",
+        "source": "lib64/egl/libMEOW_qt.so"
+      },
+      {
+        "from": "official",
+        "source": "lib64/egl/libMEOW_trace.so"
+      },
+      {
+        "from": "official",
+        "source": "lib64/libOpenCL.so"
+      },
+      {
+        "from": "official",
+        "source": "lib64/libpng.so"
+      },
+      {
+        "from": "official",
+        "mode": "replace",
+        "source": "etc/permissions"
+      },
+      {
+        "from": "official",
+        "mode": "replace",
+        "source": "etc/security"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_performance.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_profiles_V1_0.xml"
+      }
+    ],
+    "hardware": [
+      {
+        "android.hardware.audio": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.bluetooth": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.camera": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.drm": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.gnss": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.gpu": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.graphics.allocator": {
+          "variant": "default",
+          "version": "2.0"
+        }
+      },
+      {
+        "android.hardware.graphics.composer3": {
+          "variant": "default",
+          "version": "3.0"
+        }
+      },
+      {
+        "android.hardware.health": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.keymint": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.light": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.media": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.media.v412": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.radio": {
+          "variant": "mtk",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.sensors": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.thermal": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.vibrator": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.hardware.wifi": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      },
+      {
+        "android.service.daemon": {
+          "variant": "default",
+          "version": "1.0"
+        }
+      }
+    ],
+    "lib64-backfills": [],
+    "selinux-labels": {
+      "lib64/egl/libEGL_meow.so": "u:object_r:same_process_hal_file:s0",
+      "lib64/egl/libEGL_mesa.so": "u:object_r:same_process_hal_file:s0",
+      "lib64/egl/libGLESv1_CM_meow.so": "u:object_r:same_process_hal_file:s0",
+      "lib64/egl/libGLESv1_CM_mesa.so": "u:object_r:same_process_hal_file:s0",
+      "lib64/egl/libGLESv2_meow.so": "u:object_r:same_process_hal_file:s0",
+      "lib64/egl/libGLESv2_mesa.so": "u:object_r:same_process_hal_file:s0",
+      "lib64/hw/vulkan.mali.so": "u:object_r:same_process_hal_file:s0"
+    },
+    "sepolicy": {
+      "vendor_sepolicy.cil": ";; cdh G1170 (BLU G75, MT6768, Android 15 / plat 202404) SELinux 补丁。\n;; 1. Widevine AIDL HAL（com.google.android.widevine APEX）hal_drm_widevine 域与过渡规则；\n;; 2. crash_dump / surfaceflinger 宽松模式（对齐 MTK Android 15 22.2 基线）；\n;; 3. cameraserver / system_server / audioserver 对 MTK 虚拟/缺省服务的查询放行与 FRP misc 块设备授权。\n\n;; ---- Widevine 类型与属性 ----\n(type hal_drm_widevine)\n(roletype object_r hal_drm_widevine)\n(type hal_drm_widevine_exec)\n(roletype object_r hal_drm_widevine_exec)\n(typeattributeset domain (hal_drm_widevine))\n(typeattributeset halserverdomain (hal_drm_widevine))\n(typeattributeset halclientdomain (hal_drm_widevine))\n(typeattributeset hal_drm (hal_drm_widevine))\n(typeattributeset hal_drm_server (hal_drm_widevine))\n(typeattributeset hal_allocator_client (hal_drm_widevine))\n(typeattributeset file_type (hal_drm_widevine_exec))\n(typeattributeset exec_type (hal_drm_widevine_exec))\n(typeattributeset vendor_file_type (hal_drm_widevine_exec))\n\n;; ---- 启动链：rc 不带 seclabel，靠 APEX 内文件标签换域 ----\n(allow init_{{vers}} hal_drm_widevine_exec (file (read getattr map execute open)))\n(allow init_{{vers}} hal_drm_widevine (process (transition siginh rlimitinh)))\n(dontaudit init_{{vers}} hal_drm_widevine (process (noatsecure)))\n(typetransition init_{{vers}} hal_drm_widevine_exec process hal_drm_widevine)\n(allow hal_drm_widevine hal_drm_widevine_exec (file (read getattr map execute open entrypoint)))\n\n;; ---- APEX 内库只读映射 ----\n(allow hal_drm_widevine vendor_file_{{vers}} (file (read getattr map open)))\n\n;; ---- vndbinder 与 servicemanager 注册 ----\n(allow hal_drm_widevine vndbinder_device_{{vers}} (chr_file (ioctl read write getattr lock append map open watch watch_reads)))\n(allow hal_drm_widevine vndservicemanager_{{vers}} (binder (call transfer)))\n(allow vndservicemanager_{{vers}} hal_drm_widevine (dir (search)))\n(allow vndservicemanager_{{vers}} hal_drm_widevine (file (read map open)))\n(allow vndservicemanager_{{vers}} hal_drm_widevine (process (getattr)))\n(allow hal_drm_widevine servicemanager_{{vers}} (binder (call transfer)))\n(allow hal_drm_widevine hal_drm_service_{{vers}} (service_manager (add find)))\n(allow hal_drm_widevine mediaserver_service_{{vers}} (service_manager (add find)))\n(allow hal_drm_widevine default_android_service_{{vers}} (service_manager (add find)))\n(allow hal_drm_widevine pioneer (binder (call transfer)))\n(allow pioneer hal_drm_widevine (binder (call transfer)))\n\n;; ---- 安全缓冲/分配器 fd 传递 ----\n(allow hal_drm_widevine hal_allocator_server (fd (use)))\n(allow hal_drm_widevine mediacodec (fd (use)))\n(allow hal_drm_widevine base_typeattr_232_{{vers}} (fd (use)))\n\n;; ---- /data/vendor/mediadrm ----\n(allow hal_drm_widevine vendor_data_file_{{vers}} (dir (ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir)))\n(allow hal_drm_widevine vendor_data_file_{{vers}} (file (ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads)))\n\n;; ---- 诊断与只读设备树 ----\n(allow hal_drm_widevine debugfs_tracing_{{vers}} (file (write)))\n(allow hal_drm_widevine mnt_vendor_file_{{vers}} (dir (search)))\n(allow hal_drm_widevine block_device_{{vers}} (dir (search)))\n\n;; ---- crash_dump / surfaceflinger 宽松模式 ----\n(typepermissive crash_dump)\n(typepermissive surfaceflinger)\n\n;; ---- MTK 框架服务查询放行（避免 SELinux find 拒绝阻塞）----\n(allow cameraserver_{{vers}} mtk_hal_atms_service (service_manager (find)))\n(allow system_server_{{vers}} mtk_hal_gpuserv_service (service_manager (find)))\n(allow system_server_{{vers}} mtk_hal_lbs_service (service_manager (find)))\n(allow audioserver_{{vers}} mtk_hal_audio_service (service_manager (find)))\n\n;; ---- FRP 承载块设备（/dev/block/by-name/frp -> /dev/block/vda3）----\n(allow system_server_{{vers}} misc_block_device_{{vers}} (blk_file (open read write append getattr ioctl map lock)))\n"
+    },
+    "vintf-drop": [
+      "android.hardware.drm-service.widevine.xml",
+      "vendor.dolby.media.c2-default-service-dax.xml"
+    ],
+    "vintf-version": "8.0"
+  },
+  "buildVendorDlkm": {},
+  "buildPatch": {},
+  "buildSuper": {
+    "images": [
+      "super.img"
+    ]
+  },
+  "buildVda": {
+    "partitions": []
+  },
+  "extra": {},
+  "updatedAt": "2026-11-11T04:20:00Z"
+}

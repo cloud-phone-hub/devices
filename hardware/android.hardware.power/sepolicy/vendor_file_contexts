@@ -1,0 +1,14 @@
+# power HAL 模块自带 file_contexts 片段（由 07_build_vendor 追加到装配树的
+# /vendor/etc/selinux/vendor_file_contexts）。
+#
+# lineage 底座的 vendor_file_contexts 只给 power 的 .example 变体打了 exec 标签，
+# 正式名 android.hardware.power-service 会落到 vendor_file 兜底标签。此时 init 在
+# **定义服务**阶段就拒绝启动：
+#   init: Control message: Could not ctl.start for 'vendor.power-default':
+#     File /vendor/bin/hw/android.hardware.power-service(labeled "u:object_r:vendor_file:s0")
+#     has incorrect label or no domain transition from u:r:init:s0 ...
+# 该检查在 permissive 下同样生效。服务起不来 → HintManagerService 构造时读
+# IPower.getSupportInfo().headroom 抛 NPE → system_server 无限重启。
+#
+# 放在模块层而不是机型层：标签是"这个 HAL 自身"的契约，换机型不必重写。
+/vendor/bin/hw/android\.hardware\.power-service            u:object_r:hal_power_default_exec:s0

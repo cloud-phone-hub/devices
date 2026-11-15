@@ -1,0 +1,41 @@
+# 失败现场：实例 11（指纹 getSensorProps 回空表）+ 实例 12（createSession 抛异常）
+# 日志全量：out/core/daemon/runtime/cph2797_16.0.8.301_EX01/{11,12}/qemu.log
+
+# 计数（命令 -> 值）：
+#   grep -c "ArrayIndexOutOfBoundsException"            11/qemu.log -> 82
+#   grep -c "FATAL EXCEPTION IN SYSTEM PROCESS"         11/qemu.log -> 40
+#   grep -c "no fingerprint sensor"                     12/qemu.log -> 21
+#   grep -c "FingerprintHandler"                        12/qemu.log -> 11
+#   grep -c "FATAL EXCEPTION IN SYSTEM PROCESS"         12/qemu.log -> 11
+
+# 1）实例 11：ColorOS 指纹扩展对空传感器表直接 valueAt(0)
+*** FATAL EXCEPTION IN SYSTEM PROCESS: main
+Process: system_server, PID: 6543
+java.lang.ArrayIndexOutOfBoundsException: Array index out of range: 0
+    at android.util.SparseArray.valueAt(SparseArray.java:224)
+    at android.hardware.biometrics.common.SensorList.valueAt(SensorList.java:67)
+    at com.oplus.server.fingerprint.FingerprintServiceProviderExtImpl.init(FingerprintServiceProviderExtImpl.java:211)
+    at com.android.server.biometrics.sensors.fingerprint.FingerprintProvider.initSensors(FingerprintProvider.java:...)
+    at com.android.server.biometrics.sensors.fingerprint.FingerprintService.getProviders(FingerprintService.java:...)
+    at com.android.server.biometrics.BiometricServiceRegistry.registerAllInBackground(BiometricServiceRegistry.java:...)
+# 紧接着是「自己打死自己」，不是 watchdog：
+Process: Sending signal. PID: 6543 SIG: 9
+ActivityManager: Quit itself
+
+# 2）实例 12：占位传感器上报生效（越界归零），但 createSession 仍抛异常
+*** FATAL EXCEPTION IN SYSTEM PROCESS: FingerprintHandler
+java.lang.UnsupportedOperationException: no fingerprint sensor
+    at android.hardware.biometrics.fingerprint.IFingerprint$Stub$Proxy.createSession(IFingerprint.java:...)
+    at com.android.server.biometrics.sensors.fingerprint.FingerprintStartUserClient.startHalOperation(FingerprintStartUserClient.java:...)
+    at com.android.server.biometrics.sensors.fingerprint.FingerprintProvider.scheduleInternalCleanup(FingerprintProvider.java:...)
+    at com.android.server.biometrics.sensors.fingerprint.FingerprintProvider.onUserSwitched(FingerprintProvider.java:...)
+
+# 3）官方 /odm 声明（说明框架一定会枚举指纹提供者）
+$ dump.erofs --cat /odm/etc/vintf/manifest/manifest_oplus_fingerprint_aidl_v3.xml odm_a.img
+<manifest version="1.0" type="device">
+    <hal format="aidl">
+        <name>android.hardware.biometrics.fingerprint</name>
+        <version>3</version>
+        <fqname>IFingerprint/default</fqname>
+    </hal>
+</manifest>

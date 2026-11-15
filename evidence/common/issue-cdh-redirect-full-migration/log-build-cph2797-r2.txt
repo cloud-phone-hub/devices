@@ -1,0 +1,229 @@
+########## cph2797 : cph2797 --from build_vendor_dlkm
+==> 设备: OPPO Find X9（oppo/cph2797）
+==> 清单: manifest/oppo/cph2797/baselines/CPH2797_16.0.8.301_EX01_A11_full.json
+    厂商固件: roms/devices/oppo/cph2797/CPH2797_16.0.8.301_EX01_A11_full.zip
+    lineage 底包: roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip
+==> 阶段(4): build_vendor_dlkm, build_patch, pack_super, pack_vda
+==> [1/4] build_vendor_dlkm  (08_build_vendor_dlkm)
+  + 进程内调用 build_vendor_dlkm
+==> 产物目录: out/devices/oppo/cph2797/16.0.8.301_EX01（out/devices）
+==> vendor_dlkm 基座: out/roms/lineage/lineage-23.2/super/vendor_dlkm_a.img（命令行）
+==> 模块产物目录: out/kernel/lineage-23-6.12/modules（out/kernel/lineage-23-6.12）
+==> 厂商 vendor_dlkm: out/roms/oppo/cph2797/16.0.8.301_EX01/super/vendor_dlkm_a.img（命令行）
+==> build.prop 基线: /etc/build.prop（884 B / 837e8eb6ceb4）
+==> 模块产物: out/kernel/lineage-23-6.12/modules（6 个 .ko）
+    输入: 缓存配方 dlkm-a994059f1033（输入哈希）
+==> 阶段日志: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_dlkm-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    基底镜像:   out/roms/lineage/lineage-23.2/super/vendor_dlkm_a.img（15831040 B，已存在，lineage 虚机 vendor_dlkm）
+    工作镜像:   out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/vendor_dlkm.work.img（步骤 1 每次从基底重拷）
+    模块产物:   out/kernel/lineage-23-6.12/modules（6 个 .ko，整树哈希 f8792150cb5873722734609872921675a6498af2100df16a5eb838438e84fd1e）
+    官方镜像:   out/roms/oppo/cph2797/16.0.8.301_EX01/super/vendor_dlkm_a.img（28889088 B）
+    清单基线:   /etc/build.prop（期望 884 B / 837e8eb6ceb4，标签 u:object_r:vendor_configs_file:s0）
+    工具:       debugfs=/opt/homebrew/opt/e2fsprogs/sbin/debugfs，e2fsck=/opt/homebrew/opt/e2fsprogs/sbin/e2fsck，dump.erofs=/opt/homebrew/bin/dump.erofs
+    回收候选:   24 个基座测试模块（步骤 2 按 debugfs stat 探测后删除）
+    镜像产物:   out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_dlkm.img
+    注入模块:   cfg80211.ko（name=cfg80211，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，2044352 B）
+        依赖 rfkill
+    注入模块:   libarc4.ko（name=libarc4，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，11424 B）
+    注入模块:   mac80211.ko（name=mac80211，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，1973680 B）
+        依赖 cfg80211
+        依赖 libarc4
+    注入模块:   mac80211_hwsim.ko（name=mac80211_hwsim，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，275376 B）
+        依赖 cfg80211
+        依赖 mac80211
+    注入模块:   rfkill.ko（name=rfkill，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，63608 B）
+    注入模块:   virtio_console.ko（name=virtio_console，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，74096 B）
+    缓存配方:   dlkm-a994059f1033
+==> [步骤 1] 准备基底镜像
+    输入: out/roms/lineage/lineage-23.2/super/vendor_dlkm_a.img（15831040 B，lineage 虚机 vendor_dlkm）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/vendor_dlkm.work.img（每次从基底重拷，保留 mtime）
+[ok] 工作镜像就绪: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/vendor_dlkm.work.img（15831040 B）
+==> [步骤 2] 回收基座测试模块
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/vendor_dlkm.work.img，回收候选 24 个（/lib/modules）
+    输出: 释放基座测试模块占用的 inode 与块，供步骤 6 写入
+[ok] 回收 24 个基座模块: clk-gate_test.ko clk_kunit_helpers.ko clk-test.ko dev_addr_lists_test.ko ext4-inode-test.ko fat_test.ko hid-uclogic-test.ko iio-test-format.ko input_test.ko kheaders.ko kunit-example-test.ko kunit-test.ko kunit.ko lib_test.ko of_kunit_helpers.ko platform-test.ko regmap-kunit.ko regmap-ram.ko regmap-raw-ram.ko soc-topology-test.ko soc-utils-test.ko time_test.ko tipc.ko tipc_diag.ko
+==> [步骤 3] 收集内核模块产物
+    输入: out/kernel/lineage-23-6.12/modules
+    输出: 6 个 .ko（合计 4442536 B）注入 /lib/modules
+    cfg80211.ko: name=cfg80211，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，依赖 rfkill，alias 1 条
+    libarc4.ko: name=libarc4，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，依赖 无，alias 0 条
+    mac80211.ko: name=mac80211，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，依赖 cfg80211,libarc4，alias 0 条
+    mac80211_hwsim.ko: name=mac80211_hwsim，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，依赖 cfg80211,mac80211，alias 1 条
+    rfkill.ko: name=rfkill，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，依赖 无，alias 2 条
+    virtio_console.ko: name=virtio_console，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，依赖 无，alias 2 条
+[ok] 模块产物已就绪: 6 个 .ko
+==> [步骤 4] 生成模块索引
+    输入: 基座 /lib/modules（modules.dep 108 行，modules.alias 1690 行，modules.options 0 行）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/{modules.load、modules.dep、modules.alias、modules.options}
+    modules.load: 6 行
+    modules.dep: 6 行
+    modules.alias: 1693 行
+    modules.options: 1 行
+[ok] 索引已生成: load 6 项，dep 6 项，alias 1693 行，options 1 行
+==> [步骤 5] 覆盖 /etc/build.prop
+    输入: /opt/homebrew/bin/dump.erofs --path=/etc/build.prop --cat out/roms/oppo/cph2797/16.0.8.301_EX01/super/vendor_dlkm_a.img（期望 884 B / 837e8eb6ceb4）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/build.prop（length + sha256 双校验通过才用）
+[ok] 基线件已就位: /etc/build.prop（884 B / 837e8eb6ceb4，标签 u:object_r:vendor_configs_file:s0）
+==> [步骤 6] debugfs 写入并回读校验
+    输入: 11 个文件（模块 6 + 索引 4 + build.prop /etc/build.prop）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/vendor_dlkm.work.img（一次 debugfs -w -f 会话，62 条命令）
+    命令文件: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/debugfs.cmd
+[ok] 写入 11 个文件，回读 11/11 内容一致
+==> [步骤 7] e2fsck 修复一致性
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/vendor_dlkm.work.img
+    输出: 元数据一致、可挂载的 ext4 镜像
+[ok] e2fsck 通过（退出码 0 = 无需修复）
+==> [步骤 8] 发布镜像并写清单与校验和
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/vendor_dlkm.work.img（注入 11 个文件）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/img/{vendor_dlkm.img、vendor_dlkm-info.txt、vendor_dlkm-recipe.txt、SHA256SUMS}
+[ok] vendor_dlkm.img 构建完成: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_dlkm.img（15831040 字节，sha256 b25433c71c9d）
+[ok] vendor_dlkm 重打包完成: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_dlkm.img
+    注入 11 个文件，回读校验 11 个一致，回收 24 个基座模块
+    备注: 基座几乎写满（约剩 12 inode / 10 块），必须先回收 24 个 kunit/test/tipc 模块，才有空间写入新 .ko 与索引
+    备注: modules.dep 的行前缀沿用基座写法 /vendor_dlkm/lib/modules（与镜像内 /lib/modules 是同一棵树）
+    备注: modules.alias 的追加行写成基座同格式 alias <pattern> <模块名>；机型侧 Python 版直接写 .modinfo 原值，缺少模块名
+    备注: build.prop 覆盖依赖清单 vendor-dlkm.baseline-build-prop；清单未声明时保持基座 VirtIO 身份（步骤 5 跳过）
+    备注: 镜像走 debugfs 就地注入而非重建文件系统：UUID/features 与 lineage 基座一致，fstab 不必改
+    备注: 机型侧 vendor_dlkm_builder.py 与本阶段同路线；差别是这里把回收与写入拆成两次 debugfs 会话
+==> [2/4] build_patch  (09_build_patch)
+  + 进程内调用 build_patch
+==> 产物目录: out/devices/oppo/cph2797/16.0.8.301_EX01（out/devices）
+==> vendor 源镜像（07 产物）: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor.img（214536192 B，sha256 a80b9c1eaf38，产物目录缺省）
+==> vendor_dlkm 源镜像（08 产物）: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_dlkm.img（15831040 B，sha256 b25433c71c9d，产物目录缺省）
+==> odm 源镜像（06 产物）: out/devices/oppo/cph2797/16.0.8.301_EX01/img/odm.img（8388608 B，sha256 fba0475a17ea，产物目录缺省）
+    基线清单: manifest/oppo/cph2797/baselines/CPH2797_16.0.8.301_EX01_A11_full.json（patch.vendor-cil-rewrite 4 条）
+      #1 (allow ot_rcp self (netlink_route_socket (nlmsg)))
+      #2 (allowx ot_rcp self (nlmsg netlink_route_socket (0x16 0x1a 0x22 0x26 0x2a 0x2e 0x32 0x3a 0x3e 0x4a 0x4e 0x52 0x56 0x5a 0x5c 0x5e 0x60 0x66 0x6a 0x72 0x76 0x7a)))
+      #3 (allowx ot_rcp self (nlmsg netlink_route_socket (0x12)))
+      #4 (allow kernel_202504 vendor_firmware_file (system (firmware_load)))
+    输入: 缓存配方 patch-b92b22801b96（输入哈希）
+==> 阶段日志: out/devices/oppo/cph2797/16.0.8.301_EX01/img/patch-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    载体:        /dev/block/vdc -> /mnt/vendorpatch（first_stage_mount；名以 /mnt/vendor 为前缀命中 vold 白名单，避开强拆）
+    子树 vendor: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor.img（214536192 B，已存在，sha256 a80b9c1eaf38） -> /vendor
+    子树 dlkm:   out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_dlkm.img（15831040 B，已存在，sha256 b25433c71c9d） -> /vendor_dlkm
+    子树 odm:    out/devices/oppo/cph2797/16.0.8.301_EX01/img/odm.img（8388608 B，已存在，sha256 fba0475a17ea） -> /odm
+    形态修正:    /vendor/odm 软链接换真实空目录；/vendor/lib/modules 由 vendor_dlkm 复制实体
+    屏蔽落点:    odm/etc/selinux/odm_sepolicy.cil、odm/etc/selinux/precompiled_sepolicy（必须不存在，否则反噬引导）
+    工具:        debugfs=/opt/homebrew/opt/e2fsprogs/sbin/debugfs，e2fsck=/opt/homebrew/opt/e2fsprogs/sbin/e2fsck，mkfs.ext4=/opt/homebrew/opt/e2fsprogs/sbin/mkfs.ext4
+    镜像产物:    out/devices/oppo/cph2797/16.0.8.301_EX01/img/patch.img（384 MiB，ext4）
+    缓存配方:    patch-b92b22801b96
+==> [步骤 1] 解包三棵源树
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor.img（214536192 B）+ out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_dlkm.img（15831040 B）+ out/devices/oppo/cph2797/16.0.8.301_EX01/img/odm.img（8388608 B）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/{raw_vendor、raw_vendor_dlkm、raw_odm}（debugfs rdump）
+    vendor: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/raw_vendor（793 条目：文件 559 / 链接 199 / 目录 35）
+    vendor_dlkm: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/raw_vendor_dlkm（98 条目：文件 94 / 链接 0 / 目录 4）
+    odm: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/raw_odm（3 条目：文件 1 / 链接 0 / 目录 2）
+[ok] 源树已解包
+==> [步骤 2] 组装 patch 容器根
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/raw_vendor -> /vendor，out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/raw_vendor_dlkm -> /vendor_dlkm，out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/raw_odm -> /odm
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/root（= 运行态 /mnt/vendorpatch）
+    /vendor/lib/modules 符号链接（-> /vendor_dlkm/lib/modules）替换为真实目录（从 /vendor_dlkm/lib/modules 复制 90 条目）
+    屏蔽落点校验通过（2 项均不存在）
+    改写 /vendor/etc/selinux/vendor_sepolicy.cil（清单 4 条规则）
+      #1 命中 1 次 -> (allow ot_rcp self (netlink_route_socket (nlmsg_write)))
+      #2 命中 1 次 -> ;; cdh: permissionx nlmsg 内核与 plat 均不支持，已删除（ot_r…
+      #3 命中 1 次 -> ;; cdh: permissionx nlmsg 内核与 plat 均不支持，已删除（ot_r…
+      #4 命中 1 次 -> ;; cdh: system class 的 firmware_load 是 6.13+ 权限，内核 classma…
+[ok] 组装完成：987 条目（文件 744 / 链接 198 / 目录 45）
+==> [步骤 3] 逐路径从源镜像取元数据
+    输入: 988 条目（源 986 + 固定 2），源镜像 3 张
+    输出: 每个条目的 mode（含类型位）/ uid / gid / security.selinux
+    out/devices/oppo/cph2797/16.0.8.301_EX01/img/odm.img: 读回 4 条目
+    out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor.img: 读回 793 条目，[warn] 1 个缺 security.selinux（按 u:object_r:vendor_file:s0 兜底）
+    out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_dlkm.img: 读回 189 条目
+[ok] 元数据就绪：988 条目，标签 51 种
+==> [步骤 4] mkfs.ext4 -d 导入内容与权限位
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/root（988 条目，384 MiB）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/patch.work.img（98304 块 × 4096 B；uid/gid 留给步骤 5 回填）
+[ok] 文件系统已建立: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/patch.work.img（402653184 B）
+==> [步骤 5] debugfs 回填属主与标签并回读校验
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/patch.work.img（988 条目）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/patch-debugfs.cmd（3952 条命令：sif 2964 + ea_set 988，标签值文件 51 个）
+[ok] 回填 988 条目，回读 988/988 一致
+==> [步骤 6] e2fsck 修复一致性
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/patch.work.img
+    输出: 元数据一致、可挂载的 ext4 镜像
+[ok] e2fsck 通过（退出码 0 = 无需修复）
+==> [步骤 7] 发布镜像并写清单与校验和
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/patch.work.img（988 条目，384 MiB）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/img/{patch.img、patch-info.txt、patch-recipe.txt、SHA256SUMS}
+[ok] patch.img 发布完成: out/devices/oppo/cph2797/16.0.8.301_EX01/img/patch.img（402653184 字节，sha256 b9135408860a）
+[ok] patch.img 构建完成: out/devices/oppo/cph2797/16.0.8.301_EX01/img/patch.img
+    条目 988（源 986 + 固定 2），回读校验 988 一致，标签值文件 51 个
+    备注: patch.img 根是容器：/vendor、/vendor_dlkm、/odm 三棵并列子树分别来自 vendor.img / vendor_dlkm.img / odm.img
+    备注: mke2fs -d 不保留 uid/gid：属主与标签由步骤 5 的 debugfs 会话统一回填（标签用 -f 值文件带 NUL）
+    备注: 容器根、/vendor/odm、/vendor/lib/modules 的元数据固定，不取自源镜像
+    备注: /vendor/odm 在 vendor.img 里是绝对软链接，组装时换成真实空目录；odm 内容由 /odm 子树承载
+    备注: /vendor/lib/modules 在 vendor.img 里是软链接，组装时替换为真实目录并从 vendor_dlkm 复制；其子项元数据取自 vendor_dlkm.img
+    备注: odm 子树（odm.img）由 06_build_odm 产出，承载 odm/etc/build.prop 的 64 位 ABI 覆盖件
+    备注: 屏蔽落点（odm/etc/selinux/odm_sepolicy.cil）用 exists 校验；/system/bin/update_verifier 由内核 getname 直接返回 ENOENT，与镜像内容无关
+    备注: 镜像大小固定 384 MiB（--size 可调）；ext4 只按内容占用，剩余空间留白供 vdc 只读挂载
+    备注: /mnt/vendor 不再被 patch 覆盖，EFI/persist/shared/mi_ext 由 first_stage_init 的 tmpfs + 官方 fstab 挂载
+==> [3/4] pack_super  (10_pack_super)
+  + 进程内调用 pack_super
+==> 来源目录: out/roms/oppo/cph2797/16.0.8.301_EX01（命令行）
+==> 产物目录: out/devices/oppo/cph2797/16.0.8.301_EX01（out/devices）
+==> 阶段日志: out/devices/oppo/cph2797/16.0.8.301_EX01/img/super-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    模式:       案例 2/3 · 按分区镜像打包（system* / product / odm / vendor / vendor_dlkm / my_*）
+    来源目录:   out/roms/oppo/cph2797/16.0.8.301_EX01（动态分区镜像）
+    产物:       out/devices/oppo/cph2797/16.0.8.301_EX01/img/super.img（已存在 11.08 GiB）
+    工作镜像:   out/devices/oppo/cph2797/16.0.8.301_EX01/pack-super/super.work.img
+    模板:       out/devices/oppo/cph2797/16.0.8.301_EX01/img/super.img（复用 geometry/组表/块设备，liblp v10.2，组 default/cdh_dynamic_partitions_a/cdh_dynamic_partitions_b）
+    geometry:   max-size=65536 slot-count=2 block-size=4096（槽 4 份 × 64.0 KiB）
+    组:         default / cdh_dynamic_partitions_a / cdh_dynamic_partitions_b
+    分区识别:   system* / product / odm / odm_dlkm / vendor / vendor_dlkm / mi_ext / my_*（根目录优先，其次 super/；非动态分区一律不进 super）
+    容量:       11.08 GiB（沿用模板容量）
+    缓存配方:   记录为 super-b9d5dd862d15，实跑时重新计算比对
+    输入: 16 个源镜像共 11.07 GiB，按内容 SHA256 比对配方
+[skip] super.img 可复用: out/devices/oppo/cph2797/16.0.8.301_EX01/img/super.img
+    配方与 16 个源镜像内容均未变（super-b9d5dd862d15）
+==> [4/4] pack_vda  (11_pack_vda)
+  + 进程内调用 pack_vda
+==> 底盘: roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2 / LineageOS_on_arm64.utm/Data/vda.img（CDH_LINEAGE_ZIP）
+==> 阶段日志: out/dist/oppo/cph2797/16.0.8.301_EX01/vda-log.txt（边写边变，不在 SHA256SUMS 之内）
+==> [步骤 0] 解析计划
+    设备:       oppo/cph2797 16.0.8.301_EX01（id=cph2797_16.0.8.301_EX01）
+    来源镜像:   out/devices/oppo/cph2797/16.0.8.301_EX01/img（super 必需，boot/vendor_boot 可缺，patch 必需）
+    底盘:       roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2 / LineageOS_on_arm64.utm/Data/vda.img（zip）
+    盘集目录:   out/dist/oppo/cph2797/16.0.8.301_EX01（已有 vda.img 13.00 GiB）
+    分区表:     11 个分区、扇区 512 B（EFI/super/misc/persist/metadata/firmware/vendor_boot_a/vendor_boot_b/boot_a/boot_b/BIOS）
+    设备规格:   OPPO Find X9 / mt6993 1256×2760 @ 480 dpi，1 档内存，8 vCPU；verified-boot-hash fe049d35e450
+    data:       稀疏种子 110.27 GiB（data.qcow2）
+    grub:       固化固定 _a 槽 + 菜单零等待 + vbmeta 注入（幂等，缺 mtools 只告警）
+    缓存配方:   记录为 vda-a12c4572e3b0，实跑时重新计算比对
+    重建原因: 配方变化: vda-a12c4572e3b0 -> vda-87596e5eaac7
+==> [步骤 1] 校验来源镜像并生成 device.json
+    [ok] super.img 11.08 GiB（out/devices/oppo/cph2797/16.0.8.301_EX01/img/super.img）
+    [ok] boot.img         80.0 MiB（out/devices/oppo/cph2797/16.0.8.301_EX01/img/boot.img）
+    [ok] vendor_boot.img  21.4 MiB（out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_boot.img）
+    [ok] patch.img 384.0 MiB（out/devices/oppo/cph2797/16.0.8.301_EX01/img/patch.img）
+    [ok] device.json 内容已生成（id=cph2797_16.0.8.301_EX01，566 B）
+==> [步骤 2] 准备 vda 底盘
+    输入: roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2 / LineageOS_on_arm64.utm/Data/vda.img
+    [skip] 缓存 raw 可用: out/tmp/pack-vda/oppo/cph2797/16.0.8.301_EX01/vda.raw（13.00 GiB）
+    [skip] 复用 out/dist/oppo/cph2797/16.0.8.301_EX01/vda.img（底盘未变，仅原位刷新分区）
+==> [步骤 3] 替换 super 分区（安卓系统盘）
+    [ok] super           11.08 GiB @ 129.0 MiB（容量 12.00 GiB，余量 937.0 MiB），回读一致
+==> [步骤 4] 替换 boot / vendor_boot 分区（A/B 双槽）
+    [ok] boot_a          80.0 MiB @ 12.49 GiB（容量 80.0 MiB，余量 0 B），回读一致
+    [ok] boot_b          80.0 MiB @ 12.57 GiB（容量 80.0 MiB，余量 0 B），回读一致
+    [ok] vendor_boot_a   21.4 MiB @ 12.30 GiB（容量 100.0 MiB，余量 78.6 MiB），回读一致
+    [ok] vendor_boot_b   21.4 MiB @ 12.40 GiB（容量 100.0 MiB，余量 78.6 MiB），回读一致
+==> [步骤 5] 固化 EFI grub.cfg（固定 _a + 菜单零等待 + vbmeta + 设备 cmdline）
+    [..] 已含# CDH: 固定启动 A 槽
+    [..] 已含# CDH: 引导菜单零等待
+    [..] 已含# CDH: Remote KeyMint verified boot 参数
+    [warn] device.json 未登记 cmdline，跳过设备参数注入
+    [skip] grub.cfg 已含全部 CDH 固化
+==> [步骤 6] 发布盘集（patch.img / data.qcow2 / device.json）
+    [..] patch.img 内容已变，重新发布（384.0 MiB）
+    [ok] patch.img -> out/dist/oppo/cph2797/16.0.8.301_EX01/patch.img（384.0 MiB，sha256 b9135408860a）
+    [skip] data.qcow2 已就位（193.7 KiB）
+    [ok] device.json（id=cph2797_16.0.8.301_EX01）-> out/dist/oppo/cph2797/16.0.8.301_EX01/device.json
+    [ok] out/dist/oppo/cph2797/16.0.8.301_EX01/vda-info.txt / out/dist/oppo/cph2797/16.0.8.301_EX01/vda-recipe.txt
+    产物: out/dist/oppo/cph2797/16.0.8.301_EX01（vda.img 13.00 GiB，5 个分区已刷新）
+[ok] 已完成
+EXIT=0

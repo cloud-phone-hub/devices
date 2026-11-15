@@ -1,0 +1,32 @@
+{
+  "id": 27,
+  "official": "vivo",
+  "brand": "vivo",
+  "model": "vivo X200 Ultra",
+  "device": "PD2454",
+  "platform": "qcom",
+  "resolution": "1080x2400",
+  "inch": "72x160",
+  "density": 480,
+  "smp": 8,
+  "memory": [
+    8192
+  ],
+  "storage": [
+    128000,
+    256000
+  ],
+  "extra": {
+    "board": "sun",
+    "hostHvc": {
+      "host-hvc-adbkey": "hvc2",
+      "host-hvc-daemon": "hvc7",
+      "host-hvc-keymint": "hvc3",
+      "host-hvc-radio": "hvc4",
+      "host-hvc-wifi": "hvc9",
+      "host-hvc-wifi-data": "hvc10"
+    },
+    "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
+  },
+  "updatedAt": "2026-11-05T04:33:33Z"
+}

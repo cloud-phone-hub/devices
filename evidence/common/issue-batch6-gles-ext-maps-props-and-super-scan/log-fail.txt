@@ -1,0 +1,17 @@
+#232 改动前对比快照（Batch-5 口径 / 修复前）
+
+1. GLES 扩展（Batch-5 `display.md`）：
+   - `gles.extensions` 云机暴露 24 项桌面 GPU 独有扩展（如 `GL_OES_texture_float`、`GL_EXT_disjoint_timer_query`、`GL_KHR_no_error`、`GL_KHR_parallel_shader_compile`、`GL_EXT_depth_clamp`、`GL_EXT_draw_buffers` 等），而 `GL_RENDERER` 已伪装为 `Mali-G57 MC2`，形成“Mali 名 + 桌面扩展”强特征。
+   - 且此前 `cdh_gl_strings.c` 的 `cdh_stripped()` 仅支持前缀匹配，若直接配置 `GL_EXT_draw_buffers` 会误删真机原生的 `GL_EXT_draw_buffers_indexed`。
+
+2. GPU 设备路径与 `maps` 加载 SO（Batch-5 `native_env.md`）：
+   - `loadedVendorSo.gpuSo`（`24 对 20`）与 `loadedVendorSo.vendorSo`（`59 对 34`）存在仅云机多出的 SO 暴露：`libgpudataproducer.so`、`libpng.so`（以及 `identity.base_apk` `8 对 7`）。
+   - 普通应用视角下 `/dev/dri/renderD128`、`/dev/dri/card0` 与 `vendor_mesa_prop` / `vendor_minigbm_debug_prop` 未归一化为真机 MTK 节点。
+
+3. `dev.mnt.*` 与 `tmpfs` 内存页上限（Batch-5 `build_props.md` / `proc.md`）：
+   - `build_props.raw = 486`：仍余 `data/*` 与 `super` 逻辑分区（`dm-10..17`/`dm-58`）的 `dev.mnt.*` 差异。
+   - `proc` `capability = 18`：包含 13 条根 `tmpfs` `superOptions` 内存页上限微差（`tmpfs_limits=(3_863_628, 965_907)`，与真机 `3859852k` 不一致）。
+
+4. 风控脚本 `ultimate.super_scan` 失败与并发 `U-BINDER-TRANSACT`：
+   - `super_scan.js` 中 `H-57`（`rawPowerW`）与 `H-84`（`upSec`/`elapSec` 不可读）产生 JS `NaN`/`Infinity`，`Checker.kt` `JsJson.rec` 直接输出字面量 `NaN` 导致服务端 JSON 反序列化失败，触发 `ultimate.super_scan` 失败或超 5s 超时。
+   - 14 套 `ultimate.*` 同批次并发下发时（`run-00277`），`dev.checker` 内 14 个 Rhino 线程抢占调度使 `ultimate.hook_inject` 的 `U-BINDER-TRANSACT` 云机耗时录得 `ms=[10.2, 8.6, 52, 42.1, 26.4]`、`ratio=[0.843, 5.098, 4.127, 2.588]`（触发误报 `hit=true [deadly]`）。

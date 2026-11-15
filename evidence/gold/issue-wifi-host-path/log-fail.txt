@@ -1,0 +1,118 @@
+# 失败证据（修复前）
+
+采集环境：实例 5（gold_cn_OS3.0.10.0.VNQCNXM），guest Enforcing，CDH-A（直连）。
+时间：2026-10-27 23:00 ~ 2026-10-28 01:47。
+
+## 1. DNS 地理错配 → TCP 间歇超时
+
+宿主侧解析同一域名，上游不同则节点归属不同：
+
+```
+$ dig +short @8.8.8.8   www.baidu.com
+www.a.shifen.com.
+www.wshifen.com.
+103.235.46.96
+103.235.47.188          # 香港
+
+$ dig +short @223.5.5.5 www.baidu.com
+www.a.shifen.com.
+180.101.49.44
+180.101.51.73           # 江苏（CN）
+```
+
+guest 侧 60 轮 DNS+HTTP 采样（`out/tmp/wifi-evidence/pre-dns-diag.log`）：
+DNS **60/60** 成功，HTTP **52/60**：
+
+```
+9 00:24:15 dns=1 http='' err=''
+25 00:25:53 dns=1 http='' err='nc: Timeout'
+29 00:26:21 dns=1 http='' err='nc: Timeout'
+33 00:26:50 dns=1 http='' err='nc: Timeout'
+60 00:29:39 dns=1 http='' err=''
+DONE
+```
+
+180 轮长稳（`out/tmp/wifi-evidence/pre-dns-stab.log`）：**169/180**，失败轮次
+`baidu=` 全空（`captive` 全通过），即失败集中在外网出口而非本链路：
+
+```
+8 00:12:48 ip=1 gw=1 captive=HTTP/1.1 204 No Content baidu=
+13 00:13:50 ip=1 gw=1 captive=HTTP/1.1 204 No Content baidu=
+...
+161 00:43:41 ip=1 gw=1 captive=HTTP/1.1 204 No Content baidu=
+```
+
+## 2. 大流量下行永久卡死（链路丢帧）
+
+宿主 wifi-host-service.log：
+
+```
+2026/10/28 01:36:59 [link] 发送队列满，丢帧（累计 12200）：对端未排空
+```
+
+20MB 下载停在此处，guest `/data/local/tmp/dl.bin` 约 15KB。网关 TCP 无重传，
+seq 空洞之后连接永久等待。
+
+## 3. 握手/半关闭语义错误（流控补丁首版）
+
+```
+# 流控已按 maxInflight=64KB 生效，但缺 isn 复用与半关闭
+round bytes=65906 elapsed=10s     # 恰在 64KB 上限附近停住
+round bytes=206   elapsed=0s      # 只收到 HTTP 响应头即 EOF
+```
+
+同一次会话中 guest 侧 TCP 计数（`/proc/net/snmp`）显示 connect 成功、有入段，
+但应用 0 字节：`ActiveOpens +1, InSegs +8, OutSegs +9, wc -c = 0`。
+
+## 4. hvc10 静默（guest 停止发帧）
+
+```
+2026/10/28 01:42:38 [stat] rx=482(+0) tx=445 drop=0 reset=0 队列=0/1024
+2026/10/28 01:43:35 [link] 读帧失败: read unix ->/tmp/stage-007d12b0/wifi-data.sock: i/o timeout
+2026/10/28 01:43:35 [link] 已连接 /tmp/stage-007d12b0/wifi-data.sock
+2026/10/28 01:43:38 [stat] rx=529(+47) tx=488 drop=0 reset=1 队列=0/1024
+```
+
+期间 guest `ping 192.168.60.1` 100% 失败、`ip neigh` 为 `INCOMPLETE`；宿主看门狗
+重置连接后自行恢复（宿主 readLoop 未卡在帧处理：`rx` 冻结是因为 guest 一个字节
+都没写，长度头/帧体读超时）。
+
+## 5. 单次 captive 空响应（SYN-ACK 丢失）
+
+`out/tmp/wifi-evidence/post-dns-stab.log` 第 51 轮：
+
+```
+51 00:59:50 ip=1 gw=1 captive= baidu=HTTP/1.0 200 OK
+```
+
+## 6. guest→host 上行静默丢字节（seq 未校验）
+
+旧二进制 `90fb3ac9…`，guest 上传 20MB（源 `out/tmp/speed/payload.bin`，
+20971520 字节，sha256 `cd52d81e…`）到宿主 18081 接收器
+（`out/tmp/wifi-evidence/pre-ingest-upload.log`）：
+
+```
+connected from ('192.168.31.230', 63245)
+received 20968304            # 少 3216 字节
+# 落盘 up.bin sha256
+c9f9513e4d4cbf221f4b1bd65e9dd530bf12a4c3e26c0b9eeebdc8f9ea657960
+```
+
+同时段网关日志既无 `非法以太帧`、也无 `读帧失败/重同步/写出口失败`，
+`[stat] drop=0 reset=0`。即：guest→host 链路丢了一帧，而网关既不看 TCP seq
+也不校验，空洞之后的段照常写进上游流、ACK 还越过了空洞，guest 因此不会重传，
+上游文件就在无任何告警的情况下少了一段。
+
+## 7. captive 空响应（204 发完即 Closed，重传被忽略）
+
+`out/tmp/wifi-evidence/final-stab-120-newbin.log`（二进制 `55ca32e6…`，120 轮长稳）
+第 107 轮：
+
+```
+107 03:07:37 ip=1 gw=1 captive= baidu=HTTP/1.0 200 OK
+```
+
+同轮 baidu 正常、网关 `drop=0 reset=0`、无读写错误。代码审查：captive 连接在
+`respondCaptive` 里发完 204+FIN 立即 `stage=Closed`；一旦 204/FIN 在 hvc10 丢帧，
+guest 重传的请求段落在 Closed 状态，被 `handleTCP` 直接忽略，不会再有任何响应
+（guest 校验 5s 后超时）。修复后用 captive 专项复测（结果见 `log-pass.txt` 第 5 节）。

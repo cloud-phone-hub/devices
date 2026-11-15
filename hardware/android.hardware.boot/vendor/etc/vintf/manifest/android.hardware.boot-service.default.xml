@@ -1,0 +1,8 @@
+<manifest version="1.0" type="device">
+  <!-- engine/vendor 自研 boot HAL（虚拟 HAL）：单槽位，声明 IBootControl/default。 -->
+  <hal format="aidl">
+    <name>android.hardware.boot</name>
+    <version>1</version>
+    <fqname>IBootControl/default</fqname>
+  </hal>
+</manifest>

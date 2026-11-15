@@ -1,0 +1,356 @@
+# 改名后验证：8 个服务类型去 `cdh` 前缀
+
+采集时间：2026-10-29 16:43–16:53（重建产物 + 实例 39）
+关联：`solution.md`、`log-fail.txt`
+
+## A. 构建产物
+
+```sh
+cd engine/build
+../out/bin/cdh device build m22 --only build_vendor     # 07
+../out/bin/cdh device build m22 --from build_patch      # 09→10→11，16:44 完成
+```
+
+`engine/out/devices/flyme/m22/12.5.0.0A/img/SHA256SUMS` 相关行：
+
+```
+1824c88ec116effb4bf1d4f565c045846b7086f8698838c37ca3e4b9f93cb028  vendor.img
+c02a86866eb2f962ba667966cac815cca87d55818fd9305787b0208ba30ae0e7  patch.img
+3eb133bbc4afd07dc8e78a1654caccb72b9fbe0d21a7d62796aad8269bfbbaf9  super.img
+```
+
+- `patch.img` 402,653,184 B，recipe `patch-3a93fcd5dc95`，`layout:
+  root=container;vendor=subtree`，回读 873/873、fsck true；
+- `super.img` 10 阶段 `[skip]`（配方 `super-2340ae080a5b` 与 7 个源镜像内容均未变），
+  沿用 10-28 版本；
+- `vda.img` 13.00 GiB，recipe `vda-876908d30aec`（16:44:22）。
+
+## B. 装配树（`engine/out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/`）
+
+```sh
+V=engine/out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux
+grep -c 'cdh_[a-z0-9_]*_service' $V/vendor_sepolicy.cil          # 0
+grep -c '{{vers}}'               $V/vendor_sepolicy.cil          # 0
+grep -n  'hal_perf2_service'     $V/vendor_sepolicy.cil
+```
+
+模块层块（perf2）与机型层块（7 个类型）都在，行号：
+
+```
+4583: ;; cdh-patch-begin: vendor_sepolicy.cil@vendor.qti.hardware.perf2
+4609: (type hal_perf2_service)
+4611: (typeattributeset service_manager_type (hal_perf2_service))
+4614: (allow hal_sensors_default hal_perf2_service (service_manager (add find)))
+4617: (allow domain hal_perf2_service (service_manager (find)))
+4678: (type hal_servicetracker_service)
+4681: (type hal_meizu_charging_service)
+4684: (type hal_aw_light_service)
+4687: (type hal_awa_reality_service)
+4690: (type hal_idiag_service)
+4693: (type hal_realitytap_service)
+4696–4703: (allow system_server_202504 hal_*_service …) ×6 + (allow vendor_dpmd hal_idiag_service …)
+4712: (type hal_sensor_aux_service)
+4716: (allow system_server_202504 hal_sensor_aux_service (service_manager (find)))
+4718: (allow hal_sensors_default hal_sensor_aux_service (service_manager (add find)))
+```
+
+`{{vers}}` 已按 `plat_sepolicy_vers.txt=202504` 展开（`system_server_202504`），0 残留。
+装配树文件 4738 行，与 `patch/stage/root/vendor/etc/selinux/vendor_sepolicy.cil` 同行数、
+同行号（09 改写后仍为 4738 行）。
+
+## C. 设备侧（实例 39，`adb -s 127.0.0.1:5919`）
+
+### C.1 类型定义各 1 次，旧名 0 次
+
+```
+== 8 类型定义计数 ==
+hal_perf2_service                  type_def=1 ctl=6
+hal_servicetracker_service         type_def=1 ctl=4
+hal_meizu_charging_service         type_def=1 ctl=4
+hal_aw_light_service               type_def=1 ctl=4
+hal_awa_reality_service            type_def=1 ctl=4
+hal_idiag_service                  type_def=1 ctl=5
+hal_realitytap_service             type_def=1 ctl=4
+hal_sensor_aux_service             type_def=1 ctl=5
+== cdh 残留 ==
+cdh_*_service = 0
+```
+
+（`type_def` 是 `grep -c "(type <名>)"`，`ctl` 是该名在整个 CIL 里的总出现次数，
+含注释与 roletype/typeattributeset/allow。）
+
+### C.2 服务名标签（`/vendor/etc/selinux/vendor_service_contexts`）
+
+```
+59:# 类型名 hal_perf2_service 与 AOSP hal_*_service 同风格，不带项目缩写。
+60:vendor.qti.hardware.perf2.IPerf/default      u:object_r:hal_perf2_service:s0
+78:…IServicetracker/default     u:object_r:hal_servicetracker_service:s0
+79:…IMeizuCharging/default      u:object_r:hal_meizu_charging_service:s0
+80:…IAwLight/default            u:object_r:hal_aw_light_service:s0
+81:…IRealityTap/default         u:object_r:hal_awa_reality_service:s0
+82:…Idiag/default               u:object_r:hal_idiag_service:s0
+85:realitytap                    u:object_r:hal_realitytap_service:s0
+90:vendor.meizu.sensor_aux.ISensorAux/default  u:object_r:hal_sensor_aux_service:s0
+```
+
+该文件 `grep -c cdh_` = 0。
+
+### C.3 占位与旧名
+
+```
+{{vers}} = 0
+cdh_*_service = 0
+```
+
+## D. 静态编译（guest 内 `secilc`，按 init 同序）
+
+以 root 通道（`.tmp/root_shell.py`，`SPEC=m22_12.5.0.0A INDEX=39`）执行
+`.tmp/secilc_compile.sh` 编译**设备上生效的** `/vendor/etc/selinux/vendor_sepolicy.cil`：
+
+```
+sha256 /vendor/etc/selinux/vendor_sepolicy.cil
+  = f83e798e6a2417946d7e022ed0a4628e4b0c30ee2d3386c88e64e1403d4fbf34
+  （= engine/out/devices/flyme/m22/12.5.0.0A/patch/stage/root/vendor/etc/selinux/vendor_sepolicy.cil）
+
+plat_sepolicy_vers=202504 genfs_labels_version=202504
+secilc_rc=0
+-rw------- 1 root root 869026 /data/local/tmp/policy.new
+54d483a973d9ae73491779239772863636c86a040468f12ac55d99aa072d6ca2  /data/local/tmp/policy.new
+```
+
+注：`secilc` 是 `-rwx------ root root`，`adb shell`（uid 2000）执行会报
+`can't execute: Permission denied`；必须走 guest 的 root PTY 通道。
+
+## E. 运行期（实例 39，开机后 ≈8 min）
+
+```
+adb -s 127.0.0.1:5919 shell 'getprop sys.boot_completed; \
+  getprop init.svc.vendor.perf2-default; \
+  pidof vendor.qti.hardware.perf2-hal-service; \
+  service check vendor.qti.hardware.perf2.IPerf/default'
+1
+running
+513
+Service vendor.qti.hardware.perf2.IPerf/default: found
+```
+
+```
+service list | grep -E "perf2|realitytap"
+267	realitytap: [android.os.vibrator.IRealityTapManagerService]
+335	vendor.qti.hardware.perf2.IPerf/default: [vendor.qti.hardware.perf2.IPerf]
+```
+
+服务名一个没变 —— 本轮只改 SELinux 标签，客户端 `getService` 的字符串与 VINTF 名
+都保持原样。
+
+设备：`ro.build.version.release` = 16；日志窗口 `up 2 days, 7 min`（guest uptime 从
+底盘继承，不代表本实例运行时长）。
+
+## F. avc 统计（记录级口径，沿用 #58）
+
+日志快照：`out/core/daemon/runtime/m22_12.5.0.0A/39/qemu.log`
+12,514,453 B / 90,373 行 / sha256 `371edc6f…` / kernel ts 0.0–478.4 s。
+
+统计脚本（按**完整记录**而不是按行：从 kernel `[...][  Tn] SELinux:` 与 logd
+`… I auditd  :` 两个上报前缀起找 `avc: denied { … } scontext=… tcontext=…`）：
+
+```python
+import re, collections
+raw = open(log, 'rb').read().decode('utf-8', 'replace')
+KER = re.compile(r"\[\s*\d+\.\d+\]\[\s*T\d+\]\s*SELinux:\s*")
+AUD = re.compile(r"\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}\s+\d+\s+\d+\s+[IWEF] auditd\s*:\s*")
+NF  = re.compile(r"avc:\s+denied\s+\{([^}]*)\}\s+for\s+(.*?)\s+scontext=(\S+)\s+"
+                 r"tcontext=(\S+)\s+tclass=(\S+)(?:\s+permissive=(\d))?")
+names = (...8 个 hal_*_service...)
+recs = [NF.search(raw[m.end():m.end()+700]) for m in list(KER.finditer(raw)) + list(AUD.finditer(raw))]
+```
+
+输出：
+
+```
+结构完整 avc 记录 5379 (ker 379 / aud 5000)
+8 类型命中: hal_servicetracker_service 3, hal_meizu_charging_service 3, hal_aw_light_service 3,
+           hal_awa_reality_service 3, hal_idiag_service 3, hal_realitytap_service 3,
+           hal_sensor_aux_service 3        （合计 21）
+pid: 8292 8293 8294 8295 8296 8297 8298
+scontext: u:r:pioneer:s0 (21)     permissive: 1 (21)
+perf2 关键字记录: 0
+cdh_*_service 记录: 0
+Compiling SELinux policy 1 | InitFatalReboot 0 | Failed to resolve 0
+```
+
+判读：
+
+1. **perf2 相关 avc 记录 0**（对照实例 37 的 1653 条 `cdh_perf2_service`），改名没有
+   把 #58 修好的授权改坏。
+2. 21 条命中全是 `scontext=u:r:pioneer:s0` + `permissive=1` + pid 连续（8292–8298）：
+   就是我本轮验证时自己跑的 `service check <name>`（uid 2000 shell 即 pioneer 域），
+   一个名字一条，再被 kernel 与 logd 双通道各记一次。pioneer 是 permissive 域，
+   只记不拦；**system_server 侧 0 条**，说明 `add/find` 授权面没被打破。
+3. `Compiling SELinux policy` 1 次、`InitFatalReboot` 0、`Failed to resolve` 0：
+   策略在 boot 期一次编译通过，没有 duplicate type。
+
+## G. `cdh` 在 vendor 分区的其它残留（第一阶段当时的清点；第二阶段已清，见 H/I 段）
+
+```sh
+grep -n cdh_ engine/out/devices/flyme/m22/12.5.0.0A/vendor/etc/selinux/vendor_sepolicy.cil
+```
+
+```
+4455 (type cdh_wifi_scan_param) … 4462 (allow shell cdh_wifi_scan_param …)      # wifi 模块层片段，7 行
+4471 ;; 类型名沿用 … cdh_wifi_data。   4472 (type cdh_wifi_data) … 4479 …
+4735 ;; … 见 vendor/etc/init/cdh_frp_symlink.rc                              # 注释引用文件名
+```
+
+共 14 行，全部是 wifi 两类型与 1 条注释，无服务类型。
+
+文件名/服务名维度（非 SELinux 类型，第二阶段已改）：
+
+```
+/etc/cdh_{battery,gnss,light,media,sensors,thermal,vibrator,wifi}.xml
+/etc/init/cdh_frp_symlink.rc
+rc 服务名：vendor.cdh_gnss / vendor.cdh_gold_camera / vendor.cdh_gold_radio / vendor.cdh_gold_wifi
+内核 printk 前缀：cdh_redirect（实例 39 日志内 337 次）
+```
+
+**订正**：`cdh_redirect` 早前被写成「运行期属性」，实测
+`getprop | grep -c cdh_redirect` = **0**；它是内核侧 printk 前缀/函数名
+（`cdh_redirect_vendor_path()`、`CONFIG_CDH_PATH_REDIRECT`），只能用
+`dmesg` / 串口日志清点。
+
+marker 锚点：`vendor_sepolicy.cil` 23 处、`vendor_service_contexts` 7 处
+（`cdh-patch-begin/end`，07 的常量，本轮按约定不动）。
+
+## H. 第二阶段：wifi 类型 / rc 服务名 / 配置文件名（构建与静态）
+
+采集时间：2026-10-29 17:00–17:40（两轮 07→11，最终实例 42）
+
+### H.1 改动面
+
+```
+SELinux 类型   cdh_wifi_scan_param -> wifi_scan_param
+               cdh_wifi_data       -> wifi_hvc_data
+rc 服务名      vendor.cdh_gnss / vendor.cdh_gold_wifi / vendor.cdh_gold_radio /
+               vendor.cdh_gold_camera -> vendor.{gnss,wifi,radio,camera}-vhal
+               cdh_daemon -> vendor.service-daemon
+配置文件       cdh_<模块>.xml -> <模块>_config.xml（m22 8 + gold 9）
+rc 文件名      cdh_frp_symlink.rc -> frp_symlink.rc
+env            CDH_<模块>_XML -> <模块>_CONFIG_XML（9 个）
+```
+
+引用同步涉及 27 个文本文件（9 cpp + 3 h + 8 rc + 5 xml + 2 README）：
+
+```sh
+cd engine
+grep -rl '_config\.xml' manifest/flyme/m22 manifest/xiaomi/gold vendor/hardware \
+  --include='*.xml' --include='*.rc' --include='*.c' --include='*.h' \
+  --include='*.cpp' --include='*.rs' --include='*.md' --include='*.go' \
+  | grep -v /target/ | wc -l          # 27
+grep -rn 'CDH_[A-Z_]*_XML' manifest vendor/hardware | grep -v /target/ | wc -l   # 0
+```
+
+### H.2 构建
+
+```sh
+cd engine/build
+../out/bin/cdh device build m22 --only build_vendor     # 07，RC=0（/tmp/build07-4.log）
+../out/bin/cdh device build m22 --from build_patch      # 09→11，RC=0（/tmp/build09-4.log）
+```
+
+`engine/out/devices/flyme/m22/12.5.0.0A/img/SHA256SUMS`：
+
+```
+e482c559cfa193cb528392ace31b42a43430f69d88ba11c56e1a2f7c54c763c4  vendor.img   206,680,064 B  recipe vendor-cccf0f8c247a
+3cdf4b16b5c7f1c36d32eede35de0f1c4bccf08542424bbef94655e315926c77  patch.img    402,653,184 B  recipe patch-d7ebb01534d8
+3eb133bbc4afd07dc8e78a1654caccb72b9fbe0d21a7d62796aad8269bfbbaf9  super.img    9.39 GiB       recipe super-2340ae080a5b（10 阶段 skip）
+```
+
+`vda.img` 13.00 GiB，recipe `vda-79ec3f6cf770`（17:33）。
+
+### H.3 设备侧静态（实例 42）
+
+```
+adb -s 127.0.0.1:5919 shell
+
+ls /vendor/etc/*_config.xml | wc -l        -> 9   （8 个自研 + 底座 audio_effects_config.xml）
+ls /vendor/etc/cdh_*            | wc -l    -> 0
+ls /vendor/etc/init/cdh_*       | wc -l    -> 0
+grep -c cdh_ /vendor/etc/selinux/vendor_sepolicy.cil        -> 0
+grep -c cdh_ /vendor/etc/selinux/vendor_file_contexts       -> 0
+grep -c wifi_hvc_data  /vendor/etc/selinux/vendor_sepolicy.cil  -> 7
+grep -c wifi_scan_param /vendor/etc/selinux/vendor_sepolicy.cil -> 8
+grep -c cdh  /vendor/etc/selinux/vendor_sepolicy.cil        -> 39（全部是注释，见 §7.7/遗留）
+```
+
+## I. 第二阶段：运行期与 avc
+
+### I.1 服务与属性（实例 42，`sys.boot_completed=1`）
+
+```
+vendor.service-daemon    running
+vendor.gnss-vhal         running
+vendor.wifi-vhal         running
+vendor.radio-vhal        running
+vendor.camera-vhal       running
+vendor.perf2-default     running
+
+getprop | grep -c cdh    -> 0
+```
+
+### I.2 标签
+
+```
+ls -Z /dev/hvc10                                             -> u:object_r:wifi_hvc_data:s0 /dev/hvc10
+ls -Z /sys/module/mac80211_hwsim/parameters/scan_profile     -> u:object_r:wifi_scan_param:s0 …
+```
+
+### I.3 配置真被读（功能侧闭环）
+
+```
+dumpsys thermalservice | grep 'Temperature{'  -> CPU/GPU/NPU/SOC/TPU/SKIN/BATTERY/POWER_AMPLIFIER 8 个温区
+                                                 与 thermal_config.xml 的 name= 逐条一致；HAL Ready: true
+dumpsys battery | grep -E 'voltage|temperature' -> voltage: 4388 / temperature: 290
+dumpsys sensorservice | grep 'Total'            -> Total 29 h/w sensors（sensors_config.xml 29 条）
+grep -n wifi_config.h /vendor/etc/init/*wifi*.rc -> 11:# …（见引擎 src/wifi_config.h）。  # 注释已同步
+```
+
+（实例 39/41 上同样口径曾验过：battery 4390/290、vibrator `vibratorInfoLoadSuccessful
+= true`、thermal 16 条 `Temperature{`。）
+
+### I.4 avc（记录级口径）
+
+实例 42 快照：`out/core/daemon/runtime/m22_12.5.0.0A/42/qemu.log`
+4,347,391 B / 29,410 行 / sha256 `002badad0465bf1f…`（17:36 抓取，kernel ts 0–约 60 s）。
+
+```
+结构完整 avc 记录 731 (ker 81 / aud 722)
+10 个新名命中 0
+含 perf2 的记录 0
+含 cdh_ 的记录 0
+含 cdh 的记录 5
+   add_name   u:r:pioneer:s0 -> u:object_r:vendor_data_file:s0 dir  permissive=1 name=cdh   x2
+   create     u:r:pioneer:s0 -> u:object_r:vendor_data_file:s0 dir  permissive=1 name=cdh   x1
+   write open u:r:pioneer:s0 -> u:object_r:vendor_data_file:s0 file permissive=1 path=/data/vendor/cdh/boot_identity  x2
+Compiling SELinux policy 1 | InitFatalReboot 0 | Failed to resolve 0
+duplicate definition of service 0
+SELinux: cdh: pioneer (type 2605) forced permissive   x1
+cdh_redirect …                                        x185（内核 printk，非属性）
+```
+
+对照实例 41（上一轮镜像，快照 12,043,373 B / 83,789 行 / sha256 `4e73cdb2…`）：
+4651 条 avc 中 10 个新名命中 **2** 条，即我自己 `ls -Z /dev/hvc10` 的 `getattr`
+（`comm="ls"`、pioneer、permissive=1），其余口径同上。
+
+判读：以上 5/6 条 `cdh` 相关记录都是**同一个运行期数据目录**
+`/data/vendor/cdh/boot_identity`（3 个唯一事件 audit 100/101/103 的双通道副本），
+来源 `vendor/hardware/android.service.daemon/src/rust/src/boardid.rs` 的
+`CACHE_DIR`/`CACHE_FILE`，与 SELinux 类型名/文件名/服务名均无关。
+
+### I.5 复现命令
+
+```sh
+python3 .tmp/avc_stats.py out/core/daemon/runtime/m22_12.5.0.0A/42/qemu.log
+```
+
+（`.tmp/avc_stats.py` 是记录级统计脚本：从 kernel `[<ts>][  T<n>] SELinux:` 与 logd
+`… I auditd  :` 两个前缀起抽完整 avc 记录，按记录内容归属。）

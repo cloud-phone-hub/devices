@@ -1,0 +1,8 @@
+<manifest version="1.0" type="device">
+  <!-- engine/vendor 自研 usb HAL（虚拟 HAL）：无控制器，声明 IUsb/default。 -->
+  <hal format="aidl">
+    <name>android.hardware.usb</name>
+    <version>3</version>
+    <fqname>IUsb/default</fqname>
+  </hal>
+</manifest>

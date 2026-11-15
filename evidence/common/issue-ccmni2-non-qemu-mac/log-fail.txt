@@ -1,0 +1,5 @@
+# 修复前：gold 15-OS3.0.11.0.VNQCNXM 云机（4503ac70a1c898f3-cloud）aligner.network_full
+# 提取来源：engine/out/tmp/p0_fail_extract.txt
+
+=== P0-5 fail (network interfaces ccmni2) ===
+  {"addresses": [{"host": "fe80::5054:ff:fe12:3458%ccmni2", "loopback": false}, {"host": "fec0::5054:ff:fe12:3458", "loopback": false}], "displayName": "ccmni2", "loopback": false, "mac": null, "mtu": 1400, "name": "ccmni2", "pointToPoint": false, "up": true, "virtual": false}

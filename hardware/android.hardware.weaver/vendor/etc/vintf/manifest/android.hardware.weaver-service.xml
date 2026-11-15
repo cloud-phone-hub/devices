@@ -1,0 +1,8 @@
+<manifest version="1.0" type="device">
+  <!-- engine/vendor 自研 weaver HAL（虚拟 HAL）：无 TEE，声明 IWeaver/default。 -->
+  <hal format="aidl">
+    <name>android.hardware.weaver</name>
+    <version>2</version>
+    <fqname>IWeaver/default</fqname>
+  </hal>
+</manifest>

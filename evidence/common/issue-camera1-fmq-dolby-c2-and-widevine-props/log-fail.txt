@@ -1,0 +1,81 @@
+# 证据 #178 修复前失败取证日志（log-fail.txt）
+# 对照运行：
+#   真机（fmvwkrheonugvgjb / ec519c7d513a3ad3）：run-00222（32/32 passed）
+#   云机（127.0.0.1:5911 / df809591a4e085ae-cloud）：run-00223（22/32 passed，E1/E2/E3 均 FAIL）
+
+=== 1. E1_camera2AndCamera1Connectable 失败现场 ===
+[device-checker run-00223 aligner_xiaomi_gold.camera_media_drm_audio]
+E1_camera2AndCamera1Connectable: false
+camera2Ids: ["0", "1"]
+camera1Count: 2
+camera1OpenOk: false
+camera1OpenDetail: "open(0) failed: RuntimeException: Fail to connect to camera service"
+camera1PreviewSizesCount: 0
+
+[云机 logcat / qemu.log 硬证据]
+04-19 22:13:02.418   542   542 E cdh_note13_camera_provider: open(/dev/ashmem) for cdh-camera-request-fmq failed: 13
+04-19 22:13:02.418   542   542 E cdh_note13_camera_provider: open(/dev/ashmem) for cdh-camera-result-fmq failed: 13
+[  214.881204] type=1400 audit(1776607982.416:89): avc:  denied  { open } for  pid=542 comm="android.hardwar" path="/dev/ashmem" dev="tmpfs" ino=118 scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:ashmem_device:s0 tclass=chr_file permissive=0
+04-19 22:13:02.419   626  1912 E Camera3-Device: Camera 0: initialize: Could not open camera session: Function not implemented (-38)
+04-19 22:13:02.420   626  1912 E Camera2ClientBase: initializeImpl: Camera 0: unable to initialize device: Function not implemented (-38)
+04-19 22:13:02.421   341   341 E SELinux : avc:  denied  { find } for pid=626 uid=1047 name=vendor.mediatek.hardware.camera.atms.IATMs/default scontext=u:r:cameraserver:s0 tcontext=u:object_r:mtk_hal_atms_service:s0 tclass=service_manager permissive=0
+
+=== 2. E2_mediaCodecsHasMtkAndDolbyNoV4l2Leak 失败现场 ===
+[device-checker run-00223 aligner_xiaomi_gold.camera_media_drm_audio]
+E2_mediaCodecsHasMtkAndDolbyNoV4l2Leak: false
+totalCodecCount: 74
+mtkC2Count: 20
+dolbyC2Count: 0
+v4l2LeakCount: 3
+v4l2LeakNames: ["c2.v4l2.avc.decoder", "c2.v4l2.hevc.decoder", "c2.v4l2.avc.encoder"]
+
+[真机 run-00222 对照]
+E2_mediaCodecsHasMtkAndDolbyNoV4l2Leak: true
+totalCodecCount: 73
+mtkC2Count: 20
+dolbyC2Count: 2
+dolbyC2Sample: ["c2.dolby.ac4.decoder", "c2.dolby.eac3.decoder"]
+v4l2LeakCount: 0
+v4l2LeakNames: []
+
+[云机 qemu.log 硬证据]
+04-19 22:09:44.112   341   341 E SELinux : avc:  denied  { find } for pid=666 uid=1013 name=android.hardware.media.c2.IComponentStore/default9 scontext=u:r:mediaserver:s0 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0
+$ adb -s 127.0.0.1:5911 shell grep -E 'media\.c2|IComponentStore' /vendor/etc/selinux/vendor_service_contexts /system/etc/selinux/plat_service_contexts
+/system/etc/selinux/plat_service_contexts:android.hardware.media.c2.IComponentStore/default                    u:object_r:hal_codec2_service:s0
+/system/etc/selinux/plat_service_contexts:android.hardware.media.c2.IComponentStore/default1                   u:object_r:hal_codec2_service:s0
+/system/etc/selinux/plat_service_contexts:android.hardware.media.c2.IComponentStore/default2                   u:object_r:hal_codec2_service:s0
+/system/etc/selinux/plat_service_contexts:android.hardware.media.c2.IComponentStore/software                   u:object_r:hal_codec2_service:s0
+# （/vendor/etc/selinux/vendor_service_contexts 缺失 default9 -> hal_codec2_service 映射）
+
+=== 3. E3_widevineVendorAndPropertiesAuthentic 失败现场 ===
+[device-checker run-00223 aligner_xiaomi_gold.camera_media_drm_audio]
+E3_widevineVendorAndPropertiesAuthentic: false
+widevineSupported: true
+widevineVendor: "com.google.widevine.software.drm"
+widevineVersion: "16"
+widevineDescription: "Widevine CDM"
+widevineSecurityLevel: "L1"
+widevineSystemId: "0"
+widevineAlgorithms: ""
+widevineMaxHdcpLevel: "Unsecured"
+widevineHdcpLevel: "Unsecured"
+widevineMaxNumberOfSessions: "30"
+widevineOemCryptoApiVersion: null
+widevineUsageReportingSupport: ""
+widevineDeviceUniqueIdHexLen: 64
+
+[真机 run-00222 对照]
+E3_widevineVendorAndPropertiesAuthentic: true
+widevineSupported: true
+widevineVendor: "com.google.android.widevine"
+widevineVersion: "19.0.1@AV1A.240725.002"
+widevineDescription: "Widevine CDM"
+widevineSecurityLevel: "L3"
+widevineSystemId: "33098"
+widevineAlgorithms: "AES/CBC/NoPadding,HmacSHA256"
+widevineMaxHdcpLevel: "Unprotected"
+widevineHdcpLevel: "Unprotected"
+widevineMaxNumberOfSessions: "16"
+widevineOemCryptoApiVersion: "18"
+widevineUsageReportingSupport: "True"
+widevineDeviceUniqueIdHexLen: 64

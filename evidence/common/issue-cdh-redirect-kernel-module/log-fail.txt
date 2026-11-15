@@ -1,0 +1,120 @@
+# log-fail —— cdh_redirect 模块化的三个失败态（oriole / lineage-21 6.1）
+
+三个失败态按出现的先后排列，都是把重定向搬出内核后**必须先跨过**的坑。
+每段的「来源」标明是构建输出、实例 qemu.log 还是 guest 命令回显。
+
+---
+
+## ① 实例 21：vendor_ramdisk 里根本没有模块
+
+来源：`../out/bin/cdh device build oriole --manifest ap2a --from build_modules` 输出
+（构建 EXIT=0，但 05 没有任何「重定向模块」行）：
+
+```
+==> [5/9] build_vendor_boot  (05_build_vendor_boot)
+==> fstab: out/devices/google/oriole/AP2A.240905.003.F1/vendor_boot/fstab.gs101 （缓存复用）
+fragment0 platform: 4281414 B -> 4281639 B（删 fstab 3 项，注入 first_stage_ramdisk/system/etc/fstab.oriole）
+    缓存配方:   vboot-c042c1641afa
+```
+
+实例 21 起机（`out/core/daemon/runtime/oriole_AP2A.240905.003.F1/21/qemu.log`）：
+
+```
+[    0.145996][    T1] init: Unable to open /lib/modules, skipping module loading.
+```
+
+`grep -ac "cdh_redirect" 21/qemu.log` = 0，起机停在 early-init，`sys.boot_completed` 永远拿不到。
+
+根因：`engine/build/05_build_vendor_boot/modules.go` 里 `resolveRedirectInjection()` 是新加的，
+但 `out/bin/cdh` 还是 22:24 之前的旧二进制（没重编），于是整段注入逻辑根本没被调用，
+构建不报错、只在配方号上留痕（`vboot-c042c1641afa` 里没有 `redirect:<sha>`）。
+
+修法：`cd engine/build && go build -o ../../out/bin/cdh .` 后重跑 05：
+
+```
+==> 重定向模块: out/kernel/lineage-21-6.1/modules/cdh_redirect.ko（41216 B，内核 6.1.138-4k-cdh，规则 manifest/google/oriole/kernel/cdh_redirect.rules）
+fragment0 platform: 4281414 B -> 4296025 B（删 fstab 3 项，注入 first_stage_ramdisk/system/etc/fstab.oriole，
+    注入模块 6.1.138-4k-cdh、…/cdh_redirect.ko、…/modules.load、…/modules.dep、cdh_redirect.rules）
+```
+
+旁证（当时的错误自检方法，别再用）：`strings -a out/bin/cdh | grep -c "重定向模块"` 新旧二进制
+都是 0 —— `strings` 把非 ASCII 当不可打印，中文串永远搜不到。
+
+---
+
+## ② 只挂 proc_pid_readlink 时，`readlink` 拿不到改写
+
+来源：guest 命令回显（实例 22 之前那一轮，模块只有 proc 层）+ 同一窗口的 qemu.log。
+`/proc/self/cwd` 已经是 `/vendor/lib64`：
+
+```
+# cd /vendor/lib64; readlink /proc/self/cwd
+/mnt/vendorpatch/vendor/lib64
+# cd /vendor/lib64; readlink /proc/self/fd/3      ← 换个 proc 魔术链接反而正常
+/vendor/lib64
+```
+
+同一时刻 dmesg 里 proc 层明明改写成功（路径从 `/mnt/vendorpatch/...` 变回 `/vendor/...`），
+而 `readlink(2)` 的返回值仍是 29 字节的物理串。
+
+根因：`readlink(2)` 的公共出口是 `vfs_readlink()`（`fs/namei.c`），proc 层只是它下面的一层；
+`do_readlinkat()` 在 `fs/stat.c`，两个编译单元不会内联 —— 只挂 `proc_pid_readlink`。
+（`/proc/self/fd/N` 能正常是因为它的 inode ops 与 cwd/exe 相同，恰好在同一层。）
+
+修法：补挂 `kretprobe vfs_readlink`，两层共用一套改写逻辑，第二层读回已是虚拟串 → 幂等跳过。
+
+---
+
+## ③ 两层都挂了、日志只有「进入」没有「读回」
+
+来源：`out/core/daemon/runtime/oriole_AP2A.240905.003.F1/22/qemu.log:36496-36506`
+（`cdh_debug=1`，`cd /vendor_dlkm/lib; readlink /proc/self/cwd`）：
+
+```
+[   72.292396][ T7697] cdh_redirect: vfs_readlink 进入 pid=7697 comm=readlink buf=b4000070b28b0380 buflen=64
+[   72.292644][ T7697] cdh_redirect: proc_pid_readlink 进入 pid=7697 comm=readlink buf=b4000070b28b0380 buflen=64
+[   72.293707][ T7698] cdh_redirect: vfs_readlink 进入 pid=7698 comm=dmesg buf=0000007ff2401920 buflen=4096
+[   72.294066][ T7699] cdh_redirect: vfs_readlink 进入 pid=7699 comm=grep buf=0000007ffda06870 buflen=4096
+```
+
+guest 输出仍是物理路径：
+
+```
+# cd /vendor_dlkm/lib; readlink /proc/self/cwd
+/mnt/vendorpatch/vendor_dlkm/lib
+```
+
+注意对比：同一个入口、同一个调用里 `ls -l` 是**成功**的（缓冲区无标签）：
+
+```
+[  105.597503] cdh_redirect: proc_pid_readlink pid=7964(ls) ret=32 buflen=4095 读回=/mnt/vendorpatch/vendor_dlkm/lib
+[  105.597781] cdh_redirect: proc_pid_readlink pid=7964 写回=/vendor_dlkm/lib len=16 err=0
+[  105.598109] cdh_redirect: vfs_readlink pid=7964(ls) ret=16 buflen=4095 读回=/vendor_dlkm/lib
+# /system/bin/ls -l /proc/self/cwd
+lrwxrwxrwx 1 root root 0 2026-11-02 01:04 /proc/self/cwd -> /vendor_dlkm/lib
+```
+
+根因（`arch/arm64/include/asm/uaccess.h:38`）：
+
+```c
+static inline int access_ok(const void __user *addr, unsigned long size)
+{
+	/*
+	 * Asynchronous I/O running in a kernel thread does not have the
+	 * TIF_TAGGED_ADDR flag of the process owning the mm, so always untag
+	 * the user address before checking.
+	 */
+	if (IS_ENABLED(CONFIG_ARM64_TAGGED_ADDR_ABI) &&
+	    (current->flags & PF_KTHREAD || test_thread_flag(TIF_TAGGED_ADDR)))
+		addr = untagged_addr(addr);
+	return likely(__access_ok(addr, size));
+}
+```
+
+toybox 的 `readlink` applet 走 `xreadlinkat()`，缓冲区是 `malloc(64)` 出来的，指针带 MTE 标签
+（`b4000070b28b0380`）；`access_ok()` 只在 `PF_KTHREAD` / `TIF_TAGGED_ADDR` 时剥标签，
+普通进程的带标签指针被判成越界 → `copy_from_user_nofault()` 返回 `-EFAULT` → 该次改写被
+静默跳过（当时的代码只 `atomic64_inc(skipped)`，不打日志，于是「进入有、读回无」）。
+
+修法：`hook/readlink.c` 入口 `cdh_untag_user()` → `untagged_addr()`（非 arm64 原样返回），
+并在 `copy_from_user_nofault` 失败时打印 `读回失败 buf=… len=…`。修好后见 `log-pass.txt`。

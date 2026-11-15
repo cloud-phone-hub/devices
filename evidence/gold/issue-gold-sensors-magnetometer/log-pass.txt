@@ -1,0 +1,36 @@
+# 修后现场：云机与真机 37 行传感器清单一字不差（gold）
+
+## ① 修后 device-checker run-00039（18:10）云机 hardware.sensor
+云机 sensor 总数: 29
+  1 lsm6dso_acc  InvenSense  android.sensor.accelerometer
+  2 mmc5603      Memsic      android.sensor.magnetic_field      # ← 已由 qmc6308/QST 改成真机值
+  3 ORIENTATION  MTK         android.sensor.orientation
+（29 个 sensor 与真机 29 个逐字段一致）
+
+## ② 两侧 dumpsys sensorservice 清单直接 diff（USB 真机 vs 云机）
+$ for d in 4lmbvom7gifm5lbu 127.0.0.1:5911; do
+    adb -s $d shell "dumpsys sensorservice" \
+      | grep -E '^0x[0-9a-f]{8}\) ' | grep -v 'active-count' > out/tmp/sensor-<real|cloud>-list.txt
+  done
+$ wc -l out/tmp/sensor-real-list.txt out/tmp/sensor-cloud-list.txt
+      37 out/tmp/sensor-real-list.txt
+      37 out/tmp/sensor-cloud-list.txt
+      74 total
+$ diff out/tmp/sensor-real-list.txt out/tmp/sensor-cloud-list.txt && echo "OK: 传感器清单逐字节一致"
+OK: 传感器清单逐字节一致
+
+## ③ 关键行（真机 = 云机）
+0x00000001) lsm6dso_acc        | InvenSense | ver: 1 | type: android.sensor.accelerometer(1) | flags: 0x00000000
+0x00000002) mmc5603            | Memsic     | ver: 1 | type: android.sensor.magnetic_field(2) | flags: 0x00000000
+0x00000003) ORIENTATION        | MTK        | ver: 1 | type: android.sensor.orientation(3)
+0x00000004) lsm6dso_gyro       | InvenSense | ver: 1 | type: android.sensor.gyroscope(4)
+0x00000005) tcs3701_l         | AMS        | ver: 1 | type: android.sensor.light(5)
+0x00000008) tcs3701_p         | AMS        | ver: 1 | type: android.sensor.proximity(8)
+… 共 29 个 sensor（含 9 个 wake-up 版）、37 行摘录全部一致
+
+## ④ 构建与发布
+engine/manifest/xiaomi/gold/vendor/etc/sensors_config.xml handle=2 → name=mmc5603 / vendor=Memsic
+→ 07 build-vendor（vendor.img 内含 /vendor/etc/sensors_config.xml）
+→ 09 build-patch → 11 pack-vda → engine/out/dist/xiaomi/gold/OS3.0.10.0.VNQCNXM/
+   patch.img sha256 前缀 304f3a9c9bd2，vda-recipe.txt = vda-d44b6b713de9
+重启实例 2 后 dumpsys 直接生效（清单由 vendor 配置驱动，不需要重编 HAL）。

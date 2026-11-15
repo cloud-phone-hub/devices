@@ -1,0 +1,14 @@
+# #71 log-fail —— 改动前：机型层 early 版与模块版两份并存
+# 采集：2026-10-30 flyme/m22（07 run3 产物）
+
+--- 步骤 4 连写两件 logcat rc ---
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/cph_logcat_dump.rc（0644）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/cph_logcat_dump_early.rc（0644）
+
+--- 装配树两件 ---
+369 B  cph_logcat_dump.rc       （模块 vendor 树，service logcat_dump）
+922 B  cph_logcat_dump_early.rc （机型静态树，service logcat_dump_early）
+
+--- 条目 / 镜像 ---
+==> debugfs 写入 670 个条目的元数据（权限 / 归属 / 时间 / SELinux）
+[ok] vendor.img 构建完成: out/devices/flyme/m22/12.5.0.0A/img/vendor.img（206704640 字节）

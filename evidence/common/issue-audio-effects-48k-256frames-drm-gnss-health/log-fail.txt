@@ -1,0 +1,590 @@
+=== [修复前] #188 Audio 23 音效/48kHz/256帧/流音量、DRM ClearKey、GNSS 与 Health 电流 ===
+
+1. dev.test_media 云机 vs 真机:
+CLOUD:
+{
+  "runId": "run-00006",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "allC2Count": 46,
+    "allTotal": 84,
+    "c2": [
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.dolby.eac3.decoder",
+        "types": [
+          "audio/ac3",
+          "audio/eac3",
+          "audio/eac3-joc"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.dolby.ac4.decoder",
+        "types": [
+          "audio/ac4"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.android.aac.decoder",
+        "types": [
+          "audio/mp4a-latm"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "encoder",
+        "name": "c2.android.aac.encoder",
+        "types": [
+          "audio/mp4a-latm"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.android.amrnb.decoder",
+        "types": [
+          "audio/3gpp"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "encoder",
+        "name": "c2.android.amrnb.encoder",
+        "types": [
+          "audio/3gpp"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.android.amrwb.decoder",
+        "types": [
+          "audio/amr-wb"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "encoder",
+        "name": "c2.android.amrwb.encoder",
+        "types": [
+          "audio/amr-wb"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.android.flac.decoder",
+        "types": [
+          "audio/flac"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "encoder",
+        "name": "c2.android.flac.encoder",
+        "types": [
+          "audio/flac"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.android.g711.alaw.decoder",
+        "types": [
+          "audio/g711-alaw"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.android.g711.mlaw.decoder",
+        "types": [
+          "audio/g711-mlaw"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.android.mp3.decoder",
+        "types": [
+          "audio/mpeg"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.android.opus.decoder",
+        "types": [
+          "audio/opus"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "encoder",
+        "name": "c2.and
+
+REAL:
+{
+  "runId": "run-00006",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "allC2Count": 46,
+    "allTotal": 84,
+    "c2": [
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.dolby.ac4.decoder",
+        "types": [
+          "audio/ac4"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.dolby.eac3.decoder",
+        "types": [
+          "audio/ac3",
+          "audio/eac3",
+          "audio/eac3-joc"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.android.aac.decoder",
+        "types": [
+          "audio/mp4a-latm"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "encoder",
+        "name": "c2.android.aac.encoder",
+        "types": [
+          "audio/mp4a-latm"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.android.amrnb.decoder",
+        "types": [
+          "audio/3gpp"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "encoder",
+        "name": "c2.android.amrnb.encoder",
+        "types": [
+          "audio/3gpp"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.android.amrwb.decoder",
+        "types": [
+          "audio/amr-wb"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "encoder",
+        "name": "c2.android.amrwb.encoder",
+        "types": [
+          "audio/amr-wb"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.android.flac.decoder",
+        "types": [
+          "audio/flac"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "encoder",
+        "name": "c2.android.flac.encoder",
+        "types": [
+          "audio/flac"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.android.g711.alaw.decoder",
+        "types": [
+          "audio/g711-alaw"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.android.g711.mlaw.decoder",
+        "types": [
+          "audio/g711-mlaw"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.android.mp3.decoder",
+        "types": [
+          "audio/mpeg"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "decoder",
+        "name": "c2.android.opus.decoder",
+        "types": [
+          "audio/opus"
+        ]
+      },
+      {
+        "aliases": null,
+        "domain": "audio",
+        "kind": "encoder",
+        "name": "c2.and
+
+2. id.drm_uuid 云机 vs 真机:
+CLOUD:
+{
+  "runId": "run-00010",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "ok": true,
+    "s_2_0": "[a4c31406fb572516a754d73da3cd0ef14f695a2c5e764bd42b53bbddbacc010e]"
+  }
+}
+REAL:
+{
+  "runId": "run-00010",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "ok": true,
+    "s_2_0": "[fe8eba40cab64e02c8980425f983fe02145ddd752182b014a8476b24eb4749eb]"
+  }
+}
+
+3. hardware.battery 云机 vs 真机:
+CLOUD:
+{
+  "runId": "run-00008",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "battery": {
+      "android.os.extra.CHARGING_STATUS": 0,
+      "android.os.extra.CYCLE_COUNT": 753,
+      "battery_low": false,
+      "charge_counter": 4958,
+      "health": 2,
+      "icon-small": 17303933,
+      "invalid_charger": 0,
+      "level": 100,
+      "max_charging_current": 0,
+      "max_charging_voltage": 0,
+      "metadata": "1AIAAEJOREwSAAAACgAAAHQAZQBjAGgAbgBvAGwAbwBnAHkAAAAAAAAAAAAHAAAATABpAC0AcABv\nAGwAeQAAAAoAAABpAGMAbwBuAC0AcwBtAGEAbABsAAAAAAABAAAAfQkIARQAAABtAGEAeABfAGMA\naABhAHIAZwBpAG4AZwBfAHYAbwBsAHQAYQBnAGUAAAAAAAEAAAAAAAAABgAAAGgAZQBhAGwAdABo\nAAAAAAABAAAAAgAAABQAAABtAGEAeABfAGMAaABhAHIAZwBpAG4AZwBfAGMAdQByAHIAZQBuAHQA\nAAAAAAEAAAAAAAAABgAAAHMAdABhAHQAdQBzAAAAAAABAAAABQAAAAcAAABwAGwAdQBnAGcAZQBk\nAAAAAQAAAAEAAAAHAAAAcAByAGUAcwBlAG4AdAAAAAkAAAABAAAAIAAAAGEAbgBkAHIAbwBpAGQA\nLgBvAHMALgBlAHgAdAByAGEALgBDAEgAQQBSAEcASQBOAEcAXwBTAFQAQQBUAFUAUwAAAAAAAQAA\nAAAAAAADAAAAcwBlAHEAAAABAAAAYAAAAA4AAABjAGgAYQByAGcAZQBfAGMAbwB1AG4AdABlAHIA\nAAAAAAEAAABeEwAABQAAAGwAZQB2AGUAbAAAAAEAAABkAAAABQAAAHMAYwBhAGwAZQAAAAEAAABk\nAAAACwAAAHQAZQBtAHAAZQByAGEAdAB1AHIAZQAAAAEAAABWAQAABwAAAHYAbwBsAHQAYQBnAGUA\nAAABAAAAHxEAABwAAABhAG4AZAByAG8AaQBkAC4AbwBzAC4AZQB4AHQAcgBhAC4AQwBZAEMATABF\nAF8AQwBPAFUATgBUAAAAAAABAAAA8QIAAA8AAABpAG4AdgBhAGwAaQBkAF8AYwBoAGEAcgBnAGUA\ncgAAAAEAAAAAAAAACwAAAGIAYQB0AHQAZQByAHkAXwBsAG8AdwAAAAkAAAAAAAAA\n",
+      "plugged": 1,
+      "present": true,
+      "scale": 100,
+      "seq": 96,
+      "status": 5,
+      "technology": "Li-poly",
+      "temperature": 342,
+      "voltage": 4383
+    },
+    "ok": true
+  }
+}
+REAL:
+{
+  "runId": "run-00008",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "battery": {
+      "android.os.extra.CHARGING_STATUS": 0,
+      "android.os.extra.CYCLE_COUNT": 642,
+      "battery_low": false,
+      "charge_counter": 4967,
+      "health": 2,
+      "icon-small": 17303933,
+      "invalid_charger": 0,
+      "level": 100,
+      "max_charging_current": 0,
+      "max_charging_voltage": 0,
+      "metadata": "1AIAAEJOREwSAAAACgAAAHQAZQBjAGgAbgBvAGwAbwBnAHkAAAAAAAAAAAAHAAAATABpAC0AcABv\nAGwAeQAAAAoAAABpAGMAbwBuAC0AcwBtAGEAbABsAAAAAAABAAAAfQkIARQAAABtAGEAeABfAGMA\naABhAHIAZwBpAG4AZwBfAHYAbwBsAHQAYQBnAGUAAAAAAAEAAAAAAAAABgAAAGgAZQBhAGwAdABo\nAAAAAAABAAAAAgAAABQAAABtAGEAeABfAGMAaABhAHIAZwBpAG4AZwBfAGMAdQByAHIAZQBuAHQA\nAAAAAAEAAAAAAAAABgAAAHMAdABhAHQAdQBzAAAAAAABAAAABQAAAAcAAABwAGwAdQBnAGcAZQBk\nAAAAAQAAAAEAAAAHAAAAcAByAGUAcwBlAG4AdAAAAAkAAAABAAAAIAAAAGEAbgBkAHIAbwBpAGQA\nLgBvAHMALgBlAHgAdAByAGEALgBDAEgAQQBSAEcASQBOAEcAXwBTAFQAQQBUAFUAUwAAAAAAAQAA\nAAAAAAADAAAAcwBlAHEAAAABAAAAUggDAA4AAABjAGgAYQByAGcAZQBfAGMAbwB1AG4AdABlAHIA\nAAAAAAEAAABnEwAABQAAAGwAZQB2AGUAbAAAAAEAAABkAAAABQAAAHMAYwBhAGwAZQAAAAEAAABk\nAAAACwAAAHQAZQBtAHAAZQByAGEAdAB1AHIAZQAAAAEAAAAYAQAABwAAAHYAbwBsAHQAYQBnAGUA\nAAABAAAADREAABwAAABhAG4AZAByAG8AaQBkAC4AbwBzAC4AZQB4AHQAcgBhAC4AQwBZAEMATABF\nAF8AQwBPAFUATgBUAAAAAAABAAAAggIAAA8AAABpAG4AdgBhAGwAaQBkAF8AYwBoAGEAcgBnAGUA\ncgAAAAEAAAAAAAAACwAAAGIAYQB0AHQAZQByAHkAXwBsAG8AdwAAAAkAAAAAAAAA\n",
+      "plugged": 1,
+      "present": true,
+      "scale": 100,
+      "seq": 198738,
+      "status": 5,
+      "technology": "Li-poly",
+      "temperature": 280,
+      "voltage": 4365
+    },
+    "ok": true
+  }
+}
+
+4. ultimate.location_network (GNSS 段) 云机 vs 真机:
+CLOUD:
+{
+  "runId": "run-00002",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "category": "location_network",
+    "checks": [
+      {
+        "evidence": [],
+        "hit": false,
+        "id": "H-65",
+        "name": "模拟位置(Mock Provider)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "gpsAccuracyM": null
+        },
+        "hit": false,
+        "id": "H-67",
+        "name": "GPS 精度异常高(<1m 疑似注入)",
+        "risk": "info"
+      },
+      {
+        "evidence": {
+          "distanceKm": null
+        },
+        "hit": false,
+        "id": "H-68",
+        "name": "GPS 与网络定位相距过远(>100km)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "count": 0
+        },
+        "hit": false,
+        "id": "H-66",
+        "name": "定位样本全同(多 provider lastKnown>3 点)",
+        "risk": "deadly"
+      },
+      {
+        "evidence": {
+          "marks": [],
+          "upIfaces": [
+            "dummy0",
+            "wlan0",
+            "lo",
+            "ccmni2",
+            "ccmni0"
+          ]
+        },
+        "hit": false,
+        "id": "H-79",
+        "name": "VPN 检测(能力/NetworkInfo/网卡 三路)",
+        "risk": "deadly"
+      },
+      {
+        "evidence": {
+          "marks": [],
+          "note": "launch NetworkDetector：System.getProperty(http(s).proxyHost/Port) + Settings.Global.http_proxy"
+        },
+        "hit": false,
+        "id": "U-PROXY-GLOBAL",
+        "name": "系统 HTTP/HTTPS 代理被设置",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "err": null,
+          "note": "launch NetworkDetector：别名以 user: 开头即用户安装 CA，常被用于中间人抓包",
+          "totalCa": 145,
+          "userCa": 0
+        },
+        "hit": false,
+        "id": "U-USER-CA",
+        "name": "AndroidCAStore 存在用户自签根证书",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "bssid": "74:39:89:0b:24:63",
+          "rssi": -33,
+          "ssid": "\"TP-LINK_2464\""
+        },
+        "hit": false,
+        "id": "H-78",
+        "name": "WiFi 信息脱敏判定",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "count": 2,
+          "sample": "CellInfoLte:{mRegistered=YES mTimeStamp=83775841705ns mCellConnectionStatus=1 CellIdentityLte:{ mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国"
+        },
+        "hit": false,
+        "id": "H-70",
+        "name": "基站列表采集(取证)",
+        "risk": "none"
+      },
+      {
+        "evidence": "",
+        "hit": false,
+        "id": "H-74",
+        "name": "定位提供者通路异常(getP
+REAL:
+{
+  "runId": "run-00002",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "category": "location_network",
+    "checks": [
+      {
+        "evidence": [],
+        "hit": false,
+        "id": "H-65",
+        "name": "模拟位置(Mock Provider)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "gpsAccuracyM": null
+        },
+        "hit": false,
+        "id": "H-67",
+        "name": "GPS 精度异常高(<1m 疑似注入)",
+        "risk": "info"
+      },
+      {
+        "evidence": {
+          "distanceKm": null
+        },
+        "hit": false,
+        "id": "H-68",
+        "name": "GPS 与网络定位相距过远(>100km)",
+        "risk": "warn"
+      },
+      {
+        "evidence": {
+          "count": 2
+        },
+        "hit": false,
+        "id": "H-66",
+        "name": "定位样本全同(多 provider lastKnown>3 点)",
+        "risk": "deadly"
+      },
+      {
+        "evidence": {
+          "marks": [],
+          "upIfaces": [
+            "dummy0",
+            "wlan0",
+            "lo",
+            "ccmni0"
+          ]
+        },
+        "hit": false,
+        "id": "H-79",
+        "name": "VPN 检测(能力/NetworkInfo/网卡 三路)",
+        "risk": "deadly"
+      },
+      {
+        "evidence": {
+          "marks": [],
+          "note": "launch NetworkDetector：System.getProperty(http(s).proxyHost/Port) + Settings.Global.http_proxy"
+        },
+        "hit": false,
+        "id": "U-PROXY-GLOBAL",
+        "name": "系统 HTTP/HTTPS 代理被设置",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "err": null,
+          "note": "launch NetworkDetector：别名以 user: 开头即用户安装 CA，常被用于中间人抓包",
+          "totalCa": 145,
+          "userCa": 0
+        },
+        "hit": false,
+        "id": "U-USER-CA",
+        "name": "AndroidCAStore 存在用户自签根证书",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "bssid": "74:39:89:0b:24:64",
+          "rssi": -57,
+          "ssid": "\"TP-LINK_JIJIA_1\""
+        },
+        "hit": false,
+        "id": "H-78",
+        "name": "WiFi 信息脱敏判定",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "count": 9,
+          "sample": "CellInfoNr:{ mRegistered=YES mTimeStamp=729088131020626ns mCellConnectionStatus=1 CellIdentityNr:{ mMcc = 460 mMnc = 11 mAlphaLong = CHN-CT mAlphaShort = CT mAd"
+        },
+        "hit": false,
+        "id": "H-70",
+        "name": "基站列表采集(取证)",
+        "risk": "none"
+      },
+      {
+        "evidence": "",
+        "hit": false,
+        "id": "H-74",
+        "name": "定位提供者通路异常(getProviders 报错)",
+    
+
+5. dumpsys audio 流音量范围对比:
+CLOUD: STREAM_MUSIC Min=0 Max=25, STREAM_ALARM Min=1(w/o perm:3) Max=7
+REAL:  STREAM_MUSIC Min=0 Max=15(super->17), STREAM_ALARM Min=1(w/o perm:6) Max=15

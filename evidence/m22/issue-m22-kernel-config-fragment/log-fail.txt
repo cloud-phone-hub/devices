@@ -1,0 +1,25 @@
+# 失败现场：默认片段被 m22 硬套，两项配置不报错地失效
+# 采集时间：2026-10-28（改动前产物 = 旧构建卷 cdh-kernel-lineage-23-6.12-cdh-eef9316b0b57）
+# 运行目录：/Volumes/work/cloud-phone-hub/engine
+
+$ grep -rn "CDH_PATH_REDIRECT" kernels/lineage-23-6.12 --include=Kconfig --include=Makefile
+（无输出：lineage-23.2 源码里没有这个符号）
+
+$ docker run --rm -v cdh-kernel-lineage-23-6.12-cdh-eef9316b0b57:/src \
+    ghcr.io/feicong/droid-ddk:android16-6.12 bash -c \
+    "grep -E '^CONFIG_(VIRTIO_CONSOLE|CDH_PIONEER_PERMISSIVE|CDH_PATH_REDIRECT)' /src/out/.config; \
+     echo '--- 片段原文 ---'; grep -E 'VIRTIO_CONSOLE|CDH_PATH_REDIRECT' /src/.cdh/kernel.config"
+CONFIG_VIRTIO_CONSOLE=m
+CONFIG_CDH_PIONEER_PERMISSIVE=y
+--- 片段原文 ---
+CONFIG_CDH_PATH_REDIRECT=y
+CONFIG_VIRTIO_CONSOLE=y
+
+# 对照结论：
+#   1) 片段写 CONFIG_VIRTIO_CONSOLE=y（注释还写着"内建，不再作为模块"），
+#      产物是 =m —— containerScript 在 merge_config 之后执行了
+#      scripts/config --module VIRTIO_CONSOLE；
+#   2) 片段写 CONFIG_CDH_PATH_REDIRECT=y，产物里整条不存在 ——
+#      olddefconfig 对源码不认识的符号静默丢弃，不告警。
+#   3) 旧 02 日志首行（改动前）：配置片段: build/02_build_kernel/lineage-kernel.config（本阶段默认）
+#   4) 旧配方：lineage-23-6.12-cdh-eef9316b0b57

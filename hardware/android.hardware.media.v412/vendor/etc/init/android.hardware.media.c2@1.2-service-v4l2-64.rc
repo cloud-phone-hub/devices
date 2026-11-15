@@ -1,0 +1,21 @@
+# v4l2_codec2 的 Codec2 store（AIDL）。开机由 init 按 lazy HAL 语义按需拉起，
+# 客户端请求 android.hardware.media.c2.IComponentStore/default 时启动。
+#
+# 三点与 AOSP 原版不同，都是本云机基线决定的：
+#   1) seclabel 显式落 mediacodec 域：vendor 基线里没有 hal_codec2_default 到
+#      mediacodec 的自动域转换（mtk / dolby 两个 c2 store 也是这么落的）；
+#   2) 二进制的文件标签由模块自带的 sepolicy/vendor_file_contexts 补成
+#      mediacodec_exec（基底表里只有 c2-default / omx / dolby 三条同族规则），
+#      否则 init exec 时它是 vendor_file、非 exec_type，直接 127；
+#   3) 运行期库（libcodec2_* / libchrome / libsfplugin_ccodec_utils 等）随模块构建
+#      一起落进 /vendor/lib64：vendor 进程的 linker namespace 看不到 system 与
+#      media-swcodec APEX 里的私有库。
+service vendor.media.c2-v4l2-hal-1-2 /vendor/bin/hw/android.hardware.media.c2@1.2-service-v4l2-64
+    class hal
+    interface aidl android.hardware.media.c2.IComponentStore/default
+    user media
+    group mediadrm drmrpc
+    ioprio rt 4
+    task_profiles ProcessCapacityHigh
+    setenv MESA_GLSL_CACHE_DISABLE 1
+    seclabel u:r:mediacodec:s0

@@ -1,0 +1,23 @@
+<!-- Remote KeyMint 的实际能力清单（engine/vendor/hardware 线）。
+
+     IKeyMintDevice 声明 v3：tag r36 上 security/keymint 的 aidl_api 最高冻结版就是 v3
+     （无 v4，见 internal/profile 的 keymint HAL 表），而 Cuttlefish base 的
+     security/keymint/aidl/default 样例声明的是 v4 —— 以真实实现为准取 v3。
+
+     不声明 IRemotelyProvisionedComponent：远程证明（RKP）链路尚未在 host secure_env
+     侧启用，与设备侧 devices/xiaomi/gold-15/build/vendor/source/android.hardware.keymint
+     的 build.py（patch_vintf 删除 RKP 块）保持一致；本进程实际仍会注册该实例，
+     只是不对 framework 声明。
+
+     本文件只管 keymint 自己这一族：进程另外注册的 ISecureClock / ISharedSecret 在 AOSP
+     里各有专属 fragment（android.hardware.security.secureclock-service.xml /
+     sharedsecret-service.xml，与 keymint-service.xml 平级），由基座 vendor 原样提供，
+     这里重复声明会构成同一 fqname 的双重声明。设备侧 config/keymint.json 的
+     interfaces 三组是「进程注册什么」的清单，不驱动本文件（build.py 不读该字段）。 -->
+<manifest version="1.0" type="device">
+    <hal format="aidl">
+        <name>android.hardware.security.keymint</name>
+        <version>3</version>
+        <fqname>IKeyMintDevice/default</fqname>
+    </hal>
+</manifest>

@@ -1,0 +1,8 @@
+# engine 自研 neuralnetworks AIDL HAL：默认注册 android.hardware.neuralnetworks.IDevice/default。
+# 可选传参指定实例名（如 mtk-neuron_shim 注册 IDevice/mtk-neuron_shim）。
+service vendor.neuralnetworks-default /vendor/bin/hw/android.hardware.neuralnetworks-service
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_neuralnetworks_default:s0
+    interface aidl android.hardware.neuralnetworks.IDevice/default

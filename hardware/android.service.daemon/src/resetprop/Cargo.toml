@@ -1,0 +1,9 @@
+[package]
+name = "resetprop"
+description = "System property manipulation (Magisk-style resetprop), FFI over C++ core"
+links = "resetprop"
+
+[dependencies]
+
+[build-dependencies]
+cc = "1"

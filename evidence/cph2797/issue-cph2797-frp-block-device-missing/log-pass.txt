@@ -1,0 +1,67 @@
+== 修复后：FRP 三件入树，PersistentDataBlockService 不再超时，system_server 越过 phase 500（2026-11-04）==
+
+清单件（engine/manifest/oppo/cph2797/）：
+  vendor/etc/init/frp_symlink.rc     30 行  md5 db37f9734b044a02704bf450631ac670
+  vendor/etc/ueventd.mt6993.rc       19 行  md5 39e75f90987c73779f1948276d176004
+  sepolicy/vendor_sepolicy.cil       55 行  md5 508b685f52da08fea577c84c1fbedab8
+
+
+## 1. 构建留痕（engine/out/tmp/cph2797-build3.log）
+
+359:    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/frp_symlink.rc（0644）
+363:    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/ueventd.mt6993.rc（0644）
+440:    保留 ueventd.mt6993.rc（已由上层提供），不改写
+        ← 07 步骤 6 的 placeVendorUeventdRC 见同名件已在位就让位，接管件里那句
+          `import /vendor/etc/ueventd.virt.rc` 必须自己写（本文件第 17 行）
+SELinux 补丁行：机型层 manifest/oppo/cph2797/sepolicy（1 个文件）
+
+产物盘集：out/dist/oppo/cph2797/16.0.8.301_EX01
+          patch.img sha256 9a82ee2261c7（vda.img 13.00 GiB，5 个分区已刷新）
+
+
+## 2. 从最终 vendor.img 读回（不是读装配树）
+
+$ D=/opt/homebrew/opt/e2fsprogs/sbin/debugfs
+$ V=out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor.img
+
+$ $D -R "cat /etc/init/frp_symlink.rc" $V | grep -nE "on post|mkdir|symlink"
+28:on post-fs-data
+29:    mkdir /dev/block/by-name 0755 root root
+30:    symlink /dev/block/vda3 /dev/block/by-name/frp
+
+$ $D -R "cat /etc/ueventd.mt6993.rc" $V | grep -nE "import|vda3"
+17:import /vendor/etc/ueventd.virt.rc
+19:/dev/block/vda3    0660    root    system
+
+$ $D -R "cat /etc/selinux/vendor_sepolicy.cil" $V | grep -n "system_server.*misc_block_device"
+4665:(allow system_server_202504 misc_block_device_202504 (blk_file (open read write append getattr ioctl map lock)))
+（`{{vers}}` 已由构建期替换成 202504；整份 cil 4666 行）
+
+
+## 3. 运行态实测（实例 3，2026-11-04）
+
+$ adb -s 127.0.0.1:5911 shell 'ls -l /dev/block/by-name/frp'
+lrwxrwxrwx 1 root root 15 1969-12-31 19:00 /dev/block/by-name/frp -> /dev/block/vda3
+
+$ grep -c 'PersistentDataBlockService init timeout' engine/out/tmp/cph2797-pass-qemu.log
+0        （run1 = 18）
+$ grep -c "FATAL EXCEPTION IN SYSTEM PROCESS" engine/out/tmp/cph2797-pass-qemu.log
+0
+
+判定：
+$ python3 core/host/daemon/tools/boot_check.py cph2797_16.0.8.301_EX01 --timeout 600 \
+    --png engine/out/tmp/cph2797-desktop3.png
+[shot] engine/out/tmp/cph2797-desktop3.png 1264x2760 bpp=32 平均亮度=4.3 峰值=255
+[pass] 引导完成（日志 17248 行）+ 截图非黑（平均亮度=4.3 峰值=255）
+qemu.log:16390  [  110.993517] init: processing action (sys.boot_completed=1)
+
+旁证（FRP 修好、GPU 收口尚未修的那一轮 = 实例 2）：
+$ grep -c 'PersistentDataBlockService init timeout' engine/out/tmp/cph2797-logcat-crash2.txt
+0        ← 三件单独就能关掉这条；该轮改卡在 libEGL 断言（137 次），见
+           engine/evidence/common/issue-odm-prop-source-unpack-dir/（#154）
+
+
+## 4. 连带效果
+
+system_server 越过 phase 500 后，引导才走得到渲染侧，本轮因此暴露出 #154；
+反过来 #154 修好后 boot_completed 才真正置位。两条是同一台机的串联堵点，不是同一件事。

@@ -1,0 +1,17 @@
+{
+  "id": 21,
+  "buildId": "13-BP2A.250605.031.A3-20260823",
+  "deviceId": 16,
+  "configId": 16,
+  "osVersion": "13-BP2A.250605.031.A3-20260823",
+  "buildDate": "20260823",
+  "securityPatch": "2026-04-05",
+  "factoryTgz": "itel-A6612L.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 itel-A6612L.zip (vendor/build.prop) 自动生成。",
+    "osVersion": "13-BP2A.250605.031.A3-20260823"
+  },
+  "updatedAt": "2026-11-06 02:47:41"
+}

@@ -1,0 +1,75 @@
+# CPH2797 起机卡点的验证记录（运行态，实例 6）
+# 采集：2026-10-30，通道：.tmp/root_shell.py（hvc7 guest root PTY，pioneer permissive）
+#        + adb -s 127.0.0.1:5911 + out/core/daemon/runtime/cph2797_16.0.8.301_EX01/6/qemu.log
+
+## 验证 1：遮蔽 /system_ext/lib64/librenderengineextimpl.so → SF 不再 abort
+# 1) 造一个非 ELF 的假 .so，bind mount 覆盖（源：/data/local/tmp/bad.so，20 B）
+:/ # mount --bind /data/local/tmp/bad.so /system_ext/lib64/librenderengineextimpl.so
+RC=0
+-rw-r--r-- 1 root root 20 1969-12-31 19:15 /system_ext/lib64/librenderengineextimpl.so
+not-a-shared-object
+:/ # setprop ctl.restart surfaceflinger
+RESTARTED
+
+# 2) 40 s 后：SF 起来了且不再退出
+12-31 19:06:01.811 11522 11522 I SurfaceFlinger: SurfaceFlinger is starting
+12-31 19:06:01.862 11522 11522 I SurfaceFlinger: Set power mode: Normal
+init.svc.surfaceflinger = running
+init.svc.bootanim       = running
+pidof surfaceflinger    = 6088
+
+# 3) 标记点（qemu.log 第 1276072 行）之后 100 s 的逐项计数
+tail -n +1276072 qemu.log | grep -c "input buffer not gpu readable"  →  0
+tail -n +1276072 qemu.log | grep -c "TemporaryPrecompile"            →  0
+# 对照（同一文件标记点之前）：412 次 / 621 次
+# 结论：OPPO 的 primeCache 预编译路径整体消失，SF 稳定出画（VNC 抓到「Find X」开机动画）。
+
+## 验证 2：audioserver 卡点的精确调用栈（debuggerd -b，audioserver sysTid=13687）
+    #07 pc 0000000000016f4c  /system/lib64/libbinder_ndk.so (AServiceManager_waitForService+92)
+    #08 pc 0000000000145ab0  /system/lib64/libaudiohal@aidl.so
+                             (android::getServiceInstance<aidl::android::hardware::audio::core::IModule>(std::string const&)+304)
+    #09 pc 0000000000140d3c  /system/lib64/libaudiohal@aidl.so
+                             (android::DevicesFactoryHalAidl::openDevice(char const*, sp<DeviceHalInterface>*)+220)
+    #10 pc 00000000000daad0  /system/bin/audioserver (android::AudioFlinger::loadHwModule_ll(char const*)+528)
+    #11 pc 00000000000c2f6c  /system/bin/audioserver (android::AudioFlinger::getAudioPolicyConfig(media::AudioPolicyConfig*)+876)
+    #12 pc 00000000000310b0  /system/lib64/libaudiopolicyservice.so
+                             (android::AudioPolicyService::AudioPolicyClient::getAudioPolicyConfig(...)+96)
+    #13 pc 00000000000778d8  /system/lib64/libaudiopolicyservice.so (createAudioPolicyManager(...)+200)
+    #14 pc 000000000007b314  /system/lib64/libaudiopolicyservice.so (android::AudioPolicyService::onFirstRef()+708)
+    #15 pc 0000000000075920  /system/bin/audioserver (main.cfi+624)
+# 结论：阻塞发生在 AudioFlinger::getAudioPolicyConfig() 内，逐个 openDevice，
+#       DevicesFactoryHalAidl 认为 "virtual" 是已声明实例 → AServiceManager_waitForService
+#       无超时死等。卡在主线程上，所以 AudioPolicyService 永远不会 addService。
+
+## 验证 3：VINTF 声明的定位与"运行态遮蔽无效"的原因
+# 声明来源（/odm 官方件，非我们装配树）
+/odm/etc/vintf/manifest/manifest_module_virtual_audio_v3.xml      → <fqname>IModule/virtual</fqname>
+/odm/etc/vintf/manifest/manifest_oplus_virtualdevice_audio_aidl.xml → <name>vendor.oplus.hardware.virtual_device.audio</name>
+# 我们自己的 policy 里没有 virtual（已确认，排除 policy 侧）
+/vendor/etc/audio_policy_configuration.xml  只有 primary / r_submix / bluetooth_with_le_audio
+/odm/etc/audio/audio_policy_configuration_a2dp_offload_enable_cg_enable.xml 只有 primary / binaural_record
+# 运行态把两份 odm VINTF 片段 bind 成 <manifest/> 后 restart audioserver：**仍然死等**
+:/ # mount --bind /data/local/tmp/empty_vintf.xml /odm/etc/vintf/manifest/manifest_module_virtual_audio_v3.xml
+RC1=0
+:/ # setprop ctl.restart audioserver
+12-31 19:07:00.306 13371 13371 W ServiceManagerCppClient: Waited one second for android.hardware.audio.core.IModule/virtual
+# 原因（时序证据）：
+ro.boottime.servicemanager   = 1.117 s   ← VINTF 数据库由 servicemanager 持有
+ro.boottime.surfaceflinger   = 23.865 s
+ro.boottime.audioserver      = 23.766 s
+12-31 19:00:xx  init: processing action (post-fs-data) ...   ← 约 4.8 s
+# 运行态遮蔽发生在 servicemanager 已经建立 VINTF 缓存之后，不回溯；
+# 必须在 init 的 post-fs-data（4.8 s，早于 class core 启动的 23 s）里做才有效。
+
+## 验证 4：init 的 mount 支持 bind（决定落地方案可行）
+# cuttlefish/source/system-core/init/builtins.cpp:468
+#   { "bind", MS_BIND },
+#   { "rec",  MS_REC  },
+# → 可用 "mount <src> <dst> bind" 在 rc 的 action 里做文件级遮蔽。
+
+## 验证 5：patch.img 的内核重定向白名单不含 /odm/etc/vintf（排除改内核以外的通路）
+# engine/kernels/lineage-22-6.6/fs/namei.c:189-219 规则表：/vendor/{etc,bin,lib,lib64}、
+# /vendor/build.prop、/vendor/ueventd.rc、/vendor_dlkm/lib、/odm/etc/build.prop、
+# /odm/etc/selinux/odm_sepolicy.cil。目录规则可覆盖整棵子树，文件规则只精确匹配。
+# → 要让 patch.img 遮蔽 /odm/etc/vintf 必须改内核并重打 vda；
+#   而 init 自己的 mount 命令即可完成同样遮蔽，无需改内核。

@@ -1,0 +1,9 @@
+# vendor.qti.hardware.perf2（IPerf v1 空实现 HAL）在 servicemanager 里的名字标签。
+#
+# 由 07_build_vendor 步骤 6 以 marker（vendor_service_contexts@vendor.qti.hardware.perf2）
+# 整块并入装配树 /vendor/etc/selinux/vendor_service_contexts；类型声明与服务端/客户端
+# 的 find 授权见同目录 vendor_sepolicy.cil。
+#
+# 为什么放模块层：服务名与它的类型是本 HAL 的契约，随模块复用；机型层不再重复声明。
+# 类型名 hal_perf2_service 与 AOSP hal_*_service 同风格，不带项目缩写。
+vendor.qti.hardware.perf2.IPerf/default	u:object_r:hal_perf2_service:s0

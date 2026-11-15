@@ -1,0 +1,165 @@
+# #69 realitytap + diaghal 逆向 / 落地流水（可复现）
+# 环境：m22 / flyme 12.5.0.0A / android 16；NDK 29.0.14206865
+#   原厂件根：out/tmp/unpack-vendor_a/flyme-m22      （记作 $V）
+#   逆向工作区：out/tmp/rev2
+#   产物根：out/vendor/android16；装配树/镜像：out/devices/flyme/m22/12.5.0.0A
+
+## 0) 定位原厂件
+
+    ls -l $V/bin/hw | grep -E 'reality|diag'
+        vendor.awa.realitytap.service                    52024 B
+        （没有 vendor.qti.diaghal-service —— Idiag 由 /vendor/bin/diag-router 注册）
+    ls -l $V/lib64 | grep -E 'reality|diag'
+        vendor.awa.reality-V3-ndk.so                     85248 B
+        vendor.awa.realitytap.impl.so                    52072 B
+        vendor.qti.diaghal-V1-ndk.so                     85776 B
+        vendor.qti.diaghal@1.0.so                       169648 B（旧 HIDL，不搬）
+
+## 1) 取接口 hash 与 descriptor
+
+    strings -a $V/lib64/vendor.awa.reality-V3-ndk.so | grep -E '^[0-9a-f]{40}$'
+        054e790771427edda2465b91648721f3d1033d4b      # vendor.awa.reality.IRealityTap v3
+        ea8742d6993e1a82917da38b9938e537aa7fcb54      # android.hardware.vibrator v2（跨包依赖）
+    strings -a $V/lib64/vendor.qti.diaghal-V1-ndk.so | grep -E '^[0-9a-f]{40}$'
+        1180103e4052662bcb692e2ae3a1d6b326fc5dfb      # vendor.qti.diaghal.IIdiag v1
+
+    strings -a <so> | grep -E '^vendor\.(awa\.reality|qti\.diaghal)\.'
+        IRealityTap / RealityTapHe / RealityTapRtp
+        Idiag / Idiagcallback / ParcelableMemory
+    → 各包 aidl/vendor.<pkg>/<ver>/.hash
+
+## 2) 事务表 + 写序（反汇编）
+
+    TC=~/Library/Android/sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/bin
+    $TC/llvm-objdump -d --no-show-raw-insn rt.so > rt.dis      # 原厂
+    $TC/llvm-objdump -d --no-show-raw-insn dg.so > dg.dis
+    python3 rev_any.py rt.dis          # 逐 code 的写/读序列
+    python3 codes.py  rt-new.dis       # 抽 mov w1(=code) / w4(=flags)（需 llvm-cxxfilt）
+
+    # 原厂事务号（自研产物逐条对齐，见 §6 回放）
+    BpRealityTap  performTap=1 performRtp=2 cancel=3 calibrate=4 getF0=5
+                  getInterfaceHash=16777214 getInterfaceVersion=16777215
+    BpIdiag       close=1 ioctl=2 open=3 write=4；BpIdiagcallback send_data=1
+    原厂 flags 全为 0x10000000（FLAG_PRIVATE_LOCAL）；BpVibratorCallback::onComplete=0x1（oneway）
+
+## 3) 引擎改造（跨包 codegen）
+
+    engine/vendor/build/internal/halbuild/build.go    AIDLRoot() → aidlRoots()/aidlDir()/isDir()
+    engine/vendor/build/internal/halbuild/codegen.go  多个 -I 根 + aidlDir(pkg/ver)
+    engine/vendor/build/internal/profile/profile.go   halTable 增 "common"（android.hardware.common v2）
+
+    # common 平台包离线播种（deps 无网络，gitiles 000）
+    cp -R engine/vendor/out/android16/aosp/aidl/media/android.hardware.common \
+          engine/vendor/out/android16/aosp/aidl/common/
+    printf 'android-16.0.0_r2' > engine/vendor/out/android16/aosp/aidl/common/.aidl-complete
+
+    go build ./... && go build -o engine/out/bin/cdh-vendor .
+    ./out/bin/cdh-vendor deps -android 16 common   -check     # exit=0
+    ./out/bin/cdh-vendor deps -android 16 vibrator -check     # exit=0
+
+## 4) 落模块
+
+    engine/vendor/hardware/vendor.awa.reality/{aidl,src,vendor/etc/{init,vintf},sepolicy}
+    engine/vendor/build/modules/vendor.awa.reality.json
+    engine/vendor/hardware/vendor.qti.diaghal/{aidl,src,vendor/etc/{init,vintf},sepolicy}
+    engine/vendor/build/modules/vendor.qti.diaghal.json
+
+    ./out/bin/cdh-vendor hal list --android 16 | grep -E 'reality|diaghal'
+        vendor.awa.reality          aidl -> vendor.awa.realitytap.service
+        vendor.qti.diaghal          aidl -> vendor.qti.diaghal-service
+
+    ./out/bin/cdh-vendor hal build vendor.awa.reality --android 16
+        vendor.awa.reality (v3, hash 054e79077142)
+        android.hardware.vibrator (v2, hash ea8742d6993e)
+        编译 5+1 个源文件 -> 写 bin/hw/vendor.awa.realitytap.service（140,504 B）
+        合并 vendor 静态树：新增 0，已存在同内容 2
+    ./out/bin/cdh-vendor hal build vendor.qti.diaghal --android 16
+        vendor.qti.diaghal (v1, hash 1180103e4052)
+        android.hardware.common (v2, hash c32ddfdeb69c)
+        编译 4+1 个源文件 -> 写 bin/hw/vendor.qti.diaghal-service（122,472 B）
+        合并 vendor 静态树：新增 0，已存在同内容 2
+
+    $TC/llvm-readelf -d <产物> | grep NEEDED
+        libc++.so / libbinder_ndk.so / liblog.so / libdl.so / libm.so / libc.so
+        （原厂 realitytap 还要 vendor.awa.reality-V3-ndk.so + …impl.so，本云静态编入）
+
+## 5) 声明 + 机型层下放
+
+    manifest/flyme/m22/device.json            hardware 34 → 36 项
+    manifest/flyme/m22/sepolicy/vendor_service_contexts   删 2 行 HAL 名；realitytap → realitytap_service
+    manifest/flyme/m22/sepolicy/vendor_sepolicy.cil       删 2 段类型/授权 + vendor_dpmd；realitytap_service 块
+
+    python3 -c "import json;print(len(json.load(open('manifest/flyme/m22/device.json'))['hardware']))"
+        36
+
+## 6) wire 回放（自研 vs 原厂）
+
+    $TC/llvm-objdump -d --no-show-raw-insn out/vendor/android16/bin/hw/vendor.awa.realitytap.service > rt-new.dis
+    $TC/llvm-objdump -d --no-show-raw-insn out/vendor/android16/bin/hw/vendor.qti.diaghal-service   > dg-new.dis
+
+    事务号：BpRealityTap 1/2/3/4/5/16777214/16777215、BpIdiag 1/2/3/4、BpIdiagcallback 1  → 全 OK
+    写序：   performTap = [RealityTapHe][EffectStrength→writeByte][IVibratorCallback]
+             ioctl      = [Int32 cmd][ParcelableMemory][Int32 flag]
+             write      = [ParcelableMemory][Int32 length]；send_data 同
+    parcelable：RealityTapHe  = [size][Int32Array values][Int32 arg1..arg4]
+                RealityTapRtp = [size][ParcelFileDescriptor][Int32 arg1]
+                ParcelableMemory = [size][Int32(1) 非空标记][MappableFile][String name]
+    唯一差异：transact flags 自研=0 / 原厂=0x10000000（FLAG_PRIVATE_LOCAL；不进 parcel）
+
+## 7) 07 装配 + 打包
+
+    eval "$(./out/bin/cdh env manifest/flyme/m22/baselines/12.5.0.0A.json --env)"
+    ./out/bin/cdh build-vendor --android 16 --manifest "$CDH_MANIFEST" \
+        --vendor flyme --brand m22 --version 12.5.0.0A            # exit=0
+
+    关键行：
+        HAL 模块 vendor.awa.reality（…源码或配置已变（指纹不一致）→ 重编）
+        HAL 模块 vendor.qti.diaghal（…指纹不一致 → 重编）
+        编译产物 vendor.awa.reality@default: 写入 3，已存在同内容 0
+        编译产物 vendor.qti.diaghal@default: 写入 3，已存在同内容 0
+        追加 …/vendor_sepolicy.cil <- …/vendor.awa.reality/…（3,245 字节）
+        追加 …/vendor_service_contexts <- …/vendor.awa.reality/…（770 字节）
+        追加 …/vendor_sepolicy.cil <- …/vendor.qti.diaghal/…（3,407 字节）
+        追加 …/vendor_service_contexts <- …/vendor.qti.diaghal/…（525 字节）
+        vendor.awa.realitytap.service -> hal_realitytap_default_exec          # 步骤 6b
+        vendor.qti.diaghal-service    -> vendor_hal_diaghal_default_exec      # 步骤 6b
+        vendor.img 构建完成（206,704,640 字节）
+
+    装配树：out/devices/flyme/m22/12.5.0.0A/vendor  664 → 670 条目
+        （文件 439 / 链接 199 / 目录 32；find -mindepth 1 | wc -l 复核 = 670）
+
+## 8) 镜像回读
+
+    D=/opt/homebrew/opt/e2fsprogs/sbin/debugfs
+    IMG=out/devices/flyme/m22/12.5.0.0A/img/vendor.img
+    ls -l $IMG       → 206,704,640 B（上一版 meizu_charging 后为 206,413,824 B）
+    shasum -a 256 $IMG → b2245b134f7da524…（sha 不作一致性判据）
+
+    debugfs dump 后 sha 对照（镜像 vs out/vendor/android16）  6/6 SAME
+        /bin/hw/vendor.awa.realitytap.service              033ed26c…
+        /bin/hw/vendor.qti.diaghal-service                 28832acf…
+        /etc/init/vendor.awa.realitytap.service.rc         0fa26f75…
+        /etc/init/vendor.qti.diaghal-service.rc            13068db8…
+        /etc/vintf/manifest/vendor.awa.realitytap.service.xml  81b8c6e2…
+        /etc/vintf/manifest/vendor.qti.diaghal-service.xml     8d2d21fc…
+
+    debugfs ea_get … security.selinux
+        /bin/hw/vendor.awa.realitytap.service   → u:object_r:hal_realitytap_default_exec:s0   (0755/0:2000, 140504 B)
+        /bin/hw/vendor.qti.diaghal-service      → u:object_r:vendor_hal_diaghal_default_exec:s0 (0755/0:2000, 122472 B)
+        rc / VINTF 四件                          → u:object_r:vendor_configs_file
+
+    内容核对（dump 出来再 grep）：
+        vendor_service_contexts 65 = IRealityTap/default（reality 模块块内）
+                                116 = Idiag/default（diaghal 模块块内）
+                                171 = realitytap → realitytap_service（机型层块）
+        vendor_file_contexts 388/393 = 两条 6b 派生行（点号已转义）
+        vendor_sepolicy.cil：hal_realitytap_service / vendor_hal_diaghal_service /
+            realitytap_service 的 (type …) 各 1 次；hal_awa_reality_service /
+            hal_idiag_service 仅 3 处注释命中、0 条声明/allow
+        {{vers}} 残留 0（已替换为 202504）
+
+## 9) 判据
+
+    - 装配树条目数（664 → 670）+ 逐文件 sha（6/6 SAME）+ 镜像 xattr 是主判据；
+    - 镜像 sha 只做记录（mke2fs 非确定性，同内容两次构建也不保证同 sha）；
+    - 「类型声明唯一」用镜像内 grep `^(type …)` 计数判定，避免 secilc 重复声明致命错误。

@@ -1,0 +1,313 @@
+# 失败态取证：gold 实例卡在 OOBE（首次开机向导）
+#
+# 设备/清单：xiaomi/gold  OS3.0.10.0.VNQCNXM（Redmi Note 13 5G）
+# 实例：gold_cn_OS3.0.10.0.VNQCNXM/17，daemon 9050 启动，8 GiB / 8 vCPU
+# 时间：2026-10-25 06:07 起（guest RTC 显示 07-15 21:0x，随底包时钟）
+#
+# 两条根因叠加（后一条在补上补丁后暴露）：
+#   1) 机型清单丢失金实例的 provisioning 补丁：/vendor/bin/setup_display.sh 与
+#      /vendor/etc/init/cph_disable_provision.rc 不存在 → 没有服务置
+#      device_provisioned / 禁用 com.android.provision，空白 data 首次启动必进 OOBE。
+#   2) 补上补丁后，auto_provision 的第一条
+#      `settings put system screen_off_timeout ...` 永久阻塞：cmd 在 pioneer 进程
+#      内注册 ShellCallback 回调 binder 节点，system_server 命令结束回程调用
+#      onCommandFinished 被 SELinux 拒绝（enforcing），cmd 永不退出。
+#      auto_provision 因此停在第一行，provisioned 仍为 0，界面停在迁移数据页。
+
+## 0. 运行态快照（guest shell，经 hvc7 通道）
+# 首个失败关口（补丁缺失时）：
+$ ls /vendor/etc/init/cph_disable_provision.rc
+ls: /vendor/etc/init/cph_disable_provision.rc: No such file or directory
+$ ls /vendor/bin/setup_display.sh
+ls: /vendor/bin/setup_display.sh: No such file or directory
+$ getprop sys.boot_completed
+1
+$ settings get global device_provisioned
+0
+$ settings get secure user_setup_complete
+0
+# 框架在失败期间重启两次：system_server pid 813 -> 10197 -> 16554
+# OOBE 停在 com.miui.huanji/.provision.ui.ProvisionCTAActivity（“从旧手机迁移数据”）。
+
+## 1. 补丁回到产物后仍失败：auto_provision 卡在 settings put
+# 重建后 /vendor/bin/setup_display.sh 与 cph_disable_provision.rc 已存在且 init 已拉起
+# auto_provision（init.svc.auto_provision=running），但进程表显示：
+$ ps -A -o PID,PPID,NAME,ARGS | grep -E "cmd settings|setup_display"
+  565     1 sh                          sh /vendor/bin/setup_display.sh
+  912   909 cmd                         cmd settings put system screen_off_timeout 2147483647
+# 同一命令的第三次重试（kill -9 后脚本 i++ 重跑）同样挂住：
+ 5074 sh /system/bin/settings put system screen_off_timeout 2147483647
+ 5075 cmd settings put system screen_off_timeout 2147483647
+
+# 对照实验：写入其实已经生效，只是 cmd 进程不退出。
+$ timeout -s KILL 6 cmd settings put system screen_off_timeout 4242 ; echo rc=$?
+rc=137
+$ timeout -s KILL 6 content update --uri content://settings/system/screen_off_timeout --bind value:s:4242 ; echo rc=$?
+rc=0
+$ settings get system screen_off_timeout
+4242
+# 同类现象覆盖全部 cmd 子命令（执行完不退出）：
+#   cmd settings put system/global/secure、cmd settings put --user 0、
+#   cmd window dismiss-keyguard、cmd deviceidle disable 均为 rc=137；
+#   svc power stayon true 为 rc=0（不走 cmd 的 ShellCallback 路径）。
+
+## 2. cmd 卡住的现场栈（debuggerd -b 912）
+# 失败态取证：cmd 执行完不退出（pioneer 域）
+# 来源：debuggerd -b 912（cmd settings put 进程）+ crash.txt + fd.txt 摘录
+
+
+----- pid 912 at 2026-07-15 21:05:30.785251069+0800 -----
+Cmd line: cmd settings put system screen_off_timeout 2147483647
+ABI: 'arm64'
+
+"cmd" sysTid=912
+    #00 pc 0000000000086dbc  /apex/com.android.runtime/lib64/bionic/libc.so (syscall+28) (BuildId: 4f9662f2c4cc93880474c7b483cce276)
+    #01 pc 00000000000604a0  /apex/com.android.runtime/lib64/bionic/libc.so (__futex_wait_ex(void volatile*, bool, int, bool, timespec const*)+144) (BuildId: 4f9662f2c4cc93880474c7b483cce276)
+    #02 pc 000000000006f878  /apex/com.android.runtime/lib64/bionic/libc.so (pthread_cond_wait+72) (BuildId: 4f9662f2c4cc93880474c7b483cce276)
+    #03 pc 000000000000482c  /system/bin/cmd (cmdMain(std::__1::vector<std::__1::basic_string_view<char, std::__1::char_traits<char>>, std::__1::allocator<std::__1::basic_string_view<char, std::__1::char_traits<char>>>> const&, android::TextOutput&, android::TextOutput&, int, int, int, RunMode)+1228) (BuildId: 6aa2f894c04ecff13a328a3f0f6a6b3b)
+    #04 pc 0000000000004290  /system/bin/cmd (main+432) (BuildId: 6aa2f894c04ecff13a328a3f0f6a6b3b)
+    #05 pc 0000000000057674  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+116) (BuildId: 4f9662f2c4cc93880474c7b483cce276)
+
+"binder:912_1" sysTid=914
+    #00 pc 00000000000c9928  /apex/com.android.runtime/lib64/bionic/libc.so (__ioctl+8) (BuildId: 4f9662f2c4cc93880474c7b483cce276)
+    #01 pc 000000000006b1ec  /apex/com.android.runtime/lib64/bionic/libc.so (ioctl+156) (BuildId: 4f9662f2c4cc93880474c7b483cce276)
+    #02 pc 0000000000057ba8  /system/lib64/libbinder.so (android::IPCThreadState::joinThreadPool(bool)+264) (BuildId: 294e01b30f94828116b931f42b0b58c1)
+    #03 pc 0000000000061388  /system/lib64/libbinder.so (android::PoolThread::threadLoop()+24) (BuildId: 294e01b30f94828116b931f42b0b58c1)
+    #04 pc 0000000000012000  /system/lib64/libutils.so (android::Thread::_threadLoop(void*)+368) (BuildId: 73aea3e37d4105b80f24929166a76a64)
+    #05 pc 00000000000706a8  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+200) (BuildId: 4f9662f2c4cc93880474c7b483cce276)
+    #06 pc 0000000000061a40  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: 4f9662f2c4cc93880474c7b483cce276)
+
+"binder:912_2" sysTid=915
+    #00 pc 00000000000c9928  /apex/com.android.runtime/lib64/bionic/libc.so (__ioctl+8) (BuildId: 4f9662f2c4cc93880474c7b483cce276)
+    #01 pc 000000000006b1ec  /apex/com.android.runtime/lib64/bionic/libc.so (ioctl+156) (BuildId: 4f9662f2c4cc93880474c7b483cce276)
+    #02 pc 0000000000057ba8  /system/lib64/libbinder.so (android::IPCThreadState::joinThreadPool(bool)+264) (BuildId: 294e01b30f94828116b931f42b0b58c1)
+    #03 pc 0000000000061388  /system/lib64/libbinder.so (android::PoolThread::threadLoop()+24) (BuildId: 294e01b30f94828116b931f42b0b58c1)
+    #04 pc 0000000000012000  /system/lib64/libutils.so (android::Thread::_threadLoop(void*)+368) (BuildId: 73aea3e37d4105b80f24929166a76a64)
+    #05 pc 00000000000706a8  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+200) (BuildId: 4f9662f2c4cc93880474c7b483cce276)
+    #06 pc 0000000000061a40  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: 4f9662f2c4cc93880474c7b483cce276)
+
+"binder:912_3" sysTid=1021
+    #00 pc 00000000000c9928  /apex/com.android.runtime/lib64/bionic/libc.so (__ioctl+8) (BuildId: 4f9662f2c4cc93880474c7b483cce276)
+    #01 pc 000000000006b1ec  /apex/com.android.runtime/lib64/bionic/libc.so (ioctl+156) (BuildId: 4f9662f2c4cc93880474c7b483cce276)
+    #02 pc 0000000000057ba8  /system/lib64/libbinder.so (android::IPCThreadState::joinThreadPool(bool)+264) (BuildId: 294e01b30f94828116b931f42b0b58c1)
+    #03 pc 0000000000061388  /system/lib64/libbinder.so (android::PoolThread::threadLoop()+24) (BuildId: 294e01b30f94828116b931f42b0b58c1)
+    #04 pc 0000000000012000  /system/lib64/libutils.so (android::Thread::_threadLoop(void*)+368) (BuildId: 73aea3e37d4105b80f24929166a76a64)
+    #05 pc 00000000000706a8  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+200) (BuildId: 4f9662f2c4cc93880474c7b483cce276)
+    #06 pc 0000000000061a40  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: 4f9662f2c4cc93880474c7b483cce276)
+
+----- end 912 -----
+=====CRASH=====
+--------- beginning of crash
+07-15 21:37:52.146 F/libc    ( 9734): expected /dev/null fd to be 0, actually 3: Bad file descriptor
+07-15 21:37:53.087 E/AndroidRuntime(16258): *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+07-15 21:37:53.087 E/AndroidRuntime(16258): DeadSystemException: The system died; earlier logs will point to the root cause
+07-15 21:38:06.886 I/SmartRatSwitch(17248): mtk-brm-commit-id:b5a60cc69a1756c521ec182159b2accf61e98864
+07-15 21:38:06.886 I/SmartRatSwitch(17248): mtk-brm-change-id:I4b61c3110cf0ec624b06cc6b58c35cc1bb10baec
+07-15 21:38:06.886 I/SmartRatSwitch(17248): mtk-brm-merge-id:none
+=====FD=====
+431-    #04 pc 000000000034a654  /apex/com.android.art/lib64/libart.so (art_quick_lock_object_no_inline+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+432-    #05 pc 000000000078710c  /apex/com.android.art/lib64/libart.so (nterp_op_monitor_enter+12) (BuildId: 3488dfa8bacb759428391ac92851731e)
+433:    #06 pc 000000000053abd0  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (com.xiaomi.finddevice.v2.FindDeviceStatusManagerInternal.get+4)
+434-    #07 pc 000000000078eda4  /apex/com.android.art/lib64/libart.so (nterp_helper+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+435-    #08 pc 000000000053d574  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (com.xiaomi.finddevice.v2.FindDeviceStatusManagerProvider.query+20)
+436-    #09 pc 0000000000511738  /system/framework/arm64/boot-framework.oat (android.content.ContentProvider.query+72) (BuildId: 3a1fe4b8922a45ce850699b29fbc51113ce47c3d)
+437-    #10 pc 000000000051167c  /system/framework/arm64/boot-framework.oat (android.content.ContentProvider.query+1276) (BuildId: 3a1fe4b8922a45ce850699b29fbc51113ce47c3d)
+438-    #11 pc 000000000056f840  /system/framework/arm64/boot-framework.oat (android.content.ContentProvider$Transport.query+1584) (BuildId: 3a1fe4b8922a45ce850699b29fbc51113ce47c3d)
+439-    #12 pc 0000000000514bc8  /system/framework/arm64/boot-framework.oat (android.content.ContentProviderNative.onTransact+10024) (BuildId: 3a1fe4b8922a45ce850699b29fbc51113ce47c3d)
+440-    #13 pc 000000000066c1b0  /system/framework/arm64/boot-framework.oat (android.os.Binder.execTransactInternal+704) (BuildId: 3a1fe4b8922a45ce850699b29fbc51113ce47c3d)
+441-    #14 pc 000000000066bd38  /system/framework/arm64/boot-framework.oat (android.os.Binder.execTransact+408) (BuildId: 3a1fe4b8922a45ce850699b29fbc51113ce47c3d)
+442-    #15 pc 000000000034a174  /apex/com.android.art/lib64/libart.so (art_quick_invoke_stub+612) (BuildId: 3488dfa8bacb759428391ac92851731e)
+443-    #16 pc 0000000000348b94  /apex/com.android.art/lib64/libart.so (art::JValue art::InvokeVirtualOrInterfaceWithVarArgs<art::ArtMethod*>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, art::ArtMethod*, std::__va_list)+820) (BuildId: 3488dfa8bacb759428391ac92851731e)
+444-    #17 pc 0000000000743d70  /apex/com.android.art/lib64/libart.so (art::JNI<false>::CallBooleanMethodV(_JNIEnv*, _jobject*, _jmethodID*, std::__va_list)+176) (BuildId: 3488dfa8bacb759428391ac92851731e)
+445-    #18 pc 00000000000e8f48  /system/lib64/libandroid_runtime.so (_JNIEnv::CallBooleanMethod(_jobject*, _jmethodID*, ...)+120) (BuildId: 8e14fc054575d9679fdff0ad2372901e)
+446-    #19 pc 00000000001afae0  /system/lib64/libandroid_runtime.so (JavaBBinder::onTransact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+160) (BuildId: 8e14fc054575d9679fdff0ad2372901e)
+447-    #20 pc 000000000005a6e0  /system/lib64/libbinder.so (android::IPCThreadState::executeCommand(int)+7248) (BuildId: 294e01b30f94828116b931f42b0b58c1)
+--
+505-    #11 pc 000000000053e8f8  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (com.xiaomi.finddevice.v2.FindDeviceStorage.getStatus+24)
+506-    #12 pc 000000000078eda4  /apex/com.android.art/lib64/libart.so (nterp_helper+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+507:    #13 pc 000000000053ac02  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (com.xiaomi.finddevice.v2.FindDeviceStatusManagerInternal.get+54)
+508-    #14 pc 000000000078eda4  /apex/com.android.art/lib64/libart.so (nterp_helper+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+509-    #15 pc 00000000001a4ed6  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (C2.a.b+1122)
+510-    #16 pc 000000000078fcc4  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 3488dfa8bacb759428391ac92851731e)
+511-    #17 pc 000000000019b6e6  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (B2.d.h+94)
+512-    #18 pc 000000000078fcc4  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 3488dfa8bacb759428391ac92851731e)
+513-    #19 pc 000000000019b878  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (B2.d.i+160)
+514-    #20 pc 000000000078fcc4  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 3488dfa8bacb759428391ac92851731e)
+515-    #21 pc 000000000019b32c  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (B2.d.a+768)
+516-    #22 pc 000000000078eda4  /apex/com.android.art/lib64/libart.so (nterp_helper+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+517-    #23 pc 00000000009b2ce0  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (J3.x3.run+44)
+518-    #24 pc 0000000000790ae4  /apex/com.android.art/lib64/libart.so (nterp_helper+7540) (BuildId: 3488dfa8bacb759428391ac92851731e)
+519-    #25 pc 000000000019bc80  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (B2.g.doInBackground+8)
+520-    #26 pc 000000000066b0f8  /system/framework/arm64/boot-framework.oat (android.os.AsyncTask$3.call+168) (BuildId: 3a1fe4b8922a45ce850699b29fbc51113ce47c3d)
+521-    #27 pc 000000000024c894  /system/framework/arm64/boot.oat (java.util.concurrent.FutureTask.run+180) (BuildId: 84bf9d54ca73be653c53acc7e4bcca4d220569a1)
+--
+553-    #04 pc 000000000034a654  /apex/com.android.art/lib64/libart.so (art_quick_lock_object_no_inline+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+554-    #05 pc 000000000078710c  /apex/com.android.art/lib64/libart.so (nterp_op_monitor_enter+12) (BuildId: 3488dfa8bacb759428391ac92851731e)
+555:    #06 pc 000000000053abd0  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (com.xiaomi.finddevice.v2.FindDeviceStatusManagerInternal.get+4)
+556-    #07 pc 000000000078eda4  /apex/com.android.art/lib64/libart.so (nterp_helper+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+557-    #08 pc 00000000001a4ed6  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (C2.a.b+1122)
+558-    #09 pc 000000000078fcc4  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 3488dfa8bacb759428391ac92851731e)
+559-    #10 pc 000000000019b6e6  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (B2.d.h+94)
+560-    #11 pc 000000000078fcc4  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 3488dfa8bacb759428391ac92851731e)
+561-    #12 pc 000000000019b878  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (B2.d.i+160)
+562-    #13 pc 000000000078fcc4  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 3488dfa8bacb759428391ac92851731e)
+563-    #14 pc 000000000019b32c  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (B2.d.a+768)
+564-    #15 pc 000000000078eda4  /apex/com.android.art/lib64/libart.so (nterp_helper+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+565-    #16 pc 00000000009b2ce0  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (J3.x3.run+44)
+566-    #17 pc 0000000000790ae4  /apex/com.android.art/lib64/libart.so (nterp_helper+7540) (BuildId: 3488dfa8bacb759428391ac92851731e)
+567-    #18 pc 000000000019bc80  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (B2.g.doInBackground+8)
+568-    #19 pc 000000000066b0f8  /system/framework/arm64/boot-framework.oat (android.os.AsyncTask$3.call+168) (BuildId: 3a1fe4b8922a45ce850699b29fbc51113ce47c3d)
+569-    #20 pc 000000000024c894  /system/framework/arm64/boot.oat (java.util.concurrent.FutureTask.run+180) (BuildId: 84bf9d54ca73be653c53acc7e4bcca4d220569a1)
+--
+585-    #04 pc 000000000034a654  /apex/com.android.art/lib64/libart.so (art_quick_lock_object_no_inline+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+586-    #05 pc 000000000078710c  /apex/com.android.art/lib64/libart.so (nterp_op_monitor_enter+12) (BuildId: 3488dfa8bacb759428391ac92851731e)
+587:    #06 pc 000000000053abd0  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (com.xiaomi.finddevice.v2.FindDeviceStatusManagerInternal.get+4)
+588-    #07 pc 000000000078eda4  /apex/com.android.art/lib64/libart.so (nterp_helper+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+589-    #08 pc 000000000050dfa6  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (com.xiaomi.finddevice.coreserver.business.cloudconfig.CloudControlMission$FetchCloudConfigTask.run+86)
+590-    #09 pc 000000000078fcc4  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 3488dfa8bacb759428391ac92851731e)
+:/ #
+
+## 3. SELinux 拒绝（qemu.log，system_server 回程调用 pioneer 的回调节点）
+91972:[  485.682016][  T202] type=1400 audit(1784121057.796:2047): avc:  denied  { call } for  comm="binder:638_16" scontext=u:r:system_server:s0 tcontext=u:r:pioneer:s0 tclass=binder permissive=0
+92009:[  491.705568][  T202] type=1400 audit(1784121063.820:2048): avc:  denied  { call } for  comm="binder:638_16" scontext=u:r:system_server:s0 tcontext=u:r:pioneer:s0 tclass=binder permissive=0
+92045:[  497.731447][  T202] type=1400 audit(1784121069.844:2049): avc:  denied  { call } for  comm="binder:638_16" scontext=u:r:system_server:s0 tcontext=u:r:pioneer:s0 tclass=binder permissive=0
+92172:[  526.790351][  T202] type=1400 audit(1784121098.904:2050): avc:  denied  { call } for  comm="binder:638_16" scontext=u:r:system_server:s0 tcontext=u:r:pioneer:s0 tclass=binder permissive=0
+92215:[  532.820015][  T202] type=1400 audit(1784121104.932:2052): avc:  denied  { call } for  comm="binder:638_15" scontext=u:r:system_server:s0 tcontext=u:r:pioneer:s0 tclass=binder permissive=0
+
+# 解读：cmd（pioneer）把自己的 ShellCallback binder 节点交给 system_server；
+# 命令完成后 system_server 回程 call 该节点，被拒后 cmd 永远等不到完成通知。
+# pioneer 是内核 permissive 域，但此处主体是 system_server（enforcing），
+# permissive 位救不了反向调用；原策略只覆盖了 servicemanager/hwservicemanager。
+
+## 4. 可见症状：OOBE 卡死链（finddevice provider 查询阻塞）
+# OOBE 主线程（com.android.provision）查询
+#   content://com.xiaomi.finddevice.provider/lastSessionUserId
+# finddevice 侧的 get() 持锁做 FindDeviceStorage.getStatus 的 sleep 重试，
+# 所有查询线程等 monitor。摘录自 /data/local/tmp/fd.txt：
+
+431-    #04 pc 000000000034a654  /apex/com.android.art/lib64/libart.so (art_quick_lock_object_no_inline+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+432-    #05 pc 000000000078710c  /apex/com.android.art/lib64/libart.so (nterp_op_monitor_enter+12) (BuildId: 3488dfa8bacb759428391ac92851731e)
+433:    #06 pc 000000000053abd0  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (com.xiaomi.finddevice.v2.FindDeviceStatusManagerInternal.get+4)
+434-    #07 pc 000000000078eda4  /apex/com.android.art/lib64/libart.so (nterp_helper+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+435-    #08 pc 000000000053d574  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (com.xiaomi.finddevice.v2.FindDeviceStatusManagerProvider.query+20)
+436-    #09 pc 0000000000511738  /system/framework/arm64/boot-framework.oat (android.content.ContentProvider.query+72) (BuildId: 3a1fe4b8922a45ce850699b29fbc51113ce47c3d)
+437-    #10 pc 000000000051167c  /system/framework/arm64/boot-framework.oat (android.content.ContentProvider.query+1276) (BuildId: 3a1fe4b8922a45ce850699b29fbc51113ce47c3d)
+438-    #11 pc 000000000056f840  /system/framework/arm64/boot-framework.oat (android.content.ContentProvider$Transport.query+1584) (BuildId: 3a1fe4b8922a45ce850699b29fbc51113ce47c3d)
+439-    #12 pc 0000000000514bc8  /system/framework/arm64/boot-framework.oat (android.content.ContentProviderNative.onTransact+10024) (BuildId: 3a1fe4b8922a45ce850699b29fbc51113ce47c3d)
+440-    #13 pc 000000000066c1b0  /system/framework/arm64/boot-framework.oat (android.os.Binder.execTransactInternal+704) (BuildId: 3a1fe4b8922a45ce850699b29fbc51113ce47c3d)
+441-    #14 pc 000000000066bd38  /system/framework/arm64/boot-framework.oat (android.os.Binder.execTransact+408) (BuildId: 3a1fe4b8922a45ce850699b29fbc51113ce47c3d)
+442-    #15 pc 000000000034a174  /apex/com.android.art/lib64/libart.so (art_quick_invoke_stub+612) (BuildId: 3488dfa8bacb759428391ac92851731e)
+443-    #16 pc 0000000000348b94  /apex/com.android.art/lib64/libart.so (art::JValue art::InvokeVirtualOrInterfaceWithVarArgs<art::ArtMethod*>(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, art::ArtMethod*, std::__va_list)+820) (BuildId: 3488dfa8bacb759428391ac92851731e)
+444-    #17 pc 0000000000743d70  /apex/com.android.art/lib64/libart.so (art::JNI<false>::CallBooleanMethodV(_JNIEnv*, _jobject*, _jmethodID*, std::__va_list)+176) (BuildId: 3488dfa8bacb759428391ac92851731e)
+445-    #18 pc 00000000000e8f48  /system/lib64/libandroid_runtime.so (_JNIEnv::CallBooleanMethod(_jobject*, _jmethodID*, ...)+120) (BuildId: 8e14fc054575d9679fdff0ad2372901e)
+446-    #19 pc 00000000001afae0  /system/lib64/libandroid_runtime.so (JavaBBinder::onTransact(unsigned int, android::Parcel const&, android::Parcel*, unsigned int)+160) (BuildId: 8e14fc054575d9679fdff0ad2372901e)
+447-    #20 pc 000000000005a6e0  /system/lib64/libbinder.so (android::IPCThreadState::executeCommand(int)+7248) (BuildId: 294e01b30f94828116b931f42b0b58c1)
+--
+505-    #11 pc 000000000053e8f8  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (com.xiaomi.finddevice.v2.FindDeviceStorage.getStatus+24)
+506-    #12 pc 000000000078eda4  /apex/com.android.art/lib64/libart.so (nterp_helper+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+507:    #13 pc 000000000053ac02  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (com.xiaomi.finddevice.v2.FindDeviceStatusManagerInternal.get+54)
+508-    #14 pc 000000000078eda4  /apex/com.android.art/lib64/libart.so (nterp_helper+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+509-    #15 pc 00000000001a4ed6  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (C2.a.b+1122)
+510-    #16 pc 000000000078fcc4  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 3488dfa8bacb759428391ac92851731e)
+511-    #17 pc 000000000019b6e6  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (B2.d.h+94)
+512-    #18 pc 000000000078fcc4  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 3488dfa8bacb759428391ac92851731e)
+513-    #19 pc 000000000019b878  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (B2.d.i+160)
+514-    #20 pc 000000000078fcc4  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 3488dfa8bacb759428391ac92851731e)
+515-    #21 pc 000000000019b32c  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (B2.d.a+768)
+516-    #22 pc 000000000078eda4  /apex/com.android.art/lib64/libart.so (nterp_helper+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+517-    #23 pc 00000000009b2ce0  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (J3.x3.run+44)
+518-    #24 pc 0000000000790ae4  /apex/com.android.art/lib64/libart.so (nterp_helper+7540) (BuildId: 3488dfa8bacb759428391ac92851731e)
+519-    #25 pc 000000000019bc80  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (B2.g.doInBackground+8)
+520-    #26 pc 000000000066b0f8  /system/framework/arm64/boot-framework.oat (android.os.AsyncTask$3.call+168) (BuildId: 3a1fe4b8922a45ce850699b29fbc51113ce47c3d)
+521-    #27 pc 000000000024c894  /system/framework/arm64/boot.oat (java.util.concurrent.FutureTask.run+180) (BuildId: 84bf9d54ca73be653c53acc7e4bcca4d220569a1)
+--
+553-    #04 pc 000000000034a654  /apex/com.android.art/lib64/libart.so (art_quick_lock_object_no_inline+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+554-    #05 pc 000000000078710c  /apex/com.android.art/lib64/libart.so (nterp_op_monitor_enter+12) (BuildId: 3488dfa8bacb759428391ac92851731e)
+555:    #06 pc 000000000053abd0  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (com.xiaomi.finddevice.v2.FindDeviceStatusManagerInternal.get+4)
+556-    #07 pc 000000000078eda4  /apex/com.android.art/lib64/libart.so (nterp_helper+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+557-    #08 pc 00000000001a4ed6  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (C2.a.b+1122)
+558-    #09 pc 000000000078fcc4  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 3488dfa8bacb759428391ac92851731e)
+559-    #10 pc 000000000019b6e6  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (B2.d.h+94)
+560-    #11 pc 000000000078fcc4  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 3488dfa8bacb759428391ac92851731e)
+561-    #12 pc 000000000019b878  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (B2.d.i+160)
+562-    #13 pc 000000000078fcc4  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 3488dfa8bacb759428391ac92851731e)
+563-    #14 pc 000000000019b32c  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (B2.d.a+768)
+564-    #15 pc 000000000078eda4  /apex/com.android.art/lib64/libart.so (nterp_helper+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+565-    #16 pc 00000000009b2ce0  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (J3.x3.run+44)
+566-    #17 pc 0000000000790ae4  /apex/com.android.art/lib64/libart.so (nterp_helper+7540) (BuildId: 3488dfa8bacb759428391ac92851731e)
+567-    #18 pc 000000000019bc80  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (B2.g.doInBackground+8)
+568-    #19 pc 000000000066b0f8  /system/framework/arm64/boot-framework.oat (android.os.AsyncTask$3.call+168) (BuildId: 3a1fe4b8922a45ce850699b29fbc51113ce47c3d)
+569-    #20 pc 000000000024c894  /system/framework/arm64/boot.oat (java.util.concurrent.FutureTask.run+180) (BuildId: 84bf9d54ca73be653c53acc7e4bcca4d220569a1)
+--
+585-    #04 pc 000000000034a654  /apex/com.android.art/lib64/libart.so (art_quick_lock_object_no_inline+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+586-    #05 pc 000000000078710c  /apex/com.android.art/lib64/libart.so (nterp_op_monitor_enter+12) (BuildId: 3488dfa8bacb759428391ac92851731e)
+587:    #06 pc 000000000053abd0  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (com.xiaomi.finddevice.v2.FindDeviceStatusManagerInternal.get+4)
+588-    #07 pc 000000000078eda4  /apex/com.android.art/lib64/libart.so (nterp_helper+52) (BuildId: 3488dfa8bacb759428391ac92851731e)
+589-    #08 pc 000000000050dfa6  /product/priv-app/MIUIFindDeviceCN/oat/arm64/MIUIFindDeviceCN.vdex (com.xiaomi.finddevice.coreserver.business.cloudconfig.CloudControlMission$FetchCloudConfigTask.run+86)
+590-    #09 pc 000000000078fcc4  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 3488dfa8bacb759428391ac92851731e)
+:/ #
+
+# 说明：这是“OOBE 为什么看起来卡死”的直接症状；OOBE 本身之所以运行，是因为
+# 根因 1（缺 provisioning 补丁），而补丁生效受阻是根因 2（cmd 回调被拒）。
+
+## 5. 失败期间框架重启（次生现象，非本次修复对象）
+$ logcat -d -b all | grep -E 'FATAL EXCEPTION IN SYSTEM PROCESS|DeadSystemException|SYSTEM_RESTART'
+07-15 21:37:53.087 16258 16258 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+07-15 21:37:53.087 16258 16258 E AndroidRuntime: DeadSystemException: The system died; earlier logs will point to the root cause
+07-15 21:38:06.161 16554 19169 I DropBoxManagerService: add tag=SYSTEM_RESTART isTagEnabled=true flags=0x2
+
+## 6. logcat 过滤摘录（53 行完整版见 logcat-filtered.txt）
+475:07-15 21:03:10.574   813   976 I am_proc_start: [0,2470,6110,com.xiaomi.finddevice,broadcast,{com.xiaomi.finddevice/com.xiaomi.finddevice.v2.receiver.BootCompletedReceiver}]
+477:07-15 21:03:10.597   813  1579 I am_proc_bound: [0,2470,com.xiaomi.finddevice]
+530:07-15 21:03:11.321  2470  2470 I wm_on_application_create_called: [0,com.xiaomi.finddevice,314]
+538:07-15 21:03:11.379   813  1086 I am_foreground_service_start: [0,com.xiaomi.finddevice/.v2.ui.FindDeviceSysNotificationReceiver,0,PROC_STATE_FGS,35,35,0,0,0,1,UNKNOWN,1]
+540:07-15 21:03:11.388   813   848 I am_foreground_service_stop: [0,com.xiaomi.finddevice/.v2.ui.FindDeviceSysNotificationReceiver,0,PROC_STATE_FGS,35,35,0,0,9,1,STOP_FOREGROUND,1]
+547:07-15 21:03:11.398   813   813 I notification_enqueue: [6110,2470,com.xiaomi.finddevice,14,NULL,0,Notification(channel=FGS_HIDE shortcut=null contentView=null vibrate=null sound=null defaults=0 flags=0 color=0x00000000 groupKey=FGS_HIDE_autogroup vis=PRIVATE),0]
+548:07-15 21:03:11.405   813   813 I sysui_multi_action: [757,128,758,5,759,8,793,15,794,0,795,15,796,14,806,com.xiaomi.finddevice,857,FGS_HIDE,858,2,946,FGS_HIDE_autogroup,947,0,1500,15]
+549:07-15 21:03:11.405   813   813 I notification_canceled: [0|com.xiaomi.finddevice|14|null|6110,8,15,15,0,-1,-1,NULL]
+2814:07-15 21:23:12.548   813   966 I am_pss  : [2470,6110,com.xiaomi.finddevice,29515776,25202688,0,182378496,2,8,1]
+2978:07-15 21:23:45.917   813   966 I am_pss  : [2470,6110,com.xiaomi.finddevice,28428288,24301568,0,181506048,0,8,1]
+3859:07-15 21:28:04.813   813  1269 I sysui_multi_action: [757,1243,758,4,806,com.xiaomi.finddevice,1241,android.permission.SEND_SMS]
+3860:07-15 21:28:04.813   813  1269 I sysui_multi_action: [757,1243,758,4,806,com.xiaomi.finddevice,1241,android.permission.BLUETOOTH_ADVERTISE]
+3861:07-15 21:28:04.813   813  1269 I sysui_multi_action: [757,1243,758,4,806,com.xiaomi.finddevice,1241,android.permission.ACCESS_FINE_LOCATION]
+3862:07-15 21:28:04.813   813  1269 I sysui_multi_action: [757,1243,758,4,806,com.xiaomi.finddevice,1241,android.permission.CALL_PHONE]
+3863:07-15 21:28:04.813   813  1269 I sysui_multi_action: [757,1243,758,4,806,com.xiaomi.finddevice,1241,android.permission.BLUETOOTH_SCAN]
+3864:07-15 21:28:04.813   813  1269 I sysui_multi_action: [757,1243,758,4,806,com.xiaomi.finddevice,1241,android.permission.ACCESS_BACKGROUND_LOCATION]
+3865:07-15 21:28:04.813   813  1269 I sysui_multi_action: [757,1243,758,4,806,com.xiaomi.finddevice,1241,android.permission.BLUETOOTH_CONNECT]
+3866:07-15 21:28:04.813   813  1269 I sysui_multi_action: [757,1243,758,4,806,com.xiaomi.finddevice,1241,android.permission.READ_PHONE_STATE]
+4744:07-15 21:32:51.398 10197 10313 I am_proc_start: [0,11906,6110,com.xiaomi.finddevice,broadcast,{com.xiaomi.finddevice/com.xiaomi.finddevice.v2.receiver.BootCompletedReceiver}]
+4747:07-15 21:32:51.435 10197 10378 I am_proc_bound: [0,11906,com.xiaomi.finddevice]
+4837:07-15 21:32:52.560 10197 11321 I am_foreground_service_start: [0,com.xiaomi.finddevice/.v2.ui.FindDeviceSysNotificationReceiver,0,PROC_STATE_FGS,35,35,0,0,0,1,UNKNOWN,1]
+4838:07-15 21:32:52.563 10197 10377 I am_foreground_service_stop: [0,com.xiaomi.finddevice/.v2.ui.FindDeviceSysNotificationReceiver,0,PROC_STATE_FGS,35,35,1,0,3,1,STOP_FOREGROUND,1]
+5770:07-15 21:37:53.087 16258 16258 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+5771:07-15 21:37:53.087 16258 16258 E AndroidRuntime: DeadSystemException: The system died; earlier logs will point to the root cause
+11621:07-15 21:38:05.065 16554 16674 D MiuiEmbeddingWindow: blacklistedAppRunningOnPhone: package=com.xiaomi.finddeviceisNotProjeciton=true isHavingJeppackDisabledConfig=false isRunningOnPhone=true
+11622:07-15 21:38:05.065 16554 16674 D MiuiEmbeddingWindow: MiuiEmbeddingWindowService: updateApplicationInfo for com.xiaomi.finddevice, blacklistedAppRunningOnPhone updated: clear
+11625:07-15 21:38:05.065 16554 16674 I SmartPower: com.xiaomi.finddevice/6110(0): -1->background(0ms) R(become background) adj=-10000.
+11673:07-15 21:38:05.095 16554 16675 I am_proc_start: [0,18478,6110,com.xiaomi.finddevice,broadcast,{com.xiaomi.finddevice/com.xiaomi.finddevice.v2.receiver.BootCompletedReceiver}]
+11701:07-15 21:38:05.096 16554 16675 I ActivityManager: Start proc 18478:com.xiaomi.finddevice/6110 for broadcast {com.xiaomi.finddevice/com.xiaomi.finddevice.v2.receiver.BootCompletedReceiver} caller=null
+11923:07-15 21:38:05.706 16554 17243 I am_proc_bound: [0,18478,com.xiaomi.finddevice]
+12051:07-15 21:38:05.728 16554 17243 D MiuiForceVkService: shouldUseVk, pkg=com.xiaomi.finddevice useVk 0
+12267:07-15 21:38:05.894 16554 16735 I ActivityManager: Background started FGS: Allowed [callingPackage: com.xiaomi.finddevice; callingUid: 6110; uidState: CEM ; uidBFSL: n/a; intent: Intent { act=private_action_reshow_all cmp=com.xiaomi.finddevice/.v2.ui.FindDeviceSysNotificationReceiver }; code:BACKGROUND_FGS_PERMISSION; tempAllowListReason:<null>; targetSdkVersion:35; callerTargetSdkVersion:35; startForegroundCount:0; bindFromPackage:null: isBindService:false]
+12347:07-15 21:38:05.960 16554 16735 W ActivityManager: Foreground service started from background can not have location/camera/microphone access: service com.xiaomi.finddevice/.v2.ui.FindDeviceSysNotificationReceiver
+12348:07-15 21:38:05.960 16554 16735 I ActivityManager: Background started FGS: Allowed [callingPackage: com.xiaomi.finddevice; callingUid: 6110; uidState: FGS ; uidBFSL: [BFSL]; intent: Intent { act=private_action_reshow_all cmp=com.xiaomi.finddevice/.v2.ui.FindDeviceSysNotificationReceiver }; code:PROC_STATE_FGS; tempAllowListReason:<fg-service-launch,reasonCode:SERVICE_LAUNCH,duration:30000,callingUid:6110>; targetSdkVersion:35; callerTargetSdkVersion:35; startForegroundCount:0; bindFromPackage:null: isBindService:false]
+12349:07-15 21:38:05.961 16554 16735 I am_foreground_service_start: [0,com.xiaomi.finddevice/.v2.ui.FindDeviceSysNotificationReceiver,0,PROC_STATE_FGS,35,35,0,0,0,1,UNKNOWN,1]
+12362:07-15 21:38:05.986 16554 18576 D ActivityManager: Stop FGS timeout: ServiceRecord{8255f1c u0 com.xiaomi.finddevice/.v2.ui.FindDeviceSysNotificationReceiver c:com.xiaomi.finddevice}
+12363:07-15 21:38:05.986 16554 18576 I ActivityManager: Cancel FGS notification userId: 0 definingUid: 6110 packageName: com.xiaomi.finddevice processName:com.xiaomi.finddevice ChannelId:FGS_HIDE foregroundNotiWhen:1784122685942 Notiflags:64
+12364:07-15 21:38:05.987 16554 18576 I am_foreground_service_stop: [0,com.xiaomi.finddevice/.v2.ui.FindDeviceSysNotificationReceiver,0,PROC_STATE_FGS,35,35,1,0,26,1,STOP_FOREGROUND,1]
+12587:07-15 21:38:06.161 16554 19169 I DropBoxManagerService: add tag=SYSTEM_RESTART isTagEnabled=true flags=0x2
+13632:07-15 21:38:07.229 16554 16966 I SmartPower.PowerPolicy: Powerkeeper configure ChangedNoRestrictAppsList remove: com.xiaomi.finddevice
+23679:07-15 21:42:17.023 18478 18575 I aomi.finddevice: This is non sticky GC, maxfree is 8388608 minfree is 524288
+23680:07-15 21:42:17.023 18478 21342 D JavaheapMonitor: Java heap used=2M max=192M, proc: com.xiaomi.finddevice
+28399:07-15 21:43:12.293 18478 18575 I aomi.finddevice: This is sticky GC, maxfree is 8388608 minfree is 524288
+28400:07-15 21:43:12.294 18478 21342 D JavaheapMonitor: Java heap used=2M max=192M, proc: com.xiaomi.finddevice
+30173:07-15 21:43:33.836 18478 21342 D JavaheapMonitor: Java heap used=3M max=192M, proc: com.xiaomi.finddevice
+33008:07-15 21:44:06.476 18478 18575 I aomi.finddevice: This is non sticky GC, maxfree is 8388608 minfree is 524288
+33009:07-15 21:44:06.476 18478 21342 D JavaheapMonitor: Java heap used=2M max=192M, proc: com.xiaomi.finddevice
+34973:07-15 21:44:30.547 18478 21342 D JavaheapMonitor: Java heap used=3M max=192M, proc: com.xiaomi.finddevice
+37622:07-15 21:45:01.649 18478 18575 I aomi.finddevice: This is sticky GC, maxfree is 8388608 minfree is 524288
+37623:07-15 21:45:01.650 18478 21342 D JavaheapMonitor: Java heap used=2M max=192M, proc: com.xiaomi.finddevice
+39773:07-15 21:45:27.730 18478 21342 D JavaheapMonitor: Java heap used=3M max=192M, proc: com.xiaomi.finddevice
+42107:07-15 21:45:55.833 18478 18575 I aomi.finddevice: This is non sticky GC, maxfree is 8388608 minfree is 524288
+42108:07-15 21:45:55.833 18478 21342 D JavaheapMonitor: Java heap used=2M max=192M, proc: com.xiaomi.finddevice
+:/ #

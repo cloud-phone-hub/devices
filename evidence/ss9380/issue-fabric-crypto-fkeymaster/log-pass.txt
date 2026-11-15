@@ -1,0 +1,52 @@
+# 通过态：fabric_crypto 只启动一次即停止，Fkeymaster 错误归零（build15）
+
+- 盘集：`vendor.img 0ab16bc80f27c8dfb889f2ded5175c1827aefd2f0b2d330f142f2c68c110b833`
+  / `patch.img 2af63406bd4bf5c7982f2f86830132d09dda1e0f33697070ea1b36ffc6398624`
+- 实例：`ss9380_S9380ZCSDCZH1` / index 4，adb `127.0.0.1:5911`
+- 日志：`out/core/daemon/runtime/ss9380_S9380ZCSDCZH1/4/qemu.log`（build15 整份）
+
+## 1. 一次性启动
+
+```
+[   95.788245][  T1] init: starting service 'fabric_crypto'...
+[   95.795075][  T1] init: ... started service 'fabric_crypto' has pid 944
+```
+
+## 2. 被机型 rc 停止（非循环）
+
+```
+[   96.045369][  T1] init: processing action (nonencrypted) from (/vendor/etc/init/cdh-fabric-crypto.rc:9)
+[   96.045933][  T1] init: Sending SIGKILL to service 'fabric_crypto' (pid 944) process group...
+[   96.047324][  T1] init: Service 'fabric_crypto' (pid 944) received SIGKILL
+```
+
+之后整份日志中再无 `starting service 'fabric_crypto'`。
+
+## 3. 计数（整份 qemu.log）
+
+```
+starting service 'fabric_crypto'              = 1
+service 'fabric_crypto' ... SIGKILL           = 1
+Not found Fkeymaster service                  = 0
+Abort message: 'Check failed: fKeymaster ...' = 0
+```
+
+（修复前同一实例：启动 185 次、错误 347 条、abort 174 次。）
+
+## 4. guest crash buffer
+
+```
+$ adb -s 127.0.0.1:5911 shell 'logcat -b crash -d | grep -c "Not found Fkeymaster"'
+0
+```
+
+## 5. rc 落盘校验
+
+```
+$ debugfs -R 'stat etc/init/cdh-fabric-crypto.rc' vendor.img
+Size: 681
+
+$ debugfs -R 'cat etc/init/cdh-fabric-crypto.rc' vendor.img | tail -2
+on nonencrypted
+    stop fabric_crypto
+```

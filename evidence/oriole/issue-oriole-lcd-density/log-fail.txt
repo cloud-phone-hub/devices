@@ -1,0 +1,48 @@
+问题：oriole 云机（实例 7）界面按「平板」口径排版，桌面图标与文字整体偏小；用户反馈「图标很小，应该适配…而不是手机」。
+
+# A. 现场实测（实例 7，改造前）
+
+```
+$ adb -s 127.0.0.1:5911 shell 'wm size; wm density; getprop ro.sf.lcd_density'
+Physical size: 1080x2400
+Physical density: 160
+160
+
+$ adb -s 127.0.0.1:5911 shell 'getprop ro.build.fingerprint; getprop ro.build.characteristics'
+google/oriole/oriole:14/AP2A.240905.003.F1/12235381:user/release-keys
+nosdcard
+```
+
+换算：1080 px × 160 / 160 dpi = **1080 dp 宽**（2400 px → 2400 dp 高），远大于手机区间（sw ≥ 600 dp 即按平板布局），Pixel 6 真机同分辨率只有 411 dp。
+
+# B. guest 里没有任何 build.prop 写这个键
+
+```
+$ adb shell cat /system/build.prop | grep -iE 'density|screen'      # 无命中
+$ adb shell cat /vendor/build.prop | grep -iE 'density|screen'      # 无命中
+```
+
+即密度不是被哪份 build.prop 覆盖的，而是「没人写，落到底包的默认值」。
+
+# C. 160 的出处：底包 init.virt.rc 第 22 行
+
+```
+$ adb shell grep -n lcd_density /vendor/etc/init/hw/init.virt.rc
+22:    setprop ro.sf.lcd_density ${ro.boot.lcd_density:-160}
+```
+
+cmdline 侧没有 `androidboot.lcd_density`（05_build_vendor_boot 只改写 `verifiedbootstate` 与 `androidboot.hardware` 等），所以 `${ro.boot.lcd_density:-160}` 取到 160。
+
+# D. device.json 的 420 只到 daemon，不进镜像
+
+```
+$ cat engine/out/dist/google/oriole/AP2A.240905.003.F1/device.json | grep density
+  "density": 420,
+```
+
+daemon 侧 `config/device.go:248` 只把它读成窗口元数据（`spec.Density`），没有任何镜像写入路径；guest 里 `ro.sf.lcd_density` 仍是 160——两处数值各自有效、互不相干。
+
+# E. 结论
+
+「图标很小」不是渲染缩放问题，是**密度口径**问题：A14 基座缺 `ro.sf.lcd_density`，底包把默认值钉在 160，
+而真机真值 420 就在本机型官方 `vendor_a.img:/build.prop` 第 49 行，构建链路没有把它带进装配树。

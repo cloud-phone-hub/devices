@@ -1,0 +1,62 @@
+# log-fail.txt —— oriole 载体落点两次失败的现场
+#
+# 日志来源：engine/out/core/daemon/runtime/oriole_AP2A.240905.003.F1/<n>/qemu.log
+#   实例 2：patch.img 挂 /mnt/patch（vold 当 stale mount 强拆 + 杀进程）
+#   实例 3：patch.img 挂 /mnt/vendor/patch（mnt_vendor_file 标签导致全域被拒 search）
+# 以下是现场 grep，行首为 qemu.log 的行号。
+
+## ① 实例 2：/mnt/patch
+$ grep -c 'Found map' 2/qemu.log
+131
+$ grep -c 'Sending Interrupt to pid' 2/qemu.log
+4
+
+$ grep -n 'Found map /proc/198/maps\|Sending Interrupt to pid 198' 2/qemu.log
+951:[    5.795029][  T205] vold: Found map /proc/198/maps referencing /mnt/patch/vendor/bin/vndservicemanager
+953:[    5.796113][  T205] vold: Sending Interrupt to pid 198 (vndservicemanag, /vendor/bin/vndservicemanager)
+1270:01-01 00:00:05.779   205   205 W vold    : Found map /proc/198/maps referencing /mnt/patch/vendor/bin/vndservicemanager
+1271:01-01 00:00:05.780   205   205 W vold    : Sending Interrupt to pid 198 (vndservicemanag, /vendor/bin/vndservicemanager)[    6.060570][    T1] init: ... started service 'vendor.vibrator-default' has pid 299
+
+$ grep -n "class_restart main" 2/qemu.log | head -2
+1208:01-01 00:00:00.496     1     1 I auditd  : type=1107 audit(0.0:5): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=ro.recovery.batteryless pid=1 uid=0 gid=0 scontext=u:r:vendor_init:s0 tcontext=u:object_r:default_prop:s0 tclass=property_service permissive=0'[    5.930714][    T1] init: Command 'class_restart main' action=onrestart (<Service 'vndservicemanager' onrestart>:1) took 133ms and succeeded
+2039:[   10.946500][    T1] init: Command 'class_restart main' action=onrestart (<Service 'vndservicemanager' onrestart>:1) took 96ms and succeeded
+
+$ grep -n "starting service 'zygote'" 2/qemu.log | head -3
+968:[    5.800424][    T1] init: starting service 'zygote'...
+1801:[   10.806370][    T1] init: starting service 'zygote'...
+3300:[   15.812997][    T1] init: starting service 'zygote'...
+
+$ grep -n 'libnativeloader' 2/qemu.log | head -2
+1275:01-01 00:00:05.791   214   214 F linker  : CANNOT LINK EXECUTABLE "/system/bin/app_process64": library "libnativeloader.so" not found: needed by main executable[    6.065206][    T1] init: ... started service 'vendor.wifi-vhal' has pid 304
+1812:11-01 02:04:45.897   354   354 F linker  : CANNOT LINK EXECUTABLE "/system/bin/app_process64": library "libnativeloader.so" not found: needed by main executable[   10.808982][  T354] cdh_redirect: /mnt/patch/vendor/lib64
+
+## ② 实例 3：/mnt/vendor/patch
+$ grep -c 'avc:.*mnt_vendor_file' 3/qemu.log
+3924
+$ grep -c 'Found map' 3/qemu.log
+0
+
+$ grep -n "Service 'vndservicemanager'" 3/qemu.log | head -2
+869:[    1.323995][    T1] init: Service 'vndservicemanager' (pid 197) exited with status 1
+1179:[    1.509848][    T1] init: Command 'class_restart main' action=onrestart (<Service 'vndservicemanager' onrestart>:1) took 185ms and succeeded
+
+$ grep -n 'Starting service\|starting service' 3/qemu.log | grep zygote | head -2
+891:[    1.332893][    T1] init: starting service 'zygote'...
+3658:[   32.951569][    T1] init: starting service 'zygote'...
+
+$ grep -n 'mnt_vendor_file' 3/qemu.log | head -3
+880:[    1.330400][  T202] type=1400 audit(1.304:43): avc:  denied  { search } for  comm="hwservicemanage" name="vendor" dev="tmpfs" ino=2 scontext=u:r:hwservicemanager:s0 tcontext=u:object_r:mnt_vendor_file:s0 tclass=dir permissive=0
+881:[    1.330445][  T202] type=1400 audit(1.308:44): avc:  denied  { search } for  comm="logcat" name="vendor" dev="tmpfs" ino=2 scontext=u:r:logpersist:s0 tcontext=u:object_r:mnt_vendor_file:s0 tclass=dir permissive=0
+882:[    1.330456][  T202] type=1400 audit(1.308:45): avc:  denied  { search } for  comm="logcat" name="vendor" dev="tmpfs" ino=2 scontext=u:r:logpersist:s0 tcontext=u:object_r:mnt_vendor_file:s0 tclass=dir permissive=0
+
+## 结论
+两次落点都活不过 6 s：
+- /mnt/patch：vold 的 VolumeManager::start() 把载体当 stale mount，131 次
+  "Found map ... referencing /mnt/patch/..." 后按 /proc/<pid>/maps 杀进程，
+  首个被杀的是 vndservicemanager；它的 rc 里 onrestart class_restart main
+  立刻把 zygote 拉起来（5.8 s，远早于 APEX 就绪 22 s），zygote 被永久钉在
+  bootstrap 挂载命名空间 → CANNOT LINK ... libnativeloader.so not found。
+- /mnt/vendor/patch：3924 条 avc denied { search } for name="vendor"
+  tcontext=u:object_r:mnt_vendor_file:s0，zygote/vndservicemanager/hwservicemanager
+  等全域命中；vndservicemanager 1.324 s exit 1 → class_restart main → zygote 1.33 s
+  起、1.669 s exit 1。

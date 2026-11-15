@@ -1,0 +1,22 @@
+真机 InputReader 设备（id / name / Sources / Descriptor）
+   -1 Virtual                          KEYBOARD | DPAD            a718a782d34bc767f4689c232d64d527998ea7fd
+    0 uinput-fpc                       KEYBOARD | GAMEPAD         8136f1e77728f603ac0ec0e545d338eba3cbcbc0
+    2 mtk-kpd                          KEYBOARD                   9a244e01c90550ca2eb2798ffe20d8731e811765
+    3 mtk-pmic-keys                    KEYBOARD                   485d69228e24f5e46da1598745890b214130dbc4
+    4 fpc_irq@fingerprint              KEYBOARD                   dad8bc819b573998ec22ca3952b1006fc1aa1a82
+    5 mt6833-mt6359 Headset Jack       KEYBOARD                   393bc96fab9421f9d6a6059cfe79e8b042c8755d
+    6 goodix_ts                        KEYBOARD | TOUCHSCREEN     c63c3be2de98f10e6bbd97f78684d819a6c862b9
+
+云机 InputReader 设备（id / name / Sources / Descriptor）
+   -1 Virtual                          KEYBOARD | DPAD            a718a782d34bc767f4689c232d64d527998ea7fd
+    0 uinput-fpc                       KEYBOARD | GAMEPAD         8136f1e77728f603ac0ec0e545d338eba3cbcbc0
+    2 mtk-kpd                          KEYBOARD                   9a244e01c90550ca2eb2798ffe20d8731e811765
+    3 goodix_ts                        KEYBOARD | TOUCHSCREEN     c63c3be2de98f10e6bbd97f78684d819a6c862b9
+    4 fpc_irq@fingerprint              KEYBOARD                   dad8bc819b573998ec22ca3952b1006fc1aa1a82
+    5 mt6833-mt6359 Headset Jack       KEYBOARD                   393bc96fab9421f9d6a6059cfe79e8b042c8755d
+    6 mtk-pmic-keys                    KEYBOARD                   485d69228e24f5e46da1598745890b214130dbc4
+
+真机 7 台，云机 7 台
+仅在真机: 无
+仅在云机: 无
+(name, Sources, Descriptor) 三元组集合完全一致: True

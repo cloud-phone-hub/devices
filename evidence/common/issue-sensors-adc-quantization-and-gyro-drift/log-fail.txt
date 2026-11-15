@@ -1,0 +1,226 @@
+=== Real Device (ec519c7d513a3ad3, run-00174) dynamicSample ===
+{
+  "accQuantizationStepMatchesResolution": true,
+  "accelerometer": {
+    "count": 79,
+    "mean": [
+      0.004183,
+      8.430055,
+      4.713536
+    ],
+    "minDiff": [
+      0.00195,
+      0.001949,
+      0.00195
+    ],
+    "name": "lsm6dso_acc",
+    "sigma": [
+      0.005203,
+      0.00556,
+      0.009444
+    ]
+  },
+  "allSixStreamsDynamic": true,
+  "constantOrMissingSensors": [],
+  "durationMs": 1500,
+  "gravityNorm": 9.6583,
+  "gravityNormValid": true,
+  "gyroQuantizationStepMatchesResolution": true,
+  "gyroscope": {
+    "count": 78,
+    "mean": [
+      7.2e-05,
+      -4.9e-05,
+      0.000381
+    ],
+    "minDiff": [
+      0.001237,
+      0.0011,
+      0.001237
+    ],
+    "name": "lsm6dso_gyro",
+    "sigma": [
+      0.001098,
+      0.000629,
+      0.000571
+    ]
+  },
+  "magnetometer": {
+    "count": 74,
+    "mean": [
+      -119.503129,
+      11.464358,
+      -167.602455
+    ],
+    "minDiff": [
+      0.018745,
+      0.018749,
+      0.018738
+    ],
+    "name": "qmc6308",
+    "sigma": [
+      0.562088,
+      0.170294,
+      0.538897
+    ],
+    "vendor": "QST"
+  },
+  "supported": true,
+  "uncaliGyroBiasHasThermalDrift": true,
+  "uncalibratedAccelerometer": {
+    "bias": [
+      0,
+      0,
+      0
+    ],
+    "biasSigma": [
+      0,
+      0,
+      0
+    ],
+    "count": 79,
+    "name": "UNCALI_ACC"
+  },
+  "uncalibratedGyroscope": {
+    "bias": [
+      -0.001237,
+      0.002028,
+      0.004871
+    ],
+    "biasSigma": [
+      3e-06,
+      1e-06,
+      4e-06
+    ],
+    "count": 77,
+    "name": "UNCALI_GYRO"
+  },
+  "uncalibratedMagnetometer": {
+    "bias": [
+      0,
+      0,
+      0
+    ],
+    "biasSigma": [
+      0,
+      0,
+      0
+    ],
+    "count": 74,
+    "name": "UNCALI_MAG"
+  }
+}
+
+=== Cloud Device Before Fix (df809591a4e085ae-cloud, run-00226) scorecard D & dynamicSample ===
+goldScorecard D: {"D1_sensorsCountIs29AndMagnetometerValid": true, "D2_sensorsDynamic50HzStreamsActive": true, "D3_sensorsAdcQuantizationAndGyroDriftReal": false, "D4_inputsValidAndNoRiskyControlIme": true}
+{
+  "accQuantizationStepMatchesResolution": false,
+  "accelerometer": {
+    "count": 63,
+    "mean": [
+      0.02545,
+      -0.01409,
+      9.821201
+    ],
+    "minDiff": [
+      0.00015,
+      0.00015,
+      0.00015
+    ],
+    "name": "lsm6dso_acc",
+    "sigma": [
+      0.008847,
+      0.003797,
+      0.005057
+    ]
+  },
+  "allSixStreamsDynamic": true,
+  "constantOrMissingSensors": [],
+  "durationMs": 1500,
+  "gravityNorm": 9.8212,
+  "gravityNormValid": true,
+  "gyroQuantizationStepMatchesResolution": false,
+  "gyroscope": {
+    "count": 63,
+    "mean": [
+      0.001451,
+      -0.001091,
+      0.000727
+    ],
+    "minDiff": [
+      0.000137,
+      0.000137,
+      0.000137
+    ],
+    "name": "lsm6dso_gyro",
+    "sigma": [
+      0.000507,
+      0.000386,
+      0.000249
+    ]
+  },
+  "magnetometer": {
+    "count": 63,
+    "mean": [
+      25.019049,
+      -4.553572,
+      -39.317561
+    ],
+    "minDiff": [
+      0.018749,
+      0.01875,
+      0.018749
+    ],
+    "name": "mmc5603",
+    "sigma": [
+      0.075678,
+      0.050539,
+      0.063022
+    ],
+    "vendor": "Memsic"
+  },
+  "supported": true,
+  "uncaliGyroBiasHasThermalDrift": false,
+  "uncalibratedAccelerometer": {
+    "bias": [
+      0.001,
+      -0.001,
+      0.0005
+    ],
+    "biasSigma": [
+      0,
+      0,
+      0
+    ],
+    "count": 63,
+    "name": "UNCALI_ACC"
+  },
+  "uncalibratedGyroscope": {
+    "bias": [
+      0.001,
+      -0.001,
+      0.0005
+    ],
+    "biasSigma": [
+      0,
+      0,
+      0
+    ],
+    "count": 63,
+    "name": "UNCALI_GYRO"
+  },
+  "uncalibratedMagnetometer": {
+    "bias": [
+      0.001,
+      -0.001,
+      0.0005
+    ],
+    "biasSigma": [
+      0,
+      0,
+      0
+    ],
+    "count": 63,
+    "name": "UNCALI_MAG"
+  }
+}

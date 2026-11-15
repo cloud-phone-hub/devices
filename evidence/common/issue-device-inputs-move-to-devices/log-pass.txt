@@ -1,0 +1,64 @@
+# 输入目录迁移 #238 —— 迁移后验证记录（2026-11-15）
+
+## 1. 目录迁移
+
+```
+$ mv engine/hardware devices/hardware
+$ mv engine/kernels  devices/kernels
+$ mv engine/manifest devices/manifest
+$ mv engine/modules  devices/modules
+
+$ ls engine
+out  roms
+$ ls devices
+evidence  hardware  kernels  manifest  modules
+
+$ du -sh devices/hardware devices/kernels devices/manifest devices/modules
+522M	devices/hardware
+ 17G	devices/kernels
+1.3M	devices/manifest
+ 16M	devices/modules
+```
+
+## 2. 根定位与访问器
+
+- `engine.Init()` 改为识别 `<仓库根>/engine` + `<仓库根>/devices/manifest`；
+- 新增 `engine.WorkspaceRoot/DevicesRoot/ManifestRoot/HardwareDir/KernelsRoot/ModulesRoot/EvidenceRoot`；
+- `profile.findRoot` / `HardwareDir` 改判 `devices/hardware`；
+- agent 侧新增 `tools.DevicesRoot/ManifestRoot`，manifest.show、上下文包、
+  `/api/manifest/*`、`/api/runs/{id}/evidence`、`CDH_DEVICES_DB` 全部改用；
+- cdha read/write roots 增加 `<仓库根>/devices`；daemon `ProjectRoot` 改用
+  `devices/manifest` 标记。
+
+## 3. 构建 / 测试
+
+```
+$ cd agent && go build ./... && go vet ./... && go test ./...
+...
+FINAL_DEVICES_GREEN
+```
+
+## 4. 运行时冒烟
+
+```
+$ cd agent && go run ./cmd/cdh-engine device list | head -3
+序号  厂商       型号           名称
+   1  google     oriole         Pixel 6
+
+$ go run ./cmd/cdh-engine device build gold --manifest 15-OS3.0.11.0.VNQCNXM --dry-run | head -4
+==> 设备: Redmi Note 13 5G（redmi/gold）
+==> 清单: out/tmp/db-manifest/redmi/gold/baselines/15-OS3.0.11.0.VNQCNXM.json
+    lineage 底包: roms/lineage/UTM-VM-lineage-22.2-...
+
+$ go run ./cmd/cdh-engine build-hardware --android 15 --dry-run | head -3
+==> HAL 构建: android15，45 个模块
+==> 源码树: /Volumes/work/cloud-phone-hub/devices/hardware
+
+$ go run ./cmd/host-daemon state | head -3
+{
+  "deviceRoot": "/Volumes/work/cloud-phone-hub/engine/out/dist",
+
+$ go run ./cmd/cdha tool manifest.show '{"device":"15r"}' | head -2
+设备: oneplus/CPH2767 (OnePlus 15R) | 平台=qcom | ...
+设备表路径: devices/manifest/devices/oneplus/CPH2767.json
+```

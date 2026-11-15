@@ -1,0 +1,38 @@
+{
+  "id": 28,
+  "official": "小米",
+  "brand": "redmi",
+  "model": "Redmi Note 13 5G",
+  "device": "gold",
+  "platform": "mtk",
+  "resolution": "1080x2400",
+  "inch": "70x155",
+  "density": 400,
+  "smp": 8,
+  "memory": [
+    8192,
+    16384
+  ],
+  "storage": [
+    128000,
+    256000
+  ],
+  "extra": {
+    "board": "mt6833",
+    "cmdline": [
+      "androidboot.product.hardware.sku=gold_cn"
+    ],
+    "hasReadme": true,
+    "hostHvc": {
+      "host-hvc-adb": "hvc8",
+      "host-hvc-bluetooth": "hvc5",
+      "host-hvc-daemon": "hvc7",
+      "host-hvc-haptic": "hvc6",
+      "host-hvc-keymint": "hvc3",
+      "host-hvc-radio": "hvc4",
+      "host-hvc-wifi": "hvc9"
+    },
+    "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
+  },
+  "updatedAt": "2026-11-05T04:33:33Z"
+}

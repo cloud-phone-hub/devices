@@ -1,0 +1,86 @@
+# 通过态取样：KnoxGuard 中国区属性修复（build15）
+
+- 盘集：samsung/ss9380 S9380ZCSDCZH1
+  - super.img  215e6964c494e64d4a7a79247119c1df33c60a38ff5dc95e1d2daf9d7356a960（官方 super 零改动）
+  - vendor.img 0ab16bc80f27c8dfb889f2ded5175c1827aefd2f0b2d330f142f2c68c110b833
+  - patch.img  2af63406bd4bf5c7982f2f86830132d09dda1e0f33697070ea1b36ffc6398624
+  - vda.img    19.07 GiB（pack_vda 回读一致，5 个分区已刷新）
+- 实例：daemon `POST /api/start {"spec":"ss9380_S9380ZCSDCZH1","index":"4"}`
+  - adb `127.0.0.1:5911`，VNC `127.0.0.1:5912`（1440×3120）
+- 取样时间：2026-10-31 06:23（boot_completed=1）～ 06:27
+
+## 1. guest 属性
+
+```
+$ adb -s 127.0.0.1:5911 shell 'getprop ro.csc.country_code; getprop knox.kg.state; getprop sys.boot_completed'
+China
+Error
+1
+```
+
+说明：`knox.kg.state=Error` 是云机没有 KG Trustlet 的预期值（TA 读不到）。
+修复前该值同样为 Error，但地区属性为空导致走非中国分支而锁机。
+
+## 2. 属性加载（build14 → build15 对比）
+
+build14（只把属性写进 vendor build.prop，未补策略）：
+
+```
+[    0.972358][    T1] init: Do not have permissions to set 'ro.csc.country_code' to 'China'
+                      in property file '/vendor/build.prop': SELinux permission check failed
+```
+
+build15（补 `(allow vendor_init csc_prop (property_service (set)))` 后）：qemu.log 中
+`ro.csc.country_code` 的拒绝行 **0** 条；guest `getprop` 返回 `China`。
+
+## 3. KnoxGuard 启动路径（中国分支提前返回，不锁机）
+
+```
+08-12 17:07:54.760   697   697 D KG.Utils: getStateAndSetToKGSystemProperty - knox.kg.state : Error
+08-12 17:07:54.760   697   697 I KG.KnoxGuardSeService: call registerReceiver
+08-12 17:07:54.760   697   697 I KG.KnoxGuardSeService: call registerAlarmReceiver
+08-12 17:07:54.762   697   697 I KG.IntegritySeUtil: setInitialState, state : 5
+08-12 17:08:25.766   697   697 I KG.SystemSeReceiver: onReceive android.intent.action.BOOT_COMPLETED
+08-12 17:08:25.776   697  6713 I KG.SystemIntentProcessor: handling boot completed
+08-12 17:08:25.785   697  6713 D KG.Utils: getStateAndSetToKGSystemProperty - knox.kg.state : Error
+08-12 17:08:25.785   697  6713 D KG.SystemIntentProcessor: isSetupWizardFinished : true
+```
+
+关键：`handleBootCompleted` 在中国分支里 state!=0 且 `isStateForEnrolledDevice(state)`
+为假（只认 2/3），到 `return-void` 提前返回，**没有**走到
+`checkKGClientIntegrity false. Lock device without passcode.`。
+
+失败态（build13）同一位置：
+
+```
+KG.IntegritySeUtil: checkKGClientIntegrity Exception. ... NameNotFoundException: com.samsung.android.kgclient
+KG.SystemIntentProcessor: checkKGClientIntegrity false. Lock device without passcode.
+```
+
+## 4. qemu.log 计数（build15，同一实例整份日志）
+
+```
+Lock device without passcode            = 0
+China Binary and previously enrolled    = 0（自动锁机分支）
+init country_code 权限拒绝              = 0
+```
+
+（build13 失败实例同项 `Lock device without passcode` = 1，随后锁屏 Bouncer 显示“手机已锁定(8135)”。）
+
+## 5. 交互面
+
+```
+$ adb shell dumpsys window | grep mCurrentFocus
+mCurrentFocus=Window{df82abd u0 com.sec.android.app.launcher/com.sec.android.app.launcher.activities.LauncherActivity}
+mFocusedApp=ActivityRecord{27451802 u0 com.sec.android.app.launcher/.activities.LauncherActivity t9}
+
+$ adb shell pidof com.android.systemui
+2508
+$ adb shell 'logcat -d | grep -c "Process: com.android.systemui"'
+0
+```
+
+- `pass-setupwizard.png`：中国区 SetupWizard 条款页正常渲染（对比失败态的
+  `lock-screen-8135.png` 锁屏）。
+- `pass-home.png`：标记 `device_provisioned=1` / `user_setup_complete=1`（仅本测试实例的
+  运行态操作，非镜像改动）后，launcher 桌面、状态栏、dock 与导航栏均正常显示。

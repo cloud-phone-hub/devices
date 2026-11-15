@@ -1,0 +1,34 @@
+# P0-4 (H2) 修复前失败证据 (log-fail.txt)
+# 采样时间: 2026-11-10
+# 设备: Xiaomi Redmi Note 13 5G (gold / 2312DRAABC, OS3.0.10.0.VNQCNXM)
+# 真机 ID: ec519c7d513a3ad3 (USB: fmvwkrheonugvgjb)
+# 云机实例: gold_15-OS3.0.10.0.VNQCNXM/1 (df809591a4e085ae-cloud, ADB: 127.0.0.1:5911)
+# 测试批次: run-00173 / run-00174 / run-00220
+
+=== 1. aligner_xiaomi_gold.all ===
+H2_keystoreHwSignAndSepolicyClean: false
+passed: 17/32 (after #174)
+
+=== 2. aligner_xiaomi_gold.package_service_security ===
+CLOUD security.androidKeyStore:
+  {"attestationChallengeSupported": true, "canaryIntact": true, "certificateChainLength": 3, "hasAttestationChain": true, "hasAttestationExtensionOid": true, "insideSecureHardware": true, "keyGenerated": true, "securityLevel": 1}
+CLOUD security.sepolicyFileAudit:
+  {"lineageOrCustomRomPolicyLeaks": [], "noCustomRomSepolicyLeak": true}
+CLOUD security.zygoteDirtyPolicyProbe:
+  {
+    "auditAllowedCount": 151,
+    "cilTypesCount": 1735,
+    "dirtyHitCount": 2,
+    "dirtyHits": [
+      "KernelSU 域 ksu(u:r:ksu:s0 binder:call)",
+      "KernelSU 文件类型 ksu_file(u:object_r:ksu_file:s0 file:read)"
+    ],
+    "hasSelectiveDirtyKernelRules": true,
+    "noDirtyPolicyHits": false,
+    "ok": true,
+    "probedCount": 8,
+    "propTypesCount": 744,
+    "supported": true,
+    "vendorPolicyComplete": true,
+    "zygoteContext": "u:r:app_zygote:s0:c512,c768"
+  }

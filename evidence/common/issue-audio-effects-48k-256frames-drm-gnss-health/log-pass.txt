@@ -1,0 +1,627 @@
+=== [修复后] #188 Audio 23 音效/48kHz/256帧/流音量、DRM ClearKey、GNSS 与 Health 电流 ===
+
+1. aligner_xiaomi_gold.camera_media_drm_audio (audio & dev.test_media 摘要) 云机 vs 真机:
+CLOUD (0b7cd3333759d674-cloud) audio:
+{
+  "effectCount": 23,
+  "effects": {
+    "Acoustic Echo Canceler_bb392ec0-8d4d-11e0-a896-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "Acoustic Echo Canceler",
+      "type": "7b491460-8d4d-11e0-bd61-0002a5d5c51b",
+      "uuid": "bb392ec0-8d4d-11e0-a896-0002a5d5c51b"
+    },
+    "Alarm Volume Listener_6aff229c-30c6-4cc8-9957-dbfe5c1bd7f6": {
+      "connectMode": "Insert",
+      "implementor": "Dolby Laboratories",
+      "name": "Alarm Volume Listener",
+      "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+      "uuid": "6aff229c-30c6-4cc8-9957-dbfe5c1bd7f6"
+    },
+    "Automatic Gain Control V2_89f38e65-d4d2-4d64-ad0e-2b3e799ea886": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "Automatic Gain Control V2",
+      "type": "ae3c653b-be18-4ab8-8938-418f0a7f06ac",
+      "uuid": "89f38e65-d4d2-4d64-ad0e-2b3e799ea886"
+    },
+    "Auxiliary Environmental Reverb_4a387fc0-8ab3-11df-8bad-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "NXP Software Ltd.",
+      "name": "Auxiliary Environmental Reverb",
+      "type": "c2e5d5f0-94bd-4763-9cac-4e234d06839e",
+      "uuid": "4a387fc0-8ab3-11df-8bad-0002a5d5c51b"
+    },
+    "Auxiliary Preset Reverb_f29a1400-a3bb-11df-8ddc-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "NXP Software Ltd.",
+      "name": "Auxiliary Preset Reverb",
+      "type": "47382d60-ddd8-11db-bf3a-0002a5d5c51b",
+      "uuid": "f29a1400-a3bb-11df-8ddc-0002a5d5c51b"
+    },
+    "DAP_9d4921da-8225-4f29-aefa-39537a04bcaa": {
+      "connectMode": "Insert",
+      "implementor": "Dolby Laboratories",
+      "name": "DAP",
+      "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+      "uuid": "9d4921da-8225-4f29-aefa-39537a04bcaa"
+    },
+    "DAP_game_3783c334-d3a0-4d13-874f-0032e5fb80e2": {
+      "connectMode": "Insert",
+      "implementor": "Dolby Laboratories",
+      "name": "DAP_game",
+      "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+      "uuid": "3783c334-d3a0-4d13-874f-0032e5fb80e2"
+    },
+    "Dynamic Bass Boost_8631f300-72e2-11df-b57e-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "NXP Software Ltd.",
+      "name": "Dynamic Bass Boost",
+      "type": "0634f220-ddd4-11db-a0fc-0002a5d5c51b",
+      "uuid": "8631f300-72e2-11df-b57e-0002a5d5c51b"
+    },
+    "DynamicsProcessing_e0e6539b-1781-7261-676f-6d7573696340": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "DynamicsProcessing",
+      "type": "7261676f-6d75-7369-6364-28e2fd3ac39e",
+      "uuid": "e0e6539b-1781-7261-676f-6d7573696340"
+    },
+    "EqualizerBundle_ce772f20-847d-11df-bb17-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "NXP Software Ltd.",
+      "name": "EqualizerBundle",
+      "type": "0bed4300-ddd6-11db-8f34-0002a5d5c51b",
+      "uuid": "ce772f20-847d-11df-bb17-0002a5d5c51b"
+    },
+    "ExtensionEffectExample_fa81dd00-588b-11ed-9b6a-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "ExtensionEffectExample",
+      "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+      "uuid": "fa81dd00-588b-11ed-9b6a-0002a5d5c51b"
+    },
+    "Haptic Generator_97c4acd1-8b82-4f2f-832e-c2fe5d7a9931": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "Haptic Generator",
+      "type": "1411e6d6-aecd-4021-a1cf-a6aceb0d71e5",
+      "uuid": "97c4acd1-8b82-4f2f-832e-c2fe5d7a9931"
+    },
+    "Insert Environmental Reverb_c7a511a0-a3bb-11df-860e-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "NXP Software Ltd.",
+      "name": "Insert Environmental Reverb",
+      "type": "c2e5d5f0-94bd-4763-9cac-4e234d06839e",
+      "uuid": "c7a511a0-a3bb-11df-860e-0002a5d5c51b"
+    },
+    "Insert Preset Reverb_172cdf00-a3bc-11df-a72f-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "NXP Software Ltd.",
+      "name": "Insert Preset Reverb",
+      "type": "47382d60-ddd8-11db-bf3a-0002a5d5c51b",
+      "uuid": "172cdf00-a3bc-11df-a72f-0002a5d5c51b"
+    },
+    "Loudness Enhancer_fa415329-2034-4bea-b5dc-5b381c8d1e2c": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "Loudness Enhancer",
+      "type": "fe3199be-aed0-413f-87bb-11260eb63cf1",
+      "uuid": "fa415329-2034-4bea-b5dc-5b381c8d1e2c"
+    },
+    "MiSound_5b8e36a5-144a-4c38-b1d7-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "MiSound Audio Effect",
+      "name": "MiSound",
+      "type": "f46b26a0-dddd-11db-8afd-0002a5d5c51b",
+      "uuid": "5b8e36a5-144a-4c38-b1d7-0002a5d5c51b"
+    },
+    "Multichannel Downmix To Stereo_93f04452-e4fe-41cc-91f9-e475b6d1d69f": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "Multichannel Downmix To Stereo",
+      "type": "381e49cc-a858-4aa2-87f6-e8388e7601b2",
+      "uuid": "93f04452-e4fe-41cc-91f9-e475b6d1d69f"
+    },
+    "Music Volume Listener_40f66c8b-5aa5-4345-8919-53ec431aaa98": {
+      "connectMode": "Insert",
+      "implementor": "Dolby Laboratories",
+      "name": "Music Volume Listener",
+      "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+      "uuid": "40f66c8b-5aa5-4345-8919-53ec431aaa98"
+    },
+    "Noise Suppression_c06c8400-8e06-11e0-9cb6-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "Noise Suppression",
+      "type": "58b4b260-8e06-11e0-aa8e-0002a5d5c51b",
+      "uuid": "c06c8400-8e06-11e0-9cb6-0002a5d5c51b"
+    },
+    "Ring Volume Listener_21d14087-558a-4f21-94a9-5002dce64bce": {
+      "connectMode": "Insert",
+      "implementor": "Dolby Laboratories",
+      "name": "Ring Volume Listener",
+      "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+      "uuid": "21d14087-558a-4f21-94a9-5002dce64bce"
+    },
+    "Virtualizer_1d4033c0-8557-11df-9f2d-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "NXP Software Ltd.",
+      "name": "Virtualizer",
+      "type": "37cc2c00-dddd-11db-8577-0002a5d5c51b",
+      "uuid": "1d4033c0-8557-11df-9f2d-0002a5d5c51b"
+    },
+    "Visualizer_d069d9e0-8329-11df-9168-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "Visualizer",
+      "type": "e46b26a0-dddd-11db-8afd-0002a5d5c51b",
+      "uuid": "d069d9e0-8329-11df-9168-0002a5d5c51b"
+    },
+    "Volume_119341a0-8469-11df-81f9-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "NXP Software Ltd.",
+      "name": "Volume",
+      "type": "09e8ede0-ddde-11db-b4f6-0002a5d5c51b",
+      "uuid": "119341a0-8469-11df-81f9-0002a5d5c51b"
+    }
+  },
+  "isVolumeFixed": false,
+  "outputFramesPerBuffer": "256",
+  "outputSampleRate": "48000",
+  "streamVolumeRanges": {
+    "accessibility": {
+      "maxVolume": 15,
+      "minVolume": 1
+    },
+    "alarm": {
+      "maxVolume": 15,
+      "minVolume": 5
+    },
+    "dtmf": {
+      "maxVolume": 15,
+      "minVolume": 0
+    },
+    "music": {
+      "maxVolume": 15,
+      "minVolume": 0
+    },
+    "notification": {
+      "maxVolume": 15,
+      "minVolume": 0
+    },
+    "ring": {
+      "maxVolume": 15,
+      "minVolume": 0
+    },
+    "system": {
+      "maxVolume": 15,
+      "minVolume": 0
+    },
+    "voice_call": {
+      "maxVolume": 11,
+      "minVolume": 1
+    }
+  },
+  "supportAudioSourceUnprocessed": "false",
+  "supportMicNearUltrasound": "true",
+  "supportSpeakerNearUltrasound": "true"
+}
+
+REAL (ec519c7d513a3ad3) audio:
+{
+  "effectCount": 23,
+  "effects": {
+    "Acoustic Echo Canceler_bb392ec0-8d4d-11e0-a896-0002a5d5c51b": {
+      "connectMode": "Pre Processing",
+      "implementor": "The Android Open Source Project",
+      "name": "Acoustic Echo Canceler",
+      "type": "7b491460-8d4d-11e0-bd61-0002a5d5c51b",
+      "uuid": "bb392ec0-8d4d-11e0-a896-0002a5d5c51b"
+    },
+    "Alarm Volume Listener_6aff229c-30c6-4cc8-9957-dbfe5c1bd7f6": {
+      "connectMode": "Insert",
+      "implementor": "Dolby Laboratories",
+      "name": "Alarm Volume Listener",
+      "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+      "uuid": "6aff229c-30c6-4cc8-9957-dbfe5c1bd7f6"
+    },
+    "Automatic Gain Control V2_89f38e65-d4d2-4d64-ad0e-2b3e799ea886": {
+      "connectMode": "Pre Processing",
+      "implementor": "The Android Open Source Project",
+      "name": "Automatic Gain Control V2",
+      "type": "ae3c653b-be18-4ab8-8938-418f0a7f06ac",
+      "uuid": "89f38e65-d4d2-4d64-ad0e-2b3e799ea886"
+    },
+    "Auxiliary Environmental Reverb_4a387fc0-8ab3-11df-8bad-0002a5d5c51b": {
+      "connectMode": "Auxiliary",
+      "implementor": "NXP Software Ltd.",
+      "name": "Auxiliary Environmental Reverb",
+      "type": "c2e5d5f0-94bd-4763-9cac-4e234d06839e",
+      "uuid": "4a387fc0-8ab3-11df-8bad-0002a5d5c51b"
+    },
+    "Auxiliary Preset Reverb_f29a1400-a3bb-11df-8ddc-0002a5d5c51b": {
+      "connectMode": "Auxiliary",
+      "implementor": "NXP Software Ltd.",
+      "name": "Auxiliary Preset Reverb",
+      "type": "47382d60-ddd8-11db-bf3a-0002a5d5c51b",
+      "uuid": "f29a1400-a3bb-11df-8ddc-0002a5d5c51b"
+    },
+    "DAP_9d4921da-8225-4f29-aefa-39537a04bcaa": {
+      "connectMode": "Insert",
+      "implementor": "Dolby Laboratories",
+      "name": "DAP",
+      "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+      "uuid": "9d4921da-8225-4f29-aefa-39537a04bcaa"
+    },
+    "DAP_game_3783c334-d3a0-4d13-874f-0032e5fb80e2": {
+      "connectMode": "Insert",
+      "implementor": "Dolby Laboratories",
+      "name": "DAP_game",
+      "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+      "uuid": "3783c334-d3a0-4d13-874f-0032e5fb80e2"
+    },
+    "Dynamic Bass Boost_8631f300-72e2-11df-b57e-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "NXP Software Ltd.",
+      "name": "Dynamic Bass Boost",
+      "type": "0634f220-ddd4-11db-a0fc-0002a5d5c51b",
+      "uuid": "8631f300-72e2-11df-b57e-0002a5d5c51b"
+    },
+    "DynamicsProcessing_e0e6539b-1781-7261-676f-6d7573696340": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "DynamicsProcessing",
+      "type": "7261676f-6d75-7369-6364-28e2fd3ac39e",
+      "uuid": "e0e6539b-1781-7261-676f-6d7573696340"
+    },
+    "EqualizerBundle_ce772f20-847d-11df-bb17-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "NXP Software Ltd.",
+      "name": "EqualizerBundle",
+      "type": "0bed4300-ddd6-11db-8f34-0002a5d5c51b",
+      "uuid": "ce772f20-847d-11df-bb17-0002a5d5c51b"
+    },
+    "ExtensionEffectExample_fa81dd00-588b-11ed-9b6a-0242ac120002": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "ExtensionEffectExample",
+      "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+      "uuid": "fa81dd00-588b-11ed-9b6a-0242ac120002"
+    },
+    "Haptic Generator_97c4acd1-8b82-4f2f-832e-c2fe5d7a9931": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "Haptic Generator",
+      "type": "1411e6d6-aecd-4021-a1cf-a6aceb0d71e5",
+      "uuid": "97c4acd1-8b82-4f2f-832e-c2fe5d7a9931"
+    },
+    "Insert Environmental Reverb_c7a511a0-a3bb-11df-860e-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "NXP Software Ltd.",
+      "name": "Insert Environmental Reverb",
+      "type": "c2e5d5f0-94bd-4763-9cac-4e234d06839e",
+      "uuid": "c7a511a0-a3bb-11df-860e-0002a5d5c51b"
+    },
+    "Insert Preset Reverb_172cdf00-a3bc-11df-a72f-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "NXP Software Ltd.",
+      "name": "Insert Preset Reverb",
+      "type": "47382d60-ddd8-11db-bf3a-0002a5d5c51b",
+      "uuid": "172cdf00-a3bc-11df-a72f-0002a5d5c51b"
+    },
+    "Loudness Enhancer_fa415329-2034-4bea-b5dc-5b381c8d1e2c": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "Loudness Enhancer",
+      "type": "fe3199be-aed0-413f-87bb-11260eb63cf1",
+      "uuid": "fa415329-2034-4bea-b5dc-5b381c8d1e2c"
+    },
+    "MiSound_5b8e36a5-144a-4c38-b1d7-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "MiSound Audio Effect",
+      "name": "MiSound",
+      "type": "f46b26a0-dddd-11db-8afd-0002a5d5c51b",
+      "uuid": "5b8e36a5-144a-4c38-b1d7-0002a5d5c51b"
+    },
+    "Multichannel Downmix To Stereo_93f04452-e4fe-41cc-91f9-e475b6d1d69f": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "Multichannel Downmix To Stereo",
+      "type": "381e49cc-a858-4aa2-87f6-e8388e7601b2",
+      "uuid": "93f04452-e4fe-41cc-91f9-e475b6d1d69f"
+    },
+    "Music Volume Listener_40f66c8b-5aa5-4345-8919-53ec431aaa98": {
+      "connectMode": "Insert",
+      "implementor": "Dolby Laboratories",
+      "name": "Music Volume Listener",
+      "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+      "uuid": "40f66c8b-5aa5-4345-8919-53ec431aaa98"
+    },
+    "Noise Suppression_c06c8400-8e06-11e0-9cb6-0002a5d5c51b": {
+      "connectMode": "Pre Processing",
+      "implementor": "The Android Open Source Project",
+      "name": "Noise Suppression",
+      "type": "58b4b260-8e06-11e0-aa8e-0002a5d5c51b",
+      "uuid": "c06c8400-8e06-11e0-9cb6-0002a5d5c51b"
+    },
+    "Ring Volume Listener_21d14087-558a-4f21-94a9-5002dce64bce": {
+      "connectMode": "Insert",
+      "implementor": "Dolby Laboratories",
+      "name": "Ring Volume Listener",
+      "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+      "uuid": "21d14087-558a-4f21-94a9-5002dce64bce"
+    },
+    "Virtualizer_1d4033c0-8557-11df-9f2d-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "NXP Software Ltd.",
+      "name": "Virtualizer",
+      "type": "37cc2c00-dddd-11db-8577-0002a5d5c51b",
+      "uuid": "1d4033c0-8557-11df-9f2d-0002a5d5c51b"
+    },
+    "Visualizer_d069d9e0-8329-11df-9168-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "The Android Open Source Project",
+      "name": "Visualizer",
+      "type": "e46b26a0-dddd-11db-8afd-0002a5d5c51b",
+      "uuid": "d069d9e0-8329-11df-9168-0002a5d5c51b"
+    },
+    "Volume_119341a0-8469-11df-81f9-0002a5d5c51b": {
+      "connectMode": "Insert",
+      "implementor": "NXP Software Ltd.",
+      "name": "Volume",
+      "type": "09e8ede0-ddde-11db-b4f6-0002a5d5c51b",
+      "uuid": "119341a0-8469-11df-81f9-0002a5d5c51b"
+    }
+  },
+  "isVolumeFixed": false,
+  "outputFramesPerBuffer": "256",
+  "outputSampleRate": "48000",
+  "streamVolumeRanges": {
+    "accessibility": {
+      "maxVolume": 15,
+      "minVolume": 1
+    },
+    "alarm": {
+      "maxVolume": 15,
+      "minVolume": 6
+    },
+    "dtmf": {
+      "maxVolume": 15,
+      "minVolume": 0
+    },
+    "music": {
+      "maxVolume": 17,
+      "minVolume": 0
+    },
+    "notification": {
+      "maxVolume": 17,
+      "minVolume": 0
+    },
+    "ring": {
+      "maxVolume": 17,
+      "minVolume": 0
+    },
+    "system": {
+      "maxVolume": 15,
+      "minVolume": 0
+    },
+    "voice_call": {
+      "maxVolume": 11,
+      "minVolume": 1
+    }
+  },
+  "supportAudioSourceUnprocessed": "false",
+  "supportMicNearUltrasound": "true",
+  "supportSpeakerNearUltrasound": "true"
+}
+
+2. id.drm_uuid & supportedCryptoSchemes (4 个 UUID 含 ClearKey + Widevine) 云机 vs 真机:
+CLOUD (0b7cd3333759d674-cloud) drm:
+{
+  "supportedCryptoSchemes": [
+    "1077efec-c0b2-4d02-ace3-3c1e52e2fb4b",
+    "29701fe4-3cc7-4a34-8c5b-ae90c7439a47",
+    "e2719d58-a985-b3c9-781a-b030af78d30e",
+    "edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"
+  ],
+  "widevine": {
+    "algorithms": "AES/CBC/NoPadding,HmacSHA256",
+    "description": "Widevine CDM",
+    "deviceUniqueIdLen": 32,
+    "deviceUniqueIdNonZero": true,
+    "hdcpLevel": "Unprotected",
+    "isSupported": true,
+    "maxHdcpLevel": "Unprotected",
+    "maxNumberOfSessions": "16",
+    "oemCryptoApiVersion": "18",
+    "openSessionOk": true,
+    "securityLevel": "L3",
+    "sessionIdLen": true,
+    "systemId": "33098",
+    "usageReportingSupport": "True",
+    "vendor": "com.google.android.widevine",
+    "version": "19.0.1@AV1A.240725.002"
+  }
+}
+CLOUD id.drm_uuid:
+{
+  "runId": "run-00019",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "ok": true,
+    "s_2_0": "[fddab2f4583b27a9c212d9bc2687286b1115a2de8c8cc3fcf72d6f55831327b5]"
+  }
+}
+
+REAL (ec519c7d513a3ad3) drm:
+{
+  "supportedCryptoSchemes": [
+    "1077efec-c0b2-4d02-ace3-3c1e52e2fb4b",
+    "29701fe4-3cc7-4a34-8c5b-ae90c7439a47",
+    "e2719d58-a985-b3c9-781a-b030af78d30e",
+    "edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"
+  ],
+  "widevine": {
+    "algorithms": "AES/CBC/NoPadding,HmacSHA256",
+    "description": "Widevine CDM",
+    "deviceUniqueIdLen": 32,
+    "deviceUniqueIdNonZero": true,
+    "hdcpLevel": "Unprotected",
+    "isSupported": true,
+    "maxHdcpLevel": "Unprotected",
+    "maxNumberOfSessions": "16",
+    "oemCryptoApiVersion": "18",
+    "openSessionOk": false,
+    "securityLevel": "L3",
+    "sessionIdLen": false,
+    "systemId": "33098",
+    "usageReportingSupport": "True",
+    "vendor": "com.google.android.widevine",
+    "version": "19.0.1@AV1A.240725.002"
+  }
+}
+
+3. hardware.battery & battery_power_thermal (微安级动态电流 bmCurrentNowUa / bmCurrentAvgUa) 云机 vs 真机:
+CLOUD (0b7cd3333759d674-cloud):
+{
+  "batteryLow": false,
+  "bmCapacityValid": true,
+  "bmCurrentAvgUa": -63100,
+  "bmCurrentNowUa": -62500,
+  "bmEnergyCounterNwh": -9223372036854775808,
+  "bmStatusValid": true,
+  "chargeCounterPositive": true,
+  "chargeCounterUah": 4954,
+  "cycleCount": 753,
+  "health": 2,
+  "instantPowerWatts": 0.2741,
+  "level": 100,
+  "levelInValidRange": true,
+  "maxChargingCurrent": 0,
+  "maxChargingVoltage": 0,
+  "notEmulatorConstantBattery": true,
+  "plugged": 1,
+  "present": true,
+  "scale": 100,
+  "status": 5,
+  "statusValid": true,
+  "technology": "Li-poly",
+  "temperatureInValidRange": true,
+  "temperatureTenthsC": 331,
+  "voltageInValidRange": true,
+  "voltageMv": 4385
+}
+{
+  "runId": "run-00019",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "battery": {
+      "android.os.extra.CHARGING_STATUS": 0,
+      "android.os.extra.CYCLE_COUNT": 753,
+      "battery_low": false,
+      "charge_counter": 4961,
+      "health": 2,
+      "icon-small": 17303933,
+      "invalid_charger": 0,
+      "level": 100,
+      "max_charging_current": 0,
+      "max_charging_voltage": 0,
+      "metadata": "1AIAAEJOREwSAAAACgAAAHQAZQBjAGgAbgBvAGwAbwBnAHkAAAAAAAAAAAAHAAAATABpAC0AcABv\nAGwAeQAAAAoAAABpAGMAbwBuAC0AcwBtAGEAbABsAAAAAAABAAAAfQkIARQAAABtAGEAeABfAGMA\naABhAHIAZwBpAG4AZwBfAHYAbwBsAHQAYQBnAGUAAAAAAAEAAAAAAAAABgAAAGgAZQBhAGwAdABo\nAAAAAAABAAAAAgAAABQAAABtAGEAeABfAGMAaABhAHIAZwBpAG4AZwBfAGMAdQByAHIAZQBuAHQA\nAAAAAAEAAAAAAAAABgAAAHMAdABhAHQAdQBzAAAAAAABAAAABQAAAAcAAABwAGwAdQBnAGcAZQBk\nAAAAAQAAAAEAAAAHAAAAcAByAGUAcwBlAG4AdAAAAAkAAAABAAAAIAAAAGEAbgBkAHIAbwBpAGQA\nLgBvAHMALgBlAHgAdAByAGEALgBDAEgAQQBSAEcASQBOAEcAXwBTAFQAQQBUAFUAUwAAAAAAAQAA\nAAAAAAADAAAAcwBlAHEAAAABAAAAIgAAAA4AAABjAGgAYQByAGcAZQBfAGMAbwB1AG4AdABlAHIA\nAAAAAAEAAABhEwAABQAAAGwAZQB2AGUAbAAAAAEAAABkAAAABQAAAHMAYwBhAGwAZQAAAAEAAABk\nAAAACwAAAHQAZQBtAHAAZQByAGEAdAB1AHIAZQAAAAEAAABeAQAABwAAAHYAbwBsAHQAYQBnAGUA\nAAABAAAAHxEAABwAAABhAG4AZAByAG8AaQBkAC4AbwBzAC4AZQB4AHQAcgBhAC4AQwBZAEMATABF\nAF8AQwBPAFUATgBUAAAAAAABAAAA8QIAAA8AAABpAG4AdgBhAGwAaQBkAF8AYwBoAGEAcgBnAGUA\ncgAAAAEAAAAAAAAACwAAAGIAYQB0AHQAZQByAHkAXwBsAG8AdwAAAAkAAAAAAAAA\n",
+      "plugged": 1,
+      "present": true,
+      "scale": 100,
+      "seq": 34,
+      "status": 5,
+      "technology": "Li-poly",
+      "temperature": 350,
+      "voltage": 4383
+    },
+    "ok": true
+  }
+}
+
+REAL (ec519c7d513a3ad3):
+{
+  "batteryLow": false,
+  "bmCapacityValid": true,
+  "bmCurrentAvgUa": -65000,
+  "bmCurrentNowUa": -67800,
+  "bmEnergyCounterNwh": -9223372036854775808,
+  "bmStatusValid": true,
+  "chargeCounterPositive": true,
+  "chargeCounterUah": 4967,
+  "cycleCount": 642,
+  "health": 2,
+  "instantPowerWatts": 0.2955,
+  "level": 100,
+  "levelInValidRange": true,
+  "maxChargingCurrent": 0,
+  "maxChargingVoltage": 0,
+  "notEmulatorConstantBattery": true,
+  "plugged": 1,
+  "present": true,
+  "scale": 100,
+  "status": 5,
+  "statusValid": true,
+  "technology": "Li-poly",
+  "temperatureInValidRange": true,
+  "temperatureTenthsC": 290,
+  "voltageInValidRange": true,
+  "voltageMv": 4359
+}
+
+4. GNSS 硬件年份 (gnssYearOfHardware=2020) & ultimate.location_network 云机 vs 真机:
+CLOUD (0b7cd3333759d674-cloud) locationGnss:
+{
+  "allProviders": [
+    "fused",
+    "gps",
+    "network",
+    "passive"
+  ],
+  "gnssCapabilities": {
+    "hasAntennaInfo": false,
+    "hasGeofencing": false,
+    "hasLowPowerMode": true,
+    "hasMeasurements": true,
+    "hasNavigationMessages": true
+  },
+  "gnssHardwareModelName": "MediaTek,MT,MTK_MNLD_14_1.00,MNL_VER_24100901ALPS05_8.00_00",
+  "gnssYearOfHardware": 2020,
+  "isLocationEnabled": true
+}
+
+REAL (ec519c7d513a3ad3) locationGnss:
+{
+  "allProviders": [
+    "fused",
+    "gps",
+    "network",
+    "passive"
+  ],
+  "gnssCapabilities": {
+    "hasAntennaInfo": false,
+    "hasGeofencing": false,
+    "hasLowPowerMode": true,
+    "hasMeasurements": true,
+    "hasNavigationMessages": true
+  },
+  "gnssHardwareModelName": "MediaTek,MT,MTK_MNLD_14_1.00,MNL_VER_24100901ALPS05_8.00_00",
+  "gnssYearOfHardware": 2020,
+  "isLocationEnabled": true
+}
+
+5. dumpsys media.audio_flinger & dumpsys audio 实测输出 (48000 Hz / 256 frames / STREAM_MUSIC max=15):
+- STREAM_MUSIC:
+   Muted: false
+   Muted Internally: false
+   Min: 0
+   Max: 15
+   streamVolume:5
+   Current: 2 (speaker): 5, 40000000 (default): 5
+--
+--- Hal2AidlMapper & AudioFlinger logcat ---

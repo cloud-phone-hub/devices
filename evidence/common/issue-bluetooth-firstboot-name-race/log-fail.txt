@@ -1,0 +1,12 @@
+# 修复前：4d5128bd8ca07462-cloud aligner.network_full 差异 & 中间调试曝光的启动竞态
+1) diff/network.json bluetooth.name:
+{
+  "level": "identity",
+  "path": "bluetooth.name",
+  "base": "Redmi Note 13 5G",
+  "target": "2312DRAABC"
+}
+   summary(old): {"identity": 1, "capability": 2, "state": 34, "availability": 0, "fatal": 3}
+2) 中间实测阻塞问题（service_daemon）：
+   - scrub.rs 在 init.svc.hwservicemanager=stopped 时删除 hwservicemanager.disabled 并写 hwservicemanager.ready=true，导致 com.android.bluetooth Mainline HalVersionManager 撞死 /dev/hwbinder，蓝牙 STATE_ON 无法完成且 bluetooth_manager 报错。
+   - mgmt_bridge::spawn() 与 main() reap_children() (waitpid(-1, WNOHANG)) 并发竞态，子线程 run_ip() 遭遇 ECHILD(10) 或主 netns 尚未隔离 mgmt0。

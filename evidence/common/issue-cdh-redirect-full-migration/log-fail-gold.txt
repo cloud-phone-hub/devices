@@ -1,0 +1,23 @@
+### gold 实例 3（移植规则缺 update_verifier 屏蔽）重启循环摘录  2026-11-02 08:44:42
+
+== 模块本身正常
+451:[    0.138429][    T1] cdh_redirect: 规则来自 /lib/modules/cdh_redirect.rules：9 条
+454:[    0.139942][    T1] cdh_redirect: 已加载：9 条规则（/lib/modules/cdh_redirect.rules），内核未打补丁
+3313:[    0.132248][    T1] cdh_redirect: 规则来自 /lib/modules/cdh_redirect.rules：9 条
+
+== 缺屏蔽 → update_verifier 取不到 bootctl → 自杀重启
+788:[    0.488240][    T1] init: Parsing file /system/etc/init/update_verifier.rc...
+2513:[    8.192775][    T1] init: starting service 'update_verifier'...
+2517:[    8.194539][    T1] init: ... started service 'update_verifier' has pid 477
+2519:[    8.195658][    T1] init: SVC_EXEC service 'update_verifier' pid 477 (uid 0 gid 2001+1 context default) started; waiting...
+2538:[    8.205636][  T191] servicemanager: Caller(pid=477,uid=0,sid=u:r:update_verifier:s0) Could not find android.hardware.boot.IBootControl/default in the VINTF manifest. No alternative instances declared in VINTF.
+2540:[    8.206509][  T477] update_verifier: AIDL IBootControl not available, falling back to HIDL.
+2550:[    8.209587][  T477] update_verifier: Error getting bootctrl v1.0 module.
+2551:[    8.213362][  T477] update_verifier: Error getting bootctrl module.
+2552:[    8.213647][  T198] type=1400 audit(8.200:244): avc:  denied  { read } for  comm="update_verifier" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=498 scontext=u:r:update_verifier:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+2553:[    8.213655][  T122]  Received sys.powerctl='reboot' from pid: 477 (/system/bin/update_verifier)
+2554:[    8.214458][  T122] init: Received sys.powerctl='reboot' from pid: 477 (/system/bin/update_verifier)
+2575:[    8.224525][    T1] init: Sending signal 15 to service 'update_verifier' (pid 477) process group...
+
+== 重启次数（同一份 qemu.log 内多次早期启动即为循环证据）
+48

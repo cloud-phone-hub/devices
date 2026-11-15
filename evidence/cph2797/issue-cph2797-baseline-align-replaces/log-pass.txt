@@ -1,0 +1,24 @@
+==> [步骤 5] 厂商 vendor 原件覆盖
+    输入: out/roms/oppo/cph2797/16.0.8.301_EX01（厂商 vendor 原件）（覆盖集合 4 项）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor
+[replace] vendor/lib64/libpng.so <- 厂商 vendor/lib64/libpng.so（文件覆盖）
+[replace] vendor/etc/permissions <- 厂商 vendor/etc/permissions（目录，49 个文件，替换）
+[replace] vendor/etc/security <- 厂商 vendor/etc/security（目录，171 个文件，替换）
+[replace] vendor/lib64/android.hardware.graphics.common-V5-ndk.so <- 厂商 vendor/lib64/android.hardware.graphics.common-V5-ndk.so（文件覆盖）
+==> VINTF schema 对齐到 9.0（系统 libvintf 上限）
+    已全部是 9.0，无需改写
+==> [步骤 6] 应用基线 vendor 属性 -> out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/build.prop
+    [prop] 追加 ro.hardware.egl=mesa
+    [prop] 追加 ro.hardware.hwcomposer=drm
+    [prop] 覆盖 ro.hwui.use_vulkan=false
+    [prop] 追加 ro.opengles.version=196608
+    [prop] 覆盖 ro.soc.model=vsoc_arm64
+    [prop] 追加 ro.vendor.boot_security_patch=2026-06-01
+    [prop] 覆盖 ro.vendor.build.security_patch=2026-06-01
+==> [步骤 6] fstab 收口
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_boot/fstab.mt6993（05 阶段缓存的 first_stage fstab）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc（落 fstab.<board>，删除 lineage fstab.virtio*；把 init.virtio.rc 改名成 init.<board>.rc）
+    删除 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/fstab.virtio（lineage fstab.virtio 副本）
+    删除 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/fstab.virtio.gsi.sda（lineage fstab.virtio 副本）
+    删除 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/fstab.virtio.gsi.vdc（lineage fstab.virtio 副本）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/fstab.mt6993（first_stage fstab：out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_boot/fstab.mt6993）

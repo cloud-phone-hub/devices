@@ -1,0 +1,879 @@
+==> 设备: OPPO Find X9（oppo/cph2797）
+==> 清单: manifest/oppo/cph2797/baselines/CPH2797_16.0.8.301_EX01_A11_full.json
+    厂商固件: roms/devices/oppo/cph2797/CPH2797_16.0.8.301_EX01_A11_full.zip
+    lineage 底包: roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip
+==> 阶段(8): build_boot, build_vendor_boot, build_odm, build_vendor, build_vendor_dlkm, build_patch, pack_super, pack_vda
+==> [1/8] build_boot  (04_build_boot)
+  + 进程内调用 build_boot
+==> 内核产物目录: out/kernel/lineage-23-6.12（out/kernel/lineage-23-6.12）
+==> boot 基底: out/roms/lineage/lineage-23.2/boot_a.img（CDH_LINEAGE_DIR）
+==> 产物目录: out/devices/oppo/cph2797/16.0.8.301_EX01（out/devices）
+    输入: 缓存配方 boot-3f9814a60296（输入哈希）
+==> 阶段日志: out/devices/oppo/cph2797/16.0.8.301_EX01/img/boot-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    boot 基底:  out/roms/lineage/lineage-23.2/boot_a.img
+    基底信息:   kernel 44780032 B，ramdisk 1707747 B，os_version 0x200001a8
+    内核镜像:   out/kernel/lineage-23-6.12/Image
+    内核配方:   lineage-23-6.12-cdh-0c0573720acb
+    zygote64:   追加 ro.zygote=zygote64
+    产物:       out/devices/oppo/cph2797/16.0.8.301_EX01/img/boot.img
+    缓存配方:   boot-3f9814a60296
+    缓存状态:   需重建（配方变化: boot-5a215e13e2f5 -> boot-3f9814a60296）
+==> [步骤 1] 解包 boot 基底
+    输入: out/roms/lineage/lineage-23.2/boot_a.img（页 4096，kernel 44780032 B，ramdisk 1707747 B）
+    输出: ramdisk 1707747 B
+==> [步骤 2] 注入 ramdisk 属性
+    输入: ramdisk 1707747 B（build.prop 追加 ro.zygote=zygote64）
+    输出: ramdisk 1707747 B（无 build.prop，跳过注入）
+==> [步骤 3] 重打 boot.img
+    输入: kernel 43969024 B（out/kernel/lineage-23-6.12/Image）、ramdisk 1707747 B
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/img/boot.img（83886080 字节，上限 268435456 字节）
+==> [步骤 4] 写清单与校验和
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/img/boot.img
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/img/{boot-info.txt、build-recipe.txt、SHA256SUMS}
+[ok] boot.img 打包完成: out/devices/oppo/cph2797/16.0.8.301_EX01/img/boot.img（83886080 字节）
+    kernel 43969024 B（基底 44780032 B），ramdisk 1707747 B（基底 1707747 B）
+    os_version 0x200001a8（保留基底值），缓存配方 boot-3f9814a60296
+==> [2/8] build_vendor_boot  (05_build_vendor_boot)
+  + 进程内调用 build_vendor_boot
+==> vendor_boot 基底: out/roms/lineage/lineage-23.2/vendor_boot_a.img（CDH_LINEAGE_DIR）
+==> 产物目录: out/devices/oppo/cph2797/16.0.8.301_EX01（out/devices）
+==> vendor 镜像目录: out/roms/oppo/cph2797/16.0.8.301_EX01（命令行）
+==> 板级名: mt6993
+    缓存过期（无合并标记）: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_boot/fstab.mt6993
+    生成: 2026-11-02 09:23，算法 fstab-rev: merge-v8
+    厂商 fstab: first_stage_ramdisk/fstab.mt6993（out/roms/oppo/cph2797/16.0.8.301_EX01/vendor_boot.img）
+    lineage fstab: first_stage_ramdisk/system/etc/fstab.virtio（out/roms/lineage/lineage-23.2/vendor_boot_a.img）
+    合并: 厂商 114 行、lineage 28 行；保留 45、覆盖 14、追加 14、丢弃 55、跳过逻辑分区 14
+    云机分区集: 9 个（BIOS, EFI, boot_a, firmware, metadata, misc, persist, super, vendor_boot_a）
+    云机不存在的分区已剔除: apusys1, apusys2, audio_dsp, boot_para, bootloader2, ccu, connsys_bt, connsys_wifi, dpm1, dpm2, dtbo, expdb, frp, gpueb, gz1, gz2, init_boot, lk1, logo, mcf_ota, mcupm1, mcupm2, md1arm7, md1dsp, md3img, md_sec, modem, mvpu_algo1, mvpu_algo2, nvcfg, nvdata, nvram, odmdtbo, oplusreserve2, otp, para, pi_img, proinfo, protect1, protect2, scp1, scp2, seccfg, spmfw, sspm1, sspm2, tee1, tee2, userdata, vbmeta, vbmeta_system, vbmeta_vendor, vcp
+==> fstab: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_boot/fstab.mt6993（vendor_boot 提取合并）
+==> 内核产物目录: out/kernel/lineage-23-6.12（out/kernel/lineage-23-6.12）
+==> 重定向模块: out/kernel/lineage-23-6.12/modules/cdh_redirect.ko（42808 B，内核 6.12.81-4k-cdh，规则 manifest/oppo/cph2797/kernel/cdh_redirect.rules）
+    输入: 缓存配方 vboot-6e395d3476aa（输入哈希）
+==> 阶段日志: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_boot-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    vendor_boot 基底: out/roms/lineage/lineage-23.2/vendor_boot_a.img
+    基底信息:   version 4，page 2048 B，ramdisk 22387457 B，fragment 2 个
+    cmdline:    binder.impl=rust firmware_class.path=/vendor/firmware/ log_buf_len=4M loop.max_part=7 printk.devkmsg=on rw vt.global_cursor_default=0 acpi=nospcr androidboot.verifiedbootstate=green console=tty0 androidboot.hardware=mt6993 bootconfig
+    cmdline 改写: androidboot.verifiedbootstate=orange -> androidboot.verifiedbootstate=green；(缺失) -> androidboot.hardware=mt6993
+    板级名:     mt6993
+    fstab:      out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_boot/fstab.mt6993（vendor_boot 提取合并），6849 B -> first_stage_ramdisk/system/etc/fstab.mt6993
+    重定向模块: cdh_redirect.ko（out/kernel/lineage-23-6.12/modules/cdh_redirect.ko，42808 B）+ 规则 manifest/oppo/cph2797/kernel/cdh_redirect.rules（4024 B）-> lib/modules/6.12.81-4k-cdh/
+    产物:       out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_boot.img
+    缓存配方:   vboot-6e395d3476aa
+    缓存状态:   需重建（配方变化: vboot-12aedb9feb6b -> vboot-6e395d3476aa）
+==> [步骤 1] 拆解 vendor_boot 基底
+    输入: out/roms/lineage/lineage-23.2/vendor_boot_a.img（version 4，页 2048 B，vendor_ramdisk 22387457 B）
+    输出: fragment 2 个（fragment0 platform 4794800 B，fragment1 recovery 17592657 B）
+==> [步骤 2] 重建 vendor_ramdisk fragment
+    输入: fragment 2 个；向 fragment0 注入 first_stage_ramdisk/system/etc/fstab.mt6993（6849 B）
+    输入: 引导期模块 -> fragment0 根级 lib/modules/6.12.81-4k-cdh/（cdh_redirect.ko 42808 B + 规则 4024 B）
+    输出: vendor_ramdisk 22387457 B -> 22404493 B
+    fragment0 platform: 4794800 B -> 4811836 B（删 fstab 3 项，注入 first_stage_ramdisk/system/etc/fstab.mt6993，注入模块 6.12.81-4k-cdh、6.12.81-4k-cdh/cdh_redirect.ko、6.12.81-4k-cdh/modules.load、6.12.81-4k-cdh/modules.dep、cdh_redirect.rules）
+    fragment1 recovery: 17592657 B -> 17592657 B（删 fstab 0 项）
+==> [步骤 3] 重打 vendor_boot.img
+    输入: cmdline（androidboot.verifiedbootstate=orange -> androidboot.verifiedbootstate=green；(缺失) -> androidboot.hardware=mt6993）
+    输入: bootconfig（bootconfig androidboot.hardware=virtio -> androidboot.hardware=mt6993）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_boot.img（22411527 字节）
+    cmdline: binder.impl=rust firmware_class.path=/vendor/firmware/ log_buf_len=4M loop.max_part=7 printk.devkmsg=on rw vt.global_cursor_default=0 acpi=nospcr androidboot.verifiedbootstate=green console=tty0 androidboot.hardware=mt6993 bootconfig
+==> [步骤 4] 写清单与校验和
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_boot.img、fstab：out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_boot/fstab.mt6993（vendor_boot 提取合并），6849 B -> first_stage_ramdisk/system/etc/fstab.mt6993
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/img/{vendor_boot-info.txt、vendor_boot-recipe.txt、SHA256SUMS}
+[ok] vendor_boot.img 打包完成: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_boot.img（22411527 字节）
+    板级名: mt6993，缓存配方 vboot-6e395d3476aa
+==> [3/8] build_odm  (06_build_odm)
+  + 进程内调用 build_odm
+==> 阶段日志: out/devices/oppo/cph2797/16.0.8.301_EX01/img/odm-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    设备:       oppo/cph2797 16.0.8.301_EX01
+    输入: manifest/oppo/cph2797/odm/etc/build.prop
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/odm/etc/build.prop
+    镜像: out/devices/oppo/cph2797/16.0.8.301_EX01/img/odm.img（ext4，打包 out/devices/oppo/cph2797/16.0.8.301_EX01/odm）
+    工具: debugfs=/opt/homebrew/opt/e2fsprogs/sbin/debugfs，mke2fs=/opt/homebrew/opt/e2fsprogs/sbin/mke2fs，e2fsck=/opt/homebrew/opt/e2fsprogs/sbin/e2fsck
+==> [步骤 1] odm 覆盖件已一致: out/devices/oppo/cph2797/16.0.8.301_EX01/odm/etc/build.prop
+    abilist32="" abilist64=arm64-v8a sha256=efeee888fee9d196228f8272f409a29ef879da93d8164f2e963b9d23bb2c09ca
+==> [步骤 2] 计算 odm 镜像配方
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/odm（3 条目，sha256 abf4c63f077d）
+    配方: odm-1dc0fc2c2884（layout v1:root=vendor_file;etc=vendor_configs_file;fixed-mode=dir0755,file0644）
+[skip] odm.img 可复用: out/devices/oppo/cph2797/16.0.8.301_EX01/img/odm.img（odm-1dc0fc2c2884）
+==> [4/8] build_vendor  (07_build_vendor)
+  + 进程内调用 build_vendor
+==> android: 16（命令行）
+==> 产物目录: out/devices/oppo/cph2797/16.0.8.301_EX01（out/devices）
+==> 厂商解包根: out/roms/oppo/cph2797/16.0.8.301_EX01（命令行）
+==> HAL 产物根: out/vendor/android16（out/vendor）
+==> vendor 基底: out/roms/lineage/lineage-23.2/super/vendor_a.img（命令行）
+==> 厂商覆盖集合: 基线清单 vendor.replaces（4 项）
+==> 阶段日志: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    HAL 编译器: out/bin/cdh-vendor
+    设备清单:   manifest/oppo/cph2797/device.json
+    机型静态树: manifest/oppo/cph2797/vendor（3 个文件）
+    编译产物:   out/vendor/android16（android.hardware.audio@default 4 项、android.hardware.authsecret@default 3 项、android.hardware.bluetooth@default 3 项、android.hardware.boot@default 3 项、android.hardware.camera@default 3 项、android.hardware.confirmationui@default 3 项、android.hardware.drm@default 3 项、android.hardware.gnss@default 3 项、android.hardware.health@default 3 项、android.hardware.identity@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.media.v412@default 20 项、android.hardware.memtrack@default 3 项、android.hardware.nfc@default 3 项、android.hardware.power@default 3 项、android.hardware.power.stats@default 2 项、android.hardware.radio@default 3 项、android.hardware.secure_element@default 2 项、android.hardware.sensors@default 3 项、android.hardware.soundtrigger3@default 3 项、android.hardware.thermal@default 3 项、android.hardware.usb@default 6 项、android.hardware.vibrator@default 3 项、android.hardware.weaver@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 14 项）；out/vendor/android16/fakefingerprint（android.hardware.biometrics@fakefingerprint 9 项）
+    基底镜像:   out/roms/lineage/lineage-23.2/super/vendor_a.img（已存在，作为打包 vendor.img 基底）
+    解包目录:   out/roms/lineage/lineage-23.2/super/unpack_vendor（已有 444 个文件，步骤 1 会清空重解）
+    vendor APEX: default（预计摊平 3/12：com.android.hardware.graphics.composer.drm_hwcomposer_upstream / com.android.hardware.wpa_supplicant.mainline_common / org.lineageos.device.gralloc.minigbm_upstream）
+    平台覆盖层: mtk（产物根下暂无该目录，跳过）
+    目标树:     out/devices/oppo/cph2797/16.0.8.301_EX01/vendor（已有 754 个文件（仅保留白名单顶层））
+    厂商覆盖:   4 条（lib64/libpng.so（替换）、etc/permissions（替换）、etc/security（替换）、lib64/android.hardware.graphics.common-V5-ndk.so（替换）；来源 out/roms/oppo/cph2797/16.0.8.301_EX01/super/vendor_a.img，已存在）
+    借件:       无
+    vendor fstab: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_boot/fstab.mt6993 -> etc/fstab.mt6993（删除 fstab.virtio, fstab.virtio.gsi.sda, fstab.virtio.gsi.vdc）
+    vendor init:  etc/init/hw/init.virtio.rc -> init.mt6993.rc（计划）
+    SELinux 补丁: 模块层 android.hardware.audio vendor/hardware/android.hardware.audio/sepolicy（2 个文件）；模块层 android.hardware.bluetooth vendor/hardware/android.hardware.bluetooth/sepolicy（1 个文件）；模块层 android.hardware.gnss vendor/hardware/android.hardware.gnss/sepolicy（1 个文件）；模块层 android.hardware.keymint vendor/hardware/android.hardware.keymint/sepolicy（2 个文件）；模块层 android.hardware.media vendor/hardware/android.hardware.media/sepolicy（1 个文件）；模块层 android.hardware.media.v412 vendor/hardware/android.hardware.media.v412/sepolicy（2 个文件）；模块层 android.hardware.power vendor/hardware/android.hardware.power/sepolicy（1 个文件）；模块层 android.hardware.radio vendor/hardware/android.hardware.radio/sepolicy（1 个文件）；模块层 android.hardware.soundtrigger3 vendor/hardware/android.hardware.soundtrigger3/sepolicy（1 个文件）；模块层 android.hardware.thermal vendor/hardware/android.hardware.thermal/sepolicy（1 个文件）；模块层 android.hardware.wifi vendor/hardware/android.hardware.wifi/sepolicy（2 个文件）；模块层 android.service.daemon vendor/hardware/android.service.daemon/sepolicy（2 个文件）；机型层 manifest/oppo/cph2797/sepolicy（1 个文件）
+    vendor 属性: 基线 build-prop-sets 8 项 / unsets 0 项 -> vendor/build.prop
+    VINTF schema: schema -> 9.0（33 个片段，0 个待改写）
+    镜像产物:   out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor.img
+    HAL 模块:  android.hardware.audio（变体 default，变体产物根 out/vendor/android16，4 项齐全（编译产物 2 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.audio.service
+        期望产物 out/vendor/android16/bin/hw/android.hardware.audio.effect.service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.audio.service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.audio.service.xml
+    HAL 模块:  android.hardware.authsecret（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.authsecret-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.authsecret-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.authsecret-service.xml
+    HAL 模块:  android.hardware.biometrics（变体 fakefingerprint，变体产物根 out/vendor/android16/fakefingerprint，9 项齐全（编译产物 4 + vendor 静态树 5，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/fakefingerprint/bin/hw/android.hardware.biometrics.fingerprint-service
+        期望产物 out/vendor/android16/fakefingerprint/bin/hw/android.hardware.biometrics.face-service
+        期望产物 out/vendor/android16/fakefingerprint/bin/hw/android.hardware.biometrics.fingerprint-virtualhal-service
+        期望产物 out/vendor/android16/fakefingerprint/bin/hw/android.hardware.biometrics.face-virtualhal-service
+        期望静态树 out/vendor/android16/fakefingerprint/etc/init/android.hardware.biometrics.face-service.rc
+        期望静态树 out/vendor/android16/fakefingerprint/etc/init/android.hardware.biometrics.fingerprint-service.rc
+        期望静态树 out/vendor/android16/fakefingerprint/etc/init/android.hardware.biometrics.virtualhal-service.rc
+        期望静态树 out/vendor/android16/fakefingerprint/etc/vintf/manifest/android.hardware.biometrics.face-service.xml
+        期望静态树 out/vendor/android16/fakefingerprint/etc/vintf/manifest/android.hardware.biometrics.fingerprint-service.xml
+    HAL 模块:  android.hardware.bluetooth（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.bluetooth-service
+        期望静态树 out/vendor/android16/etc/init/bluetooth-service-default.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/bluetooth-service-default.xml
+    HAL 模块:  android.hardware.boot（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.boot-service.default
+        期望静态树 out/vendor/android16/etc/init/android.hardware.boot-service.default.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.boot-service.default.xml
+    HAL 模块:  android.hardware.camera（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.camera-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.camera-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.camera-service.xml
+    HAL 模块:  android.hardware.confirmationui（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.confirmationui-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.confirmationui-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.confirmationui-service.xml
+    HAL 模块:  android.hardware.drm（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.drm-service.clearkey
+        期望静态树 out/vendor/android16/etc/init/android.hardware.drm-service.clearkey.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.drm-service.clearkey.xml
+    HAL 模块:  android.hardware.gnss（变体 default，变体产物根 out/vendor/android16，产物齐全但源码/配置已变 -> 重编）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.gnss-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.gnss-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.gnss-service.xml
+    HAL 模块:  android.hardware.health（变体 default，变体产物根 out/vendor/android16，产物齐全但源码/配置已变 -> 重编）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.health-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.health-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.health-service.xml
+    HAL 模块:  android.hardware.identity（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.identity-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.identity-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.identity-service.xml
+    HAL 模块:  android.hardware.keymint（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.security.keymint-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.security.keymint-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.security.keymint-service.xml
+    HAL 模块:  android.hardware.light（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.lights-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.lights-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.lights-service.xml
+    HAL 模块:  android.hardware.media（变体 default，变体产物根 out/vendor/android16，产物齐全但源码/配置已变 -> 重编）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.media.c2-mediatek
+        期望产物 out/vendor/android16/bin/hw/vendor.dolby.media.c2-default-service-dax
+        期望静态树 out/vendor/android16/etc/init/android.hardware.media.c2-mediatek.rc
+        期望静态树 out/vendor/android16/etc/init/vendor.dolby.media.c2-default-service-dax.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/manifest_media_c2_default.xml
+        期望静态树 out/vendor/android16/etc/vintf/manifest/vendor.dolby.media.c2-default-service-dax.xml
+    HAL 模块:  android.hardware.media.v412（变体 default，变体产物根 out/vendor/android16，20 项齐全（编译产物 17 + vendor 静态树 3，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.media.c2@1.2-service-v4l2-64
+        期望产物 out/vendor/android16/lib64/libc2plugin_store.so
+        期望产物 out/vendor/android16/lib64/android.hardware.graphics.bufferqueue@2.0.so
+        期望产物 out/vendor/android16/lib64/android.hardware.media.bufferpool2-V2-ndk.so
+        期望产物 out/vendor/android16/lib64/android.hardware.media.bufferpool@2.0.so
+        期望产物 out/vendor/android16/lib64/android.hardware.media.c2-V1-ndk.so
+        期望产物 out/vendor/android16/lib64/libchrome.so
+        期望产物 out/vendor/android16/lib64/libcodec2.so
+        期望产物 out/vendor/android16/lib64/libcodec2_aidl.so
+        期望产物 out/vendor/android16/lib64/libcodec2_hal_common.so
+        期望产物 out/vendor/android16/lib64/libcodec2_vndk.so
+        期望产物 out/vendor/android16/lib64/libevent.so
+        期望产物 out/vendor/android16/lib64/libfmq.so
+        期望产物 out/vendor/android16/lib64/libion.so
+        期望产物 out/vendor/android16/lib64/libsfplugin_ccodec_utils.so
+        期望产物 out/vendor/android16/lib64/libstagefright_aidl_bufferpool2.so
+        期望产物 out/vendor/android16/lib64/libstagefright_bufferpool@2.0.1.so
+        期望静态树 out/vendor/android16/etc/init/android.hardware.media.c2@1.2-service-v4l2-64.rc
+        期望静态树 out/vendor/android16/etc/seccomp_policy/android.hardware.media.c2-extended-seccomp_policy
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.media.c2@1.2-service-v4l2.xml
+    HAL 模块:  android.hardware.memtrack（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.memtrack-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.memtrack-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.memtrack-service.xml
+    HAL 模块:  android.hardware.nfc（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.nfc-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.nfc-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.nfc-service.xml
+    HAL 模块:  android.hardware.power（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.power-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.power-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.power.xml
+    HAL 模块:  android.hardware.power.stats（变体 default，变体产物根 out/vendor/android16，2 项齐全（编译产物 1 + vendor 静态树 1，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.power.stats-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.power.stats-service.rc
+    HAL 模块:  android.hardware.radio（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.radio-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.radio-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.radio-service.xml
+    HAL 模块:  android.hardware.secure_element（变体 default，变体产物根 out/vendor/android16，2 项齐全（编译产物 1 + vendor 静态树 1，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.secure_element-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.secure_element-service.rc
+    HAL 模块:  android.hardware.sensors（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.sensors-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.sensors-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.sensors-service.xml
+    HAL 模块:  android.hardware.soundtrigger3（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.soundtrigger3-service.example
+        期望静态树 out/vendor/android16/etc/init/android.hardware.soundtrigger3-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.soundtrigger3.xml
+    HAL 模块:  android.hardware.thermal（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.thermal-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.thermal-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.thermal-service.xml
+    HAL 模块:  android.hardware.usb（变体 default，变体产物根 out/vendor/android16，6 项齐全（编译产物 2 + vendor 静态树 4，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.usb-service
+        期望产物 out/vendor/android16/bin/hw/android.hardware.usb.gadget-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.usb-service.rc
+        期望静态树 out/vendor/android16/etc/init/android.hardware.usb.gadget-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.usb-service.xml
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.usb.gadget-service.xml
+    HAL 模块:  android.hardware.vibrator（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.vibrator-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.vibrator-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.vibrator-service.xml
+    HAL 模块:  android.hardware.weaver（变体 default，变体产物根 out/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.weaver-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.weaver-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.weaver-service.xml
+    HAL 模块:  android.hardware.wifi（变体 default，变体产物根 out/vendor/android16，产物齐全但源码/配置已变 -> 重编）
+        期望产物 out/vendor/android16/bin/hw/android.hardware.wifi-service
+        期望静态树 out/vendor/android16/etc/init/android.hardware.wifi-service.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.hardware.wifi-service.xml
+    HAL 模块:  android.service.daemon（变体 default，变体产物根 out/vendor/android16，产物齐全但源码/配置已变 -> 重编）
+        期望产物 out/vendor/android16/bin/service_daemon
+        期望静态树 out/vendor/android16/bin/cph-logcat-dump
+        期望静态树 out/vendor/android16/bin/cph-netmgr-setup
+        期望静态树 out/vendor/android16/bin/cph-setup-display
+        期望静态树 out/vendor/android16/bin/cph-storage-align
+        期望静态树 out/vendor/android16/bin/cph-wifi-bootstrap
+        期望静态树 out/vendor/android16/etc/init/cph_daemon_service.rc
+        期望静态树 out/vendor/android16/etc/init/cph_disable_provision.rc
+        期望静态树 out/vendor/android16/etc/init/cph_logcat_dump.rc
+        期望静态树 out/vendor/android16/etc/init/cph_netmgr.rc
+        期望静态树 out/vendor/android16/etc/init/cph_start_adbd.rc
+        期望静态树 out/vendor/android16/etc/init/cph_storage_align.rc
+        期望静态树 out/vendor/android16/etc/init/cph_wifi_bootstrap.rc
+        期望静态树 out/vendor/android16/etc/vintf/manifest/android.se.omapi.xml
+    缓存配方:   vendor-d9df1c11f4f7
+==> [步骤 1] 解包 lineage vendor 镜像
+    输入: out/roms/lineage/lineage-23.2/super/vendor_a.img（debugfs /opt/homebrew/opt/e2fsprogs/sbin/debugfs）
+    输出: out/roms/lineage/lineage-23.2/super/unpack_vendor
+    解包条目 481（文件 244 / 链接 200 / 目录 37），权限与归属由打包段按官方真值重设
+==> [步骤 2] 按白名单复制到装配树
+    输入: out/roms/lineage/lineage-23.2/super/unpack_vendor（顶层白名单 bin / build.prop / etc / firmware_mnt / lib / lib64 / pci.ids）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor
+    保留 bin / build.prop / etc / firmware_mnt / lib / lib64 / pci.ids（复制 446 条目：文件 219 / 链接 199 / 目录 28）
+    丢弃 apex / firmware / lost+found / odm / odm_dlkm / overlay / usr
+==> [步骤 2b] 摊平 vendor APEX（模式 default）
+    输入: out/roms/lineage/lineage-23.2/super/unpack_vendor/apex（共 12 个 .apex，选中 3 个：com.android.hardware.graphics.composer.drm_hwcomposer_upstream / com.android.hardware.wpa_supplicant.mainline_common / org.lineageos.device.gralloc.minigbm_upstream）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor
+    com.android.hardware.graphics.composer.drm_hwcomposer_upstream.apex: 新增 6 / 覆盖 22 / 跳过 2，rc 改写 1 个文件 1 行
+    com.android.hardware.wpa_supplicant.mainline_common.apex: 新增 17 / 覆盖 6 / 跳过 2，rc 改写 2 个文件 2 行
+    org.lineageos.device.gralloc.minigbm_upstream.apex: 新增 4 / 覆盖 16 / 跳过 2，rc 改写 1 个文件 1 行
+    合计: 新增 27 / 覆盖 44 / 跳过 6，rc 改写 4 个文件 4 行（3 个 APEX）
+==> [步骤 3] 编译 HAL 模块
+    输入: manifest/oppo/cph2797/device.json（hardware 29 项：android.hardware.audio@default、android.hardware.authsecret@default、android.hardware.biometrics@fakefingerprint、android.hardware.bluetooth@default、android.hardware.boot@default、android.hardware.camera@default、android.hardware.confirmationui@default、android.hardware.drm@default、android.hardware.gnss@default、android.hardware.health@default、android.hardware.identity@default、android.hardware.keymint@default、android.hardware.light@default、android.hardware.media@default、android.hardware.media.v412@default、android.hardware.memtrack@default、android.hardware.nfc@default、android.hardware.power@default、android.hardware.power.stats@default、android.hardware.radio@default、android.hardware.secure_element@default、android.hardware.sensors@default、android.hardware.soundtrigger3@default、android.hardware.thermal@default、android.hardware.usb@default、android.hardware.vibrator@default、android.hardware.weaver@default、android.hardware.wifi@default、android.service.daemon@default）
+    输出: out/vendor/android16（android.hardware.audio@default 4 项、android.hardware.authsecret@default 3 项、android.hardware.bluetooth@default 3 项、android.hardware.boot@default 3 项、android.hardware.camera@default 3 项、android.hardware.confirmationui@default 3 项、android.hardware.drm@default 3 项、android.hardware.gnss@default 3 项、android.hardware.health@default 3 项、android.hardware.identity@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.media.v412@default 20 项、android.hardware.memtrack@default 3 项、android.hardware.nfc@default 3 项、android.hardware.power@default 3 项、android.hardware.power.stats@default 2 项、android.hardware.radio@default 3 项、android.hardware.secure_element@default 2 项、android.hardware.sensors@default 3 项、android.hardware.soundtrigger3@default 3 项、android.hardware.thermal@default 3 项、android.hardware.usb@default 6 项、android.hardware.vibrator@default 3 项、android.hardware.weaver@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 14 项）；out/vendor/android16/fakefingerprint（android.hardware.biometrics@fakefingerprint 9 项）
+    机型属性: ro.board.platform=virt（展开产物名占位）
+[skip] android.hardware.audio 已编译（2 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.authsecret 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.biometrics 已编译（4 个编译产物 + 5 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.bluetooth 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.boot 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.camera 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.confirmationui 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.drm 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+==> 编译 HAL 模块 android.hardware.gnss（变体 default，模块源码或配置已变（指纹不一致））
+  + out/bin/cdh-vendor hal build android.hardware.gnss --android 16 --out-dir /Volumes/work/cloud-phone-hub/engine/out/vendor/android16
+==> AIDL 代码生成
+    android.hardware.gnss (v4, hash 3552d3a7d21e)
+==> 编译 45+1 个源文件到 .o
+==> 链接服务二进制
+==> 编译静态库 libxml2（38 个 C 源，静态编入服务）
+    写 bin/hw/android.hardware.gnss-service
+[ok] android.hardware.gnss 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+[ok] android.hardware.gnss 合并 vendor 静态树：新增 0，已存在同内容 2
+==> 编译 HAL 模块 android.hardware.health（变体 default，模块源码或配置已变（指纹不一致））
+  + out/bin/cdh-vendor hal build android.hardware.health --android 16 --out-dir /Volumes/work/cloud-phone-hub/engine/out/vendor/android16
+==> AIDL 代码生成
+    android.hardware.health (v4, hash c8d014c7bb95)
+==> 编译 13+1 个源文件到 .o
+==> 链接服务二进制
+==> 编译静态库 libxml2（38 个 C 源，静态编入服务）
+    写 bin/hw/android.hardware.health-service
+[ok] android.hardware.health 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+[ok] android.hardware.health 合并 vendor 静态树：新增 0，已存在同内容 2
+[skip] android.hardware.identity 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.keymint 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.light 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+==> 编译 HAL 模块 android.hardware.media（变体 default，模块源码或配置已变（指纹不一致））
+  + out/bin/cdh-vendor hal build android.hardware.media --android 16 --out-dir /Volumes/work/cloud-phone-hub/engine/out/vendor/android16
+==> AIDL 代码生成
+    android.hardware.common (v2, hash c32ddfdeb69c)
+    android.hardware.common.fmq (v1, hash 6a780550f6e6)
+    android.hardware.media.bufferpool2 (v2, hash c12818c51418)
+    android.hardware.media.c2 (v1, hash d4c3897135ef)
+==> 编译 48+1 个源文件到 .o
+==> 链接服务二进制
+==> 编译静态库 libxml2（38 个 C 源，静态编入服务）
+    写 bin/hw/android.hardware.media.c2-mediatek
+    写 bin/hw/vendor.dolby.media.c2-default-service-dax
+[ok] android.hardware.media 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+[ok] android.hardware.media 合并 vendor 静态树：新增 0，已存在同内容 4
+[skip] android.hardware.media.v412 已编译（17 个编译产物 + 3 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.memtrack 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.nfc 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.power 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.power.stats 已编译（1 个编译产物 + 1 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.radio 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.secure_element 已编译（1 个编译产物 + 1 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.sensors 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.soundtrigger3 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.thermal 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.usb 已编译（2 个编译产物 + 4 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.vibrator 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+[skip] android.hardware.weaver 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+==> 编译 HAL 模块 android.hardware.wifi（变体 default，模块源码或配置已变（指纹不一致））
+  + out/bin/cdh-vendor hal build android.hardware.wifi --android 16 --out-dir /Volumes/work/cloud-phone-hub/engine/out/vendor/android16
+==> AIDL 代码生成
+==> 平台 parcelable（framework-ndk.aidl：android.os.PersistableBundle）
+    写 framework-ndk.aidl
+    android.hardware.wifi.common (v1, hash 6a467a628209)
+    android.hardware.wifi (v2, hash a5a330d7dabd)
+==> 编译 137+2 个源文件到 .o
+==> 链接服务二进制
+==> 编译静态库 libxml2（38 个 C 源，静态编入服务）
+    写 bin/hw/android.hardware.wifi-service
+[ok] android.hardware.wifi 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/hw
+[ok] android.hardware.wifi 合并 vendor 静态树：新增 0，已存在同内容 2
+==> 编译 HAL 模块 android.service.daemon（变体 default，模块源码或配置已变（指纹不一致））
+  + out/bin/cdh-vendor hal build android.service.daemon --android 16 --out-dir /Volumes/work/cloud-phone-hub/engine/out/vendor/android16
+==> 编译 service_daemon（cargo release aarch64-linux-android，NDK clang 35）
+[ok] android.service.daemon 构建完成 -> /Volumes/work/cloud-phone-hub/engine/out/vendor/android16/bin/service_daemon
+[ok] android.service.daemon 合并 vendor 静态树：新增 0，已存在同内容 13
+==> [步骤 4] 复制编译产物到装配树
+    输入: 机型静态树 manifest/oppo/cph2797/vendor；编译产物 out/vendor/android16（android.hardware.audio@default 4 项、android.hardware.authsecret@default 3 项、android.hardware.bluetooth@default 3 项、android.hardware.boot@default 3 项、android.hardware.camera@default 3 项、android.hardware.confirmationui@default 3 项、android.hardware.drm@default 3 项、android.hardware.gnss@default 3 项、android.hardware.health@default 3 项、android.hardware.identity@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.media.v412@default 20 项、android.hardware.memtrack@default 3 项、android.hardware.nfc@default 3 项、android.hardware.power@default 3 项、android.hardware.power.stats@default 2 项、android.hardware.radio@default 3 项、android.hardware.secure_element@default 2 项、android.hardware.sensors@default 3 项、android.hardware.soundtrigger3@default 3 项、android.hardware.thermal@default 3 项、android.hardware.usb@default 6 项、android.hardware.vibrator@default 3 项、android.hardware.weaver@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 14 项）；out/vendor/android16/fakefingerprint（android.hardware.biometrics@fakefingerprint 9 项）；平台覆盖层 out/vendor/android16/mtk
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor
+[warn] 平台覆盖层 mtk 不存在，跳过: out/vendor/android16/mtk
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/cph-logcat-dump（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/cph-netmgr-setup（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/cph-setup-display（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/cph-storage-align（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/cph-wifi-bootstrap（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.audio.effect.service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.audio.service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.authsecret-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.biometrics.face-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.biometrics.face-virtualhal-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.biometrics.fingerprint-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.biometrics.fingerprint-virtualhal-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.bluetooth-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.boot-service.default（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.camera-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.confirmationui-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.drm-service.clearkey（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.gnss-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.health-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.identity-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.lights-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.media.c2-mediatek（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.media.c2@1.2-service-v4l2-64（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.memtrack-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.nfc-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.power-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.power.stats-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.radio-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.secure_element-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.security.keymint-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.sensors-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.soundtrigger3-service.example（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.thermal-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.usb-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.usb.gadget-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.vibrator-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.weaver-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/android.hardware.wifi-service（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/hw/vendor.dolby.media.c2-default-service-dax（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/bin/service_daemon（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/compat/renderengine_ext_unavailable.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/compat/vintf_empty.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.audio.service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.authsecret-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.biometrics.face-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.biometrics.fingerprint-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.biometrics.virtualhal-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.boot-service.default.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.camera-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.confirmationui-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.drm-service.clearkey.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.gnss-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.health-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.identity-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.lights-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.media.c2-mediatek.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.media.c2@1.2-service-v4l2-64.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.memtrack-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.nfc-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.power-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.power.stats-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.radio-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.secure_element-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.security.keymint-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.sensors-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.soundtrigger3-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.thermal-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.usb-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.usb.gadget-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.vibrator-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.weaver-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/android.hardware.wifi-service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/bluetooth-service-default.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/cph_daemon_service.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/cph_disable_provision.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/cph_logcat_dump.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/cph_netmgr.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/cph_start_adbd.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/cph_storage_align.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/cph_wifi_bootstrap.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/init.virtio_compat.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/init/vendor.dolby.media.c2-default-service-dax.rc（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/seccomp_policy/android.hardware.media.c2-extended-seccomp_policy（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.audio.service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.authsecret-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.biometrics.face-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.biometrics.fingerprint-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.boot-service.default.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.camera-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.confirmationui-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.drm-service.clearkey.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.gnss-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.health-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.identity-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.lights-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.media.c2@1.2-service-v4l2.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.memtrack-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.nfc-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.power.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.radio-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.security.keymint-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.sensors-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.soundtrigger3.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.thermal-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.usb-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.usb.gadget-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.vibrator-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.weaver-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.wifi-service.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.se.omapi.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/bluetooth-service-default.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/manifest_media_c2_default.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/vendor.dolby.media.c2-default-service-dax.xml（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/android.hardware.graphics.bufferqueue@2.0.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/android.hardware.media.bufferpool2-V2-ndk.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/android.hardware.media.bufferpool@2.0.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/android.hardware.media.c2-V1-ndk.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/libc2plugin_store.so（0755）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/libchrome.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/libcodec2.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/libcodec2_aidl.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/libcodec2_hal_common.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/libcodec2_vndk.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/libevent.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/libfmq.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/libion.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/libsfplugin_ccodec_utils.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/libstagefright_aidl_bufferpool2.so（0644）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/lib64/libstagefright_bufferpool@2.0.1.so（0644）
+==> [步骤 5] 厂商 vendor 原件覆盖
+    输入: out/roms/oppo/cph2797/16.0.8.301_EX01（厂商 vendor 原件）（覆盖集合 4 项）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor
+[replace] vendor/lib64/libpng.so <- 厂商 vendor/lib64/libpng.so（文件覆盖）
+[replace] vendor/etc/permissions <- 厂商 vendor/etc/permissions（目录，49 个文件，替换）
+[replace] vendor/etc/security <- 厂商 vendor/etc/security（目录，171 个文件，替换）
+[replace] vendor/lib64/android.hardware.graphics.common-V5-ndk.so <- 厂商 vendor/lib64/android.hardware.graphics.common-V5-ndk.so（文件覆盖）
+==> VINTF schema 对齐到 9.0（系统 libvintf 上限）
+    已全部是 9.0，无需改写
+==> [步骤 6] 应用基线 vendor 属性 -> out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/build.prop
+    [prop] 追加 ro.hardware.egl=mesa
+    [prop] 追加 ro.hardware.hwcomposer=drm
+    [prop] 覆盖 ro.hwui.use_vulkan=false
+    [prop] 追加 ro.opengles.version=196608
+    [prop] 覆盖 ro.soc.model=vsoc_arm64
+    [prop] 追加 ro.vendor.boot_security_patch=2026-06-01
+    [prop] 覆盖 ro.vendor.build.security_patch=2026-06-01
+    [prop] 追加 vendor.oplus.dalvik.vm.done=1
+==> [步骤 6] fstab 收口
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_boot/fstab.mt6993（05 阶段缓存的 first_stage fstab）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc（落 fstab.<board>，删除 lineage fstab.virtio*；把 init.virtio.rc 改名成 init.<board>.rc）
+    删除 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/fstab.virtio（lineage fstab.virtio 副本）
+    删除 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/fstab.virtio.gsi.sda（lineage fstab.virtio 副本）
+    删除 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/fstab.virtio.gsi.vdc（lineage fstab.virtio 副本）
+    写 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/fstab.mt6993（first_stage fstab：out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_boot/fstab.mt6993）
+    改名 init.virtio.rc -> init.mt6993.rc（init 按 ro.hardware=mt6993 找板级入口）
+==> [步骤 6] 注入 SELinux 策略补丁
+    输入[模块层 android.hardware.audio]: vendor/hardware/android.hardware.audio/sepolicy
+    输入[模块层 android.hardware.bluetooth]: vendor/hardware/android.hardware.bluetooth/sepolicy
+    输入[模块层 android.hardware.gnss]: vendor/hardware/android.hardware.gnss/sepolicy
+    输入[模块层 android.hardware.keymint]: vendor/hardware/android.hardware.keymint/sepolicy
+    输入[模块层 android.hardware.media]: vendor/hardware/android.hardware.media/sepolicy
+    输入[模块层 android.hardware.media.v412]: vendor/hardware/android.hardware.media.v412/sepolicy
+    输入[模块层 android.hardware.power]: vendor/hardware/android.hardware.power/sepolicy
+    输入[模块层 android.hardware.radio]: vendor/hardware/android.hardware.radio/sepolicy
+    输入[模块层 android.hardware.soundtrigger3]: vendor/hardware/android.hardware.soundtrigger3/sepolicy
+    输入[模块层 android.hardware.thermal]: vendor/hardware/android.hardware.thermal/sepolicy
+    输入[模块层 android.hardware.wifi]: vendor/hardware/android.hardware.wifi/sepolicy
+    输入[模块层 android.service.daemon]: vendor/hardware/android.service.daemon/sepolicy
+    输入[机型层]: manifest/oppo/cph2797/sepolicy
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.audio/sepolicy/vendor_sepolicy.cil（3439 字节，marker ;; vendor_sepolicy.cil@android.hardware.audio）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_service_contexts <- vendor/hardware/android.hardware.audio/sepolicy/vendor_service_contexts（1516 字节，marker # vendor_service_contexts@android.hardware.audio）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.bluetooth/sepolicy/vendor_sepolicy.cil（1820 字节，marker ;; vendor_sepolicy.cil@android.hardware.bluetooth）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.gnss/sepolicy/vendor_sepolicy.cil（1326 字节，marker ;; vendor_sepolicy.cil@android.hardware.gnss）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.keymint/sepolicy/vendor_sepolicy.cil（2300 字节，marker ;; vendor_sepolicy.cil@android.hardware.keymint）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_property_contexts <- vendor/hardware/android.hardware.keymint/sepolicy/vendor_property_contexts（647 字节，marker # vendor_property_contexts@android.hardware.keymint）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.media/sepolicy/vendor_sepolicy.cil（2188 字节，marker ;; vendor_sepolicy.cil@android.hardware.media）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.media.v412/sepolicy/vendor_sepolicy.cil（1162 字节，marker ;; vendor_sepolicy.cil@android.hardware.media.v412）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_file_contexts <- vendor/hardware/android.hardware.media.v412/sepolicy/vendor_file_contexts（1244 字节，marker # vendor_file_contexts@android.hardware.media.v412）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_file_contexts <- vendor/hardware/android.hardware.power/sepolicy/vendor_file_contexts（989 字节，marker # vendor_file_contexts@android.hardware.power）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.radio/sepolicy/vendor_sepolicy.cil（2351 字节，marker ;; vendor_sepolicy.cil@android.hardware.radio）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_service_contexts <- vendor/hardware/android.hardware.soundtrigger3/sepolicy/vendor_service_contexts（702 字节，marker # vendor_service_contexts@android.hardware.soundtrigger3）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.thermal/sepolicy/vendor_sepolicy.cil（482 字节，marker ;; vendor_sepolicy.cil@android.hardware.thermal）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.hardware.wifi/sepolicy/vendor_sepolicy.cil（3335 字节，marker ;; vendor_sepolicy.cil@android.hardware.wifi）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_file_contexts <- vendor/hardware/android.hardware.wifi/sepolicy/vendor_file_contexts（586 字节，marker # vendor_file_contexts@android.hardware.wifi）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_sepolicy.cil <- vendor/hardware/android.service.daemon/sepolicy/vendor_sepolicy.cil（7534 字节，marker ;; vendor_sepolicy.cil@android.service.daemon）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_file_contexts <- vendor/hardware/android.service.daemon/sepolicy/vendor_file_contexts（1568 字节，marker # vendor_file_contexts@android.service.daemon）
+    追加 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_sepolicy.cil <- manifest/oppo/cph2797/sepolicy/vendor_sepolicy.cil（2659 字节，marker ;; vendor_sepolicy.cil）
+[ok] 补充 HAL 可执行标签 25 条（out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/selinux/vendor_file_contexts）：
+    android.hardware.authsecret-service -> hal_authsecret_default_exec
+    android.hardware.biometrics.face-service -> hal_face_default_exec
+    android.hardware.biometrics.face-virtualhal-service -> hal_face_default_exec
+    android.hardware.biometrics.fingerprint-service -> hal_fingerprint_default_exec
+    android.hardware.biometrics.fingerprint-virtualhal-service -> hal_fingerprint_default_exec
+    android.hardware.bluetooth-service -> hal_bluetooth_default_exec
+    android.hardware.camera-service -> hal_camera_default_exec
+    android.hardware.confirmationui-service -> hal_confirmationui_default_exec
+    android.hardware.gnss-service -> hal_gnss_default_exec
+    android.hardware.health-service -> hal_health_default_exec
+    android.hardware.identity-service -> hal_identity_default_exec
+    android.hardware.lights-service -> hal_light_default_exec
+    android.hardware.media.c2-mediatek -> mediacodec_exec
+    android.hardware.memtrack-service -> hal_memtrack_default_exec
+    android.hardware.nfc-service -> hal_nfc_default_exec
+    android.hardware.power.stats-service -> hal_power_stats_default_exec
+    android.hardware.radio-service -> hal_radio_default_exec
+    android.hardware.secure_element-service -> hal_secure_element_default_exec
+    android.hardware.soundtrigger3-service.example -> hal_audio_default_exec
+    android.hardware.thermal-service -> hal_thermal_default_exec
+    android.hardware.usb-service -> hal_usb_default_exec
+    android.hardware.usb.gadget-service -> hal_usb_gadget_default_exec
+    android.hardware.vibrator-service -> hal_vibrator_default_exec
+    android.hardware.weaver-service -> hal_weaver_default_exec
+    vendor.dolby.media.c2-default-service-dax -> mediacodec_exec
+==> [步骤 6c] 按清单裁掉 VINTF 片段（6 个）：android.se.omapi.xml、android.hardware.biometrics.face-service.xml、android.hardware.vibrator-service.xml、android.hardware.weaver-service.xml、android.hardware.biometrics.fingerprint-service.xml、android.hardware.nfc-service.xml
+[vintf] 裁掉 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.se.omapi.xml（官方同名声明保留，避免 fqname 冲突）
+[vintf] 裁掉 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.biometrics.face-service.xml（官方同名声明保留，避免 fqname 冲突）
+[vintf] 裁掉 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.vibrator-service.xml（官方同名声明保留，避免 fqname 冲突）
+[vintf] 裁掉 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.weaver-service.xml（官方同名声明保留，避免 fqname 冲突）
+[vintf] 裁掉 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.biometrics.fingerprint-service.xml（官方同名声明保留，避免 fqname 冲突）
+[vintf] 裁掉 out/devices/oppo/cph2797/16.0.8.301_EX01/vendor/etc/vintf/manifest/android.hardware.nfc-service.xml（官方同名声明保留，避免 fqname 冲突）
+==> [步骤 7] 打包 vendor.img
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor（792 条目：文件 559 / 链接 199 / 目录 34）+ 基底 out/roms/lineage/lineage-23.2/super/vendor_a.img（取 UUID/features）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor.img（mke2fs -d -> 元数据回写 -> e2fsck -> resize2fs -M）
+==> 基底文件系统特征: UUID 2b96c597-1e2f-5ee1-9851-c4a9fa9de36e，block 4096 / inode 256，features ext_attr dir_index filetype extent sparse_super large_file huge_file uninit_bg dir_nlink extra_isize
+==> mke2fs -d 从装配树生成 vendor.img: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor -> out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor.img
+    装配树条目 792（文件 559 / 链接 199 / 目录 34），初始 62964 块（245 MB），inode 1024
+==> 解包官方 vendor 镜像（取 SELinux 标签真值）: out/roms/oppo/cph2797/16.0.8.301_EX01/super/vendor_a.img
+==> 官方镜像标签真值: 3245 条（含 735 个符号链接自身）
+==> vendor 元数据规则表: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor-meta-rules.txt, out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor-meta-summary.txt
+==> debugfs 写入 792 个条目的元数据（权限 / 归属 / 时间 / SELinux）
+==> e2fsck 校验修复 vendor.img
+==> resize2fs -M 最小化收紧 vendor.img
+[ok] vendor.img 构建完成: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor.img（214536192 字节）
+==> [步骤 8] 写清单与校验和
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor.img、out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor-meta-rules.txt、out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor-meta-summary.txt
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/img/{vendor-info.txt、vendor-recipe.txt、SHA256SUMS}
+[ok] vendor 目录树装配与 vendor.img 打包完成: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor, out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor.img
+    机型静态树: 写入 3，已存在同内容 0
+    机型 usr: 跳过（源目录不存在）
+    编译产物 android.hardware.audio@default: 写入 4，已存在同内容 0
+    编译产物 android.hardware.authsecret@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.biometrics@fakefingerprint: 写入 9，已存在同内容 0
+    编译产物 android.hardware.bluetooth@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.boot@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.camera@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.confirmationui@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.drm@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.gnss@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.health@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.identity@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.keymint@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.light@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.media@default: 写入 6，已存在同内容 0
+    编译产物 android.hardware.media.v412@default: 写入 20，已存在同内容 0
+    编译产物 android.hardware.memtrack@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.nfc@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.power@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.power.stats@default: 写入 2，已存在同内容 0
+    编译产物 android.hardware.radio@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.secure_element@default: 写入 2，已存在同内容 0
+    编译产物 android.hardware.sensors@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.soundtrigger3@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.thermal@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.usb@default: 写入 6，已存在同内容 0
+    编译产物 android.hardware.vibrator@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.weaver@default: 写入 3，已存在同内容 0
+    编译产物 android.hardware.wifi@default: 写入 3，已存在同内容 0
+    编译产物 android.service.daemon@default: 写入 14，已存在同内容 0
+    平台覆盖层 mtk: 跳过（产物根下无 mtk/ 目录）
+    备注: vendor.img 由装配树经 mke2fs -d 全量生成，复刻基底 UUID/features，元数据经回查与 e2fsck 校验
+    备注: mke2fs 会在新镜像里自带一个空的 /lost+found（e2fsck 也会补回），不属于装配树，已补 0700 root:root 与 vendor_file 标签
+    备注: 符号链接在 ext4 上恒为 0777，规则表里记的是官方 EROFS 原值（0755 之类），两者不同属预期
+    备注: 机型侧 vendor_builder.py 走的是镜像内就地注入路线，与本阶段统一为先解包装配再建镜像
+    备注: 模块 vendor 静态树（rc / VINTF）已计入复用判据：产物根缺件会自动重跑该模块的 hal build
+==> [5/8] build_vendor_dlkm  (08_build_vendor_dlkm)
+  + 进程内调用 build_vendor_dlkm
+==> 产物目录: out/devices/oppo/cph2797/16.0.8.301_EX01（out/devices）
+==> vendor_dlkm 基座: out/roms/lineage/lineage-23.2/super/vendor_dlkm_a.img（命令行）
+==> 模块产物目录: out/kernel/lineage-23-6.12/modules（out/kernel/lineage-23-6.12）
+==> 厂商 vendor_dlkm: out/roms/oppo/cph2797/16.0.8.301_EX01/super/vendor_dlkm_a.img（命令行）
+==> build.prop 基线: /etc/build.prop（884 B / 837e8eb6ceb4）
+==> 模块产物: out/kernel/lineage-23-6.12/modules（6 个 .ko）
+    输入: 缓存配方 dlkm-47909e487270（输入哈希）
+==> 阶段日志: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_dlkm-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    基底镜像:   out/roms/lineage/lineage-23.2/super/vendor_dlkm_a.img（15831040 B，已存在，lineage 虚机 vendor_dlkm）
+    工作镜像:   out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/vendor_dlkm.work.img（步骤 1 每次从基底重拷）
+    模块产物:   out/kernel/lineage-23-6.12/modules（6 个 .ko，整树哈希 f8792150cb5873722734609872921675a6498af2100df16a5eb838438e84fd1e）
+    官方镜像:   out/roms/oppo/cph2797/16.0.8.301_EX01/super/vendor_dlkm_a.img（28889088 B）
+    清单基线:   /etc/build.prop（期望 884 B / 837e8eb6ceb4，标签 u:object_r:vendor_configs_file:s0）
+    工具:       debugfs=/opt/homebrew/opt/e2fsprogs/sbin/debugfs，e2fsck=/opt/homebrew/opt/e2fsprogs/sbin/e2fsck，dump.erofs=/opt/homebrew/bin/dump.erofs
+    回收候选:   24 个基座测试模块（步骤 2 按 debugfs stat 探测后删除）
+    镜像产物:   out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_dlkm.img
+    注入模块:   cfg80211.ko（name=cfg80211，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，2044352 B）
+        依赖 rfkill
+    注入模块:   libarc4.ko（name=libarc4，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，11424 B）
+    注入模块:   mac80211.ko（name=mac80211，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，1973680 B）
+        依赖 cfg80211
+        依赖 libarc4
+    注入模块:   mac80211_hwsim.ko（name=mac80211_hwsim，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，275376 B）
+        依赖 cfg80211
+        依赖 mac80211
+    注入模块:   rfkill.ko（name=rfkill，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，63608 B）
+    注入模块:   virtio_console.ko（name=virtio_console，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，74096 B）
+    缓存配方:   dlkm-47909e487270
+==> [步骤 1] 准备基底镜像
+    输入: out/roms/lineage/lineage-23.2/super/vendor_dlkm_a.img（15831040 B，lineage 虚机 vendor_dlkm）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/vendor_dlkm.work.img（每次从基底重拷，保留 mtime）
+[ok] 工作镜像就绪: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/vendor_dlkm.work.img（15831040 B）
+==> [步骤 2] 回收基座测试模块
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/vendor_dlkm.work.img，回收候选 24 个（/lib/modules）
+    输出: 释放基座测试模块占用的 inode 与块，供步骤 6 写入
+[ok] 回收 24 个基座模块: clk-gate_test.ko clk_kunit_helpers.ko clk-test.ko dev_addr_lists_test.ko ext4-inode-test.ko fat_test.ko hid-uclogic-test.ko iio-test-format.ko input_test.ko kheaders.ko kunit-example-test.ko kunit-test.ko kunit.ko lib_test.ko of_kunit_helpers.ko platform-test.ko regmap-kunit.ko regmap-ram.ko regmap-raw-ram.ko soc-topology-test.ko soc-utils-test.ko time_test.ko tipc.ko tipc_diag.ko
+==> [步骤 3] 收集内核模块产物
+    输入: out/kernel/lineage-23-6.12/modules
+    输出: 6 个 .ko（合计 4442536 B）注入 /lib/modules
+    cfg80211.ko: name=cfg80211，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，依赖 rfkill，alias 1 条
+    libarc4.ko: name=libarc4，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，依赖 无，alias 0 条
+    mac80211.ko: name=mac80211，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，依赖 cfg80211,libarc4，alias 0 条
+    mac80211_hwsim.ko: name=mac80211_hwsim，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，依赖 cfg80211,mac80211，alias 1 条
+    rfkill.ko: name=rfkill，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，依赖 无，alias 2 条
+    virtio_console.ko: name=virtio_console，vermagic=6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64，依赖 无，alias 2 条
+[ok] 模块产物已就绪: 6 个 .ko
+==> [步骤 4] 生成模块索引
+    输入: 基座 /lib/modules（modules.dep 108 行，modules.alias 1690 行，modules.options 0 行）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/{modules.load、modules.dep、modules.alias、modules.options}
+    modules.load: 6 行
+    modules.dep: 6 行
+    modules.alias: 1693 行
+    modules.options: 1 行
+[ok] 索引已生成: load 6 项，dep 6 项，alias 1693 行，options 1 行
+==> [步骤 5] 覆盖 /etc/build.prop
+    输入: /opt/homebrew/bin/dump.erofs --path=/etc/build.prop --cat out/roms/oppo/cph2797/16.0.8.301_EX01/super/vendor_dlkm_a.img（期望 884 B / 837e8eb6ceb4）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/build.prop（length + sha256 双校验通过才用）
+[ok] 基线件已就位: /etc/build.prop（884 B / 837e8eb6ceb4，标签 u:object_r:vendor_configs_file:s0）
+==> [步骤 6] debugfs 写入并回读校验
+    输入: 11 个文件（模块 6 + 索引 4 + build.prop /etc/build.prop）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/vendor_dlkm.work.img（一次 debugfs -w -f 会话，62 条命令）
+    命令文件: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/debugfs.cmd
+[ok] 写入 11 个文件，回读 11/11 内容一致
+==> [步骤 7] e2fsck 修复一致性
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/vendor_dlkm.work.img
+    输出: 元数据一致、可挂载的 ext4 镜像
+[ok] e2fsck 通过（退出码 0 = 无需修复）
+==> [步骤 8] 发布镜像并写清单与校验和
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/vendor_dlkm/vendor_dlkm.work.img（注入 11 个文件）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/img/{vendor_dlkm.img、vendor_dlkm-info.txt、vendor_dlkm-recipe.txt、SHA256SUMS}
+[ok] vendor_dlkm.img 构建完成: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_dlkm.img（15831040 字节，sha256 a9e5408c9247）
+[ok] vendor_dlkm 重打包完成: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_dlkm.img
+    注入 11 个文件，回读校验 11 个一致，回收 24 个基座模块
+    备注: 基座几乎写满（约剩 12 inode / 10 块），必须先回收 24 个 kunit/test/tipc 模块，才有空间写入新 .ko 与索引
+    备注: modules.dep 的行前缀沿用基座写法 /vendor_dlkm/lib/modules（与镜像内 /lib/modules 是同一棵树）
+    备注: modules.alias 的追加行写成基座同格式 alias <pattern> <模块名>；机型侧 Python 版直接写 .modinfo 原值，缺少模块名
+    备注: build.prop 覆盖依赖清单 vendor-dlkm.baseline-build-prop；清单未声明时保持基座 VirtIO 身份（步骤 5 跳过）
+    备注: 镜像走 debugfs 就地注入而非重建文件系统：UUID/features 与 lineage 基座一致，fstab 不必改
+    备注: 机型侧 vendor_dlkm_builder.py 与本阶段同路线；差别是这里把回收与写入拆成两次 debugfs 会话
+==> [6/8] build_patch  (09_build_patch)
+  + 进程内调用 build_patch
+==> 产物目录: out/devices/oppo/cph2797/16.0.8.301_EX01（out/devices）
+==> vendor 源镜像（07 产物）: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor.img（214536192 B，sha256 a80b9c1eaf38，产物目录缺省）
+==> vendor_dlkm 源镜像（08 产物）: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_dlkm.img（15831040 B，sha256 a9e5408c9247，产物目录缺省）
+==> odm 源镜像（06 产物）: out/devices/oppo/cph2797/16.0.8.301_EX01/img/odm.img（8388608 B，sha256 fba0475a17ea，产物目录缺省）
+    基线清单: manifest/oppo/cph2797/baselines/CPH2797_16.0.8.301_EX01_A11_full.json（patch.vendor-cil-rewrite 4 条）
+      #1 (allow ot_rcp self (netlink_route_socket (nlmsg)))
+      #2 (allowx ot_rcp self (nlmsg netlink_route_socket (0x16 0x1a 0x22 0x26 0x2a 0x2e 0x32 0x3a 0x3e 0x4a 0x4e 0x52 0x56 0x5a 0x5c 0x5e 0x60 0x66 0x6a 0x72 0x76 0x7a)))
+      #3 (allowx ot_rcp self (nlmsg netlink_route_socket (0x12)))
+      #4 (allow kernel_202504 vendor_firmware_file (system (firmware_load)))
+    输入: 缓存配方 patch-65fd22138202（输入哈希）
+==> 阶段日志: out/devices/oppo/cph2797/16.0.8.301_EX01/img/patch-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    载体:        /dev/block/vdc -> /mnt/vendorpatch（first_stage_mount；名以 /mnt/vendor 为前缀命中 vold 白名单，避开强拆）
+    子树 vendor: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor.img（214536192 B，已存在，sha256 a80b9c1eaf38） -> /vendor
+    子树 dlkm:   out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_dlkm.img（15831040 B，已存在，sha256 a9e5408c9247） -> /vendor_dlkm
+    子树 odm:    out/devices/oppo/cph2797/16.0.8.301_EX01/img/odm.img（8388608 B，已存在，sha256 fba0475a17ea） -> /odm
+    形态修正:    /vendor/odm 软链接换真实空目录；/vendor/lib/modules 由 vendor_dlkm 复制实体
+    屏蔽落点:    odm/etc/selinux/odm_sepolicy.cil、odm/etc/selinux/precompiled_sepolicy（必须不存在，否则反噬引导）
+    工具:        debugfs=/opt/homebrew/opt/e2fsprogs/sbin/debugfs，e2fsck=/opt/homebrew/opt/e2fsprogs/sbin/e2fsck，mkfs.ext4=/opt/homebrew/opt/e2fsprogs/sbin/mkfs.ext4
+    镜像产物:    out/devices/oppo/cph2797/16.0.8.301_EX01/img/patch.img（384 MiB，ext4）
+    缓存配方:    patch-65fd22138202
+==> [步骤 1] 解包三棵源树
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor.img（214536192 B）+ out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_dlkm.img（15831040 B）+ out/devices/oppo/cph2797/16.0.8.301_EX01/img/odm.img（8388608 B）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/{raw_vendor、raw_vendor_dlkm、raw_odm}（debugfs rdump）
+    vendor: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/raw_vendor（793 条目：文件 559 / 链接 199 / 目录 35）
+    vendor_dlkm: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/raw_vendor_dlkm（98 条目：文件 94 / 链接 0 / 目录 4）
+    odm: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/raw_odm（3 条目：文件 1 / 链接 0 / 目录 2）
+[ok] 源树已解包
+==> [步骤 2] 组装 patch 容器根
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/raw_vendor -> /vendor，out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/raw_vendor_dlkm -> /vendor_dlkm，out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/raw_odm -> /odm
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/root（= 运行态 /mnt/vendorpatch）
+    /vendor/lib/modules 符号链接（-> /vendor_dlkm/lib/modules）替换为真实目录（从 /vendor_dlkm/lib/modules 复制 90 条目）
+    屏蔽落点校验通过（2 项均不存在）
+    改写 /vendor/etc/selinux/vendor_sepolicy.cil（清单 4 条规则）
+      #1 命中 1 次 -> (allow ot_rcp self (netlink_route_socket (nlmsg_write)))
+      #2 命中 1 次 -> ;; cdh: permissionx nlmsg 内核与 plat 均不支持，已删除（ot_r…
+      #3 命中 1 次 -> ;; cdh: permissionx nlmsg 内核与 plat 均不支持，已删除（ot_r…
+      #4 命中 1 次 -> ;; cdh: system class 的 firmware_load 是 6.13+ 权限，内核 classma…
+[ok] 组装完成：987 条目（文件 744 / 链接 198 / 目录 45）
+==> [步骤 3] 逐路径从源镜像取元数据
+    输入: 988 条目（源 986 + 固定 2），源镜像 3 张
+    输出: 每个条目的 mode（含类型位）/ uid / gid / security.selinux
+    out/devices/oppo/cph2797/16.0.8.301_EX01/img/odm.img: 读回 4 条目
+    out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor.img: 读回 793 条目，[warn] 1 个缺 security.selinux（按 u:object_r:vendor_file:s0 兜底）
+    out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_dlkm.img: 读回 189 条目
+[ok] 元数据就绪：988 条目，标签 51 种
+==> [步骤 4] mkfs.ext4 -d 导入内容与权限位
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/stage/root（988 条目，384 MiB）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/patch.work.img（98304 块 × 4096 B；uid/gid 留给步骤 5 回填）
+[ok] 文件系统已建立: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/patch.work.img（402653184 B）
+==> [步骤 5] debugfs 回填属主与标签并回读校验
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/patch.work.img（988 条目）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/patch-debugfs.cmd（3952 条命令：sif 2964 + ea_set 988，标签值文件 51 个）
+[ok] 回填 988 条目，回读 988/988 一致
+==> [步骤 6] e2fsck 修复一致性
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/patch.work.img
+    输出: 元数据一致、可挂载的 ext4 镜像
+[ok] e2fsck 通过（退出码 0 = 无需修复）
+==> [步骤 7] 发布镜像并写清单与校验和
+    输入: out/devices/oppo/cph2797/16.0.8.301_EX01/patch/patch.work.img（988 条目，384 MiB）
+    输出: out/devices/oppo/cph2797/16.0.8.301_EX01/img/{patch.img、patch-info.txt、patch-recipe.txt、SHA256SUMS}
+[ok] patch.img 发布完成: out/devices/oppo/cph2797/16.0.8.301_EX01/img/patch.img（402653184 字节，sha256 29dceb593d23）
+[ok] patch.img 构建完成: out/devices/oppo/cph2797/16.0.8.301_EX01/img/patch.img
+    条目 988（源 986 + 固定 2），回读校验 988 一致，标签值文件 51 个
+    备注: patch.img 根是容器：/vendor、/vendor_dlkm、/odm 三棵并列子树分别来自 vendor.img / vendor_dlkm.img / odm.img
+    备注: mke2fs -d 不保留 uid/gid：属主与标签由步骤 5 的 debugfs 会话统一回填（标签用 -f 值文件带 NUL）
+    备注: 容器根、/vendor/odm、/vendor/lib/modules 的元数据固定，不取自源镜像
+    备注: /vendor/odm 在 vendor.img 里是绝对软链接，组装时换成真实空目录；odm 内容由 /odm 子树承载
+    备注: /vendor/lib/modules 在 vendor.img 里是软链接，组装时替换为真实目录并从 vendor_dlkm 复制；其子项元数据取自 vendor_dlkm.img
+    备注: odm 子树（odm.img）由 06_build_odm 产出，承载 odm/etc/build.prop 的 64 位 ABI 覆盖件
+    备注: 屏蔽落点（odm/etc/selinux/odm_sepolicy.cil）用 exists 校验；/system/bin/update_verifier 由内核 getname 直接返回 ENOENT，与镜像内容无关
+    备注: 镜像大小固定 384 MiB（--size 可调）；ext4 只按内容占用，剩余空间留白供 vdc 只读挂载
+    备注: /mnt/vendor 不再被 patch 覆盖，EFI/persist/shared/mi_ext 由 first_stage_init 的 tmpfs + 官方 fstab 挂载
+==> [7/8] pack_super  (10_pack_super)
+  + 进程内调用 pack_super
+==> 来源目录: out/roms/oppo/cph2797/16.0.8.301_EX01（命令行）
+==> 产物目录: out/devices/oppo/cph2797/16.0.8.301_EX01（out/devices）
+==> 阶段日志: out/devices/oppo/cph2797/16.0.8.301_EX01/img/super-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 0] 解析计划
+    模式:       案例 2/3 · 按分区镜像打包（system* / product / odm / vendor / vendor_dlkm / my_*）
+    来源目录:   out/roms/oppo/cph2797/16.0.8.301_EX01（动态分区镜像）
+    产物:       out/devices/oppo/cph2797/16.0.8.301_EX01/img/super.img（已存在 11.08 GiB）
+    工作镜像:   out/devices/oppo/cph2797/16.0.8.301_EX01/pack-super/super.work.img
+    模板:       out/devices/oppo/cph2797/16.0.8.301_EX01/img/super.img（复用 geometry/组表/块设备，liblp v10.2，组 default/cdh_dynamic_partitions_a/cdh_dynamic_partitions_b）
+    geometry:   max-size=65536 slot-count=2 block-size=4096（槽 4 份 × 64.0 KiB）
+    组:         default / cdh_dynamic_partitions_a / cdh_dynamic_partitions_b
+    分区识别:   system* / product / odm / odm_dlkm / vendor / vendor_dlkm / mi_ext / my_*（根目录优先，其次 super/；非动态分区一律不进 super）
+    容量:       11.08 GiB（沿用模板容量）
+    缓存配方:   记录为 super-b9d5dd862d15，实跑时重新计算比对
+    输入: 16 个源镜像共 11.07 GiB，按内容 SHA256 比对配方
+[skip] super.img 可复用: out/devices/oppo/cph2797/16.0.8.301_EX01/img/super.img
+    配方与 16 个源镜像内容均未变（super-b9d5dd862d15）
+==> [8/8] pack_vda  (11_pack_vda)
+  + 进程内调用 pack_vda
+==> 底盘: roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2 / LineageOS_on_arm64.utm/Data/vda.img（CDH_LINEAGE_ZIP）
+==> 阶段日志: out/dist/oppo/cph2797/16.0.8.301_EX01/vda-log.txt（边写边变，不在 SHA256SUMS 之内）
+==> [步骤 0] 解析计划
+    设备:       oppo/cph2797 16.0.8.301_EX01（id=cph2797_16.0.8.301_EX01）
+    来源镜像:   out/devices/oppo/cph2797/16.0.8.301_EX01/img（super 必需，boot/vendor_boot 可缺，patch 必需）
+    底盘:       roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2 / LineageOS_on_arm64.utm/Data/vda.img（zip）
+    盘集目录:   out/dist/oppo/cph2797/16.0.8.301_EX01（已有 vda.img 13.00 GiB）
+    分区表:     11 个分区、扇区 512 B（EFI/super/misc/persist/metadata/firmware/vendor_boot_a/vendor_boot_b/boot_a/boot_b/BIOS）
+    设备规格:   OPPO Find X9 / mt6993 1256×2760 @ 480 dpi，1 档内存，8 vCPU；verified-boot-hash fe049d35e450
+    data:       稀疏种子 110.27 GiB（data.qcow2）
+    grub:       固化固定 _a 槽 + 菜单零等待 + vbmeta 注入（幂等，缺 mtools 只告警）
+    缓存配方:   记录为 vda-2defad1c2dc4，实跑时重新计算比对
+    重建原因: 配方变化: vda-2defad1c2dc4 -> vda-a12c4572e3b0
+==> [步骤 1] 校验来源镜像并生成 device.json
+    [ok] super.img 11.08 GiB（out/devices/oppo/cph2797/16.0.8.301_EX01/img/super.img）
+    [ok] boot.img         80.0 MiB（out/devices/oppo/cph2797/16.0.8.301_EX01/img/boot.img）
+    [ok] vendor_boot.img  21.4 MiB（out/devices/oppo/cph2797/16.0.8.301_EX01/img/vendor_boot.img）
+    [ok] patch.img 384.0 MiB（out/devices/oppo/cph2797/16.0.8.301_EX01/img/patch.img）
+    [ok] device.json 内容已生成（id=cph2797_16.0.8.301_EX01，566 B）
+==> [步骤 2] 准备 vda 底盘
+    输入: roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip 的 LineageOS_on_arm64.utm/Data/vda.qcow2 / LineageOS_on_arm64.utm/Data/vda.img
+    [skip] 缓存 raw 可用: out/tmp/pack-vda/oppo/cph2797/16.0.8.301_EX01/vda.raw（13.00 GiB）
+    [skip] 复用 out/dist/oppo/cph2797/16.0.8.301_EX01/vda.img（底盘未变，仅原位刷新分区）
+==> [步骤 3] 替换 super 分区（安卓系统盘）
+    [ok] super           11.08 GiB @ 129.0 MiB（容量 12.00 GiB，余量 937.0 MiB），回读一致
+==> [步骤 4] 替换 boot / vendor_boot 分区（A/B 双槽）
+    [ok] boot_a          80.0 MiB @ 12.49 GiB（容量 80.0 MiB，余量 0 B），回读一致
+    [ok] boot_b          80.0 MiB @ 12.57 GiB（容量 80.0 MiB，余量 0 B），回读一致
+    [ok] vendor_boot_a   21.4 MiB @ 12.30 GiB（容量 100.0 MiB，余量 78.6 MiB），回读一致
+    [ok] vendor_boot_b   21.4 MiB @ 12.40 GiB（容量 100.0 MiB，余量 78.6 MiB），回读一致
+==> [步骤 5] 固化 EFI grub.cfg（固定 _a + 菜单零等待 + vbmeta + 设备 cmdline）
+    [..] 已含# CDH: 固定启动 A 槽
+    [..] 已含# CDH: 引导菜单零等待
+    [..] 已含# CDH: Remote KeyMint verified boot 参数
+    [warn] device.json 未登记 cmdline，跳过设备参数注入
+    [skip] grub.cfg 已含全部 CDH 固化
+==> [步骤 6] 发布盘集（patch.img / data.qcow2 / device.json）
+    [..] patch.img 内容已变，重新发布（384.0 MiB）
+    [ok] patch.img -> out/dist/oppo/cph2797/16.0.8.301_EX01/patch.img（384.0 MiB，sha256 29dceb593d23）
+    [skip] data.qcow2 已就位（193.7 KiB）
+    [ok] device.json（id=cph2797_16.0.8.301_EX01）-> out/dist/oppo/cph2797/16.0.8.301_EX01/device.json
+    [ok] out/dist/oppo/cph2797/16.0.8.301_EX01/vda-info.txt / out/dist/oppo/cph2797/16.0.8.301_EX01/vda-recipe.txt
+    产物: out/dist/oppo/cph2797/16.0.8.301_EX01（vda.img 13.00 GiB，5 个分区已刷新）
+[ok] 已完成
+EXIT=0

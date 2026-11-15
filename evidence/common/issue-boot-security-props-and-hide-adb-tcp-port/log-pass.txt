@@ -1,0 +1,50 @@
+# P0-1 (A4) 修复后验证证据 (log-pass.txt)
+# 采样时间: 2026-11-10
+# 设备: Xiaomi Redmi Note 13 5G (gold / 2312DRAABC, OS3.0.10.0.VNQCNXM)
+# 真机 ID: ec519c7d513a3ad3 (USB: fmvwkrheonugvgjb)
+# 云机实例: gold_15-OS3.0.10.0.VNQCNXM/1 (df809591a4e085ae-cloud, ADB: 127.0.0.1:5911)
+# 镜像产物: vendor_boot.img (vboot-aaa1631d4912), patch.img (sha256 987e19e67b9d), vda.img (vda-0026a0d15ecc)
+# 测试批次: run-00219
+
+=== 1. qemu.log 引导与瞬态端口清理日志 ===
+[    0.000000][    T0] Kernel command line: ... androidboot.veritymode=enforcing androidboot.mode=normal androidboot.vbmeta.avb_version=1.2 androidboot.vbmeta.hash_alg=sha256 androidboot.hardware=mt6833 ... androidboot.vbmeta.digest=fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f androidboot.vbmeta.device_state=locked androidboot.verifiedbootstate=green androidboot.veritymode=enforcing androidboot.vbmeta.avb_version=1.2 androidboot.vbmeta.hash_alg=sha256 androidboot.product.hardware.sku=gold_cn
+[    7.355625][  T450] ro.boot.vbmeta.size=11904（direct mmap）
+[    7.355749][  T450] ro.boot.chipid=0x01a90ae4ceb966e8515802723fe0d408（direct mmap）
+[    7.355774][  T450] ro.boot.cpuid=0x01a90ae4ceb966e8515802723fe0d408b5764774f82b5690a022dd673f3a64c49ccf0734（direct mmap）
+[    7.355796][  T450] ro.boot.serialno=jhkpt81z5p0t2xpk（direct mmap）
+[    7.362574][  T454] adbd: 子进程 pid=458 已拉起（/apex/com.android.adbd/bin/adbd）
+[    7.388831][  T454] adbd: 5555 监听就绪，已移除 service.adb.tcp.port
+
+=== 2. Cloud ADB 连接与 shell getprop 实测对照 ===
+connected to 127.0.0.1:5911
+ro.secure                        = 1
+ro.debuggable                    = 0
+ro.adb.secure                    = 1
+ro.boot.veritymode               = enforcing
+ro.boot.mode                     = normal
+ro.boot.vbmeta.avb_version       = 1.2
+ro.boot.vbmeta.hash_alg          = sha256
+ro.boot.vbmeta.size              = 11904
+ro.boot.vbmeta.digest            = fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f
+ro.boot.vbmeta.device_state      = locked
+ro.boot.verifiedbootstate        = green
+ro.boot.flash.locked             = 1
+service.adb.tcp.port             =
+
+=== 3. boot_check.py 冷启动亮屏验收 ===
+[shot] /Volumes/work/cloud-phone-hub/engine/out/tmp/gold_boot_173.png 1088x2400 bpp=32 平均亮度=209.3 峰值=255
+[pass] 引导完成（日志 6185 行）+ 截图非黑（平均亮度=209.3 峰值=255）
+
+=== 4. device-checker 双机对比批次 run-00219 ===
+[REAL ] aligner_xiaomi_gold.build_props:
+  crossLayerChecks={"adbTcpPortHidden": true, "brandConsistentAcrossPartitions": true, "brandMismatches": [], "deviceConsistentAcrossPartitions": true, "deviceMismatches": [], "fingerprintFormatValid": true, "isUserReleaseKeys": true, "modelConsistentAcrossPartitions": true, "modelMismatches": [], "noAntiEmuOrLineageProps": true, "releaseMatchesSdkInt": true, "roSecureAndDebuggableValid": true, "vbmetaDigestPresent": true, "verifiedBootGreenLocked": false, "verityModeEnforcing": true}
+  service.adb.tcp.port='' veritymode='enforcing' mode='normal' avb='1.2' hash='sha256' size='11904'
+[CLOUD] aligner_xiaomi_gold.build_props:
+  crossLayerChecks={"adbTcpPortHidden": true, "brandConsistentAcrossPartitions": true, "brandMismatches": [], "deviceConsistentAcrossPartitions": true, "deviceMismatches": [], "fingerprintFormatValid": true, "isUserReleaseKeys": true, "modelConsistentAcrossPartitions": true, "modelMismatches": [], "noAntiEmuOrLineageProps": true, "releaseMatchesSdkInt": true, "roSecureAndDebuggableValid": true, "vbmetaDigestPresent": true, "verifiedBootGreenLocked": true, "verityModeEnforcing": true}
+  service.adb.tcp.port='' veritymode='enforcing' mode='normal' avb='1.2' hash='sha256' size='11904'
+
+[REAL ] aligner_xiaomi_gold.all: passed=32/32 A1=True A2=True A3=True A4=True
+[CLOUD] aligner_xiaomi_gold.all: passed=16/32 A1=True A2=True A3=True A4=True
+
+[REAL ] ultimate.boot_unlock: ok=True deadly=0 warn=0 info=3
+[CLOUD] ultimate.boot_unlock: ok=True deadly=0 warn=0 info=1

@@ -1,0 +1,33 @@
+{
+  "id": 31,
+  "official": "BLU",
+  "brand": "blu",
+  "model": "BLU G75",
+  "device": "G1170",
+  "platform": "mtk",
+  "resolution": "720x1640",
+  "inch": "70x156",
+  "density": 320,
+  "smp": 8,
+  "memory": [
+    8192
+  ],
+  "storage": [
+    128000,
+    256000
+  ],
+  "extra": {
+    "board": "mt6768",
+    "hostHvc": {
+      "host-hvc-adb": "hvc8",
+      "host-hvc-bluetooth": "hvc5",
+      "host-hvc-daemon": "hvc7",
+      "host-hvc-haptic": "hvc6",
+      "host-hvc-keymint": "hvc3",
+      "host-hvc-radio": "hvc4",
+      "host-hvc-wifi": "hvc9"
+    },
+    "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
+  },
+  "updatedAt": "2026-11-09T03:17:21Z"
+}

@@ -1,0 +1,49 @@
+# oriole AP2A（kernel 5.10.270-4k-cdh，build-prop-unsets 删除 ro.frp.pst + build-prop-sets 锁 ro.hwui.use_vulkan=false）通过态取证
+# 盘集：out/dist/google/oriole/AP2A.240905.003.F1（vda-recipe vda-681ba1a2f915，patch.img sha256 32a528d8c46b）
+# 实例：out/core/daemon/runtime/oriole_AP2A.240905.003.F1/1（pid 19671，2026-11-04 11:17:17 从零起盘）
+
+==== 1) 装配树 vendor/build.prop 复核 ====
+$ grep -n -E "^ro\.(hwui\.use_vulkan|frp\.pst)" out/devices/google/oriole/AP2A.240905.003.F1/vendor/build.prop
+48:ro.hwui.use_vulkan=false
+
+==== 2) 内核引导与 sys.boot_completed=1（27.98 s）====
+$ grep -E "Linux version|sys\.boot_completed=1|InitFatalReboot|zygote-fatal|RescueParty" out/core/daemon/runtime/oriole_AP2A.240905.003.F1/1/qemu.log
+[    0.000000][    T0] Linux version 5.10.270-4k-cdh (root@769025b5e576) (Android (dev, NO PGO PROFILE, NO BOLT PROFILE, based on r487747) clang version 17.0.0 (https://android.googlesource.com/toolchain/llvm-project abf7f3400b057e0460f10da2a9573663122a78e2), LLD 17.0.0) #1 SMP PREEMPT Wed Nov 4 02:55:20 UTC 2026
+[   27.981012][    T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1218)
+[   28.118365][    T1] init: Command 'exec - system system -- /bin/rm -rf /data/per_boot' action=sys.boot_completed=1 (/system/etc/init/hw/init.rc:1221) took 129ms and succeeded
+[   28.687841][    T1] init: processing action (sys.boot_completed=1 && sys.bootstat.first_boot_completed=0) from (/system/etc/init/bootstat.rc:67)
+[   28.744237][    T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/flags_health_check.rc:7)
+[   28.797320][    T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/logd.rc:34)
+[   28.802552][    T1] init: processing action (sys.boot_completed=1 && sys.wifitracing.started=0) from (/system/etc/init/wifi.rc:28)
+[   28.992268][    T1] init: processing action (sys.boot_completed=1) from (/vendor/etc/init/cph_disable_provision.rc:17)
+[   29.001899][    T1] init: processing action (sys.boot_completed=1) from (/vendor/etc/init/cph_logcat_dump.rc:39)
+[   29.012500][    T1] init: processing action (sys.boot_completed=1) from (/vendor/etc/init/cph_start_adbd.rc:28)
+[   29.035531][    T1] init: processing action (sys.boot_completed=1) from (/vendor/etc/init/cph_storage_align.rc:27)
+[   29.059223][    T1] init: processing action (sys.boot_completed=1) from (/vendor/etc/init/cph_wifi_bootstrap.rc:20)
+
+==== 3) ADB 运行态核验 ====
+$ adb -s 127.0.0.1:5911 shell "uname -a; getprop sys.boot_completed; getprop init.svc.bootanim; getprop ro.hwui.use_vulkan; getprop ro.frp.pst; pidof system_server surfaceflinger com.android.systemui com.google.android.apps.nexuslauncher; dumpsys window | grep -E 'mCurrentFocus|mFocusedApp'"
+Linux localhost 5.10.270-4k-cdh #1 SMP PREEMPT Wed Nov 4 02:55:20 UTC 2026 aarch64 Toybox
+1
+stopped
+false
+
+765 873 2067 2560
+  mCurrentFocus=Window{3a5dbcc u0 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}
+  mFocusedApp=ActivityRecord{e0be45b u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t7}
+
+==== 4) TestHarnessModeService 与 0 次崩溃核验 ====
+$ grep -E "PersistentDataBlock|!gpuCount|TestHarnessModeService|FATAL EXCEPTION IN SYSTEM PROCESS" engine/out/tmp/oriole_510_run3_logcat.txt
+11-04 11:17:48.081   873   873 D SystemServerTimingAsync: ssm.onStartUser-0_com.android.server.testharness.TestHarnessModeService
+11-04 11:17:49.994   873   899 D ActivityManagerTiming: OnBootPhase_1000_com.android.server.testharness.TestHarnessModeService
+11-04 11:17:49.994   873   899 D TestHarnessModeService: Completing Test Harness Mode setup.
+11-04 11:17:49.994   873   899 D TestHarnessModeService: Getting PersistentDataBlockManagerInternal from LocalServices
+11-04 11:17:49.994   873   899 E TestHarnessModeService: Failed to start Test Harness Mode; no implementation of PersistentDataBlockManagerInternal was bound!
+11-04 11:17:50.184   873   908 D SystemServerTimingAsync: ssm.onUnlockingUser-0_com.android.server.testharness.TestHarnessModeService
+11-04 11:18:00.572   873   908 D SystemServerTimingAsync: ssm.onUnlockedUser-0_com.android.server.testharness.TestHarnessModeService
+11-04 11:18:05.585   873  7410 D SystemServerTimingAsync: ssm.onCompletedEventUser-0_{|Unlocked|}_com.android.server.testharness.TestHarnessModeService
+
+==== 5) VNC WebSocket 抓帧 ====
+$ python3 engine/out/tmp/ws_shot.py 5913 engine/evidence/oriole/issue-oriole-system-server-crash-loop/desktop-pass.png 15
+engine/evidence/oriole/issue-oriole-system-server-crash-loop/desktop-pass.png 1088x2400 bpp=32 平均亮度=91.3 峰值=255
+

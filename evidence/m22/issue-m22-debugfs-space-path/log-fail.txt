@@ -1,0 +1,53 @@
+# 07_build_vendor：步骤 7 打包，带空格的文件名被 debugfs 拆参
+$ cd engine && ./out/bin/cdh device build m22 --only 07_build_vendor
+…
+==> [步骤 7] 打包 vendor.img
+    vendor 条目 587（文件 354 / 链接 199 / 目录 34）
+    mke2fs -d 完成 -> out/devices/flyme/m22/12.5.0.0A/vendor/vendor.work.img
+[warn] debugfs 有 14 条指令执行失败（前 5 条）: sif: Usage: set_inode <inode> <field> <value>
+  sif: Usage: set_inode <inode> <field> <value>
+  stat: Usage: stat <file>
+  Usage:  ea_set [-r] <file> <attr> <value>
+  …
+[err] 阶段 build_vendor 失败: vendor.img 元数据未落地：2/587 个条目与规则表不符（/usr/idc/QEMU Virtio MultiTouch.idc 无 stat 输出；/usr/idc/QEMU Virtio Tablet.idc 无 stat 输出）
+
+# 同一根因在 09 的表现（内容已写进镜像，只有元数据回读不一致）
+$ ./out/bin/cdh device build m22 --only 09_build_patch
+==> [步骤 3] 逐路径从源镜像取元数据
+    [warn] vendor.img 有 2 个条目 stat 解析失败
+==> [步骤 5] debugfs 回填属主与标签并回读校验
+[err] 阶段 build_patch 失败: 回读校验失败：2/823 条不符（/vendor/usr/idc/QEMU Virtio MultiTouch.idc 回读缺失；/vendor/usr/idc/QEMU Virtio Tablet.idc 回读缺失）
+
+# 含空格路径全集（装配树里只有两个）
+$ find out/devices/flyme/m22/12.5.0.0A/vendor -name "* *"
+out/devices/flyme/m22/12.5.0.0A/vendor/usr/idc/QEMU Virtio MultiTouch.idc
+out/devices/flyme/m22/12.5.0.0A/vendor/usr/idc/QEMU Virtio Tablet.idc
+
+# 定位：debugfs -f 按空白分词，无引号语法（e2fsprogs 1.47.4）
+$ /opt/homebrew/opt/e2fsprogs/sbin/debugfs -V
+debugfs 1.47.4 (6-Mar-2025)
+        Using EXT2FS Library version 1.47.4
+$ cp out/devices/flyme/m22/12.5.0.0A/img/vendor.img /tmp/v.img
+$ cat s.txt
+sif /usr/idc/QEMU Virtio Tablet.idc mode 0100644
+stat /usr/idc/QEMU Virtio Tablet.idc
+$ debugfs -w -f s.txt /tmp/v.img
+debugfs: sif /usr/idc/QEMU Virtio Tablet.idc mode 0100644
+sif: Usage: set_inode <inode> <field> <value>
+        "set_inode_field -l" will list the names of the fields in an ext2 inode
+debugfs: stat /usr/idc/QEMU Virtio Tablet.idc
+stat: Usage: stat <file>
+
+$ cat es.txt
+ea_set -f val.txt /usr/idc/QEMU Virtio Tablet.idc security.selinux
+$ debugfs -w -f es.txt /tmp/v.img
+debugfs: ea_set -f val.txt /usr/idc/QEMU Virtio Tablet.idc security.selinux
+Usage:  ea_set [-r] <file> <attr> <value>
+        ea_set -f <value_file> [-r] <file> <attr>
+
+# 单测的自身坑：用 debugfs -R "write" 造样本时同样被拆参，镜像里没建出文件
+$ go test ./internal/e2fs/ -run TestFilespecs -v
+=== RUN   TestFilespecs
+    filespec_test.go:41: Filespecs 失败: debugfs 未能定位 1/1 个含空白路径的 inode（如 "/usr/idc/QEMU Virtio Tablet.idc"）
+--- FAIL: TestFilespecs
+# 改为 mke2fs -q -F -t ext4 -d tree 建树后通过（凡 debugfs/mke2fs 的路径参数都必须加引号）

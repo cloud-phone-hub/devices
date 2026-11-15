@@ -1,0 +1,53 @@
+# oriole_BP1A.250505.005-20250326（Android 15 / lineage-22.2）卡加载页失败日志
+
+## 1. 现象一：未配置 android.hardware.power 时 HintManagerService.<init> 空指针崩溃
+
+```
+03-26 22:32:56.826  1029  1029 E System  : ******************************************
+03-26 22:32:56.827  1029  1029 E System  : ************ Failure starting system services
+03-26 22:32:56.827  1029  1029 E System  : java.lang.RuntimeException: Failed to create service com.android.server.power.hint.HintManagerService: service constructor threw an exception
+03-26 22:32:56.827  1029  1029 E System  : 	at com.android.server.SystemServiceManager.startService(SystemServiceManager.java:255)
+03-26 22:32:56.827  1029  1029 E System  : 	at com.android.server.SystemServer.startOtherServices(SystemServer.java:3204)
+03-26 22:32:56.827  1029  1029 E System  : Caused by: java.lang.reflect.InvocationTargetException
+03-26 22:32:56.827  1029  1029 E System  : 	at java.lang.reflect.Constructor.newInstance0(Native Method)
+03-26 22:32:56.827  1029  1029 E System  : 	at com.android.server.SystemServiceManager.startService(SystemServiceManager.java:244)
+03-26 22:32:56.827  1029  1029 E System  : Caused by: java.lang.NullPointerException: Attempt to read from field 'android.hardware.power.SupportInfo$HeadroomSupportInfo android.hardware.power.SupportInfo.headroom' on a null object reference in method 'void com.android.server.power.hint.HintManagerService.<init>(android.content.Context, com.android.server.power.hint.HintManagerService$Injector)'
+03-26 22:32:56.827  1029  1029 E System  : 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:304)
+03-26 22:32:56.827  1029  1029 E System  : 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:266)
+```
+
+## 2. 现象二：接入 AIDL v6 的 android.hardware.power-service 后报 Method getSupportInfo is unimplemented
+
+```
+03-26 22:51:04.482  1015  1015 E System  : ************ Failure starting system services
+03-26 22:51:04.482  1015  1015 E System  : java.lang.RuntimeException: Failed to create service com.android.server.power.hint.HintManagerService: service constructor threw an exception
+03-26 22:51:04.482  1015  1015 E System  : Caused by: java.lang.IllegalStateException: Could not contact PowerHAL!
+03-26 22:51:04.482  1015  1015 E System  : 	at com.android.server.power.hint.HintManagerService.getSupportInfo(HintManagerService.java:324)
+03-26 22:51:04.482  1015  1015 E System  : 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:299)
+03-26 22:51:04.482  1015  1015 E System  : Caused by: android.os.RemoteException: Method getSupportInfo is unimplemented.
+03-26 22:51:04.482  1015  1015 E System  : 	at android.hardware.power.IPower$Stub$Proxy.getSupportInfo(IPower.java:835)
+03-26 22:51:04.482  1015  1015 E System  : 	at com.android.server.power.hint.HintManagerService.getSupportInfo(HintManagerService.java:321)
+```
+
+## 3. 反汇编证据（services.jar 与 framework.jar）
+
+```
+# /system/framework/services.jar: HintManagerService.getSupportInfo()
+420c8c: |[420c8c] com.android.server.power.hint.HintManagerService.getSupportInfo:()Landroid/hardware/power/SupportInfo;
+420c9c: |0000: iget-object v0, v2, Lcom/android/server/power/hint/HintManagerService;.mPowerHal:Landroid/hardware/power/IPower;
+420ca0: |0002: invoke-interface {v0}, Landroid/hardware/power/IPower;.getInterfaceVersion:()I
+420ca6: |0005: move-result v0
+420ca8: |0006: iput v0, v2, Lcom/android/server/power/hint/HintManagerService;.mPowerHalVersion:I
+420cac: |0008: const/4 v1, #int 6 // #6
+420cae: |0009: if-lt v0, v1, 0014 // 若 version < 6 跳转到 0014 本地构造默认 SupportInfo
+420cb2: |000b: iget-object v2, v2, Lcom/android/server/power/hint/HintManagerService;.mPowerHal:Landroid/hardware/power/IPower;
+420cb6: |000d: invoke-interface {v2}, Landroid/hardware/power/IPower;.getSupportInfo:()Landroid/hardware/power/SupportInfo;
+
+# /system/framework/framework.jar: IPower$Stub$Proxy.getSupportInfo()
+24f764: |[24f764] android.hardware.power.IPower$Stub$Proxy.getSupportInfo:()Landroid/hardware/power/SupportInfo;
+24f774: |0000: new-instance v0, Landroid/os/RemoteException;
+24f778: |0002: const-string v1, "Method getSupportInfo is unimplemented."
+24f77c: |0004: invoke-direct {v0, v1}, Landroid/os/RemoteException;.<init>:(Ljava/lang/String;)V
+24f782: |0007: throw v0
+```
+

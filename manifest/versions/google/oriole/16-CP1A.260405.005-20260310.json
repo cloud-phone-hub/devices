@@ -1,0 +1,17 @@
+{
+  "id": 3,
+  "buildId": "16-CP1A.260405.005-20260310",
+  "deviceId": 1,
+  "configId": 3,
+  "osVersion": "16-CP1A.260405.005-20260310",
+  "buildDate": "20260310",
+  "securityPatch": "2026-04-05",
+  "factoryTgz": "oriole-cp1a.260405.005-factory-8081a8ba.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 oriole-cp1a.260405.005-factory-8081a8ba.zip (vendor/build.prop) 自动生成。",
+    "osVersion": "16-CP1A.260405.005-20260310"
+  },
+  "updatedAt": "2026-11-05T07:30:07Z"
+}

@@ -1,0 +1,346 @@
+diff --git a/source/kernel/Kbuild b/source/kernel/Kbuild
+index 6c92a013..c5eae70a 100644
+--- a/source/kernel/Kbuild
++++ b/source/kernel/Kbuild
+@@ -34,6 +34,7 @@ kernelsu-objs += manager/throne_tracker.o
+ endif
+ 
+ kernelsu-objs += policy/allowlist.o
++kernelsu-objs += policy/shell_profile.o
+ kernelsu-objs += policy/app_profile.o
+ kernelsu-objs += policy/feature.o
+ 
+diff --git a/source/kernel/core/init.c b/source/kernel/core/init.c
+index 0ca7529f..412b0e3f 100644
+--- a/source/kernel/core/init.c
++++ b/source/kernel/core/init.c
+@@ -75,11 +75,7 @@ __attribute__((naked)) int __init kernelsu_init_early(void)
+ struct cred *ksu_cred;
+ bool ksu_late_loaded;
+ 
+-#ifdef CONFIG_KSU_DEBUG
+ bool allow_shell = true;
+-#else
+-bool allow_shell = false;
+-#endif
+ module_param(allow_shell, bool, 0);
+ 
+ bool ksu_no_custom_rc = false;
+diff --git a/source/kernel/hook/setuid_hook.c b/source/kernel/hook/setuid_hook.c
+index d3f3ac49..a6134b29 100644
+--- a/source/kernel/hook/setuid_hook.c
++++ b/source/kernel/hook/setuid_hook.c
+@@ -13,6 +13,7 @@
+ #include <linux/uidgid.h>
+ 
+ #include "policy/allowlist.h"
++#include "policy/shell_profile.h"
+ #include "hook/setuid_hook.h"
+ #include "klog.h" // IWYU pragma: keep
+ #include "manager/manager_identity.h"
+@@ -45,6 +46,8 @@ int ksu_handle_setresuid(uid_t old_uid, uid_t new_uid)
+             spin_unlock_irq(&current->sighand->siglock);
+         }
+         ksu_set_task_tracepoint_flag(current);
++        if (ksu_shell_drop(old_uid, new_uid))
++            ksu_mark_shell();
+     } else {
+         ksu_clear_task_tracepoint_flag_if_needed(current);
+     }
+diff --git a/source/kernel/hook/syscall_event_bridge.c b/source/kernel/hook/syscall_event_bridge.c
+index 9d2977f1..21938d51 100644
+--- a/source/kernel/hook/syscall_event_bridge.c
++++ b/source/kernel/hook/syscall_event_bridge.c
+@@ -13,6 +13,7 @@
+ #include "feature/sucompat.h"
+ #include "hook/setuid_hook.h"
+ #include "policy/app_profile.h"
++#include "policy/shell_profile.h"
+ #include "runtime/ksud.h"
+ #include "sulog/event.h"
+ #include "hook/syscall_hook.h"
+@@ -40,7 +41,7 @@ static int ksu_handle_init_mark_tracker(const char __user **filename_user)
+         pr_info("hook_manager: escape to root for init executing ksud: %d\n", current->pid);
+         escape_to_root_for_init();
+     } else if (likely(strstr(path, "/app_process") == NULL && strstr(path, "/adbd") == NULL &&
+-                      strstr(path, "/stub_zygote") == NULL)) {
++                      strstr(path, "/stub_zygote") == NULL && !ksu_is_shell_uid(current_uid().val))) {
+         pr_info("hook_manager: unmark %d exec %s\n", current->pid, path);
+         ksu_clear_task_tracepoint_flag_if_needed(current);
+     }
+diff --git a/source/kernel/hook/syscall_hook_manager.c b/source/kernel/hook/syscall_hook_manager.c
+index c11eb9d4..2deecd42 100644
+--- a/source/kernel/hook/syscall_hook_manager.c
++++ b/source/kernel/hook/syscall_hook_manager.c
+@@ -129,6 +129,7 @@ void __init ksu_syscall_hook_manager_init(void)
+ {
+     int ret;
+     pr_info("hook_manager: ksu_hook_manager_init called\n");
++    ksu_mark_start();
+ 
+ #ifdef CONFIG_KRETPROBES
+     syscall_regfunc_rp = init_kretprobe("syscall_regfunc", syscall_regfunc_handler);
+@@ -141,6 +142,9 @@ void __init ksu_syscall_hook_manager_init(void)
+     ksu_register_syscall_hook(__NR_execveat, ksu_hook_execveat);
+     ksu_register_syscall_hook(__NR_newfstatat, ksu_hook_newfstatat);
+     ksu_register_syscall_hook(__NR_faccessat, ksu_hook_faccessat);
++#ifdef __NR_faccessat2
++    ksu_register_syscall_hook(__NR_faccessat2, ksu_hook_faccessat);
++#endif
+ 
+ #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
+     ret = register_trace_prio_sys_enter(ksu_sys_enter_handler, NULL, INT_MIN);
+@@ -161,6 +165,7 @@ void __init ksu_syscall_hook_manager_init(void)
+ void __exit ksu_syscall_hook_manager_exit(void)
+ {
+     pr_info("hook_manager: ksu_hook_manager_exit called\n");
++    ksu_mark_stop();
+ #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
+     unregister_trace_sys_enter(ksu_sys_enter_handler, NULL);
+     tracepoint_synchronize_unregister();
+@@ -177,6 +182,9 @@ void __exit ksu_syscall_hook_manager_exit(void)
+     ksu_unregister_syscall_hook(__NR_execveat);
+     ksu_unregister_syscall_hook(__NR_newfstatat);
+     ksu_unregister_syscall_hook(__NR_faccessat);
++#ifdef __NR_faccessat2
++    ksu_unregister_syscall_hook(__NR_faccessat2);
++#endif
+ 
+     ksu_syscall_hook_exit();
+ 
+diff --git a/source/kernel/hook/tp_marker.c b/source/kernel/hook/tp_marker.c
+index c78bbbdd..556a8396 100644
+--- a/source/kernel/hook/tp_marker.c
++++ b/source/kernel/hook/tp_marker.c
+@@ -5,8 +5,10 @@
+ #include <linux/version.h>
+ #include <linux/sched/signal.h>
+ #include <linux/sched/task.h>
++#include <linux/workqueue.h>
+ 
+ #include "policy/allowlist.h"
++#include "policy/shell_profile.h"
+ #include "klog.h" // IWYU pragma: keep
+ #include "selinux/selinux.h"
+ 
+@@ -77,6 +79,62 @@ void ksu_unmark_all_process(void)
+     pr_info("tp_marker: unmark all user process done!\n");
+ }
+ 
++static DEFINE_SPINLOCK(shell_mark_lock);
++static bool shell_mark_enabled;
++
++static void shell_mark_work(struct work_struct *work)
++{
++    struct task_struct *p, *t;
++    unsigned long flags;
++    unsigned int marked = 0;
++
++    (void)work;
++    spin_lock_irqsave(&tracepoint_reg_lock, flags);
++    if (tracepoint_reg_count <= 1) {
++        read_lock(&tasklist_lock);
++        for_each_process_thread (p, t) {
++            if (task_uid(t).val != KSU_SHELL_UID)
++                continue;
++            ksu_set_task_tracepoint_flag(t);
++            marked++;
++        }
++        read_unlock(&tasklist_lock);
++    }
++    spin_unlock_irqrestore(&tracepoint_reg_lock, flags);
++    pr_info("tp_marker: marked %u Android shell tasks\n", marked);
++}
++
++static DECLARE_WORK(shell_mark_job, shell_mark_work);
++
++void ksu_mark_start(void)
++{
++    unsigned long flags;
++
++    spin_lock_irqsave(&shell_mark_lock, flags);
++    shell_mark_enabled = true;
++    spin_unlock_irqrestore(&shell_mark_lock, flags);
++}
++
++void ksu_mark_shell(void)
++{
++    unsigned long flags;
++
++    spin_lock_irqsave(&shell_mark_lock, flags);
++    if (shell_mark_enabled)
++        schedule_work(&shell_mark_job);
++    spin_unlock_irqrestore(&shell_mark_lock, flags);
++}
++
++void ksu_mark_stop(void)
++{
++    unsigned long flags;
++
++    spin_lock_irqsave(&shell_mark_lock, flags);
++    shell_mark_enabled = false;
++    spin_unlock_irqrestore(&shell_mark_lock, flags);
++    cancel_work_sync(&shell_mark_job);
++}
++
+ void ksu_mark_running_process_locked(void)
+ {
+     struct task_struct *p, *t;
+diff --git a/source/kernel/hook/tp_marker.h b/source/kernel/hook/tp_marker.h
+index c4e36915..c31e38d8 100644
+--- a/source/kernel/hook/tp_marker.h
++++ b/source/kernel/hook/tp_marker.h
+@@ -9,6 +9,9 @@
+ void ksu_mark_all_process(void);
+ void ksu_unmark_all_process(void);
+ void ksu_mark_running_process(void);
++void ksu_mark_start(void);
++void ksu_mark_shell(void);
++void ksu_mark_stop(void);
+ 
+ // Per-task mark operations
+ int ksu_get_task_mark(pid_t pid);
+diff --git a/source/kernel/policy/allowlist.c b/source/kernel/policy/allowlist.c
+index e5735d67..85318f22 100644
+--- a/source/kernel/policy/allowlist.c
++++ b/source/kernel/policy/allowlist.c
+@@ -22,6 +22,7 @@
+ #include "runtime/ksud_boot.h"
+ #include "selinux/selinux.h"
+ #include "policy/allowlist.h"
++#include "policy/shell_profile.h"
+ #include "manager/manager_identity.h"
+ #include "infra/su_mount_ns.h"
+ #include "feature/shell_su_adb_only.h"
+@@ -112,9 +113,8 @@ retry:
+ 
+ static inline bool forbid_system_uid(uid_t uid)
+ {
+-#define SHELL_UID 2000
+ #define SYSTEM_UID 1000
+-    return uid < SHELL_UID && uid != SYSTEM_UID;
++    return uid < KSU_SHELL_UID && uid != SYSTEM_UID;
+ }
+ 
+ static bool profile_valid(struct app_profile *profile)
+@@ -169,6 +169,7 @@ int ksu_set_app_profile(struct app_profile *profile)
+     struct perm_data *p, *np;
+     int result = 0;
+ 
++    ksu_guard_shell(profile, &default_root_profile);
+     if (!profile_valid(profile)) {
+         pr_err("Failed to set app profile: invalid profile!\n");
+         return -EINVAL;
+@@ -266,7 +267,7 @@ bool __ksu_is_allow_uid(uid_t uid)
+         return true;
+     }
+ 
+-    if (unlikely(allow_shell) && uid == SHELL_UID) {
++    if (unlikely(allow_shell) && uid == KSU_SHELL_UID) {
+         return true;
+     }
+ 
+@@ -293,7 +294,7 @@ bool ksu_is_uid_granted_root(uid_t uid)
+ 
+ bool __ksu_is_allow_uid_for_current(uid_t uid)
+ {
+-    if (unlikely(uid == SHELL_UID) && !ksu_shell_su_allowed_for_current()) {
++    if (unlikely(uid == KSU_SHELL_UID) && !ksu_shell_su_allowed_for_current()) {
+         return false;
+     }
+     return ksu_is_uid_granted_root(uid);
+@@ -354,7 +355,7 @@ struct root_profile *ksu_get_root_profile(uid_t uid)
+         goto use_default;
+     }
+ 
+-    if (unlikely(allow_shell && uid == SHELL_UID)) {
++    if (unlikely(allow_shell && uid == KSU_SHELL_UID)) {
+         goto use_default;
+     }
+ 
+@@ -599,7 +600,8 @@ void ksu_prune_allowlist(bool (*is_uid_valid)(uid_t, char *, void *), void *data
+         uid_t uid = np->profile.curr_uid;
+         char *package = np->profile.key;
+         // we use this uid for special cases, don't prune it!
+-        bool is_preserved_uid = uid == KSU_APP_PROFILE_PRESERVE_UID || uid == WEBVIEW_ZYGOTE_UID;
++        bool is_preserved_uid = uid == KSU_APP_PROFILE_PRESERVE_UID || uid == WEBVIEW_ZYGOTE_UID ||
++                                uid == KSU_SHELL_UID;
+         if (!is_preserved_uid && !is_uid_valid(uid, package, data)) {
+             modified = true;
+             pr_info("prune uid: %d, package: %s\n", uid, package);
+@@ -618,7 +620,11 @@ void ksu_prune_allowlist(bool (*is_uid_valid)(uid_t, char *, void *), void *data
+ 
+ void __init ksu_allowlist_init(void)
+ {
++    struct app_profile shell;
++
+     init_default_profiles();
++    ksu_shell_prof(&shell, &default_root_profile);
++    WARN_ON(ksu_set_app_profile(&shell));
+ }
+ 
+ void __exit ksu_allowlist_exit(void)
+diff --git a/source/kernel/policy/shell_profile.c b/source/kernel/policy/shell_profile.c
+new file mode 100644
+index 00000000..d440f30c
+--- /dev/null
++++ b/source/kernel/policy/shell_profile.c
+@@ -0,0 +1,38 @@
++#ifdef KSU_HOST_TEST
++#include <string.h>
++#else
++#include <linux/string.h>
++#endif
++
++#include "policy/shell_profile.h"
++
++bool ksu_is_shell_uid(__u32 uid)
++{
++    return uid == KSU_SHELL_UID;
++}
++
++bool ksu_shell_drop(__u32 old_uid, __u32 new_uid)
++{
++    return old_uid != KSU_SHELL_UID && new_uid == KSU_SHELL_UID;
++}
++
++void ksu_shell_prof(struct app_profile *profile, const struct root_profile *root)
++{
++    memset(profile, 0, sizeof(*profile));
++    profile->curr_uid = KSU_SHELL_UID;
++    ksu_guard_shell(profile, root);
++}
++
++void ksu_guard_shell(struct app_profile *profile, const struct root_profile *root)
++{
++    if (!profile || !root || profile->curr_uid != KSU_SHELL_UID)
++        return;
++
++    profile->version = KSU_APP_PROFILE_VER;
++    memset(profile->key, 0, sizeof(profile->key));
++    memcpy(profile->key, KSU_SHELL_KEY, sizeof(KSU_SHELL_KEY));
++    memset(&profile->rp_config, 0, sizeof(profile->rp_config));
++    profile->allow_su = true;
++    profile->rp_config.use_default = true;
++    memcpy(&profile->rp_config.profile, root, sizeof(*root));
++}
+diff --git a/source/kernel/policy/shell_profile.h b/source/kernel/policy/shell_profile.h
+new file mode 100644
+index 00000000..c541dc4b
+--- /dev/null
++++ b/source/kernel/policy/shell_profile.h
+@@ -0,0 +1,14 @@
++#ifndef __KSU_SHELL_PROFILE_H
++#define __KSU_SHELL_PROFILE_H
++
++#include "uapi/app_profile.h"
++
++#define KSU_SHELL_UID 2000
++#define KSU_SHELL_KEY "com.android.shell"
++
++bool ksu_is_shell_uid(__u32 uid);
++bool ksu_shell_drop(__u32 old_uid, __u32 new_uid);
++void ksu_shell_prof(struct app_profile *profile, const struct root_profile *root);
++void ksu_guard_shell(struct app_profile *profile, const struct root_profile *root);
++
++#endif

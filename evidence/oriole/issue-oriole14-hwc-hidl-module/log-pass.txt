@@ -1,0 +1,126 @@
+# 迁移完成后的通过记录（2026-11-01，终态实例 17，patch.img sha256 e8567516ac7f）
+#
+# 一/二/三轮的差异：首轮（实例 15，patch d25f85d08df6）的 .so 是改 halbuild 之前的
+# 旧件（见 log-fail ⑨）；二轮（实例 16，patch 32a5213431d2）重编 .so；三轮（实例 17，
+# patch e8567516ac7f）把 rc / VINTF 从机型静态树下放到模块树，下面记的是三轮结果。
+
+## ① 代码：build / vet / test
+
+$ cd engine/vendor/build && gofmt -l . ; go vet ./... && go test ./...
+    ?       build   [no test files]
+    ok      build/internal/deps     1.268s
+    ok      build/internal/halbuild 1.529s
+    ok      build/internal/profile  0.884s
+    ok      build/internal/spec     1.781s
+    ok      build/internal/toolchain        2.040s
+
+$ cd engine/build && go build ./... && go vet ./07_build_vendor/ && go test ./07_build_vendor/
+    ok  cloud-phone-hub/engine/build/07_build_vendor  12.816s    ← 含新增 TestModuleTargetsHidl
+
+## ② cdh-vendor 一次跑通三件产物
+
+$ cd engine/vendor/build && go build -o /tmp/cdh-vendor .
+$ /tmp/cdh-vendor hal build graphics-composer --android 14 --prop ro.board.platform=gs101
+    ==> 构建期依赖（上游仓 / hidl-gen / HIDL 头 / 链接期库）
+    [..] hidl 头已生成（>= 104）
+    [..] android.hardware.graphics.composer: 链接期库已就绪: engine/out/vendor/android14/abi/graphics-composer/system/lib64
+    ==> 上游 AIDL 代码生成（@platform/hardware/interfaces/common/aidl、@platform/hardware/interfaces/graphics/common/aidl）
+        @platform/hardware/interfaces/common/aidl（3 个 .aidl）
+        @platform/hardware/interfaces/graphics/common/aidl（28 个 .aidl）
+    ==> 构建 android.hardware.graphics.composer（HIDL 头 hidl-gen，2 个共享库 + 1 个服务）
+    ==> 编译共享库 hwcomposer.gs101.so（27 个编译单元，源码根 .../aosp/platform/external/drm_hwcomposer）
+    ==> 编译共享库 android.hardware.graphics.composer@2.1-resources.so（1 个编译单元，源码根 .../aosp/platform/hardware/interfaces）
+    ==> 编译服务 android.hardware.graphics.composer@2.4-service（main: engine/vendor/hardware/android.hardware.graphics.composer/src/service.cpp）
+        写 lib64/hw/hwcomposer.gs101.so
+        写 lib64/android.hardware.graphics.composer@2.1-resources.so
+        写 bin/hw/android.hardware.graphics.composer@2.4-service
+    [ok] android.hardware.graphics.composer 构建完成 -> engine/out/vendor/android14
+
+$ llvm-readelf -d lib64/hw/hwcomposer.gs101.so | head -15
+    NEEDED libui.so / libcutils.so / libutils.so / libhardware.so / libdrm.so /
+           libbase.so / libc++.so / libsync.so / liblog.so / libdl.so / libm.so / libc.so
+    SONAME hwcomposer.drm.so            ← 仍按 drm_hwcomposer 的模块名，hw_get_module 只认文件名
+$ llvm-readelf -d bin/hw/android.hardware.graphics.composer@2.4-service
+    NEEDED android.hardware.graphics.composer@2.1-resources.so / libhidlbase.so /
+           libbinder.so / libutils.so / libcutils.so / libbase.so / libfmq.so /
+           libhardware.so / libsync.so / libui.so …
+→ 无 hwc2on1adapter / hwc2onfbadapter / @2.2-resources，与 #105 的「彻底不要」口径一致。
+
+## ③ 07 / 09 / 11：EXIT=0
+
+$ cd engine && ./out/bin/cdh device build oriole --only 07_build_vendor \
+      --manifest oriole-ap2a.240905.003.f1-factory-655c44e7.json
+    机型属性: ro.board.platform=gs101（展开产物名占位）      ← 属性收口后的真值
+    ==> 编译 HAL 模块 android.hardware.graphics.composer（变体 default，待落盘 lib64/hw/hwcomposer.gs101.so）
+      + out/bin/cdh-vendor hal build android.hardware.graphics.composer --android 14 \
+          --out-dir .../engine/out/vendor/android14 --prop ro.board.platform=gs101
+    写 out/devices/google/oriole/AP2A.240905.003.F1/vendor/bin/hw/android.hardware.graphics.composer@2.4-service（0755）
+    写 out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/android.hardware.graphics.composer@2.1-resources.so（0644）
+    写 out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/hw/hwcomposer.gs101.so（0644）
+    [ok] vendor.img 构建完成: .../img/vendor.img（134537216 字节）
+    [ok] 已完成
+
+$ ./out/bin/cdh device build oriole --from 09_build_patch --manifest oriole-ap2a...json
+    [ok] 回填 691 条目，回读 691/691 一致
+    [ok] patch.img 内容已变，重新发布（384.0 MiB）
+    [ok] patch.img 发布完成: .../img/patch.img（402653184 字节，sha256 e8567516ac7f）
+    [ok] patch.img -> out/dist/google/oriole/AP2A.240905.003.F1/patch.img（384.0 MiB，sha256 e8567516ac7f）
+    [ok] super 4.78 GiB / boot_a / boot_b / vendor_boot_a / vendor_boot_b 回读一致
+    [ok] 已完成        ← 09 → 10 → 11 一条命令跑完，EXIT=0
+
+$ for f in bin/hw/...service lib64/...@2.1-resources.so lib64/hw/hwcomposer.gs101.so; do
+      shasum -a 256 engine/out/vendor/android14/$f vs 装配树/$f
+  done
+    0b93f7446306ee80  0b93f7446306ee80
+    2bd37698def64ab6  2bd37698def64ab6
+    7f305c069100ea85  7f305c069100ea85     ← 装配树与 HAL 产物根逐件相等
+$ llvm-nm -C <三件产物> | grep verbose_abort
+    T std::__1::__libcpp_verbose_abort(char const*, ...)   ← 服务与两个 .so 都自带定义
+                                                              （旧件是 U，见 log-fail ⑨）
+$ diff <装配树>/etc/init/hwc3-drm.rc <产物根>/etc/init/hwc3-drm.rc   # 本轮：rc / VINTF 改由模块树发布
+$ diff <装配树>/etc/vintf/manifest/hwc3-drm.xml <产物根>/…
+    （无输出，两件逐字相等；07 模块清单从 5 项中的 3 编译 + 2 静态树）
+
+## ④ 起机（实例 17，新建 data，插槽 console 5910 / adb 5911 / vnc 5912）
+
+$ curl -X POST -d '{"spec":"oriole_AP2A.240905.003.F1","index":"16"}' http://127.0.0.1:9050/api/stop
+$ curl -X POST -d '{"index":1}' http://127.0.0.1:9050/api/create
+    {"index":1,"instance":{"spec":"oriole_AP2A.240905.003.F1","index":"17","pid":79428,
+     "slot":0,"adb":5911,"vnc":5912}}
+
+$ adb -s 127.0.0.1:5911 shell 'getprop sys.boot_completed; getprop ro.build.version.release;
+      getprop init.svc.vendor.hwcomposer-2-4; pidof surfaceflinger;
+      pidof android.hardware.graphics.composer@2.4-service; getprop ro.board.platform'
+    1
+    14
+    running
+    729
+    714
+    gs101
+$ adb shell 'grep -c publishVendor /vendor/etc/init/hwc3-drm.rc'
+    1        ← 设备上跑的正是模块树里那份 rc（下放生效）
+
+$ grep -a "composer" out/core/daemon/runtime/oriole_AP2A.240905.003.F1/17/qemu.log | head
+    [   10.815051][    T1] init: starting service 'vendor.hwcomposer-2-4'...
+    [   10.817588][    T1] init: ... started service 'vendor.hwcomposer-2-4' has pid 714
+    01-01 00:00:10.839   714   714 I HidlServiceManagement: Registered android.hardware.graphics.composer@2.4::IComposer/default
+    [   32.225788][    T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1218)
+→ 服务只启动一次、无 restart；HIDL 2.4 注册成功；boot_completed 32.23 s（三轮分别
+  32.59 / 33.86 / 32.23 s，与 #105 三轮的 32.79 s 同量级）。
+
+$ adb shell 'logcat -d | grep -c "CANNOT LINK"'
+    0
+$ adb shell 'lshal | grep -i composer'
+    android.hardware.graphics.composer@2.1::IComposer/default
+    android.hardware.graphics.composer@2.2::IComposer/default
+    android.hardware.graphics.composer@2.3::IComposer/default
+    android.hardware.graphics.composer@2.4::IComposer/default
+
+## ⑤ 画面与帧：宿主大帧 1452 次，VNC 桌面完整
+
+$ grep -ac 'cgl-headless 大帧' .../runtime/oriole_AP2A.240905.003.F1/17/qemu.log
+    1452      （1080x2400 合成帧）
+$ python3 .tmp/rfb_shot.py 127.0.0.1 5912 /tmp/oriole17.ppm 25
+    ok 1088x2400 covered=2611200 px
+→ 见同目录 boot-desktop.png：状态栏（11:04 / 信号 / 电量）、桌面图标、Dock、导航栏
+  全部正常，密度 420 的手机排版。

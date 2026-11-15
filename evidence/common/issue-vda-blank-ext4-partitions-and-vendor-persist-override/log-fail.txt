@@ -1,0 +1,18 @@
+=== [修复前：2026-11-14 P1 Batch-3 前差异日志] ===
+# 1) batch3-pre-diffs/diff/proc.json 片段
+identity mountinfo.entries[mountPoint=/mnt/vendor/persist].fsType | base: ext4 | target: vfat
+capability mountinfo.entries[mountPoint=/mnt/vendor/persist].options | base: rw,nosuid,nodev,noatime | target: rw,relatime
+capability mountinfo.entries[mountPoint=/mnt/vendor/persist].superOptions | base: rw,seclabel,nodelalloc,noauto_da_alloc,commit=1 | target: rw,sync,context=u:object_r:persist_file:s0,uid=1000,gid=1000,fmask=0117,dmask=0007,allow_utime=0020,...
+capability mountinfo.entries[mountPoint=/mnt/rescue] | base: {'fsType': 'ext4', ...} | target: <缺>
+capability mountinfo.entries[mountPoint=/mnt/vendor/nvcfg] | base: {'fsType': 'ext4', ...} | target: <缺>
+capability mountinfo.entries[mountPoint=/mnt/vendor/nvdata] | base: {'fsType': 'ext4', ...} | target: <缺>
+capability mountinfo.entries[mountPoint=/mnt/vendor/protect_f] | base: {'fsType': 'ext4', ...} | target: <缺>
+capability mountinfo.entries[mountPoint=/mnt/vendor/protect_s] | base: {'fsType': 'ext4', ...} | target: <缺>
+
+# 2) batch3-pre-diffs/diff/native_env.json 片段
+identity mounts.blockMounts[mountpoint=/mnt/vendor/persist].fstype | base: ext4 | target: vfat
+identity mounts.blockMounts[mountpoint=/mnt/rescue] | target: <缺>
+identity mounts.blockMounts[mountpoint=/mnt/vendor/nvcfg] | target: <缺>
+identity mounts.blockMounts[mountpoint=/mnt/vendor/nvdata] | target: <缺>
+identity mounts.blockMounts[mountpoint=/mnt/vendor/protect_f] | target: <缺>
+identity mounts.blockMounts[mountpoint=/mnt/vendor/protect_s] | target: <缺>

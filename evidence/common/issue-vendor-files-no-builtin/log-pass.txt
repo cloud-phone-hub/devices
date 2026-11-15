@@ -1,0 +1,122 @@
+# 改造后的取证（gold，2026-11-03）
+
+```bash
+cd /Volumes/work/cloud-phone-hub/engine/build && go build -o ../out/bin/cdh .
+cd /Volumes/work/cloud-phone-hub/engine
+./out/bin/cdh device build gold --only 07_build_vendor > out/tmp/gold-07-media-static.log 2>&1
+echo rc=$?                                   # 0；日志 419 行
+```
+
+## 1. 基线清单与静态树就位
+
+```text
+$ python3 -c '…读 baselines/gold_images_OS3.0.10.0.VNQCNXM_....json 的 vendor.files…'
+16                                           # 10 条原条目 + 6 条 etc/media_codecs*.xml（from: official）
+$ ls manifest/xiaomi/gold/vendor/etc | grep media_codecs
+media_codecs_c2.xml                          # 只有 c2 一份（整份修改件）
+$ md5 -q manifest/xiaomi/gold/vendor/etc/media_codecs_c2.xml
+c46a2a6839bf5907feca7a253f04810c             # 29400 B
+$ ls -d manifest/xiaomi/gold/patches 2>/dev/null || echo 已无
+已无                                          # patch 机制与 patches/ 目录一并删除
+$ find manifest/xiaomi/gold/vendor -type f | wc -l
+      16                                     # 22 - 6
+```
+
+## 2. 07 实跑：16 项、全程 `[replace]`，c2 由步骤 4 写入
+
+```text
+（日志第 13 行）
+==> 文件操作集合: 基线清单 vendor.files（16 项）
+
+（日志第 227 行，步骤 4 静态树叠加）
+    写 out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/media_codecs_c2.xml（0644）
+
+（日志第 276 行起，步骤 5）
+==> [步骤 5] 厂商文件操作（添加 / 取代 / 删除）
+    输入: 厂商 vendor（文件操作 16 项）
+    输出: out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor
+[replace] vendor/lib64/egl/libGLES_mali.so <- 厂商 vendor/lib64/egl/libGLES_mali.so（文件覆盖）
+[replace] vendor/lib64/egl/libMEOW_data.so <- 厂商 vendor/lib64/egl/libMEOW_data.so（文件覆盖）
+[replace] vendor/lib64/egl/libMEOW_gift.so <- 厂商 vendor/lib64/egl/libMEOW_gift.so（文件覆盖）
+[replace] vendor/lib64/egl/libMEOW_qt.so <- 厂商 vendor/lib64/egl/libMEOW_qt.so（文件覆盖）
+[replace] vendor/lib64/egl/libMEOW_trace.so <- 厂商 vendor/lib64/egl/libMEOW_trace.so（文件覆盖）
+[replace] vendor/lib64/libOpenCL.so <- 厂商 vendor/lib64/libOpenCL.so（文件覆盖）
+[replace] vendor/lib64/libpng.so <- 厂商 vendor/lib64/libpng.so（文件覆盖）
+[replace] vendor/etc/permissions <- 厂商 vendor/etc/permissions（目录，46 个文件，取代）
+[replace] vendor/etc/security <- 厂商 vendor/etc/security（目录，165 个文件，取代）
+[replace] vendor/etc/md <- 厂商 vendor/etc/md（目录，40 个文件，取代）
+[replace] vendor/etc/media_codecs.xml <- 厂商 vendor/etc/media_codecs.xml（文件覆盖）
+[replace] vendor/etc/media_codecs_dolby_audio.xml <- 厂商 vendor/etc/media_codecs_dolby_audio.xml（文件覆盖）
+[replace] vendor/etc/media_codecs_google_audio.xml <- 厂商 vendor/etc/media_codecs_google_audio.xml（文件覆盖）
+[replace] vendor/etc/media_codecs_google_video_le.xml <- 厂商 vendor/etc/media_codecs_google_video_le.xml（文件覆盖）
+[replace] vendor/etc/media_codecs_performance.xml <- 厂商 vendor/etc/media_codecs_performance.xml（文件覆盖）
+[replace] vendor/etc/media_codecs_system_default.xml <- 厂商 vendor/etc/media_codecs_system_default.xml（文件覆盖）
+```
+
+`etc/media_codecs_c2.xml` 不在步骤 5 的 16 条里——它由步骤 4 的静态树叠加写入，
+步骤 5 不会碰它（写进表里反而会用官方原件盖掉那份带 v4l2 声明的成品）。
+
+## 3. 8 个 media/audio 文件 md5：与迁移前全部相同
+
+```bash
+D=out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM
+for f in etc/media_codecs.xml etc/media_codecs_c2.xml etc/media_codecs_dolby_audio.xml \
+         etc/media_codecs_google_audio.xml etc/media_codecs_google_video_le.xml \
+         etc/media_codecs_performance.xml etc/media_codecs_system_default.xml \
+         etc/primary_audio_policy_configuration.xml; do
+  printf "%s  %s\n" "$(md5 -q $D/vendor/$f)" "$f"; done > out/tmp/gold-media-after-static.txt
+python3 - <<'EOF'   # 与 out/tmp/gold-media-before.txt 按文件名对账
+…
+EOF
+8 个文件 md5 全同: True 不一致: []
+```
+
+```text
+781b139a4c4bbebf50b37f52fe31e154  etc/media_codecs.xml
+c46a2a6839bf5907feca7a253f04810c  etc/media_codecs_c2.xml
+b599c0954777a44fa9de7747682e1a8c  etc/media_codecs_dolby_audio.xml
+7646c7fa82e5839e0b6dee36c8845c08  etc/media_codecs_google_audio.xml
+1e86c5333c1b3e3be65215c580b946e4  etc/media_codecs_google_video_le.xml
+596c6837008dc544f8ef495fd2c311c1  etc/media_codecs_performance.xml
+781b139a4c4bbebf50b37f52fe31e154  etc/media_codecs_system_default.xml
+d306eac37460135baaec87ccf7034e50  etc/primary_audio_policy_configuration.xml
+```
+
+## 4. 装配树条目 / 元数据规则表 / 镜像字节数
+
+```text
+$ find $D/vendor | sort > out/tmp/gold-tree-after-static.txt
+$ diff out/tmp/gold-tree-before-patch.txt out/tmp/gold-tree-after-static.txt | wc -l
+       0                                     # 801 行逐条一致
+$ wc -l < $D/img/vendor-meta-rules.txt
+     821
+$ diff out/tmp/gold-meta-before-patch.txt $D/img/vendor-meta-rules.txt && echo "meta: 0 差异"
+meta: 0 差异
+$ wc -c < $D/img/vendor.img
+170676224                                    # 与迁移前同字节数
+```
+
+官方件对账（6 个直取件与厂商解包树、c2 与厂商原件）：
+
+```text
+SAME  media_codecs.xml
+SAME  media_codecs_dolby_audio.xml
+SAME  media_codecs_google_audio.xml
+SAME  media_codecs_google_video_le.xml
+SAME  media_codecs_performance.xml
+SAME  media_codecs_system_default.xml
+DIFF  media_codecs_c2.xml                     # 静态树整份件，带 v4l2 三条声明（预期不同）
+```
+
+## 5. 单测与静态检查
+
+```text
+$ cd engine/build && gofmt -l 07_build_vendor/            # 无输出
+$ go vet ./07_build_vendor                                # 无输出
+$ go test ./07_build_vendor -count=1
+ok      cloud-phone-hub/engine/build/07_build_vendor    2.990s
+$ ls 07_build_vendor/*_test.go | wc -l
+      15                                                  # 删掉 patch_test.go
+$ wc -l 07_build_vendor/*_test.go | tail -1
+    2956 total
+```

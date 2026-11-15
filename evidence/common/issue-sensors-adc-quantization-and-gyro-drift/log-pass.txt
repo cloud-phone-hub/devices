@@ -1,0 +1,149 @@
+=== Cloud Device After Fix (df809591a4e085ae-cloud, run-00230) scorecard D & dynamicSample ===
+scoreSummary: {"passed": 26, "total": 32, "failedItems": ["B5_mapsHasRealMaliAndNoMesaMinigbm", "C2_displaySupports120HzAndWideColorGamut", "C4_glesGlsl320AndArmExtsNoDesktopLeak", "C5_webViewWebGlReadyAndMatchesMali", "F2_thermalZonesPresentInSysfs", "H1_criticalSystemServicesAndIfaaReady"]}
+goldScorecard D: {"D1_sensorsCountIs29AndMagnetometerValid": true, "D2_sensorsDynamic50HzStreamsActive": true, "D3_sensorsAdcQuantizationAndGyroDriftReal": true, "D4_inputsValidAndNoRiskyControlIme": true}
+{
+  "accQuantizationStepMatchesResolution": true,
+  "accelerometer": {
+    "count": 64,
+    "mean": [
+      0.000396,
+      -0.0234,
+      9.731079
+    ],
+    "minDiff": [
+      0.00195,
+      0.00195,
+      0.001949
+    ],
+    "name": "lsm6dso_acc",
+    "sigma": [
+      0.002888,
+      0.004599,
+      0.003246
+    ]
+  },
+  "allSixStreamsDynamic": true,
+  "constantOrMissingSensors": [],
+  "durationMs": 1500,
+  "gravityNorm": 9.7311,
+  "gravityNormValid": true,
+  "gyroQuantizationStepMatchesResolution": true,
+  "gyroscope": {
+    "count": 64,
+    "mean": [
+      -0.001719,
+      0.000808,
+      0.0022
+    ],
+    "minDiff": [
+      0.0011,
+      0.0011,
+      0.0011
+    ],
+    "name": "lsm6dso_gyro",
+    "sigma": [
+      0.001914,
+      0.002484,
+      0.00126
+    ]
+  },
+  "magnetometer": {
+    "count": 64,
+    "mean": [
+      24.782521,
+      -4.666992,
+      -39.451466
+    ],
+    "minDiff": [
+      0.018749,
+      0.01875,
+      0.018749
+    ],
+    "name": "mmc5603",
+    "sigma": [
+      0.037972,
+      0.039736,
+      0.024426
+    ],
+    "vendor": "Memsic"
+  },
+  "supported": true,
+  "uncaliGyroBiasHasThermalDrift": true,
+  "uncalibratedAccelerometer": {
+    "bias": [
+      0,
+      0,
+      0
+    ],
+    "biasSigma": [
+      0,
+      0,
+      0
+    ],
+    "count": 64,
+    "name": "UNCALI_ACC"
+  },
+  "uncalibratedGyroscope": {
+    "bias": [
+      -0.001336,
+      0.002179,
+      0.004978
+    ],
+    "biasSigma": [
+      0.000194,
+      0.000184,
+      0.000131
+    ],
+    "count": 64,
+    "name": "UNCALI_GYRO"
+  },
+  "uncalibratedMagnetometer": {
+    "bias": [
+      0,
+      0,
+      0
+    ],
+    "biasSigma": [
+      0,
+      0,
+      0
+    ],
+    "count": 64,
+    "name": "UNCALI_MAG"
+  }
+}
+
+=== Cloud Device After Fix (df809591a4e085ae-cloud, run-00230) id.sensor_fingerprint s_10_3 ===
+{
+  "dynamic": {
+    "accNorm": 9.7237,
+    "accNormErr": -0.0829,
+    "accSigma": [
+      0.00465,
+      0.00252,
+      0.0048
+    ],
+    "gyroBias": [
+      -0.001349,
+      0.001899,
+      0.004834
+    ],
+    "gyroSigma": [
+      0.002534,
+      0.001281,
+      0.002612
+    ],
+    "gyroStaticMean": [
+      -0.000756,
+      -0.002148,
+      -0.000309
+    ],
+    "magSigma": [
+      0.0405,
+      0.0244,
+      0.045
+    ]
+  },
+  "fpStr": "sensors:1:lsm6dso_acc:InvenSense:1:0.001200:78.45:5000:80000|35:UNCALI_ACC:MTK:1:0.001200:39.23:5000:80000|4:lsm6dso_gyro:InvenSense:1:0.001100:34.91:5000:80000|16:UNCALI_GYRO:MTK:1:0.001100:34.91:5000:80000|2:mmc5603:Memsic:1:0.150000:4912.05:10000:200000|14:UNCALI_MAG:MTK:1:0.150000:4912.05:20000:200000\naq:0.001950,0.001950,0.001949,an:9.7",
+  "hash": "605d63ba38362e64"
+}

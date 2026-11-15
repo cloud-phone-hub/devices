@@ -1,0 +1,21 @@
+$ cd engine && ./out/bin/cdh device build m22 --only 07_build_vendor
+…
+==> [步骤 4] 叠加机型静态树与编译产物
+    写 …/vendor/etc/vintf/manifest/android.hardware.wifi-service.xml（0644）
+    …（13 个 HAL、76 项）
+==> [步骤 5] 厂商 vendor 原件覆盖
+    输入: out/roms/flyme/m22/12.5.0.0A（厂商 vendor 原件）
+    输出: out/devices/flyme/m22/12.5.0.0A/vendor
+[err] 阶段 build_vendor 失败: 厂商 vendor 缺少该路径: lib64/egl/libGLES_mali.so
+
+# 把 etc/security、etc/md 也写进机型清单后的第二次失败
+==> [步骤 5] 厂商 vendor 原件覆盖
+    输入: out/roms/flyme/m22/12.5.0.0A（厂商 vendor 原件）（覆盖集合 4 项）
+[replace] vendor/lib64/libpng.so <- 厂商 vendor/lib64/libpng.so（文件覆盖）
+[replace] vendor/etc/permissions <- 厂商 vendor/etc/permissions（目录，80 个文件，替换）
+[err] 阶段 build_vendor 失败: 厂商 vendor 缺少该路径: etc/security
+
+# 官方 m22 vendor 的实际 /etc 目录（只有 permissions 与 selinux）
+$ dump.erofs --ls --path=/etc out/roms/flyme/m22/12.5.0.0A/super/vendor_a.img | grep -Ei " (md|permissions|security|selinux)$"
+  66062848    2  permissions
+  66063209    2  selinux

@@ -1,0 +1,18 @@
+{
+  "id": 37,
+  "buildId": "14-GQ5011AF1_EEA_V13-20260825",
+  "deviceId": 29,
+  "configId": 30,
+  "osVersion": "14-GQ5011AF1_EEA_V13-20260825",
+  "buildDate": "20260825",
+  "securityPatch": "2026-06-05",
+  "factoryTgz": "Ulefone-Armor-28-Ultra-Thermal-Version-16.zip",
+  "factoryDir": "",
+  "overrides": {
+    "buildKernel": {
+      "uname": "Linux localhost 6.1.145-android14-11-g09f1c0074ad7-ab14226177 #1 SMP PREEMPT Tue Oct  7 14:55:18 UTC 2025 aarch64 Toybox"
+    }
+  },
+  "extra": {},
+  "updatedAt": "2026-11-09T03:16:20Z"
+}

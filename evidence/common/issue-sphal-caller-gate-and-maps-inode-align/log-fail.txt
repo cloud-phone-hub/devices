@@ -1,0 +1,39 @@
+=== [修复前：2026-11-14 P1 Batch-4 基线 9f0cf68f69184fc9-cloud] ===
+# 1) batch4-risk-summary.txt §1：普通 App 读取 native_env.vendorLibMd5（4 项载体库 MD5 差异）
+  /vendor/lib64/hw/gralloc.default.so: real=67a4ce0d39220b4df9236834a253a1c6 cloud=6eb5f040a4a09b6c7f51bf30a5b718c1
+  /vendor/lib64/hw/mapper.mediatek.so: real=38f1edc2da209058dfa7a31faae62262 cloud=7e2aaca12982d68740d7a3d56afae045
+  /vendor/lib64/hw/vulkan.mali.so: real=36ab352cddadd3017a8efdd3a456c423 cloud=11e8bb5d0141bb1ebbfce80a334fdc06
+  /vendor/lib64/libdrm.so: real=10e2de0de029b412db1472dc905f155c cloud=3798101f7f52d7bdb909b67485b42825
+
+# 2) batch4-maps-vendor.txt：真机 (07cf5fc1784783d5) 与云机 (9f0cf68f69184fc9-cloud) proc.maps 片段对比
+--- 真机 (/vendor/lib64/*.so 映射自带 4KB 页对齐偏移与官网 erofs 设备号 fe:23) ---
+  70cf6cb000-70cf6d3000 r--p 00000000 fe:23 41894263                       /vendor/lib64/libdrm.so
+  70cf6d3000-70cf6e1000 r-xp 00008000 fe:23 41894263                       /vendor/lib64/libdrm.so
+  70cf6e1000-70cf6e2000 r--p 00016000 fe:23 41894263                       /vendor/lib64/libdrm.so
+  70cf71a000-70cf71b000 r--p 00000000 fe:23 41868887                       /vendor/lib64/arm.graphics-V5-ndk.so
+  70cf71e000-70cf71f000 r-xp 00004000 fe:23 41868887                       /vendor/lib64/arm.graphics-V5-ndk.so
+  70cf722000-70cf723000 r--p 00008000 fe:23 41868887                       /vendor/lib64/arm.graphics-V5-ndk.so
+  70cf755000-70cf760000 r--p 00000000 fe:23 41947248                       /vendor/lib64/hw/mapper.mediatek.so
+  70cf761000-70cf778000 r-xp 0000c000 fe:23 41947248                       /vendor/lib64/hw/mapper.mediatek.so
+  712e15b000-712e15e000 r--p 00000000 fe:23 41865833                       /vendor/lib64/android.hardware.graphics.common-V5-ndk.so
+  712e15e000-712e161000 r-xp 00003000 fe:23 41865833                       /vendor/lib64/android.hardware.graphics.common-V5-ndk.so
+  712e161000-712e162000 r--p 00006000 fe:23 41865833                       /vendor/lib64/android.hardware.graphics.common-V5-ndk.so
+  712e162000-712e163000 rw-p 00007000 fe:23 41865833                       /vendor/lib64/android.hardware.graphics.common-V5-ndk.so
+
+--- 云机修复前 (/vendor/lib64/*.so 映射暴露载体设备号 fe:20 与 16KB VNDK 页对齐偏移/小inode) ---
+  790bf60000-790bf6a000 r--p 00000000 fe:20 777                            /vendor/lib64/egl/libGLES_mali.so
+  790bf6c000-790bf72000 r-xp 0000c000 fe:20 777                            /vendor/lib64/egl/libGLES_mali.so
+  790bf74000-790bf75000 r--p 00014000 fe:20 777                            /vendor/lib64/egl/libGLES_mali.so
+  790c1a3000-790c1ac000 r--p 00000000 fe:20 737                            /vendor/lib64/arm.graphics-V5-ndk.so
+  790c1af000-790c1b7000 r-xp 0000c000 fe:20 737                            /vendor/lib64/arm.graphics-V5-ndk.so
+  790c1b7000-790c1b9000 r--p 00014000 fe:20 737                            /vendor/lib64/arm.graphics-V5-ndk.so
+  790c1bb000-790c1bc000 rw-p 00018000 fe:20 737                            /vendor/lib64/arm.graphics-V5-ndk.so
+  790c388000-790c391000 r--p 00000000 fe:20 814                            /vendor/lib64/libdrm.so
+  790c394000-790c3a1000 r-xp 0000c000 fe:20 814                            /vendor/lib64/libdrm.so
+  790c3a4000-790c3a5000 r--p 0001c000 fe:20 814                            /vendor/lib64/libdrm.so
+  790ce5a000-790ce5e000 r--p 00000000 fe:20 739                            /vendor/lib64/android.hardware.graphics.common-V5-ndk.so
+  790ce5e000-790ce61000 r-xp 00004000 fe:20 739                            /vendor/lib64/android.hardware.graphics.common-V5-ndk.so
+  790ce62000-790ce63000 r--p 00008000 fe:20 739                            /vendor/lib64/android.hardware.graphics.common-V5-ndk.so
+  790ce66000-790ce67000 rw-p 0000c000 fe:20 739                            /vendor/lib64/android.hardware.graphics.common-V5-ndk.so
+  792be82000-792be98000 r--p 00000000 fe:20 786                            /vendor/lib64/hw/mapper.mediatek.so
+  792be9b000-792bebc000 r-xp 00015000 fe:20 786                            /vendor/lib64/hw/mapper.mediatek.so

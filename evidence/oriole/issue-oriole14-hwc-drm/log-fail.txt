@@ -1,0 +1,84 @@
+# oriole-A14 撤回 A15 借件后的失败链（2026-11-01，实例 9 / 实例 10 早期）
+#
+# 三处失败依次暴露：① 服务壳 status 127；② SF 拿不到 hotplug 直接 SIGABRT；
+# ③ 自编模块里 BufferInfoGetter 初始化失败（探针在 guest 内直接复现）。
+# 每段都附取证命令，便于复核。
+
+## ① status 127：借来的 composer 服务壳没有执行位
+
+$ adb -s 127.0.0.1:5911 shell 'ls -l /vendor/bin/hw /vendor/lib64/hw'
+-rw-r--r-- 1 root root   ... /vendor/bin/hw/android.hardware.graphics.composer@2.4-service
+-rwxr-xr-x 1 root root 336488 /vendor/lib64/hw/hwcomposer.gs101.so
+
+$ grep -n "bin/hw" engine/out/devices/google/oriole/AP2A.240905.003.F1/img/vendor-meta-rules.txt
+bin/hw/android.hardware.graphics.composer@2.4-service file 0644 ... inode_source=fallback
+（同目录其余 /bin/hw 全是 0755）
+
+$ /opt/homebrew/opt/e2fsprogs/sbin/debugfs -R "stat /bin/hw/android.hardware.graphics.composer@2.4-service" vendor_a.img
+Inode: 1234   Type: regular    Mode:  0755   ...
+→ 镜像里是 0755，落盘变 0644 = debugfs dump 按宿主 umask 写，丢了执行位。
+
+$ adb shell dmesg | grep hwcomposer-2-4
+init: Service 'vendor.hwcomposer-2-4' (pid 678) exited with status 127
+init: process with updatable components 'vendor.hwcomposer-2-4' exited 4 times in 4 minutes
+
+## ② SF 无 hotplug → 初始显示配置失败，5 s 一次 SIGABRT
+
+E HWComposer: Error in fetching HDR conversion capabilities Unsupported
+F SurfaceFlinger: Initial display configuration failed: HWC did not hotplug
+（循环；RenderEngine 已初始化成功：vendor Mesa / renderer virgl (Mali-G78) / GLES 3.0 Mesa 24.3.4）
+
+# /sys/class/drm/card0-Virtual-1/status = connected，/dev/dri/card0 在；
+# logcat 里没有任何 hwc-drm-two 的日志 —— drm_hwcomposer 自带 utils/Log.h 把
+# ALOGx 宏重定向到 stderr（printf("ERR: " args)），服务日志不会进 logcat。
+
+## ③ guest 内探针（/data/local/tmp/hwc_probe，dlopen + HWC2 open + registerCallback）
+
+module id=hwcomposer name=DrmHwcTwo module api=512 hal_api=0
+open err=0 dev=... version=0x2000001
+VERBOSE: Device hook: android::DrmHwcTwo::GetMaxVirtualDisplayCount ... maxVirtualDisplays=0
+VERBOSE: Device hook: android::DrmHwcTwo::RegisterCallback
+ERR: DRM/KMS master access required
+WARN: Generic buffer getter is not available. Falling back to legacy...
+INFO: Using CrOS Gralloc gralloc module: Chrome OS
+ERR: Gralloc name isn't valid: Expected: "GBM Memory Allocator" or "DRM Memory Allocator", Actual: "CrOS Gralloc"
+ERR: Failed to initialize BufferInfoGetter
+registerCallback(hotplug) ret=0
+
+# 结论：BufferInfoMapperMetadata（IMapper-4.0 元数据通路）此前被换成返回 nullptr 的桩，
+# BufferInfoGetter::GetInstance() 退到 BufferInfoLibdrm，后者只认 "GBM Memory Allocator" /
+# "DRM Memory Allocator" 两个名字，遇到 minigbm 的 "CrOS Gralloc" 直接判死 →
+# ResourceManager::Init() 提前 return → 一个 connector 都没 attach → 服务端永不 hotplug。
+
+## ④ 改「显示栈现编」后的五连坑（2026-11-01，逐条都是真报错原文）
+
+# 坑 1：跑的是过期二进制。cdh 是 15:39 编的，lift.go（含 lineage:<分区> 支持）19:30
+# 才写，于是 "system" 被当成版本段 → 报底包目录不存在。
+$ ./out/bin/cdh device build oriole --manifest … --only 07_build_vendor --refresh
+    输入: lineage-system 底包（借件集合 12 项）
+[err] 阶段 build_vendor 失败: lineage 底包解包根不存在: out/roms/lineage/lineage-system
+# 修：cd engine/build && go build -o ../out/bin/cdh .（改完 Go 代码必须重编这个二进制，
+# 它不会自己跟着源码走）
+
+# 坑 2：取链接用的 libsync.so 时漏了 system/ 前缀。lineage 的 system_a.img 是 system-as-root
+# （镜像根就是设备根），库在 /system/lib64，不在 /lib64。
+[err] 阶段 build_vendor 失败: 现编显示栈需要底包 system 分区的 lib64/libsync.so 参与链接:
+      lineage-21.0 底包 system 里没有 lib64/libsync.so: 来源缺少该路径: lib64/libsync.so
+
+# 坑 3：默认挑到 NDK 29，它的 libc++ 与 AOSP 14 的平台 __config_site 不兼容。
+[err] 编译 drm_hwcomposer/bufferinfo/BufferInfoGetter.cpp 失败:
+      #error _LIBCPP_HARDENING_MODE must be set to one of the following values
+
+# 坑 4：链命令只给了 -Wl,…没给 --target，裸 clang++ 把 -Wl 交给宿主自己的 ld64。
+[err] 链接 hwcomposer.drm.so 失败: ld64.lld: error: unknown argument '-soname'
+      ld64.lld: error: unknown argument '--allow-shlib-undefined'
+
+# 坑 5：-L 顺序把 NDK sysroot 排在最前，-lc++ 命中了 NDK 的 std::__ndk1。
+[err] 链接 android.hardware.graphics.composer@2.4-service 失败:
+      …service.o:(std::__1::__function::__func<…ComposerImpl<…>::createClient()::'lambda'()…
+      >::operator()()) … referenced 1 more times
+
+# 另：--only 是单值 flag，写成 "--only 09_build_patch --only 11_pack_vda" 只会保留后者，
+# 09 根本没跑；11 于是把 19:32 的旧 patch.img 原样发布出去（sha 与上一轮同），
+# 起机后拿设备上的三件 sha256 与装配树一对就露馅（旧 d7184184…/bc31e31b…/d12d15d1…）。
+# 两次分开跑之后 patch sha 从 3c5a75f9061a 变成 06e93c8f36a5。

@@ -1,0 +1,17 @@
+# 修复后：7d10bffa4bc09406-cloud 实机与 aligner.build_props_full 重采结果
+=== 3. build_props (#213) & telephony (#215) ===
+ro.boot.vbmeta.device=PARTUUID=d722c721-0dee-4cb8-8a83-2c63cd1393c7
+ro.hardware.gatekeeper=mitee
+ro.ril.factory_id=29
+ro.ril.oem.wifimac=3c:38:24:80:07:c4
+ro.ril.oem.btmac=3c:38:24:80:07:c5
+ro.boot.chipid=0x0180410e320017b2c0d0779813edd3e3
+ro.vendor.radio.meid.prefix=99002158
+
+summary(new): {"identity": 16, "capability": 0, "state": 510, "availability": 0, "fatal": 16}
+diff[props.ro.boot.vbmeta.device] = null
+diff[props.ro.hardware.gatekeeper] = null
+diff[props.ro.ril.factory_id] = null
+diff[props.ro.ril.oem.btmac] = {"level": "identity", "path": "props.ro.ril.oem.btmac", "base": "3c:38:24:24:c3:65", "target": "3c:38:24:80:07:c5"}
+diff[props.ro.ril.oem.wifimac] = {"level": "identity", "path": "props.ro.ril.oem.wifimac", "base": "3c:38:24:24:c3:64", "target": "3c:38:24:80:07:c4"}
+diff[props.ro.boot.chipid] = {"level": "identity", "path": "props.ro.boot.chipid", "base": "0x63af62d056e8466522b0bdc117769c12", "target": "0x0180410e320017b2c0d0779813edd3e3"}

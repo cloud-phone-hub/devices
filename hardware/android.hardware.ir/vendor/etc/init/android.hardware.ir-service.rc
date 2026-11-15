@@ -1,0 +1,8 @@
+service vendor.ir-default /vendor/bin/hw/android.hardware.ir-service
+    class hal
+    user system
+    group system
+
+# 云机没有红外发射硬件：服务只做 binder 注册（IConsumerIr/default），transmit 空转，
+# 目的是让 PackageManager 的 FEATURE_CONSUMER_IR 与 HAL 成对存在，避免
+# SystemServer 的 ConsumerIrService 因"有特性无 HAL"而告警/异常。

@@ -1,0 +1,25 @@
+08-12 17:08:33.526   720   720 I KG.SystemSeReceiver: onReceive android.intent.action.BOOT_COMPLETED
+08-12 17:08:33.527   720  7288 I KG.SystemIntentProcessor: handling boot completed
+08-12 17:08:33.536   720  7288 D KG.Utils: getStateAndSetToKGSystemProperty - knox.kg.state : Error
+08-12 17:08:33.536   720  7288 D KG.SystemIntentProcessor: isSetupWizardFinished : true
+08-12 17:08:33.537   720  7288 D KG.Utils: isOtpBitFusedWithActive - false
+08-12 17:08:33.537   720  7288 D KG.Utils: isSingleOtpBitFused - false
+08-12 17:08:33.537   720  7288 D KG.Utils: isSingleOtpBitFused - false
+08-12 17:08:33.537   720  7288 I KG.IntegritySeUtil: checkKGClientIntegrity()
+08-12 17:08:33.537   720  7288 I KG.IntegritySeUtil: kgState() : 5
+08-12 17:08:33.540   720  7288 E KG.IntegritySeUtil: checkKGClientIntegrity Exception. android.content.pm.PackageManager$NameNotFoundException: com.samsung.android.kgclient
+08-12 17:08:33.540   720  7288 E KG.IntegritySeUtil: isSystemApp NameNotFoundException : android.content.pm.PackageManager$NameNotFoundException: com.samsung.android.kgclient
+08-12 17:08:33.540   720  7288 E KG.IntegritySeUtil: isEnabled NameNotFoundException : android.content.pm.PackageManager$NameNotFoundException: com.samsung.android.kgclient
+08-12 17:08:33.540   720  7288 E KG.IntegritySeUtil: Client Notfound : android.content.pm.PackageManager$NameNotFoundException: com.samsung.android.kgclient
+08-12 17:08:33.546   720  7288 D KG.IntegritySeUtil: checkSignatures : false
+08-12 17:08:33.546   720  7288 D KG.IntegritySeUtil: isSystemApp : false
+08-12 17:08:33.546   720  7288 D KG.IntegritySeUtil: isEnabled : false
+08-12 17:08:33.546   720  7288 D KG.IntegritySeUtil: isValidVersion : true
+08-12 17:08:33.552   720  7288 E KG.IntegritySeUtil: isKGComponentsEnabled error: com.samsung.android.kgclient
+08-12 17:08:33.552   720  7288 D KG.IntegritySeUtil: isComponentEnabled : false
+08-12 17:08:33.552   720  7288 D KG.Utils: getKGPolicyCompany
+08-12 17:08:33.566   720  7288 I KG.KnoxGuardSeService: call registerUserPresentReceiver
+08-12 17:08:33.566   720  7288 I KG.KnoxGuardSeService: call unregisterUserPresentReceiver
+08-12 17:08:33.799   720  7288 I KG.SystemIntentProcessor: checkKGClientIntegrity false. Lock device without passcode.[  255.871157][ T4670] servicemanager: Caller(pid=986,uid=1013,sid=u:r:mediaserver:s0) Tried to start aidl service android.hardware.media.c2.IComponentStore/default9 as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+08-12 17:08:33.799   720  7288 D KG.KGEventQueue: @queueIdle called
+08-12 17:27:49.953   642   642 I adbd    : adbd service requested 'shell,v2,TERM=xterm-256color,raw:grep -l KnoxGuardNative /system/lib64/*.so 2>/dev/null; grep -l KnoxGuardNative /system/lib64/*/*.so 2>/dev/null; grep -rl KnoxGuardNative /system/lib64 2>/dev/null | head'

@@ -1,0 +1,35 @@
+=== 1. 5.10 编译 virtio_media 与 kernelsu 失败日志 ===
+=== Building virtio_media on 5.10 ===
+/src/.cdh/test-modules/virtio_media/virtio_media_driver.c:29:10: fatal error: 'media/frame_vector.h' file not found
+#include <media/frame_vector.h>
+         ^~~~~~~~~~~~~~~~~~~~~~
+/src/.cdh/test-modules/virtio_media/scatterlist_builder.c:261:50: error: too many arguments to function call, expected 2, have 3
+        framevec = vb2_create_framevec(userptr, length, write);
+                   ~~~~~~~~~~~~~~~~~~~                  ^~~~~
+../include/media/videobuf2-memops.h:36:22: note: 'vb2_create_framevec' declared here
+struct frame_vector *vb2_create_framevec(unsigned long start,
+                     ^
+/src/.cdh/test-modules/virtio_media/virtio_media_driver.c:960:2: error: implicit declaration of function 'virtio_reset_device' [-Werror,-Wimplicit-function-declaration]
+        virtio_reset_device(virtio_dev);
+        ^
+
+=== Building kernelsu on 5.10 ===
+  MODPOST /src/.cdh/test-modules/kernelsu/Module.symvers
+WARNING: modpost: "security_inode_init_security_anon" [/src/.cdh/test-modules/kernelsu/source/kernel/kernelsu.ko] undefined!
+
+=== 2. 5.10 / 6.6 / 6.12 vmlinux 符号表对账（修复前 ksu_ksym_table 无条件查表） ===
+=== Checking ksu_ksym_table symbols in 5.10 (cdh-kernel-5.10-cdh-77627c213cec) ===
+  MISSING in vmlinux: anon_inode_getfile_secure
+  MISSING in vmlinux: anon_inode_create_getfile
+  MISSING in vmlinux: set_cred_ucounts
+=== Checking ksu_ksym_table symbols in 6.6 (cdh-kernel-lineage-22-6.6-cdh-f235b97cd2ec) ===
+  MISSING in vmlinux: anon_inode_create_getfile
+=== Checking ksu_ksym_table symbols in 6.12 (cdh-kernel-lineage-23-6.12-cdh-b4fe1c987b3a) ===
+  MISSING in vmlinux: anon_inode_getfile_secure
+
+=== 3. 6.18 编译 kernelsu 失败日志（修复 KSU_KERNEL_DIR 前） ===
+--- [kernelsu] ---
+source/kernel/feature/sulog.c:4:10: fatal error: 'feature/sulog.h' file not found
+    4 | #include "feature/sulog.h"
+      |          ^~~~~~~~~~~~~~~~~
+1 error generated.

@@ -1,0 +1,152 @@
+# log-pass：m22 机型层 SELinux 片段下放（2026-10-29 22:19~22:23）
+
+完整构建日志：`out/devices/flyme/m22/12.5.0.0A/img/vendor-log.txt`（本次 22:23 写入）。
+下面按节摘录与本次改动相关的行，命令均为实跑。
+
+## 1. 改前状态（22:18 取证）
+
+```
+$ ls -l manifest/flyme/m22/sepolicy/
+-rw-r--r--  2527  vendor_file_contexts
+-rw-r--r--  7996  vendor_sepolicy.cil
+-rw-r--r--  1862  vendor_service_contexts
+
+$ grep -c "cdh-patch-begin" out/devices/.../vendor/etc/selinux/vendor_file_contexts
+6            # 5 个模块层 + 1 个机型层（手写的 8 条 exec 标签）
+
+$ ls vendor/hardware/*/sepolicy（13 个来源）
+audio bluetooth ir keymint media media.v412 power radio thermal wifi daemon perf2
+```
+
+## 2. dry-run：来源与计划
+
+```
+$ ../out/bin/cdh build-vendor --manifest ../manifest/flyme/m22/baselines/12.5.0.0A.json \
+    --manifest-dir ../manifest/flyme/m22 --vendor flyme --brand m22 --version 12.5.0.0A --dry-run
+    SELinux 补丁: … 模块层 android.hardware.gnss vendor/hardware/android.hardware.gnss/sepolicy（1 个文件）；
+                  … 模块层 vendor.meizu.sensor_aux vendor/hardware/vendor.meizu.sensor_aux/sepolicy（2 个文件）；
+                  … 机型层 manifest/flyme/m22/sepolicy（2 个文件）
+    计划命令 [步骤 6]: 追加 SELinux 补丁（模块层 android.hardware.gnss）…/sepolicy/vendor_sepolicy.cil
+                       -> …/vendor/etc/selinux/vendor_sepolicy.cil（marker ;; vendor_sepolicy.cil@android.hardware.gnss）
+    计划命令 [步骤 6]: 追加 SELinux 补丁（模块层 vendor.meizu.sensor_aux）…/sepolicy/vendor_service_contexts
+                       -> …/vendor/etc/selinux/vendor_service_contexts（marker # vendor_service_contexts@vendor.meizu.sensor_aux）
+    计划命令 [步骤 6]: 追加 SELinux 补丁（机型层）…/sepolicy/vendor_sepolicy.cil（marker ;; vendor_sepolicy.cil）
+```
+
+## 3. 实跑：步骤 6 注入（模块层 15 个来源 + 机型层）
+
+```
+==> [步骤 6] 注入 SELinux 策略补丁
+    输入[模块层 android.hardware.gnss]: vendor/hardware/android.hardware.gnss/sepolicy
+    输入[模块层 vendor.meizu.sensor_aux]: vendor/hardware/vendor.meizu.sensor_aux/sepolicy
+    …
+    输入[机型层]: manifest/flyme/m22/sepolicy
+    追加 …/vendor_sepolicy.cil <- vendor/hardware/android.hardware.gnss/sepolicy/vendor_sepolicy.cil（1326 字节，marker ;; vendor_sepolicy.cil@android.hardware.gnss）
+    追加 …/vendor_sepolicy.cil <- vendor/hardware/vendor.meizu.sensor_aux/sepolicy/vendor_sepolicy.cil（1394 字节，marker ;; vendor_sepolicy.cil@vendor.meizu.sensor_aux）
+    追加 …/vendor_service_contexts <- vendor/hardware/vendor.meizu.sensor_aux/sepolicy/vendor_service_contexts（725 字节，marker # vendor_service_contexts@vendor.meizu.sensor_aux）
+    追加 …/vendor_sepolicy.cil <- manifest/flyme/m22/sepolicy/vendor_sepolicy.cil（6925 字节，marker ;; vendor_sepolicy.cil）
+    追加 …/vendor_service_contexts <- manifest/flyme/m22/sepolicy/vendor_service_contexts（1545 字节，marker # vendor_service_contexts）
+```
+
+注意：机型层不再有 `vendor_file_contexts` 条目——文件已删。
+
+## 4. 实跑：步骤 6b 补可执行标签 26 条（含原手写的 8 条）
+
+```
+[ok] 补充 HAL 可执行标签 26 条（…/vendor/etc/selinux/vendor_file_contexts）：
+    android.hardware.gnss-service -> hal_gnss_default_exec
+    android.hardware.health-service -> hal_health_default_exec
+    android.hardware.lights-service -> hal_light_default_exec
+    android.hardware.media.c2-mediatek -> mediacodec_exec
+    android.hardware.radio-service -> hal_radio_default_exec
+    android.hardware.thermal-service -> hal_thermal_default_exec
+    android.hardware.vibrator-service -> hal_vibrator_default_exec
+    vendor.dolby.media.c2-default-service-dax -> mediacodec_exec
+    vendor.meizu.sensor_aux-service -> hal_sensors_default_exec
+    vendor.qti.hardware.perf2-hal-service -> hal_sensors_default_exec
+    （另有 authsecret / face / fingerprint / bluetooth / camera / confirmationui /
+      identity / memtrack / nfc / power.stats / secure_element / usb / gadget / weaver 等 16 条）
+```
+
+## 5. 装配树回读
+
+```
+$ grep -n "cdh-patch-begin" …/vendor/etc/selinux/vendor_file_contexts
+280: vendor_file_contexts@android.hardware.ir
+289: vendor_file_contexts@android.hardware.media.v412
+311: vendor_file_contexts@android.hardware.power
+328: vendor_file_contexts@android.hardware.wifi
+340: vendor_file_contexts@android.service.daemon      # 全为模块层，机型层块已消失
+
+$ grep -n "android\\\\.hardware\\\\.health-service \|vendor\\\\.dolby" …/vendor_file_contexts
+373:/(vendor|system/vendor)/bin/hw/android\.hardware\.health-service u:object_r:hal_health_default_exec:s0
+388:/(vendor|system/vendor)/bin/hw/vendor\.dolby\.media\.c2-default-service-dax u:object_r:mediacodec_exec:s0
+
+$ grep -c "cdh-patch-begin" …/vendor/etc/selinux/vendor_sepolicy.cil
+16
+$ grep -n "cdh-patch-begin: vendor_sepolicy.cil@android.hardware.gnss\|@vendor.meizu.sensor_aux" …
+4290:;; cdh-patch-begin: vendor_sepolicy.cil@android.hardware.gnss
+4608:;; cdh-patch-begin: vendor_sepolicy.cil@vendor.meizu.sensor_aux
+
+$ grep -n "hal_gnss_default vendor_data_file" …/vendor_sepolicy.cil
+4308:(allow hal_gnss_default vendor_data_file_202504 (dir (search getattr)))
+4309:(allow hal_gnss_default vendor_data_file_202504 (file (read open getattr)))
+
+$ grep -c "{{vers}}" …/vendor_sepolicy.cil
+0
+$ grep -c "hal_sensor_aux_service" …/vendor_sepolicy.cil
+6            # 5 条语句 + 1 行注释，全在模块层 marker 块内
+$ grep -n "sensor_aux" …/vendor_service_contexts
+51:# cdh-patch-begin: vendor_service_contexts@vendor.meizu.sensor_aux
+62:vendor.meizu.sensor_aux.ISensorAux/default      u:object_r:hal_sensor_aux_service:s0
+63:# cdh-patch-end: vendor_service_contexts@vendor.meizu.sensor_aux
+```
+
+## 6. 装配树统计与镜像
+
+```
+    机型静态树: 写入 23，已存在同内容 0
+    机型 usr: 跳过（源目录不存在）
+    …
+    编译产物 vendor.meizu.sensor_aux@default: 写入 2，已存在同内容 0
+    编译产物 vendor.qti.hardware.perf2@default: 写入 2，已存在同内容 0
+
+==> [步骤 7] 打包 vendor.img
+    装配树条目 655（文件 424 / 链接 199 / 目录 32）
+
+$ ls -l img/vendor.img
+-rw-r--r--  205877248  vendor.img
+$ shasum -a 256 img/vendor.img
+6e20f34c239dad2f574f3f594cef7b6ce7124c3e0ba79bf7086e41b111132c6f
+```
+
+## 7. 镜像内 SELinux 标签回读（debugfs ea_get -V）
+
+```
+android.hardware.health-service                u:object_r:hal_health_default_exec:s0
+android.hardware.lights-service                u:object_r:hal_light_default_exec:s0
+android.hardware.media.c2-mediatek             u:object_r:mediacodec_exec:s0
+vendor.dolby.media.c2-default-service-dax      u:object_r:mediacodec_exec:s0
+vendor.meizu.sensor_aux-service                u:object_r:hal_sensors_default_exec:s0
+```
+
+## 8. 装配树 656 → 655 的原因（与本次改动无关）
+
+```
+==> [步骤 6] fstab 收口
+    保留 init.qcom.rc（已由上层提供），删除 lineage 的 init.virtio.rc
+```
+
+机型静态树已提供 `vendor/etc/init/hw/init.qcom.rc`，步骤 6 因此删掉基底的
+`init.virtio.rc`，条目 −1；与 sepolicy 下放无关。
+
+## 9. 质量门
+
+```
+$ gofmt -l build/07_build_vendor/
+（空）
+$ cd build && go vet ./... && go build ./...
+（无输出，exit=0）
+```
+
+本轮未改 Go 代码，仅资产（sepolicy 片段、rc）与文档，跑一遍确认无回归。

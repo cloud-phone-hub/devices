@@ -1,0 +1,103 @@
+# 迁移过程中的失败记录（2026-11-01，oriole-A14 显示栈迁到 cdh-vendor kind=hidl）
+#
+# 说明：①②③⑤ 是在 /tmp 下手跑 cdh-vendor 时抓到的；④⑥ 是同一命令的后续轮次；
+# ⑦⑧ 是 07 全绿之后上机前的符号级复核；⑨ 是复跑时发现产物其实是旧件。
+
+## ① 模块短名不是 composer
+
+$ /tmp/cdh-vendor hal build composer --android 14
+    未知模块: composer（可用模块见 hal list）
+→ resolveModule 去掉了 android.hardware. 前缀后按短名匹配，composer 这一族的短名是
+  graphics-composer。
+
+## ② 依赖校验早于依赖自愈
+
+$ /tmp/cdh-vendor hal build graphics-composer --android 14 --prop ro.board.platform=gs101
+    [err] android.hardware.graphics.composer 依赖未就绪：
+      - HIDL 头数量不符（got 0 want 89）
+      - 链接期库缺失: libhidlbase.so, libbinder.so, ...
+    先运行：cdh-vendor deps --android 14 --platform
+→ kind=hidl 的 buildHidl 里 checkHidlDeps() 排在 deps.PrepareHIDLModule() 之前，
+  自愈根本没机会跑。改成先自愈、后校验（与 v412 同口径），dry-run 下校验直接跳过。
+
+## ③ lineage 底包里 libc.so / libm.so / libdl.so 取不出来
+
+    [err] android.hardware.graphics.composer: 提取链接期库失败: 三个 lineage 镜像均找不到 libc.so
+
+$ debugfs -R "stat /system/lib64/libc.so" .../super/system_a.img
+    Type: symlink  Fast link dest: libc.so (in /system/lib64/bootstrap)
+→ 这三个是符号链接，debugfs dump 取不到实体；而 libui / libc++ / libbinder /
+  composer@2.x 都是普通文件（debugfs stat 逐个确认）。处理：把 libc/libm/libdl/liblog
+  从 hidl.linkLibs 里去掉，改用仓库既有的 `-lc/-lm/-ldl/-llog` 写法（ndk sysroot stub
+  解析），并让 hidlLinkInputs 对 `-` 开头的条目原样透传。
+
+## ④ aidl 把冻结快照也当输入编
+
+    ERROR: .../graphics/common/aidl/aidl_api/android.hardware.graphics.common/1/
+           android/hardware/graphics/common/BlendMode.aidl:20.5-15:
+           directory .../aidl_api/android.hardware.graphics.common/1/ is not found in
+           any of the import paths: - .../graphics/common/aidl/
+→ collectAidls(root) 递归把 aidl_api/ 下的历史版本快照一起收进来了；那些文件要挂
+  自己的版本化 -I 根。新增 filterFrozenAidls：跳过路径里含 /aidl_api/ 的项。
+
+## ⑤ graphics.common 引用了 hardware.common 的 NativeHandle
+
+    ERROR: .../graphics/common/aidl/android/hardware/graphics/common/HardwareBuffer.aidl:
+           Couldn't find import for class android.hardware.common.NativeHandle.
+           Searched here: - .../graphics/common/aidl/
+→ 一个 AIDL 根不够：graphics.common 的 Android.bp 声明 imports: android.hardware.common-V2。
+  改为 aidlRoots 多根 + 每轮编译带上全部 -I 根（common/aidl 3 个 .aidl、
+  graphics/common/aidl 28 个）。
+
+## ⑥ 服务壳缺三处头（每轮一个）
+
+    fatal error: 'android/hidl/manager/1.0/IServiceNotification.h' file not found
+    fatal error: 'sync/sync.h' file not found
+    fatal error: 'hwbinder/IBinder.h' file not found
+→ manager@1.0/1.1 的 .hal 在 system/libhidl/transport/manager/ 下，不在
+  hardware/interfaces/hidl/：hidl.packages 补 android.hidl.manager@1.0 / @1.1
+  （expectHeaders 89 → 104），includeDirs 补 system/core/libsync/include 与
+  system/libhwbinder/include。
+
+## ⑦ 07 全绿，但装进 vendor 的是 hwcomposer.virt.so
+
+$ ./out/bin/cdh device build oriole --only 07_build_vendor --manifest oriole-ap2a...json
+    机型属性: ro.board.platform=virt（展开产物名占位）
+    写 out/devices/google/oriole/AP2A.240905.003.F1/vendor/lib64/hw/hwcomposer.virt.so（0644）
+$ grep -n ro.board.platform out/devices/.../vendor/build.prop
+    105:ro.board.platform=gs101
+→ 步骤 3 编译时读的是步骤 2 刚铺好的 lineage build.prop（virt），而把属性改成 gs101
+  的是步骤 6 的属性收口（基线清单 vendor.build-prop-sets）。运行期 libhardware 按
+  gs101 找，名字对不上服务就起不来。处理：moduleProps 在装配树 build.prop 之上再叠
+  一次 readVendorBuildProps 的 sets/unsets，取「最终落盘的属性」。
+
+## ⑧ .so 里 __libcpp_verbose_abort 是未定义符号
+
+$ llvm-nm -uC lib64/hw/hwcomposer.gs101.so | grep verbose_abort
+                 U std::__1::__libcpp_verbose_abort(char const*, ...)
+$ llvm-nm -D --defined-only abi/graphics-composer/system/lib64/libc++.so | grep -c verbose_abort
+    0        （该 libc++.so 共 2159 个动态导出符号，没有这一个）
+→ halbuild 原来只给「服务」补 compat 对象（linkService），.so 走的是另一条链接函数，
+  BIND_NOW 下缺符号会直接拒绝加载。处理：compatObjects 改成按调用方给的 ABI 目录判
+  定（kind=hidl 的库在模块专属 ABI 目录里），buildSharedLibs 也把 compat 对象链进去。
+  复核：三件产物 `llvm-nm -uC | grep -c verbose_abort` 均为 0，且各自 T 掉一个定义。
+
+## ⑨ 改了 halbuild，07 却把旧产物拷进装配树
+
+$ ./out/bin/cdh device build oriole --only 07_build_vendor --refresh --manifest oriole-ap2a...json
+    [skip] android.hardware.graphics.composer 已编译（3 个编译产物 + 0 个 vendor 静
+           态树文件齐全，源码指纹一致）
+$ llvm-nm -C out/vendor/android14/lib64/hw/hwcomposer.gs101.so | grep verbose_abort
+                 U std::__1::__libcpp_verbose_abort(char const*, ...)   ← ⑧ 修好之前的旧件
+$ llvm-nm -C out/vendor/android14/bin/hw/android.hardware.graphics.composer@2.4-service | grep verbose_abort
+    0000000000031290 T std::__1::__libcpp_verbose_abort(char const*, ...)
+→ needsBuild 的 digest 只算模块源码树 + 模块 JSON，不含 cdh-vendor 自己的编译逻辑；
+  `--refresh` 只注册在 07 的 ParseArgs 上，`cdh device build --refresh` 不会传到
+  RunStage。结果：服务是新件（T），两个 .so 还是旧件（U）—— 首轮实例 15 能跑起来
+  全靠服务端导出的同名符号兼容了 dlopen，属于「碰巧能跑」。
+  处理：先手工跑一遍
+    cdh-vendor hal build android.hardware.graphics.composer --android 14 \
+        --out-dir engine/out/vendor/android14 --prop ro.board.platform=gs101
+  再走 07（装配段会把新产物写进 vendor 树）→ 09→11。
+  复核：gs101 7f305c06… / resources 2bd37698…（旧值 fa45b466… / 05c9310d…），服务
+  字节未变 0b93f744…；两件 .so 的 verbose_abort 由 U 变 T；实例 16 起机正常。

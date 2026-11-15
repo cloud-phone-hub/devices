@@ -1,0 +1,52 @@
+== run3：基线补 ro.hardware.egl=mesa + ro.hwui.use_vulkan=false 后 15r 起机通过（2026-11-04）==
+构建: cd engine/build && ../out/bin/cdh device build 15r --from build_vendor
+577:[ok] 已完成
+产物: out/dist/oneplus/15r/16.0.10.500_EX01（vda.img 13.00 GiB，5 个分区已刷新）
+
+## 1. 装配树里两条键的实值（07 阶段产物，非视图）
+$ grep -nE '^(ro.hardware.egl|ro.hardware.vulkan|ro.hwui.use_vulkan)' out/devices/oneplus/15r/16.0.10.500_EX01/vendor/build.prop
+45:ro.hwui.use_vulkan=false
+127:ro.hardware.vulkan=adreno
+128:ro.hardware.egl=mesa
+（127 行保持官方 adreno 未动，改在消费侧关掉 hwui 的 Vulkan 管线。）
+
+## 2. 起机与判据
+$ curl -s -X POST http://127.0.0.1:9050/api/create -d '{"index":2}'
+{"index":2,"instance":{"spec":"15r_16.0.10.500_EX01","index":"1","running":true,"pid":...,"adb":5911,"vnc":5912},"ok":true}
+$ python3 core/host/daemon/tools/boot_check.py 15r_16.0.10.500_EX01 --timeout 600 --png engine/out/tmp/15r-desktop-pass.png
+实例: /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1  adb=5911 vnc=5912 ws=5913
+日志: /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/15r_16.0.10.500_EX01/1/qemu.log
+[shot] engine/out/tmp/15r-desktop-pass.png 1280x2800 bpp=32 平均亮度=3.8 峰值=102
+[pass] 引导完成（日志 8462 行）+ 截图非黑（平均亮度=3.8 峰值=102）-> engine/out/tmp/15r-desktop-pass.png
+（3.8 那一帧是开机动画收尾/桌面刚起；桌面稳定后再抓一帧见下。）
+
+## 3. qemu.log（run3，13294 行）
+7942:[   52.254431][    T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:2263)
+  grep -cE "Service 'surfaceflinger'.*received signal" = 0   （run1 是 94）
+  grep -cE 'critical process' = 0
+  grep -c 'sys.boot_completed=1' = 56
+
+## 4. VM 内属性与进程实测
+$ adb connect 127.0.0.1:5911 && adb -s 127.0.0.1:5911 shell '...'
+false                      ← getprop ro.hwui.use_vulkan
+mesa                       ← getprop ro.hardware.egl
+1                          ← getprop sys.boot_completed
+3420                       ← pidof com.android.launcher
+2776                       ← pidof com.android.systemui
+$ adb -s 127.0.0.1:5911 shell 'dumpsys window | grep -E "mCurrentFocus|mFocusedApp"'
+  mCurrentFocus=Window{b891d2c u0 com.oplus.battery}
+  mFocusedApp=ActivityRecord{80973981 u0 com.android.launcher/.Launcher t7}
+（焦点窗口是 ColorOS 的「充电上限 80%」弹窗，桌面本身已在前台渲染。）
+
+## 5. 抓帧（websocket 5913）
+$ python3 core/host/daemon/tools/vnc_grab.py 5913 engine/out/tmp/15r-desktop-late.png 25
+engine/out/tmp/15r-desktop-late.png 1280x2800 bpp=32 平均亮度=63.9 峰值=255
+（run2 同位置是 平均亮度=0.0 峰值=0；本帧与 run2 的 skiagl 旁证 64.2 一致。）
+截图见本目录 desktop-pass.png（ColorOS 桌面：状态栏 18:24 / 时钟组件 / Phone Manager·Photos·Notes·Gemini 图标 / 充电弹窗）。
+
+## 6. 残留噪声计数（run3 logcat，22962→按本轮实际）
+Fatal signal: 1（`F/libc (711): Fatal signal 11 ... (minidumpreader)`，ColorOS 自带 minidumpreader，
+  run1/run2 同样存在，不参与引导链）
+gpuCount 断言: 0     （run2 是 257）
+drmhwc 'No layers to present': 0（run2 是 40）
+adb logcat -d -v brief 行数: 13890

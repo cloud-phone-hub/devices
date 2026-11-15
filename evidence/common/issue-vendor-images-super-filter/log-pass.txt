@@ -1,0 +1,62 @@
+# 01_unpack 实跑日志摘录（2026-11-02，改后）
+
+## 1. oriole AP2A.240905.003.F1（平铺工厂包，清单 5 逻辑 + vendor_boot）
+
+```
+==> 清单保留镜像: system.img、system_ext.img、product.img、vendor.img、vendor_dlkm.img、vendor_boot.img（manifest/google/oriole/baselines/oriole-ap2a.240905.003.f1-factory-655c44e7.json）
+==> 保留镜像: super.img、product.img、system.img、system_ext.img、vendor.img、vendor_boot.img、vendor_dlkm.img（清单 rom.vendor.images）
+  + system_ext.img（273.46 MiB，平铺分区 -> super/system_ext_a.img）
+  + vendor_dlkm.img（46.79 MiB，平铺分区 -> super/vendor_dlkm_a.img）
+  + dtbo.img（16.00 MiB）
+  + vbmeta.img（0.01 MiB）
+[ok] 已由平铺分区还原 5 个逻辑分区 + 3 个物理分区（4.86 GiB） + vendor_boot.img （64.00 MiB） -> out/roms/google/oriole/AP2A.240905.003.F1
+```
+
+产物（`super/` 恰好 5 个 + vendor_boot + firmware 3 件，目录 4.9 GiB）：
+
+```
+product_a.img      3054.86 MiB
+system_a.img        958.12 MiB
+system_ext_a.img    273.46 MiB
+vendor_a.img        559.57 MiB
+vendor_dlkm_a.img    46.79 MiB
+vendor_boot.img      64.00 MiB
+firmware/{boot,dtbo,vbmeta}.img
+```
+
+## 2. nothing/3a B4.1-260810-1153（OTA payload，清单 7 逻辑 + vendor_boot）
+
+```
+  [group] qti_dynamic_partitions  9.00 GiB  odm,product,system,system_dlkm,system_ext,vendor,vendor_dlkm
+  - abl                0.26 MiB  清单未声明，跳过
+  - boot              96.00 MiB  清单未声明，跳过
+  - dsp               64.00 MiB  清单未声明，跳过
+  - modem            185.14 MiB  清单未声明，跳过
+  - recovery         100.00 MiB  清单未声明，跳过
+  + odm              319.36 MiB   160 ops  -> super/odm_a.img
+  + product         2253.45 MiB  1127 ops  -> super/product_a.img
+  + system          1098.05 MiB   550 ops  -> super/system_a.img
+```
+
+产物（`super/` 恰好 7 个 + vendor_boot，无 `firmware/`，目录 5.9 GiB）：
+
+```
+odm_a.img           319.36 MiB
+product_a.img      2253.45 MiB
+system_a.img       1098.05 MiB
+system_dlkm_a.img    11.30 MiB
+system_ext_a.img    663.15 MiB
+vendor_a.img       1603.23 MiB
+vendor_dlkm_a.img    36.73 MiB
+vendor_boot.img      96.00 MiB
+```
+
+## 3. 启动测试（既有 dist）
+
+| 机型 | 实例 | 端口 | 结果 |
+| :--- | :--- | :--- | :--- |
+| oriole | oriole_AP2A.240905.003.F1/1 | adb 5911 | `boot_completed=1`，`Pixel 6 / 14 / AP2A…F1`，`NexusLauncher` 前台，`egl=mesa`、`opengles=196610` |
+| cph2797 | cph2797_16.0.8.301_EX01/1 | adb 5911 | `boot_completed=1`，`CPH2797 / 16 / 36`，`com.android.launcher` 为 `topResumedActivity` |
+| ss9380 | ss9380_S9380ZCSDCZH1/1 | guest 通道 | `boot_completed=1`（`init: processing action (sys.boot_completed=1)`），`SM-S9380 / 16`，SetupWizard 前台；adb 端口 offline |
+
+三台 `screencap -p` 均 6 s 超时、输出 0 字节（与 m22 同现象）；gold 正常（2.79 MB PNG）。

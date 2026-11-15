@@ -1,0 +1,29 @@
+=== 1. LTPO AutoMode TP-Idle 10Hz 掉帧（修复前 dumpsys display） ===
+  DisplayModeController
+    mDefaultModeId=1
+    mActiveRenderFrameRate=10.0
+11-06 17:19:45.120   752   840 D DisplayModeDirector: onTpIdleChanged: tpIdle=true, entering 10Hz auto mode
+11-06 17:19:45.121   752   840 I RefreshRateSelector: Switching render frame rate from 60.0 to 10.0 (AutoMode)
+
+=== 2. 4.5 分钟内 logcat 高频刷屏统计（修复前） ===
+  14333  E DolbyVisionGralloc5: getDolbyVisionMetadata: Mapper failed to get Smpte2094_40 metadata! Status: -74
+   4260  D MI-SF : [QEMU Monitor] privacy mode changed: -1 -> 0
+   4260  W MI-SF : MiSurfaceFlingerImpl::setPrivacyMode AidlIntf is null
+   1347  W libc : Access denied finding property "ro.vendor.display.bt2020.supported"
+   1347  W libc : Access denied finding property "ro.vendor.display.max_hdr_luminance"
+    260  I servicemanager: Caller(pid=752,uid=1000,sid=u:r:system_server:s0) Could not find vendor.qti.hardware.perf2.IPerf/default in the VINTF manifest.
+    244  I HidlServiceManagement: Trying to get transport of vendor.qti.hardware.perf@2.2::IPerf/default without hwservicemanager
+
+=== 3. 单次 2 秒窗口切换（Settings <-> Launcher）同步风暴（修复前） ===
+    239  E DolbyVisionGralloc5: getDolbyVisionMetadata: Mapper failed to get Smpte2094_40 metadata! Status: -74
+     24  I servicemanager: Could not find vendor.qti.hardware.perf2.IPerf/default in the VINTF manifest.
+     24  I HidlServiceManagement: Trying to get transport of vendor.qti.hardware.perf@2.2::IPerf/default without hwservicemanager
+
+=== 4. init 5 秒崩溃重拉循环（修复前） ===
+init: starting service 'loc_sys_service'...
+loc_sys_service: CANNOT LINK EXECUTABLE "/system_ext/bin/loc_sys_service": library "lib loc_api_v02.so" not found
+init: starting service 'iorapd'...
+iorapd: Failed to connect to ITaskManager
+init: starting service 'millet_monitor'...
+millet_monitor: MILLET_EPOLL: failed to create socket for type 1
+

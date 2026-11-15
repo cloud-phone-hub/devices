@@ -1,0 +1,56 @@
+# 1. 05_build_vendor_boot 日志（仅 10 条 cdh_redirect 规则，未重定向 /vendor/apex）
+==> first-stage 模块: [first-stage] cdh_redirect.ko（40232 B） -> lib/modules/6.1.138-4k-cdh/ + lib/modules/cdh_redirect.rules（599 B）
+    输入: 缓存配方 vboot-946e306c5c95（输入哈希）
+
+[    0.136440][    T1] cdh_redirect: 规则来自 /lib/modules/cdh_redirect.rules：10 条
+[    0.137115][    T1] cdh_redirect: 前向钩子就绪：getname_flags（maxactive 4096）
+[    0.138041][    T1] cdh_redirect: 逆向钩子就绪：proc_pid_readlink + vfs_readlink
+[    0.138295][    T1] cdh_redirect: 已加载：10 条规则（/lib/modules/cdh_redirect.rules），内核未打补丁
+
+# 2. bootstrap 阶段（0.65s）：仅挂载 /bootstrap-apex 时 Device VINTF Manifest 校验通过
+[    0.648638][  T243] servicemanager: getDeviceHalManifest: Reading VINTF information.
+[    0.650005][  T243] servicemanager: Loaded APEX Infos from /bootstrap-apex/apex-info-list.xml
+[    0.650791][  T243] servicemanager: Loaded APEX Infos from /bootstrap-apex/apex-info-list.xml
+[    0.651577][  T243] servicemanager: getDeviceHalManifest: Successfully processed VINTF information
+
+# 3. apexd 阶段（1.41s ~ 9.48s）：因 /vendor/apex 未被 cdh_redirect 拦截，穿透扫描并激活官方 vendor_a.img 中的 4 个真机 APEX
+[    1.413603][  T359] apexd: Scanning /product/apex for pre-installed ApexFiles
+[    1.414030][  T359] apexd: /product/apex does not exist. Skipping
+[    1.414504][  T359] apexd: Scanning /vendor/apex for pre-installed ApexFiles
+[    1.414990][  T359] apexd: Found pre-installed APEX /vendor/apex/com.google.pixel.wifi.ext.apex
+[    1.415410][  T359] apexd: Found pre-installed APEX /vendor/apex/com.google.android.widevine-13130248.apex
+[    1.415983][  T359] apexd: Found pre-installed APEX /vendor/apex/com.google.pixel.camera.hal.apex
+[    1.416577][  T359] apexd: Found pre-installed APEX /vendor/apex/com.google.pixel.euicc.update.apex
+[    1.417404][  T359] apexd: Scanning /odm/apex for pre-installed ApexFiles
+[    1.417407][  T359] apexd: /odm/apex does not exist. Skipping
+[    9.479949][  T359] apexd: Activated 43 packages.
+[    9.480992][  T359] apexd: Marking APEXd as activated
+[    9.497495][    T1] init: Parsing file /apex/com.google.pixel.wifi.ext/etc/vendor.google.wifi_ext-service-vendor.rc...
+[    9.497893][    T1] init: /apex/com.google.pixel.wifi.ext/etc/vendor.google.wifi_ext-service-vendor.rc: 2: Interface 'aidl/android.hardware.wifi.IWifi/default' redefined in vendor.wifi_hal_legacy but is already defined by vendor.wifi-vhal
+
+# 4. post-fs-data 阶段（9.90s 起）：com.google.pixel.wifi.ext.apex 内的 manifest_wifi_ext_aidl.xml (IWifi @3) 与 /vendor/etc/vintf/manifest/android.hardware.wifi-service.xml (IWifi @2) 冲突，导致 Device VINTF Manifest 变为 NULL
+[    9.900107][  T243] servicemanager: getDeviceHalManifest: Reloading VINTF information.
+[    9.900672][  T243] servicemanager: getDeviceHalManifest: Reading VINTF information.
+[    9.901210][  T243] servicemanager: Loaded APEX Infos from /apex/apex-info-list.xml
+[    9.902817][  T243] servicemanager: getDeviceHalManifest: status from fetching VINTF information: -2147483648
+[    9.903151][  T243] servicemanager: getDeviceHalManifest: -2147483648 VINTF parse error: Cannot add manifest fragment /apex/com.google.pixel.wifi.ext/etc/vintf/manifest_wifi_ext_aidl.xml: HAL "android.hardware.wifi" has a conflict: Conflicting FqInstance: IWifi/default (@2) (from /vendor/etc/vintf/manifest/android.hardware.wifi-service.xml) vs. IWifi/default (@3) (from /apex/com.google.pixel.wifi.ext/etc/vintf/manifest_wifi_ext_aidl.xml). Check whether or not multiple modules providing the same HAL are installed.
+[    9.912964][  T243] servicemanager: Cannot fetch device manifest to determine target FCM version to filter framework manifest HALs properly. Treating as infinitely old device.
+[    9.912967][  T243] servicemanager: getFrameworkHalManifest: Successfully processed VINTF information
+[    9.912968][  T243] servicemanager: NULL VINTF MANIFEST!: device
+
+# 5. boot 阶段（10.24s 起，每 5s 循环）：Device VINTF Manifest 为 NULL 导致 IComposer/default 与 IAllocator/default 全部未找到，hwcomposer-3 退出触发 onrestart 连环杀死 surfaceflinger 与 zygote
+[   10.245863][    T1] init: starting service 'vendor.hwcomposer-3.drm_upstream'...
+[   10.249348][    T1] init: ... started service 'vendor.hwcomposer-3.drm_upstream' has pid 621
+[   10.327179][    T1] init: starting service 'surfaceflinger'...
+[   10.331389][    T1] init: ... started service 'surfaceflinger' has pid 636
+[   10.342627][  T243] servicemanager: Caller(pid=621,uid=1000,sid=u:r:hal_graphics_composer_default:s0) Could not find android.hardware.graphics.composer3.IComposer/default in the VINTF manifest. No alternative instances declared in VINTF.
+[   10.349515][    T1] init: Service 'vendor.hwcomposer-3.drm_upstream' (pid 621) exited with status 234
+[   10.349517][    T1] init: Sending SIGKILL to service 'vendor.hwcomposer-3.drm_upstream' (pid 621) process group...
+[   10.349791][    T1] init: Sending SIGKILL to service 'surfaceflinger' (pid 636) process group...
+[   10.351233][    T1] init: Service 'surfaceflinger' (pid 636) received SIGKILL
+[   10.351251][    T1] init: Sending SIGKILL to service 'zygote' (pid 579) process group...
+[   10.354355][    T1] init: Service 'zygote' (pid 579) received SIGKILL
+[   15.276228][  T243] servicemanager: Caller(pid=694,uid=1000,sid=u:r:hal_graphics_allocator_default:s0) Could not find android.hardware.graphics.allocator.IAllocator/default in the VINTF manifest. No alternative instances declared in VINTF.
+[   15.280482][  T694] allocator.minigbm_upstream: Could not register service for Waived AIDL HAL IAllocator/default (status: -2147483648)
+[   15.291326][    T1] init: Service 'vendor.graphics.allocator.minigbm_upstream' (pid 694) received SIGABRT
+

@@ -1,0 +1,34 @@
+{
+  "id": 1,
+  "official": "Google",
+  "brand": "google",
+  "model": "Pixel 6",
+  "device": "oriole",
+  "platform": "tensor",
+  "resolution": "1080x2400",
+  "inch": "67x149",
+  "density": 420,
+  "smp": 8,
+  "memory": [
+    8192
+  ],
+  "storage": [
+    128000,
+    256000
+  ],
+  "extra": {
+    "board": "oriole",
+    "hasReadme": true,
+    "hostHvc": {
+      "host-hvc-adbkey": "hvc2",
+      "host-hvc-bluetooth": "hvc5",
+      "host-hvc-daemon": "hvc7",
+      "host-hvc-keymint": "hvc3",
+      "host-hvc-radio": "hvc4",
+      "host-hvc-wifi": "hvc9",
+      "host-hvc-wifi-data": "hvc10"
+    },
+    "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
+  },
+  "updatedAt": "2026-11-05T04:33:32Z"
+}

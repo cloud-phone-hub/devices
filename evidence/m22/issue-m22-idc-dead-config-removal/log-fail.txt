@@ -1,0 +1,98 @@
+# log-fail —— 判断"这 3 份 idc 能不能删"时踩过/差点踩的坑
+
+本目录记录的不是构建失败，而是**判断失败**：一度把"idc 没生效"归因到错误的地方，
+差点得出"补内核白名单就能让 idc 复活"的结论。留档，避免下次再从同一条错路走。
+
+---
+
+## 1. 错误认知一：把"idc 没被读到"全归给 /vendor/usr 不可达
+
+#51 现场（实例 28）的观察是：`/vendor/usr/idc/*` ENOENT，只有 `/mnt/patch/vendor/usr/idc/` 有文件，
+而 6.12 内核 `cdh_redirect_vendor_path()`（`kernels/lineage-23-6.12/fs/namei.c:208` 起的 `rules[]`）
+只管 `/vendor/{etc,bin,lib,lib64,build.prop,ueventd.rc}`，**没有 `/vendor/usr`**。
+
+于是很容易顺着写成"根因 = 内核重定向没覆盖 /vendor/usr，补上白名单就好"。
+
+错。**idc 的匹配键是输入设备名**，不是路径。就算路径可达，
+`QEMU Virtio MultiTouch.idc` 也只能匹配叫 `QEMU Virtio MultiTouch` 的设备——
+而 `input.touch.name = "fts"` 之后那台设备已经改名成 `fts`（`dumpsys input` 里 `7: fts`），
+`QEMU Virtio Tablet` 更是 `tablet:false` 后压根不创建。结论：路径问题只是第二道门，
+第一道门（名字）已经永久关闭。
+
+**教训**：idc/kl 是否生效要按「设备名匹配 → 路径可达 → 内容解析」三层顺序查，
+先看 `dumpsys input` 的 `ConfigurationFile:` 和 EventHub 设备名，再谈挂载/重定向。
+
+---
+
+## 2. 错误认知二：把 `tablet2multitouch.idc` 当成"必须保留的基座覆盖"
+
+这份文件是"覆盖基座同名件"的性质（基座 `usr/idc/tablet2multitouch.idc` 缺 `touch.toolType`），
+看起来"基座有、我们覆盖"，像是流水线的一部分。
+
+实际它对位的是设备 `virt-tablet2multitouch`——那台设备由 `input_identity` 模块注册，
+#51 已把该模块从 `device.json` 移除。实例 30 的 `dumpsys input` 只有 7 台设备，
+没有 `virt-tablet2multitouch`，所以这份覆盖同样无主。
+
+**教训**："基座有同名文件"不等于"必须有覆盖件"；判据只有一条——**当前 guest 里有没有这个设备名**。
+
+---
+
+## 3. 错误认知三：把"静态树无声明也会上树"读成"静态树里的东西都在生效"
+
+上一轮刚确认过：`device.json` 的声明只管 HAL 模块，机型静态树是"放了就上树"的一层；
+`usr` 更是单独一条窄层（`assemble.go` 的 `overlayLayers()` 第二层 + `vendorUsrOnlyTop`）。
+这条事实容易顺推出"所以这 3 件 idc 一定在生效"。
+
+反了：**上树 ≠ 被使用**。静态树没有声明门控，也没有"被引用"校验，
+一件没人读的配置会在 `vendor.img` 里安静地躺很久，只在查 `ConfigurationFile` 时才露馅。
+
+**教训**：无门控的层要按「谁读它」反查一遍（idc → InputReader；kl → InputReader；
+属性 → init；xml config → 对应 HAL），而不是按"在不在镜像里"判断。
+
+---
+
+## 4. 操作风险：带空格的文件名删完必须复核
+
+`QEMU Virtio MultiTouch.idc` / `QEMU Virtio Tablet.idc` 文件名含空格，
+本仓库有过"删除报成功、文件仍在"和"shell 未引号导致被按空白切参数"的历史（见 #48 与
+`tool_experience` 里那条"删除文件工具报成功但文件仍存在"）。
+
+本次删除后立即复核：
+
+```
+$ find manifest/flyme/m22/vendor/usr          # 只剩两个空目录
+manifest/flyme/m22/vendor/usr
+manifest/flyme/m22/vendor/usr/idc
+$ rmdir …/usr/idc …/usr
+$ find manifest/flyme/m22/vendor -type f | wc -l
+23
+```
+
+**教训**：删带空格路径的文件，`DeleteFile` 之后一律 `find` 复核条目数，再跑构建。
+
+---
+
+## 5. 退化路径：什么情况下必须把 idc 加回来
+
+删掉是**有前提**的，前提写在 `device.json` 的 `input` 段里。任一条被改回去，就必须恢复：
+
+| 触发条件 | 为什么会退化 |
+| :--- | :--- |
+| `input.touch.abs-to-mt` 改回 false | 绝对坐标退回 `ABS_X/ABS_Y`，multitouch 节点只暴露 `ABS_MT_*`，事件会落到 tablet 或被丢弃，必须靠 idc 把设备钉成触屏 |
+| `input.tablet` 改回 true | 重新创建 `virtio-tablet-pci`；它拿不到 idc 就被 Android 当鼠标（`mode - POINTER`），X 轴 MotionRange 按屏高 2399.927 建映射，点击 x 放大 2.22 倍——#51 的原始故障 |
+
+还有一个隐蔽点：**`patch.img` 里仍有旧副本**（本轮没重跑 09）。
+如果将来起实例看到 `/mnt/patch/vendor/usr/idc/` 有文件、而 `/vendor/usr` 没有，
+别把它当成"idc 还在生效"的证据——那是旧 patch 镜像的残留。
+
+---
+
+## 6. 刻意没做的事
+
+1. 没删 07 的「机型 usr」窄层与 `vendorUsrOnlyTop`：gold 的 `usr/idc/uinput-fpc.idc` +
+   `usr/keylayout/uinput-fpc.kl` 仍在用，而且这一层是"基底 usr 不得整棵带入"的唯一防线，
+   删了会把 lineage 的 `Generic.kl` / `tablet2multitouch.idc` 带进每个机型。
+2. 没动内核 `rules[]`：`/vendor/usr` 可达性属于 #51 遗留 1 的另一条线，
+   本轮只处理"没人读的配置"，不顺手改内核（要重编 6.6/6.12）。
+3. 没重跑 09 / 11 / 整条流水线：本轮验证目标是构建层装配与镜像结构，
+   `patch.img` / `out/dist` 的更新留给发布时一次性做（见 solution.md 遗留 2、3）。

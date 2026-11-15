@@ -1,0 +1,114 @@
+# 通过证据：宿主 WiFi → guest WiFi 通路与稳定性
+
+被测产物：`out/qemu/dist/darwin/libexec/wifi-host-service`
+最终 sha256 `83759fef020633b03d0ef210c693fab8dcfd7c4c1773294722bf56589a3f3737`
+（PID 92706，2026-10-28 03:12:36 起；含 guest→host seq 校验与 captive 幂等重放；
+实例 5，guest 192.168.60.100）
+前一版 `55ca32e6b211960077b25c05f690e477208aa51662889a14e867df8588ef2441`
+（第 2/3/4 节的 20MB 与流控验证即在其上完成）。
+
+## 1. 单元测试
+
+```
+$ cd qemu/backend/wifi-host-service && go test ./...
+?   .../component  [no test files]
+ok  .../gw         3.086s
+
+$ go test ./gw/ -run 'TestNoDataBeforeHandshakeAck|TestGuestFinHalfClose|TestUploadSeqGapNoCorruption' -v
+--- PASS: TestNoDataBeforeHandshakeAck (0.90s)
+--- PASS: TestGuestFinHalfClose (0.20s)
+--- PASS: TestUploadSeqGapNoCorruption (0.35s)
+```
+
+## 2. 构建与部署
+
+```
+$ go build -trimpath -o /tmp/wifi-host-service.new ./component
+55ca32e6b211960077b25c05f690e477208aa51662889a14e867df8588ef2441  /tmp/wifi-host-service.new
+$ mv /tmp/wifi-host-service.new out/qemu/dist/darwin/libexec/wifi-host-service
+$ cp out/qemu/dist/darwin/libexec/wifi-host-service out/wifi-host-service/darwin-arm64/wifi-host-service
+# 以原参数重启（实例 5 未重启）
+2026/10/28 02:37:01 cdh wifi gateway 启动: data-socket=/tmp/stage-007d12b0/wifi-data.sock ...
+2026/10/28 02:37:01 [link] 已连接 /tmp/stage-007d12b0/wifi-data.sock
+2026/10/28 02:37:01 [ctrl] hvc9 控制面已连接 .../5/channels/wifi.sock
+```
+
+## 3. 20MB 上下行完整性（新二进制，各 3 次）
+
+`out/tmp/wifi-evidence/verify-newbin.log`：
+
+```
+DL#1 elapsed=2s body=20971520 body_sha=cd52d81e25f372e6fa4db2c0dfceb59862c1969cab17096da352b34950c973cc file_sha=6f8c9ea3... ok
+DL#2 elapsed=2s body=20971520 body_sha=cd52d81e25f372e6fa4db2c0dfceb59862c1969cab17096da352b34950c973cc file_sha=65775b07... ok
+DL#3 elapsed=2s body=20971520 body_sha=cd52d81e25f372e6fa4db2c0dfceb59862c1969cab17096da352b34950c973cc file_sha=3c53219c... ok
+UP#1 elapsed=10s size=20971520 sha=cd52d81e25f372e6fa4db2c0dfceb59862c1969cab17096da352b34950c973cc recv=... received 20971520  ok
+UP#2 elapsed=11s size=20971520 sha=cd52d81e25f372e6fa4db2c0dfceb59862c1969cab17096da352b34950c973cc recv=... received 20971520  ok
+UP#3 elapsed=10s size=20971520 sha=cd52d81e25f372e6fa4db2c0dfceb59862c1969cab17096da352b34950c973cc recv=... received 20971520  ok
+```
+
+源 `out/tmp/speed/payload.bin` sha256 =
+`cd52d81e25f372e6fa4db2c0dfceb59862c1969cab17096da352b34950c973cc`（20971520 字节）。
+修复前同一条上传路径曾只收到 20,968,304 字节（见 `log-fail.txt` 第 6 节）。
+
+## 4. 链路统计与错误计数
+
+```
+2026/10/28 02:42:01 [stat] rx=48934(+9475) tx=67258 drop=0 reset=0 队列=0/1024
+2026/10/28 02:42:31 [stat] rx=153675(+104741) tx=182122 drop=0 reset=0 队列=0/1024
+```
+
+同日志 `grep`：`流控停顿` 0 条、`非法以太帧` 0 条、`发送队列满` 0 条。
+仅故意拨号关闭端口（`192.168.31.230:1`）时出现预期的一条：
+
+```
+2026/10/28 02:44:08 [tcp] 出口 direct 拨号 192.168.31.230:1 失败: dial tcp ... connection refused
+```
+
+guest 侧对应 `nc: connect: Connection refused`，说明失败拨号会立刻回 RST。
+
+## 5. 30 分钟长稳（最终二进制，120 轮 ×15s）
+
+guest `/data/local/tmp/wifi-stab-final.log` 全量见同目录 `stab-120-final.log`
+（120 行轮次 + 末行 `DONE`，03:17 起跑、03:45:42 收尾）。
+
+```
+$ awk '/^[0-9]+ / {n++; if ($0 ~ /ip=1 gw=1/ && $0 ~ /captive=HTTP\/1\.1 204/ && $0 ~ /baidu=HTTP\/1\.0 200 OK/) p++; else f++} END {print "总轮次="n" 通过="p" 失败="f+0}' stab-120-final.log
+总轮次=120 通过=120 失败=0
+```
+
+每轮检查 `ip`（wlan0 有 192.168.60 地址）/ `gw`（ping CDH-A 网关）/ `captive`
+（172.16.0.1:80 generate_204）/ `baidu`（域名解析 + HTTP），四项同时成立才计通过。
+
+```
+119 03:45:28 ip=1 gw=1 captive=HTTP/1.1 204 No Content baidu=HTTP/1.0 200 OK
+120 03:45:42 ip=1 gw=1 captive=HTTP/1.1 204 No Content baidu=HTTP/1.0 200 OK
+DONE
+```
+
+同期宿主统计（最终产物 PID 92706）：
+
+```
+2026/10/28 03:45:37 [stat] rx=136701(+52) tx=164824 drop=0 reset=0 队列=0/1024
+2026/10/28 03:45:57 [ctrl] scan_profile_ack seq=67 ok=true detail=applied 4 access points
+```
+
+## 6. 空闲恢复（静默 >120s）
+
+03:46:41–03:48:56 期间不发任何帧（135s），宿主看门狗按 `idleTimeout=120s` 重置连接：
+
+```
+2026/10/28 03:48:31 [link] 静默 2m0s 无帧，重置连接（看门狗）
+2026/10/28 03:48:31 [link] 已连接 /tmp/stage-007d12b0/wifi-data.sock
+2026/10/28 03:48:37 [stat] rx=136733(+0) tx=164851 drop=0 reset=1 队列=0/1024
+2026/10/28 03:48:58 [ctrl] scan_profile_ack seq=73 ok=true detail=applied 4 access points
+2026/10/28 03:49:07 [stat] rx=136739(+6) tx=164857 drop=0 reset=1 队列=0/1024
+```
+
+重置后首轮检查（03:49:08）：
+
+```
+IDLE-RECOVER 03:49:08 ip=1 gw=1 captive=HTTP/1.1 204 No Content baidu=HTTP/1.0 200 OK
+```
+
+即空闲静默后无需人工干预，通路在数秒内自动恢复。
+

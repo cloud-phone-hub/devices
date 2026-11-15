@@ -1,0 +1,17 @@
+{
+  "id": 1,
+  "buildId": "14-AP2A.240905.003.F1-20240815",
+  "deviceId": 1,
+  "configId": 1,
+  "osVersion": "14-AP2A.240905.003.F1-20240815",
+  "buildDate": "20240815",
+  "securityPatch": "2024-09-05",
+  "factoryTgz": "oriole-ap2a.240905.003.f1-factory-655c44e7.zip",
+  "factoryDir": "oriole-ap2a.240905.003.f1",
+  "overrides": {},
+  "extra": {
+    "comment": "Pixel 6（google/oriole）AP2A.240905.003.F1 基线件清单。官方固件是 Android 14，云机底包同样取 Android 14 的 lineage-21.0（roms/lineage/UTM-VM-lineage-21.0-20260804-UNOFFICIAL-virtio_arm64only.zip），故 android-version 写 14：02 据此选 DDK 镜像 ghcr.io/feicong/droid-ddk:android14-6.1、07 据此选 HAL 产物目录 engine/out/vendor/android14。云机内核跟底包走 android14-6.1，源码取 kernels/lineage-21-6.1（私有仓库 android_kernel_virt_virtio 的 lineage-21 分支），产物落 out/kernel/lineage-21-6.1。官方 5.10（android13 GKI）内核在 kernels/ 下没有对应源码，且 07/08 的 vendor、vendor_dlkm 都以 lineage 底包为基座，官方 vendor 只作属性/身份取证来源，故不采用官方内核。工厂包是 Pixel 的平铺分区形态：外层 factory zip 套 image-*.zip，内层 boot/vendor_boot/system/vendor/vendor_dlkm/product/system_ext 各占一个 <name>.img，没有 super.img，也没有 payload.bin；01_unpack 走 flatTarget 路线把逻辑分区落成 super/<name>_a.img（见 01_unpack 包注释）。rom.official.images 留空：平铺分区的落盘位置由 01 的产物约定决定，不经清单声明。rom.lineage.kernel.in-tree-modules 显式声明而不是沿用引擎默认表：默认表是 gold/6.6 口径，末项 cdh_virt_wifi.ko 是那边把 virt_wifi.o 改名产出的模块，lineage-21 分支（纯上游 android14-6.1 基线，尚未做 CDH 移植）没有它，03 会因缺模块硬失败；这条线仍用上游 virt_wifi.ko。 rom.lineage.kernel.modules 声明为空：devices/modules 下四个外部模块都是 gold/6.6 口径（device_info 依赖 6.6 GKI 的 trace/hooks/cpuinfo.h、virtio_media 用了 6.6 的三参 vb2_create_framevec、goodix_fingerprint 是小米指纹、input_identity 是 Note 13 的输入设备身份），在 6.1 上编不过或没有意义，需逐项移植后再加回。",
+    "osVersion": "14-AP2A.240905.003.F1-20240815"
+  },
+  "updatedAt": "2026-11-05T05:31:15Z"
+}

@@ -1,0 +1,63 @@
+=== 1. lockdown LSM confidentiality-only 拦截 dlkm_loader 加载未签名 .ko (qemu.log) ===
+[    0.851138][  T251] audit: type=1400 audit(1793961775.479:4): avc:  denied  { integrity } for  pid=251 comm="dlkm_loader" lockdown_reason="unsigned module loading" scontext=u:r:dlkm_loader:s0 tcontext=u:r:dlkm_loader:s0 tclass=lockdown permissive=0
+[    0.855131][  T251] dlkm_loader: Failed to load kernel module /vendor_dlkm/lib/modules/virtio_snd.ko: Operation not permitted
+
+=== 2. VINTF 8.0 / target-level 8 与 Android 13 libvintf 7.0 不兼容 + VNDK-less 路径断层 ===
+surfaceflinger: VINTF parse error: No converter for schema 8.0 (max supported is 7.0)
+CANNOT LINK EXECUTABLE "/vendor/bin/hw/android.hardware.graphics.composer@2.4-service": library "android.hardware.graphics.composer@2.4.so" not found
+
+=== 3. libbinder.so DT_NEEDED libapexsupport.so 及 APersistableBundle_* 符号缺失 ===
+CANNOT LINK EXECUTABLE "/vendor/bin/hw/android.hardware.sensors-service.multihal": library "libapexsupport.so" not found: needed by /system/lib64/libbinder.so
+CANNOT LINK EXECUTABLE "/vendor/bin/hw/android.hardware.audio.service-aidl.example": cannot locate symbol "APersistableBundle_new" referenced by "/vendor/lib64/libaudio_aidl_conversion_common_ndk.so"...
+
+=== 4. QSSI Android 13 libaudiohal.so 硬编码 HIDL 4.0 导致 audioserver 无限崩溃 ===
+AudioFlinger: loadHwModule() error -19 loading module primary
+DevicesFactoryHalHidl: Failed toget IDevicesFactory/default, No HIDL manager
+libc: Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 521 (audioserver), pid 521 (audioserver)
+
+=== 5. Lights HAL 缺 light_config.xml 返回 0 盏灯触发 NotificationManagerService 空指针 ===
+E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+E AndroidRuntime: java.lang.RuntimeException: Failed to boot service com.android.server.notification.NotificationManagerService: onBootPhase threw an exception during phase 500
+E AndroidRuntime: Caused by: java.lang.NullPointerException: Attempt to invoke virtual method 'void com.android.server.lights.LogicalLight.setFlashing(int, int, int, int)' on a null object reference
+E AndroidRuntime: 	at com.android.server.notification.NotificationManagerService.updateLightsLocked(NotificationManagerService.java:8661)
+
+=== 6. WiFi HAL getLinkLayerStats 空数组越界与 timeStampInMs 差值为 0 除零崩溃 ===
+E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: WifiHandlerThread
+E AndroidRuntime: java.lang.ArrayIndexOutOfBoundsException: length=0; index=0
+E AndroidRuntime: 	at com.android.server.wifi.hal.AidlStaIface.getWifiLinkLayerStats(AidlStaIface.java:363)
+
+E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: WifiHandlerThread
+E AndroidRuntime: java.lang.ArithmeticException: divide by zero
+E AndroidRuntime: 	at com.android.server.wifi.WifiDataStall.isThroughputSufficientInternal(WifiDataStall.java:536)
+E AndroidRuntime: 	at com.android.server.wifi.WifiDataStall.checkDataStallAndThroughputSufficiency(WifiDataStall.java:342)
+
+=== 7. QTI 蓝牙栈 libbluetooth_qti.so CLOCK_BOOTTIME_ALARM (CAP_WAKE_ALARM) 致命断言 ===
+F bt_osi_alarm: [1106/220031.224801:FATAL:alarm.cc(179)] Check failed: false.
+F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 2011 (droid.bluetooth), pid 1979 (droid.bluetooth)
+
+=== 8. 厂商自定义公共属性、平台域 uevent socket 与自定义 vendor_service_contexts 缺失导致崩溃 ===
+SELinux: avc:  denied  { set } for property=vendor.screen.rotation pid=657 uid=1000 gid=1000 scontext=u:r:system_server:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=property_service permissive=0
+E AndroidRuntime: java.lang.RuntimeException: Unable to set system property "vendor.screen.rotation" to "0"
+
+E AndroidRuntime: FATAL EXCEPTION: UEventObserver
+E AndroidRuntime: Process: com.android.phone, PID: 1621
+E AndroidRuntime: java.lang.RuntimeException: Unable to open socket for UEventObserver: Permission denied
+
+[    8.594078][  T198] SELinux: avc:  denied  { add } for pid=657 uid=1000 name=vicewifi scontext=u:r:system_server:s0 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0
+[  102.265752][  T198] SELinux: avc:  denied  { find } for pid=657 uid=1000 name=vicewifi scontext=u:r:system_server:s0 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0
+11-06 22:41:00.205   657   657 D WifiViceService: ACTION_BOOT_COMPLETED
+11-06 22:41:00.216   657  1184 E WifiViceManager: Vice Wifi service not available
+11-06 22:41:00.238   657  1184 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: WifiHandlerThread
+11-06 22:41:00.238   657  1184 E AndroidRuntime: java.lang.NullPointerException: Attempt to invoke virtual method 'boolean asus.net.vicewifi.WifiViceManager.isWifiEnabled()' on a null object reference
+	at com.asus.server.vicewifi.hotspot2.OsuNetworkConnection.init(OsuNetworkConnection.java:122)
+	at com.asus.server.vicewifi.hotspot2.PasspointProvisioner.init(PasspointProvisioner.java:123)
+	at com.asus.server.vicewifi.hotspot2.PasspointManager.initializeProvisioner(PasspointManager.java:410)
+	at com.asus.server.vicewifi.hotspot2.WifiServiceImpl.lambda$handleBootCompleted$2(WifiServiceImpl.java:676)
+
+=== 9. 高通 QSSI vendor/build.prop 未写死 ro.sf.lcd_density 被 init.virt.rc 兜底为 160dpi 触发 tablet 模式 ===
+/vendor/etc/init/hw/init.virt.rc:22:    setprop ro.sf.lcd_density ${ro.boot.lcd_density:-160}
+[ro.sf.lcd_density]: [160]
+Display: mDisplayId=0 (organized)
+  init=1080x2400 160dpi mMinSizeOfResizeableTaskDp=220 cur=2400x1080 app=2400x1032 rng=1080x1008-2400x2328
+  overrideConfig={0 1.0 460mcc1mnc [en_US] ldltr sw1080dp w2400dp h1008dp 160dpi xlrg long widecg land night finger qwerty/v/v -nav/hfalse1.0 ... mDisplayRotation=ROTATION_90}
+

@@ -1,0 +1,116 @@
+# log-pass.txt —— 载体落点统一为 /mnt/vendorpatch 后的验证记录
+#
+# 对照 log-fail.txt：迁移前三棵树 /mnt/patch 命中 22-6.6 = 67、23-6.12 = 75。
+# 下面每条都可原样重跑。
+
+## ① 三棵内核树：口径已切换（vendorpatch 计数 = 迁移前 patch 计数）
+
+$ cd engine/kernels/lineage-22-6.6 && git log --oneline -1
+0192a6feab2d CDH 重定向：载体落点统一为 /mnt/vendorpatch（对齐 05 fstab 与 09_build_patch）
+$ grep -rc '/mnt/vendorpatch' fs/namei.c fs/namespace.c fs/Kconfig fs/proc/base.c include/linux/namei.h
+fs/namei.c:53
+fs/namespace.c:5
+fs/Kconfig:7
+fs/proc/base.c:1
+include/linux/namei.h:1
+
+$ cd engine/kernels/lineage-23-6.12 && git log --oneline -1
+47d441573 CDH 重定向：载体落点统一为 /mnt/vendorpatch（对齐 05 fstab 与 09_build_patch）
+$ grep -rc '/mnt/vendorpatch' fs/namei.c fs/namespace.c fs/Kconfig fs/proc/base.c include/linux/namei.h
+fs/namei.c:62
+fs/namespace.c:5
+fs/Kconfig:6
+fs/proc/base.c:1
+include/linux/namei.h:1
+
+$ cd engine/kernels/lineage-21-6.1 && git log --oneline -1
+128aa20763b6 CDH 重定向：Kconfig help 与 22/23 口径对齐（载体白名单前缀匹配 + mnt_vendor_file）
+
+# 剩下的 /mnt/patch 字样全部是注释里的改名历史，且不带结尾斜杠：
+$ grep -rn '/mnt/patch' engine/kernels/*/fs engine/kernels/*/include
+lineage-23-6.12/fs/namei.c:138: *  1) 不能挂在 /mnt/patch：system/vold 的 VolumeManager::start() 会把 /proc/mounts
+lineage-21-6.1/fs/namei.c:138: *  1) 不能挂在 /mnt/patch：system/vold 的 VolumeManager::start() 会把 /proc/mounts
+lineage-21-6.1/fs/namei.c:144: *     /mnt/patch 时 vold 在 ~5.8 s 杀掉 maps 里引用它的 vndservicemanager，它 rc
+lineage-2{1,2,3}*/fs/Kconfig:  carrier would shadow. The carrier cannot live at /mnt/patch either:
+#（22-6.6 的 namei.c 长注释改写成"不能挂在 /mnt/patch"叙述时同样保留了这个词，属说明而非路径）
+
+## ② engine 内（排除 evidence/out/roms/kernels）无 /mnt/patch/ 实际路径
+
+$ cd engine && grep -rIn '/mnt/patch/' --include='*.go' --include='*.rc' --include='*.md' \
+    --include='*.json' --include='*.c' --include='*.h' --include='*.rs' --include='*.txt' . \
+    | grep -v '^./evidence/' | grep -v '^./out/' | grep -v '^./roms/' | grep -v '^./kernels/'
+./build/test/carrier_mount_test.go:10://  2. engine 下（证据目录除外）不得再出现 "/mnt/patch/" 形式的实际路径——注释里
+./build/test/carrier_mount_test.go:58:// TestCarrierNoLegacyPatchPath 断言 engine 内不再有 /mnt/patch/ 形式的实际路径。
+./build/test/carrier_mount_test.go:73:          if path == self { // 本文件自带 /mnt/patch/ 字面量（正是用来搜它的）
+./build/test/carrier_mount_test.go:112:const legacyPath = "/mnt/patch/"
+# 只剩守卫用例自身的字面量（它靠这个字面量去搜别人，已用 runtime.Caller 自排除）。
+# 构建侧 05/09 早就写 /mnt/vendorpatch，清单侧 cph2797 的 4 条 bind source 已随本次改完。
+
+## ③ 守卫用例
+
+$ cd engine/build && go test ./test/ -run 'Carrier' -v
+=== RUN   TestCarrierMountPointUnified
+    carrier_mount_test.go:55: 载体口径一致：3 棵内核树均为 /mnt/vendorpatch
+--- PASS: TestCarrierMountPointUnified (0.01s)
+=== RUN   TestCarrierNoLegacyPatchPath
+    carrier_mount_test.go:107: engine 内无 /mnt/patch/ 残留
+--- PASS: TestCarrierNoLegacyPatchPath (0.42s)
+PASS
+
+## ④ 全量构建与测试
+
+$ cd engine/build && go build ./...   # 无输出
+$ cd engine/build && go vet ./...     # 无输出
+$ cd engine/build && go test ./...    # 日志 out/tmp/gotest-all-20261101.log
+ok      cloud-phone-hub/engine/build/test       31.971s
+EXIT=0
+
+## ⑤ 三棵内核树工作树检查
+
+$ for t in lineage-21-6.1 lineage-22-6.6 lineage-23-6.12; do \
+    go run . check-worktree /Volumes/work/cloud-phone-hub/engine/kernels/$t; done
+--- lineage-21-6.1 ---
+[ok] 工作树无大小写折叠风险
+--- lineage-22-6.6 ---
+[ok] 工作树无大小写折叠风险
+--- lineage-23-6.12 ---
+[ok] 工作树无大小写折叠风险
+
+## ⑥ 02 内核编译（证明只动字符串，不影响编译）
+
+$ cd engine/build && go run . device build gold \
+    --manifest manifest/xiaomi/gold/baselines/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.json \
+    --only build_kernel      # 日志 out/tmp/kbuild-gold-20261101.log
+
+    内核:       lineage-22-6.6（release 6.6.127-4k-cdh）
+    源码:       kernels/lineage-22-6.6（HEAD 0192a6feab2d）
+    构建镜像:   ghcr.io/feicong/droid-ddk:android15-6.6，-j10，全量（重新配置）
+    缓存状态:   需重建（配方变化: lineage-22-6.6-cdh-4f2152cbe2de -> lineage-22-6.6-cdh-ac3d1f410301）
+    ...
+    LD      vmlinux
+    OBJCOPY arch/arm64/boot/Image
+[ok] 内核构建完成: out/kernel/lineage-22-6.6
+    out/kernel/lineage-22-6.6/Image
+    out/kernel/lineage-22-6.6/config
+    out/kernel/lineage-22-6.6/Module.symvers
+EXIT=0
+
+产物 :
+  21f89c9a8606c0fbec8e789ee6a1a8c1378176ce91f151ec540b76410f474175  Image
+  release 6.6.127-4k-cdh，CONFIG_CDH_PATH_REDIRECT=y
+
+要点：配方哈希从 4f2152cbe2de 变成 ac3d1f410301（源码变了就得全量重编），
+6435 行日志零 error、零 warning，落到 Image/Module.symvers 全量导出并过 SHA256SUMS。
+说明这一轮只改了字符串与注释，没有碰任何影响编译的东西。
+
+## 判定
+
+- 三棵内核树口径一致：vendorpatch 计数与迁移前的 patch 计数逐文件相等（53/5/7/1/1、
+  62/5/6/1/1），说明没有漏改也没有多改；
+- engine 内（除证据目录）不再有 /mnt/patch/ 形式的实际路径，只剩守卫用例自己的字面量；
+- 守卫用例把这条口径钉在源码层：以后谁再往内核树或清单里写旧落点，`go test` 直接红；
+- 编译与工作树检查都通过，改动是字符串与注释级别，不带任何行为副作用。
+
+整机层面没有复跑：13 台机型的盘集都是旧内核编出来的，要吃新口径必须按 02→…→11
+重编（见 solution.md 的遗留段）。oriole 那条线的正向验证见
+../issue-zygote-bootstrap-ns/log-pass.txt。

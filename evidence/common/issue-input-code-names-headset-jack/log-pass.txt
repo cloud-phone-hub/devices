@@ -1,0 +1,42 @@
+# 修复后：重跑 08 → 09 → 11，实例 gold_15-OS3.0.11.0.VNQCNXM/2 重启（2026-11-14 10:58）
+# 渲染产物 cdh_input_identity.devices（Headset Jack 段）
+dev  mt6833-mt6359 Headset Jack
+id  25 0 0 0
+phys  ALSA
+key  164 257 258 582
+sw  2 4 6 7
+
+# getevent -lp（云机）
+  name:     "mt6833-mt6359 Headset Jack"
+  events:
+    KEY (0001): KEY_PLAYPAUSE         BTN_1                 BTN_2                 KEY_VOICECOMMAND     
+    SW  (0005): SW_HEADPHONE_INSERT   SW_MICROPHONE_INSERT  SW_LINEOUT_INSERT     SW_JACK_PHYSICAL_INS    
+  input props:
+    <none>
+
+# aligner.inputs_full 复采 run-00109 对比（真机 vs 云机）
+=== aligner 全量对比  domain=inputs  base=07cf5fc1784783d5  target=4503ac70a1c898f3-cloud
+  [capability] devices[name=goodix_ts,vendorId=10182,productId=1].keyCharacterMap.keyLabels[code=224]
+      base  : {"code": 224, "label": null, "number": null}
+      target: "<缺>"
+  [capability] devices[name=goodix_ts,vendorId=10182,productId=1].keyCharacterMap.keyLabels[code=26]
+      base  : {"code": 26, "label": null, "number": null}
+      target: "<缺>"
+  [capability] devices[name=goodix_ts,vendorId=10182,productId=1].keyCharacterMap.supportedKeyCodes
+      base  : {"missing": [], "count": 2}
+      target: {"extra": [224, 26], "count": 0}
+  [capability] devices[name=goodix_ts,vendorId=10182,productId=1].motionRanges[axis=0,source=4098].max
+      base  : 1079.9375
+      target: 1079.967
+  [capability] devices[name=goodix_ts,vendorId=10182,productId=1].motionRanges[axis=0,source=4098].range
+      base  : 1079.9375
+      target: 1079.967
+  [capability] devices[name=goodix_ts,vendorId=10182,productId=1].motionRanges[axis=1,source=4098].max
+      base  : 2399.9375
+      target: 2399.9268
+  [capability] devices[name=goodix_ts,vendorId=10182,productId=1].motionRanges[axis=1,source=4098].range
+      base  : 2399.9375
+      target: 2399.9268
+汇总: identity=0 capability=7 state=0 availability=0 → 未对齐（存在必须一致项差异）
+
+# go test ./...（engine/build）全绿；新增 TestInputCodeNamesMatchKernelHeader

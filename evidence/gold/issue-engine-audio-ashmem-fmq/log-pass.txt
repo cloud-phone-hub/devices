@@ -1,0 +1,92 @@
+# 修复后证据：补 hal_audio_default -> ashmem_device 授权
+# 实例：gold_cn_OS3.0.10.0.VNQCNXM/3（pid 80344，adb 5911，patch.img sha256 94caf245d410）
+# 构建：cd engine && ./out/bin/cdh device build gold --from 07_build_vendor --refresh
+# 实例：/api/stop -> /api/delete -> /api/create {"index":0}，boot 70 s
+
+== 1. 产物自检（宿主机）==
+$ grep -n "hal_audio_default ashmem_device_202404" \
+    engine/out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil
+2003:(allow hal_audio_default ashmem_device_202404 (chr_file (ioctl read write getattr map open)))
+$ grep -n "hal_audio_default audio_device_202404" \
+    engine/out/devices/xiaomi/gold/OS3.0.10.0.VNQCNXM/vendor/etc/selinux/vendor_sepolicy.cil
+2010:(allow hal_audio_default audio_device_202404 (chr_file (ioctl read write getattr map open)))
+
+$ debugfs -R "stat /vendor/etc/selinux/vendor_sepolicy.cil" .../patch.img | grep Size
+User:     0   Group:     0   Project:     0   Size: 222494
+$ ls -l engine/out/devices/.../vendor/etc/selinux/vendor_sepolicy.cil | awk '{print $5}'
+222494                                   # 装配树与 patch.img 内一致
+$ debugfs -R "cat /vendor/etc/selinux/vendor_sepolicy.cil" .../patch.img | grep -c \
+    "hal_audio_default ashmem_device_202404"
+1                                        # patch.img 内确实含该规则
+
+== 2. APM 恢复正常（boot 日志中不再出现失败链）==
+$ adb -s 127.0.0.1:5911 shell "logcat -d -b all -v time | grep -E \
+    'Cannot open output stream|is unreachable|does not declare a primary output|mAudioPolicyManager == NULL'"
+（无输出）
+
+== 3. dumpsys audio：输出设备回来了 ==
+$ adb -s 127.0.0.1:5911 shell "dumpsys audio | grep -m4 'Devices:'"
+   Devices: speaker(2)
+   Devices: speaker(2)
+   Devices: speaker(2)
+   Devices: speaker(2)
+
+$ adb -s 127.0.0.1:5911 shell "dumpsys audio | sed -n '/Stream volumes/,/STREAM_RING/p'"
+Stream volumes (device: index)
+- STREAM_VOICE_CALL:
+   Muted: false
+   Muted Internally: false
+   Min: 1
+   Max: 11
+   streamVolume:8
+   Current: 2 (speaker): 8, 40000000 (default): 8
+   Devices: speaker(2)
+   Volume Group: AUDIO_STREAM_VOICE_CALL
+
+- STREAM_SYSTEM (aliased to: STREAM_RING):
+   ...（与实例 1 一致）
+
+== 4. 症状计数清零 ==
+$ adb -s 127.0.0.1:5911 shell "logcat -d -b main -b system | grep -c 'listAudioPorts error'"
+1                                        # 修复前 656，且每次查询 +1；现在只剩历史残留 1 条
+
+$ adb -s 127.0.0.1:5911 shell "dumpsys audio | grep -c 'initStreamVolume failed'"
+0                                        # 修复前持续 'failed with 1 will retry'
+
+== 5. SELinux：audio 相关无真拒绝 ==
+$ adb -s 127.0.0.1:5911 shell "logcat -d -b all | grep 'avc:' | grep 'permissive=0' | grep -iE 'audio|ashmem|snd'"
+（无输出）
+
+== 6. HAL 服务与进程 ==
+$ adb -s 127.0.0.1:5911 shell "service list | grep -E 'IModule|IConfig|IFactory'"
+30  android.hardware.audio.core.IConfig/default
+31  android.hardware.audio.core.IModule/default
+32  android.hardware.audio.core.IModule/primary
+33  android.hardware.audio.core.IModule/r_submix
+34  android.hardware.audio.effect.IFactory/default
+
+$ adb -s 127.0.0.1:5911 shell "ps -A -o PID,NAME | grep -E 'android.hardware.audio|audioserver'"
+  559 android.hardware.audio.service
+  560 android.hardware.audio.effect.service
+  587 audioserver
+  594 android.hardware.audio.parameter_parser.service
+
+== 7. 回归：第一步属性修复仍然生效 ==
+$ adb -s 127.0.0.1:5911 shell "getprop persist.system.powerhal.applist_enable"
+0
+$ adb -s 127.0.0.1:5911 shell "getprop debug.sf.vsync_reactor_ignore_present_fences"
+true
+$ adb -s 127.0.0.1:5911 shell "logcat -d -b all | grep -c 'Waiting for service'"
+1                                        # 修复前 20+
+
+== 8. 与对照实例 1（gold-15 路线）逐项对齐 ==
+$ adb -s 127.0.0.1:5919 shell "dumpsys audio | grep -m4 'Devices:'"
+   Devices: speaker(2)                   # 实例 3 现与之一致
+$ adb -s 127.0.0.1:5919 shell "ls /dev/snd/"
+timer                                    # 实例 3 同样只有 timer（QEMU 未暴露 PCM 节点）
+
+== 遗留（见 solution.md §6）==
+- /dev/snd/pcmC0D0p 不存在 -> AlsaPcm 回退内存 VirtualDac；实例 1 同样，非回归
+- input keyevent 全部失败（BR_FAILED_REPLY / -28 ENOSPC）
+- cmd notification post 失败（Failed transaction (2147483646)）
+- dumpsys media.audio_policy / audio_flinger 仍 FAILED_TRANSACTION（实例 1 相同，环境通用）

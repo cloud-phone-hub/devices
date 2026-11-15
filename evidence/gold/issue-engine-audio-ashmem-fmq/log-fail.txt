@@ -1,0 +1,91 @@
+# 修复前证据：audio HAL 缺 /dev/ashmem 授权
+# 实例：gold_cn_OS3.0.10.0.VNQCNXM/3（pid 62009，patch.img sha256 58cf81cda188 时）
+# 抓取：adb -s 127.0.0.1:5911 shell "logcat -d -b all -v time ..."
+# 说明：boot 早期 RTC 未同步，时间戳为 01-01 08:00:xx；RTC 同步后跳到 07-15 21:0x
+
+== APM 构造失败并被析构（boot 早期，audioserver pid 578）==
+01-01 08:00:16.610 I/AudioFlinger(  578): EffectDapController()
+01-01 08:00:16.620 D/audioserver(  578): main: AudioFlinger created
+01-01 08:00:16.626 W/AudioFlinger(  578): loadHwModule() sound dose reporting is not available
+01-01 08:00:16.627 I/AudioFlinger(  578): loadHwModule() Loaded primary audio interface, handle 10
+01-01 08:00:16.627 I/AudioFlinger(  578): loadHwModule() Loaded r_submix audio interface, handle 18
+01-01 08:00:16.630 E/APM_Config(  578): Function: aidl2legacy_AudioHwModule_HwModule Line: 88 Failed result (BAD_VALUE)
+01-01 08:00:16.630 E/APM_Config(  578): Function: aidl2legacy_AudioHwModules_HwModuleCollection Line: 159 Failed
+01-01 08:00:16.630 E/APM_Config(  578): Function: loadFromAidl Line: 275 Failed
+01-01 08:00:16.630 D/APM_Config(  578): +addSupportedDevice AUDIO_DEVICE_OUT_SPEAKER, @:
+01-01 08:00:16.630 D/APM_Config(  578): +addSupportedDevice AUDIO_DEVICE_IN_BUILTIN_MIC, @:
+01-01 08:00:16.630 D/APM_EngineLoader(  578): Loaded engine from libaudiopolicyenginedefault.so
+01-01 08:00:16.632 D/AudioPolicyManagerCustomImpl(  578): Set mAudioPolicyManager with 0xb40000733bc459d0
+01-01 08:00:16.634 D/AudioFlinger(  578): openOutput() this 0xb40000751bc46c70, module 10 Device AUDIO_DEVICE_OUT_SPEAKER, @:, SamplingRate 44100, Format 0x000001, Channels 0x3, flags 0x2
+01-01 08:00:16.681 D/AudioFlinger(  578): AudioStreamOut::open(), HAL returned stream 0x0, sampleRate 44100, format 0x1, channelMask 0x3, status -2147483640
+01-01 08:00:16.681 W/APM_AudioPolicyManager(  578): Cannot open output stream for devices AUDIO_DEVICE_OUT_SPEAKER, @: on hw module primary
+01-01 08:00:16.682 D/AudioFlinger(  578): openInput_l() openInputStream returned input 0x0, devices 0x80000004, sampleRate 8000, format 0x1, channelMask 0x10, flags 0, status -2147483640, addr bottom
+01-01 08:00:16.682 W/APM_AudioPolicyManager(  578): Cannot open input stream for device {AUDIO_DEVICE_IN_BUILTIN_MIC, @:bottom} on hw module primary
+01-01 08:00:16.682 E/APM_AudioPolicyManager(  578): Default device AUDIO_DEVICE_OUT_SPEAKER, @: is unreachable
+01-01 08:00:16.682 W/APM_AudioPolicyManager(  578): The policy configuration does not declare a primary output
+01-01 08:00:16.682 I/APM::AudioPolicyEngine(  578): getDevicesForStrategyInt no device found for strategy 0
+01-01 08:00:16.682 I/APM::AudioPolicyEngine(  578): getDevicesForStrategyInt no device found for strategy 1
+01-01 08:00:16.682 I/APM::AudioPolicyEngine(  578): getDevicesForStrategyInt no device found for strategy 2
+01-01 08:00:16.682 I/APM::AudioPolicyEngine(  578): getDevicesForStrategyInt no device found for strategy 3
+01-01 08:00:16.682 I/APM::AudioPolicyEngine(  578): getDevicesForStrategyInt no device found for strategy 4
+01-01 08:00:16.682 I/APM::AudioPolicyEngine(  578): getDevicesForStrategyInt no device found for strategy 5
+01-01 08:00:16.682 I/APM::AudioPolicyEngine(  578): getDevicesForStrategyInt no device found for strategy 6
+01-01 08:00:16.682 I/APM::AudioPolicyEngine(  578): getDevicesForStrategyInt no device found for strategy 7
+01-01 08:00:16.682 I/APM::AudioPolicyEngine(  578): getDevicesForStrategyInt no device found for strategy 8
+01-01 08:00:16.682 I/APM::AudioPolicyEngine(  578): getDevicesForStrategyInt no device found for strategy 9
+01-01 08:00:16.682 D/AudioPolicyManagerCustomImpl(  578): ~AudioPolicyManagerCustomImpl()
+01-01 08:00:16.682 W/AudioPolicyManagerCustomImpl(  578): freeGainTable unsupport
+07-15 21:03:13.631 V/AudioPolicyInterfaceImpl(  578): mAudioPolicyManager == NULL
+07-15 21:03:13.633 V/AudioPolicyInterfaceImpl(  578): mAudioPolicyManager == NULL
+
+== 同一时刻 HAL 侧（pid 537）走的是成功分支 ==
+01-01 08:00:16.185 I/cdh_audio(  537): registered android.hardware.audio.core.IModule/default
+01-01 08:00:16.185 I/cdh_audio(  537): registered android.hardware.audio.core.IModule/primary
+01-01 08:00:16.186 I/cdh_audio(  537): registered android.hardware.audio.core.IModule/r_submix
+01-01 08:00:16.624 I/cdh_audio(  537): IConfig.getEngineConfig -> xml=/vendor/etc/audio_policy_engine_configuration.xml volumeGroups=13 volumeCurves=65 productStrategies=0 music[min=0,max=25]
+01-01 08:00:16.626 I/cdh_audio(  537): getAudioPorts: role=primary port_count=7
+01-01 08:00:16.626 I/cdh_audio(  537): getAudioRoutes: role=primary route_count=5
+01-01 08:00:16.627 I/cdh_audio(  537): getAudioPortConfigs: primary config_count=0
+01-01 08:00:16.681 I/cdh_audio(  537): setAudioPortConfig: primary port=2(speaker) cfgId=0 maxActiveStreamCount=-1 sampleRate=44100
+01-01 08:00:16.681 I/cdh_audio(  537): setAudioPortConfig: primary port=1(out) cfgId=0 maxActiveStreamCount=0 sampleRate=44100
+01-01 08:00:16.681 I/cdh_audio(  537): openOutputStream: primary OK cfgId=2 frames=1 buffer=8192
+01-01 08:00:16.682 I/cdh_audio(  537): setAudioPortConfig: primary port=4(mic) cfgId=0 maxActiveStreamCount=-1 sampleRate=8000
+01-01 08:00:16.682 I/cdh_audio(  537): setAudioPortConfig: primary port=3(in) cfgId=0 maxActiveStreamCount=0 sampleRate=8000
+01-01 08:00:16.682 I/cdh_audio(  537): openInputStream: primary OK cfgId=4 frames=1 buffer=4096
+
+== system_server 侧症状 ==
+$ adb shell "dumpsys audio | sed -n '/Stream volumes/,/STREAM_RING/p'"
+Stream volumes (device: index)
+- STREAM_VOICE_CALL:
+   Muted: false
+   Muted Internally: false
+   Min: 1
+   Max: 11
+   streamVolume:8
+   Current: 40000000 (default): 8
+   Devices:
+   Volume Group: n/a
+
+$ adb shell "dumpsys audio | grep -c 'initStreamVolume failed'"
+（持续重试：VSS(): initStreamVolume failed with 1 will retry，每 2 s 一条）
+
+$ adb shell "logcat -d -b main -b system | grep -c 'listAudioPorts error'"
+656
+
+$ adb shell "service list | grep IModule"      # 注册是成功的，但音频仍然全哑
+31  android.hardware.audio.core.IModule/default
+32  android.hardware.audio.core.IModule/primary
+33  android.hardware.audio.core.IModule/r_submix
+
+== 对照：实例 1（gold-15 路线，audio 正常）==
+$ adb -s 127.0.0.1:5919 shell "dumpsys audio | grep -m4 'Devices:'"
+   Devices: speaker(2)
+   Devices: speaker(2)
+   Devices: speaker(2)
+   Devices: speaker(2)
+$ adb -s 127.0.0.1:5919 shell "dumpsys media.audio_policy | head -2"
+Error with service 'media.audio_policy' while dumping: FAILED_TRANSACTION   <- 同样报错，故非判据
+
+== 关键常量换算 ==
+status -2147483640 = 0x80000008 = STATUS_BAD_INDEX = (UNKNOWN_ERROR + 8)
+  UNKNOWN_ERROR = (-2147483647 - 1)  # system/core/libutils/include/utils/Errors.h

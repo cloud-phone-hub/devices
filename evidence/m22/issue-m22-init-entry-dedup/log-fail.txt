@@ -1,0 +1,19 @@
+# #70 log-fail —— 改动前：手写入口生效，基底件被步骤 6 丢弃
+# 采集：2026-10-30 flyme/m22（同一 run2 产物）
+
+--- 静态树 / 装配树 / 基底 三份 sha ---
+(手写件已被删除，下面为改动当时记录)
+ddb23240d8b162d29ec152a14ed0014da5790687f7512cc743ee833a3007802c  静态树 init.qcom.rc（1180 B / 23 行）
+ddb23240d8b162d29ec152a14ed0014da5790687f7512cc743ee833a3007802c  装配树同名件（步骤 4 上树）
+c77d9905a8d32168ea11ff9ce6f6dd4cdf97ba042b752c8169ae75feb175ca67  基底 lineage-23.2 init.virtio.rc（2164 B / 59 行，被删）
+
+--- 改动前 07 日志（run2）---
+    vendor init:  etc/init/hw/init.virtio.rc -> init.qcom.rc（计划）
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/hw/init.qcom.rc（0644）
+    保留 init.qcom.rc（已由上层提供），删除 lineage 的 init.virtio.rc
+
+--- 装配树里谁 import init.virt.rc（改动前）---
+$ grep -rn "init.virt" out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/
+android.hardware.security.keymint-service.rc:20:#    板级入口 /vendor/etc/init/hw/init.<board>.rc（gold: init.mt6833.rc → init.virt.rc）
+（仅注释命中 → init.virt.rc 在树里但无人加载；其 by-name symlink / lcd_density /
+  firmware mount / 图形 setprop，以及 init.virtio.rc 的 GPU 段，全部不执行）

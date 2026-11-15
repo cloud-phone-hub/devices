@@ -1,0 +1,50 @@
+# 通过侧：屏蔽 /system/priv-app/NfcNci 之后（实例 13 = 8 vCPU，实例 14 = 4 vCPU）
+# 取数：adb -s 127.0.0.1:5911 shell ...
+# 实例 13：2026-11-03 10:43:16 启动，10:44:29 boot_completed=1（58 s）
+# 实例 14：2026-11-03 10:50:11 启动，10:51:28 boot_completed=1（60 s）
+
+== 1. 包与进程都不在了 ==
+$ adb shell 'pm list packages | grep -i nfc'
+package:com.oplus.nfcengineertest
+package:com.google.android.apps.walletnfcrel
+#   com.android.nfc 已消失
+$ adb shell 'ps -A | grep -c com.android.nfc'
+0
+$ adb shell 'ls -d /system/priv-app/NfcNci'
+ls: /system/priv-app/NfcNci: No such file or directory
+
+== 2. 崩溃风暴停了（实例 13）==
+$ adb shell 'logcat -d -b events | grep -c am_crash'
+9                       # 开机初期残留 9 条（改前同一窗口 555 条 ≈9 次/秒），之后不再增长
+$ adb shell 'dmesg | grep -c "soft lockup - CPU"'
+0
+$ adb shell getprop sys.init.updatable_crashing
+                        # 空（改前被点亮）
+
+== 3. 负载与线程数（实例 13 开机 60 s 左右）==
+loadavg  4.92           # 对照实例 12（未修）73 s 时 14.55、133 s 涨到 20.86
+线程数    2572           # 对照实例 12 的 4358
+
+== 4. 系统面（实例 13）==
+$ adb shell getprop sys.boot_completed                -> 1
+$ adb shell getprop init.svc.surfaceflinger           -> running
+$ adb shell 'logcat -d | grep -c "WATCHDOG KILLING"'  -> 0
+
+== 5. 4 vCPU 实例 14 的 20 分钟取样（/tmp/15r-14-watch.log）==
+[01] 10:51:35 up=68.05s  load=[10.72 2.56 0.86]  memAvailMB=4883 softlockup=0 hungtask=0 crash=9
+[02] 10:52:35 up=128.37s load=[27.87 9.34 3.31]  memAvailMB=3817 softlockup=0 hungtask=0 crash=18
+[03] 10:53:36 up=188.72s load=[11.61 8.04 3.24]  memAvailMB=4077 softlockup=0 hungtask=0 crash=18
+[04] 10:54:36 up=248.91s load=[4.31 6.59 3.04]   memAvailMB=4030 softlockup=0 hungtask=0 crash=18
+[05] 10:55:36 up=309.12s load=[1.76 5.43 2.86]   memAvailMB=4046 softlockup=0 hungtask=0 crash=18
+[06] 10:57:06 up=399.46s load=[0.46 4.05 2.61]   memAvailMB=4083 softlockup=0 hungtask=0 crash=18
+[07] 10:58:07 up=459.70s load=[0.22 3.33 2.45]   memAvailMB=4064 softlockup=0 hungtask=0 crash=18
+[08] 10:59:07 up=520.02s load=[1.72 3.19 2.46]   memAvailMB=4009 softlockup=0 hungtask=0 crash=18
+[09] 11:00:07 up=580.29s load=[0.78 2.65 2.32]   memAvailMB=3997 softlockup=0 hungtask=0 crash=18
+#   crash 在开机初期两批各 9 条后停止增长；load 从 GApps 首启峰 27.87 一路回落到 0.22–1.72
+#   744 s 出现的 soft lockup 是另一族原因（wifi 数据面自死锁），与本条目无关
+
+== 6. 连续两轮开机都没再出现 NFC 相关日志 ==
+$ adb shell 'dmesg | grep -c "vendor.oplus.hardware.nfc"'
+0
+$ adb shell 'logcat -d | grep -c "NfcChipManager"'
+0

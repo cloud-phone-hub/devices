@@ -1,0 +1,774 @@
+=== [修复后] #187 Vulkan 物理设备/pNext/UUID 与 GLES 6 项上限 ===
+
+1. hardware.gles & aligner_xiaomi_gold.display_gpu_webview (含 GLES 6 项上限对比):
+CLOUD (0b7cd3333759d674-cloud) hardware.gles:
+{
+  "runId": "run-00019",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "gles": {
+      "extensions": "GL_EXT_debug_marker GL_EXT_blend_minmax GL_EXT_multi_draw_arrays GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth24 GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_mapbuffer GL_OES_rgb8_rgba8 GL_OES_standard_derivatives GL_OES_stencil8 GL_OES_texture_3D GL_OES_texture_float GL_OES_texture_float_linear GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_vertex_half_float GL_EXT_draw_instanced GL_EXT_texture_sRGB_decode GL_OES_EGL_image GL_OES_depth_texture GL_OES_packed_depth_stencil GL_EXT_texture_type_2_10_10_10_REV GL_OES_get_program_binary GL_EXT_discard_framebuffer GL_EXT_read_format_bgra GL_EXT_texture_storage GL_EXT_frag_depth GL_OES_EGL_image_external GL_OES_EGL_sync GL_OES_vertex_array_object GL_EXT_occlusion_query_boolean GL_EXT_texture_rg GL_EXT_unpack_subimage GL_EXT_draw_buffers GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_shadow_samplers GL_KHR_debug GL_KHR_texture_compression_astc_ldr GL_OES_depth_texture_cube_map GL_OES_required_internalformat GL_OES_surfaceless_context GL_EXT_color_buffer_float GL_EXT_debug_label GL_EXT_sRGB_write_control GL_EXT_separate_shader_objects GL_EXT_shader_integer_mix GL_EXT_compressed_ETC1_RGB8_sub_texture GL_EXT_draw_buffers_indexed GL_EXT_draw_elements_base_vertex GL_EXT_render_snorm GL_EXT_texture_border_clamp GL_KHR_context_flush_control GL_OES_draw_buffers_indexed GL_OES_draw_elements_base_vertex GL_OES_sample_shading GL_OES_sample_variables GL_OES_shader_multisample_interpolation GL_OES_texture_border_clamp GL_EXT_blend_func_extended GL_EXT_float_blend GL_KHR_no_error GL_KHR_texture_compression_astc_sliced_3d GL_OES_EGL_image_external_essl3 GL_EXT_disjoint_timer_query GL_EXT_color_buffer_half_float GL_KHR_parallel_shader_compile GL_EXT_EGL_image_storage GL_EXT_depth_clamp GL_EXT_texture_query_lod GL_EXT_EGL_image_storage_compression GL_EXT_texture_storage_compression GL_ARM_mali_program_binary GL_ARM_mali_shader_binary GL_ARM_rgba8",
+      "renderer": "Mali-G57 MC2",
+      "shadingLanguageVersion": "OpenGL ES GLSL ES 3.20",
+      "vendor": "ARM",
+      "version": "OpenGL ES 3.2 v1.r49p1-03bet0.569c83bf81f68e2ce8910542c6846b7e"
+    },
+    "ok": true
+  }
+}
+
+CLOUD (0b7cd3333759d674-cloud) display_gpu_webview.gles (maxTextureSize=16384 等 6 项上限):
+{
+  "armExtensionCount": 3,
+  "desktopOrMesaLeakExtensions": [],
+  "eglClientApis": "OpenGL_ES",
+  "eglExtensionCount": 34,
+  "eglExtensions": [
+    "EGL_ANDROID_front_buffer_auto_refresh",
+    "EGL_ANDROID_get_frame_timestamps",
+    "EGL_ANDROID_get_native_client_buffer",
+    "EGL_ANDROID_image_native_buffer",
+    "EGL_ANDROID_native_fence_sync",
+    "EGL_ANDROID_presentation_time",
+    "EGL_ANDROID_recordable",
+    "EGL_EXT_buffer_age",
+    "EGL_EXT_gl_colorspace_display_p3",
+    "EGL_EXT_gl_colorspace_display_p3_linear",
+    "EGL_EXT_gl_colorspace_display_p3_passthrough",
+    "EGL_EXT_gl_colorspace_scrgb",
+    "EGL_EXT_gl_colorspace_scrgb_linear",
+    "EGL_EXT_pixel_format_float",
+    "EGL_EXT_surface_CTA861_3_metadata",
+    "EGL_EXT_surface_SMPTE2086_metadata",
+    "EGL_KHR_config_attribs",
+    "EGL_KHR_create_context",
+    "EGL_KHR_create_context_no_error",
+    "EGL_KHR_fence_sync",
+    "EGL_KHR_get_all_proc_addresses",
+    "EGL_KHR_gl_colorspace",
+    "EGL_KHR_gl_renderbuffer_image",
+    "EGL_KHR_gl_texture_2D_image",
+    "EGL_KHR_gl_texture_3D_image",
+    "EGL_KHR_gl_texture_cubemap_image",
+    "EGL_KHR_image",
+    "EGL_KHR_image_base",
+    "EGL_KHR_mutable_render_buffer",
+    "EGL_KHR_no_config_context",
+    "EGL_KHR_reusable_sync",
+    "EGL_KHR_surfaceless_context",
+    "EGL_KHR_swap_buffers_with_damage",
+    "EGL_KHR_wait_sync"
+  ],
+  "eglVendor": "Android",
+  "eglVersion": "1.5 Android META-EGL",
+  "extensionCount": 79,
+  "glslIs320": true,
+  "hasArmMaliShaderBinaryExt": true,
+  "hasAstcLdrExt": true,
+  "limits": {
+    "maxCombinedTextureImageUnits": 160,
+    "maxCubeMapTextureSize": 16384,
+    "maxRenderbufferSize": 16384,
+    "maxTextureImageUnits": 32,
+    "maxTextureSize": 16384,
+    "maxVertexAttribs": 16
+  },
+  "noDesktopOrMesaExtensionLeak": true,
+  "renderer": "Mali-G57 MC2",
+  "shadingLanguageVersion": "OpenGL ES GLSL ES 3.20",
+  "vendor": "ARM",
+  "version": "OpenGL ES 3.2 v1.r49p1-03bet0.569c83bf81f68e2ce8910542c6846b7e"
+}
+
+REAL (ec519c7d513a3ad3) display_gpu_webview.gles:
+{
+  "armExtensionCount": 8,
+  "desktopOrMesaLeakExtensions": [],
+  "eglClientApis": "OpenGL_ES",
+  "eglExtensionCount": 38,
+  "eglExtensions": [
+    "EGL_ANDROID_front_buffer_auto_refresh",
+    "EGL_ANDROID_get_frame_timestamps",
+    "EGL_ANDROID_get_native_client_buffer",
+    "EGL_ANDROID_image_native_buffer",
+    "EGL_ANDROID_native_fence_sync",
+    "EGL_ANDROID_presentation_time",
+    "EGL_ANDROID_recordable",
+    "EGL_EXT_create_context_robustness",
+    "EGL_EXT_gl_colorspace_display_p3",
+    "EGL_EXT_gl_colorspace_display_p3_linear",
+    "EGL_EXT_gl_colorspace_display_p3_passthrough",
+    "EGL_EXT_gl_colorspace_scrgb",
+    "EGL_EXT_gl_colorspace_scrgb_linear",
+    "EGL_EXT_image_gl_colorspace",
+    "EGL_EXT_pixel_format_float",
+    "EGL_EXT_protected_content",
+    "EGL_EXT_surface_CTA861_3_metadata",
+    "EGL_EXT_surface_SMPTE2086_metadata",
+    "EGL_EXT_yuv_surface",
+    "EGL_IMG_context_priority",
+    "EGL_KHR_config_attribs",
+    "EGL_KHR_create_context",
+    "EGL_KHR_fence_sync",
+    "EGL_KHR_get_all_proc_addresses",
+    "EGL_KHR_gl_colorspace",
+    "EGL_KHR_gl_renderbuffer_image",
+    "EGL_KHR_gl_texture_2D_image",
+    "EGL_KHR_gl_texture_3D_image",
+    "EGL_KHR_gl_texture_cubemap_image",
+    "EGL_KHR_image",
+    "EGL_KHR_image_base",
+    "EGL_KHR_mutable_render_buffer",
+    "EGL_KHR_no_config_context",
+    "EGL_KHR_partial_update",
+    "EGL_KHR_surfaceless_context",
+    "EGL_KHR_swap_buffers_with_damage",
+    "EGL_KHR_wait_sync",
+    "EGL_NV_context_priority_realtime"
+  ],
+  "eglVendor": "Android",
+  "eglVersion": "1.5 Android META-EGL",
+  "extensionCount": 109,
+  "glslIs320": true,
+  "hasArmMaliShaderBinaryExt": true,
+  "hasAstcLdrExt": true,
+  "limits": {
+    "maxCombinedTextureImageUnits": 96,
+    "maxCubeMapTextureSize": 16383,
+    "maxRenderbufferSize": 16383,
+    "maxTextureImageUnits": 16,
+    "maxTextureSize": 16383,
+    "maxVertexAttribs": 32
+  },
+  "noDesktopOrMesaExtensionLeak": true,
+  "renderer": "Mali-G57 MC2",
+  "shadingLanguageVersion": "OpenGL ES GLSL ES 3.20",
+  "vendor": "ARM",
+  "version": "OpenGL ES 3.2 v1.r49p1-03bet0.569c83bf81f68e2ce8910542c6846b7e"
+}
+
+2. ultimate.hardware_env (Vulkan 物理设备 / UUID / pNext 探测段 0 命中) 云机 vs 真机:
+CLOUD (0b7cd3333759d674-cloud):
+{
+  "runId": "run-00017",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "category": "hardware_env",
+    "checks": [
+      {
+        "evidence": {
+          "note": "launch DeviceAuthenticityDetector 的显示面板探针；无头云机常为 disconnected，读不到不判定",
+          "status": "(不可读)"
+        },
+        "hit": false,
+        "id": "U-HW-DISPLAY-PANEL",
+        "name": "DRM 显示面板未连接",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "count": 0,
+          "note": "launch DeviceAuthenticityDetector：无障碍服务数量是群控/自动化农场的旁证；阈值取 >3",
+          "services": "(空)"
+        },
+        "hit": false,
+        "id": "U-HW-ACCESSIBILITY",
+        "name": "启用无障碍服务数量 >3",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "expectedMajor": 15,
+          "note": "AIDA64：‘Android 版本’与 API 等级反查不一致",
+          "release": "15",
+          "sdkInt": 35
+        },
+        "hit": false,
+        "id": "U-HW-RELEASE-SDK",
+        "name": "Android RELEASE 与 SDK_INT 不一致",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "brand": "redmi",
+          "brandPrefixOk": true,
+          "fingerprint": "Redmi/gold/gold:15/AP3A.240905.015.A2/OS3.0.10.0.VNQCNXM:user/release-keys",
+          "note": "标准形如 brand/product/device:release/id/incremental:type/tags；山寨机常改 model 但忘改 fingerprint",
+          "shapeOk": true
+        },
+        "hit": false,
+        "id": "U-HW-FINGERPRINT-FORMAT",
+        "name": "Build.FINGERPRINT 结构/brand 前缀异常",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "accel": true,
+          "err": null,
+          "gyro": true,
+          "note": "硬件文档：传感器总数 <5，或缺少 TYPE_ACCELEROMETER(1)/TYPE_GYROSCOPE(4) 判云机/山寨机；平板无陀螺仪会命中，按 warn 处理",
+          "total": 29,
+          "types": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            8,
+            9,
+            10,
+            11,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            22,
+            33171036,
+            27,
+            35,
+            33171005,
+            33171007,
+            33171029,
+            33171028,
+            33171059,
+            33171109,
+            33171089,
+            18,
+            33171031
+          ]
+        },
+        "hit": false,
+        "id": "U-HW-SENSORS-CORE",
+        "name": "核心传感器缺失(加速度计/陀螺仪或总数<5)",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "cameraCount": 2,
+          "err": null,
+          "note": "DevCheck 硬件一致性：getCameraIdList() 为空"
+        },
+        "hit": false,
+        "id": "U-HW-CAMERA",
+        "name": "无任何摄像头(CameraManager)",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "abis": [
+            "arm64-v8a"
+          ],
+          "abis64": [
+            "arm64-v8a"
+          ],
+          "implementer": "0x41",
+          "note": "TrustScoreEngine 22 项之 ABI/64 位一致性；ARMv8 part 却无 64 位 ABI 另见 evidence.no64=false",
+          "part": "0xd05"
+        },
+        "hit": false,
+        "id": "U-HW-ABI-CPU-PART",
+        "name": "ABI 与 CPU implementer/part 矛盾",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "abis64": [
+            "arm64-v8a"
+          ],
+          "note": "AIDA64/CPU-Z：Cortex-A53 起为 ARMv8，必然有 64 位 ABI",
+          "part": "0xd05"
+        },
+        "hit": false,
+        "id": "U-HW-64BIT",
+        "name": "ARMv8 CPU 但无 64 位 ABI",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "amAvailBytes": 5542944768,
+          "amTotalBytes": 7946981376,
+          "availRatio": 1.07,
+          "err": null,
+          "note": "AIDA64：与 MemTotal 相差 >10%、可用内存高于内核 2 倍即判改容量；既有 U-MEMINFO-CROSS 用 5% 阈值，本项为原文 10% 口径",
+          "procAvailKb": 5057512,
+          "procMemTotalKb": 7760724,
+          "totalDiffPct": 0
+        },
+        "hit": false,
+        "id": "U-HW-MEM-FAKE",
+        "name": "内存容量虚标(totalMem 偏差>10% 或可用量>2x)",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "board": "2312draabc mt6833 gold mt6833 mt6833",
+          "cores": 8,
+          "marks": [],
+          "note": "AIDA64：MT6580/MT6735 最多 4 核；报 8/10 核即参数伪造（原文还含字符串替换变形，见 U-HW-ART-NATIVE-HOOK）"
+        },
+        "hit": false,
+        "id": "U-HW-MTK-FAKE",
+        "name": "MT6580/6735 等低端 SoC 配 8/10 核",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "hits": [],
+          "note": "鲁大师：仅 su 路径存在不足以定性，需可执行位或 setuid；Root 结论仍以 root_selinux 的 deadly 项为准"
+        },
+        "hit": false,
+        "id": "U-HW-SU-EXECBIT",
+        "name": "su 文件可执行/带 setuid",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "checked": 6,
+          "hits": [],
+          "note": "TrustScoreEngine native integrity 的 Java 侧近似：Xposed/LSPosed 常把 getDeviceId/getMacAddress 等改成 native"
+        },
+        "hit": false,
+        "id": "U-HW-ART-NATIVE-HOOK",
+        "name": "Java 方法被改为 native(ART Hook 旁证)",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "canonical": "/data/data/dev.checker/cache/fk_w_probe5034525718895492043.tmp",
+          "context": "u:r:untrusted_app:s0:c30,c257,c512,c768\u0000",
+          "contextOk": true,
+          "fdRedirect": false,
+          "fdTarget": "/data/data/dev.checker/cache/fk_w_probe5034525718895492043.tmp",
+          "uid": 10286,
+          "uidClone": false
+        },
+        "hit": false,
+        "id": "U-HW-VIRTUAL-FD",
+        "name": "VirtualApp/多开 fd 重定向或 uid/SELinux 异常",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "error": "java.lang.RuntimeException: java.lang.reflect.Array 无匹配构造器",
+          "maxHdcpLevel": null,
+          "note": "L1 需要 TEE 内解密；云机/模拟器普遍只有 L3，与 green 锁定状态矛盾",
+          "securityLevel": null,
+          "verifiedBootState": "green"
+        },
+        "hit": false,
+        "id": "U-HW-WIDEVINE",
+        "name": "green 启动状态却仅 Widevine L3",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "codecs": null,
+          "err": "java.lang.IllegalArgumentException: method android.media.MediaCodecList.<init> argument 1 has type int, got java.lang.Double",
+          "note": "硬件文档把编解码器数量列为虚拟设备旁证；真机通常 20+，阈值取 10 保守判定",
+          "threshold": 10
+        },
+        "hit": false,
+        "id": "U-HW-CODEC-COUNT",
+        "name": "MediaCodec 编解码器数量过少",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "err": "java.lang.RuntimeException: Settings key: <enabled_input_methods> is only readable to apps with targetSdkVersion lower than or equal to: 33",
+          "inputMethods": "(空)",
+          "note": "硬件文档：ADBKeyboard 是模拟器/群控的典型输入法；真机也可能装了测试输入法，故用 warn"
+        },
+        "hit": false,
+        "id": "U-HW-IME-CONTROL",
+        "name": "启用 ADBKeyboard/群控输入法",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "devices": [],
+          "err": null,
+          "hits": [],
+          "note": "InputDevice.isVirtual 在部分真机会命中 'Virtual'，故要求名称同时含 uinput/adb/virtual"
+        },
+        "hit": false,
+        "id": "U-HW-INPUT-VIRTUAL",
+        "name": "存在 uinput/虚拟输入设备",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "err": "java.lang.IllegalArgumentException: method android.content.IntentFilter.<init> argument 1 has type android.content.IntentFilter, got java.lang.String",
+          "level": null,
+          "note": "锂电电压通常 3000-4500mV、温度 -20..70℃；云机常回 0/异常值（0 电压不判）",
+          "temperatureTenthC": null,
+          "voltageMv": null
+        },
+        "hit": false,
+        "id": "U-HW-BATTERY-SANITY",
+        "name": "电池电压/温度物理异常",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "cores": 8,
+          "distinctFreqs": 2,
+          "err": null,
+          "freqSamples": [
+            2000000,
+            2000000,
+            2000000,
+            2000000,
+            2000000,
+            2000000,
+            2400000,
+            2400000
+          ],
+          "note": "CPU-Z 反查：真机 big.LITTLE 至少 2 簇；全核同频且 >=4 核是云机常见形态"
+        },
+        "hit": false,
+        "id": "U-HW-CPU-TOPO",
+        "name": "多核仅单频率簇(同频云机)",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "implementer": 65,
+          "kernel": "0x412fd050",
+          "note": "MIDR = implementer<<24 | variant<<20 | part<<4 | revision；内核文件不可读时不做判定",
+          "part": 3333,
+          "revision": null,
+          "synthesized": "0x4120d050",
+          "variant": 2
+        },
+        "hit": true,
+        "id": "U-HW-MIDR",
+        "name": "cpuinfo MIDR 与 midr_el1 不一致",
+        "risk": "warn"
+      }
+    ],
+    "deadly": 0,
+    "hit": 1,
+    "info": 0,
+    "ok": true,
+    "total": 20,
+    "warn": 1
+  }
+}
+
+REAL (ec519c7d513a3ad3):
+{
+  "runId": "run-00017",
+  "status": "succeeded",
+  "error": null,
+  "result": {
+    "category": "hardware_env",
+    "checks": [
+      {
+        "evidence": {
+          "note": "launch DeviceAuthenticityDetector 的显示面板探针；无头云机常为 disconnected，读不到不判定",
+          "status": "connected"
+        },
+        "hit": false,
+        "id": "U-HW-DISPLAY-PANEL",
+        "name": "DRM 显示面板未连接",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "count": 0,
+          "note": "launch DeviceAuthenticityDetector：无障碍服务数量是群控/自动化农场的旁证；阈值取 >3",
+          "services": "(空)"
+        },
+        "hit": false,
+        "id": "U-HW-ACCESSIBILITY",
+        "name": "启用无障碍服务数量 >3",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "expectedMajor": 15,
+          "note": "AIDA64：‘Android 版本’与 API 等级反查不一致",
+          "release": "15",
+          "sdkInt": 35
+        },
+        "hit": false,
+        "id": "U-HW-RELEASE-SDK",
+        "name": "Android RELEASE 与 SDK_INT 不一致",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "brand": "redmi",
+          "brandPrefixOk": true,
+          "fingerprint": "Redmi/gold/gold:15/AP3A.240905.015.A2/OS3.0.10.0.VNQCNXM:user/release-keys",
+          "note": "标准形如 brand/product/device:release/id/incremental:type/tags；山寨机常改 model 但忘改 fingerprint",
+          "shapeOk": true
+        },
+        "hit": false,
+        "id": "U-HW-FINGERPRINT-FORMAT",
+        "name": "Build.FINGERPRINT 结构/brand 前缀异常",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "accel": true,
+          "err": null,
+          "gyro": true,
+          "note": "硬件文档：传感器总数 <5，或缺少 TYPE_ACCELEROMETER(1)/TYPE_GYROSCOPE(4) 判云机/山寨机；平板无陀螺仪会命中，按 warn 处理",
+          "total": 29,
+          "types": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            8,
+            9,
+            10,
+            11,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            22,
+            33171036,
+            27,
+            35,
+            33171005,
+            33171007,
+            33171029,
+            33171028,
+            33171059,
+            33171109,
+            33171089,
+            18,
+            33171031
+          ]
+        },
+        "hit": false,
+        "id": "U-HW-SENSORS-CORE",
+        "name": "核心传感器缺失(加速度计/陀螺仪或总数<5)",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "cameraCount": 2,
+          "err": null,
+          "note": "DevCheck 硬件一致性：getCameraIdList() 为空"
+        },
+        "hit": false,
+        "id": "U-HW-CAMERA",
+        "name": "无任何摄像头(CameraManager)",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "abis": [
+            "arm64-v8a",
+            "armeabi-v7a",
+            "armeabi"
+          ],
+          "abis64": [
+            "arm64-v8a"
+          ],
+          "implementer": "0x41",
+          "note": "TrustScoreEngine 22 项之 ABI/64 位一致性；ARMv8 part 却无 64 位 ABI 另见 evidence.no64=false",
+          "part": "0xd05"
+        },
+        "hit": false,
+        "id": "U-HW-ABI-CPU-PART",
+        "name": "ABI 与 CPU implementer/part 矛盾",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "abis64": [
+            "arm64-v8a"
+          ],
+          "note": "AIDA64/CPU-Z：Cortex-A53 起为 ARMv8，必然有 64 位 ABI",
+          "part": "0xd05"
+        },
+        "hit": false,
+        "id": "U-HW-64BIT",
+        "name": "ARMv8 CPU 但无 64 位 ABI",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "amAvailBytes": 4067090432,
+          "amTotalBytes": 7939248128,
+          "availRatio": 0.94,
+          "err": null,
+          "note": "AIDA64：与 MemTotal 相差 >10%、可用内存高于内核 2 倍即判改容量；既有 U-MEMINFO-CROSS 用 5% 阈值，本项为原文 10% 口径",
+          "procAvailKb": 4239096,
+          "procMemTotalKb": 7753172,
+          "totalDiffPct": 0
+        },
+        "hit": false,
+        "id": "U-HW-MEM-FAKE",
+        "name": "内存容量虚标(totalMem 偏差>10% 或可用量>2x)",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "board": "2312draabc mt6833 gold mt6833 mt6833",
+          "cores": 8,
+          "marks": [],
+          "note": "AIDA64：MT6580/MT6735 最多 4 核；报 8/10 核即参数伪造（原文还含字符串替换变形，见 U-HW-ART-NATIVE-HOOK）"
+        },
+        "hit": false,
+        "id": "U-HW-MTK-FAKE",
+        "name": "MT6580/6735 等低端 SoC 配 8/10 核",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "hits": [],
+          "note": "鲁大师：仅 su 路径存在不足以定性，需可执行位或 setuid；Root 结论仍以 root_selinux 的 deadly 项为准"
+        },
+        "hit": false,
+        "id": "U-HW-SU-EXECBIT",
+        "name": "su 文件可执行/带 setuid",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "checked": 6,
+          "hits": [],
+          "note": "TrustScoreEngine native integrity 的 Java 侧近似：Xposed/LSPosed 常把 getDeviceId/getMacAddress 等改成 native"
+        },
+        "hit": false,
+        "id": "U-HW-ART-NATIVE-HOOK",
+        "name": "Java 方法被改为 native(ART Hook 旁证)",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "canonical": "/data/data/dev.checker/cache/fk_w_probe7050688769344758398.tmp",
+          "context": "u:r:untrusted_app:s0:c43,c257,c512,c768\u0000",
+          "contextOk": true,
+          "fdRedirect": false,
+          "fdTarget": "/data/data/dev.checker/cache/fk_w_probe7050688769344758398.tmp",
+          "uid": 10299,
+          "uidClone": false
+        },
+        "hit": false,
+        "id": "U-HW-VIRTUAL-FD",
+        "name": "VirtualApp/多开 fd 重定向或 uid/SELinux 异常",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "error": "java.lang.RuntimeException: java.lang.reflect.Array 无匹配构造器",
+          "maxHdcpLevel": null,
+          "note": "L1 需要 TEE 内解密；云机/模拟器普遍只有 L3，与 green 锁定状态矛盾",
+          "securityLevel": null,
+          "verifiedBootState": "orange"
+        },
+        "hit": false,
+        "id": "U-HW-WIDEVINE",
+        "name": "green 启动状态却仅 Widevine L3",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "codecs": null,
+          "err": "java.lang.IllegalArgumentException: method android.media.MediaCodecList.<init> argument 1 has type int, got java.lang.Double",
+          "note": "硬件文档把编解码器数量列为虚拟设备旁证；真机通常 20+，阈值取 10 保守判定",
+          "threshold": 10
+        },
+        "hit": false,
+        "id": "U-HW-CODEC-COUNT",
+        "name": "MediaCodec 编解码器数量过少",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "err": "java.lang.RuntimeException: Settings key: <enabled_input_methods> is only readable to apps with targetSdkVersion lower than or equal to: 33",
+          "inputMethods": "(空)",
+          "note": "硬件文档：ADBKeyboard 是模拟器/群控的典型输入法；真机也可能装了测试输入法，故用 warn"
+        },
+        "hit": false,
+        "id": "U-HW-IME-CONTROL",
+        "name": "启用 ADBKeyboard/群控输入法",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "devices": [],
+          "err": null,
+          "hits": [],
+          "note": "InputDevice.isVirtual 在部分真机会命中 'Virtual'，故要求名称同时含 uinput/adb/virtual"
+        },
+        "hit": false,
+        "id": "U-HW-INPUT-VIRTUAL",
+        "name": "存在 uinput/虚拟输入设备",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "err": "java.lang.IllegalArgumentException: method android.content.IntentFilter.<init> argument 1 has type android.content.IntentFilter, got java.lang.String",
+          "level": null,
+          "note": "锂电电压通常 3000-4500mV、温度 -20..70℃；云机常回 0/异常值（0 电压不判）",
+          "temperatureTenthC": null,
+          "voltageMv": null
+        },
+        "hit": false,
+        "id": "U-HW-BATTERY-SANITY",
+        "name": "电池电压/温度物理异常",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "cores": 8,
+          "distinctFreqs": 2,
+          "err": null,
+          "freqSamples": [
+            2000000,
+            2000000,
+            2000000,
+            2000000,
+            2000000,
+            2000000,
+            2400000,
+            2400000
+          ],
+          "note": "CPU-Z 反查：真机 big.LITTLE 至少 2 簇；全核同频且 >=4 核是云机常见形态"
+        },
+        "hit": false,
+        "id": "U-HW-CPU-TOPO",
+        "name": "多核仅单频率簇(同频云机)",
+        "risk": "none"
+      },
+      {
+        "evidence": {
+          "implementer": 65,
+          "kernel": "0x412fd050",
+          "note": "MIDR = implementer<<24 | variant<<20 | part<<4 | revision；内核文件不可读时不做判定",
+          "part": 3333,
+          "revision": null,
+          "synthesized": "0x4120d050",
+          "variant": 2
+        },
+        "hit": true,
+        "id": "U-HW-MIDR",
+        "name": "cpuinfo MIDR 与 midr_el1 不一致",
+        "risk": "warn"
+      }
+    ],
+    "deadly": 0,
+    "hit": 1,
+    "info": 0,
+    "ok": true,
+    "total": 20,
+    "warn": 1
+  }
+}

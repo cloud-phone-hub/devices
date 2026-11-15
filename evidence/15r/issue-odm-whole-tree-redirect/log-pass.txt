@@ -1,0 +1,83 @@
+# 通过侧：/odm 整棵重定向（实例 11，改后）
+# 取数：adb -s 127.0.0.1:5911 shell ...  与 out/core/daemon/runtime/15r_16.0.10.500_EX01/11/qemu.log
+# 实例：index 11，2026-11-03 10:19 启动，10:20:32 boot_completed=1（开机约 72 s）
+
+== 1. 规则表加载：12 条有效规则（原 13 条里 1 条 file 自映射 + 12 条 dir/file），上限 32 ==
+$ cat /proc/cdh_redirect
+rules: 12/32
+  file /odm                     -> /odm
+  dir  /odm                     -> /mnt/vendorpatch/odm
+  dir  /vendor/etc              -> /mnt/vendorpatch/vendor/etc
+  dir  /vendor/bin              -> /mnt/vendorpatch/vendor/bin
+  dir  /vendor/lib              -> /mnt/vendorpatch/vendor/lib
+  dir  /vendor/lib64            -> /mnt/vendorpatch/vendor/lib64
+  file /vendor/build.prop       -> /mnt/vendorpatch/vendor/build.prop
+  file /vendor/ueventd.rc       -> /mnt/vendorpatch/vendor/ueventd.rc
+  dir  /vendor_dlkm/lib         -> /mnt/vendorpatch/vendor_dlkm/lib
+  dir  /system/lib/modules      -> /mnt/vendorpatch/system/lib/modules
+  file /my_product/etc/oplus_re_cache_miss_config.json -> /mnt/vendorpatch/...
+  file /system/bin/update_verifier -> /mnt/vendorpatch/...
+forward_hits: 17355
+reverse_hits: 3396
+forward_missed: 0
+reverse_missed: 0
+
+== 2. 自映射护栏生效：/odm 的挂载点没有被改写到载体 ==
+$ grep odm /proc/mounts
+/dev/block/dm-5 /odm erofs ro,seclabel,relatime,context=... 0 0
+/dev/block/vdc /mnt/vendorpatch ext4 rw,seclabel,relatime 0 0
+
+[    0.247434][    T1] init: [libfs_mgr] __mount(source=/dev/block/dm-5,target=/odm,type=erofs)=0: Success
+[    0.265829][    T1] init: [libfs_mgr] __mount(source=/dev/block/vdc,target=/mnt/vendorpatch,type=ext4)=0: Success
+# 次序：odm 先（0.2474）、载体后（0.2658）。若没有自映射，0.2474 这次 mount 的目标会被改写成
+# /mnt/vendorpatch/odm，而当时载体尚未挂上 → ENOENT → 首阶段 FATAL。
+
+== 3. 官方 odm 的绝对路径全部不可达；我方顶层属性件在 ==
+$ for p in /odm/etc/vintf /odm/etc/init /odm/etc/audio /odm/etc/selinux /odm/lib64 /odm/firmware /odm/etc/build.prop /odm/build.prop; do
+>   printf '%-26s ' "$p"; adb shell "[ -e $p ] && echo EXIST || echo ENOENT"
+> done
+/odm/etc/vintf             No such file or directory
+/odm/etc/init              No such file or directory
+/odm/etc/audio             No such file or directory
+/odm/etc/selinux           No such file or directory
+/odm/lib64                 No such file or directory
+/odm/firmware              No such file or directory
+/odm/etc/build.prop        No such file or directory
+/odm/build.prop            EXIST
+
+== 4. 属性件内容确实来自载体 ==
+$ adb shell 'md5sum /odm/build.prop /mnt/vendorpatch/odm/build.prop'
+ffbe0df42886e9af97d8dbb0faa9a95c  /odm/build.prop
+ffbe0df42886e9af97d8dbb0faa9a95c  /mnt/vendorpatch/odm/build.prop
+$ adb shell getprop ro.oplus.wifi.wsa
+none                                   # #127 的关键属性，未回退
+$ adb shell getprop ro.odm.product.cpu.abilist
+arm64-v8a
+
+== 5. 连带故障消失 ==
+$ adb shell 'dmesg | grep -c "property file \"/odm/etc/build.prop\""'
+0                                      # 文件已不存在（改前 64）
+$ adb shell 'dmesg | grep -c "NULL VINTF MANIFEST"'
+0
+$ adb shell 'dmesg | grep -c "property file \"/odm/build.prop\""'
+128                                    # 顶层件仍报（first/second stage 各一遍）—— #127 已知类别
+$ adb shell getprop sys.init.updatable_crashing
+0                                      # 改前 116
+$ adb shell getprop init.svc.vendor.secure_element      # 相关进程退出 0 次（改前 129）
+$ adb shell getprop init.svc.vendor.oplus.vibrator     # 相关进程退出 0 次（改前 127）
+
+== 6. 系统面 ==
+$ adb shell getprop sys.boot_completed
+1
+$ adb shell dumpsys activity activities | grep -m1 topResumedActivity
+topResumedActivity=ActivityRecord{... com.android.launcher/.Launcher}
+$ adb shell 'logcat -d | grep -c "FATAL EXCEPTION IN SYSTEM PROCESS"'   -> 0
+$ adb shell 'logcat -d | grep -c "WATCHDOG KILLING"'                   -> 0
+
+== 7. 已知残留（见 solution.md 第六节）==
+$ adb shell 'cd /odm && ls'            # 相对路径不经 getname 改写 → 仍列官方根目录项
+app bin etc firmware lib lib64 ... overlay
+$ adb shell 'cd /odm && ls etc | head -3'
+24877  Custom_LUT_hlg.cube  ...
+$ adb shell 'ls /odm/etc'
+ls: /odm/etc: No such file or directory

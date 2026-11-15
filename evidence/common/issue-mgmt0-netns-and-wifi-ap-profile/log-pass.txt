@@ -1,0 +1,60 @@
+# P0-3 (G1 & G2) 修复后验证证据 (log-pass.txt)
+# 采样时间: 2026-11-10
+# 设备: Xiaomi Redmi Note 13 5G (gold / 2312DRAABC, OS3.0.10.0.VNQCNXM)
+# 真机 ID: ec519c7d513a3ad3 (USB: fmvwkrheonugvgjb)
+# 云机实例: gold_15-OS3.0.10.0.VNQCNXM/1 (df809591a4e085ae-cloud, ADB: 127.0.0.1:5911)
+# 镜像产物: patch.img (sha256 eaff76e24905), vda.img (vda-c97d6641407d)
+# 测试批次: run-00222
+
+=== 1. wifi-host-service 单元测试 ===
+ok  github.com/cloud-phone-hub/cloud-phone-hub/qemu/backend/wifi-host-service/gw  4.556s (13/13 PASS)
+
+=== 2. boot_check.py 启动亮屏与 mgmt_bridge 内核日志 ===
+[    7.036940][  T440] mgmt_bridge: mgmt0 (10.0.2.15/24) 已隔离并监听 0.0.0.0:5555 -> 127.0.0.1:5555
+[shot] /Volumes/work/cloud-phone-hub/engine/out/tmp/gold_boot_176.png 1088x2400 bpp=32 平均亮度=121.5 峰值=255
+[pass] 引导完成（日志 5542 行）+ 截图非黑（平均亮度=121.5 峰值=255）
+
+=== 3. 主网络命名空间网卡与 Wi-Fi 状态 (adb shell) ===
+ip -br addr:
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+dummy0           UNKNOWN        fe80::1419:13ff:fe61:636d/64
+ccmni2           UP             fec0::5054:ff:fe12:3458/64 fe80::5054:ff:fe12:3458/64
+wlan0            UP             192.168.60.100/24 fe80::700a:e8ff:fe93:879b/64
+ccmni0           UNKNOWN        240e:573:ec0:1345:18d1:1082:f180:ed50/64 fe80::68ab:e4ff:fe9e:8b8a/64
+
+cmd wifi status:
+Wifi is connected to "TP-LINK_2464"
+WifiInfo: SSID: "TP-LINK_2464", BSSID: 74:39:89:0b:24:63, IP: /192.168.60.100, Security type: 0, Supplicant state: COMPLETED, Frequency: 2437MHz
+
+cmd wifi list-scan-results:
+    BSSID              Frequency      RSSI           Age(sec)     SSID                                 Flags
+  74:39:89:0b:24:64       5180        -49             14.407    TP-LINK_5G_2464                   [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  28:6c:07:51:a4:90       5220        -64             14.407    Xiaomi_A490_5G                    [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  c8:3a:35:4c:8f:3a       2412        -64             14.407    ChinaNet-8F3A                     [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  74:39:89:0b:24:63       2437        -35             14.407    TP-LINK_2464                      [ESS]
+
+=== 4. device-checker 双机对比批次 run-00222 ===
+[REAL ] aligner_xiaomi_gold.all: passed=32/32 G1=True G2=True
+[CLOUD] aligner_xiaomi_gold.all: passed=20/32 G1=True G2=True
+
+[CLOUD] aligner_xiaomi_gold.network_telephony_bt_gnss:
+  networkInterfaces={
+    "hasLo": true,
+    "hasWlan0": true,
+    "hasSuspiciousMgmt0": false,
+    "hasSuspiciousEth0": false,
+    "noSuspiciousInterfaces": true,
+    "suspiciousInterfaceNames": [],
+    "interfaces": ["ccmni0", "ccmni2", "dummy0", "lo", "wlan0"]
+  }
+  wifi={
+    "connected": true,
+    "connectedSsid": "TP-LINK_2464",
+    "connectedBssid": "74:39:89:0b:24:63",
+    "connectedFrequencyMhz": 2437,
+    "hasValidNonHwsimBssid": true,
+    "noSuspiciousConnectedSsid": true,
+    "noVirtWifiOrHwsimInScan": true,
+    "hwsimBssidApCount": 0,
+    "suspiciousScanAps": []
+  }

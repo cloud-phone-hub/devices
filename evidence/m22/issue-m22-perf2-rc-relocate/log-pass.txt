@@ -1,0 +1,110 @@
+# issue-m22-perf2-rc-relocate / 改动后验证（pass）
+
+> 全部命令在 `/Volumes/work/cloud-phone-hub/engine` 下执行；输出原样，省略无关行时标 [略]。
+
+## 一、归位后的目录与文件
+
+```
+$ find vendor/hardware/vendor.qti.hardware.perf2 -type f | sort
+aidl/vendor.qti.hardware.perf2/1/.hash
+aidl/vendor.qti.hardware.perf2/1/vendor/qti/hardware/perf2/IPerf.aidl
+aidl/vendor.qti.hardware.perf2/1/vendor/qti/hardware/perf2/IPerfCallback.aidl
+sepolicy/vendor_sepolicy.cil
+sepolicy/vendor_service_contexts
+src/perf2_service.cpp
+vendor/etc/init/vendor.qti.hardware.perf2-hal-service.rc        <- 新增
+
+$ find vendor/hardware -path "*/vendor/etc/init/*.rc" | wc -l
+39      # 改动前 38（唯一缺 perf2）
+
+$ find manifest/flyme/m22/vendor/etc/init -type f | sort
+manifest/flyme/m22/vendor/etc/init/cph_logcat_dump_early.rc
+manifest/flyme/m22/vendor/etc/init/frp_symlink.rc
+manifest/flyme/m22/vendor/etc/init/hw/init.qcom.rc
+# perf2 的 rc 已从机型静态树删除（板级入口与 daemon 的两份仍属设备相关，保留）
+```
+
+## 二、07 自动发现「产物根缺 vendor 静态树」并重编该模块
+
+```
+$ ./out/bin/cdh device build m22 --only 07_build_vendor
+[略]
+    HAL 模块:  vendor.qti.hardware.perf2（变体 default，变体产物根 out/vendor/android16，
+               待落盘 1/2 项（编译产物 1 + vendor 静态树 1）-> 重编）
+        期望产物 out/vendor/android16/bin/hw/vendor.qti.hardware.perf2-hal-service
+        期望静态树 out/vendor/android16/etc/init/vendor.qti.hardware.perf2-hal-service.rc
+    [skip] android.service.daemon 已编译（1 个编译产物 + 8 个 vendor 静态树文件齐全，源码指纹一致）
+    [skip] vendor.meizu.sensor_aux 已编译（1 个编译产物 + 1 个 vendor 静态树文件齐全，源码指纹一致）
+==> 编译 HAL 模块 vendor.qti.hardware.perf2（变体 default，待落盘 etc/init/vendor.qti.hardware.perf2-hal-service.rc）
+  + out/bin/cdh-vendor hal build vendor.qti.hardware.perf2 --android 16 --out-dir .../out/vendor/android16
+    vendor.qti.hardware.perf2 (v1, hash c5d67f27386b)
+    写 bin/hw/vendor.qti.hardware.perf2-hal-service
+[ok] vendor.qti.hardware.perf2 构建完成：codegen + 编译 + 链接
+    写 etc/init/vendor.qti.hardware.perf2-hal-service.rc（0644）
+[ok] vendor.qti.hardware.perf2 合并 vendor 静态树：新增 1，已存在同内容 0
+    [略]
+    写 out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/vendor.qti.hardware.perf2-hal-service.rc（0644）
+    [略]
+    vendor.qti.hardware.perf2-hal-service -> hal_sensors_default_exec
+    [略]
+    编译产物 vendor.qti.hardware.perf2@default: 写入 2，已存在同内容 0
+[ok] 已完成
+```
+
+## 三、三层落位与大小一致
+
+```
+$ ls -l out/vendor/android16/etc/init/vendor.qti.hardware.perf2-hal-service.rc
+-rw-r--r--@ 1 cuimingqiang  staff  2296 10 29 21:13 .../out/vendor/android16/etc/init/vendor.qti.hardware.perf2-hal-service.rc
+
+$ ls -l out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/vendor.qti.hardware.perf2-hal-service.rc
+-rw-r--r--@ 1 cuimingqiang  staff  2296 10 29 21:13 .../vendor/etc/init/vendor.qti.hardware.perf2-hal-service.rc
+
+$ debugfs -R "ls -l /etc/init" img/vendor.img | grep -i perf2
+    361  100644 (1)      0      0    2296  1-Jan-2009 08:00 vendor.qti.hardware.perf2-hal-service.rc
+```
+
+## 四、服务定义行逐行不变（只动了注释）
+
+```
+$ grep -n "^service\|^    seclabel\|^    interface\|^    disabled\|^on post-fs-data\|^    start" \
+       out/devices/flyme/m22/12.5.0.0A/vendor/etc/init/vendor.qti.hardware.perf2-hal-service.rc
+25:service vendor.perf2-default /vendor/bin/hw/vendor.qti.hardware.perf2-hal-service
+29:    seclabel u:r:hal_sensors_default:s0
+30:    interface aidl vendor.qti.hardware.perf2.IPerf/default
+31:    disabled
+33:on post-fs-data
+34:    start vendor.perf2-default
+# 与改动前静态树那份逐行一致：服务名 vendor.perf2-default、二进制、域、interface、启动门控均未变
+```
+
+## 五、镜像标签与最终产物
+
+```
+$ debugfs -R "ea_get -V /etc/init/vendor.qti.hardware.perf2-hal-service.rc security.selinux" img/vendor.img
+u:object_r:vendor_configs_file:s0
+
+$ debugfs -R "ea_get -V /bin/hw/vendor.qti.hardware.perf2-hal-service security.selinux" img/vendor.img
+u:object_r:hal_sensors_default_exec:s0
+
+$ ls -l img/vendor.img; shasum -a 256 img/vendor.img
+-rw-r--r--@ 1 cuimingqiang  staff  205897728 10 29 21:13 img/vendor.img
+1cc87515c5423322e42ad967f2eed6559bf1ba3ecc828c1591b70785e568e682  img/vendor.img
+```
+
+## 六、模块层 SELinux 片段照旧注入
+
+```
+    SELinux 补丁: 模块层 … vendor.qti.hardware.perf2/sepolicy（2 个文件）
+    输入[模块层 vendor.qti.hardware.perf2]: vendor/hardware/vendor.qti.hardware.perf2/sepolicy
+    追加 …/vendor/etc/selinux/vendor_sepolicy.cil <- …/sepolicy/vendor_sepolicy.cil（2318 字节）
+    追加 …/vendor/etc/selinux/vendor_service_contexts <- …/sepolicy/vendor_service_contexts（636 字节）
+```
+
+## 七、文档口径同步
+
+`engine/vendor/build/README.md`「放什么、不放什么」表内 `etc/init/*.rc` 一行由
+「gold 的 17 个声明模块均已就位」改为「各机型声明模块均已就位（gold 的 17 个 + 仅 m22
+声明的 `vendor.qti.hardware.perf2`）」，并在表后补一段：**「在哪些机型上启动」不靠机型 rc
+门控**——07 步骤 4 只复制 `device.json` 声明模块的 `VendorTree`，未声明机型拿不到这份 rc，
+机型静态树里不要再放同名副本。

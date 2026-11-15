@@ -1,0 +1,61 @@
+# 通过态取证：停用 v4l2_codec2 + 放大 Watchdog 超时后，system_server 不再周期性重启
+#
+# 设备/清单：xiaomi/gold  OS3.0.10.0.VNQCNXM（Redmi Note 13 5G）
+# 宿主：macOS (darwin, QEMU + hvf)，8 GiB / 8 vCPU
+# 实例：gold_OS3.0.10.0.VNQCNXM/34（2026-10-26 15:00:50 重启，全新内核会话）
+# 镜像：patch.img sha256 a94930d30a16…（rebuild.sh 于 15:00 产出）
+# 采集：经宿主 daemon 事件通道（hvc7）在 guest 内执行，guest 侧 date 21:21:12
+#
+# 本轮修复（相对 log-fail.txt 的失败态）：
+#   1) /vendor/etc/init/android.hardware.media.c2@1.2-service-v4l2-64.rc 整体注释
+#      + /vendor/etc/vintf/manifest/android.hardware.media.c2@1.2-service-v4l2.xml
+#      清空声明 + /vendor/etc/media_codecs_c2.xml 注释掉 3 条 c2.v4l2.*
+#      （三处缺一不可：rc 只管 class_start，vintf 管 lazy HAL 按需拉起，
+#        codecs xml 管 MediaCodecList 是否把已停用的 codec 继续列为可用）
+#   2) /vendor/build.prop 增加 ro.hw_timeout_multiplier=10（AOSP emulator 同款），
+#      把 Watchdog 的 30s 硬超时放大到 300s
+#   3) 机型层 sepolicy（manifest/xiaomi/gold/sepolicy/vendor_sepolicy.cil）补齐
+#      mtk c2 / dolby c2 / radio HAL 的类型与授权，三者从崩溃循环转为 running
+
+## 1. 属性：ro.hw_timeout_multiplier 从 build.prop 生效
+
+ro.hw_timeout_multiplier=10
+sys.boot_completed=1
+sys.init.updatable_crashing=[]
+
+## 2. HAL 服务：三个此前 4 分钟崩 4 次的服务全部 running
+
+media-c2-hal=running
+dolby-c2-hal=running
+cdh-radio=running
+
+## 3. v4l2：只剩 init 解析 rc 的一条记录，没有启动、没有退出
+
+v4l2-dmesg-total=1          # [0.466919] init: Parsing file /vendor/etc/init/android.hardware.media.c2@1.2-service-v4l2-64.rc...
+v4l2-starting=0             # 修复前：dmesg 里 "starting service" 反复出现，exited 累计 727 次
+v4l2-exited=0
+
+## 4. 稳定性：system_server 自 21:01 起 28 分钟未换 pid，mediaserver 同样
+
+system_server=722
+mediaserver=674
+anr-latest=BinderUsage_pid14513.txt   # /data/anr 里最新仍是旧实例 21:34 的遗留文件，本次开机后零新增 ANR
+# 末次复核：21:29:13，仍是 722 / 674
+
+## 5. 点击延迟（VNC 强制全屏探测，逐轮读回 scanout 比对哈希）
+
+# 修复前（同一实例、同一脚本）：点击后 1340ms 画面才第一次变（整屏黑），
+# 8477ms 才出内容；期间 system_server 被杀、zygote 重启。
+#
+# 修复后（本次）：
+#   导航栏返回 (900,2333)     变化#1 t_click+316.0ms   （其后 26~31ms 一帧动画）
+#   最近任务 (551,2333)       变化#1 t_click+1512.3ms
+#   桌面图标（超级小爱权限框） 变化#1 t_click+3401.3ms  （含 app 冷启动）
+#
+# 注：VNC 点击必须先发一次「无按键的 pointer 移动」再 down/up。只发 down/up 时，
+#     down 携带的坐标跳变会被 guest 触摸栈当作滑动起手 —— 实测点桌面图标变成
+#     翻页（第 1 页翻到第 2 页）。对比脚本：out/tmp/vnc_click_move.py。
+
+## 6. 采集时刻
+
+Wed Jul 15 21:21:12 CST 2026

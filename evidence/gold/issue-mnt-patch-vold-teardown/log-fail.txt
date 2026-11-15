@@ -1,0 +1,74 @@
+# 失败态取证：patch.img 挂 /mnt/patch 后被 vold 启动清理撕掉
+#
+# 设备/清单：xiaomi/gold  OS3.0.10.0.VNQCNXM（Redmi Note 13 5G）
+# 宿主：macOS (darwin, QEMU + hvf)，8 GiB / 8 vCPU
+# 镜像：patch.img sha256 0ba51fd5a321dddd5a7593ac1e45bbae829a277f502aaa5c1ed71d37db0fb93a
+#       挂载点 /mnt/patch，内部 /vendor、/vendor_dlkm、/odm 三棵并列子树
+# 实例：gold_OS3.0.10.0.VNQCNXM/32（2026-10-26 11:59 创建，无保护）
+#       gold_OS3.0.10.0.VNQCNXM/33（12:11 创建，仅加 init rc 的 post-fs 补挂）
+# 日志：out/core/daemon/runtime/gold_OS3.0.10.0.VNQCNXM/{32,33}/qemu.log
+# 说明：行首 `NNNN:` 为抓取时刻的 qemu.log 行号；时间戳为 guest 内核时间。
+#
+# 实例 32 链条：first-stage 挂载成功 → vold 0.709s 用 MNT_DETACH 撕掉 →
+#   ReadDefaultFstab 失败 → keymint 的 wait /dev/hvc3 卡满 30s → /data 只读 →
+#   35.9s 起 keystore2/zygote 反复 signal 6，直到 642s 共 454 次。
+# 实例 33 证明「只在 rc 里补挂」不够：keymint 起来了（52ms），但 vold 启动时
+#   已读过一次失败的 fstab，内部状态为空，mount_all --late 仍然失败。
+
+## 1. 实例 32：first-stage 挂载本身是成功的
+
+   468:[    0.153330][    T1] init: [libfs_mgr] __mount(source=/dev/block/vdc,target=/mnt/patch,type=ext4)=0: Success
+
+## 2. 实例 32：~0.7s vold（T202）把 vdc 挂载卸掉
+
+ 1068:[    0.709234][  T202] EXT4-fs (vdc): unmounting filesystem 25902bea-b62b-464c-b52f-756e57bd0be7.
+
+## 3. 实例 32：紧接着 vold 读不到默认 fstab（/vendor 重定向后 ENOENT）
+
+ 1072:[    0.711205][  T202] vold: [libfstab] Using Android DT directory /proc/device-tree/firmware/android/
+ 1074:[    0.711779][  T202] vold: [libfstab] ReadDefaultFstab(): failed to find device default fstab
+ 1076:[    0.712117][  T202] vold: Failed to open default fstab: No such file or directory
+ 1078:[    0.712745][  T202] vold: Error reading configuration... continuing anyways: No such file or directory
+
+## 4. 实例 32：keymint rc 的 wait /dev/hvc3 卡满 30s（服务 exec 失败，hvc3 永不到来）
+
+ 1271:[   35.820819][  T117] init: wait for '/dev/hvc3' timed out and took 30001ms
+ 1272:[   35.821363][    T1] init: Command 'wait /dev/hvc3 30' action=post-fs (/vendor/etc/init/android.hardware.security.keymint-service.rc:27) took 30002ms and failed: wait_for_file() failed
+
+## 5. 实例 32：mount_all --late 直接失败（无默认 fstab）
+
+ 1311:[   35.868257][    T1] init: [libfstab] ReadDefaultFstab(): failed to find device default fstab
+ 1313:[   35.868931][    T1] init: Command 'mount_all --late' action=late-fs (/vendor/etc/init/hw/init.mt6833.rc:34) took 0ms and failed: Could not read default fstab
+
+## 6. 实例 32：/data 从未挂载，post-fs-data 全线只读
+
+ 1327:[   35.879002][    T1] init: Command 'chown system system /data' action=post-fs-data (/system/etc/init/hw/init.rc:791) took 0ms and failed: lchown() failed: Read-only file system
+ 1328:[   35.879681][    T1] init: Command 'chmod 0771 /data' action=post-fs-data (/system/etc/init/hw/init.rc:792) took 0ms and failed: fchmodat() failed: Read-only file system
+ 1329:[   35.880474][    T1] init: Command 'mkdir /data/bootchart 0755 shell shell encryption=Require' action=post-fs-data (/system/etc/init/hw/init.rc:801) took 0ms and failed: mkdir() failed on /data/bootchart: Read-only file system
+ 1331:[   35.882030][    T1] init: Command 'mkdir /data/vendor 0771 root root encryption=Require' action=post-fs-data (/system/etc/init/hw/init.rc:807) took 0ms and failed: mkdir() failed on /data/vendor: Read-only file system
+
+## 7. 实例 32：35.9s 起 keystore2 / zygote 反复 signal 6（共 454 次，到 642s）
+
+ 1376:[   35.930839][    T1] init: Service 'keystore2' (pid 248) received signal 6 from uid 1017 pid 248
+ 1420:[   40.924179][    T1] init: Service 'keystore2' (pid 265) received signal 6 from uid 1017 pid 265
+40976:[  638.252007][    T1] init: Service 'zygote' (pid 11681) received signal 6 from uid 0 pid 11681
+41157:[  642.071491][    T1] init: Service 'keystore2' (pid 11758) received signal 6 from uid 1017 pid 11758
+
+# 统计（实例 32 全文 41162 行）：
+#   $ grep -c 'received signal 6' 32/qemu.log
+#   454
+#   zygote pid 已重启到 11681；adb 全程 offline。
+
+## 8. 实例 33：rc post-fs 补挂只恢复了文件路径
+
+# keymint 立刻起来了（对比实例 32 的 30s 超时）：
+ 1308:[    5.861631][  T118] init: wait for '/dev/hvc3' took 52ms
+ 1309:[    5.861928][    T1] init: Command 'wait /dev/hvc3 30' action=post-fs (/vendor/etc/init/android.hardware.security.keymint-service.rc:27) took 52ms and succeeded
+
+# 但 vold 在 0.687s 就已把挂载撕掉、把 fstab 读失败，内部状态无法补回：
+ 1069:[    0.687796][  T201] EXT4-fs (vdc): unmounting filesystem 1c0d967e-58fc-4698-b603-0d77565000b8.
+
+ 1501:[    6.298136][    T1] init: Command 'mount_all --late' action=late-fs (/vendor/etc/init/hw/init.mt6833.rc:40) took 323ms and failed: queue_fs_event() failed: Invalid code: -1
+
+# 结论：补挂只能恢复文件路径，恢复不了 vold 的内部 fstab 状态；
+#       必须让 vold 根本不撕（见 log-pass.txt 的内核 EBUSY 拦截）。

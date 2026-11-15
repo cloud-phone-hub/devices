@@ -1,0 +1,9 @@
+<manifest version="1.0" type="device">
+  <!-- engine/vendor 自研 DRM HAL（widevine 检测模拟）：声明 IDrmFactory/widevine，
+       与 clearkey 桩分文件并存，镜像装配阶段合并 VINTF。 -->
+  <hal format="aidl">
+    <name>android.hardware.drm</name>
+    <version>1</version>
+    <fqname>IDrmFactory/widevine</fqname>
+  </hal>
+</manifest>

@@ -1,0 +1,47 @@
+# 通过证据：in-tree 名单由清单声明（6 项），03 产出 10 个 .ko 并做符号版本校验
+# 采集时间 2026-10-28，原始日志 out/tmp/modules-build2.log
+
+## 1) 名单来自清单（rom.lineage.kernel.in-tree-modules），不再是引擎默认表
+$ python3 -c "import json;print(json.load(open('manifest/flyme/m22/baselines/12.5.0.0A.json'))['rom']['lineage']['kernel']['in-tree-modules'])"
+['virtio_console.ko', 'rfkill.ko', 'cfg80211.ko', 'mac80211.ko', 'mac80211_hwsim.ko', 'libarc4.ko']
+
+## 2) 实跑（名单 6 项、配方随输入变化）
+$ ./out/bin/cdh device build m22 --only 03_build_modules
+==> [步骤 0] 解析计划
+    内核产物:   out/kernel/lineage-23-6.12（release 6.12.81-4k-cdh）
+    内核配方:   lineage-23-6.12-cdh-eef9316b0b57
+    源码:       kernels/lineage-23-6.12（HEAD bccd296879a5）
+    配置片段:   build/02_build_kernel/lineage-kernel.config
+    外部模块:   device_info, goodix_fingerprint, input_identity, virtio_media
+    in-tree:    virtio_console.ko, rfkill.ko, cfg80211.ko, mac80211.ko, mac80211_hwsim.ko, libarc4.ko
+    构建镜像:   ghcr.io/feicong/droid-ddk:android16-6.12
+    并行度:     10
+    LOCALVERSION: -4k-cdh
+    缓存配方:   lineage-23-6.12-cdh-9669bd33c849（原 201adb120001，名单变→配方变）
+    构建卷:     cdh-kernel-lineage-23-6.12-cdh-eef9316b0b57
+...
+[ok] mac80211.ko: 323 个符号版本一致
+[ok] mac80211_hwsim.ko: 204 个符号版本一致
+[ok] rfkill.ko: 58 个符号版本一致
+[ok] virtio_console.ko: 100 个符号版本一致
+==> [步骤 5] 写模块清单与校验和
+==> [步骤 6] 发布模块产物
+[ok] 模块构建完成: out/kernel/lineage-23-6.12/modules（10 个 .ko）
+[ok] 已完成
+
+## 3) 产物与下游消费
+$ ls out/kernel/lineage-23-6.12/modules
+SHA256SUMS  build-recipe.txt  modules-log.txt
+cfg80211.ko  libarc4.ko  mac80211.ko  mac80211_hwsim.ko  rfkill.ko  virtio_console.ko
+device_info.ko  goodix_fingerprint.ko  input_identity.ko  virtio_media.ko
+
+$ ./out/bin/cdh device build m22 --only 08_build_vendor_dlkm
+[ok] 基线件已就位: /etc/build.prop（878 B / 46cce3a89624，标签 u:object_r:vendor_configs_file:s0）
+==> [步骤 6] debugfs 写入并回读校验
+    输入: 15 个文件（模块 10 + 索引 4 + build.prop /etc/build.prop）
+[ok] 写入 15 个文件，回读 15/15 内容一致
+[ok] vendor_dlkm.img 构建完成: out/devices/flyme/m22/12.5.0.0A/img/vendor_dlkm.img（15831040 字节，sha256 ebecf4588d5c）
+
+## 4) 单测
+$ cd build && go test ./internal/kbuild/
+ok  	cloud-phone-hub/engine/build/internal/kbuild

@@ -1,0 +1,69 @@
+==========================================
+=== Building all 6 modules on 5.10 (cdh-kernel-5.10-cdh-77627c213cec) ===
+==========================================
+--- [cdh_redirect] ---
+--- [device_info] ---
+--- [goodix_fingerprint] ---
+--- [input_identity] ---
+--- [virtio_media] ---
+--- [kernelsu] ---
+kernelsu: 应用 0001-shell-profile.patch
+kernelsu: 应用 0002-kernel-6.9-tracepoint-prio.patch
+kernelsu: 应用 0003-ksym-shim.patch
+-- KernelSU version: 32680
+>>> Built .ko files and vermagic:
+  cdh_redirect.ko: 5.10.270-4k-cdh SMP preempt mod_unload modversions aarch64
+  cdh_device_info.ko: 5.10.270-4k-cdh SMP preempt mod_unload modversions aarch64
+  cdh_goodix_fingerprint.ko: 5.10.270-4k-cdh SMP preempt mod_unload modversions aarch64
+  cdh_input_identity.ko: 5.10.270-4k-cdh SMP preempt mod_unload modversions aarch64
+  kernelsu.ko: 5.10.270-4k-cdh SMP preempt mod_unload modversions aarch64
+  cdh_media.ko: 5.10.270-4k-cdh SMP preempt mod_unload modversions aarch64
+
+==========================================
+=== Building all 6 modules on 6.1 (kernels/6.1) ===
+==========================================
+>>> Built .ko files and vermagic:
+  cdh_redirect.ko: 6.1.168-4k-g9bb44cf2db60 SMP preempt mod_unload aarch64
+  cdh_device_info.ko: 6.1.168-4k-g9bb44cf2db60 SMP preempt mod_unload aarch64
+  cdh_goodix_fingerprint.ko: 6.1.168-4k-g9bb44cf2db60 SMP preempt mod_unload aarch64
+  cdh_input_identity.ko: 6.1.168-4k-g9bb44cf2db60 SMP preempt mod_unload aarch64
+  kernelsu.ko: 6.1.168-4k-g9bb44cf2db60 SMP preempt mod_unload aarch64
+  cdh_media.ko: 6.1.168-4k-g9bb44cf2db60 SMP preempt mod_unload aarch64
+
+==========================================
+=== Building all 6 modules on 6.6 (cdh-kernel-lineage-22-6.6-cdh-4f2152cbe2de) ===
+==========================================
+>>> Built .ko files and vermagic:
+  cdh_redirect.ko: 6.6.127-4k-cdh SMP preempt mod_unload modversions aarch64
+  cdh_device_info.ko: 6.6.127-4k-cdh SMP preempt mod_unload modversions aarch64
+  cdh_goodix_fingerprint.ko: 6.6.127-4k-cdh SMP preempt mod_unload modversions aarch64
+  cdh_input_identity.ko: 6.6.127-4k-cdh SMP preempt mod_unload modversions aarch64
+  kernelsu.ko: 6.6.127-4k-cdh SMP preempt mod_unload modversions aarch64
+  cdh_media.ko: 6.6.127-4k-cdh SMP preempt mod_unload modversions aarch64
+
+==========================================
+=== Building all 6 modules on 6.12 (cdh-kernel-lineage-23-6.12-cdh-b4fe1c987b3a) ===
+==========================================
+>>> Built .ko files and vermagic:
+  cdh_redirect.ko: 6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64
+  cdh_device_info.ko: 6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64
+  cdh_goodix_fingerprint.ko: 6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64
+  cdh_input_identity.ko: 6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64
+  kernelsu.ko: 6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64
+  cdh_media.ko: 6.12.81-4k-cdh SMP preempt mod_unload modversions aarch64
+
+==========================================
+=== Building all 6 modules on 6.18 (kernels/6.18) ===
+==========================================
+>>> Built .ko files and vermagic:
+  cdh_redirect.ko: 6.18.32-4k-g604b22fb250f SMP preempt mod_unload aarch64
+  cdh_device_info.ko: 6.18.32-4k-g604b22fb250f SMP preempt mod_unload aarch64
+  cdh_goodix_fingerprint.ko: 6.18.32-4k-g604b22fb250f SMP preempt mod_unload aarch64
+  cdh_input_identity.ko: 6.18.32-4k-g604b22fb250f SMP preempt mod_unload aarch64
+  kernelsu.ko: 6.18.32-4k-g604b22fb250f SMP preempt mod_unload aarch64
+  cdh_media.ko: 6.18.32-4k-g604b22fb250f SMP preempt mod_unload aarch64
+
+=== Go Unit Tests ===
+ok  	cloud-phone-hub/engine/build/internal/modmeta	1.391s
+ok  	cloud-phone-hub/engine/build/02_build_kernel	1.229s
+ok  	cloud-phone-hub/engine/build/03_build_modules	1.821s

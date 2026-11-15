@@ -1,0 +1,13 @@
+# cdh_redirect：路径重定向模块（前向 getname_flags + 逆向 proc_pid_readlink）
+MODULE_NAME := cdh_redirect
+$(MODULE_NAME)-objs := \
+	core/main.o \
+	core/rules.o \
+	hook/namei.o \
+	hook/readlink.o \
+	hook/mountinfo.o \
+	hook/maps.o
+
+obj-m += $(MODULE_NAME).o
+
+ccflags-y += -I$(src)/include

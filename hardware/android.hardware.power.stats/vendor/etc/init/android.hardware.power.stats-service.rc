@@ -1,0 +1,18 @@
+# engine/vendor 自研 power.stats HAL（虚拟 HAL）：无能量计，六个查询方法回空数组。
+#
+# 为什么 disabled + on post-fs-data 显式 start，而不是 class hal 自动起：
+#   该实例未被 VINTF 声明（见模块头注释），没有任何框架组件会在开机关键路径上等它；
+#   显式在 post-fs-data 启动既保证 /vendor 与 /dev/binder 就绪，又不会进入 init 的
+#   class 批量启动窗口，避免"服务起不来 → 每秒重试"拖慢开机。
+# SELinux：复用底座标准域 hal_power_stats_default（plat 已给该域完整授权）；
+#   可执行标签由 07_build_vendor 步骤 6b 按本文件的 seclabel 自动补 _exec 规则。
+service vendor.power.stats-default /vendor/bin/hw/android.hardware.power.stats-service
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_power_stats_default:s0
+    interface aidl android.hardware.power.stats.IPowerStats/default
+    disabled
+
+on post-fs-data
+    start vendor.power.stats-default

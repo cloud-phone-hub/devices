@@ -1,0 +1,168 @@
+=== 实机 shell 改前基线 (batch2-pre.log) ===
+=== stat /data ===
+  File: "/data"
+    ID: 0eb8a9afe46d9c1d Namelen: 255    Type: ext3/4
+Block Size: 4096    Fundamental block size: 4096
+Blocks: Total: 27868855	Free: 24437120	Available: 24143964
+Inodes: Total: 7233536	Free: 7218547
+=== /proc/mounts ===
+tmpfs /dev tmpfs rw,seclabel,nosuid,relatime,mode=755 0 0
+tmpfs /mnt tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755,gid=1000 0 0
+tmpfs /mnt/installer tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755,gid=1000 0 0
+tmpfs /mnt/androidwritable tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755,gid=1000 0 0
+tmpfs /apex tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755 0 0
+tmpfs /bootstrap-apex tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755 0 0
+tmpfs /linkerconfig tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755 0 0
+tmpfs /bootstrap-apex/apex-info-list.xml tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755 0 0
+tmpfs /tmp tmpfs rw,seclabel,relatime 0 0
+/dev/block/vda5 /metadata ext4 rw,seclabel,nosuid,nodev,noatime,nodioread_nolock,discard,nodelalloc,commit=1,data=journal 0 0
+tmpfs /storage tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755,gid=1000 0 0
+/dev/block/dm-48 /data ext4 rw,seclabel,nosuid,nodev,noatime,discard 0 0
+tmpfs /linkerconfig tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755 0 0
+tmpfs /data_mirror tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=700,gid=1000 0 0
+tmpfs /apex/apex-info-list.xml tmpfs rw,seclabel,nosuid,nodev,noexec,relatime,mode=755 0 0
+vold.has_compress (pre aligner diff): [{'level': 'state', 'path': 'props.vold.has_compress', 'base': '0', 'target': '1'}]
+
+=== diff/storage.json summary (pre) ===
+{"identity": 97, "capability": 0, "state": 114, "availability": 0, "fatal": 97}
+sample /data blocks/files/totalMb/fsid diffs (pre):
+[
+ {
+  "level": "identity",
+  "path": "mountStatvfs[path=/].statvfs.fsid",
+  "base": "65057",
+  "target": "64770"
+ },
+ {
+  "level": "identity",
+  "path": "mountStatvfs[path=/data].statvfs.blocks",
+  "base": 28079608,
+  "target": 27868855
+ },
+ {
+  "level": "identity",
+  "path": "mountStatvfs[path=/data].statvfs.files",
+  "base": 13511677,
+  "target": 7233536
+ },
+ {
+  "level": "identity",
+  "path": "mountStatvfs[path=/data].statvfs.fsid",
+  "base": "65105",
+  "target": "-1986760211985553000"
+ },
+ {
+  "level": "identity",
+  "path": "mountStatvfs[path=/data].statvfs.totalMb",
+  "base": 109686,
+  "target": 108863
+ },
+ {
+  "level": "identity",
+  "path": "mountStatvfs[path=/storage/emulated/0].statvfs.blocks",
+  "base": 28079608,
+  "target": 27868855
+ },
+ {
+  "level": "identity",
+  "path": "mountStatvfs[path=/storage/emulated/0].statvfs.files",
+  "base": 13511677,
+  "target": 7233536
+ },
+ {
+  "level": "identity",
+  "path": "mountStatvfs[path=/storage/emulated/0].statvfs.totalMb",
+  "base": 109686,
+  "target": 108863
+ },
+ {
+  "level": "identity",
+  "path": "mountStatvfs[path=/system].statvfs.fsid",
+  "base": "65057",
+  "target": "64770"
+ },
+ {
+  "level": "identity",
+  "path": "mountStatvfs[path=/vendor].statvfs.fsid",
+  "base": "65059",
+  "target": "64773"
+ },
+ {
+  "level": "identity",
+  "path": "storagePaths[path=/data/system/users/0].statvfs.blocks",
+  "base": 28079608,
+  "target": 27868855
+ },
+ {
+  "level": "identity",
+  "path": "storagePaths[path=/data/system/users/0].statvfs.files",
+  "base": 13511677,
+  "target": 7233536
+ }
+]
+=== /metadata & /data superOptions/fsType sample (pre proc diff) ===
+[
+ {
+  "level": "state",
+  "path": "mountinfo.entries[mountPoint=/data].dev",
+  "base": "254:81",
+  "target": "253:48"
+ },
+ {
+  "level": "identity",
+  "path": "mountinfo.entries[mountPoint=/data].fsType",
+  "base": "f2fs",
+  "target": "ext4"
+ },
+ {
+  "level": "identity",
+  "path": "mountinfo.entries[mountPoint=/data].source",
+  "base": "/dev/block/dm-81",
+  "target": "/dev/block/dm-48"
+ },
+ {
+  "level": "capability",
+  "path": "mountinfo.entries[mountPoint=/data].superOptions",
+  "base": "rw,lazytime,seclabel,background_gc=on,gc_merge,discard,discard_unit=block,user_xattr,inline_xattr,acl,inline_data,inline_dentry,noflush_merge,barrier,extent_cache,mode=adaptive,active_logs=6,reserve_root=134217,reserve_node=0,resuid=0,resgid=1065,inlinecrypt,alloc_mode=default,checkpoint_merge,fsync_mode=nobarrier,memory=normal,errors=continue,lookup_mode=perf",
+  "target": "rw,seclabel,discard"
+ },
+ {
+  "level": "state",
+  "path": "mountinfo.entries[mountPoint=/metadata].dev",
+  "base": "8:46",
+  "target": "254:5"
+ },
+ {
+  "level": "identity",
+  "path": "mountinfo.entries[mountPoint=/metadata].source",
+  "base": "/dev/block/sdc14",
+  "target": "/dev/block/vda5"
+ },
+ {
+  "level": "capability",
+  "path": "mountinfo.entries[mountPoint=/metadata].superOptions",
+  "base": "rw,seclabel,discard",
+  "target": "rw,seclabel,nodioread_nolock,discard,nodelalloc,commit=1,data=journal"
+ }
+]
+=== partitionFsid (pre ids diff) ===
+[
+ {
+  "level": "capability",
+  "path": "partitionFsid.cache",
+  "base": "65105",
+  "target": "-1986760211985553000"
+ },
+ {
+  "level": "capability",
+  "path": "partitionFsid.data",
+  "base": "65105",
+  "target": "-1986760211985553000"
+ },
+ {
+  "level": "capability",
+  "path": "partitionFsid.system",
+  "base": "65057",
+  "target": "64770"
+ }
+]

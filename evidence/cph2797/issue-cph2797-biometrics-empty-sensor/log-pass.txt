@@ -1,0 +1,28 @@
+# 通过现场：实例 13（fakefingerprint 变体：1 块占位传感器 + BnSession 全 no-op）
+# 日志全量：out/core/daemon/runtime/cph2797_16.0.8.301_EX01/13/qemu.log（约 26 万行）
+
+# 计数（命令 -> 值）：
+#   grep -c "ArrayIndexOutOfBoundsException"        13/qemu.log -> 0   （实例 11 为 82）
+#   grep -c "no fingerprint sensor"                 13/qemu.log -> 0   （实例 12 为 21）
+#   grep -c "FingerprintHandler"                    13/qemu.log -> 0   （实例 12 为 11）
+#   grep -c "FATAL EXCEPTION IN SYSTEM PROCESS"     13/qemu.log -> 0   （实例 11/12 为 40/11）
+#   grep -c "START com.android.internal.os.ZygoteInit" 13/qemu.log -> 1 （首轮 system_server 未被指纹打死）
+
+# 1）指纹不再抛异常：框架侧不再出现 FATAL，指纹相关只剩 init 解析 rc / 包注册
+init: Parsing file /vendor/etc/init/android.hardware.biometrics.fingerprint-service.rc...
+OsFeatureConfiguration: Feature file /system_ext/etc/permissions/vendor-oplus-hardware-biometrics-fido.xml
+
+# 2）启动进度越过指纹（此前实例 11/12 连开始都走不完）
+$ grep -o "OnBootPhase_[0-9]*" 13/qemu.log | sort -u
+OnBootPhase_10 OnBootPhase_100 OnBootPhase_200 OnBootPhase_480 OnBootPhase_500
+# 实例 13 停在 _500 是下一个卡点 power.stats（见 #80），与指纹无关
+
+# 3）实例 15（同一镜像 + power.stats/contexthub 修复）达成 boot completed
+I boot_progress_enable_screen: 68564
+init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:2268)
+$ getprop sys.boot_completed
+1
+$ dumpsys activity activities | grep topResumedActivity
+      topResumedActivity=ActivityRecord{... u0 com.android.launcher/.Launcher t4}
+$ dumpsys activity activities | grep topResumedActivity   # am start -a android.settings.SETTINGS 之后
+      topResumedActivity=ActivityRecord{... u0 com.android.settings/com.oplus.settings.feature.homepage.OplusSettingsHomepageActivity t5}

@@ -1,0 +1,27 @@
+=== [修复前：2026-11-14 P1 Batch-3 前差异日志（batch3-pre-diffs/diff/services.json）] ===
+summary: {'identity': 0, 'capability': 89, 'state': 1, 'availability': 0, 'fatal': 89}
+serviceList.count | base: 471 | target: 390
+
+# 1) 6 个通用 AIDL HAL 缺失
+serviceList.services.android.hardware.boot.IBootControl/default | base: [] | target: <缺>
+serviceList.services.android.hardware.memtrack.IMemtrack/default | base: [] | target: <缺>
+serviceList.services.android.hardware.power.IPower/default | base: [] | target: <缺>
+serviceList.services.android.hardware.soundtrigger3.ISoundTriggerHw/default | base: [] | target: <缺>
+serviceList.services.android.hardware.usb.IUsb/default | base: [] | target: <缺>
+serviceList.services.android.hardware.usb.gadget.IUsbGadget/default | base: [] | target: <缺>
+
+# 2) AAudio 与 NeuralNetworks 实例缺失
+serviceList.services.media.aaudio | base: [aaudio.IAAudioService] | target: <缺>
+serviceList.services.android.hardware.neuralnetworks.IDevice/mtk-neuron_shim | base: [android.hardware.neuralnetworks.IDevice] | target: <缺>
+
+# 3) 22 个 Radio / MtkRadioEx 多槽占位缺失
+serviceList.services.android.hardware.radio.ims.IRadioIms/slot1 | target: <缺>
+serviceList.services.android.hardware.radio.ims.IRadioIms/slot2 | target: <缺>
+serviceList.services.android.hardware.radio.modem.IRadioModem/{imsSlot1,imsSlot2,se1,se2} | target: <缺>
+serviceList.services.android.hardware.radio.network.IRadioNetwork/{imsSlot1,imsSlot2} | target: <缺>
+serviceList.services.android.hardware.radio.sap.ISap/{slot1,slot2} | target: <缺>
+serviceList.services.android.hardware.radio.sim.IRadioSim/{imsSlot1,imsSlot2,se1,se2} | target: <缺>
+serviceList.services.android.hardware.radio.voice.IRadioVoice/{imsSlot1,imsSlot2} | target: <缺>
+serviceList.services.vendor.mediatek.hardware.mtkradioex.dch.IMtkRadioExDc/{slot1,slot2} | target: <缺>
+serviceList.services.vendor.mediatek.hardware.mtkradioex.ims.IMtkRadioExIms/{slot1,slot2} | target: <缺>
+serviceList.services.vendor.mediatek.hardware.mtkradioex.rcs.IMtkRadioExRcs/{slot1,slot2} | target: <缺>

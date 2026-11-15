@@ -1,0 +1,51 @@
+=== 1. device-checker run-00245 (修改前 H1_criticalSystemServicesAndIfaaReady = false) ===
+{
+  "runId": "run-00245",
+  "device": "df809591a4e085ae-cloud",
+  "scoreSummary": {
+    "failedItems": [
+      "H1_criticalSystemServicesAndIfaaReady"
+    ],
+    "passed": 31,
+    "total": 32
+  },
+  "goldScorecard": {
+    "H1_criticalSystemServicesAndIfaaReady": false,
+    "H2_keystoreHwSignAndSepolicyClean": true
+  },
+  "packageServiceSecurity": {
+    "systemServices": {
+      "allCriticalServicesPresent": false,
+      "missingCriticalServices": [
+        "app_integrity",
+        "network_score",
+        "oem_lock",
+        "persistent_data_block",
+        "secure_element",
+        "system_update"
+      ]
+    },
+    "strongIds": {
+      "ifaaTee": {
+        "bridgeSupported": true,
+        "error": "ifaa_Empty",
+        "ifaaTeeReady": false,
+        "responseLength": 0
+      }
+    }
+  }
+}
+
+=== 2. SELinux 与系统服务诊断日志 (修改前) ===
+$ adb -s 127.0.0.1:5911 shell "getprop ro.frp.pst; service list | grep -E 'oem_lock|persistent_data_block|mlipay'"
+(空输出：ro.frp.pst 被 build-prop-unsets 移除，SystemServer 跳过启动 PersistentDataBlockService 与 OemLockService；无 IMlipayService/default)
+
+$ adb -s 127.0.0.1:5911 shell "dmesg | grep -E 'avc:.*service_manager|avc:.*mlipay'"
+avc:  denied  { find } for pid=4312 uid=10248 name=app_integrity scontext=u:r:untrusted_app:s0:c248,c256,c512,c768 tcontext=u:object_r:app_integrity_service:s0 tclass=service_manager permissive=0
+avc:  denied  { find } for pid=4312 uid=10248 name=network_score scontext=u:r:untrusted_app:s0:c248,c256,c512,c768 tcontext=u:object_r:network_score_service:s0 tclass=service_manager permissive=0
+avc:  denied  { find } for pid=4312 uid=10248 name=secure_element scontext=u:r:untrusted_app:s0:c248,c256,c512,c768 tcontext=u:object_r:secure_element_service:s0 tclass=service_manager permissive=0
+avc:  denied  { find } for pid=4312 uid=10248 name=system_update scontext=u:r:untrusted_app:s0:c248,c256,c512,c768 tcontext=u:object_r:system_update_service:s0 tclass=service_manager permissive=0
+
+$ adb -s 127.0.0.1:5911 logcat -d | grep -iE "Mlipay|IFAA"
+E MlipayService: vendor.xiaomi.hardware.mlipay.IMlipayService/default is null
+E IFAAService: processCmdV2 returned null or empty
