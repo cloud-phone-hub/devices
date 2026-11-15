@@ -83,3 +83,45 @@ $ git -C devices status --porcelain
 $ cd agent && go build ./...
 build OK
 ```
+
+## 5. 远端仓库创建 + 首次推送（2026-11-15）
+
+```
+$ curl -s -X POST https://api.github.com/orgs/cloud-phone-hub/repos \
+    -d '{"name":"devices","private":false,"auto_init":false}'
+HTTP=201  cloud-phone-hub/devices  private=False  default=main
+
+$ cd devices && git init -b main
+在 /Volumes/work/cloud-phone-hub/devices/.git/ 初始化空的 Git 仓库
+$ git remote add origin git@github.com:cloud-phone-hub/devices.git
+$ git config core.autocrlf false     # 证据日志含 CRLF，禁止提交时改写字节
+$ git add -A && git commit -m "初始化 devices 仓库：机型三表、自研 HAL、外部内核模块与六段式证据"
+a2c882f 初始化 devices 仓库：机型三表、自研 HAL、外部内核模块与六段式证据
+$ git ls-files | wc -l
+1589
+
+$ git push -u origin main
+To github.com:cloud-phone-hub/devices.git
+ * [new branch]      main -> main
+
+$ git ls-remote origin
+a2c882fe2e058185ea614611c291acf1ecec52b8	HEAD
+a2c882fe2e058185ea614611c291acf1ecec52b8	refs/heads/main
+$ git ls-tree -r --name-only origin/main | wc -l
+1589
+
+$ git clone --depth 1 git@github.com:cloud-phone-hub/devices.git <out/agent/tmp>/devices-clone-check
+正克隆到 'devices-clone-check'...      # 退出码 0
+$ ls devices-clone-check
+evidence  hardware  manifest  modules
+$ git -C devices-clone-check status --porcelain
+（空）
+```
+
+被 `.gitignore` 挡在仓库外、本地仍照常可用：
+
+- `kernels/`（六棵内核树 + patches，约 17 GB）——由 `kernel.xml` 作为嵌套项目声明；
+- `modules/kernelsu/source/`——KernelSU 上游检出，同样由 `kernel.xml` 嵌套声明；
+- `hardware/android.service.daemon/src/{resetprop/external,target}/`——该子树上游自带的
+  `.gitignore`（`target/`、`resetprop/external/`、`*.a`）的口径，仓库不含这批 vendor 内容。
+

@@ -51,10 +51,19 @@ manifest 是独立于磁盘目录的声明源，前几轮只搬了目录、同�
 - 同形态沙盒（父 `devices` + 子 `devices/kernels/5.10`，父 `.gitignore` 排除 `kernels/`）
   实跑 `repo sync` 成功，`repo status` 与父仓库 `git status` 均为空；
 - `cd agent && go build ./...` 通过（本改动不触及代码）。
+- **远端已落地（2026-11-15）**：在 GitHub 组织下创建 `cloud-phone-hub/devices`（public，
+  默认分支 `main`），`devices/` 内 `git init` 后首次提交 `a2c882f` 推送成功；
+  `git ls-remote origin` 与 `origin/main` 同步，远端 1589 个文件，`git clone --depth 1`
+  拉回后 `evidence` / `hardware` / `manifest` / `modules` 四棵目录齐全、工作区干净。
+  该仓库本地提交时显式设 `core.autocrlf=false`，避免证据日志里的 CRLF 被改写。
 
 ## 六、遗留
 
-- `cloud-phone-hub/devices` 仓库尚未在 GitHub 组织创建并推送；本地 `devices/` 仍是普通目录
-  （无 `.git`），需要时在该目录 `git init` 后按 `.gitignore` 首次提交；
-- `devices/hardware`（522 MB，46 棵 HAL 树）入库后体积较大，是否拆分独立仓库留待实际推送时再定；
-- 未做真实远端 `repo sync`（仅 init/解析与本地沙盒 sync），首次推送后需按 manifest 全量同步复核。
+- 未做真实远端 `repo sync`：目前是「manifest 能解析 + 沙盒 sync + 真实远端可克隆」三件事分别
+  验证过，还没有一台干净机器按 `repo init -u <manifest 仓> -m default.xml` 全量同步过
+  `devices` 项目，首次换机时需补这一步；
+- `devices/hardware`（522 MB，46 棵 HAL 树）单仓入库，GitHub 未告警（最大文件远低于 100 MB），
+  但首次 clone 成本偏高，是否拆成独立仓库仍待定；
+- `hardware/android.service.daemon/src/{resetprop/external,target}` 被该子树上游自带的
+  `.gitignore` 排除，仓库里不含这两处 vendor 内容（nanopb、system_properties 本地仍在），
+  换机后需按上游脚本重新拉取。
