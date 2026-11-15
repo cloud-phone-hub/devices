@@ -121,6 +121,7 @@ init 的「后读覆盖先读」盖回；#154：06 的 odm 留档目录名写死
 | 242 | [issue-agent-out-move-to-out-agent](issue-agent-out-move-to-out-agent/solution.md) | agent 产物根从 `agent/out` 迁到仓库根 `out/agent`：`cdha` 的 `agentOutDir`、`dshsdk` 的 `DSH_HOME`、`server/roms.go` 的 `cdh-engine` 回退路径全部改 `<仓库根>/out/agent`；`fsx.Options` 新增 `DenyWriteExempts`，在禁写 `<仓库根>/out` 的同时放行 `out/agent`（`engine/out` 红线不变）；`agent/out` 整体迁移并修正 `nodes.json` / `dsh-tools.patch.yml` / release 记录里的旧绝对路径；文档与 Web 文案同步 | **已闭环**（2026-11-15）：`go build/vet/test ./...` 全绿（含 fsx 例外用例）；新管理台启动输出 `产物与发布根: …/out/agent/dist`、HTTP 200；`agent/out` 不再存在也不再生成。遗留：历史日志/会话里的旧路径不改写；`nodes.json` 的 `local.romsDir` 仍指向 `engine/roms`（#239 遗留，未顺带修改） |
 
 | 243 | [issue-local-node-roms-dir-fix](issue-local-node-roms-dir-fix/solution.md) | 修复 `out/agent/config/nodes.json` 里 `local.romsDir` 遗留的 `engine/roms`：#239 只改了代码默认值与环境变量，磁盘上持久化的节点表仍覆盖默认值，`EffectiveRomsDir()` 因此指向已删除目录；把 `local.romsDir` 改为仓库根 `roms/` 并重启管理台让 `Cluster.Manager` 重新加载 | **已闭环**（2026-11-15）：JSON 可解析且两节点路径均指向各自仓库根 `roms/`；`roms/{devices,lineage}` 存在；重启后 `GET /api/nodes` 返回新路径、`HTTP 200`；`cdha node list` 正常。遗留：远端节点若也存了旧路径需单独核对 |
+| 244 | [issue-drop-engine-dir-and-unify-out-devices](issue-drop-engine-dir-and-unify-out-devices/solution.md) | 消灭 `/Volumes/work/cloud-phone-hub/engine` 目录并同步全仓代码、配置、测试、Web 与文档：工作区根锚定仓库根、`pipeline` / `daemon` / `cdha` 统一输出根为 `out/devices/`（`TempRoot` 落 `out/devices/tmp`、`DeviceDir` 默认 `out/devices/dist`）；流水线 CLI 入口从 `cdh-engine` 升级为 `cdh-pipeline`（删除旧入口与 `out/agent/dist/cdh-engine`）；同步更新 `cluster` / `manifestview` / `tools` / `agent` / `fsx`、`agent/web`、`out/agent/config/{nodes.json,dsh-tools.patch.yml}`、`.trae/mcp.json`、`AGENTS.md`（保留 §2 停用注释）、`TODO.md`、`manifest/default.xml`、`build/justfile`、技能及阶段 README | **已闭环**（2026-11-16）：`cdha` / `cdh-pipeline` / `host-daemon` 编译成功；`go vet ./...`、`go test -count=1 ./...`（51 ok / 14 无测 / 共 65 包）及 `node --check agent/web/app.js` 全通；`cdh-pipeline device list`（40 台）、`device build gold --manifest 15-OS3.0.10.0.VNQCNXM --dry-run`、`host-daemon state`、`cdha tool list`、`cdha node list` 实测正常；活动仓残留扫描零失效引用 |
 
 ## 备注
 
@@ -132,8 +133,8 @@ init 的「后读覆盖先读」盖回；#154：06 的 odm 留档目录名写死
 - **vendor 装配两面**：`vendor.replaces`（厂商原件最终裁决）与 `vendor.lifts`（从别处取件）
   合并成一张表，见 #116；显示栈垫片库由 `cdh-vendor` 现编、07 只消费产物，见 #117
   （07 里原先自己拼 `clang++` 的 `composercompat.go` 已整链删除）。
-- **落点口径**：构建中间件一律落工作区——临时目录由 `engine.Init()` 改 `TMPDIR` 到
-  `<engine>/out/tmp`（`AGENTS.md` 第 7 条），vendor 取件规则落 `device.json` 的
+- **落点口径**：构建中间件一律落工作区——临时目录由 `internal/engine.Init()` 改 `TMPDIR` 到
+  `out/devices/tmp`（`AGENTS.md` 第 7 条），vendor 取件规则落 `device.json` 的
   `vendor.files`（#116）、`/vendor` 重定向规则落 `modules.redirect`（#107/#137），
   清单手写形态见 #138。
 - **`/vendor` 重定向**：外部模块 `cdh_redirect.ko` 的做法见 #107（首发 oriole）与 #108

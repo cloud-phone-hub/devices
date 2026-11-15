@@ -76,7 +76,7 @@
 
 1. `03_build_modules`：baseline 里 `rom.lineage.kernel.modules` 含 `"cdh_redirect"`
    （见 `devices/manifest/google/oriole/baselines/*.json`）→ 对该目录做 `make M=… modules`
-   → `llvm-strip --strip-debug` → 落到 `out/kernel/<tag>/modules/cdh_redirect.ko`。
+   → `llvm-strip --strip-debug` → 落到 `out/devices/kernel/<tag>/modules/cdh_redirect.ko`。
 2. `05_build_vendor_boot`：把模块塞进 **vendor_ramdisk 根级**（initramfs），不是 `/vendor`：
 
    ```
@@ -134,10 +134,11 @@ readlink[vfs]: entries=58904 rets=58904 hits=0 skipped=58904
    且「第 2、3 个参数是 buffer/buflen」的假设要成立。6.1 / 6.6 / 6.12 实测通过；
    注意 6.12 的 `getname_flags()` 已只有两个参数（少了 `empty` 出参），但本模块只取
    返回值，不解析入参，所以不受影响。
-3. **旧的构建二进制静默不注入**：`out/bin/cdh` 没重编时，05 不会打印
+3. **旧的构建二进制静默不注入**：`out/agent/dist/cdh-pipeline` 没重编时，06 不会打印
    `==> 重定向模块: …` 那一行，vendor_ramdisk 里就是没有模块，起机表现为
    `init: Unable to open /lib/modules, skipping module loading.`（实例 21 踩过）。
-   改了 `engine/build/05_build_vendor_boot/` 就要 `cd engine/build && go build -o ../../out/bin/cdh .`。
+   改了 `agent/modules/pipeline/stages/06_build_vendor_boot/` 就要
+   `cd agent && TMPDIR=$PWD/../out/agent/tmp go build -o ../out/agent/dist/cdh-pipeline ./cmd/cdh-pipeline`。
 4. **改 `.ko` 必须重跑 05 → 09 → 11**：模块只在 vendor_boot 里，`patch.img`/`vda.img`
    不带它；只重跑 11 拿不到新模块。按 #101/#102 的经验，`10_pack_super` 对这种机型是 no-op。
    **08 不再往 vendor_dlkm 里塞它**（`08_build_vendor_dlkm` 的 `firstStageModules`）：
@@ -152,7 +153,7 @@ readlink[vfs]: entries=58904 rets=58904 hits=0 skipped=58904
 
 ## 6. 迁一台新机型要做什么
 
-1. 在 `<engine>/manifest/<vendor>/<device>/device.json` 里写 `modules.redirect`
+1. 在 `devices/manifest/<vendor>/<device>/device.json` 里写 `modules.redirect`
    （照抄该机型原内核补丁里的白名单；落点路径按 patch.img 的装法定）。**数组里只放对象
    元素**（一条规则一个），分段标题与「为什么这么改」写进同目录 `README.md` 的
    `modules.redirect` 一节——那份说明与规则本身同等重要，别丢，也别塞回 JSON 数组。

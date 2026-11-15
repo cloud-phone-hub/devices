@@ -27,7 +27,7 @@ MODULE_DIR := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 
 # 源码不在库里，没同步就编不出东西；这里直接报错，比 kbuild 的“找不到目录”好定位。
 ifeq ($(wildcard $(MODULE_DIR)/source/kernel/Kbuild),)
-$(error kernelsu: 缺 source/kernel，先 repo sync 拉取源码（manifest 的 engine/modules/kernelsu/source）)
+$(error kernelsu: 缺 source/kernel，先 repo sync 拉取源码（manifest 的 devices/modules/kernelsu/source）)
 endif
 
 # 云机定制以 patches/*.patch 落地，补丁路径相对本目录（a/source/kernel/…）。

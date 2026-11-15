@@ -1,0 +1,60 @@
+=== 1. 编译、语法检查、vet 与全量 Go 单测 ===
+Command:
+  cd /Volumes/work/cloud-phone-hub/agent && \
+  export TMPDIR=/Volumes/work/cloud-phone-hub/out/agent/tmp && \
+  go build -o ../out/agent/dist/cdha ./cmd/cdha && \
+  go build -o ../out/agent/dist/cdh-pipeline ./cmd/cdh-pipeline && \
+  go build -o ../out/agent/dist/host-daemon ./cmd/host-daemon && \
+  test ! -e ../out/agent/dist/cdh-engine && \
+  test ! -e /Volumes/work/cloud-phone-hub/engine && \
+  /Users/cuimingqiang/.nvm/versions/node/v24.22.3/bin/node --check /Volumes/work/cloud-phone-hub/agent/web/app.js && \
+  go vet ./... && \
+  go test -count=1 ./...
+
+Summary:
+  exit code: 0
+  go test summary: 51 ok, 14 no test files, total 65
+  - cmd/cdha: ok 4.682s
+  - internal/{agent,checker,cluster,daemonctl,dshsdk,eval,event,fsx,llm,manifestview,mcp,obs,proc,release,server,store,tool,tools,view,yamlx}: all ok
+  - modules/daemon/{config,run,test}: all ok
+  - modules/pipeline/cli, modules/pipeline/internal/*, modules/pipeline/stages/{01,03..07,08/core/*,09..13}: all ok
+
+=== 2. 产物二进制确认 ===
+-rwxr-xr-x@ 1 cuimingqiang  staff    14M Nov 16 01:29 /Volumes/work/cloud-phone-hub/out/agent/dist/cdh-pipeline
+-rwxr-xr-x@ 1 cuimingqiang  staff    13M Nov 16 01:29 /Volumes/work/cloud-phone-hub/out/agent/dist/cdha
+-rwxr-xr-x@ 1 cuimingqiang  staff   9.8M Nov 16 01:29 /Volumes/work/cloud-phone-hub/out/agent/dist/host-daemon
+
+=== 3. Live Smoke 检查 ===
+$ ./out/agent/dist/cdh-pipeline device list
+  (exit 0, 共列出 40 个机型条目：1 google/oriole .. 40 motorola/aito)
+
+$ ./out/agent/dist/cdh-pipeline device build gold --manifest 15-OS3.0.10.0.VNQCNXM --dry-run
+==> 设备: Redmi Note 13 5G（redmi/gold）
+==> 清单: out/devices/tmp/db-manifest/redmi/gold/baselines/15-OS3.0.10.0.VNQCNXM.json
+    厂商固件: roms/devices/xiaomi/gold/gold_images_OS3.0.10.0.VNQCNXM_20260715.0000.00_15.0_cn_a9729c6694.tgz
+    lineage 底包: roms/lineage/UTM-VM-lineage-22.2-20261108-UNOFFICIAL-virtio_arm64.zip
+==> 阶段(13): unpack, prepare, build_kernel, build_modules, build_boot, build_vendor_boot, build_odm, build_hardware, build_vendor, build_vendor_dlkm, build_patch, pack_super, pack_vda
+[dry-run] 未执行
+
+$ ./out/agent/dist/host-daemon state
+{
+  "deviceRoot": "/Volumes/work/cloud-phone-hub/out/devices/dist",
+  "runtimeRoot": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime",
+  "qemuRoot": "/Volumes/work/cloud-phone-hub/out/qemu/dist/darwin",
+  ...
+}
+
+$ ./out/agent/dist/cdha tool list
+已启用工具 (13 个):
+  fs.write / fs.edit -> 拦截 out/devices 产物区
+  manifest.show -> 解析 devices/manifest 三表
+  bash.exec -> cdh-pipeline device build/list, TMPDIR/CDH_TEMP_DIR -> out/agent/tmp
+
+$ ./out/agent/dist/cdha node list
+  local          [local] 本机节点 (Local)           roles=[rom-builder runtime-host] host=- engine=/Volumes/work/cloud-phone-hub device=/Volumes/work/cloud-phone-hub/out/devices/dist
+  node-cuimingqiang-pc [ssh  ] cuimingqiang-pc (81.70.30.115) roles=[rom-builder runtime-host] host=81.70.30.115 engine=/home/workspace/cloud-phone-hub device=/home/workspace/cloud-phone-hub/images
+
+=== 4. 活动仓残留扫描 ===
+Residual matches: 1
+  agent/internal/cluster/cluster.go:652: if [ -x "${ENG_ROOT}/out/agent/dist/cdh-pipeline" ] || [ -x "${DEPLOY_DIR}/cdh-pipeline" ] || [ -x "%s/dist/cdh-pipeline
+（第 652 行末尾保留了远端旧节点兜底探测 || [ -x "${ENG_ROOT}/out/bin/cdh" ]，其余活动代码与文档无失效引用。）

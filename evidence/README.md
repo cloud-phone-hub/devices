@@ -24,7 +24,7 @@
 | `sun/` | Honor Magic7 RSR Porsche Design（MagicOS 9 / 骁龙 SM8750 `sun` / Android 15，lineage-22.2 + kernel 6.6） | 1 | #171 | [sun/README.md](sun/README.md) |
 | `g1170/` | BLU G75（MT6768 / Helio G81 / Coosea ODM Android 15，lineage-22.2 + kernel 6.6） | 1 | #185 | [g1170/README.md](g1170/README.md) |
 | `rmx6688/` | realme GT7（真我 GT7 国行 / MT6991 天玑 9400+ / ColorOS 15.0.2 Realme UI 6.0 / Android 15，lineage-22.2 + kernel 6.6） | 1 | #194 | [rmx6688/README.md](rmx6688/README.md) |
-| `common/` | 引擎级 / 跨机型（构建流水线、选核、vendor 装配口径、内核与模块机制、运行侧验收工具、选核口径、QEMU 触控与 VNC 推流、设备侧目录迁移、ROM 根迁移、repo manifest 收口、devices 仓库声明、agent 产物根迁移、节点 ROM 根配置修复） | 92 | #102、#107、#108、#116、#117、#119~#122、#124、#134、#137、#138、#139、#141~#145、#147、#148、#152、#154、#156、#157、#163、#167、#168、#170、#172~#184、#186~#193、#196、#199、#202~#221、#223~#226、#228~#243 | [common/README.md](common/README.md) |
+| `common/` | 引擎级 / 跨机型（构建流水线、选核、vendor 装配口径、内核与模块机制、运行侧验收工具、选核口径、QEMU 触控与 VNC 推流、设备侧目录迁移、ROM 根迁移、repo manifest 收口、devices 仓库声明、agent 产物根迁移、节点 ROM 根配置修复、消灭 engine 目录与统一 out/devices 产物根） | 93 | #102、#107、#108、#116、#117、#119~#122、#124、#134、#137、#138、#139、#141~#145、#147、#148、#152、#154、#156、#157、#163、#167、#168、#170、#172~#184、#186~#193、#196、#199、#202~#221、#223~#226、#228~#244 | [common/README.md](common/README.md) |
 
 **分组判据**：条目 `solution.md` 首部的「设备/机型」行指向哪台机就进哪个目录；同一条改动
 同时落在 3 台以上机型、或结论对所有机型成立的，进 `common/`。`gold` 与 `note13-5G-15` 是

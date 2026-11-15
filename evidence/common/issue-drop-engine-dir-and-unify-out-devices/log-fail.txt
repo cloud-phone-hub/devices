@@ -1,0 +1,32 @@
+=== 改造前核心现场与残留引用抽样（2026-11-16）===
+
+1. 目录现状：
+   - /Volumes/work/cloud-phone-hub/engine 已删除，输出迁移至 out/devices/。
+   - 旧入口 agent/cmd/cdh-engine 与产物 out/agent/dist/cdh-engine 仍按旧名命名。
+
+2. 运行配置与工具定义残留：
+   - out/agent/config/nodes.json:
+     "engineRoot": "/Volumes/work/cloud-phone-hub/engine"
+     "distDir": "/Volumes/work/cloud-phone-hub/engine/out/dist"
+     "deviceRoot": "/Volumes/work/cloud-phone-hub/engine/out/dist"
+     "engineRoot": "/home/workspace/cloud-phone-hub/engine"
+   - out/agent/config/dsh-tools.patch.yml:
+     --engine-root "/Volumes/work/cloud-phone-hub/engine"
+     cwd: "/Volumes/work/cloud-phone-hub/engine"
+   - .trae/mcp.json:
+     "CLOUD_PHONE_ENGINE_ROOT": "/Volumes/work/cloud-phone-hub/engine"
+     "CLOUD_PHONE_CDH_PATH": "/Volumes/work/cloud-phone-hub/engine/out/bin/cdh"
+
+3. Go 代码与测试夹具残留（代表项）：
+   - agent/cmd/cdha/main.go: --engine-root 仅按 "engine 根目录路径" 注册，未注册 --workspace-root
+   - agent/internal/manifestview/inspector.go: filepath.Join(ins.engineRoot, "..", "roms", "devices") / "agent" / filepath.Join(ins.engineRoot, "out", "vendor")
+   - agent/internal/cluster/cluster.go: EffectiveDistDir="engine/out/dist", EffectiveRomsDir="../roms", Probe/Dispatch/crossCompileEngine 查找 cdh-engine 与 out/tmp
+   - agent/internal/cluster/ssh_wizard.go: 探测 "engine 工程" / "仓库根（engine+devices+roms）" / "out/dist"
+   - agent/internal/{tools/tools_test.go,manifestview/inspector_test.go,agent/testhelpers_test.go,agent/dsh_web_test.go,dshsdk/client_test.go,server/server_test.go,cluster/cluster_test.go}: 测试沙箱路径拼接 "engine" 与 "out"
+   - agent/web/{app.js,index.html}: "工程相对路径 (engine/)"、"engine/out/dist"、placeholder="/data/cdh/engine"
+
+4. 文档与技能残留（代表项）：
+   - AGENTS.md §4/§5/§6/§7: engine/out/roms、engine/out/kernel、<engine>/out/tmp、engine 根定位
+   - agent/README.md、agent/modules/pipeline/README.md、agent/modules/daemon/{README.md,hvc.md}、stages/*/README.md: cdh-engine、../engine/out/bin/cdh、engine/out/dist
+   - .trae/skills/cloud-phone-build/SKILL.md、skills/{aligner-compare,build-device}/SKILL.md: cdh stage run、engine 清单、cdh device list
+   - devices/modules/{cdh_redirect/README.md,kernelsu/{Kbuild,README.md}}、devices/kernels/patches/{README.md,6.12/README.md}: engine/ 仓库路径与 out/bin/cdh

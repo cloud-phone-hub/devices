@@ -78,7 +78,7 @@ kernelsu 需要的额外条件都在 `Kbuild` 里给默认值，而不是让 03 
 `repo sync devices/modules/kernelsu` 拉取。注意两点：
 
 - repo 只接管它自己创建的工作树，**手工 `git clone` 出来的 `source/` 需先移走再 sync**
-  （与 `devices/kernels/` 同处理）；`devices/.gitignore` 已排除该目录，不会误入 engine 仓库。
+  （与 `devices/kernels/` 同处理）；`devices/.gitignore` 已排除该目录，不会误入 devices 仓库。
 - 03 导入模块树时排除 `.git`、`.o`、`.ko`、`.cmd`，卷内是纯工作树；补丁在卷内
   `git apply --check` 通过后才应用，失败即构建失败。
 
@@ -98,14 +98,14 @@ kernelsu 需要的额外条件都在 `Kbuild` 里给默认值，而不是让 03 
 
 ```bash
 # 随 03 构建（清单 modules.external 里声明过 kernelsu，或命令行指定）
-cd agent && go run ./cmd/cdh-engine build-modules --module kernelsu
+cd agent && go run ./cmd/cdh-pipeline build-modules --module kernelsu
 
 # 手工编译（只需要内核源码 + 一个 O= 输出目录，参数全在模块 Kbuild 里）
-mkdir -p /tmp/ksuout && make -C devices/kernels/lineage-22-6.6 O=/tmp/ksuout ARCH=arm64 LLVM=1 gki_defconfig
-make -C devices/kernels/lineage-22-6.6 O=/tmp/ksuout ARCH=arm64 LLVM=1 M=devices/modules/kernelsu modules
+mkdir -p out/devices/tmp/ksuout && make -C devices/kernels/lineage-22-6.6 O="$PWD/out/devices/tmp/ksuout" ARCH=arm64 LLVM=1 gki_defconfig
+make -C devices/kernels/lineage-22-6.6 O="$PWD/out/devices/tmp/ksuout" ARCH=arm64 LLVM=1 M=devices/modules/kernelsu modules
 ```
 
-产物发布到 `out/kernel/<tag>/modules/kernelsu.ko`（已 `llvm-strip --strip-debug`，并做
+产物发布到 `out/devices/kernel/<tag>/modules/kernelsu.ko`（已 `llvm-strip --strip-debug`，并做
 `Module.symvers` 符号 CRC 校验）。
 
 2026-11-02 在 `lineage-22-6.6`（6.6.127）+ `droid-ddk:android15-6.6` 上实测通过：构建日志
