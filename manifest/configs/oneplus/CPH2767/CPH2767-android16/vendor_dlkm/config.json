@@ -1,0 +1,9 @@
+{
+  "baseline-build-prop": {
+    "label": "u:object_r:vendor_configs_file:s0",
+    "length": 884,
+    "path": "/etc/build.prop",
+    "sha256": "5c0912b27c23f05e56a5111dd741982ee010118d998cd80b8472e5b8081d543d"
+  },
+  "note": "build-vendor_dlkm props 基线：官方 vendor_dlkm.img（ext4，e2cp 提取）内 /etc/build.prop（oplus/ossi 真实设备身份），覆盖 lineage 基座渲染的 VirtIO 版本。"
+}

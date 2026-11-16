@@ -1,0 +1,6 @@
+# FRP 分区路径补建：官方 vendor/build.prop 声明 ro.frp.pst=/dev/block/by-name/frp，
+# 将其软链至云机未占用的 misc 分区（vda3，DAC 0660 root:system 由 etc/ueventd.rc 设定），
+# 避免 PersistentDataBlockService 与 TestHarnessModeService 在 phase 500 抛 EACCES/invalid checksum。
+on post-fs-data
+    mkdir /dev/block/by-name 0755 root root
+    symlink /dev/block/vda3 /dev/block/by-name/frp

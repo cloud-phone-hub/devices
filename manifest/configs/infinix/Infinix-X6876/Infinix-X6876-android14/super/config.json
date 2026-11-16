@@ -1,0 +1,20 @@
+{
+  "images": [
+    "odm.img",
+    "odm_dlkm.img",
+    "product.img",
+    "system.img",
+    "system_dlkm.img",
+    "system_ext.img",
+    "tr_carrier.img",
+    "tr_company.img",
+    "tr_manifest.img",
+    "tr_misc.img",
+    "tr_overlayfs.img",
+    "tr_preload.img",
+    "tr_product.img",
+    "tr_region.img",
+    "vendor.img",
+    "vendor_dlkm.img"
+  ]
+}

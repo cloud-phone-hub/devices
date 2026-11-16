@@ -1,0 +1,103 @@
+;; m22（MEIZU 22 / Flyme 12.6 / Android 16 / 高通 sun）机型层 SELinux 片段。
+;;
+;; 由 07_build_vendor 以 marker（;; cdh-patch-begin: vendor_sepolicy.cil）整块追加到
+;; 装配树 /vendor/etc/selinux/vendor_sepolicy.cil；同一 marker 重复执行幂等。
+;;
+;; 注意：本文件不是 m22 vendor 策略的全部。最终那份 vendor_sepolicy.cil 由三段拼成：
+;;   1) lineage 基底随附（含 virtiofs / iso9660 / udf 等版本化属性引用，不可整块替换）；
+;;   2) 本文件（07 用 marker 包住整块追加）；
+;;   3) 09_build_patch 对**基底原文**的 4 条定向改写，声明在
+;;      baselines/12.5.0.0A.json 的 patch.vendor-cil-rewrite：
+;;        ot_rcp 的 (netlink_route_socket (nlmsg))  → nlmsg_write   （1 条）
+;;        ot_rcp 的 allowx permissionx nlmsg        → 删               （2 条）
+;;        kernel_202504 → vendor_firmware_file (system (firmware_load)) → 删 （1 条）
+;;      这 4 条改的都是基底里的语句（vendor/ot_rcp.te、device/mainline/.../kernel.te），
+;;      内核 classmap 没有对应权限位；CIL 又没有「撤回上一句」的语法，追加块删不掉
+;;      它们，所以只能由 09 按 from → to 精确改写（count 不符直接构建失败）。
+;;      生效点是 patch 容器里的 /vendor 副本（09 的 overlay 盖住 vendor.img 同名文件），
+;;      故在 07 改 vendor.img 里的同一文件无效；换底包时必须重扫这 4 条的命中数。
+;;      另一个坑：本追加块里不要原样抄这 4 条语句（哪怕为了举例），追加块会让
+;;      09 的 count 从 1 变 2 → 构建直接失败。
+;;      取证：devices/evidence/m22/issue-m22-vendor-cil-resolve/solution.md（未编号条目）。
+;;
+;; 分工：模块层（devices/hardware/*/sepolicy）放「HAL 自身契约」，与机型无关
+;; ——keymint（/dev/hvc3 + kmsg）、radio（/dev/hvc4 + servicemanager）、wifi（hvc9
+;; scan_profile 与 hvc10 数据面）、media（c2 store）、daemon（pioneer 启动链）、
+;; gnss（/data/vendor/gps/fix 读），以及 perf2 / servicetracker / aw_light /
+;; meizu_charging / sensor_aux / awa.reality / diaghal 这 7 个按原厂 .so 反解的自研
+;; HAL 都在模块层，类型与授权随模块走。本文件只放「没有归属模块」的 m22 事实：
+;;
+;;   1) Flyme framework 会 add 的 1 个框架服务名 realitytap（仅剩的一个名字）。
+;;      它是 RealityTapManagerService 在 system_server 里自己 addService 的（原厂
+;;      service 段也在 system_server），vendor 侧无法实现，故标签与 add/find 授权
+;;      永久留在机型层；查它的客户端按 domain 通配放 find。缺条目时 servicemanager
+;;      兜底标 default_android_service → system_server 的 addService(realitytap)
+;;      被拒 → "Failure starting core service" → system_server 崩溃重启循环。
+;;      与模块层 hal_realitytap_service 区分：那是 vendor.awa.reality 的 AIDL 实例名
+;;      （原厂两个标签同时存在：system_server → realitytap_service (add find)，
+;;      system_app → hal_realitytap_default (binder call transfer)）。
+;;   2) perfservice 读 hwservicemanager.disabled：hwservicemanager 因 VINTF 无 HIDL
+;;      实例被 init 停止（ready 恒为假），perfservice 读不到该属性就落进 libhwbinder
+;;      的 hwservicemanager.ready 死等循环，占住 binder 线程 → BoostFramework 在每次
+;;      handleBindApplication 同步调 setClientBinder → 全系统 ANR 击杀循环。
+;;   3) init 执行落在 vendor_file 兜底标签的 HAL 可执行文件：可执行标签本身已由
+;;      07 步骤 6b 按各模块 rc 的 seclabel 补齐，这条只是「init 对 vendor_file 的
+;;      execute」兜底授权，属权限放大，待实机确认底座对 *_exec 的 execute 授权后删。
+;;   4) FRP 承载块设备：本盘没有 frp 分区，按 ro.frp.pst 打开的是软链到 misc(vda3)
+;;      的节点，绑的是本机 GPT 与机型静态树里的 frp_symlink.rc。
+;;
+;; 平台类型在 vendor CIL 中必须引用版本化影子名（plat_sepolicy_vers.txt=202504），
+;; 故用 {{vers}} 占位，由构建阶段按装好的 vendor/etc/selinux/plat_sepolicy_vers.txt
+;; 替换；平台版本升级时无需改本文件。vendor_file / hal_sensors_default 属 vendor
+;; 底座自带声明，不带版本后缀。
+;;
+;; vendor_perf_service / vendor_perfservice 在本基底（lineage-23.2 virtio）里
+;; **没有**声明（gold 的基底是 lineage + cdh device 树，带 MIUI 侧 perfservice 的
+;; te）。缺声明时 secilc 现场合并直接 "Failed to resolve allow statement"，所以在
+;; 第 1)、2) 段前面自行声明。
+;; vendor_dpmd 曾因 `allow vendor_dpmd hal_idiag_service (find)` 一并声明；diaghal
+;; 收成模块后该 find 由模块层的 `(allow domain vendor_hal_diaghal_service (find))`
+;; 覆盖，本基底也没有 vendor_dpmd 这个进程，声明随之删除。
+(type vendor_perf_service)
+(roletype object_r vendor_perf_service)
+(type vendor_perfservice)
+(roletype object_r vendor_perfservice)
+
+;; ---- 1) Flyme 查询的服务名（无实体，只发标签与最小授权）----
+;; 6 个私有 HAL 名（perf2 / servicetracker / aw_light / meizu_charging /
+;; vendor.awa.reality.IRealityTap / vendor.qti.diaghal.Idiag）不在此段：它们已有
+;; 实体，类型与 find/add 授权由各自的模块层片段给出。
+;; 类型名按 AOSP 框架服务的 *_service 风格（不带项目缩写与 hal_ 前缀，避免与模块层
+;; 的 hal_realitytap_service 撞名）：镜像里的 service_contexts 与运行期 avc 都不应
+;; 出现可辨识的改造痕迹；原厂同名同授权（vendor_sepolicy.cil 里
+;; `system_server → realitytap_service (add find)`）。
+(type realitytap_service)
+(roletype object_r realitytap_service)
+(typeattributeset service_manager_type (realitytap_service))
+;; realitytap 由 RealityTapManagerService 发布，是本段唯一需要 add 的名字。
+(allow system_server_{{vers}} realitytap_service (service_manager (add find)))
+(allow surfaceflinger_{{vers}} vendor_perf_service (service_manager (find)))
+(allow bootanim_{{vers}} vendor_perf_service (service_manager (find)))
+
+;; ---- 2) perfservice 读 hwservicemanager 属性（解除 HIDL 死等）----
+;; 权限集与基座 hal_sensors_default 对 hwservicemanager_prop 的既有规则同款。
+(allow vendor_perfservice hwservicemanager_prop_{{vers}} (file (getattr map open read)))
+
+;; ---- 3) init 执行落在 vendor_file 兜底标签的 HAL 可执行文件 ----
+;; m22 厂商 file_contexts 只给了 .qti/.example/.legacy 变体的 exec 标签
+;; （如 hal_light_default_exec），正式名 android.hardware.lights-service 等文件
+;; 落到 vendor_file 兜底标签；plat 没给 init 对 vendor_file 的 execute，init 启动这些
+;; 服务时报 "cannot execv(...): Permission denied"（avc { execute }，1810 次）。
+;; 后果：lights HAL 永远不来，system_server 的 LightsService$VintfHalCache.get 在
+;; waitForDeclaredService 上阻塞 66s，被 Watchdog 杀掉 → system_server 重启循环。
+;; vendor_file 属 vendor 底座自带声明，不带版本后缀。
+(allow init vendor_file (file (execute)))
+
+;; ---- 4) FRP 承载块设备（pdb 读写 misc 分区）----
+;; 本盘没有 frp 分区，PersistentDataBlockService 按 ro.frp.pst 打开的是软链到
+;; misc(vda3) 的节点（类型 misc_block_device）；plat 只给 system_server 开了
+;; frp_block_device。缺这条时 onStart 初始化线程抛 FileNotFoundException，
+;; waitForInitDoneSignal 等不到信号 → init timeout → system_server 在 boot phase
+;; 500 FATAL 重启循环。软链与 DAC 授权见 vendor/etc/init/frp_symlink.rc
+;; 与 vendor/etc/ueventd.qcom.rc。
+(allow system_server_{{vers}} misc_block_device_{{vers}} (blk_file (open read write append getattr ioctl map lock)))

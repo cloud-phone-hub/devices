@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ss9380（Samsung Galaxy S25 Ultra）vibrator 能力清单（设备独有，随机型 vendor 镜像下发）。
+
+  改值不需要重编 HAL：vibrator 服务启动时读本文件；缺文件/缺属性一律回退
+  编码内默认（见 vibrator_service.cpp 的 VibratorConfig）。
+
+  **结论：本机型不能暴露任何 vibrator id**（下面故意没有 <vibrator> 条目）。
+  详见 devices/evidence/ss9380/issue-ss9380-vendor-hal-configs/solution.md。
+
+  原因：OneUI 的 VibratorManagerService 一旦拿到非空 getVibratorIds()，就会为每个 id 建
+  VibratorController，并在 initVibratorGroup() 里无条件调
+  NativeWrapper.supportsHapticEngine()。该实现在 /system/lib64/libvibratorservice.so 里是：
+    bl  getSehHal()               // 取 aidl::vendor::samsung::hardware::vibrator::ISehVibrator
+    ldr x0, [sp]                  // x0 = sp<ISehVibrator>.get()
+    ldr x8, [x0]                  // 无判空，x0 == nullptr 即 SIGSEGV（fault addr 0x0）
+  而 ISehVibrator 只有官方 /vendor/bin/hw/vendor.samsung.hardware.vibrator-service 注册，
+  本虚拟 vendor 树只实现 AOSP android.hardware.vibrator.IVibrator → 拿到空指针
+  → system_server 在 StartVibratorManagerService 阶段崩溃、zygote 循环重启。
+
+  清单为空时 framework 不建 controller，也就不会去探三星私有 HAL——与本文件引入前
+  （缺文件 → getVibratorIds() 为空）的已验收状态一致；虚拟侧本来不产生真实振动，无能力损失。
+
+  其余属性保留，是把「注册 manager、但零 vibrator」的意图显式化；
+  capabilities / manager-capabilities 一律 0（只报 on/off，不宣称振幅、组合、PWLE）。
+    register-manager        = 是否注册 IVibratorManager（false 时只注册 IVibrator）
+    capabilities            = IVibrator.getCapabilities() 位集（0 = 仅 on/off）
+    manager-capabilities    = IVibratorManager.getCapabilities() 位集
+    composition-delay-max   = 组合振动最大延迟 ms
+    composition-size-max    = 组合振动最大步数
+    <vibrator id>           = getVibratorIds() 暴露的 vibrator 编号
+    <effect name>           = getSupportedEffects() 支持的原语
+-->
+<vibrator-config register-manager="true"
+                 capabilities="0"
+                 manager-capabilities="0"
+                 composition-delay-max="1000"
+                 composition-size-max="256">
+    <!-- 故意为空：加回 <vibrator id="1"/> 会让 system_server 在
+         StartVibratorManagerService 阶段空指针崩溃，见文件头。 -->
+    <effect name="CLICK"/>
+    <effect name="DOUBLE_CLICK"/>
+    <effect name="TICK"/>
+    <effect name="HEAVY_CLICK"/>
+    <effect name="TEXTURE_TICK"/>
+</vibrator-config>

@@ -1,0 +1,39 @@
+# RMX6688（realme GT7 / ColorOS 15.0.2 / Realme UI 6.0 / mt6991）在 virtio 云机上的兼容遮蔽。
+#
+# 注意：bind source 必须写 /mnt/vendorpatch/vendor/etc/compat/... 而非 /vendor/etc/compat/...，
+# 因为 cdh_redirect 不拦截 mount(2) 的 source kern_path()。
+
+on early-init
+    # 1) 遮蔽 OPPO RenderEngine 10-bit/FP16 shader 预编译扩展库（避免 virtio-gpu 不支持 AB30 导致 SF SIGABRT）
+    mount none /mnt/vendorpatch/vendor/etc/compat/renderengine_ext_unavailable.so /system_ext/lib64/librenderengineextimpl.so bind wait
+
+    # 2) 遮蔽官方 /odm 声明但无实现的 virtual audio HAL 片段（RMX6688 文件名为无 _v3 后缀的 manifest_module_virtual_audio.xml）
+    mount none /mnt/vendorpatch/vendor/etc/compat/vintf_empty.xml /odm/etc/vintf/manifest/manifest_module_virtual_audio.xml bind wait
+    mount none /mnt/vendorpatch/vendor/etc/compat/vintf_empty.xml /odm/etc/vintf/manifest/manifest_oplus_virtualdevice_audio_aidl.xml bind wait
+
+    # 3) 遮蔽官方 /odm 双卡专有 RIL/IMS 声明与红外声明，使用我方通用 AOSP Radio HAL
+    mount none /mnt/vendorpatch/vendor/etc/compat/vintf_empty.xml /odm/etc/vintf/telephony_manifest_dsds.xml bind wait
+    mount none /mnt/vendorpatch/vendor/etc/compat/vintf_empty.xml /odm/etc/vintf/telephony_manifest_ssss.xml bind wait
+    mount none /mnt/vendorpatch/vendor/etc/compat/vintf_empty.xml /odm/etc/vintf/manifest/android.hardware.ir-service.xml bind wait
+    mount none /mnt/vendorpatch/vendor/etc/compat/permissions_empty.xml /odm/etc/permissions/android.hardware.consumerir.xml bind wait
+
+    # 4) 遮蔽官方 /odm 声明但无实现的面板、定位、子系统与功耗统计私有 AIDL 片段
+    #    （注：vintf_manifest_displaycolorfeature_aidl.xml 与 manifest_oplus_charger_aidl.xml 保留原厂声明，
+    #     分别由 hwc3-service.drm 与 android.hardware.health-service 同进程实现）
+    mount none /mnt/vendorpatch/vendor/etc/compat/vintf_empty.xml /odm/etc/vintf/manifest/manifest_oplus_displaypanelfeature_aidl.xml bind wait
+    mount none /mnt/vendorpatch/vendor/etc/compat/vintf_empty.xml /odm/etc/vintf/manifest/vintf_manifext_aidl_panelchaplin.xml bind wait
+    mount none /mnt/vendorpatch/vendor/etc/compat/vintf_empty.xml /odm/etc/vintf/manifest/manifest_oplus_location_aidl.xml bind wait
+    mount none /mnt/vendorpatch/vendor/etc/compat/vintf_empty.xml /odm/etc/vintf/manifest/device_manifest_subsys.xml bind wait
+    mount none /mnt/vendorpatch/vendor/etc/compat/vintf_empty.xml /odm/etc/vintf/manifest/android.hardware.power.stats-service.oplus.xml bind wait
+
+    # 5) 停用官方 /odm、/system 与 lineage-22.2 基座中抢注 AIDL 实例或因缺声明/物理芯片反复退出触发 updatable_crashing 的服务
+    stop vendor.face-virtualhal
+    stop vendor.fingerprint-virtualhal
+    stop vendor.power.stats
+    stop nfc_hal_service.tms.aidl
+    stop secure_element_hal_service.aidl
+    stop oplus_esepower_hal_service
+    stop vendor.ir-default
+    stop vendor.gpuserv-default
+    stop magt
+    stop netdiag

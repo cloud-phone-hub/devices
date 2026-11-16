@@ -1,0 +1,9 @@
+{
+  "lineage": [
+    "vendor_a.img",
+    "vendor_dlkm_a.img"
+  ],
+  "official": [
+    "super.img"
+  ]
+}

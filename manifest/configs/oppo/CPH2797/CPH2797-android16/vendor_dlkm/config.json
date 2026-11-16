@@ -1,0 +1,9 @@
+{
+  "baseline-build-prop": {
+    "label": "u:object_r:vendor_configs_file:s0",
+    "length": 884,
+    "path": "/etc/build.prop",
+    "sha256": "837e8eb6ceb4d898d48fd94299a78fb17f67906495c4256bd50a6eb5c4489503"
+  },
+  "note": "08_build_vendor_dlkm 的 props 基线：官方 vendor_dlkm.img 内 /etc/build.prop（CPH2797/OPPO 真实设备身份，884 B），覆盖 lineage 基座渲染的 VirtIO 版本。官方 vendor_dlkm.img 与 vendor/odm/system 一样是 EROFS（15R-16 那台是 ext4），读取须用宿主 dump.erofs（erofs-utils），不能用 debugfs；sha256 已用 dump.erofs --cat 复核一致。"
+}

@@ -1,0 +1,27 @@
+# FRP 分区路径补建：让 PersistentDataBlockService 找得到 ro.frp.pst 指向的节点。
+#
+# 厂商 vendor/build.prop 写 ro.frp.pst=/dev/block/bootdevice/by-name/frp（ColorOS 沿
+# QTI 口径）。本盘 GPT 来自 lineage 底座，只有 /dev/block/by-name（BIOS/EFI/boot/misc/
+# persist/super/vdc），没有 frp 分区，bootdevice/by-name 整个目录都不存在，于是
+# Android 16 的 PDB 在 phase 500 抛异常（popsicle 实测同一条链，日志见
+# devices/evidence/popsicle/issue-ueventd-frp-device-nodes/）：
+#   E PersistentDataBlockService: partition not available?
+#   E PersistentDataBlockService: java.io.FileNotFoundException:
+#       /dev/block/bootdevice/by-name/frp: open failed: ENOENT
+#   E AndroidRuntime: java.lang.RuntimeException: Failed to boot service
+#       com.android.server.pdb.PersistentDataBlockService: onBootPhase threw an exception
+#       during phase 500
+#
+# 处置：把 QTI 路径建出来，软链到本盘未被使用的 misc 分区（vda3）。本盘由 GRUB 引导，
+# 不消费 Android 的 misc/BCB，故用它承载 FRP 数据块，语义上等价于真机把 FRP 放在独立
+# 小分区。post-fs-data 早于 system_server 启动，时序足够。
+#
+# 配套：
+#   * DAC —— /dev/block/vda3 默认 0600 root:root，需 0660 root system，
+#     见 vendor/etc/ueventd.canoe.rc；
+#   * SELinux —— 节点标签是 misc_block_device（plat 只给 system_server 开
+#     frp_block_device），见 sepolicy/vendor_sepolicy.cil。
+on post-fs-data
+    mkdir /dev/block/bootdevice 0755 root root
+    mkdir /dev/block/bootdevice/by-name 0755 root root
+    symlink /dev/block/vda3 /dev/block/bootdevice/by-name/frp

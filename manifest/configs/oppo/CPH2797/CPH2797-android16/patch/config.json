@@ -1,0 +1,25 @@
+{
+  "note": "09_build_patch 对 /vendor/etc/selinux/vendor_sepolicy.cil 的定向改写。CPH2797 官方 plat 策略是 ColorOS 16.0.8.301（Android 16，security_patch 2026-06-01），其 class 表取内核 classmap：没有 Android 15 起在 netlink_route_socket 上新增的 nlmsg 权限，也没有 6.13+ 才有的 system class firmware_load；lineage-23.2 的 vendor 策略（system/sepolicy/vendor/ot_rcp.te）却在用它们，init 现场 secilc 合并直接失败。2026-10-30 实测（实例 1）：`init: /system/bin/secilc: Failed to resolve permission nlmsg` → `Failed to resolve allow statement at /vendor/etc/selinux/vendor_sepolicy.cil:2423 from system/sepolicy/vendor/ot_rcp.te:21` → `Failed to compile cildb: -2` → `secilc exited with status 254` → `init: Unable to open SELinux policy` → `InitFatalReboot: signal 6`，起来 0.4 s 就 `reboot: Restarting system with command 'recovery'`。ot_rcp 服务在本镜像里不存在（vendor 树无 bin 也无 init rc），内核对这两类权限位同样没有（nlmsg 不在 classmap、firmware_load 属 6.13+），故降级/删除不影响功能。每条规则必须按 count 精确命中，否则 09 直接失败。",
+  "vendor-cil-rewrite": [
+    {
+      "count": 1,
+      "from": "(allow ot_rcp self (netlink_route_socket (nlmsg)))",
+      "to": "(allow ot_rcp self (netlink_route_socket (nlmsg_write)))"
+    },
+    {
+      "count": 1,
+      "from": "(allowx ot_rcp self (nlmsg netlink_route_socket (0x16 0x1a 0x22 0x26 0x2a 0x2e 0x32 0x3a 0x3e 0x4a 0x4e 0x52 0x56 0x5a 0x5c 0x5e 0x60 0x66 0x6a 0x72 0x76 0x7a)))",
+      "to": ";; cdh: permissionx nlmsg 内核与 plat 均不支持，已删除（ot_rcp 服务不存在）"
+    },
+    {
+      "count": 1,
+      "from": "(allowx ot_rcp self (nlmsg netlink_route_socket (0x12)))",
+      "to": ";; cdh: permissionx nlmsg 内核与 plat 均不支持，已删除（ot_rcp 服务不存在）"
+    },
+    {
+      "count": 1,
+      "from": "(allow kernel_202504 vendor_firmware_file (system (firmware_load)))",
+      "to": ";; cdh: system class 的 firmware_load 是 6.13+ 权限，内核 classmap 无此位，已删除"
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "build-prop-sets": {
+    "persist.system.powerhal.applist_enable": "0",
+    "ro.hardware.egl": "mesa",
+    "ro.hardware.hwcomposer": "drm",
+    "ro.hwui.use_vulkan": "false",
+    "ro.opengles.version": "196608",
+    "ro.soc.model": "vsoc_arm64",
+    "ro.vendor.build.security_patch": "2026-06-01",
+    "ro.vendor.magt.mtk_magt_support": "0",
+    "vendor.oplus.dalvik.vm.done": "1"
+  },
+  "build-prop-unsets": [],
+  "files": [
+    {
+      "from": "official",
+      "note": "libpng 不在 LLNDK 名单，vendor 进程取不到 /system/lib64 的那份，必须保留官方 vendor 自带件。",
+      "source": "lib64/libpng.so"
+    },
+    {
+      "from": "official",
+      "mode": "replace",
+      "note": "官方目录 49 个文件；整目录替换（非 merge），否则会残留 lineage 的 *_prebuilt.xml 幽灵特性（有声明无 HAL → system_server 自杀）。",
+      "source": "etc/permissions"
+    },
+    {
+      "from": "official",
+      "mode": "replace",
+      "note": "官方目录 171 个文件（mac_permissions.xml、keystore 配置、fsverity 相关等）；云机身份与官方一致才谈得上 keystore/attestation 行为对齐。",
+      "source": "etc/security"
+    },
+    {
+      "from": "official",
+      "note": "基座只有 V7（lineage-23.2 vendor_a.img:/lib64 实测，51992 B），官方 vendor 带 V5+V6；ColorOS 的 odm/lib64/libui.so 等按 V5 编译，缺 V5 会让图形链 dlopen 失败。来源为官方 vendor 同路径，length 51992。",
+      "source": "lib64/android.hardware.graphics.common-V5-ndk.so"
+    }
+  ],
+  "hardware": [
+    {
+      "android.hardware.audio": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.authsecret": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.biometrics": {
+        "variant": "fakefingerprint",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.bluetooth": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.boot": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.camera": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.confirmationui": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.drm": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.gnss": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.health": {
+        "variant": "oplus",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.identity": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.keymint": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.light": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.media": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.media.v412": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.memtrack": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.nfc": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.power": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.power.stats": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.radio": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.secure_element": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.sensors": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.soundtrigger3": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.thermal": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.usb": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.vibrator": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.weaver": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.wifi": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.service.daemon": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    }
+  ],
+  "note": "build-prop-sets 由 07_build_vendor 步骤 6（props.go）写进装配树 vendor/build.prop，本文件是这七条的唯一真值。装配树 vendor/build.prop 的底子是 lineage-23.2 的 vendor_a.img（153 行，ext4），官方 ColorOS 的 vendor/build.prop 不进树，所以官方值只能靠这里覆盖或留白。\n\nro.vendor.boot_security_patch=2026-06-01：Remote KeyMint 必需（RemoteKeymaster::Initialize() 对它做 std::stoi(strip('-'))，属性缺失 → stoi(\"\") 抛 std::invalid_argument → SIGABRT，keymint 起即崩、keystore2 无 HAL、vold 死等 IKeystoreService）。官方 vendor/build.prop 没有这一行，只有 ro.vendor.build.security_patch=2026-06-01（dump.erofs 实测）；取值即官方平台补丁级别 2026-06-01。\n\nro.vendor.build.security_patch=2026-06-01：对齐官方实测值。基座自带的是 2026-08-01，比官方系统侧的 ro.build.version.security_patch（2026-06-01）还新，覆盖回去避免 vendor 补丁级别高于 system 的身份错配。\n\nro.hardware.egl=mesa：装配树 /vendor/lib64/egl 只有 mesa 三件（libEGL_mesa / libGLESv1_CM_mesa / libGLESv2_mesa，lineage 基底），官方 ColorOS 的 libGLES_mali.so 要真 Immortalis GPU，云机没有。基座 build.prop 不声明该项，属性一错就会复现 m22 的实测形态：surfaceflinger 每 5 s SIGABRT（logcat libEGL: Failed to load drivers from property ro.hardware.egl → couldn't find an OpenGL ES implementation）→ system_server 等不到 SF → 整机停在开机动画前。官方 vendor 写的是 mali；哪天把 Mali 件拉进树并解决 GPU 再改回。\n\nro.opengles.version=196608：官方 /system/build.prop 第 74 行声明 196610（ES 3.2），但本盘 GL 栈天花板是 mesa ES 3.0（与 m22 同底包）。放在 vendor /build.prop 是因为 init 按 system→system_ext→product→vendor→vendor_dlkm→odm 装载，装载阶段允许覆盖 ro. 并即刻上锁：vendor 落值既压过官方 system 的 196610，也让后续 rc 的 setprop 以 PROP_ERROR_READ_ONLY_PROPERTY 失败（m22 证据 #53 实测）。\n\nro.hardware.hwcomposer=drm：装配树的 composer 来自 APEX 摊平（com.android.hardware.graphics.composer.drm_hwcomposer_upstream），官方 ro.hardware.hwcomposer=mtk_common 的实现根本不在树里；基座 build.prop 无此项，不设会 fallback 到 ro.hardware（=mt6993）去找不存在的 hwcomposer.mt6993.so。\n\nro.hwui.use_vulkan=false：基座此项为空值（等同 false），这里显式写 false 固化。官方 vendor 写 true 且官方 vendor/etc 下没有 vulkan/icd.d（dump.erofs 实测），一旦回到 true 就复现 m22 的 VulkanManager::initialize() → LOG_ALWAYS_FATAL(\"!gpuCount\") → 每个应用 RenderThread SIGABRT。\n\nro.soc.model=vsoc_arm64（覆盖基座 virtio_arm64only）：来自旧 findx9-16 案的 ColorOS QPerformance 口径（native_perf_get_feedback_extn JNI 在非 vsoc 型号下不预载 → UnsatisfiedLinkError → system_server 反复重启）。本机型尚未实测复核，先保留待 bring-up 日志裁决；m22 之所以不设，是因为其官方 vendor 根本没有 libqti_performance.so，CPH2797 的 OPLUS 性能栈是另一条链。\n\nvintf-version=9.0：取官方实测 —— vendor/etc/vintf/manifest.xml 根为 <manifest version=\"9.0\" type=\"device\" target-level=\"202504\">，compatibility_matrix.xml 根为 <compatibility-matrix version=\"9.0\" type=\"device\">。07 的 schema 收口只改写根元素高于基线的分件，取 9.0 对模块层手写的 1.0 分件无改写，只是把「不降级于官方」的上限固定下来。\n\nselinux-labels 四条：mesa 三件来自 lineage 基底（官方 ColorOS 镜像里没有这些文件），而装配树的 vendor_file_contexts 里既无 egl/lib 规则也无 graphics.common 规则（实测 grep 无命中），落到兜底就是 vendor_file —— surfaceflinger（system 域）读 libEGL_mesa.so 会被 SELinux 拒（m22 同证据：avc: denied { read } name=\"libEGL_mesa.so\" tcontext=u:object_r:vendor_file:s0）。基座镜像里它们本就是 same_process_hal_file，这里按精确路径兜底。graphics.common-V5-ndk.so 走 vendor.files 取代取件、标签本该随官方元数据回填，仍显式写一条同值兜底。\n\n文件操作整表由机型声明：不声明就会用内置的 gold/MTK 口径，其中 etc/md 在 CPH2797 官方 vendor 里不存在，07 会直接报 [err] 厂商 vendor 缺少该路径: etc/md（2026-10-30 实测）。本表刻意不含官方 lib64/egl 的 Mali 三件、libMEOW_*.so 与 libOpenCL.so：图形走 mesa，无 GPU 时 Mali 驱动没有落地价值；也不含 etc/selinux —— 策略必须与 lineage 的 plat_pub_versioned.cil 同源，换官方策略会导致 secilc 合并失败。\n\n补充（2026-10-30 实测，实例 2）：官方 /odm/etc/init/oplus_performance.rc 的 `on performance_prop_set` 第一行是 `wait_for_prop vendor.oplus.dalvik.vm.done 1`，它由 early-init 阶段 start 的 lowram_device_setup（/odm/bin/oplus_performance.sh）置位；该脚本在装配树里是 u:object_r:unlabeled:s0（装配 vendor 的 sepolicy 是 lineage 的 395 行版本，没有 ColorOS 的 vendor_oplus_performance_shell_exec 类型，与 m22 同一范式），init 直接 `Could not start service: File /odm/bin/oplus_performance.sh(labeled \"u:object_r:unlabeled:s0\") has incorrect label or is inaccessible`，于是 init 主线程卡死在 wait_for_prop，串口停在 1.13 s、QEMU 空闲 0.3% CPU、屏幕 'Display output is not active.'。故由 vendor build.prop 直接置 1 放行。注意 vendor.* 属性可变，置 1 只影响 oplus_performance 的 dalvik 堆参数插值（源属性本身为空，setprop 落空但 init 不阻塞）。\n\n补充（2026-10-30 实测，实例 4）：官方 ColorOS odm 自带 /etc/vintf/manifest 片段，与装配 vendor 的片段撞了同一批 fqname → libvintf 唯一性校验失败 → `NULL VINTF MANIFEST!: device` → keystore2 拿不到 keymint 声明、vold 每秒重试卡死。fqname 级实测冲突 6 项，其中 odm 目录内确实加载的 4 项：android.hardware.ir（已由 device.json 摘模块解决）、android.se.omapi、biometrics.face、vibrator、weaver。内核重定向表对 /odm 只有 build.prop 与两份 selinux 文件三条精确规则，没有 /odm/etc/vintf，运行态无法遮蔽官方片段，故按 `vendor.vintf-drop` 裁掉己方这 6 个片段（实例 5 又补 fingerprint @4 vs 官方 @3、nfc 两项——同一 fqname 不分版本都算撞车，我最初的比对脚本按版本分键漏掉了它们），让官方声明生效。注意 android.service.daemon 模块本身必须保留（它带 cph_*.rc / cph-* 脚本 / service_daemon 二进制），只裁它带的那个片段。另外 odm/etc/vintf 根下的 telephony_manifest_*.xml 不在 manifest/ 目录内，libvintf 不把它们当片段加载，所以 radio 那两条 mtkradioex 实例冲突不需要处理。",
+  "selinux-labels": {
+    "lib64/android.hardware.graphics.common-V5-ndk.so": "u:object_r:same_process_hal_file:s0",
+    "lib64/egl/libEGL_mesa.so": "u:object_r:same_process_hal_file:s0",
+    "lib64/egl/libGLESv1_CM_mesa.so": "u:object_r:same_process_hal_file:s0",
+    "lib64/egl/libGLESv2_mesa.so": "u:object_r:same_process_hal_file:s0"
+  },
+  "vintf-drop": [
+    "android.se.omapi.xml",
+    "android.hardware.biometrics.face-service.xml",
+    "android.hardware.vibrator-service.xml",
+    "android.hardware.weaver-service.xml",
+    "android.hardware.biometrics.fingerprint-service.xml",
+    "android.hardware.nfc-service.xml"
+  ],
+  "vintf-version": "9.0"
+}

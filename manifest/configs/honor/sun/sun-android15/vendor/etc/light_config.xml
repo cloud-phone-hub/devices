@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  lights 灯清单（设备独有，随机型 vendor 镜像下发）。
+
+  本 HAL 是虚拟 lights HAL：颜色/闪烁模式只记录不驱动硬件，灯清单决定
+  framework LightsService 能枚举出哪些灯（getLights 的返回值）。改清单不需要重编 HAL。
+
+  取值来源：9 条灯清单，与官方 QTI lights 二进制的 strings 对齐（
+  L_BATTERY/L_BLUETOOTH/L_BUTTONS/L_KEYBOARD/L_NOTIFY/L_WIFI/ATTENTION/MICROPHONE
+  + lcd-backlight，即 AOSP LightType 0..8；本机真机 dumpsys lights 未采集）。
+    id      = getLights 返回的 id（可随意但需唯一）
+    ordinal = 同类型灯的序号（同 type 多灯时区分；本机单一灯/类型，全 0）
+    type    = BACKLIGHT / KEYBOARD / BUTTONS / BATTERY / NOTIFICATIONS / ATTENTION /
+              BLUETOOTH / WIFI / MICROPHONE / CAMERA
+-->
+<lights-config>
+    <light id="0" ordinal="0" type="BACKLIGHT"/>
+    <light id="1" ordinal="0" type="KEYBOARD"/>
+    <light id="2" ordinal="0" type="BUTTONS"/>
+    <light id="3" ordinal="0" type="BATTERY"/>
+    <light id="4" ordinal="0" type="NOTIFICATIONS"/>
+    <light id="5" ordinal="0" type="ATTENTION"/>
+    <light id="6" ordinal="0" type="BLUETOOTH"/>
+    <light id="7" ordinal="0" type="WIFI"/>
+    <light id="8" ordinal="0" type="MICROPHONE"/>
+</lights-config>

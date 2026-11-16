@@ -1,0 +1,9 @@
+{
+  "baseline-build-prop": {
+    "label": "u:object_r:vendor_configs_file:s0",
+    "length": 884,
+    "path": "/etc/build.prop",
+    "sha256": "6f46478e95ead81deee009f47abbe1ab6db8c8be759d350bb619f066403b3124"
+  },
+  "note": "build-vendor_dlkm props 基线：官方 vendor_dlkm.img（OPPO 官方件，erofs）内 /etc/build.prop，覆盖 lineage-23 基座渲染的 VirtIO 版本。"
+}

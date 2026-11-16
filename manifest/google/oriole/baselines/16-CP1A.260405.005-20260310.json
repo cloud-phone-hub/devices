@@ -1,0 +1,127 @@
+{
+  "build-id": "16-CP1A.260405.005-20260310",
+  "kernel": "6.1",
+  "modules": {
+    "external": [
+      "cdh_redirect",
+      "device_info",
+      "input_identity",
+      "virtio_media"
+    ],
+    "in-tree": [
+      "virt_wifi.ko"
+    ],
+    "input_identity": {
+      "touch_major": true,
+      "goodix_fp": false,
+      "devices": [
+        {
+          "name": "goodix_fingerprint",
+          "keys": [
+            "KEY_POWER",
+            "KEY_WAKEUP"
+          ],
+          "msc": [
+            "MSC_SCAN"
+          ]
+        },
+        {
+          "name": "gpio_keys",
+          "bus": 25,
+          "vendor": 1,
+          "product": 1,
+          "version": 1,
+          "keys": [
+            "KEY_VOLUMEUP",
+            "KEY_VOLUMEDOWN",
+            "KEY_POWER"
+          ]
+        }
+      ],
+      "aligns": []
+    }
+  },
+  "odm": {
+    "build-prop-sets": {
+      "ro.odm.product.cpu.abilist": "arm64-v8a",
+      "ro.odm.product.cpu.abilist32": "",
+      "ro.odm.product.cpu.abilist64": "arm64-v8a"
+    },
+    "build-prop-unsets": {},
+    "img": "vendor_a.img",
+    "note": "Pixel 6 没有独立 odm 分区：/odm 是 vendor.img 的子目录（ext4，debugfs 可取）。官方原件 30 行 / md5 df5fec0b557a53f503f54b3486146617，其中 abilist 三行包含 32 位值。CDH 纯 64 位锁口径：覆盖 abilist=arm64-v8a、abilist32=、abilist64=arm64-v8a。载体镜像 vendor_a.img（01 平铺分区落盘 super/vendor_a.img）。",
+    "prop": "/odm/etc/build.prop"
+  },
+  "rom": {
+    "lineage": {
+      "images": [
+        "vendor_a.img",
+        "vendor_dlkm_a.img"
+      ],
+      "kernel": {
+        "borrowed-from": "lineage-21",
+        "borrowed-reason": "云机内核按厂商固件 uname-version 主次版本匹配 kernels/6.1（lineage-21），vendor_dlkm 由 08 全量自建。",
+        "version": "6.1"
+      },
+      "version": "lineage-23.2"
+    },
+    "official": {
+      "images": [
+        "boot.img",
+        "product.img",
+        "system.img",
+        "system_ext.img",
+        "vendor.img",
+        "vendor_boot.img",
+        "vendor_dlkm.img"
+      ],
+      "kernel": {
+        "uname-version": "Linux localhost 6.1.145-android14-11-gfa1d6308d1fe-ab14691759 #1 SMP PREEMPT Fri Jan  9 16:33:46 UTC 2026 aarch64 Toybox"
+      }
+    }
+  },
+  "vda": {
+    "partitions": []
+  },
+  "vendor": {
+    "build-prop-sets": {
+      "ro.bionic.2nd_arch": "",
+      "ro.bionic.2nd_cpu_variant": "",
+      "ro.board.platform": "gs101",
+      "ro.hardware.egl": "mesa",
+      "ro.hardware.gralloc": "minigbm",
+      "ro.hardware.vulkan": "virtio",
+      "ro.hwui.use_vulkan": "false",
+      "ro.vendor.boot_security_patch": "2026-04-05",
+      "ro.vendor.product.cpu.abilist": "arm64-v8a",
+      "ro.vendor.product.cpu.abilist32": "",
+      "ro.vendor.product.cpu.abilist64": "arm64-v8a",
+      "ro.zygote": "zygote64"
+    },
+    "build-prop-unsets": {
+      "ro.frp.pst": null,
+      "ro.vndk.lite": null
+    },
+    "files": [
+      {
+        "from": "official",
+        "source": "lib64/libpng.so"
+      }
+    ],
+    "note": "机型清单声明 vendor.files 即整表取代内置 builtinFileOps；本机型 13 条：lib64/libpng.so 一条取代（from: official，官方件），显示栈 12 件 mode: add 且全部 from: official（官方固件；from 只有 official / lineage 两个取值，缺省是 lineage，取官方件必须逐条显式写）。内置集合是 gold/MTK 口径（libMEOW_* 四条、libGLES_mali.so、libOpenCL.so、etc/permissions、etc/security、etc/md）：官方 Pixel vendor_a.img 实测 lib64/egl/libMEOW_data.so、/etc/security、/etc/md 全部 File not found（debugfs stat 取证），照内置跑 07 步骤 5 必报「厂商 vendor 缺少该路径」（ss9380 同类失败见该机型证据）。Pixel 的 etc/permissions 整目录也不替换：那份目录声明 nfc / fingerprint / strongbox / device_unique_attestation 等特性，而本机 device.json 的 hardware 没有 nfc、biometrics、secure_element 实现，整目录替换会造出「有特性声明、无 HAL 实现」的组合，正是 gold 上 FEATURE_CONSUMER_IR 无 HAL 让 system_server 自杀的同类脸。特性集保持 lineage-21.0 基座（tablet_core_hardware.xml），与 gold / m22 / ss9380 同一口径。\n\nselinux-labels 三条 egl 库：/vendor/lib64/egl 由 lineage-21.0 基座提供（只有 libEGL_mesa.so / libGLESv1_CM_mesa.so / libGLESv2_mesa.so，官方 Pixel 那边是 Mali 七件，本机型不搬），基座 vendor_file_contexts 没有 egl 规则（规则在 plat 的 file_contexts 里），而 07 的标签真值链第 2 级读的是官方 Pixel 镜像的 inode（这三件在里面不存在），会落到兜底 vendor_file → surfaceflinger（system 域）读它被 avc denied，与 m22 实测同一条链路。基底镜像里它们的 inode 本来就是 same_process_hal_file（debugfs ea_list /lib64/egl/libEGL_mesa.so 实测），故按基线精确声明。\n\nGPU 属性：ro.hardware.egl=mesa / ro.hardware.vulkan=virtio / ro.hardware.gralloc=minigbm 三键必须写进 build.prop，不能等 rc 的 setprop。原判「由 init.virtio.rc 的 virtgpu_detect 在 ro.vendor.graphics=mesa 分支 setprop」实测不成立：surfaceflinger 在 10.8s 就启动，而 early-boot/boot 触发链（virtgpu_detect 计数为 0）此前从未跑过，SF 拿 ro.board.platform=gs101 回落找 libEGL_gs101.so（基座 /vendor/lib64/egl 只有 mesa 三件），报 couldn't find an OpenGL ES implementation 后 LOG_ALWAYS_FATAL 自杀。ro.* 是 set-once、build.prop 在 init property_init 阶段加载，早于任何 rc 触发；同型实测见 oriole-16 基线 note。\n\ncomposer HAL：A14 基座（lineage-21.0）里没有任何 composer 服务（vendor/bin/hw 无、30 个 APEX 里也没有），但 /system/lib64 自带完整的一代 graphics 客户端栈——composer@2.1/2.2/2.3/2.4、graphics.common-V5-ndk、allocator@2.0/3.0/4.0、mapper@2.0/2.1/3.0/4.0、libfmq、libui。A14 的 SurfaceFlinger（ComposerHal.cpp）只有 AIDL composer3 与 HIDL 两条路、没有 passthrough 分支，服务端必须是 /vendor/bin/hw 下的进程；而 vendor 进程的命名空间看不到非 LLNDK 的 /system/lib64 库，所以这批件要落进 /vendor/lib64：其中 12 条 mode=add、from=official 取官方 A14 vendor_a.img 的 /vendor/lib64（2026-11-02 起不允许跨分区取件，此前 from=lineage:system 已撤销；12 件在官方镜像里逐件 debugfs stat 实测存在、0644）；服务壳 composer@2.4-service、它链接需要的 composer@2.1-resources、以及实现体 hwcomposer.gs101.so 这三件，改由 07_build_vendor 的显示栈现编从 engine/vendor/aosp/a14 的源码编出（drm_hwcomposer 27 个编译单元 + 自写服务壳 + 2.1 的 ComposerResources；源码与头文件闭包见该目录 README）。两个 adapter 与 composer@2.2-resources 随之彻底不需要：自写服务壳不走 HwcLoader::load() 的 hwc1/fbdev 回落，源码里不引用 libhwc2on1adapter / libhwc2onfbadapter；2.2 的 ComposerResources 实测 0 个导出符号，空壳没有意义。实现体不能用官方 Pixel 那份（Exynos 绑定）。为什么不能沿用 A15 的 AIDL 路线：lineage-21 是 A14，A14 的 hardware/interfaces 只有 HIDL 2.1~2.4 的 default 实现，AIDL composer3 的default 服务源码在该版本不存在。验收见 devices/evidence/oriole/issue-oriole14-hwc-drm。\n\n屏幕密度：A14 基座的 vendor/build.prop 没有 ro.sf.lcd_density，而底包 /vendor/etc/init/hw/init.virt.rc 第 22 行会 setprop ro.sf.lcd_density ${ro.boot.lcd_density:-160}；本机型 cmdline 不带 androidboot.lcd_density，于是 1080x2400 落到 160 dpi（可用宽度 1080 dp），系统按平板口径排版、桌面图标与文字整体偏小（实例 7 实测 wm size/density 均为 1080x2400 / 160）。官方 Pixel 6 的 vendor_a.img:/build.prop 第 49 行是真值 ro.sf.lcd_density=420（与本机 device.json 的 density 一致），故在 build-prop-sets 补写 420：vendor/build.prop 装载早于 rc 的 setprop，ro. 只读，init.virt.rc 那句会因属性已锁而失败，正好不吃 160 的默认值。\n\n纯 64 位锁（2026-11-04 本轮启动实测补，与本机 cp1a 基线同口径）：本基线迁移早于「按基座只有 64 位内容锁 64-only」这条规则，vendor 侧六键一直没写，实测后果是引导不通过。lineage-21.0 基座的 vendor/build.prop 第 83 行是 `ro.zygote=zygote64_32`，第 10~12 行 abilist32=armeabi-v7a,armeabi、第 33~34 行 ro.bionic.2nd_arch=arm、第 38~39 行 dalvik.vm.isa.arm.*——装载顺序 system→…→vendor 让 vendor 的 64_32 覆盖 system 的 zygote64（init 日志 `Overriding previous property 'ro.zygote':'zygote64' with new value 'zygote64_32'`），于是 init 起 `zygote_secondary`；而这份 system 里 `/system/bin/app_process32` 是占位件（`cannot execv('/system/bin/app_process32') … Exec format error`，同型还有 mediaserver/drmserver），secondary 每次 127 退出，退出即连坐 SIGKILL primary zygote（日志时序：`Service 'zygote_secondary' … exited with status 127` → 2ms 后 `Sending signal 9 to service 'zygote'`），primary 在 boot completed 前死满 4 次触发 `critical process 'zygote' exited 4 times before boot completed` → `InitFatalReboot: signal 6` → `reboot: Restarting system with command 'zygote-fatal'` 无限循环（10 分钟窗口内 3 轮）。因此补 `ro.zygote=zygote64` 关掉 secondary 服务，并按同一事实把 abilist/bionic 2nd 三对键锁成纯 64（framework 侧的 abilist 判定另见 gold 的 zygote_secondary 证据：odm 段此前已锁，vendor 段是缺口）；`dalvik.vm.isa.arm.*` 只影响 32 位 dex2oat，不改动。\n\n删除 ro.frp.pst 与锁 ro.hwui.use_vulkan=false（#150，2026-11-04）：#148 切换为以官方 vendor_a.img:/build.prop 为基底后，带入了两条真机属性：① 第 185 行 `ro.frp.pst=/dev/block/by-name/frp`（lineage-21.0 基底无此键）。本盘 GPT 来自 lineage 底座、没有 frp 分区；SystemServer 因 `ro.frp.pst` 非空而启动 PersistentDataBlockService 并绑定 LocalServices，但底层块设备不存在，导致 PHASE_ACTIVITY_MANAGER_READY（500）时 `TestHarnessModeService.onBootPhase(500)` → `PersistentDataBlockService$InternalService.readInternal` 抛 `java.lang.IllegalStateException: invalid checksum`，system_server 每 4~5s FATAL 重启、死满 4 次触发 `zygote-fatal` 并由 RescueParty 带进 recovery。与 gold 及 Template.md 同口径，在 `build-prop-unsets` 中删除 `ro.frp.pst`。② 第 45 行 `ro.hwui.use_vulkan=true`（lineage-21.0 基底为空）。削除 `ro.frp.pst` 后整机 62.2s `sys.boot_completed=1`，但 `com.android.systemui`、`com.google.android.setupwizard`、`com.android.settings` 的 RenderThread 在 `libhwui.so!VulkanManager::initialize()` 处因 `Abort message: 'Assertion failed: !gpuCount'` 循环 SIGABRT（在线 `setprop debug.hwui.renderer skiagl` 重拉进程即恢复正常桌面），故与 m22 / gold / 15r / cph2797 / ss9380 / popsicle 同口径在 `build-prop-sets` 中锁 `ro.hwui.use_vulkan=false`。",
+    "vintf-drop": [
+      "android.hardware.wifi-service.xml"
+    ]
+  },
+  "version-description": {
+    "android-version": "16",
+    "board": "oriole",
+    "brand": "oriole",
+    "build-date": "20260310",
+    "factory-tgz": "oriole-cp1a.260405.005-factory-8081a8ba.zip",
+    "name": "Pixel 6",
+    "os-version": "16-CP1A.260405.005-20260310",
+    "security-patch": "2026-04-05",
+    "vendor": "google"
+  }
+}

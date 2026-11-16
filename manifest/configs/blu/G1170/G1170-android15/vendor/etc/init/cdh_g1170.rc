@@ -1,0 +1,6 @@
+# BLU G75 (blu/G1170) 云机收敛脚本：
+# 1. 提前停用官方 system_ext 的 netdiag（依赖真机 eBPF/netd 私有 map，云机下每 5s 崩溃触发 UPDATABLE_CRASHING）；
+# 2. 停用通用 media 模块附带的 Dolby C2 服务（G1170 真机无杜比音效，对应 VINTF 已在 vintf-drop 移除）。
+on post-fs-data
+    stop netdiag
+    stop vendor-dolby-media-c2-hal

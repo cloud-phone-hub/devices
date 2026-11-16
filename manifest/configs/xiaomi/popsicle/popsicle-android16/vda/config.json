@@ -1,0 +1,8 @@
+{
+  "partitions": [
+    {
+      "image": "cust.img",
+      "mount": "/cust"
+    }
+  ]
+}

@@ -1,0 +1,204 @@
+{
+  "build-prop-sets": {
+    "ro.hardware.egl": "mesa",
+    "ro.hardware.gralloc": "minigbm",
+    "ro.hardware.vulkan": "virtio",
+    "ro.hwui.use_vulkan": "false",
+    "ro.vendor.product.cpu.abilist": "arm64-v8a",
+    "ro.vendor.product.cpu.abilist32": "",
+    "ro.vendor.product.cpu.abilist64": "arm64-v8a",
+    "ro.zygote": "zygote64"
+  },
+  "build-prop-unsets": [
+    "ro.frp.pst",
+    "ro.gfx.driver.0",
+    "ro.gfx.driver.1",
+    "ro.vndk.lite"
+  ],
+  "files": [
+    {
+      "from": "official",
+      "source": "lib64/libpng.so"
+    },
+    {
+      "from": "official",
+      "mode": "replace",
+      "source": "etc/permissions"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_c2_audio.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_vendor_audio.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_audio.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_telephony.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_c2.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_c2_video.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_c2_audio.xml"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "source": "bin/hw/vendor.honor.hardware.hwfactoryinterface-service",
+      "target": "bin/hw/vendor.honor.hardware.hwfactoryinterface-service",
+      "note": "荣耀 MagicOS system_server (FilteredPreloadAppManager) 与 cust_init 启动时强依赖 vendor.honor.hardware.hwfactoryinterface.IHwFactoryInterface/hwfactoryinterface_hal AIDL 服务；缺席会回退 HIDL 并在无 hwservicemanager 时抛未捕获 NoSuchElementException 导致 system_server 循环崩溃。"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "source": "lib64/libc_secshared.so",
+      "target": "lib64/libc_secshared.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "source": "lib64/vendor.honor.hardware.hwfactoryinterface-V1-ndk.so",
+      "target": "lib64/vendor.honor.hardware.hwfactoryinterface-V1-ndk.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "source": "etc/init/vendor.honor.hardware.hwfactoryinterface-service.rc",
+      "target": "etc/init/vendor.honor.hardware.hwfactoryinterface-service.rc"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "source": "etc/vintf/manifest/vendor.honor.hardware.hwfactoryinterface-service.xml",
+      "target": "etc/vintf/manifest/vendor.honor.hardware.hwfactoryinterface-service.xml"
+    }
+  ],
+  "hardware": [
+    {
+      "android.hardware.audio": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.bluetooth": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.camera": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.gnss": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.gpu": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.health": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.ir": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.keymint": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.light": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.media": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.radio": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.sensors": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.thermal": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.vibrator": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.wifi": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.service.daemon": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.media.v412": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.power": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    }
+  ],
+  "lib64-backfills": [],
+  "selinux-labels": {}
+}

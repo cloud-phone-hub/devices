@@ -1,0 +1,11 @@
+{
+  "build-prop-sets": {
+    "ro.odm.product.cpu.abilist": "arm64-v8a",
+    "ro.odm.product.cpu.abilist32": "",
+    "ro.odm.product.cpu.abilist64": "arm64-v8a"
+  },
+  "build-prop-unsets": [],
+  "buildProp": "/odm/etc/build.prop",
+  "img": "vendor_a.img",
+  "note": "G1170 无独立 odm 分区，odm 树位于官方 vendor_a.img 的 /odm 子树；仅重定向 /odm/etc/build.prop 以保留原厂 /odm/etc/vintf/manifest_*.xml。"
+}

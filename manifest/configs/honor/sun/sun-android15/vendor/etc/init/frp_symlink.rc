@@ -1,0 +1,5 @@
+# FRP 分区路径补建：让 PersistentDataBlockService 找得到 ro.frp.pst 指向的节点。
+on post-fs-data
+    mkdir /dev/block/bootdevice 0755 root root
+    mkdir /dev/block/bootdevice/by-name 0755 root root
+    symlink /dev/block/vda3 /dev/block/bootdevice/by-name/frp

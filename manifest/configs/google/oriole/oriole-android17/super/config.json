@@ -1,0 +1,9 @@
+{
+  "images": [
+    "product.img",
+    "system.img",
+    "system_ext.img",
+    "vendor.img",
+    "vendor_dlkm.img"
+  ]
+}

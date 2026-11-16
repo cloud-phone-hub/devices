@@ -1,0 +1,8 @@
+{
+  "fstab": "qcom",
+  "cmdline": [
+    "vendorcountry=porsche/normal",
+    "devmodel=PTP-N59",
+    "androidboot.product.hardware.sku=PTP-N59"
+  ]
+}

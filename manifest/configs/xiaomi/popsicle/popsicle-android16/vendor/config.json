@@ -1,0 +1,193 @@
+{
+  "build-prop-sets": {
+    "ro.hardware.egl": "mesa",
+    "ro.hardware.vulkan": "mali",
+    "ro.hwui.use_vulkan": "false",
+    "ro.vendor.audio.dolby.dax.support": "false",
+    "ro.vendor.audio.dolby.surround.enable": "false",
+    "ro.vendor.audio.dolby.vision.support": "false",
+    "ro.vendor.audio.fweffect": "false",
+    "ro.vendor.qti.soc_name": "canoe",
+    "vendor.audio.dolby.control.support": "false",
+    "vendor.audio.effect_policy.support": "false",
+    "ro.vendor.cdh.vulkan.base": "pastel",
+    "ro.vendor.cdh.vulkan.name": "Adreno (TM) 840",
+    "ro.kernel.qemu.vulkan.base": "pastel",
+    "ro.kernel.qemu.vulkan.name": "Adreno (TM) 840",
+    "ro.surface_flinger.use_content_detection_for_refresh_rate": "false",
+    "vendor.display.enable_dpps_dynamic_fps": "0",
+    "debug.media.video.chipset": "0",
+    "debug.config.media.video.dolby_vision_GPU_suports": "true",
+    "persist.sys.impeller.glass.legacy_render": "true",
+    "persist.sys.rtc.onscreen_backdrop": "false",
+    "persist.sys.gradient_blur_ddk": "false"
+  },
+  "build-prop-unsets": [
+    "ro.gfx.driver.1",
+    "ro.vendor.audio.soundfx.type",
+    "ro.vendor.seriallogging",
+    "ro.vendor.seriallogging.logcat_buffer"
+  ],
+  "files": [
+    {
+      "from": "official",
+      "source": "lib64/libpng.so"
+    },
+    {
+      "from": "official",
+      "source": "lib64/libOpenCL.so"
+    },
+    {
+      "mode": "delete",
+      "source": "etc/init/android.hardware.media.c2-mediatek.rc"
+    },
+    {
+      "mode": "delete",
+      "source": "etc/init/vendor.dolby.media.c2-default-service-dax.rc"
+    },
+    {
+      "mode": "delete",
+      "source": "etc/vintf/manifest/manifest_media_c2_default.xml"
+    },
+    {
+      "mode": "delete",
+      "source": "etc/vintf/manifest/vendor.dolby.media.c2-default-service-dax.xml"
+    },
+    {
+      "mode": "delete",
+      "source": "etc/init/tablet2multitouch.rc"
+    },
+    {
+      "mode": "delete",
+      "source": "etc/permissions/android.hardware.biometrics.face.xml"
+    },
+    {
+      "mode": "delete",
+      "source": "etc/permissions/android.hardware.fingerprint.xml"
+    }
+  ],
+  "hardware": [
+    {
+      "android.hardware.audio": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.bluetooth": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.camera": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.gnss": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.gpu": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.health": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.ir": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.keymint": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.light": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.media": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.media.v412": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.memtrack": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.power": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.radio": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.sensors": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.thermal": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.vibrator": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.wifi": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.service.daemon": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "vendor.qti.hardware.perf2": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    }
+  ],
+  "note": "07 步骤 6 以官方 vendor_a.img:/build.prop（Xiaomi mivendor_sm8850 通用 vendor 身份，Android16/SDK36）为基底，build-prop-sets 仅保留相对官方原件新增或覆盖的 10 项：ro.hardware.egl=mesa（覆盖官方 adreno：lineage 基座 /vendor/lib64/egl 只有 libEGL_*_mesa.so，无 Adreno 件；virtgpu_detect 在 early-boot 触发晚于 zygote_preload_graphics，必须在 build.prop 阶段锁死）；ro.hwui.use_vulkan=false（覆盖官方 true：云机无 venus/gfxstream 后端，置 true 会致 com.miui.home / com.android.systemui 的 RenderThread 在 VulkanManager::preinitDevice 处因 '!gpuCount' 循环 SIGABRT）；ro.vendor.boot_security_patch=2026-08-01（非官方件，Cuttlefish Remote KeyMint ConfigureBootPatchlevel 以 std::stoi 直读，值与 ro.vendor.build.security_patch 同口径）；ro.vendor.qti.soc_name=canoe（官方 /vendor/etc/vintf/ 只有 manifest_canoe.xml / manifest_alor.xml，libvintf 按 ro.boot.product.vendor.sku 选基座 manifest，该属性由 init.qti.qcv.rc 从 ro.vendor.qti.soc_name 赋入，而云机无 /sys/devices/soc0/soc_id，故在 build.prop 直接补上 canoe）。\n\n[2026-10-14 效果引擎族属性（build 51 → 实例 49 实测）]\nsystem_server 主线程 Java 致命环：FATAL EXCEPTION: main / Process: system_server，\nCaused by: java.lang.RuntimeException: Cannot initialize effect engine for type:\nec7178ec-e5e1-4432-a3f4-4657e6795210 Error: -3\n  at android.media.audiofx.AudioEffect.<init>(AudioEffect.java:555)\n  at android.media.audiofx.MiSound.<init>(MiSound.java:106)\n  at android.media.audiofx.presenter.BaseEffectPresenter.getMiSoundInstanceSafely(:205)\n  at android.media.audiofx.presenter.BaseEffectPresenter.setMiSoundEnableSafely(:219)\n  at android.media.audiofx.presenter.QcomEffectPresenter.setDolbyActive(:36)\n  at android.media.audiofx.presenter.BaseEffectPresenter.setDefaultEffect(:708)\n  ... QcomEffectPresenter.onDeviceChange(:193) <- AudioEffectCenter.onDeviceChanged(:272)\n  <- ReceiverDispatcher <- Looper <- com.android.server.SystemServer.main\n栈顶是 SystemServer.main ⇒ 异常未捕获、system_server 直接死；init 随后看到\nService 'zygote' received signal 9 from uid 0 pid <zygote 自杀>，\n再累积成 \"process with updatable components 'zygote' exited 4 times in 4 minutes\"\n→ 第三个 RescueParty 触发件（同一份 qemu.log：3 次内核启动、2 次 rescue）。\n成因：CDH 自研 effect HAL（承自 note13）**不实现任何效果** ——\nbuild/vendor/source/android.hardware.audio/src/EffectFactoryImpl.cpp:27 注释\n“无支持的效果实现，任何 UUID 都非法”，listEffectDescriptors 返回空；\n而官方 /vendor/build.prop 声明了整套 Dolby/MiSound 能力，MIUI 框架按声明去建效果引擎，\n建不出来就抛。\n运行期已排除的门控（实例 49 setprop 后立即复测，崩溃继续）：\n  persist.vendor.audio.effectimplenter  dolby → \"\"    （misound 计数 2 → 26）\n  vendor.audio.dolby.control.support     true → false  （28 → 38）\n  vendor.audio.effect_policy.support     true → false  （64 → 74）\n运行期可写的键能覆盖的门都已试完，剩下的只有 ro.* 一批 ⇒ 本轮把这一族整体关掉：\nro.vendor.audio.soundfx.type 取消定义（值 \"mi\" 是 MiSound 实现选择器），\ndolby.dax.support / dolby.surround.enable / fweffect / effect_policy.support / dolby.control.support 置 false。\n预期副作用：设置里的杜比/MiSound 音效项消失；不影响出声（音频走已实测的自研 HAL）。\n\n[2026-10-15 触控链（实例 61 实测）]\n现象：画面正常但控制台点什么都没反应。根因不在 guest 而在 QEMU 的事件分发：\nui/input.c qemu_input_find_handler(mask, con, match_all=false) 对 ABS 只投给**第一个**\nmask 匹配的 handler；virtio-tablet 的 mask 含 ABS，virtio-multitouch 的 mask 是\nBTN|MTT（不含 ABS），而 web/VNC 控制台的指针事件是绝对坐标 —— 于是 event1\n（multitouch）永远收不到点击。另一条路也不通：MIUI 的 InputReader 即便读到\n/vendor/usr/idc/QEMU Virtio Tablet.idc（touch.deviceType=touchScreen）仍把 tablet\n判成 Sources: KEYBOARD|MOUSE、Touch Input Mapper = POINTER（libinput.so 里确有\n/vendor/usr/ 前缀字符串，说明文件被读了，是判定没采纳）。\n修法=承自 lineage/oriole-16 的 tablet2multitouch：读 tablet 的 ABS 流，经 /dev/uinput\n造一个真 MT 设备（名 tablet2multitouch，idc virt_tablet2multitouch.idc）。\n本表新增 vendor.tablet2multitouch.device_names 就是它的设备名白名单（二进制\nproperty_get 读，空值即打 \"Device names property not defined\" 退出）。",
+  "selinux-labels": {}
+}

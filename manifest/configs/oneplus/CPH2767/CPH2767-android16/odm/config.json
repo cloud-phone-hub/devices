@@ -1,0 +1,20 @@
+{
+  "build-prop-sets": {
+    "remote_provisioning.strongbox.rkp_only": "true",
+    "remote_provisioning.tee.rkp_only": "true",
+    "ro.device.security.level": "4",
+    "ro.odm.product.cpu.abilist": "arm64-v8a",
+    "ro.odm.product.cpu.abilist32": "",
+    "ro.odm.product.cpu.abilist64": "arm64-v8a",
+    "ro.oplus.wifi.wsa": "none",
+    "ro.vendor.oplus.oversea_oem": "11",
+    "ro.vendor.oplus.provision.pki": "10",
+    "vendor.avf_qcvm.disabled": "1",
+    "vendor.dynamic_sensor.setup.timeout.ms": "1600",
+    "vendor.wv.oemcrypto.debug.enable_prov40": "true"
+  },
+  "build-prop-unsets": [],
+  "buildProp": "/build.prop",
+  "img": "odm_a.img",
+  "note": "odm 是独立逻辑分区：super/odm_a.img（1898 MiB，EROFS），根下有 app/bin/etc/firmware/framework/lib/lib64/overlay/priv-app/vendor + 3 个 init.rc；另有 /build.prop（123 行 / md5 5ca9909e5f2cb350cf1010b3664d956d，正文）和 /etc/build.prop（4 行 import 存根：import /odm/build.prop + ${ro.boot.prjname} 动态路径 + my_manifest）。\n\n为什么 prop 取 /build.prop：同 cph2797——06 落点固定 odm/etc/build.prop，本机 /odm 整棵 dir 重定向到 /mnt/vendorpatch/odm（device.json redirect 规则 8/9），所以 06 产出的 odm/etc/build.prop 在运行态就能被 init 直接 import（AOSP init.rc 硬编码 import /odm/etc/build.prop，不依赖 /odm/build.prop 存在）。存根里的 import 目标（prjname 动态路径、my_manifest）在云机都不存在（my_manifest 分区未挂载），不影响。\n\nsets 分项：\n  - ro.oplus.wifi.wsa=none：官方值 StbcMrc 触发 OplusWifiSmartAntenna 加载 StbcMrcSolution，其 converter 判 ro.boot.hardware 前缀（qcom/mt/ums），云机是 virtio → converter null → NPE → system_server 自杀循环（2026-11-03 实例 7）；\n  - 8 条同值覆盖（vendor.dynamic_sensor... 到 vendor.avf_qcvm.disabled）：官方原件这 8 行行尾是 CRLF，sets 写同值让 proplines.Apply 的 `line == want` 比较不成立（多了 \\r），进而把整行改写成 LF——不改变值、只归一行尾，与 cph2797 同手法；\n  - abilist 3 条：官方 /build.prop 不含 ro.odm.product.cpu.abilist 行（只有 ro.vendor.product.cpu.abilist），而云机没有 my_manifest 挂载补这些，所以追加进 sets。06 的 checkOdmAbi 要求 32 位为空、64 位非空。\n\n手抄副本已删除（137 行 / md5 ffbe0df42886e9af97d8dbb0faa9a95c，含 9 行 CDH 注释 + 3 行 wsa 根因说明；这些注释不再需要——sets 的 key 自解释、根因记在本 note）。改属性口径直接改这里。\n\n迁移代价：06 的配方因此绑上 odm_a.img，没有该镜像就跑不了本阶段。取件：解包到 CDH_VENDOR_DIR/super/（01 按 rom.official.images 还原，odm.img 对应该目录下的 odm_a.img）。复核用 dump.erofs（见 manifest/oneplus/CPH2767/README.md）。"
+}

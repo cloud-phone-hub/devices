@@ -1,0 +1,9 @@
+{
+  "baseline-build-prop": {
+    "label": "u:object_r:vendor_configs_file:s0",
+    "length": 864,
+    "path": "/etc/build.prop",
+    "sha256": "eeb30a0f0112e1e47afb9e646701b13e1ab2833da7c135cb303f372a44326ad5"
+  },
+  "note": "build-vendor_dlkm 的 props 基线：官方 vendor_dlkm_a.img:/etc/build.prop（samsung/pa3qzcx/pa3q 真实设备身份，864 B），覆盖 lineage 基座渲染的 VirtIO 版本。官方 vendor_dlkm 是 EROFS，读取走宿主 dump.erofs（erofs-utils）；重建镜像在 lineage 基座 ext4 上就地 debugfs 注入，模块清单由 03_build_modules 的 in-tree 名单决定（6 个 virtio 模块），不搬三星官方的 sec_*.ko（它们是给 6.6 官方内核编的，vermagic 与本机 6.12.81-4k-cdh 不符，加载即 Exec format error）。"
+}

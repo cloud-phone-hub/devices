@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ss9380 的 media codec2 store 实例登记。
+
+  来源：官方 /vendor/etc **没有** media_config.xml（官方 codec2 走 media_codecs_sun*.xml +
+  media_sun/ 那套），本文件是云机侧自编，不能拿官方件替换：官方 codec 二进制不在
+  本 vendor（lineage 基座 + 引擎自编 HAL），换文件名只会让 c2 store 找不到登记表。
+
+  背景：/vendor 的 bin/lib64 由内核重定向到 patch 盘（lineage 基座 + 引擎自编 HAL），
+  官方三星 vendor 里的真 codec2（vendor.qti.media.c2@1.0-service、
+  samsung.software.media.c2@1.0-service、libcodec2_sec_*.so）因此完全不可见。
+  可见的只有 gold（MTK）随模块带进来的两个「假登记」store：
+    /vendor/bin/hw/android.hardware.media.c2-mediatek          -> IComponentStore/default1
+    /vendor/bin/hw/vendor.dolby.media.c2-default-service-dax   -> IComponentStore/default9
+  它们 createComponent 一律 CANNOT_DO，真实编解码不存在；作用只是满足 vendor VINTF
+  的 fqname 声明，避免 mediaserver 每 1s 重试一次实例（实测会拖住媒体框架初始化，
+  进而让依赖解码器的视频壁纸 InfinityWallpaper 卡死 → ANR → 桌面黑帧）。
+
+  三条实测定下来的硬约束：
+    1) 文件必须存在。缺失时二进制打
+         I/O warning : failed to load "/vendor/etc/media_config.xml"
+       并以 status 1 立刻退出 → init 反复 `exited 4 times in 4 minutes`。
+    2) 每个 instance 至少要有一个 component。只有 <instance> 没有 <component> 时
+       二进制以 status 3 退出（已实测：default1 空表时 status 3，default9 有表时 running）。
+    3) component 的 rank 必须远低于软解。AOSP 的 Codec2 组件排序是 rank 降序、
+       同 rank 按 name 升序；软解（c2.android.*）的 rank 是 512。这里全部写 rank="1"，
+       保证软解永远优先，假 store 只在软解完全不可用时才被选中（结果仍是 CANNOT_DO，
+       与真机上「没有这个编解码器」的语义一致）。
+
+  刻意只登记**一条** video 组件（c2.mtk.avc.decoder，gold 原表 15 条里最小的一条）：
+  法规上要有 video 组件才能让 default1 的表非空，但不需要把 hevc/vp9/mpeg2 等全部
+  搬过来，避免 framework 把这些格式认成「有硬解」。
+-->
+<media-c2-config>
+    <instance binary="android.hardware.media.c2-mediatek" store="default1"/>
+    <instance binary="vendor.dolby.media.c2-default-service-dax" store="default9"/>
+    <component
+        store="default1"
+        name="c2.mtk.avc.decoder"
+        kind="decoder"
+        domain="video"
+        media-type="video/avc"
+        rank="1"
+        aliases="OMX.MTK.VIDEO.DECODER.AVC"
+        profiles="1,2,8"
+        levels="4096"/>
+    <component
+        store="default9"
+        name="c2.dolby.eac3.decoder"
+        kind="decoder"
+        domain="audio"
+        media-type="audio/eac3"
+        rank="1"
+        aliases=""
+        profiles=""
+        levels=""/>
+    <component
+        store="default9"
+        name="c2.dolby.ac4.decoder"
+        kind="decoder"
+        domain="audio"
+        media-type="audio/ac4"
+        rank="1"
+        aliases="OMX.dolby.ac4.decoder"
+        profiles=""
+        levels=""/>
+</media-c2-config>

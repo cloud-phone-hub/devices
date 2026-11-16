@@ -1,0 +1,13 @@
+# CDH：Nothing 首启向导与工程诊断服务在云机上没有对应硬件/HAL，
+# 会压住 launcher（introduction16）或持续崩溃弹窗（engineerservice）。
+# 新实例每次都是全新加密 /data，无法预先烤入禁用状态，因此在每次开机后幂等处理。
+service cph_nothing_setup /system/bin/sh -c "sleep 5; pm disable-user --user 0 com.nothing.introduction16; pm disable-user --user 0 com.nothing.engineerservice; am force-stop com.nothing.introduction16; am force-stop com.nothing.engineerservice; pm disable-user --user 0 vendor.qti.iwlan; am force-stop vendor.qti.iwlan; locksettings set-disabled true; input keyevent 3"
+    class late_start
+    user root
+    group root system
+    seclabel u:r:pioneer:s0
+    oneshot
+    disabled
+
+on property:sys.boot_completed=1
+    start cph_nothing_setup

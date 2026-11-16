@@ -1,0 +1,55 @@
+;; cph2797（OPPO Find X9 / ColorOS 16.0.8.301_EX01 / mt6993）机型层 SELinux 片段。
+;;
+;; 由 07_build_vendor 追加到装配树的 /vendor/etc/selinux/vendor_sepolicy.cil（机型层，
+;; marker 为 `;; vendor_sepolicy.cil`）。
+;;
+;; 本文件只放一条事实：`/vendor/etc/init/init.virtio_compat.rc` 的 post-fs-data
+;; bind mount 需要在两个「官方分区」的目标文件上获得 mounton。
+;;
+;; 背景：该 rc 用 init 的 `mount none <源> <目标> bind` 遮蔽两件官方件——
+;;   /system_ext/lib64/librenderengineextimpl.so        → system_lib_file
+;;   /odm/etc/vintf/manifest/manifest_module_virtual_audio_v3.xml
+;;   /odm/etc/vintf/manifest/manifest_oplus_virtualdevice_audio_aidl.xml
+;;                                                      → vendor_configs_file
+;; 两个目标分区的类型都不在 init 的默认 mounton 授权面里：
+;;   /system_ext 的 /lib64 由 system_lib_file 承载（实测 `ls -Z` 确认，
+;;   不是 tcontext 里的 system_ext_file）；
+;;   /odm 的 /etc/vintf 由 vendor_configs_file 承载（odm 的 precompiled_file_contexts
+;;   里 `/(vendor|system/vendor)/etc/vintf(/.*)?` 一条，`ls -Z` 复核一致）。
+;;
+;; 为什么要显式给而不是靠 permissive：本机只有 pioneer 是 permissive，init 仍是
+;; enforcing；缺这两条时 mount(2) 返回 EACCES，rc 里表现为
+;;   init: mount() failed: Permission denied
+;; 而 bind 没生效 → 回到崩溃回环（SurfaceFlinger 与 audioserver 各自的原症状）。
+;;
+;; 授权面刻意收窄到 file 类的 mounton，不给 mount/remount（那是 filesystem 类），
+;; 也不给 write —— bind mount 只改挂载视图，不写任何官方分区内容。
+;;
+;; 【2026-10-30 第二轮修正】上一轮只给了 file mounton，但 bind mount 的 SELinux
+;; 检查分两道：
+;;   1) 对 target inode：file { mounton }        ← 上一轮已给
+;;   2) 对 target 所在 superblock：filesystem { mount }
+;;      （selinux_sb_mount → superblock_has_perm(..., FILESYSTEM__MOUNT)）
+;;      sb 的 label 取分区根目录的 label，实测：
+;;        /system_ext → u:object_r:system_file:s0
+;;        /odm        → u:object_r:vendor_file:s0
+;; 第 2 道缺了会 EACCES（init 会打印 `mount() failed: Permission denied`）。
+;; 上一轮之所以没暴露，是因为 source 路径先 ENOENT 了，根本没走到 SELinux 检查。
+;; filesystem 只给 mount，不给 remount/quotamod 之类。
+
+(allow init system_lib_file (file (mounton)))
+(allow init vendor_configs_file (file (mounton)))
+(allow init system_file (filesystem (mount)))
+(allow init vendor_file (filesystem (mount)))
+
+;; ---- FRP 承载块设备（2026-11-04 起机实测补）----
+;; 本盘 GPT 没有 frp 分区，而厂商 vendor/build.prop 的 ro.frp.pst 仍是
+;; /dev/block/by-name/frp（MTK 口径，无 bootdevice 前缀）。vendor/etc/init/
+;; frp_symlink.rc 在建盘后把该路径软链到 misc(vda3) 交给 PersistentDataBlockService。
+;; 该节点在 ueventd 里的标签是 misc_block_device（按 /dev/block/vda* 命名规则打），
+;; 而 plat 只给 system_server 开了 frp_block_device —— 缺这条时 open() 被拒，
+;; PDB 的 signalInitDone() 永不执行，onBootPhase(500) 等 10 s 超时崩掉 system_server，
+;; zygote 每 ~26 s 被 signal 9 重启、boot_completed 永不置位（实测计数见
+;; devices/evidence/cph2797/issue-cph2797-frp-block-device-missing/）。
+;; 权限集合照抄同链条的 15r / m22 / ss9380 / popsicle。
+(allow system_server_{{vers}} misc_block_device_{{vers}} (blk_file (open read write append getattr ioctl map lock)))

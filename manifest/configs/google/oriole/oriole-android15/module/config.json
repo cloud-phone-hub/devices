@@ -1,0 +1,104 @@
+{
+  "external": [
+    "cdh_redirect",
+    "device_info",
+    "input_identity",
+    "virtio_media"
+  ],
+  "input_identity": {
+    "touch_major": true,
+    "goodix_fp": false,
+    "devices": [
+      {
+        "name": "goodix_fingerprint",
+        "keys": [
+          "KEY_POWER",
+          "KEY_WAKEUP"
+        ],
+        "msc": [
+          "MSC_SCAN"
+        ]
+      },
+      {
+        "name": "gpio_keys",
+        "bus": 25,
+        "vendor": 1,
+        "product": 1,
+        "version": 1,
+        "keys": [
+          "KEY_VOLUMEUP",
+          "KEY_VOLUMEDOWN",
+          "KEY_POWER"
+        ]
+      }
+    ],
+    "aligns": []
+  },
+  "in-tree": [
+    "virt_wifi.ko"
+  ],
+  "redirect": [
+    {
+      "from": "/vendor/etc",
+      "to": "/mnt/vendorpatch/vendor/etc",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/bin",
+      "to": "/mnt/vendorpatch/vendor/bin",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/lib",
+      "to": "/mnt/vendorpatch/vendor/lib",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/lib64",
+      "to": "/mnt/vendorpatch/vendor/lib64",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/build.prop",
+      "to": "/mnt/vendorpatch/vendor/build.prop",
+      "type": "file"
+    },
+    {
+      "from": "/vendor/ueventd.rc",
+      "to": "/mnt/vendorpatch/vendor/ueventd.rc",
+      "type": "file"
+    },
+    {
+      "from": "/vendor_dlkm/lib",
+      "to": "/mnt/vendorpatch/vendor_dlkm/lib",
+      "type": "dir"
+    },
+    {
+      "from": "/odm/etc/build.prop",
+      "to": "/mnt/vendorpatch/odm/etc/build.prop",
+      "type": "file"
+    },
+    {
+      "from": "/odm/etc/selinux/odm_sepolicy.cil",
+      "to": "/mnt/vendorpatch/odm/etc/selinux/odm_sepolicy.cil",
+      "type": "file"
+    },
+    {
+      "from": "/system/bin/update_verifier",
+      "to": "/mnt/vendorpatch/system/bin/update_verifier",
+      "type": "file"
+    }
+  ],
+  "input": {
+    "keyboard": {},
+    "tablet": false,
+    "touch": {
+      "abs-to-mt": true,
+      "bus": 28,
+      "name": "sec_touchscreen",
+      "product": 0,
+      "vendor": 0,
+      "version": 0
+    }
+  }
+}

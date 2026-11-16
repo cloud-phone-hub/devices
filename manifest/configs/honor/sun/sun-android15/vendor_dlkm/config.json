@@ -1,0 +1,8 @@
+{
+  "baseline-build-prop": {
+    "label": "u:object_r:vendor_configs_file:s0",
+    "length": 867,
+    "path": "/etc/build.prop",
+    "sha256": "d77ef5be01de75efdc7824bfb95488e395e01ef3fc5fbc5d6496032309ec503f"
+  }
+}

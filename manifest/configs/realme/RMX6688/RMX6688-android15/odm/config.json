@@ -1,0 +1,12 @@
+{
+  "img": "odm_a.img",
+  "buildProp": "/build.prop",
+  "build-prop-sets": {
+    "persist.oplus.bt.em.adb.tool": "true",
+    "ro.odm.product.cpu.abilist": "arm64-v8a",
+    "ro.odm.product.cpu.abilist32": "",
+    "ro.odm.product.cpu.abilist64": "arm64-v8a"
+  },
+  "build-prop-unsets": [],
+  "note": "官方 odm_a.img 根下 /etc/build.prop 仅为 import 存根，正文在 /build.prop；运行态由 cdh_redirect 将 /odm/etc/build.prop 重定向到 patch 盘单文件，故取 /build.prop 正文并锁纯 64 位 abilist，同时将原件末尾带 CRLF 的 persist.oplus.bt.em.adb.tool 归一为 LF。"
+}

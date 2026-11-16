@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  m22 云机的 C2 组件能力声明（CDH 增量，不是原厂文件）。
+
+  来源：本机官方 vendor.img:/etc **没有** media_codecs_c2.xml；本文件只为引擎侧
+  的 v4l2 codec2 store（`android.hardware.media.v412`，二进制
+  android.hardware.media.c2@1.2-service-v4l2-64）补三条 c2.v4l2.* 的 limits/features。
+
+  消费方：AOSP `Codec2InfoBuilder`（frameworks/av/media/codec2/sfplugin）单独解析
+  本文件名，与 media_codecs.xml 并列；厂商组件（c2.qti.*，16 条）仍在
+  media_codecs.xml 内，本文件不重复声明，避免覆盖面偏移。
+
+  关键 limit：`<Limit name="size">` 必须给。缺它时框架
+  MediaCodecList::codecHandlesFormat 拿不到 "size-range" detail，直接判 false，
+  v4l2 组件永不被选中（m22 实测过一次的坑）；上下界取宿主 virtio-video 上报的
+  stepwise 16..4096。编码器另给 bitrate/bitrate-modes，与解码器分开列。
+-->
+<MediaCodecs>
+    <Decoders>
+        <MediaCodec name="c2.v4l2.avc.decoder" type="video/avc">
+            <Limit name="size" min="2x2" max="4096x4096" />
+            <Limit name="alignment" value="2x2" />
+            <Limit name="block-size" value="16x16" />
+            <Feature name="adaptive-playback" />
+        </MediaCodec>
+        <MediaCodec name="c2.v4l2.hevc.decoder" type="video/hevc">
+            <Limit name="size" min="2x2" max="4096x4096" />
+            <Limit name="alignment" value="2x2" />
+            <Limit name="block-size" value="16x16" />
+            <Feature name="adaptive-playback" />
+        </MediaCodec>
+    </Decoders>
+    <Encoders>
+        <MediaCodec name="c2.v4l2.avc.encoder" type="video/avc">
+            <Limit name="size" min="32x32" max="1920x1088" />
+            <Limit name="alignment" value="2x2" />
+            <Limit name="block-size" value="16x16" />
+            <Limit name="bitrate" range="1-40000000" />
+            <Feature name="bitrate-modes" value="VBR,CBR" />
+        </MediaCodec>
+    </Encoders>
+</MediaCodecs>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  wifi 宿主通道参数（设备独有，随机型 vendor 镜像下发）。
+
+  6 个运行参数（通道 / 扫描剖面 / 帧上限 / 重连间隔 / 读超时 / 协议版本）；
+  改值不需要重编 HAL：wifi 服务启动时读本文件，缺失一律回退编码内默认。
+
+  取值来源：m22 宿主通道实测（/dev/hvc9 与 guest 驱动、协议版本成对），
+  scan-profile 指向 mac80211_hwsim 的参数文件。
+    channel           = 与 guest 侧 wpa_supplicant/驱动对接的 virtio 通道
+    scan-profile      = mac80211_hwsim 扫描剖面（宿主侧可调，回显给 framework）
+    frame-max         = 单帧上限字节数（1 MiB）
+    reconnect-delay-ms= 通道断链重连间隔
+    read-timeout-ms   = 读帧超时
+    protocol-version  = 宿主通道协议版本（与 guest 驱动约定，改这个要同步改 guest）
+-->
+<wifi-config channel="/dev/hvc9"
+             scan-profile="/sys/module/mac80211_hwsim/parameters/scan_profile"
+             frame-max="1048576"
+             reconnect-delay-ms="1000"
+             read-timeout-ms="30000"
+             protocol-version="1"/>

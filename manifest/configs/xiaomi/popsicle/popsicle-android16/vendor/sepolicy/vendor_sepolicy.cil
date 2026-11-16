@@ -1,0 +1,19 @@
+;; popsicle（Xiaomi 17 Pro Max / HyperOS 3 & 4 / Android 16 / 高通 canoe）机型层 SELinux 片段。
+;;
+;; 由 07_build_vendor 以 marker（;; cdh-patch-begin: vendor_sepolicy.cil）整块追加到
+;; 装配树 /vendor/etc/selinux/vendor_sepolicy.cil；同一 marker 重复执行幂等。
+;; 平台类型按 vendor CIL 约定用 {{vers}} 影子名，构建阶段替换成基底 plat vers。
+;;
+;; ---- 1) FRP 承载块设备 ----
+(allow system_server_{{vers}} misc_block_device_{{vers}} (blk_file (open read write append getattr ioctl map lock)))
+
+;; ---- 2) pioneer (cph service_daemon) 与 system_server binder 双向回调及 sysfs 读取 ----
+(allow pioneer system_server_{{vers}} (binder (call transfer)))
+(allow system_server_{{vers}} pioneer (binder (call transfer)))
+(allow pioneer system_server_{{vers}} (fd (use)))
+(allow system_app_{{vers}} sysfs_{{vers}} (file (open read getattr)))
+
+;; ---- 3) perf2 HAL (hal_sensors_default) binder 双向调用与 SurfaceFlinger 读取 vendor 属性 ----
+(allow domain hal_sensors_default (binder (call transfer)))
+(allow hal_sensors_default domain (binder (call transfer)))
+(allow surfaceflinger_{{vers}} vendor_default_prop_{{vers}} (file (open read getattr map)))

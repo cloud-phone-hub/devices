@@ -1,0 +1,49 @@
+# FRP 分区路径补建：让 PersistentDataBlockService 找得到 ro.frp.pst 指向的节点。
+#
+# 真机 HyperOS 3 的属性写 ro.frp.pst=/dev/block/bootdevice/by-name/frp（属性不在
+# /vendor/build.prop，来自 system/odm 侧，厂商固件里同样是 QTI 风格路径）。本盘 GPT
+# 来自 lineage 底座，只有 /dev/block/by-name（BIOS/EFI/boot/misc/persist/super/vdc），
+# 没有 frp 分区，bootdevice/by-name 整个目录都不存在，于是开机实测（Android 16）：
+#   E PersistentDataBlockService: partition not available?
+#   E PersistentDataBlockService: java.io.FileNotFoundException:
+#       /dev/block/bootdevice/by-name/frp: open failed: ENOENT
+#   E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS
+#   E AndroidRuntime: java.lang.RuntimeException: Failed to boot service
+#       com.android.server.pdb.PersistentDataBlockService: onBootPhase threw an exception
+#       during phase 500
+# 与 Android 15 的 ss9380/m22 不同：那边 PDB 对 ENOENT 只打警告，只是
+# enforceChecksumValidity 里开不了节点会等不到 init 信号；Android 16 直接把异常冒泡
+# 到 lambda，signalInitDone() 永不执行，phase 500 抛 "Failed to boot service" 后
+# system_server 自杀，zygote 无限重启，sys.boot_completed 永不置位。
+#
+# 处置：把 QTI 路径建出来，软链到本盘未被使用的 misc 分区（vda3）。本盘由 GRUB 引导，
+# 不消费 Android 的 misc/BCB，故用它承载 FRP 数据块，语义上等价于真机把 FRP 放在独立
+# 小分区。post-fs-data 早于 system_server 启动，时序足够。
+#
+# 配套：
+#   * DAC —— /dev/block/vda3 默认 0600 root:root，需 0660 root system，
+#     见 vendor/etc/ueventd.canoe.rc；
+#   * SELinux —— 节点标签是 misc_block_device（plat 只给 system_server 开
+#     frp_block_device），见 sepolicy/vendor_sepolicy.cil。
+on post-fs-data
+    mkdir /dev/block/bootdevice 0755 root root
+    mkdir /dev/block/bootdevice/by-name 0755 root root
+    symlink /dev/block/vda3 /dev/block/bootdevice/by-name/frp
+
+# 引导期由内核 fbcon (vtcon1 -> virtio_gpudrmfb) 在 VNC 展示内核/init 启动日志；
+# 进入 boot 阶段后 SurfaceFlinger / bootanim 接管 DRM 主平面，解绑 vtcon1 避免
+# 后续 printk (avc/servicemanager) 继续在帧缓冲上执行同步软滚屏与全屏脏区回读；
+# 同时置 persist.sys.stability.PrereadEnable=false 触发 init.launch_boost.rc 停止 iorapd。
+service unbind_fbcon /system/bin/sh -c "echo 0 > /sys/class/vtconsole/vtcon1/bind 2>/dev/null; setprop persist.sys.stability.PrereadEnable false; stop loc_sys_service; stop iorapd; stop millet_monitor"
+    user root
+    group root
+    oneshot
+    disabled
+    seclabel u:r:pioneer:s0
+
+on boot
+    start unbind_fbcon
+
+on property:sys.boot_completed=1
+    start unbind_fbcon
+

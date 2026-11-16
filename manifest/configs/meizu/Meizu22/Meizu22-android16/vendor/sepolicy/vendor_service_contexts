@@ -1,0 +1,27 @@
+# m22（MEIZU 22 / Flyme 12.6 / Android 16）机型层 service_contexts 片段。
+#
+# 由 07_build_vendor 以 marker（# cdh-patch-begin: vendor_service_contexts）整块追加到
+# 装配树 /vendor/etc/selinux/vendor_service_contexts；类型与授权见同目录
+# vendor_sepolicy.cil 的第 1 段。
+#
+# 这些名字都是 Flyme framework 会去查询、而本云 vendor 侧（lineage-23.2 virtio 底座）
+# 没有实现的 HAL / 框架服务。缺条目时 servicemanager 兜底标 default_android_service，
+# system_server 对其无 add（realitytap）或无 find，表现为 "Failure starting core
+# service" 与整屏 denied 噪音。打标不代表服务存在：VINTF 未声明，框架按不可用降级。
+
+# 6 个私有 HAL 名已全部收成模块，标签随模块走（各自 sepolicy/vendor_service_contexts）：
+#   devices/hardware/vendor.qti.hardware.perf2/
+#   devices/hardware/vendor.qti.hardware.servicetrackeraidl/
+#   devices/hardware/vendor.meizu.hardware.aw_light/
+#   devices/hardware/vendor.meizu.hardware.meizu_charging/
+#   devices/hardware/vendor.awa.reality/          (IRealityTap/default)
+#   devices/hardware/vendor.qti.diaghal/          (Idiag/default)
+# 类型名均按 AOSP hal_*_service 风格，不带项目缩写。模块层两个例外：perf2 沿用原厂
+# 名；servicetracker 取 vendor_hal_srvctracker_service（与 exec 同前缀，原厂服务名是
+# vendor_hal_servicetrackeraidl_service，改名不影响功能）。
+
+# 只剩 realitytap：不是 HAL 实例名，而是 RealityTapManagerService 在 system_server
+# 里自己 addService 的框架服务（vendor 侧无法实现），标签与 add/find 授权永久留在
+# 机型层。类型名取 AOSP 框架服务的 *_service 风格，与原厂同名（不占用模块层的
+# hal_realitytap_service —— 那是 vendor.awa.reality 的 AIDL 实例标签）。
+realitytap	u:object_r:realitytap_service:s0

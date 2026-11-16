@@ -1,0 +1,2 @@
+# sun（Honor Magic7 RSR / MagicOS 9 / Android 15）机型层 file_contexts。
+/vendor/bin/hw/vendor\.honor\.hardware\.hwfactoryinterface-service   u:object_r:hal_hwfactoryinterface_default_exec:s0

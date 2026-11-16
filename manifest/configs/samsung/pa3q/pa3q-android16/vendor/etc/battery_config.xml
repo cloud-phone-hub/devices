@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ss9380（Samsung Galaxy S25 Ultra，SM-S9380 / pakala-SM8750）电池口径 ——
+  供自研健康 HAL 的 samsung 变体（/vendor/bin/hw/android.hardware.health-service）启动时
+  读取（env BATTERY_CONFIG_XML 可覆盖路径）。各段与属性均可缺省，缺省即用 HAL 内置
+  默认值；枚举属性值必须是 health_service.cpp 枚举表对应的 AIDL 名字（如 GOOD / FULL /
+  INVALID）。
+
+  取值口径：本机无电池硬件（/sys/class/power_supply 为空），也没有 S25 Ultra 真机
+  `dumpsys battery` 可采，故按「官方规格 + 保守下界」填：
+    - 容量 5000000 µAh = 5000 mAh（官方规格典型值，额定 4855 mAh）；
+    - 标配 45 W 有线快充 → ac=1 / usb=0（BatteryService 里 AC 优先）；
+    - 电压/温度在一个挂充周期内做「满电静置 ↔ 补电」两相位模拟（HAL 的 lerp），
+      数值取 Qualcomm 4.4 V 体系的常见档位，**非真机取证**；
+    - 真机才有的档案类字段（cycle_count、健康度、出厂/首用时间）一律取下界。
+  将来拿到真机 dumpsys battery 后只改本文件即可，不必重编 HAL。
+-->
+<battery>
+  <!-- 身份与电量：level=100、health=GOOD、capacity_level=FULL、
+       charging_state=INVALID、present=1 -->
+  <identity technology="Li-poly" cycle_count="0" level="100" health="GOOD"
+            capacity_level="FULL" charging_state="INVALID" present="1"/>
+
+  <!-- 充电器状态：S25 Ultra 标配 45 W 有线快充，AC 优先；无线/座充不报，
+       充电上限 0（不限制） -->
+  <charger ac="1" usb="0" wireless="0" dock="0"
+           max_current_ua="0" max_voltage_uv="0"/>
+
+  <!-- 容量：5000 mAh 典型值；charge_counter 落在满电静置～补电区间（49xx mAh） -->
+  <capacity full_uah="5000000" counter_min="4945000" counter_max="4972000"/>
+
+  <!-- 动态模拟区间：静置 4380 mV / 30.0°C，补电 4450 mV / 38.0°C，周期 600 s -->
+  <cycle full_mv="4380" charge_mv="4450" temperature_full_decic="300"
+         temperature_charge_decic="380" seconds="600"/>
+
+  <!-- HealthInfo 扩展档案（getBatteryHealthData）：真机档案未采集，serial_number 不下发 -->
+  <health_data state_of_health="99" part_status="UNSUPPORTED"
+               manufacturing_date_seconds="0" first_usage_seconds="0"/>
+</battery>

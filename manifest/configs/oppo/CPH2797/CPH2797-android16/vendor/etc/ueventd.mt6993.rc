@@ -1,0 +1,19 @@
+# cph2797（OPPO Find X9 / ColorOS 16.0.8.301_EX01 / MTK mt6993）的板级 ueventd 配置。
+#
+# 文件名按基座 /vendor/etc/ueventd.rc 的两行 import 来：
+#   import /vendor/etc/ueventd.${ro.board.platform}.rc
+#   import /vendor/etc/ueventd.${ro.hardware}.rc
+# 本机 cmdline 的 androidboot.hardware=mt6993（05 按清单 board 改写），所以板级件必须
+# 叫 ueventd.mt6993.rc。07_build_vendor 步骤 6 的 placeVendorUeventdRC 在同名文件已由
+# 上层提供时保留不覆盖 —— 也就是说本文件一旦存在，生成器那句
+# `import /vendor/etc/ueventd.virt.rc` 就得由自己写回来，漏了它 /dev/hvc* 会回落内核
+# 默认 0600 root:root，以 nobody 运行的 Remote KeyMint open("/dev/hvc3") 直接 EACCES。
+#
+# 本文件补的一条权限位是 FRP 承载分区：厂商 vendor/build.prop 写
+# ro.frp.pst=/dev/block/by-name/frp，而本盘 GPT 没有 frp 分区，
+# vendor/etc/init/frp_symlink.rc 把该路径软链到 misc(vda3) 交给
+# PersistentDataBlockService，该服务以 system 身份读写；vda3 出厂是 0600 root:root，
+# 不给 0660 root system 时 open() 报 EACCES，同一条 10 s 超时链照样崩 system_server。
+import /vendor/etc/ueventd.virt.rc
+
+/dev/block/vda3    0660    root    system

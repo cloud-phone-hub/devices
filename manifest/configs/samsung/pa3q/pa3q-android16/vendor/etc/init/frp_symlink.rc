@@ -1,0 +1,28 @@
+# FRP 分区路径补建：让 PersistentDataBlockService 找得到 ro.frp.pst 指向的节点。
+#
+# 官方 Samsung vendor build.prop 写 ro.frp.pst=/dev/block/bootdevice/by-name/frp
+# （见厂商 vendor_a.img:/build.prop，机型目录不放副本），framework 的
+# com.android.server.pdb.PersistentDataBlockService 据此打开 FRP 分区。本盘 GPT 来自
+# lineage 底座，没有 frp 分区，QTI 风格的 bootdevice/by-name 路径也不存在 →
+#   E PersistentDataBlockService: partition not available?
+#   E PersistentDataBlockService: java.io.FileNotFoundException:
+#       /dev/block/bootdevice/by-name/frp: open failed: ENOENT
+# 该异常发生在 onStart 的初始化线程里，waitForInitDoneSignal 等不到信号，20s 后
+#   "Service PersistentDataBlockService init timeout" →
+#   "Failed to boot service com.android.server.pdb.PersistentDataBlockService:
+#    onBootPhase threw an exception during phase 500" → system_server FATAL 重启循环
+# （m22 于 instance 24 实测，2026-10-28 12:54:44；本机 system 同源服务，风险一致）。
+#
+# 处置：把 QTI 路径建出来，软链到本盘未被使用的 misc 分区（vda3，1 MiB）。本盘由
+# GRUB 引导，不消费 Android 的 misc/BCB，故用它承载 FRP 数据块。post-fs-data 早于
+# system_server 启动，时序足够。
+#
+# 配套：
+#   * DAC —— /dev/block/vda3 默认 0600 root:root，需 0660 root system，
+#     见 vendor/etc/ueventd.qcom.rc；
+#   * SELinux —— 节点标签是 misc_block_device（plat 只给 system_server 开
+#     frp_block_device），见 sepolicy/vendor_sepolicy.cil（若 avc 拦下再补）。
+on post-fs-data
+    mkdir /dev/block/bootdevice 0755 root root
+    mkdir /dev/block/bootdevice/by-name 0755 root root
+    symlink /dev/block/vda3 /dev/block/bootdevice/by-name/frp

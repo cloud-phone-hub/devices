@@ -1,0 +1,328 @@
+;; ss9380（Samsung Galaxy S25 Ultra / OneUI Android 16 / BP4A.251205.006 / S9380ZCSDCZH1）
+;; 机型层 SELinux 片段，由 07_build_vendor 步骤 6 追加到装配树的
+;; /vendor/etc/selinux/vendor_sepolicy.cil（机型层，marker 为 `;; vendor_sepolicy.cil`）。
+;;
+;; ==========================================================================
+;; 一、napproxyd_socket：netd 启动链的硬前置
+;; ==========================================================================
+;; 事实（2026-10-30 实跑取证）：
+;;   本机型 system 侧 netd 来自官方 OneUI，其 /system/etc/init/netd.rc 里除 AOSP 的
+;;   dnsproxyd/mdns/fwmarkd 外还多一条三星 Knox NPA 的 socket：
+;;       socket napproxyd stream 0660 root inet
+;;   init 在建这个 socket 时失败：
+;;       init: Could not create socket 'napproxyd': Failed to bind socket 'napproxyd': Permission denied
+;;   原因是官方把 socket 文件的标签放在 **vendor** 的 file_contexts 里：
+;;       /dev/socket/napproxyd   u:object_r:napproxyd_socket:s0
+;;   而本机 vendor 分区用的是 lineage 基底，该条目与其类型定义都不存在，于是
+;;   init 的 setfscreatecon 拿不到可用上下文，bind(2) 直接 EACCES。
+;;
+;; 后果链（同一个 logcat 里可完整对上）：
+;;   netd 拿不到 napproxyd 的控制 fd
+;;     → Netd  : Unable to start NapProxyListener (Success)      ← strerror 是 Success，
+;;                                                              因为 errno 没被设置
+;;     → netd  main 返回 1，300 ms 内退出
+;;     → init : Service 'netd' (pid X) exited with status 1
+;;     → init : process with updatable components 'netd' exited 4 times before boot completed
+;;     → init 按 netd.rc 的 `onrestart restart zygote` 把整组 SIGKILL
+;;       （zygote/audioserver/media/cameraserver/wificond 全被带走）
+;;     → zygote 每 5 s 起一次、preload 到一半就被杀，system_server 永远跑不完整，
+;;       sys.boot_completed 不置位。
+;;
+;; 类型断言的含义（与官方 vendor_sepolicy.cil 第 1403/1426/2698/2699/14858 行逐一对应）：
+;;   (type ...)              定义 socket 文件类型；
+;;   (roletype object_r ...)  让 file_contexts 的 object_r 角色可用；
+;;   file_type              官方的 napproxyd_socket **同时**是 file_type 属性成员（官方第
+;;                          1403 行 `(typeattributeset file_type (... napproxyd_socket ...))`）。
+;;                          这不是可选项：init 建 socket 时内核走 `may_create(dir, dentry,
+;;                          sock_file)`，subject 取的是**父目录 /dev/socket 的 sid**
+;;                          （socket_device），object 取 fscreate 上下文（napproxyd_socket）。
+;;                          OneUI 的 plat 里对 socket_device 没有任何直指某个 socket 类型的
+;;                          allow（只有 `(allow domain socket_device (dir ...))` 和
+;;                          `(allow init socket_device (dir (relabelto)))`），官方能建出
+;;                          napproxyd 正是靠 file_type 属性走通用授权。
+;;                          实测漏掉它时的现象：file_contexts 能查到正确标签（restorecon 会打印
+;;                          `Relabeling ... to u:object_r:napproxyd_socket:s0`），但 init 的 bind
+;;                          仍然 EACCES，且 dmesg 里**看不到 init 的 avc 拒绝**（因为被拒的是
+;;                          dir→file 这一对，与 init 域无关）。
+;;   mlstrustedobject        官方同样把它列进 mlstrustedobject（与 tz_socket/bsd_socket 同族），
+;;                          保持与官方一致的属性归属，避免多级安全（MCS）比较把访问打回。
+;;
+;; 授权面刻意收窄：
+;;   socket_device 侧只给新建 inode 的 create —— 这正是 may_create 的第一道检查；
+;;   init 侧只给 socket 文件本身的 create/write/unlink/setattr/getattr
+;;   —— init 需要 create 建文件、unlink 清残留、setattr 做 chown 到 root:inet(3003)；
+;;   netdomain 侧只给 write —— 与官方原句完全一致（netd 是 netdomain 成员）。
+;;   不给 ioctl/read 等未用权限，也不碰 dir（/dev/socket 目录本身的 dir 权限由 plat 的
+;;   `(allow domain socket_device (dir ...))` 与 `(allow init socket_device (dir (relabelto)))` 覆盖）。
+;;
+;; 注意：本机型运行时**没有** precompiled_sepolicy（init 会打印
+;; `No precompiled sepolicy at /vendor/etc/selinux/precompiled_sepolicy` 后走
+;; `Compiling SELinux policy` + /system/bin/secilc 现场编译），所以本片段改完
+;; 只需重打 vendor 并重启，不需要重编预编译策略。
+(type napproxyd_socket)
+(roletype object_r napproxyd_socket)
+(typeattributeset file_type (napproxyd_socket))
+(typeattributeset mlstrustedobject (napproxyd_socket))
+(allow socket_device napproxyd_socket (sock_file (create)))
+(allow init napproxyd_socket (sock_file (create write unlink setattr getattr)))
+(allow netdomain napproxyd_socket (sock_file (write)))
+
+;; ==========================================================================
+;; 二、vold 的 netlink socket：vold 起不来会刷爆日志并拖死 storage 栈
+;; ==========================================================================
+;; 事实（2026-10-30 实跑取证，build7 盘集上实例 1）：
+;;   logcat 里 vold 以毫秒级频率死循环，把 main buffer 整块刷掉：
+;;       I vold    : Socket created with fd:-1
+;;       E vold    : Exiting(13)
+;;   dmesg 同一条 avc 反复出现 253 次以上：
+;;       avc: denied { create } for pid=290 comm="vold"
+;;            scontext=u:r:vold:s0 tcontext=u:r:vold:s0 tclass=netlink_socket
+;;   也就是 vold 建自己的 netlink socket（uevent/ueventd 监听）就被拒，
+;;   vold main 直接返回 13，init 每 5 s 拉一次，形成新的死循环。
+;;
+;; 为什么 lineage 基底缺：lineage 把这条权限写在 **plat** 的 vold.te
+;; （`allow vold self:netlink_socket create_socket_perms;`），而本机 plat 是
+;; 官方 OneUI 的 plat_sepolicy（vers=202504），三星把它挪到了 vendor 侧——
+;; 官方 vendor_sepolicy.cil 第 18458 行：
+;;       (allow vold_202404 self (netlink_socket (read write create bind)))
+;; 我们换了 vendor 侧的策略，这条就丢了。权限集合与官方原句保持一致。
+(allow vold_{{vers}} vold_{{vers}} (netlink_socket (read write create bind)))
+
+;; ==========================================================================
+;; 三、FRP 承载块设备：PersistentDataBlockService 的 phase 500 硬前置
+;; ==========================================================================
+;; 事实：官方 vendor build.prop 第 144 行 `ro.frp.pst=/dev/block/bootdevice/by-name/frp`，
+;;   而本盘 GPT 来自 lineage 底盘、没有 frp 分区，机型静态树用
+;;   vendor/etc/init/frp_symlink.rc 把该路径软链到 misc（vda3），
+;;   vendor/etc/ueventd.qcom.rc 给成 0660 root:system。设备上实测：
+;;       lrwxrwxrwx ... frp -> /dev/block/vda3            （u:object_r:block_device:s0）
+;;       brw-rw---- root system u:object_r:misc_block_device:s0  /dev/block/vda3
+;;
+;; 失败链（与 m22 同源、同一条崩溃栈）：
+;;   PersistentDataBlockService.onStart 把初始化任务交给 SystemServerInitThreadPool，
+;;   任务里 enforceChecksumValidity() 打开 ro.frp.pst → SELinux 拒 → 抛异常 →
+;;   signalInitDone() 没被调用 → onBootPhase(PHASE_ACTIVITY_MANAGER_READY=500) 里
+;;   mInitDoneSignal.await(10s) 超时（反编译 system/framework/services.jar 的
+;;   Lcom/android/server/pdb/PersistentDataBlockService;.onBootPhase 可逐条对上）：
+;;       java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+;;   该异常冒泡成 system_server 的 boot 失败 → zygote 重启循环、sys.boot_completed 不置位。
+;;
+;; plat 只给 system_server 开了 frp_block_device，而本盘节点的实际标签是
+;; misc_block_device（软链目标由 ueventd 按 /dev/block/vda 命名规则打标签），
+;; 所以要按 m22 的实证补这一条（m22 缺它时同样卡在这里）。
+(allow system_server_{{vers}} misc_block_device_{{vers}} (blk_file (open read write append getattr ioctl map lock)))
+
+;; ==========================================================================
+;; 四、system_server 写 wifi_log_prop：本机型当前**唯一的启动致命点**
+;; ==========================================================================
+;; 事实（2026-10-30 实跑取证，build8 盘集上实例 index 2）：
+;;   PDB 的 10 s 超时消失后，system_server 立刻在这里崩：
+;;       E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS
+;;       java.lang.RuntimeException: failed to set system property
+;;           "vendor.wifi.dualconcurrent.interface" to "swlan0" (check logcat for reason)
+;;         at com.samsung.android.server.wifi.ap.SemWifiApChipInfo
+;;              .checkWifiSharingAndPowerSave
+;;   原因在 dmesg 里同一时刻：
+;;       init: Unable to set property 'vendor.wifi.dualconcurrent.interface'
+;;             from uid:1000 gid:1000 pid=20058: SELinux permission check failed
+;;   （uid 1000 = system，发起者是 Binder 线程 Thread-18，所以 avc 的 subject 是 system_server。）
+;;
+;; 属性归属：system_ext 的 property_contexts 第 762 行
+;;       vendor.wifi.dualconcurrent.interface   u:object_r:wifi_log_prop:s0
+;;   plat 里 wifi_log_prop 只有两个 setter（plat_sepolicy.cil 第 55877 行 shell、
+;;   第 71020 行 vendor_init），**没有** system_server —— 官方是三星自己在 vendor 侧补的：
+;;   官方 vendor_sepolicy.cil 第 9353/9354 行
+;;       (allow system_server_202404 wifi_log_prop_202404 (property_service (set)))
+;;       (allow system_server_202404 wifi_log_prop_202404 (file (read getattr map open)))
+;;
+;; 后果：SemWifiApChipInfo 是 WiFi 共享/省电的启动期初始化，setprop 失败直接抛
+;;   RuntimeException，冒泡成 "FATAL EXCEPTION IN SYSTEM PROCESS" → system_server 死 →
+;;   zygote 重启循环，sys.boot_completed 永不置位。
+;; 注：`set` 之外还需要 `file (read getattr map open)`，因为 system_server 走的是
+;;   SystemProperties.set 的常规路径，会先 open/mmap 属性区做校验。
+(allow system_server wifi_log_prop (property_service (set)))
+(allow system_server wifi_log_prop (file (read getattr map open)))
+
+;; ==========================================================================
+;; 五、coredomain 读 product_ship_prop（ro.product_ship 系列）
+;; ==========================================================================
+;; 事实（同一实例，紧挨着上面那次 FATAL 之前，pid=27961 连发 9 条）：
+;;       avc: denied { read } for comm="system_server"
+;;            name="u:object_r:product_ship_prop:s0"
+;;            tcontext=u:object_r:product_ship_prop:s0 tclass=file
+;;   属性类型由 system_ext 定义（system_ext_sepolicy.cil），plat 里 product_ship_prop
+;;   出现 0 次；官方是在 vendor 侧用一条 coredomain 通配覆盖所有读方
+;;   （官方 vendor_sepolicy.cil 第 10748 行）：
+;;       (allow coredomain product_ship_prop_202404 (file (read getattr map open)))
+;;   本机型多个核心域都在读（system_server / zygote / smdexe），照抄官方通配，
+;;   避免逐个域补。
+(allow coredomain product_ship_prop (file (read getattr map open)))
+
+;; ==========================================================================
+;; 六、init 在 /dev/socket 下建三星自有 socket
+;; ==========================================================================
+;; 事实（同一实例，dmesg 去重统计）：
+;;       avc: denied { create } for pid=1 comm="init" name="perfmond"
+;;            tcontext=u:object_r:socket_device:s0 tclass=sock_file          (44 次)
+;;       同形态还有 perfmon_send(42)、imsd(44)、ss_conn_daemon2(34)、perfsdkserver(6)。
+;;   这几个 socket 名在官方 vendor_file_contexts 里大多**没有**条目（只有 perfmond 与
+;;   ss_conn_daemon2 有专属类型），也就是说官方本来就允许 init 直接把它们建成
+;;   socket_device 标签；权限同样被三星挪到了 vendor 侧：
+;;   官方 vendor_sepolicy.cil 第 13937 行（窄集合）与第 21648 行（全集合）
+;;       (allow init_202404 socket_device_202404 (sock_file (create setattr unlink)))
+;;       (allow init_202404 socket_device_202404 (sock_file (ioctl read write create getattr
+;;            setattr lock append map unlink rename open watch watch_reads)))
+;;   本机型 plat 对 socket_device 只有 6 处、全是 dir 级（第 40517 行
+;;   `(allow init socket_device (dir (relabelto)))`），sock_file 一条没有 —— 所以
+;;   dnsproxyd/mdns/fwmarkd（plat 有专属类型与授权）能建，三星这些就建不出来。
+;;   取官方的全集合，一次覆盖 create/unlink/setattr 与后续读写。
+(allow init socket_device (sock_file (ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads)))
+
+;; ==========================================================================
+;; 七、非致命但持续刷 avc 的三星自研组件（按官方原句补齐，避免后续误判）
+;; ==========================================================================
+;; (a) BattInfoManager（system_server 内的三星电池线程）要 stat /data/log：
+;;       avc: denied { search } for comm="BattInfoManager" name="log"
+;;            tcontext=u:object_r:dumplog_data_file:s0 tclass=dir
+;;     官方 vendor_sepolicy.cil 第 17080 行给了 dir 全集合。
+(allow system_server dumplog_data_file (dir (ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir)))
+
+;; (b) system_server 读 /efs（三星 NV 数据）：
+;;       avc: denied { search } for comm="system_server" name="efs"
+;;            tcontext=u:object_r:efs_file:s0 tclass=dir
+;;     官方 vendor_sepolicy.cil 第 17005 行给了 dir 全集合。
+(allow system_server efs_file (dir (ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir)))
+
+;; (c) ss_conn_daemon2 枚举 USB gadget：
+;;       avc: denied { search } for comm="ss_conn_daemon2" name="android_usb"
+;;            tcontext=u:object_r:sysfs_android_usb:s0 tclass=dir
+;;     官方 vendor_sepolicy.cil 第 16389~16391 行（dir/file/lnk_file）。
+(allow ss_conn_daemon sysfs_android_usb (dir (ioctl read getattr lock open watch watch_reads search)))
+(allow ss_conn_daemon sysfs_android_usb (file (ioctl read getattr lock map open watch watch_reads)))
+(allow ss_conn_daemon sysfs_android_usb (lnk_file (ioctl read getattr lock map open watch watch_reads)))
+
+;; 说明：以上各条里 plat/system_ext 的类型（wifi_log_prop、product_ship_prop、
+;; socket_device、init、system_server、efs_file、sysfs_android_usb）都直接用**未版本化**
+;; 名字。本机型没有 precompiled_sepolicy，init 现场用 secilc 把 plat_sepolicy.cil /
+;; system_ext_sepolicy.cil / product_sepolicy.cil / vendor_sepolicy.cil 与 mapping 一批编译，
+;; 未版本化名字在这些源码里都是定义态（第一段 napproxyd 已用 init/socket_device 验证过）。
+
+;; ==========================================================================
+;; 八、SystemUI 的 UEventObserver（= 画面全黑的直接原因）+ 一批刷屏噪音
+;; ==========================================================================
+;; 【当前唯一阻塞画面的问题】SystemUI 每 ~1 s 崩一次，崩溃栈：
+;;   FATAL EXCEPTION: UEventObserver   Process: com.android.systemui
+;;   java.lang.RuntimeException: Unable to open socket for UEventObserver
+;;       at android.os.UEventObserver.nativeSetup(Native Method)
+;; 对应 dmesg：
+;;   avc: denied { create } for comm="UEventObserver"
+;;        scontext=u:r:platform_app:s0:c512,c768
+;;        tcontext=u:r:platform_app:s0:c512,c768 tclass=netlink_kobject_uevent_socket
+;; 为什么是 platform_app：OneUI 把 SystemUI 跑在 platform_app 域里（真机如此，
+;;   ps -Z 实测 u:r:platform_app:s0:c512,c768 u0_a45 ... com.android.systemui）。
+;; 为什么本机缺：官方 vendor_sepolicy.cil 第 15175 / 16676 行正好有这两条，
+;;   plat 侧没有（plat 只给 platform_app 开过 property_service 等），换 vendor 策略即丢。
+;; 取官方原句（self 形式）：
+(allow platform_app self (netlink_kobject_uevent_socket (read create bind setopt)))
+(allow system_app self (netlink_kobject_uevent_socket (read create bind setopt)))
+
+;; (a) perfmond 连 servicemanager 拿 fd（37 次 binder call denied）：
+;;       avc: denied { call } for comm="perfmond" scontext=u:r:perfmond:s0
+;;            tcontext=u:r:servicemanager:s0 tclass=binder
+;;     以及 perfmond 读 /proc/uptime（3 次）：
+;;       avc: denied { read } for comm="perfmond" name="uptime" tcontext=u:object_r:proc_uptime:s0
+;;     官方 15087/15089/15099，另 15106/15107 是它写 /data/log。
+(allow perfmond servicemanager (binder (call transfer)))
+(allow perfmond servicemanager (fd (use)))
+(allow perfmond proc_uptime (file (ioctl read getattr lock map open watch watch_reads)))
+(allow perfmond dumplog_data_file (dir (ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir)))
+(allow perfmond dumplog_data_file (file (ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads)))
+
+;; (b) perfsdkserver 同病（27 次），官方 15110/15112。
+(allow perfsdkserver servicemanager (binder (call transfer)))
+(allow perfsdkserver servicemanager (fd (use)))
+
+;; (c) system_server 往 /dev/socket/perfmond 写（4 次），官方 17107 原句。
+;;       avc: denied { write } for comm="system_server" name="perfmond" dev="tmpfs"
+;;            tcontext=u:object_r:socket_device:s0 tclass=sock_file
+(allow system_server socket_device (sock_file (write)))
+
+;; (d) dumpstate 一启动就 abort，根因是 stat /data/log 被拒
+;;     （posix_stat("/data/log") Permission denied），官方 7149/7150；
+;;     顺带补它读 packages.list 的授权（10922），否则 bugreport 内容不全。
+(allow dumpstate dumplog_data_file (dir (ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir)))
+(allow dumpstate dumplog_data_file (file (ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads)))
+(allow dumpstate packages_list_file (file (ioctl read getattr lock map open watch watch_reads)))
+
+;; (e) surfaceflinger 写 /data/log（2 次），官方 8847/8848。
+(allow surfaceflinger dumplog_data_file (dir (ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir)))
+(allow surfaceflinger dumplog_data_file (file (ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads)))
+
+;; (f) zygote / system_app 搜 /data/log（5 + 1 次），官方 9759/9760、8945/8946。
+(allow zygote dumplog_data_file (dir (ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir)))
+(allow zygote dumplog_data_file (file (ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads)))
+(allow system_app dumplog_data_file (dir (ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir)))
+(allow system_app dumplog_data_file (file (ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads)))
+
+;; (g) platform_app（DefaultDispatch）读三星 em_version_prop，官方 10751
+;;     `(allow coredomain_202404 em_version_prop_202404 (file (read getattr map open)))`。
+(allow coredomain em_version_prop (file (read getattr map open)))
+
+;; 未处理（已取证、非致命、官方亦无对应原句，留待需要时再评估）：
+;;   - pioneer(service_daemon) 写 /dev/kmsg：官方 vendor cil 里根本没有 pioneer 这个域
+;;   - fabriccrypto 搜 /data/log：官方无条目；该进程本身每 5 s 因 fkeymaster 缺失 SIGABRT
+;;   - platform_app 读 /data/system/app_fonts：该目录在云机上不存在，属无害噪音
+
+;; ==========================================================================
+;; 九、SystemUI 设置 sys.locksecured 被拒 → 每 30 s 崩一次（锁屏因此永远退不掉）
+;; ==========================================================================
+;; 【当前唯一阻塞交互的问题】锁屏 swipe / wm dismiss-keyguard 都“无效”的表象根因，
+;; 是 SystemUI 每 30 s 死一次，每次重启都重新 SHOW 锁屏：
+;;   FATAL EXCEPTION: pool-10-thread-1    Process: com.android.systemui
+;;   java.lang.RuntimeException: failed to set system property "sys.locksecured" to "true"
+;;       at android.os.SystemProperties.native_set(Native Method)
+;;       at com.android.systemui.keyguard.KeyguardViewMediatorHelperImpl$onSecurityPropertyUpdated$1.run
+;; 伴随日志：
+;;   W libc: Unable to set property "sys.locksecured" to "true": PROP_ERROR_PERMISSION_DENIED (0x18)
+;;   init: Unable to set property 'sys.locksecured' from uid:10045 gid:10045 pid=14528:
+;;         SELinux permission check failed
+;;
+;; 这个属性归哪个域：plat_property_contexts 第 50 行 `sys.  u:object_r:system_prop:s0`
+;;   把整个 sys.* 前缀归到 system_prop（首条匹配 + 最长前缀优先），第 181 行
+;;   的 `* u:object_r:default_prop:s0` 只给完全没命中前缀的属性兜底。同类被拒的还有
+;;   sys.tile.lazy_booted（SystemUI 跑完引导时写，同样报 0x18）。
+;; 为什么本机缺：官方 vendor_sepolicy.cil 第 8275 行正好有这条，换 vendor 策略即丢。
+;;   平台侧没有：`grep '(allow platform_app system_prop (property_service (set)))'
+;;   plat_sepolicy.cil` 为空，platform_app 在 plat 里只有 debug_tracing_* 与
+;;   test_boot_reason_prop 两条。
+;; 踩过的坑：第一版（build13）错写成 default_prop —— secilc 编得过、规则也确实进镜像
+;;   （debugfs 回读第 5051 行确认），但运行时照样被拒，因为 sys.* 永远不会落到兜底域上。
+;;   判定属性域必须看 plat_property_contexts 里的最长前缀条目，不能只看兜底行。
+(allow platform_app system_prop (property_service (set)))
+
+;; (a) system_server 连三星 perf 守护进程（12 + 28 次 connectto）：
+;;       avc: denied { connectto } for comm="binder:694_4" path="/dev/socket/perfsdkserver"
+;;            scontext=u:r:system_server:s0 tcontext=u:r:perfsdkserver:s0 tclass=unix_stream_socket
+(allow system_server perfsdkserver (unix_stream_socket (connectto)))
+(allow system_server perfmond (unix_stream_socket (connectto)))
+
+;; (b) system_server 在 /data/log 建文件（6 次 create）
+(allow system_server dumplog_data_file (file (ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads)))
+
+;; ==========================================================================
+;; 十、vendor_init 加载 ro.csc.country_code 被拒 → KnoxGuard 按非中国区锁机
+;; ==========================================================================
+;; 现象（build14 首启）：
+;;   init: Do not have permissions to set 'ro.csc.country_code' to 'China'
+;;         in property file '/vendor/build.prop': SELinux permission check failed
+;; 于是 getprop ro.csc.country_code 为空，KnoxGuard 走非中国分支：
+;;   knox.kg.state=Error、锁屏显示“手机已锁定(8135)”、mCurrentFocus=Bouncer。
+;;
+;; 属性域：ro.csc.country_code 在 /system_ext/etc/selinux/system_ext_property_contexts
+;;   第 201 行，类型 csc_prop（ro.csc.sales_code、persist.sys.omc_* 等同域）。
+;; 为什么被拒：/vendor/build.prop 由 init 以 vendor_init 域加载；现场合并的
+;;   plat/system_ext/product/vendor cil 里没有 vendor_init 写 csc_prop 的允许
+;;   （真机上这些值来自三星 CSC/optics 分区与 OMC 流程，不经 vendor build.prop）。
+;;   本包 AP 固件不带 optics/prism，只能把国家码放进 vendor build.prop，
+;;   因此补这一条最小允许，作用域仅为 property_service set。
+(allow vendor_init csc_prop (property_service (set)))

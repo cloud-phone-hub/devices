@@ -1,0 +1,18 @@
+{
+  "images": [
+    "system.img",
+    "system_ext.img",
+    "product.img",
+    "product_h.img",
+    "vendor.img",
+    "vendor_dlkm.img",
+    "system_dlkm.img",
+    "odm.img",
+    "preas.img",
+    "cust.img",
+    "version.img",
+    "preload.img",
+    "ai_model.img",
+    "ai_model_vendor.img"
+  ]
+}

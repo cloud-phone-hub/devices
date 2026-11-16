@@ -1,0 +1,18 @@
+;; 15r（OnePlus 15R / CPH2769 / ColorOS 16 / Android 16 / 高通 canoe）机型层 SELinux 片段。
+;;
+;; 由 07_build_vendor 以 marker（;; cdh-patch-begin: vendor_sepolicy.cil）整块追加到
+;; 装配树 /vendor/etc/selinux/vendor_sepolicy.cil；同一 marker 重复执行幂等。
+;; 平台类型按 vendor CIL 约定用 {{vers}} 影子名，构建阶段替换成基底 plat vers。
+;;
+;; ---- 1) FRP 承载块设备 ----
+;; 本盘 GPT 来自 lineage 底座，没有 frp 分区；ro.frp.pst 仍是厂商的
+;; /dev/block/bootdevice/by-name/frp，由 vendor/etc/init/frp_symlink.rc 在建盘后
+;; 软链到 misc(vda3)。该节点在 ueventd 里的标签是 misc_block_device（按
+;; /dev/block/vda* 命名规则打），而 plat 只给 system_server 开了 frp_block_device。
+;;
+;; 缺这条时 Android 16 的 PersistentDataBlockService 会在 phase 500 抛
+;; "Failed to boot service … onBootPhase threw an exception"，system_server 自杀，
+;; zygote 无限重启（popsicle 同平台实测，见
+;; devices/evidence/popsicle/issue-ueventd-frp-device-nodes/solution.md）。
+;; 权限集合照抄同平台的 m22 / ss9380 / popsicle。
+(allow system_server_{{vers}} misc_block_device_{{vers}} (blk_file (open read write append getattr ioctl map lock)))

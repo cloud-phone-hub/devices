@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 空 manifest fragment：用于 bind mount 遮蔽官方 /odm 的 VINTF 片段。
+     必须带 version（以及 type="device"）：libvintf 对每个 fragment 都校验
+     <manifest> 的 version 属性，只写裸 <manifest/> 会得到
+       VINTF parse error: Illformed file: ...: Could not find/parse attr with
+       name "version" and value "" for element <manifest>
+     → servicemanager 报 `NULL VINTF MANIFEST!: device`，整个 device manifest
+     失效（keystore2/vold 全部 declared 判定失败 → 死等），比不遮蔽更糟。
+     实测于实例 9（2026-10-30）。下面这种「有 version、无 hal」的写法才会被
+     当作「本片段没有任何 HAL 声明」正常接受。 -->
+<manifest version="1.0" type="device"/>

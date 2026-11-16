@@ -1,0 +1,48 @@
+;; sun（Honor Magic7 RSR / MagicOS 9 / Android 15 / 高通 sun）机型层 SELinux 片段。
+;;
+;; 1) 供 vendor.honor.hardware.hwfactoryinterface-service（AIDL IHwFactoryInterface/hwfactoryinterface_hal）
+;;    由 init_202404 启动并向 servicemanager 注册，满足 system_server（FilteredPreloadAppManager）、cust_init、bootanim 查询。
+(type hal_hwfactoryinterface_default)
+(roletype object_r hal_hwfactoryinterface_default)
+(type hal_hwfactoryinterface_default_exec)
+(roletype object_r hal_hwfactoryinterface_default_exec)
+(typeattributeset domain (hal_hwfactoryinterface_default))
+(typeattributeset halserverdomain (hal_hwfactoryinterface_default))
+(typeattributeset hal_factoryinterface (hal_hwfactoryinterface_default))
+(typeattributeset hal_factoryinterface_server (hal_hwfactoryinterface_default))
+(typeattributeset hal_hwfactoryinterface (hal_hwfactoryinterface_default))
+(typeattributeset hal_hwfactoryinterface_server (hal_hwfactoryinterface_default))
+(typeattributeset file_type (hal_hwfactoryinterface_default_exec))
+(typeattributeset exec_type (hal_hwfactoryinterface_default_exec))
+(typeattributeset vendor_file_type (hal_hwfactoryinterface_default_exec))
+(allow init_202404 hal_hwfactoryinterface_default_exec (file (read getattr map execute open)))
+(allow init_202404 hal_hwfactoryinterface_default (process (transition siginh rlimitinh)))
+(allow hal_hwfactoryinterface_default hal_hwfactoryinterface_default_exec (file (read getattr map execute open entrypoint)))
+(dontaudit init_202404 hal_hwfactoryinterface_default (process (noatsecure)))
+(typetransition init_202404 hal_hwfactoryinterface_default_exec process hal_hwfactoryinterface_default)
+(allow hal_factoryinterface_client hal_hwfactoryinterface_service (service_manager (find)))
+(allow hal_factoryinterface_server hal_hwfactoryinterface_service (service_manager (add find)))
+(allow hal_factoryinterface_client hal_factoryinterface_server (binder (call transfer)))
+(allow hal_factoryinterface_server hal_factoryinterface_client (binder (transfer)))
+(allow hal_factoryinterface_client hal_factoryinterface_server (fd (use)))
+(allow hal_hwfactoryinterface_client hal_hwfactoryinterface_server (binder (call transfer)))
+(allow hal_hwfactoryinterface_server hal_hwfactoryinterface_client (binder (transfer)))
+(allow hal_hwfactoryinterface_client hal_hwfactoryinterface_server (fd (use)))
+(allow hal_hwfactoryinterface_default servicemanager_202404 (binder (call transfer)))
+(allow servicemanager_202404 hal_hwfactoryinterface_default (binder (call transfer)))
+(allow servicemanager_202404 hal_hwfactoryinterface_default (dir (search)))
+(allow servicemanager_202404 hal_hwfactoryinterface_default (file (read open)))
+(allow servicemanager_202404 hal_hwfactoryinterface_default (process (getattr)))
+(allow hal_hwfactoryinterface_default property_socket_202404 (sock_file (write)))
+(allow hal_hwfactoryinterface_default init_202404 (unix_stream_socket (connectto)))
+(allow hal_hwfactoryinterface_default proc_202404 (file (read getattr open)))
+(allow hal_hwfactoryinterface_default sysfs_202404 (file (read getattr open)))
+
+;; 2) 荣耀平台服务查询与属性读取规则（对齐官方 vendor_sepolicy.cil）
+(allow hal_hndisplayengine_client hal_hndisplayengine_service (service_manager (find)))
+(allow hal_uniperf_aidl_client hal_uniperf_aidl_service (service_manager (find)))
+(allow system_server_202404 mmi_prop_202404 (file (read getattr map open)))
+(allow zygote_202404 mmi_prop_202404 (file (read getattr map open)))
+
+;; 3) FRP 承载块设备（PersistentDataBlockService 读写软链到 vda3/misc 的节点）
+(allow system_server_202404 misc_block_device_202404 (blk_file (open read write append getattr ioctl map lock)))

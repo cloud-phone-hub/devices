@@ -1,0 +1,19 @@
+{
+  "lineage": [
+    "vendor_a.img",
+    "vendor_dlkm_a.img"
+  ],
+  "official": [
+    "boot.img",
+    "odm.img",
+    "oem.img",
+    "product.img",
+    "system.img",
+    "system_dlkm.img",
+    "system_ext.img",
+    "vendor.img",
+    "vendor_boot.img",
+    "vendor_dlkm.img",
+    "vgc.img"
+  ]
+}

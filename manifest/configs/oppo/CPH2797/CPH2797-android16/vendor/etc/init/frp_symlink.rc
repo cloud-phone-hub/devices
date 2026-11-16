@@ -1,0 +1,30 @@
+# FRP 分区路径补建：让 PersistentDataBlockService 找得到 ro.frp.pst 指向的节点。
+#
+# 厂商 vendor/build.prop 写 ro.frp.pst=/dev/block/by-name/frp（ColorOS 在 MTK 底座上的
+# 口径，没有高通那层 bootdevice 前缀）。本盘 GPT 来自云机底座，实测 /dev/block/by-name
+# 里有 EFI/super/misc/persist/vdc/boot_a... 但没有 frp 分区，节点也不存在：
+#
+#   # adb shell getprop ro.frp.pst
+#   /dev/block/by-name/frp
+#   # adb shell ls -l /dev/block/by-name/frp
+#   ls: /dev/block/by-name/frp: No such file or directory
+#
+# 于是 Android 16 的 PDB 在 `enforceChecksumValidity()` 第一步就抛，
+# `signalInitDone()` 永不执行，`onBootPhase(500)` 等 10 s 超时崩掉 system_server，
+# zygote 随之每 ~26 s 被 signal 9 重启，`sys.boot_completed` 永不置位（原文与计数见
+# devices/evidence/cph2797/issue-cph2797-frp-block-device-missing/log-fail.txt）。
+# 同一条链在 15r / m22 / ss9380 / popsicle 上都收过，处置照抄（高通机型还要先建
+# bootdevice 目录，本机 by-name 已在位，只需补 frp 这一条软链）。
+#
+# 处置：把 by-name/frp 建出来，软链到本盘未被使用的 misc 分区（vda3）。本盘由 GRUB
+# 引导，不消费 Android 的 misc/BCB，故用它承载 FRP 数据块，语义上等价于真机把 FRP
+# 放在独立小分区。post-fs-data 早于 system_server 启动，时序足够。
+#
+# 配套：
+#   * DAC —— /dev/block/vda3 默认 0600 root:root，需 0660 root system，
+#     见 vendor/etc/ueventd.mt6993.rc；
+#   * SELinux —— 节点标签是 misc_block_device（plat 只给 system_server 开
+#     frp_block_device），见 sepolicy/vendor_sepolicy.cil。
+on post-fs-data
+    mkdir /dev/block/by-name 0755 root root
+    symlink /dev/block/vda3 /dev/block/by-name/frp

@@ -1,0 +1,11 @@
+{
+  "build-prop-sets": {
+    "ro.odm.product.cpu.abilist": "arm64-v8a",
+    "ro.odm.product.cpu.abilist32": "",
+    "ro.odm.product.cpu.abilist64": "arm64-v8a"
+  },
+  "build-prop-unsets": [],
+  "buildProp": "/odm/etc/build.prop",
+  "img": "vendor_a.img",
+  "note": "Pixel 6 没有独立 odm 分区：/odm 是 vendor.img 的子目录（ext4，debugfs 可取）。官方原件 30 行 / md5 df5fec0b557a53f503f54b3486146617，其中 abilist 三行包含 32 位值。CDH 纯 64 位锁口径：覆盖 abilist=arm64-v8a、abilist32=、abilist64=arm64-v8a。载体镜像 vendor_a.img（01 平铺分区落盘 super/vendor_a.img）。"
+}

@@ -1,0 +1,243 @@
+{
+  "build-prop-sets": {
+    "debug.hwui.renderer": "skiagl",
+    "ro.csc.country_code": "China",
+    "ro.hardware.egl": "mesa",
+    "ro.hwui.use_vulkan": "false",
+    "ro.opengles.version": "196608"
+  },
+  "build-prop-unsets": [],
+  "files": [
+    {
+      "from": "official",
+      "note": "libpng 不在 LLNDK 名单，vendor 进程取不到 /system/lib64 的那份。lineage 基座 vendor/lib64 实测 78 个条目、无 libpng.so（只有 egl/ 目录）；官方 vendor_a.img:/lib64/libpng.so 实测存在（251208 B，0644）。与 m22 同一条，取官方件。",
+      "source": "lib64/libpng.so"
+    },
+    {
+      "from": "official",
+      "note": "官方 vendor /etc/passwd（1439 B、37 条）整文件替换：lineage 基座的 /vendor/etc/passwd 实测 0 字节。根因是 com.samsung.android.scpm（uid 5009）的 SELinux 用户名：/system_ext/etc/selinux/system_ext_seapp_contexts 第 37 行声明 user=vendor_samsungcloud，官方 passwd 才有 vendor_samsungcloud::5009:5009 这一条；缺失时 libselinux 合成 oem_<uid>，zygote 的 selinux_android_setcontext 按 user= 匹配落空即 JNI FatalError（gold_files.py 的 creds_cmds 记录了同一机制，实测实例 25 为 com.samsung.android.scpm 崩溃循环并拖垮 com.sec.android.sdhms）。本机 lineage 基座该文件为 0 字节，等价于“补入全部官方条目”。",
+      "source": "etc/passwd"
+    },
+    {
+      "from": "official",
+      "note": "官方 vendor /etc/group（884 B、37 条）成对替换，与 etc/passwd 同源；lineage 基座同名文件同样 0 字节。group 条目决定 scpm 进程的附加组与 getgrnam 结果，单补 passwd 不完整。",
+      "source": "etc/group"
+    },
+    {
+      "from": "official",
+      "mode": "replace",
+      "note": "整目录替换（非 merge），否则会残留 lineage 基座的 virtio 特性声明。官方目录实测 64 个 XML，含 privapp-permissions-qti-vendor.xml（三星/QTI system 的 privapp 白名单，缺它 PackageManager 会以 “not in privapp-permissions allowlist” 拒装并可能反复重启）、handheld_core_hardware.xml（本机 device.json 的 tablet=false，lineage 那份是 tablet_core_hardware.xml）；官方集实测无 consumerir.xml，故不会出现 gold/MTK 那种“FEATURE_CONSUMER_IR 有声明无 HAL → system_server 自杀”。\n\n为什么不直接用内置集合：内置 builtinFileOps 是 gold/MTK 口径，头五条是 Mali/MEOW 驱动与 lib64/libOpenCL.so（厂商原件覆盖），三星官方 vendor/lib64/egl 实测只有 adreno 七件（eglSubDriverAndroid/libEGL_adreno/libGLESv1_CM_adreno/libGLESv2_adreno/libVkLayer_ADRENO_qprofiler/libq3dtools_*），既无 libGLES_mali.so 也无 libMEOW_*，etc/security 与 etc/md 也不存在（dump.erofs 读 inode 失败），照内置跑会在步骤 5 报“厂商 vendor 缺少该路径”（2026-10-30 实跑失败证据见 out/tmp/ss9380-build.log 第 7420 行）。声明即整表取代，正好贴合 QTI 机型。",
+      "source": "etc/permissions"
+    },
+    {
+      "from": "official",
+      "note": "音效注册表（三星定制名）。根因：本机 system 是官方三星 Android 16，/system/lib64/libeffectsconfig.so 的字符串实测只有 `audio_effects_sec.xml` 与 `/vendor/etc/audio/sku_`，没有 AOSP 的 `audio_effects.xml` —— 即 EffectsConfig 的默认搜索名被三星改成了 audio_effects_sec.xml。而 07 的 vendor 树是 lineage-23.2 基底（只带 `audio_effects_config.xml`）+ 自研 HAL 覆盖，这个文件从未存在，于是 audioserver 每次建输出流都走 AudioPolicyEffects::addOutputSessionEffects → EffectsConfig::loadFromXml 失败 → LOG_ALWAYS_FATAL abort（tombstone abort message 原文 'Failed to load XML effect configuration'，栈 #03 AudioPolicyEffects::addOutputSessionEffects+740），init 再按 rc 的 onrestart 连带 SIGKILL vendor.audio-hal-aidl 与 vendor.audio-effect-hal-aidl，三者长期 restarting。\n\n实测（2026-10-31，运行态用 init mount namespace 内 tmpfs 覆盖 /vendor/etc 补件）：只补这份 XML（0644 + restorecon，官方 vendor 4687 B、引用 libbundlewrapper/libreverbwrapper/libvisualizer/libdownmix/libldnhncr/libdynproc/libeffectproxy 等）后，audioserver 从连续 100+ 次 abort 变为单实例存活 90s+，audioserver / vendor.audio-hal-aidl / vendor.audio-effect-hal-aidl 三个服务同时 running，crash buffer 无新增 F 行。XML 里缺失的三星私有库（libmysound/libmyspace/libaudiosaplus_sec/libswdap/libplaybackrecorder 等）只影响对应 effect 的创建，不阻塞加载。\n\n权限：官方原件 0644；root shell 的 umask 是 077，构建/拷贝链路若忽略权限会得到 0600，audioserver（uid 1041）读不了，症状与缺失文件完全相同（'Could not parse ... any of the default locations'）—— 装配段按官方权限落盘即可。",
+      "source": "etc/audio_effects_sec.xml"
+    },
+    {
+      "from": "official",
+      "note": "policy 侧音效配置（preprocess/postprocess 与 stream 绑定）的三星版。AudioPolicyEffects::loadAudioEffectConfig_ll 读的是 `audio_effects_config.xml`：lineage 基底那份是 v2.0 且声明 21 个 AIDL 库（libaecsw/libbundleaidl/... ），而基底 /vendor/lib64/soundfx 只有 9 个 HIDL 旧库，加载即报 'Null processings with 0 skipped elements' 并回退 .conf（告警而非致命，实测不 abort）。官方 vendor 同名 _sec 件与 audio_effects_sec.xml 成对，补它让 policy 侧的 stream→effect 绑定与官方一致。",
+      "source": "etc/audio_effects_config_sec.xml"
+    },
+    {
+      "from": "official",
+      "note": "AOSP 口径的音效注册表（官方 vendor 1833 B，只引用 6 个 HIDL 库，基座 soundfx 全有）。libeffectsconfig.so 优先找 audio_effects_sec.xml，这份是同一套效果集的非三星命名兜底；三方（system/system_ext/product）实测均无此文件，只存在于 vendor，故必须从官方 vendor 取。",
+      "source": "etc/audio_effects.xml"
+    }
+  ],
+  "hardware": [
+    {
+      "android.hardware.audio": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.authsecret": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.biometrics": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.bluetooth": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.boot": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.camera": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.confirmationui": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.drm": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.gnss": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.health": {
+        "variant": "samsung",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.identity": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.keymint": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.light": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.media": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.media.v412": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.memtrack": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.nfc": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.power": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.power.stats": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.radio": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.secure_element": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.sensors": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.thermal": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.usb": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.vibrator": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.weaver": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.wifi": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.service.daemon": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "vendor.qti.diaghal": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "vendor.qti.hardware.perf2": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "vendor.qti.hardware.servicetrackeraidl": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    }
+  ],
+  "note": "属性分两层，与本机文件集严格一致：\n\n(1) 身份层：07 步骤 6 以官方 vendor_a.img:/build.prop 原文（samsung/pa3qzcx/pa3q、ro.board.platform=sun、ro.sf.lcd_density=450、ro.hardware.keystore=mdfpp 等）作基底。\n\n(2) 改写层：上面六条是本清单的唯一真值，07 步骤 6 的 props.go 把它们覆盖/追加进装配树的 vendor/build.prop（init 按 system→system_ext→product→vendor→vendor_dlkm→odm 顺序装载，该阶段允许覆盖 ro.，装载完即上锁）。\n\nro.hardware.egl=mesa（覆盖官方 adreno）：官方 vendor 声明 adreno（真机骁龙 GPU），但本机 /vendor/lib64/egl 由 lineage 基座提供，实测只有 libEGL_mesa.so / libGLESv2_mesa.so / libGLESv1_CM_mesa.so，没有 libEGL_adreno.so。不覆盖则 surfaceflinger 每 5 s SIGABRT（libEGL: Failed to load drivers from property ro.hardware.egl with value adreno），zygote/app_process64 随后同样 abort —— 与 m22 实测同一条链路。\n\nro.opengles.version=196608（ES 3.0，覆盖官方 196610）：本机 GL 栈天花板是 Mesa ES 3.0（guest 内 SF 自报 OpenGL ES 3.0 Mesa），官方 vendor 写 196610（ES 3.2）会让 pm list features 报 reqGlEsVersion=0x30002，声明与驱动不符。放 vendor build.prop 而不是改 rc：build.prop 装载早于 rc 的 setprop，且 rc 的 setprop 会被 PROP_ERROR_READ_ONLY_PROPERTY 挡掉。\n\nro.hwui.use_vulkan=false（覆盖官方 true）：决定 HWUI 走不走 Vulkan，官方 vendor 写 true，但本机 /vendor/etc/vulkan/icd.d 不存在（hw/ 下只有 vulkan.virtio / vulkan.lvp_mesa3d 等驱动，无 ICD 描述）→ 每个应用进程 RenderThread 在 preload 撞 VulkanManager::initialize() → LOG_ALWAYS_FATAL(!gpuCount) → SIGABRT，屏幕永远停在空白（m22 实测 500+ 次/分钟）。ro.hardware.vulkan 保持官方的 adreno 不动（无 ICD 时不会被真正加载）。\n\ndebug.hwui.renderer=skiagl（本机型必需，m22 不需要）：OneUI（Android 16）的 /system/lib64/libhwui.so 里已经没有 ro.hwui.use_vulkan 这个字符串，只剩 debug.hwui.renderer 的 skiavk / skiagl 两个取值，所以上面那条 false 对它不生效，RenderThread 默认仍走 Vulkan。实测崩溃栈：RenderThread::requireVkContext() → VulkanManager::initialize() → __android_log_assert(Assertion failed: !gpuCount)，systemui / SecSetupWizard / settings 全部进程循环 SIGABRT，屏幕停在开机闪屏。运行中 setprop debug.hwui.renderer skiagl 后 Settings 立刻正常 resume、闪屏被应用窗口取代（取值只能写 skiagl，写 opengl 会被忽略）。\n\nro.vendor.boot_security_patch=2026-08-05：Remote KeyMint 必需（RemoteKeymaster::Initialize() 对它做 std::stoi(strip('-'))，属性缺失 → stoi(\"\") 抛 std::invalid_argument → SIGABRT，keymint 起即崩、keystore2 无 HAL、vold 死等 IKeystoreService）。取值用官方平台安全补丁：system_a:/system/build.prop 的 ro.build.version.security_patch=2026-08-05（官方 vendor 侧的 ro.vendor.build.security_patch 同为 2026-08-05）。\n\nselinux-labels 三条 egl 库：改完 ro.hardware.egl=mesa 后 libEGL 真的去 dlopen /vendor/lib64/egl/libEGL_mesa.so，surfaceflinger（system 域）读它需要 same_process_hal_file —— 这三件来自 lineage 基底，基底 vendor_file_contexts 没有 egl 规则（该规则在 plat 的 file_contexts 里），官方镜像又没有这些文件，07 的标签真值链会落到兜底 vendor_file 而被 avc denied（m22 实测 `avc: denied { read } name=\"libEGL_mesa.so\" scontext=u:r:surfaceflinger:s0 tcontext=u:object_r:vendor_file:s0`）。基底镜像里它们的 inode 本来就是 same_process_hal_file，故按基线精确声明。\n\nvintf-version=9.0：lineage-23.2 基座 vendor/etc/vintf/manifest.xml 根元素实测 9.0（virtio-common 的 manifest_target-level-202404.xml），guest system 是 Android 16（system_a:/system/build.prop 的 ro.build.version.sdk=36、/system/etc/vintf 下带 compatibility_matrix.202504.xml），libvintf 支持 9.0。官方 Samsung vendor 自己是 8.0（etc/vintf/manifest_sun.xml），但盘集只消费 lineage 基座的分件，取 9.0 即“不降级于基座”，且 07 只改写根版本高于基线的分件。\n\nro.csc.country_code=China：本 AP 包只带 boot/init_boot/vbmeta/super/vendor_boot，不含 CSC（optics）分区，运行时 /optics、/prism 为空，guest 实测 getprop ro.csc.country_code 为空。OneUI 的 KnoxGuardSeService 用 Utils.isChinaDevice()（只读该属性、equalsIgnoreCase(\"China\")）选地区分支：未定义即走非中国分支——云机没有 KG Trustlet，TA 状态取不到（knox.kg.state=Error/5），checkKGClientIntegrity 又要求 com.samsung.android.kgclient（各分区均无此包，且需平台签名），失败即 lockSeDevice → SystemUI 显示“手机已锁定(8135)”，设备不可用。ZCH 固件真机该值即 China；补齐后 boot 分支变为 state!=0 且未入网（isStateForEnrolledDevice 只认 2/3）直接返回，且 state!=3 时 USER_PRESENT 监听不注册、PACKAGE_* 监听在 China 分支也不注册，SetupWizardCompleted 同样早退。CSC 分区未提供，vendor 是唯一可写且 init 装载晚于 system 的分区（内核 namei 白名单对 /vendor/build.prop 精确重定向）。该属性类型为 csc_prop，/vendor/build.prop 由 vendor_init 装载，lineage 基底策略缺此允许时 init 报 SELinux permission check failed、属性仍为空，故同批在 sepolicy 片段第十段补 `(allow vendor_init csc_prop (property_service (set)))`（仅 property_service set）。",
+  "selinux-labels": {
+    "lib64/egl/libEGL_mesa.so": "u:object_r:same_process_hal_file:s0",
+    "lib64/egl/libGLESv1_CM_mesa.so": "u:object_r:same_process_hal_file:s0",
+    "lib64/egl/libGLESv2_mesa.so": "u:object_r:same_process_hal_file:s0"
+  },
+  "vintf-version": "9.0"
+}

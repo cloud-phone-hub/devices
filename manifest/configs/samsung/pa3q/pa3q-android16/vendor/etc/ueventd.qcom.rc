@@ -1,0 +1,33 @@
+# CDH：virtio-console 通道节点的权限位（samsung/ss9380）。
+#
+# 来源：官方 /vendor/etc **没有** ueventd.qcom.rc（官方是 ueventd.rc），本文件是云机侧
+# 自编，不能拿官方件替换：已实测生效（/dev/hvc0 已是 0666 system:system，不是 devtmpfs
+# 默认的 0600 root:root）。
+#
+# QEMU virtconsole 通道分配（与 device.json 的 host-hvc-* 一致）：
+#   hvc0/hvc1  固件 console 与 seriallogging（cmdline androidboot.console=hvc0）
+#   hvc2       adbkey 通道
+#   hvc3       Remote KeyMint 的 host 通道
+#   hvc4/hvc5  radio 与蓝牙
+#   hvc7       event（daemon）
+#   hvc9/hvc10 wifi 控制面 / 数据面
+#
+# 为什么需要本文件：lineage-23.2 基底的 /vendor/etc/ueventd.rc 里没有 /dev/hvc* 规则，
+# ueventd 建出的节点是默认的 0600 root:root；而 Remote KeyMint HAL 以 `user nobody`
+# 运行，open("/dev/hvc3", O_RDWR) 直接 EACCES —— 日志里是
+#   android.hardware.security.keymint-service.remote: Could not connect to keymaster: Permission denied
+# 且没有任何 avc denied（卡在权限位，不是 SELinux 判定）。与「节点不存在」区分：
+# 模块没加载起来时报 No such file or directory。
+#
+# 文件名取自基底 ueventd.rc 的 `import /vendor/etc/ueventd.${ro.hardware}.rc`，
+# 本机型 cmdline 是 androidboot.hardware=qcom（device.json board=qcom）。
+# 节点自身的 SELinux 标签由模块层 vendor_file_contexts 负责（/dev/hvc3 等），与本文件无关。
+
+/dev/hvc*    0666    system  system
+
+# FRP 承载分区：vda3（misc）被 frp_symlink.rc 软链成 /dev/block/bootdevice/by-name/frp
+# 交给 PersistentDataBlockService（官方 vendor build.prop 写
+# ro.frp.pst=/dev/block/bootdevice/by-name/frp）；该服务以 system 身份读写，而 ueventd
+# 建块设备默认 0600 root:root → open 直接 EACCES（表现与「节点不存在」不同：这里是
+# Permission denied）。
+/dev/block/vda3    0660    root    system

@@ -1,0 +1,10 @@
+# 云机（QEMU）没有 QSEECom/TEE，三星 fabric_crypto 在 main 里硬查
+# vendor.samsung.hardware.security.fkeymaster.ISehFkeymaster/default；
+# 官方 fkeymaster 服务自身依赖 QSEECom（实测直跑时在 main+764 处
+# CHECK(status == STATUS_OK) 直接 SIGABRT，/dev/qseecom 在云机不存在），
+# 因此该接口在云机上永远注册不上，fabric_crypto 会每 ~5 s abort 一次
+# （logcat: "Not found Fkeymaster service"）。
+# class main 由 init.rc 的 `on nonencrypted` 拉起；本文件在系统 rc 之后解析，
+# 同触发器里的 stop 紧跟在 class_start main 之后执行，把这条循环停掉。
+on nonencrypted
+    stop fabric_crypto

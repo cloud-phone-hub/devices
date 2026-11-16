@@ -1,0 +1,13 @@
+{
+  "build-prop-sets": {
+    "persist.oplus.bt.em.adb.tool": "true",
+    "persist.vendor.oplus.icc.module.enable": "1",
+    "ro.odm.product.cpu.abilist": "arm64-v8a",
+    "ro.odm.product.cpu.abilist32": "",
+    "ro.odm.product.cpu.abilist64": "arm64-v8a"
+  },
+  "build-prop-unsets": [],
+  "buildProp": "/build.prop",
+  "img": "odm_a.img",
+  "note": "odm 是独立逻辑分区：基线 rom.official.images 声明 odm.img，01_unpack 的 payload 路线按 liblp 落 super/odm_a.img（2997 MiB）。2026-11-03 实测（01_unpack 只保留 odm.img 拆出 out/tmp/probe-cph2797/super/odm_a.img）：根下有 app/bin/etc/firmware/lib/lib64/priv-app/vendor 等，另有 /build.prop（138 行 / md5 30786e407078d3269c4cee7e81cb32e8，头行 `# build prop start`）和 /etc/build.prop（只有 4 行 import 存根：import /odm/build.prop、/odm/etc/${ro.boot.prjname}/build.gsi.prop、build.${ro.boot.flag}.prop、/mnt/vendor/my_product/etc/${ro.boot.prjname}/build.${ro.boot.flag}.prop）。\n\n为什么 prop 取 /build.prop 而不是 /etc/build.prop：06 的落点固定 odm/etc/build.prop，而运行态这个路径被 device.json 的 modules.redirect 文件规则指到 /mnt/vendorpatch/odm/etc/build.prop（只覆盖这一个文件，不含 /odm/build.prop），所以产物必须是摊平后的正文——照抄存根会只剩 4 行 import，import 的对象在云机里不一定在。迁移前的手抄副本也是这个口径（144 行 = 官方正文 138 行 + 3 行 CDH 注释 + 三条 abilist）。\n\n官方正文不含 abilist 段（原本由 my_manifest / 项目 prop 补），而 06 的 ABI 闸门要求 abilist32 为空、abilist64 非空，故 sets 显式锁三条。手抄副本已删除（md5 fb4f67b29d2fcdc34993aaff881805a9）：06 取原件套 sets 后与它只差「少 3 行注释、abilist 从第 5–7 行挪到末尾」，属性值逐条一致；另原件有 2 行行尾是 CRLF（persist.oplus.bt.em.adb.tool、persist.vendor.oplus.icc.module.enable，OPPO 自己的写法），06 原样搬运不改行尾，所以这两条在 sets 里用同值再写一遍，把行尾归一成 LF（值不变，只是不让 \\r 带进产物）。\n\n迁移代价：删掉静态副本后，06 在解包根找不到 odm_a.img:/build.prop 会直接报「取不到 odm 属性件」（不再有兜底）——必须先用完整包跑 01_unpack。注意 roms/devices 下那份包（9250896259 B）是完整的；core/development/downloader/downloads 下同名包只有 5.33 GiB（下载中断、无 EOCD），别拿它当固件包。"
+}

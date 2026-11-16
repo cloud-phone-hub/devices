@@ -1,0 +1,14 @@
+# ss9380（Samsung Galaxy S25 Ultra / OneUI Android 16 / S9380ZCSDCZH1）机型层 file_contexts。
+# 由 07_build_vendor 步骤 6 追加到装配树的 /vendor/etc/selinux/vendor_file_contexts
+# （机型层，marker 为 `# vendor_file_contexts`）。
+#
+# 唯一一条：netd 的 Knox NPA 控制 socket。
+#   官方 vendor 分区（vendor_a.img:/etc/selinux/vendor_file_contexts 第 1874 行）原文：
+#       /dev/socket/napproxyd   u:object_r:napproxyd_socket:s0
+#   lineage 基底缺这条，导致 init 建 socket 时 setfscreatecon 无可用上下文：
+#       init: Could not create socket 'napproxyd': Failed to bind socket 'napproxyd': Permission denied
+#   netd 因此 Unable to start NapProxyListener 并 exit(1)，再经 netd.rc 的
+#   `onrestart restart zygote` 把 zygote 整组 SIGKILL，system_server 永远起不完。
+#
+# 类型与授权见同目录 vendor_sepolicy.cil（(type napproxyd_socket) 等 5 行）。
+/dev/socket/napproxyd          u:object_r:napproxyd_socket:s0

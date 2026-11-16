@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  oriole（Google Pixel 6）Android 14 电池口径 —— 取值来自 run-00001 真机取证
+  （hardware.battery），供健康 HAL /vendor/bin/hw/android.hardware.health-service
+  启动时读取（env BATTERY_CONFIG_XML 可覆盖路径）。枚举属性值必须是
+  health_service.cpp 枚举表对应的 AIDL 名字。
+
+  真机采样快照：technology=Li-ion、cycle_count=427、level=80、health=3/OVERHEAT、
+  status=2/CHARGING、plugged=1/AC、charge_counter=3498000µAh、voltage=4128mV、
+  temperature=263(26.3°C)、max_charging_current=3000000µA、max_charging_voltage=5000000µV、
+  CHARGING_STATUS=4/LONG_LIFE。
+
+  动态模拟在「满电静置(75%) / 补电(25%)」两相位间按开机时钟交替：把真机采样值
+  (4128mV/26.3°C) 放进占空比更大的 FULL 相位，使云机多数时刻电压/温度与真机一致；
+  status 在 FULL(5)/CHARGING(2) 间交替属模拟固有遗留（真机采样恰为 CHARGING）。
+-->
+<battery>
+  <!-- 身份与电量：level=80 → capacity_level=NORMAL；health=OVERHEAT；
+       CHARGING_STATUS=LONG_LIFE；present=true -->
+  <identity technology="Li-ion" cycle_count="427" level="80" health="OVERHEAT"
+            capacity_level="NORMAL" charging_state="LONG_LIFE" present="1"/>
+
+  <!-- 充电器：真机 plugged=AC，故 ac=1、usb=0；限流/限压实测 3A/5V -->
+  <charger ac="1" usb="0" wireless="0" dock="0"
+           max_current_ua="3000000" max_voltage_uv="5000000"/>
+
+  <!-- 容量：charge_counter 区间括住真机 3498000；full_uah 按 counter/level 反推
+       (3498000/0.80≈4372500，cycle 427 的老化电池，低于标称 4614mAh) -->
+  <capacity full_uah="4372500" counter_min="3490000" counter_max="3510000"/>
+
+  <!-- 动态模拟区间：FULL 相位取真机采样 4128mV/26.3°C，补电相位略高 -->
+  <cycle full_mv="4128" charge_mv="4180" temperature_full_decic="263"
+         temperature_charge_decic="280" seconds="600"/>
+
+  <!-- HealthInfo 扩展档案：真机未对外提供，按缺省口径；serial_number 缺省不下发 -->
+  <health_data state_of_health="99" part_status="UNSUPPORTED"
+               manufacturing_date_seconds="0" first_usage_seconds="0"/>
+</battery>

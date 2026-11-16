@@ -1,0 +1,6 @@
+{
+  "build-prop-sets": {},
+  "build-prop-unsets": [],
+  "buildProp": "/etc/build.prop",
+  "img": "odm_a.img"
+}

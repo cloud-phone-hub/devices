@@ -3,7 +3,7 @@
 `devices/manifest/` 采用三表 JSON 文件目录结构（按表为第一层目录，下分 `<brand>/<device>`），便于多电脑通过 Git 协作与合并：
 
 - `devices/<brand>/<device>.json`：设备表（`devices`），每台设备 1 个 JSON 文件
-- `configs/<brand>/<device>/<name>.json`：配置模版表（`configs`），每套代际配置模版 1 个 JSON 文件（内含 `fileTrees` 与 `sepolicy`，不拆散文件）
+- `configs/<brand>/<device>/<name>.json` + `configs/<brand>/<device>/<name>/`：配置模版表（`configs`），每套代际配置 1 个身份 JSON + 1 个同名步骤根目录（各步骤的 `config.json` 与 `fileTrees`/`sepolicy` 真实文件，见「按 pipeline 步骤拆分的目录布局」）
 - `versions/<brand>/<device>/<buildId>.json`：版本表（`versions`），每个 ROM 版本 1 个精简 JSON 文件（仅存模版关联 `configId`、实测身份与版本差异 `overrides`）
 
 ---
@@ -37,7 +37,7 @@
 
 ---
 
-## 配置模版表 (`configs/<brand>/<device>/<name>.json`)
+## 配置模版表 (`configs/<brand>/<device>/<name>.json` + `<name>/`)
 统筹同机型在同代际（`deviceId + androidVersion`）下可跨多个 ROM 版本复用的公共构建配置模版。
 
 * 模版ID `id`
@@ -104,11 +104,12 @@
 * `buildVda`
     * `partitions` 数组：将里面的对象追加到 vda 镜像
 
-### 按 pipeline 步骤拆分的目录布局（可选）
+### 按 pipeline 步骤拆分的目录布局
 
-配置模版可以继续写成一个 `<name>.json`，也可以拆成「身份文件 + 每步骤一个子目录」。
-拆分后身份字段（`id`/`deviceId`/`name`/`androidVersion`/`lineageVersion`/`extra`/`updatedAt`）
-仍留在 `<name>.json`，其余各写入同目录下对应步骤的子目录：
+配置模版一律拆成「身份文件 + 同名步骤根目录」：身份字段
+（`id`/`deviceId`/`name`/`androidVersion`/`lineageVersion`/`extra`/`updatedAt`）留在
+`configs/<brand>/<device>/<name>.json`，其余各写入**同名**的步骤根目录
+`configs/<brand>/<device>/<name>/` 下对应步骤的子目录：
 
 | 子目录 | 配置键 | file-map 字段（铺成真实文件） |
 | --- | --- | --- |
@@ -130,8 +131,9 @@
   可以直接编辑与 diff；`config.json` 里不再保留这两个字段。
 * `hardware/config.json` 装的是 `{"hardware": [...]}`，即原本住在 `buildVendor` 里的 HAL 清单；
   读时并回 `buildVendor.hardware`，`vendor/config.json` 里不再保留这一段。
-* 拆分只在「设备目录下只有一个配置 JSON」时生效；同机型多代际各有一份 `<name>.json` 时
-  （如 `oriole` 的 21/22）无法归属步骤目录，仍按单文件读写。
+* 步骤根目录按**配置**（而不是按设备）划分：同一机型多代际各有各的 `<name>/`
+  （如 `google/oriole/` 下的 `oriole-android14/`、`oriole-android15/` …），互不干扰；
+  删除/改名一份配置只清理它自己的步骤根目录。
 * `prepare/`、`boot/` 是预留目录，当前没有对应配置键。
 
 ---

@@ -1,0 +1,20 @@
+{
+  "build-prop-sets": {
+    "debug.config.media.video.dolby_capture_supports": "false",
+    "debug.config.media.video.dolby_vision_suports": "false",
+    "debug.media.video.dolby_vision_dvs_support": "false",
+    "ro.vendor.display.dolbyvision.support": "false",
+    "ro.vendor.mi_sf.ltpo.support": "false",
+    "ro.vendor.mi_sf.enable_tp_idle_automode": "false",
+    "ro.vendor.mi_sf.support_automode_for_normalfps": "false",
+    "ro.vendor.mi_sf.enable_automode_for_maxfps_setting": "false",
+    "ro.vendor.mi_sf.sub_screen_only_enable_automode": "false",
+    "ro.vendor.mi_sf.video_offload_lowfps": "false",
+    "ro.vendor.display.uiservice_tpidle.enable": "false",
+    "ro.vendor.display.touch.idle.enable": "false"
+  },
+  "build-prop-unsets": [],
+  "buildProp": "/etc/build.prop",
+  "img": "odm_a.img",
+  "note": "odm 是 super 逻辑分区（super 里除 vendor/system/product 外还有独立的 odm_a，3.30 GiB）：01_unpack 只保留 super.img 时按 liblp 拆出 super/odm_a.img，06 从 odm_a.img:/etc/build.prop 取原件。2026-11-03 实测（dump.erofs --cat --path=/etc/build.prop out/tmp/probe-popsicle/super/odm_a.img，原件 495 行 / md5 7c4d59708467b71e17b722839a85798e）：原件已自带 ro.odm.product.cpu.abilist=arm64-v8a / abilist32 空 / abilist64=arm64-v8a（第 18–20 行，AOSP generate-common-build-props 生成），故 sets 里不放 abilist。原先手抄的 odm/etc/build.prop（500 行 / md5 8ba9d7f1a1ed1293266023d551dc0da9）与原件只差两处：4 行 CDH 注释 + 4 条 Dolby Vision 属性 true→false（云机无 Dolby Vision/DVS 硬件，见下文 sets），注释已随迁移丢弃（build.prop 注释不参与语义）。/odm 整棵被 cdh_redirect 指向 /mnt/vendorpatch/odm，06 仍只产出 etc/build.prop，运行态真值不变。"
+}

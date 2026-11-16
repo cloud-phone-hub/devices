@@ -1,0 +1,25 @@
+{
+  "note": "09_build_patch 对 /vendor/etc/selinux/vendor_sepolicy.cil 的定向改写。lineage-23.2 的 vendor 策略（system/sepolicy/vendor/ot_rcp.te、device/mainline/.../kernel.te）用了 plat class 表里没有的权限：Android 15 起在 netlink_route_socket 上新增的 nlmsg、permissionx 的 nlmsg kind，以及 6.13+ 才有的 system class firmware_load；secilc 现场合并时报 Failed to resolve permission，整帧策略编不出来 → init InitFatalReboot。本机内核 classmap 与 plat 策略均不支持这两类权限位，ot_rcp 服务在 vendor 树里也不存在（无 bin 也无 init rc），故降级/删除不影响功能。规则与 m22 完全一致（同一份 lineage-23.2 基底、同一颗 6.12 内核）；每条必须按 count 精确命中，否则 09 直接失败。",
+  "vendor-cil-rewrite": [
+    {
+      "count": 1,
+      "from": "(allow ot_rcp self (netlink_route_socket (nlmsg)))",
+      "to": "(allow ot_rcp self (netlink_route_socket (nlmsg_write)))"
+    },
+    {
+      "count": 1,
+      "from": "(allowx ot_rcp self (nlmsg netlink_route_socket (0x16 0x1a 0x22 0x26 0x2a 0x2e 0x32 0x3a 0x3e 0x4a 0x4e 0x52 0x56 0x5a 0x5c 0x5e 0x60 0x66 0x6a 0x72 0x76 0x7a)))",
+      "to": ";; cdh: permissionx nlmsg 内核与 plat 均不支持，已删除（ot_rcp 服务不存在）"
+    },
+    {
+      "count": 1,
+      "from": "(allowx ot_rcp self (nlmsg netlink_route_socket (0x12)))",
+      "to": ";; cdh: permissionx nlmsg 内核与 plat 均不支持，已删除（ot_rcp 服务不存在）"
+    },
+    {
+      "count": 1,
+      "from": "(allow kernel_202504 vendor_firmware_file (system (firmware_load)))",
+      "to": ";; cdh: system class 的 firmware_load 是 6.13+ 权限，内核 classmap 无此位，已删除"
+    }
+  ]
+}

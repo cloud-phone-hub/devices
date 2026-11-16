@@ -1,0 +1,25 @@
+{
+  "note": "09_build_patch 对 /vendor/etc/selinux/vendor_sepolicy.cil 的定向改写。本机 vendor 基座是 lineage-23.2（与 m22 / popsicle 同一棵 system/sepolicy 树），vendor 策略（vendor/ot_rcp.te）用了内核 classmap 里没有的权限：netlink_route_socket 的 nlmsg（Android 15+ 新增位）、permissionx 的 nlmsg kind、system class 的 firmware_load（6.13+），init 现场合并策略时 secilc 全盘编译失败。2026-11-03 实测（实例 1）：`Failed to resolve permission nlmsg` → `Failed to resolve allow statement at /vendor/etc/selinux/vendor_sepolicy.cil:2423 from system/sepolicy/vendor/ot_rcp.te:21` → `Failed to compile cildb: -2` → `secilc exited with status 254` → `init: Unable to open SELinux policy` → `InitFatalReboot: signal 6` → 重启进 recovery，adb 一直 offline。ot_rcp 服务在 vendor 树里不存在（无 bin、无 init rc），降级/删除不影响功能。四条规则按 count 精确命中，命中数不符 09 直接失败。照抄 m22 / cph2797 / ss9380 / popsicle 同平台口径。",
+  "vendor-cil-rewrite": [
+    {
+      "count": 1,
+      "from": "(allow ot_rcp self (netlink_route_socket (nlmsg)))",
+      "to": "(allow ot_rcp self (netlink_route_socket (nlmsg_write)))"
+    },
+    {
+      "count": 1,
+      "from": "(allowx ot_rcp self (nlmsg netlink_route_socket (0x16 0x1a 0x22 0x26 0x2a 0x2e 0x32 0x3a 0x3e 0x4a 0x4e 0x52 0x56 0x5a 0x5c 0x5e 0x60 0x66 0x6a 0x72 0x76 0x7a)))",
+      "to": ";; cdh: permissionx nlmsg 内核与 plat 均不支持，已删除（ot_rcp 服务不存在）"
+    },
+    {
+      "count": 1,
+      "from": "(allowx ot_rcp self (nlmsg netlink_route_socket (0x12)))",
+      "to": ";; cdh: permissionx nlmsg 内核与 plat 均不支持，已删除（ot_rcp 服务不存在）"
+    },
+    {
+      "count": 1,
+      "from": "(allow kernel_202504 vendor_firmware_file (system (firmware_load)))",
+      "to": ";; cdh: system class 的 firmware_load 是 6.13+ 权限，内核 classmap 无此位，已删除"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ss9380（Samsung Galaxy S25 Ultra，pakala-SM8750）thermal 温度模型与温区清单
+  （设备独有，随机型 vendor 镜像下发）。
+
+  本 HAL 是虚拟 thermal HAL：温度由「基线 + 加热/冷却模型」合成，不发真实热量。
+  改值不需要重编 HAL，缺文件则回退编码内默认模型（见 thermal_service.cpp）。
+
+  取值来源：官方 `/vendor/etc/thermal-engine.conf` 是**空文件**（内容只有
+  "File empty by default."），真机阈值在 kernel thermal 驱动与三星
+  `vendor.samsung.hardware.thermal-service` 里，镜像内无可解析的文本清单；
+  故温区名与阈值沿用 m22（同为 Qualcomm 平台）已验证的那一套：
+    thresholds 用分号分隔，nan 表示无该级；值远低于阈值 → 起机不会触发限频。
+    skin-name/skin-celsius  = 皮肤温度传感器名与基线
+    model-*                 = 加热/冷却速率模型参数
+    <sensor id name value thresholds shutdown>  = CPU/GPU/... 各温区
+    coolingDevices 为空     = 云机无已知真实风扇/散热节点，不虚报冷却设备
+-->
+<thermal-config skin-name="SKIN" skin-celsius="27.843" model-maximum-celsius="50"
+                model-heating-seconds="20" model-cooling-seconds="45" model-sample-interval-ms="1000">
+    <sensor id="0" name="CPU" value="29.174"
+            thresholds="nan;nan;nan;85;90;100;117"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="1" name="GPU" value="29.174"
+            thresholds="nan;nan;nan;85;90;100;117"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="2" name="BATTERY" value="26.0"
+            thresholds="nan;nan;nan;50;55;59;60"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="3" name="SKIN" value="27.843"
+            thresholds="nan;43;45;50;70;80;90"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="5" name="POWER_AMPLIFIER" value="28.128"
+            thresholds="nan;nan;nan;68;90;100;110"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="9" name="NPU" value="29.174"
+            thresholds="nan;nan;nan;85;90;100;117"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="10" name="TPU" value="29.174"
+            thresholds="nan;nan;nan;85;90;100;117"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="13" name="SOC" value="29.174"
+            thresholds="nan;nan;nan;85;90;100;117"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+</thermal-config>

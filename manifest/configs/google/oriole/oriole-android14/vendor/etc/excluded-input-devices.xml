@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- oriole（Pixel 6）真机仅 4 台输入设备：Virtual(合成) / goodix_fingerprint /
+     gpio_keys / fts。QEMU 自带的 Virtio Keyboard 与 Power Button 真机没有独立节点
+     （电源/音量键由 gpio_keys 统一上报），故排除；两台 QEMU Tablet 同 gold 口径排除。
+     goodix_fingerprint 与 gpio_keys 由 cdh_input_identity.ko 按清单 modules.input_identity 注册。 -->
+<devices>
+    <device name="QEMU QEMU USB Tablet"/>
+    <device name="QEMU Virtio Tablet"/>
+    <device name="QEMU Virtio Keyboard"/>
+    <device name="Power Button"/>
+</devices>

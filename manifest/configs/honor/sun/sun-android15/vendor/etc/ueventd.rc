@@ -1,0 +1,17 @@
+firmware_directories /vendor/firmware_mnt
+
+# Graphics
+/dev/dri/card0		0666	system	graphics
+/dev/dri/controlD64	0660	system	graphics
+/dev/dri/renderD128	0666	system	graphics
+
+# ION
+/dev/ion	0664	system	system
+
+# Serial console
+/dev/hvc*	0666	system	system
+/dev/ttyAMA*	0666	system	system
+/dev/ttyS*	0666	system	system
+
+# FRP 承载块设备（misc 分区软链为 /dev/block/bootdevice/by-name/frp，供 PersistentDataBlockService 以 system 读写）
+/dev/block/vda3	0660	root	system

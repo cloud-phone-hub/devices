@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  15r 的 media codec2 store 实例登记。
+
+  来源：官方 ColorOS 16.0.10.500 的 /vendor/etc **没有** media_config.xml（官方 codec2 走
+  media_codecs*.xml + qcom 的 c2.qti.* 那套），本文件是云机侧自编。必须自编、不能拿官方件：
+  官方的 codec 二进制不在本 vendor（本机 /vendor 是 lineage-23.2 基座 + 引擎自编 HAL，
+  由内核重定向到 patch 盘），换文件名只会让 c2 store 找不到登记表。
+
+  背景：/vendor 的 bin/lib64 由 cdh_redirect 重定向到 patch 盘，官方 OnePlus vendor 里的
+  真 codec2（c2.qti.* 系列 .so）因此完全不可见。可见的只有 devices/hardware/
+  android.hardware.media 随模块带进来的两个「假登记」store：
+    /vendor/bin/hw/android.hardware.media.c2-mediatek          -> IComponentStore/default1
+    /vendor/bin/hw/vendor.dolby.media.c2-default-service-dax   -> IComponentStore/default9
+  它们 createComponent 一律 CANNOT_DO，真实编解码由 v4l2（virtio-gpu venus，实例 default）
+  与 software store 承担；作用只是让 vendor VINTF 声明的两个 fqname 有实例，避免
+  mediaserver 反复按声明去等/重试。
+
+  三条实测定下来的硬约束（与 samsung/ss9380 的同名文件一致，2026-11-03 在本机复现）：
+    1) 文件必须存在。缺失时二进制打
+         I/O warning : failed to load "/vendor/etc/media_config.xml"
+       并以 status 1 立刻退出 → init 每 ~5 s 重启一轮（实例 9：mediatek 236 次、
+       dolby 52 次），且 `sys.init.updatable_crashing_process_name` 被置成
+       android-hardware-media-c2-hal，早期直接把 zygote 连坐 SIGKILL 一次。
+    2) 每个 instance 至少要有一个 component。只有 <instance> 没有 <component> 时
+       二进制以 status 3 退出（ss9380 实测：default1 空表时 status 3，default9 有表时 running）。
+    3) component 的 rank 必须远低于软解。AOSP 的 Codec2 组件排序是 rank 降序、同 rank 按
+       name 升序；软解（c2.android.*）的 rank 是 512。这里全部写 rank="1"，保证软解永远优先，
+       假 store 只在软解完全不可用时才被选中（结果仍是 CANNOT_DO，与真机上「没有这个
+       编解码器」的语义一致）。
+
+  刻意只登记**一条** video 组件（c2.mtk.avc.decoder）与两条 dolby 音频组件：
+  video 是为了让 default1 的表非空，不需要把 gold 原表 15 条全搬过来（搬全会让 framework
+  把 hevc/vp9/mpeg2 等认成「有硬解」）；dolby 的 eac3/ac4 本来在云机上就只有软解。
+-->
+<media-c2-config>
+    <instance binary="android.hardware.media.c2-mediatek" store="default1"/>
+    <instance binary="vendor.dolby.media.c2-default-service-dax" store="default9"/>
+    <component
+        store="default1"
+        name="c2.mtk.avc.decoder"
+        kind="decoder"
+        domain="video"
+        media-type="video/avc"
+        rank="1"
+        aliases="OMX.MTK.VIDEO.DECODER.AVC"
+        profiles="1,2,8"
+        levels="4096"/>
+    <component
+        store="default9"
+        name="c2.dolby.eac3.decoder"
+        kind="decoder"
+        domain="audio"
+        media-type="audio/eac3"
+        rank="1"
+        aliases=""
+        profiles=""
+        levels=""/>
+    <component
+        store="default9"
+        name="c2.dolby.ac4.decoder"
+        kind="decoder"
+        domain="audio"
+        media-type="audio/ac4"
+        rank="1"
+        aliases="OMX.dolby.ac4.decoder"
+        profiles=""
+        levels=""/>
+</media-c2-config>

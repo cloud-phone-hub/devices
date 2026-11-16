@@ -1,0 +1,9 @@
+{
+  "baseline-build-prop": {
+    "label": "u:object_r:vendor_configs_file:s0",
+    "length": 878,
+    "path": "/etc/build.prop",
+    "sha256": "46cce3a896249105a8f0df7a3157ec80b893f7066692070b26060781d8c6de2b"
+  },
+  "note": "build-vendor_dlkm 的 props 基线：官方 vendor_dlkm.img 内 /etc/build.prop（meizu/Meizu22/MEIZU 22/Meizu_22_CN 真实设备身份，878 B），覆盖 lineage 基座渲染的 VirtIO 版本。官方 vendor_dlkm.img 与 vendor/odm/system 一样是 EROFS，读取须用宿主 dump.erofs（erofs-utils），重建镜像须用 mkfs.erofs。"
+}
