@@ -8,17 +8,7 @@
   "securityPatch": "2026-10-01",
   "factoryTgz": "popsicle_images_OS4.0.5.0.XPBCNXM_20261021.0000.00_17.0_cn_087454683a.tgz",
   "factoryDir": "",
-  "overrides": {
-    "buildKernel": {
-      "uname": "Linux localhost 6.12.69-android16-6-g43b5ab7e247d-abogki558343811-4k #1 SMP PREEMPT Tue Sep  8 15:08:49 UTC 2026 aarch64 Toybox"
-    },
-    "buildVendorDlkm": {
-      "baseline-build-prop": {
-        "length": 1252,
-        "sha256": "987a98e7821bdb89602fe3c99519df9c6ca0d0a83e08554066fc6e2886d85926"
-      }
-    }
-  },
+  "overrides": {},
   "extra": {
     "comment": "由 cdh unpack prepare 从 popsicle_images_OS4.0.5.0.XPBCNXM_20261021.0000.00_17.0_cn_087454683a.tgz (vendor/build.prop) 自动生成。",
     "osVersion": "16-OS4.0.5.0.XPBCN"

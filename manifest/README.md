@@ -4,7 +4,7 @@
 
 - `devices/<brand>/<device>.json`：设备表（`devices`），每台设备 1 个 JSON 文件
 - `configs/<brand>/<device>/<name>/config.json`：配置模版表（`configs`），每套代际配置 1 个目录（身份 `config.json` + 各步骤子目录，见「按 pipeline 步骤拆分的目录布局」）
-- `versions/<brand>/<device>/<buildId>.json`：版本表（`versions`），每个 ROM 版本 1 个精简 JSON 文件（仅存模版关联 `configId`、实测身份与版本差异 `overrides`）
+- `versions/<brand>/<device>/<buildId>/config.json`：版本表（`versions`），每个 ROM 版本 1 个目录（身份 `config.json` + 被覆盖步骤的子目录，见「版本表的目录布局」）
 
 ---
 
@@ -92,10 +92,7 @@
     * `selinux-labels` 配置 key 路径的 value 标签 `{}`
     * `fileTrees` vendor 下的静态文件 `{}`
     * `sepolicy` selinux 规则文件 `{}`
-* `buildKernel`：模版基线内核版本配置（若某 ROM 版本有内核升级，在 `versions.overrides.buildKernel` 中覆盖）
-    * `uname` 如 `"Linux localhost 6.12.23-android16-5-g75e9b1c7ae7c-abogki463945075-4k #1 SMP PREEMPT Thu Nov 27 08:45:40 UTC 2025 aarch64 Toybox"`
-    * `version` 如 `"6.12"`
-    * `lineageKernel` 可选的借用说明（`borrowed-from` / `borrowed-reason`）
+* 内核（`buildKernel`）**不归模版**：内核跟着 ROM 版本走，每个版本的 `kernel/config.json` 自带，见下方「版本表」
 * `buildVendorDlkm`：模版基线 `vendor_dlkm` `/etc/build.prop` 校验信息（若某 ROM 版本有差异，在 `versions.overrides.buildVendorDlkm` 中覆盖）
 * `buildPatch`
     * `vendor-cil-rewrite` CIL 规则改写列表
@@ -114,7 +111,6 @@
 configs/google/oriole/
 ├── oriole-android16/
 │   ├── config.json          # 身份字段（这条配置的记录本体）
-│   ├── kernel/config.json   # buildKernel
 │   ├── module/config.json   # buildModules
 │   ├── vendor/config.json   # buildVendor（除 fileTrees / sepolicy）
 │   ├── vendor/etc/...       # buildVendor.fileTrees，按目标路径铺成真实文件
@@ -127,7 +123,6 @@ configs/google/oriole/
 | 子目录 | 配置键 | file-map 字段（铺成真实文件） |
 | --- | --- | --- |
 | `unpack/` | `unpack` | — |
-| `kernel/` | `buildKernel` | — |
 | `module/` | `buildModules` | — |
 | `vendor_boot/` | `buildVendorBoot` | — |
 | `odm/` | `buildOdm` | `fileTrees` → `odm/<目标路径>` |
@@ -148,10 +143,11 @@ configs/google/oriole/
   （如 `google/oriole/` 下的 `oriole-android14/`、`oriole-android15/` …），互不干扰；
   删除/改名一份配置只清理它自己的目录。
 * 步骤根目录里没出现的步骤目录就表示该步骤为空（等同 `{}`）；`prepare/`、`boot/` 是预留目录。
+* 模版**不建** `kernel/`：内核归版本表，若旧清单里还留着该目录，读取时忽略、写回时删除。
 
 ---
 
-## 版本表 (`versions/<brand>/<device>/<buildId>.json`)
+## 版本表 (`versions/<brand>/<device>/<buildId>/config.json`)
 仅存储具体 ROM 刷机包的实测身份元数据、所绑定的配置模版外键 `configId`，以及针对 `configs` 任意步骤的版本差异覆盖 `overrides`。
 
 * `id`：版本ID
@@ -163,8 +159,37 @@ configs/google/oriole/
 * `securityPatch`：ROM 的安全补丁日期 `ro.vendor.build.security_patch`（如 `2026-10-01`，合成基线时自动注入 `vendor.build-prop-sets["ro.vendor.boot_security_patch"]`）
 * `factoryTgz`：官方刷机包文件名
 * `factoryDir`：官方刷机包解包目录名（可选）
-* `overrides`：该版本相对 `configs` 模版各构建步骤（`unpack` / `buildKernel` / `buildModules` / `buildVendorBoot` / `buildOdm` / `buildVendor` / `buildVendorDlkm` / `buildPatch` / `buildSuper` / `buildVda`）的差异覆盖（默认 `{}`，支持按阶段对 Map 键值覆盖/`null` 剔除、对数组 `{"add":[...],"remove":[...]}` 增删或直接替换）
+* `overrides`：该版本相对 `configs` 模版各构建步骤（`unpack` / `buildKernel` / `buildModules` / `buildVendorBoot` / `buildOdm` / `buildVendor` / `buildVendorDlkm` / `buildPatch` / `buildSuper` / `buildVda`）的差异覆盖（默认 `{}`，支持按阶段对 Map 键值覆盖/`null` 剔除、对数组 `{"add":[...],"remove":[...]}` 增删或直接替换）；属于某个步骤的键拆在同名目录的 `<步骤>/config.json`，身份文件里只留不属于任何步骤的键；`buildKernel` 例外——模版不承载内核，版本里的那份就是完整内容（不是差异）
 * `extra`：版本级补充信息（如 `comment`、`verifiedBootHash`）
+
+---
+
+### 版本表的目录布局
+
+版本与配置模版同一套拆分规则：每个 ROM 版本占一个目录
+`versions/<brand>/<device>/<buildId>/`，身份字段在 `config.json`，被覆盖的步骤各占一个子目录；
+**没覆盖的步骤不建目录**（完全跟随 `configs` 模版）。
+
+```
+versions/redmi/gold/
+├── 15-OS3.0.10.0.VNQCNXM/
+│   ├── config.json            # 身份与实测项，没有其它步骤覆盖
+│   └── kernel/config.json     # 这个 ROM 的内核：{"uname": "Linux localhost 6.6.89-…", "version": "6.6"}
+└── 15-OS3.0.11.0.VNQCNXM/
+    ├── config.json            # 身份与实测项（overrides 为空）
+    └── kernel/config.json     # 本版本内核：{"uname": "Linux localhost 6.6.118-…", "version": "6.6"}
+```
+
+* 子目录名与 `configs` 表一一对应（`vendor/` = `overrides.buildVendor`、
+  `vendor_dlkm/` = `overrides.buildVendorDlkm` …），目录里的 `config.json` 就是该步骤的
+  覆盖对象，**不是**一条版本记录；
+* `kernel/config.json` 是例外：内核归版本，**每个版本都必须有**，内容为该 ROM 的内核线
+  （`version` 如 `"6.6"`）与 `uname`（`Linux version …` 横幅拼出的整行）；02 prepare 从官方
+  `boot.img` 实测后直接写入，不需要人工维护；
+* file-map 型覆盖（如 `buildVendor.fileTrees` / `sepolicy`）同样铺成真实文件，
+  想给某个 ROM 版本单独换一个 vendor 文件，直接放进 `<buildId>/vendor/<目标路径>`；
+* 读取时把各步骤子目录并回 `overrides` 再叠加到模版上，写回时各回各的子目录；
+  覆盖被撤掉时对应子目录一并删掉。
 
 ---
 

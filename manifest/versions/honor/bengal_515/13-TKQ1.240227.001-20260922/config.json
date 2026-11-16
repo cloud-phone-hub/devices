@@ -8,11 +8,7 @@
   "securityPatch": "2026-09-01",
   "factoryTgz": "Huawei-Honor-Pad-X7b-ONL-W09.zip",
   "factoryDir": "",
-  "overrides": {
-    "buildKernel": {
-      "uname": "Linux localhost 5.15.194-android13-8-00038-g853eb7b6b965-ab15936612 #1 SMP PREEMPT Fri Jul 24 14:10:46 UTC 2026 aarch64 Toybox"
-    }
-  },
+  "overrides": {},
   "extra": {
     "comment": "由 cdh unpack prepare 从 Huawei-Honor-Pad-X7b-ONL-W09.zip (vendor/build.prop) 自动生成。",
     "osVersion": "13-TKQ1.240227.001-20260922"
