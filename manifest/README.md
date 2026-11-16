@@ -3,7 +3,7 @@
 `devices/manifest/` 采用三表 JSON 文件目录结构（按表为第一层目录，下分 `<brand>/<device>`），便于多电脑通过 Git 协作与合并：
 
 - `devices/<brand>/<device>.json`：设备表（`devices`），每台设备 1 个 JSON 文件
-- `configs/<brand>/<device>/<name>.json` + `configs/<brand>/<device>/<name>/`：配置模版表（`configs`），每套代际配置 1 个身份 JSON + 1 个同名步骤根目录（各步骤的 `config.json` 与 `fileTrees`/`sepolicy` 真实文件，见「按 pipeline 步骤拆分的目录布局」）
+- `configs/<brand>/<device>/<name>/config.json`：配置模版表（`configs`），每套代际配置 1 个目录（身份 `config.json` + 各步骤子目录，见「按 pipeline 步骤拆分的目录布局」）
 - `versions/<brand>/<device>/<buildId>.json`：版本表（`versions`），每个 ROM 版本 1 个精简 JSON 文件（仅存模版关联 `configId`、实测身份与版本差异 `overrides`）
 
 ---
@@ -37,7 +37,7 @@
 
 ---
 
-## 配置模版表 (`configs/<brand>/<device>/<name>.json` + `<name>/`)
+## 配置模版表 (`configs/<brand>/<device>/<name>/config.json`)
 统筹同机型在同代际（`deviceId + androidVersion`）下可跨多个 ROM 版本复用的公共构建配置模版。
 
 * 模版ID `id`
@@ -106,10 +106,23 @@
 
 ### 按 pipeline 步骤拆分的目录布局
 
-配置模版一律拆成「身份文件 + 同名步骤根目录」：身份字段
-（`id`/`deviceId`/`name`/`androidVersion`/`lineageVersion`/`extra`/`updatedAt`）留在
-`configs/<brand>/<device>/<name>.json`，其余各写入**同名**的步骤根目录
-`configs/<brand>/<device>/<name>/` 下对应步骤的子目录：
+配置模版一律按代际目录存放：每份配置占一个目录 `configs/<brand>/<device>/<name>/`，
+身份字段（`id`/`deviceId`/`name`/`androidVersion`/`lineageVersion`/`extra`/`updatedAt`）
+就在该目录的 `config.json`，其余各步骤写入同目录下的子目录：
+
+```
+configs/google/oriole/
+├── oriole-android16/
+│   ├── config.json          # 身份字段（这条配置的记录本体）
+│   ├── kernel/config.json   # buildKernel
+│   ├── module/config.json   # buildModules
+│   ├── vendor/config.json   # buildVendor（除 fileTrees / sepolicy）
+│   ├── vendor/etc/...       # buildVendor.fileTrees，按目标路径铺成真实文件
+│   ├── vendor/sepolicy/...  # buildVendor.sepolicy
+│   ├── hardware/config.json # buildVendor.hardware（HAL 清单）
+│   └── ...
+└── oriole-android17/
+```
 
 | 子目录 | 配置键 | file-map 字段（铺成真实文件） |
 | --- | --- | --- |
@@ -125,16 +138,16 @@
 | `vda/` | `buildVda` | — |
 | `hardware/` | `buildVendor.hardware`（迁出存放） | — |
 
-* 每个子目录里的 `config.json` 是该步骤除 file-map 字段外剩下的字段，**不是**一条配置记录；
-  读取时按表合并回记录，写回时各回各的子目录。
+* 除身份文件外，每个子目录里的 `config.json` 是该步骤除 file-map 字段外剩下的字段，
+  **不是**一条配置记录；读取时按表合并回记录，写回时各回各的子目录。
 * file-map 字段（`fileTrees`/`sepolicy`）在磁盘上就是真实文件，按声明的目标路径摆放，
   可以直接编辑与 diff；`config.json` 里不再保留这两个字段。
 * `hardware/config.json` 装的是 `{"hardware": [...]}`，即原本住在 `buildVendor` 里的 HAL 清单；
   读时并回 `buildVendor.hardware`，`vendor/config.json` 里不再保留这一段。
 * 步骤根目录按**配置**（而不是按设备）划分：同一机型多代际各有各的 `<name>/`
   （如 `google/oriole/` 下的 `oriole-android14/`、`oriole-android15/` …），互不干扰；
-  删除/改名一份配置只清理它自己的步骤根目录。
-* `prepare/`、`boot/` 是预留目录，当前没有对应配置键。
+  删除/改名一份配置只清理它自己的目录。
+* 步骤根目录里没出现的步骤目录就表示该步骤为空（等同 `{}`）；`prepare/`、`boot/` 是预留目录。
 
 ---
 
