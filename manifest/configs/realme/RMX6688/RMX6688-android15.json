@@ -31,13 +31,7 @@
     ]
   },
   "buildKernel": {
-    "lineageKernel": {
-      "borrowed-from": "lineage-22.1",
-      "borrowed-reason": "RMX6688 官方 ColorOS 15 固件内核为 6.6.66-android15-8（mt6991），而 lineage-22.2 底包自带 6.12.23；virtio 内核上游无 22.2 的 6.6 分支，按 AGENTS.md #5 借用 lineage-22.1 的 6.6 线（kernels/lineage-22-6.6），与 gold 同核同代。底包 vendor_dlkm 内的 6.12.23 模块由 08_build_vendor_dlkm 全量清空，仅加载内核 built-in 与 03 自编的 6.6 模块。",
-      "measured-from": "产物 out/kernel/lineage-22-6.6/kernelrelease.txt = 6.6.127-4k-cdh；底包 lineage-22.2/boot_a.img 实测 6.12.23-4k-gafb0ad713e3c，属登记借用。",
-      "source": "kernels/lineage-22-6.6（origin=cloud-phone-hub/kernel_lineage-22.1.git）",
-      "version": "6.6"
-    },
+
     "uname": "Linux localhost 6.6.66-android15-8-gd43086512890-abogki423825152-4k #1 SMP PREEMPT Tue Jun 10 12:12:23 UTC 2025 aarch64 Toybox",
     "version": "6.6"
   },

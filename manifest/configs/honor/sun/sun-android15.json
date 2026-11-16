@@ -30,12 +30,7 @@
   },
   "buildKernel": {
     "uname": "Linux localhost 6.6.118-android15-8-gc901ea41aa32-ab15981388-4k #1 SMP PREEMPT Thu Jul 30 02:48:45 UTC 2026 aarch64 Toybox",
-    "version": "6.6",
-    "lineageKernel": {
-      "version": "6.6",
-      "borrowed-from": "lineage-22.1",
-      "borrowed-reason": "Honor Magic7 RSR（sun）官方固件内核 uname-version 为 6.6.118-android15-8（6.6 线），而 lineage-22.2 底包自带 6.12.23；virtio 内核上游没有 22.2 的 6.6 分支，借用 lineage-22.1 的 6.6 线（kernels/6.6），vendor_dlkm 由 08 全量自建。"
-    }
+    "version": "6.6"
   },
   "buildModules": {
     "external": [

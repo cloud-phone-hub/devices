@@ -21,13 +21,7 @@
     ]
   },
   "buildKernel": {
-    "lineageKernel": {
-      "config-note": "2026-10-29 起撤销机型片段，统一用 build/02_build_kernel/lineage-kernel.config（全机型共用；两份片段实质只差 CONFIG_DMIID 一项，统一后 m22 反而继承了 DMIID 关闭，避免 /sys/class/dmi/id 泄 QEMU/EDK II）。回退理由与实测见证据 #48 的「回退」一节。",
-      "measured-from": "out/roms/lineage/lineage-23.2/super/vendor_dlkm_a.img 内 9pnet_fd.ko 的 vermagic 段。云机跑底包内核（6.12.81），官方 ROM 内核是 6.6.66-android15（见 rom.official.kernel），两者不同代，镜像标签与源码目录名跟底包走。",
-      "source": "git@github.com:cloud-phone-hub/android_kernel_virt_virtio.git lineage-23.2 @4f6bf47200d9",
-      "vermagic": "6.12.81-4k-g4f6bf47200d9 SMP preempt mod_unload modversions aarch64",
-      "version": "6.12.81"
-    },
+
     "uname": "Linux localhost 6.6.66-android15-8-maybe-dirty-4k #1 SMP PREEMPT Tue Jan 27 19:19:43 UTC 2026 aarch64 Toybox",
     "version": "6.12"
   },

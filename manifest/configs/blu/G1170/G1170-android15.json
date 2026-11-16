@@ -15,13 +15,7 @@
     ]
   },
   "buildKernel": {
-    "lineageKernel": {
-      "borrowed-from": "lineage-22.1",
-      "borrowed-reason": "G1170 官方固件跑 MTK 6.6.89-android15-8 内核，而 lineage-22.2 底包自带 6.12.23；virtio 内核上游无 22.2 的 6.6 分支，故借用 lineage-22.1 的 6.6 线（kernels/lineage-22-6.6），vendor_dlkm 由 08 全自建注入 6.6 模块。",
-      "measured-from": "产物 out/kernel/lineage-22-6.6/kernelrelease.txt = 6.6.127-4k-cdh；底包 lineage-22.2/boot_a.img 自带 6.12.23-4k-gafb0ad713e3c，属跨代借用。",
-      "source": "kernels/lineage-22-6.6",
-      "version": "6.6"
-    },
+
     "uname": "Linux localhost 6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k #1 SMP PREEMPT Thu Jul 10 06:35:14 UTC 2025 aarch64 Toybox",
     "version": "6.6"
   },

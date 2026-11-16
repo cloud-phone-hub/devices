@@ -14,14 +14,7 @@
     ]
   },
   "buildKernel": {
-    "lineageKernel": {
-      "borrowed-from": "lineage-22.1",
-      "borrowed-reason": "官方 S25 Ultra（SM-S9380）固件内核 uname-version 为 6.6.98-android15-8（6.6 线），而底包 lineage-23.2 自带 6.12.81；云机内核按厂商固件 uname-version 主次版本匹配 kernels/6.6（LineageOS lineage-22.1 的 6.6.127），vendor_dlkm 由 08 全量自建。",
-      "measured-from": "产物 out/kernel/6.6/kernelrelease.txt = 6.6.127-4k-cdh；底包 roms/lineage/UTM-VM-lineage-23.2-20260922-UNOFFICIAL-virtio_arm64only.zip 自带 6.12.81，与本机不同代，见 borrowed-from。",
-      "source": "kernels/6.6（origin=cloud-phone-hub/android_kernel_virt_virtio.git，分支 lineage-22.1，构建镜像 ghcr.io/feicong/droid-ddk:android15-6.6）",
-      "vermagic": "6.6.127-4k-cdh SMP preempt mod_unload modversions aarch64",
-      "version": "6.6"
-    },
+
     "uname": "Linux localhost 6.6.98-android15-8-p5a696e2-abogkiS9380ZCSDCZH1-4k #1 SMP PREEMPT Wed Aug 12 09:09:58 UTC 2026 aarch64 Toybox",
     "version": "6.6"
   },

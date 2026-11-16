@@ -31,13 +31,7 @@
     ]
   },
   "buildKernel": {
-    "lineageKernel": {
-      "config-note": "本机型不声明 rom.lineage.kernel.config，02 走统一片段 build/02_build_kernel/lineage-kernel.config；机型片段是整表取代语义，CPH2797 目前没有需要独占的内核项。",
-      "measured-from": "out/roms/lineage/lineage-23.2/super/vendor_dlkm_a.img 内 9pnet_fd.ko 的 vermagic 段；与 m22 同一个底包，02 直接命中已有配方 lineage-23-6.12-cdh-b4fe1c987b3a（[skip]）。官方 ColorOS 内核是 6.12.23-android16-5（见 rom.official.kernel），两者不同代，镜像标签与源码目录名跟底包走。",
-      "source": "git@github.com:cloud-phone-hub/android_kernel_virt_virtio.git lineage-23.2 @4f6bf47200d9",
-      "vermagic": "6.12.81-4k-g4f6bf47200d9 SMP preempt mod_unload modversions aarch64",
-      "version": "6.12.81"
-    },
+
     "uname": "Linux localhost 6.12.23-android16-5-g82efd98459a2-ab14457512-4k #1 SMP PREEMPT Tue Nov 18 18:08:47 UTC 2025 aarch64 Toybox",
     "version": "6.12"
   },

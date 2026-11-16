@@ -21,12 +21,7 @@
   },
   "buildKernel": {
     "uname": "Linux localhost 6.1.162-android14-11-g9dd05ae3a1de-ab16261587 #1 SMP PREEMPT Thu Sep  3 03:59:00 UTC 2026 aarch64 Toybox",
-    "version": "6.1",
-    "lineageKernel": {
-      "version": "6.1",
-      "borrowed-from": "lineage-21",
-      "borrowed-reason": "lineage-24.0 底包自带更高版本内核，Pixel 6 厂商固件内核线为 6.1，借用 lineage-21 的 6.1 内核源码树"
-    }
+    "version": "6.1"
   },
   "buildModules": {
     "external": [

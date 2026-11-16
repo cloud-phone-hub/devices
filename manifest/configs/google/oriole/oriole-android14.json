@@ -19,13 +19,7 @@
     ]
   },
   "buildKernel": {
-    "lineageKernel": {
-      "borrowed-from": "android13-5.10",
-      "borrowed-reason": "官方 Pixel 6（oriole）AP2A.240905.003.F1 固件内核 uname-version 为 5.10.198-android13-4（5.10 线），而底包 UTM-VM-lineage-21.0 镜像自带 6.12.23；云机内核按厂商固件 uname-version 主次版本匹配 kernels/5.10（AOSP android13-5.10 的 5.10.270），vendor_dlkm 由 08 全量自建。",
-      "measured-from": "产物 out/kernel/5.10/kernelrelease.txt = 5.10.270-4k-cdh。底包镜像自带内核（lineage-21.0/boot_a.img）实测 6.12.23-4k-gafb0ad713e3c-dirty：与本机不同代，属借用，见 borrowed-from。",
-      "source": "kernels/5.10（origin=https://android.googlesource.com/kernel/common，分支 android13-5.10，构建镜像 ghcr.io/feicong/droid-ddk:android13-5.10）",
-      "version": "5.10"
-    },
+
     "uname": "Linux localhost 5.10.198-android13-4-00050-g12f3388846c3-ab11920634 #1 SMP PREEMPT Mon Jun 3 20:51:42 UTC 2024 aarch64 Toybox",
     "version": "5.10"
   },
