@@ -3,7 +3,7 @@
   "deviceId": 13,
   "name": "HNLNA-M-android13",
   "androidVersion": "13",
-  "lineageVersion": "lineage-21.0",
+  "lineageVersion": "lineage-20.0",
   "unpack": {
     "lineage": [
       "vendor_a.img",

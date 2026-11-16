@@ -3,7 +3,7 @@
   "deviceId": 23,
   "name": "RMX3823-android13",
   "androidVersion": "13",
-  "lineageVersion": "lineage-21.0",
+  "lineageVersion": "lineage-20.0",
   "unpack": {
     "lineage": [
       "vendor_a.img",
