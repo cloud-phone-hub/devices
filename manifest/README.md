@@ -190,6 +190,12 @@ versions/redmi/gold/
   想给某个 ROM 版本单独换一个 vendor 文件，直接放进 `<buildId>/vendor/<目标路径>`；
 * 读取时把各步骤子目录并回 `overrides` 再叠加到模版上，写回时各回各的子目录；
   覆盖被撤掉时对应子目录一并删掉。
+* **合并口径（pipeline 每阶段都用这一份）**：`configs` 打底，`versions` 覆盖——
+  对象按 key 递归合并（同名 key 以版本为准，对象继续往下合，值写 `null` 表示删掉该 key）；
+  `fileTrees` / `sepolicy` 这类「目标路径 → 内容」的文件表按路径逐文件合并：**版本里有同名文件就覆盖，
+  没有就沿用模版**；数组整体替换，或写 `{"add": [...], "remove": [...]}` 做增删。
+  阶段不直接读 `configs` / `versions` 目录，只消费合并后的结果（DB 读回与
+  `out/devices/manifest` 物化都已合并）。
 
 ---
 
