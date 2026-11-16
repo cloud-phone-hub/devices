@@ -14,9 +14,10 @@
   `rmx6688`（各 10）、`xiaomi/popsicle`（11）、`oppo/PME110`（待补基线）
 - 证据：`devices/evidence/common/issue-cdh-redirect-kernel-module/`（首发，oriole）与
   `devices/evidence/common/issue-cdh-redirect-full-migration/`（三棵树全面移植 + 五机型复测）
-- 规则样例：`devices/manifest/google/oriole/device.json` 的 `modules.redirect`（10 条，含
-  `update_verifier` 屏蔽）、`devices/manifest/flyme/m22/device.json` 的 `modules.redirect`
-  （12 条，多 `/system/lib/modules` 与 `/odm` 预编译策略屏蔽）
+- 规则样例：设备表 `devices/manifest/devices/google/oriole.json` 的 `modules.redirect`（10 条，含
+  `update_verifier` 屏蔽）、`devices/manifest/devices/flyme/m22.json` 的 `modules.redirect`
+  （12 条，多 `/system/lib/modules` 与 `/odm` 预编译策略屏蔽），构建期物化在
+  `out/devices/manifest/<brand>/<device>/device.json`
 
 ## 1. 它做了什么
 
@@ -75,7 +76,7 @@
 ## 3. 构建与注入
 
 1. `03_build_modules`：baseline 里 `rom.lineage.kernel.modules` 含 `"cdh_redirect"`
-   （见 `devices/manifest/google/oriole/baselines/*.json`）→ 对该目录做 `make M=… modules`
+   （见 `out/devices/manifest/<brand>/<device>/baselines/*.json`，由三表物化）→ 对该目录做 `make M=… modules`
    → `llvm-strip --strip-debug` → 落到 `out/devices/kernel/<tag>/modules/cdh_redirect.ko`。
 2. `05_build_vendor_boot`：把模块塞进 **vendor_ramdisk 根级**（initramfs），不是 `/vendor`：
 
@@ -153,7 +154,7 @@ readlink[vfs]: entries=58904 rets=58904 hits=0 skipped=58904
 
 ## 6. 迁一台新机型要做什么
 
-1. 在 `devices/manifest/<vendor>/<device>/device.json` 里写 `modules.redirect`
+1. 在设备表 `devices/manifest/devices/<brand>/<device>.json` 里写 `modules.redirect`
    （照抄该机型原内核补丁里的白名单；落点路径按 patch.img 的装法定）。**数组里只放对象
    元素**（一条规则一个），分段标题与「为什么这么改」写进同目录 `README.md` 的
    `modules.redirect` 一节——那份说明与规则本身同等重要，别丢，也别塞回 JSON 数组。

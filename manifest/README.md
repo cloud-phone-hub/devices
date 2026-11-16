@@ -174,5 +174,5 @@ configs/google/oriole/
    * 若同代存在多个候选模版，依次按：① 关联版本的 `osVersion` 语义数字向量距离最近；② `buildDate` 时间差最小进行排序；
    * 若该设备首次跨 Android 大版本升级（尚无对应代际模版），则以最近一代模版为蓝本克隆派生新模版（自动更新 `androidVersion` 与 `lineageVersion`）。
 2. **合成有效版本配置（`ResolveEffectiveVersion`）**：
-   * 以 `configs` 模版的全部 10 个步骤为基底，注入 `versions` 的 `factoryTgz`、`factoryDir`、`securityPatch`（写入 `vendor.build-prop-sets["ro.vendor.boot_security_patch"]`），最后按步骤叠加 `versions.overrides`，并在构建期物化至 `devices/manifest/<brand>/<device>/`（`device.json` + `baselines/<buildID>.json` + `vendor`/`sepolicy`/`odm` 静态树）供 `01_unpack` ~ `11_pack_vda` 透明消费。
+   * 以 `configs` 模版的全部 10 个步骤为基底，注入 `versions` 的 `factoryTgz`、`factoryDir`、`securityPatch`（写入 `vendor.build-prop-sets["ro.vendor.boot_security_patch"]`），最后按步骤叠加 `versions.overrides`，并在构建期物化至工作区 `out/devices/manifest/<brand>/<device>/`（`device.json` + `baselines/<buildID>.json` + `vendor`/`sepolicy`/`odm` 静态树）供 `01_unpack` ~ `11_pack_vda` 透明消费。工作区是派生缓存，可随时删除重建。
 
