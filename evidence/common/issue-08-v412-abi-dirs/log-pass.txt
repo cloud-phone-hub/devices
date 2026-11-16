@@ -1,0 +1,28 @@
+--> android.hardware.media.v412（v412）
+==> 构建期依赖（framework 仓 / hidl-gen / HIDL 头，见 cdh-vendor deps media-v412）
+[..] media: AIDL 依赖已就绪: /Volumes/work/cloud-phone-hub/out/devices/hal/android15/aosp/aidl/media
+[..] v412 platform-source 已就绪: /Volumes/work/cloud-phone-hub/out/devices/hal/android15/aosp/platform
+[..] hidl 头已生成（>= 219）
+[ok] v412 AIDL / platform-source / hidl-gen / HIDL 头就绪
+[..] v412 ABI 已就绪: /Volumes/work/cloud-phone-hub/out/devices/vendor/android15/abi/media-v412
+==> AIDL 代码生成
+    android.hardware.common (v2, hash c32ddfdeb69c)
+    android.hardware.common.fmq (v1, hash 6a780550f6e6)
+    android.hardware.graphics.common (v5, hash 2ffe8da11369)
+    android.hardware.media.bufferpool2 (v2, hash c12818c51418)
+    android.hardware.media.c2 (v1, hash d4c3897135ef)
+==> 编译业务源
+==> 链接 plugin 共享库
+==> libyuv 编译 + llvm-ar 归档
+==> 链接服务 PIE
+    写 bin/hw/android.hardware.media.c2@1.2-service-v4l2-64
+    写 bin/hw/android.hardware.media.c2-service-v4l2-64
+    写 lib64/libc2plugin_store.so
+    运行期闭包落盘 41 个库 -> lib64/（android.hardware.common-V2-ndk.so, android.hardware.common.fmq-V1-ndk.so, android.hardware.graphics.allocator-V2-ndk.so, android.hardware.graphics.allocator@2.0.so, 等 41 个）
+[ok] android.hardware.media.v412 构建完成 -> /Volumes/work/cloud-phone-hub/out/devices/vendor/android15
+    写 etc/init/android.hardware.media.c2@1.2-service-v4l2-64.rc（0644）
+    写 etc/seccomp_policy/android.hardware.media.c2-extended-seccomp_policy（0644）
+    写 etc/vintf/manifest/android.hardware.media.c2@1.2-service-v4l2.xml（0644）
+[ok] android.hardware.media.v412 合并 vendor 静态树：新增 3，已存在同内容 0
+--> android.hardware.memtrack（aidl）
+==> AIDL 代码生成

@@ -10,9 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 BLU-G65L-G1130.zip (vendor/build.prop) 自动生成。",
-    "osVersion": "13-UP1A.231005.007-20260511",
-    "securityPatch": "2026-04-05"
+    "comment": "由 cdh unpack prepare 从 BLU-G65L-G1130.zip (vendor/build.prop) 自动生成。"
   },
   "updatedAt": "2026-11-09T03:16:51Z"
 }

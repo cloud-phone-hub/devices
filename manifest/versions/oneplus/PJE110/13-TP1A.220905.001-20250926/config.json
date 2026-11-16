@@ -10,8 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 OP_ACE_3_PJE110_15.0.0.870_CN01.zip (vendor/build.prop) 自动生成。",
-    "osVersion": "13-TP1A.220905.001-20250926"
+    "comment": "由 cdh unpack prepare 从 OP_ACE_3_PJE110_15.0.0.870_CN01.zip (vendor/build.prop) 自动生成。"
   },
   "updatedAt": "2026-11-06 02:47:41"
 }

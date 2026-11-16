@@ -10,8 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 oriole-bp1a.250505.005-factory-9fc37bcc.zip (vendor/build.prop) 自动生成。",
-    "osVersion": "15-BP1A.250505.005-20250326"
+    "comment": "由 cdh unpack prepare 从 oriole-bp1a.250505.005-factory-9fc37bcc.zip (vendor/build.prop) 自动生成。"
   },
   "updatedAt": "2026-11-05T07:30:07Z"
 }

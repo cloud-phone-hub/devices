@@ -11,8 +11,7 @@
   "overrides": {},
   "extra": {
     "boardNote": "板级名取官方 vendor 的 fstab 后缀：vendor_boot.img 平台片段里有 first_stage_ramdisk/fstab.qcom（7108 B），真机 androidboot.hardware=qcom。ro.board.platform 是 sun（SoC 代号 pa3q/sun），但它不是 fstab 后缀：写 sun 会让 vold 找不存在的 /vendor/etc/fstab.sun，/data 永远挂不上（同 m22 的证据 #49）。05 用它拼 cmdline androidboot.hardware 与 first_stage_ramdisk/system/etc/fstab.<board>，07 用它把 lineage 的 init.virtio.rc 改名成 init.qcom.rc 并落 vendor/etc/fstab.qcom。",
-    "comment": "SM-S9380（Samsung Galaxy S25 Ultra / pa3q / CHC / Android 16）基线件清单。官方 FUS 服务包（zip → BL/AP/CP/CSC 的 tar.md5 → *.img.lz4）解出 super.img 与 vendor_boot.img：super.img 18.07 GiB 为 sparse，01_unpack 展开成 raw 后由 10_pack_super 原样搬运（super 零改动），官方 vendor_dlkm 的 /etc/build.prop 作基线件；vendor / vendor_dlkm / odm 三棵树的基底取 lineage-23.2 UTM virtio 的 ext4 分区（与底包内核同源），机型身份属性由本文件的 build-prop-sets 覆盖（07 步骤 6 现解厂商 vendor build.prop 再叠增量，机型目录不再存副本），build-prop-sets 只留与云机硬件不符、必须改写的几项。",
-    "osVersion": "16-AP3A.240905.015.A2-20260812"
+    "comment": "SM-S9380（Samsung Galaxy S25 Ultra / pa3q / CHC / Android 16）基线件清单。官方 FUS 服务包（zip → BL/AP/CP/CSC 的 tar.md5 → *.img.lz4）解出 super.img 与 vendor_boot.img：super.img 18.07 GiB 为 sparse，01_unpack 展开成 raw 后由 10_pack_super 原样搬运（super 零改动），官方 vendor_dlkm 的 /etc/build.prop 作基线件；vendor / vendor_dlkm / odm 三棵树的基底取 lineage-23.2 UTM virtio 的 ext4 分区（与底包内核同源），机型身份属性由本文件的 build-prop-sets 覆盖（07 步骤 6 现解厂商 vendor build.prop 再叠增量，机型目录不再存副本），build-prop-sets 只留与云机硬件不符、必须改写的几项。"
   },
   "updatedAt": "2026-11-06T02:13:12Z"
 }

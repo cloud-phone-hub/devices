@@ -16,8 +16,7 @@
   `devices/evidence/common/issue-cdh-redirect-full-migration/`（三棵树全面移植 + 五机型复测）
 - 规则样例：设备表 `devices/manifest/devices/google/oriole.json` 的 `modules.redirect`（10 条，含
   `update_verifier` 屏蔽）、`devices/manifest/devices/flyme/m22.json` 的 `modules.redirect`
-  （12 条，多 `/system/lib/modules` 与 `/odm` 预编译策略屏蔽），构建期物化在
-  `out/devices/manifest/<brand>/<device>/device.json`
+  （12 条，多 `/system/lib/modules` 与 `/odm` 预编译策略屏蔽），构建期由 `device.LoadView` 从三表内存合成设备视图
 
 ## 1. 它做了什么
 
@@ -76,7 +75,7 @@
 ## 3. 构建与注入
 
 1. `03_build_modules`：baseline 里 `rom.lineage.kernel.modules` 含 `"cdh_redirect"`
-   （见 `out/devices/manifest/<brand>/<device>/baselines/*.json`，由三表物化）→ 对该目录做 `make M=… modules`
+   （见三表合成的基线 `db://<brand>/<device>/<buildID>`，由 `devices/configs` 打底、`devices/versions` 覆盖）→ 对该目录做 `make M=… modules`
    → `llvm-strip --strip-debug` → 落到 `out/devices/kernel/<tag>/modules/cdh_redirect.ko`。
 2. `05_build_vendor_boot`：把模块塞进 **vendor_ramdisk 根级**（initramfs），不是 `/vendor`：
 

@@ -10,8 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 Asteroids_B4.1-260810-1153.zip (vendor/build.prop) 自动生成。",
-    "osVersion": "14-UKQ1.250612.001-20260810"
+    "comment": "由 cdh unpack prepare 从 Asteroids_B4.1-260810-1153.zip (vendor/build.prop) 自动生成。"
   },
   "updatedAt": "2026-11-06 02:47:41"
 }

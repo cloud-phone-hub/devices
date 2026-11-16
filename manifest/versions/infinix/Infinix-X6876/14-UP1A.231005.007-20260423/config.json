@@ -10,9 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 IN_X6876_A16_OPPJ_201350016_full.zip (vendor/build.prop) 自动生成。",
-    "osVersion": "14-UP1A.231005.007-20260423",
-    "securityPatch": "2026-04-01"
+    "comment": "由 cdh unpack prepare 从 IN_X6876_A16_OPPJ_201350016_full.zip (vendor/build.prop) 自动生成。"
   },
   "updatedAt": "2026-11-09T03:19:08Z"
 }

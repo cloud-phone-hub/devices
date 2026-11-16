@@ -10,8 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 R2-Asus-ROG-Phone-7-AI2205.zip (vendor/build.prop) 自动生成。",
-    "osVersion": "13-TKQ1.220928.001-20240229"
+    "comment": "由 cdh unpack prepare 从 R2-Asus-ROG-Phone-7-AI2205.zip (vendor/build.prop) 自动生成。"
   },
   "updatedAt": "2026-11-06 02:47:41"
 }

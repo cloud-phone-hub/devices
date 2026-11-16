@@ -10,9 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 Ulefone-Armor-28-Ultra-Thermal-Version-15.zip (vendor/build.prop) 自动生成。",
-    "osVersion": "14-GQ5011AF1_EEA_V17-20260429",
-    "securityPatch": "2026-03-05"
+    "comment": "由 cdh unpack prepare 从 Ulefone-Armor-28-Ultra-Thermal-Version-15.zip (vendor/build.prop) 自动生成。"
   },
   "updatedAt": "2026-11-09T03:14:42Z"
 }

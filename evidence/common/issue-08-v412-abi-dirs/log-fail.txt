@@ -1,0 +1,13 @@
+    写 bin/hw/android.hardware.media.c2-mediatek
+    写 bin/hw/vendor.dolby.media.c2-default-service-dax
+[ok] android.hardware.media 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/out/devices/vendor/android15/bin/hw
+    写 etc/init/android.hardware.media.c2-mediatek.rc（0644）
+    写 etc/init/vendor.dolby.media.c2-default-service-dax.rc（0644）
+    写 etc/vintf/manifest/manifest_media_c2_default.xml（0644）
+    写 etc/vintf/manifest/vendor.dolby.media.c2-default-service-dax.xml（0644）
+[ok] android.hardware.media 合并 vendor 静态树：新增 4，已存在同内容 0
+--> android.hardware.media.v412（v412）
+[err] 阶段 build_hardware 失败: 构建模块 android.hardware.media.v412 失败: v412 需要恰好两个 --abi-dir（先 system、后 apex），实际 0 个
+==> 设备: Redmi Note 13 5G（redmi/gold）
+==> 清单: db://redmi/gold/15-OS3.0.11.0.VNQCNXM
+    厂商固件: roms/devices/xiaomi/gold/gold_images_OS3.0.11.0.VNQCNXM_20260924.0000.00_15.0_cn_60017ed496.tgz

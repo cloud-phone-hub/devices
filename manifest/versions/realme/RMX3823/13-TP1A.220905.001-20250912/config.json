@@ -10,8 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 1862_sign_RMX3823_11_F_OTA_2160_all_Mfq9LH_10010111.zip (vendor/build.prop) 自动生成。",
-    "osVersion": "13-TP1A.220905.001-20250912"
+    "comment": "由 cdh unpack prepare 从 1862_sign_RMX3823_11_F_OTA_2160_all_Mfq9LH_10010111.zip (vendor/build.prop) 自动生成。"
   },
   "updatedAt": "2026-11-06 02:47:41"
 }

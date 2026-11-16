@@ -10,8 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 Huawei-Pura-70-PRO.zip (vendor/build.prop) 自动生成。",
-    "osVersion": "15-205.0.0.102_SP3"
+    "comment": "由 cdh unpack prepare 从 Huawei-Pura-70-PRO.zip (vendor/build.prop) 自动生成。"
   },
   "updatedAt": "2026-11-06 02:47:41"
 }

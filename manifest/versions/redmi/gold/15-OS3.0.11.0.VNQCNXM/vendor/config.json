@@ -1,0 +1,10 @@
+{
+  "build-prop-sets": {
+    "ro.bionic.2nd_arch": "",
+    "ro.bionic.2nd_cpu_variant": "",
+    "ro.hardware.gralloc": "minigbm"
+  },
+  "build-prop-unsets": [
+    "ro.vndk.lite"
+  ]
+}

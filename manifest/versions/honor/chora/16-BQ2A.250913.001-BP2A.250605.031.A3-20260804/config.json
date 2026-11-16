@@ -10,8 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 Huawei-Honor-400-Lite-BSN-NX1.zip (vendor/build.prop) 自动生成。",
-    "osVersion": "16-BQ2A.250913.001-BP2A.250605.031.A3-20260804"
+    "comment": "由 cdh unpack prepare 从 Huawei-Honor-400-Lite-BSN-NX1.zip (vendor/build.prop) 自动生成。"
   },
   "updatedAt": "2026-11-06 02:47:41"
 }

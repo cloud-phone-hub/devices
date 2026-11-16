@@ -10,8 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 itel-A6612L.zip (vendor/build.prop) 自动生成。",
-    "osVersion": "13-BP2A.250605.031.A3-20260823"
+    "comment": "由 cdh unpack prepare 从 itel-A6612L.zip (vendor/build.prop) 自动生成。"
   },
   "updatedAt": "2026-11-06 02:47:41"
 }

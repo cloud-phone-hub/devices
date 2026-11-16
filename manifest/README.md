@@ -160,7 +160,7 @@ configs/google/oriole/
 * `factoryTgz`：官方刷机包文件名
 * `factoryDir`：官方刷机包解包目录名（可选）
 * `overrides`：该版本相对 `configs` 模版各构建步骤（`unpack` / `buildKernel` / `buildModules` / `buildVendorBoot` / `buildOdm` / `buildVendor` / `buildVendorDlkm` / `buildPatch` / `buildSuper` / `buildVda`）的差异覆盖（默认 `{}`，支持按阶段对 Map 键值覆盖/`null` 剔除、对数组 `{"add":[...],"remove":[...]}` 增删或直接替换）；属于某个步骤的键拆在同名目录的 `<步骤>/config.json`，身份文件里只留不属于任何步骤的键；`buildKernel` 例外——模版不承载内核，版本里的那份就是完整内容（不是差异）
-* `extra`：版本级补充信息（如 `comment`、`verifiedBootHash`）
+* `extra`：版本级补充信息（如 `comment`、`verifiedBootHash`）；`osVersion` / `securityPatch` 只存顶层字段，不再往 `extra` 里拷一份（读侧仅为旧记录保留回退）
 
 ---
 
@@ -194,8 +194,8 @@ versions/redmi/gold/
   对象按 key 递归合并（同名 key 以版本为准，对象继续往下合，值写 `null` 表示删掉该 key）；
   `fileTrees` / `sepolicy` 这类「目标路径 → 内容」的文件表按路径逐文件合并：**版本里有同名文件就覆盖，
   没有就沿用模版**；数组整体替换，或写 `{"add": [...], "remove": [...]}` 做增删。
-  阶段不直接读 `configs` / `versions` 目录，只消费合并后的结果（DB 读回与
-  `out/devices/manifest` 物化都已合并）。
+  阶段不直接读 `configs` / `versions` 目录，只消费合并后的结果（DB 读回、`manifest.Load`
+  内存合成、`device.LoadView` 设备视图、`device.LookupStatic` 定位静态文件都已合并）。
 
 ---
 
@@ -205,5 +205,5 @@ versions/redmi/gold/
    * 若同代存在多个候选模版，依次按：① 关联版本的 `osVersion` 语义数字向量距离最近；② `buildDate` 时间差最小进行排序；
    * 若该设备首次跨 Android 大版本升级（尚无对应代际模版），则以最近一代模版为蓝本克隆派生新模版（自动更新 `androidVersion` 与 `lineageVersion`）。
 2. **合成有效版本配置（`ResolveEffectiveVersion`）**：
-   * 以 `configs` 模版的全部 10 个步骤为基底，注入 `versions` 的 `factoryTgz`、`factoryDir`、`securityPatch`（写入 `vendor.build-prop-sets["ro.vendor.boot_security_patch"]`），最后按步骤叠加 `versions.overrides`，并在构建期物化至工作区 `out/devices/manifest/<brand>/<device>/`（`device.json` + `baselines/<buildID>.json` + `vendor`/`sepolicy`/`odm` 静态树）供 `01_unpack` ~ `11_pack_vda` 透明消费。工作区是派生缓存，可随时删除重建。
+   * 以 `configs` 模版的全部 10 个步骤为基底，注入 `versions` 的 `factoryTgz`、`factoryDir`、`securityPatch`（写入 `vendor.build-prop-sets["ro.vendor.boot_security_patch"]`），最后按步骤叠加 `versions.overrides`。构建期**不再物化工作区**：各阶段用 `db://<brand>/<device>/<buildID>` 选择器从三表内存合成清单（`manifest.Load`）、合成设备视图（`device.LoadView`），静态树（`vendor`/`sepolicy`/`odm`）按「版本覆盖、配置打底」直接读 `versions/<brand>/<device>/<buildID>/` 与 `configs/<brand>/<device>/<配置>/` 下的真实文件（`device.SubRoots` / `device.LookupStatic`），供 `03` ~ `13` 消费。
 

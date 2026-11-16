@@ -10,8 +10,6 @@
   "factoryDir": "OS3.0.11.0.VNQCNXM",
   "overrides": {},
   "extra": {
-    "comment": "gold-15 CN OS3.0.11.0 基线件清单：属性/标签基底沿用 OS3.0.10.0.VNQCNXM 实测配置，rom.official.kernel 与 version-description 按 OS3.0.11.0.VNQCNXM 官方镜像提取。",
-    "osVersion": "15-OS3.0.11.0.VNQCNXM"
   },
   "updatedAt": "2026-11-05T04:33:33Z"
 }

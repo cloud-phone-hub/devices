@@ -10,8 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 R2-Asus-ROG-Phone-9-Pro-AI2501.zip (vendor/build.prop) 自动生成。",
-    "osVersion": "15-AQ3A.240829.003-20250122"
+    "comment": "由 cdh unpack prepare 从 R2-Asus-ROG-Phone-9-Pro-AI2501.zip (vendor/build.prop) 自动生成。"
   },
   "updatedAt": "2026-11-06 02:47:41"
 }

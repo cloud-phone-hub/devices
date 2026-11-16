@@ -10,9 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 NX809S_GB_REDMAGICOS11.0.05MR1_update.zip (vendor/build.prop) 自动生成。",
-    "osVersion": "16-BQ2A.250705.001-BP2A.250605.031.A3-20260527",
-    "securityPatch": "2026-05-01"
+    "comment": "由 cdh unpack prepare 从 NX809S_GB_REDMAGICOS11.0.05MR1_update.zip (vendor/build.prop) 自动生成。"
   },
   "updatedAt": "2026-11-09T03:18:05Z"
 }

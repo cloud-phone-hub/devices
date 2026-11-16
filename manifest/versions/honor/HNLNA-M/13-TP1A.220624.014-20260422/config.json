@@ -10,8 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 Huawei-Honor-X80i-5G-LNA-AN10.zip (vendor/build.prop) 自动生成。",
-    "osVersion": "13-TP1A.220624.014-20260422"
+    "comment": "由 cdh unpack prepare 从 Huawei-Honor-X80i-5G-LNA-AN10.zip (vendor/build.prop) 自动生成。"
   },
   "updatedAt": "2026-11-06 02:47:41"
 }
