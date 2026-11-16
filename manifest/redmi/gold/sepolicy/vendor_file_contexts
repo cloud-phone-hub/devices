@@ -1,0 +1,3 @@
+/vendor/etc/md(/.*)? u:object_r:vendor_etc_md_file:s0
+/vendor/firmware/connfem\.cfg u:object_r:connsys_vendor_file:s0
+/vendor/firmware/conninfra\.cfg u:object_r:connsys_vendor_file:s0

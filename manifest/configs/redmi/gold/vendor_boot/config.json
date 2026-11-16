@@ -1,0 +1,23 @@
+{
+  "cmdline": [
+    "androidboot.product.hardware.sku=gold_cn",
+    "androidboot.atm=disabled",
+    "androidboot.avb_version=1.3",
+    "androidboot.brom=false",
+    "androidboot.dp=0x20",
+    "androidboot.dtb_idx=0",
+    "androidboot.dtbo_idx=0",
+    "androidboot.efuse=1",
+    "androidboot.hwc=CN",
+    "androidboot.hwlevel=MP",
+    "androidboot.hwversion=6752.9.0",
+    "androidboot.lightpa=SmarterMicro",
+    "androidboot.meta_log_disable=0",
+    "androidboot.rpmblock_enabled=false",
+    "androidboot.rsc=gold_cn_pa",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ],
+  "fstab": "mt6833"
+}

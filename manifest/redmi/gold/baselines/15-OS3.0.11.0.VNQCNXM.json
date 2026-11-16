@@ -1,0 +1,675 @@
+{
+  "build-id": "15-OS3.0.11.0.VNQCNXM",
+  "kernel": "6.6",
+  "modules": {
+    "cpufreq": {
+      "driver": "mt-cpufreq",
+      "governor": "sugov_ext",
+      "available-governors": [
+        "sugov_ext",
+        "conservative",
+        "powersave",
+        "performance",
+        "schedutil"
+      ],
+      "transition-latency": 1000,
+      "scaling-readable": false,
+      "package-per-cluster": false,
+      "bogo-mips": "26.00",
+      "policies": [
+        {
+          "policy": 0,
+          "cpus": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "min-freq": 500000,
+          "max-freq": 2000000,
+          "cur-freq": 650000,
+          "available-frequencies": [
+            2000000,
+            1916000,
+            1812000,
+            1750000,
+            1645000,
+            1500000,
+            1393000,
+            1287000,
+            1128000,
+            1048000,
+            968000,
+            862000,
+            756000,
+            703000,
+            650000,
+            500000
+          ],
+          "implementer": "0x41",
+          "variant": 2,
+          "part": "0xd05",
+          "revision": 0,
+          "capacity": 356,
+          "midr": "0x00000000412fd050",
+          "revidr": "0x0000000000000000"
+        },
+        {
+          "policy": 6,
+          "cpus": [
+            6,
+            7
+          ],
+          "min-freq": 725000,
+          "max-freq": 2400000,
+          "cur-freq": 1274000,
+          "available-frequencies": [
+            2400000,
+            2306000,
+            2203000,
+            2118000,
+            1993000,
+            1837000,
+            1650000,
+            1534000,
+            1418000,
+            1274000,
+            1129000,
+            1042000,
+            985000,
+            898000,
+            840000,
+            725000
+          ],
+          "implementer": "0x41",
+          "variant": 4,
+          "part": "0xd0b",
+          "revision": 0,
+          "capacity": 1024,
+          "midr": "0x00000000414fd0b0",
+          "revidr": "0x0000000000000000"
+        }
+      ]
+    },
+    "external": [
+      "cdh_redirect",
+      "device_info",
+      "input_identity",
+      "kernelsu",
+      "virtio_media"
+    ],
+    "input_identity": {
+      "touch_major": true,
+      "goodix_fp": true,
+      "devices": [
+        {
+          "name": "uinput-fpc",
+          "bus": 6,
+          "vendor": 1638,
+          "product": 2184,
+          "version": 0,
+          "keys": [
+            "KEY_UP",
+            "KEY_LEFT",
+            "KEY_RIGHT",
+            "KEY_DOWN"
+          ],
+          "abs": [
+            {
+              "axis": "ABS_Z",
+              "min": 0,
+              "max": 255,
+              "fuzz": 0,
+              "flat": 0
+            }
+          ]
+        },
+        {
+          "name": "fpc_irq@fingerprint",
+          "keys": [
+            "KEY_POWER",
+            "KEY_WAKEUP"
+          ],
+          "msc": [
+            "MSC_SCAN"
+          ]
+        },
+        {
+          "name": "swtp",
+          "keys": [
+            249,
+            250
+          ]
+        },
+        {
+          "name": "mt6833-mt6359 Headset Jack",
+          "bus": 25,
+          "phys": "ALSA",
+          "keys": [
+            "KEY_PLAYPAUSE",
+            "BTN_1",
+            "BTN_2",
+            "KEY_VOICECOMMAND"
+          ],
+          "switches": [
+            "SW_HEADPHONE_INSERT",
+            "SW_MICROPHONE_INSERT",
+            "SW_LINEOUT_INSERT",
+            "SW_JACK_PHYSICAL_INSERT"
+          ]
+        },
+        {
+          "name": "mtk-pmic-keys",
+          "bus": 25,
+          "vendor": 1,
+          "product": 1,
+          "version": 1,
+          "keys": [
+            "KEY_VOLUMEUP",
+            "KEY_POWER"
+          ]
+        }
+      ],
+      "aligns": [
+        {
+          "name": "mtk-kpd",
+          "keys": [
+            "KEY_VOLUMEDOWN"
+          ]
+        }
+      ]
+    },
+    "thermal": {
+      "zones": [
+        {
+          "type": "sc-cp-standalone",
+          "base-temp-mc": 2800,
+          "jitter-mc": 25
+        },
+        {
+          "type": "mtk-master-charger",
+          "base-temp-mc": 25000,
+          "jitter-mc": 120
+        },
+        {
+          "type": "mtk-slave-charger",
+          "base-temp-mc": 0,
+          "jitter-mc": 0
+        },
+        {
+          "type": "mtk-mst-div-chg",
+          "base-temp-mc": 0,
+          "jitter-mc": 0
+        },
+        {
+          "type": "mtk-slv-div-chg",
+          "base-temp-mc": 0,
+          "jitter-mc": 0
+        },
+        {
+          "type": "mtk-mst-hvdiv-chg",
+          "base-temp-mc": 0,
+          "jitter-mc": 0
+        },
+        {
+          "type": "mtk-slv-hvdiv-chg",
+          "base-temp-mc": 0,
+          "jitter-mc": 0
+        },
+        {
+          "type": "mtk-gauge",
+          "base-temp-mc": 28000,
+          "jitter-mc": 100
+        },
+        {
+          "type": "battery",
+          "base-temp-mc": 28000,
+          "jitter-mc": 100
+        },
+        {
+          "type": "mtktscpu",
+          "base-temp-mc": 33607,
+          "jitter-mc": 350
+        },
+        {
+          "type": "mtktspmic",
+          "base-temp-mc": 29164,
+          "jitter-mc": 180
+        },
+        {
+          "type": "mtktsbattery",
+          "base-temp-mc": 28000,
+          "jitter-mc": 100
+        },
+        {
+          "type": "mtktsAP",
+          "base-temp-mc": 30479,
+          "jitter-mc": 220
+        },
+        {
+          "type": "mtktsbtsmdpa",
+          "base-temp-mc": 29413,
+          "jitter-mc": 160
+        },
+        {
+          "type": "mtktspa",
+          "base-temp-mc": 31000,
+          "jitter-mc": 200
+        },
+        {
+          "type": "mtktscharger",
+          "base-temp-mc": 28734,
+          "jitter-mc": 150
+        },
+        {
+          "type": "tzimgs0",
+          "base-temp-mc": -127000,
+          "jitter-mc": 0
+        },
+        {
+          "type": "tzimgs1",
+          "base-temp-mc": -127000,
+          "jitter-mc": 0
+        },
+        {
+          "type": "tzimgs2",
+          "base-temp-mc": -127000,
+          "jitter-mc": 0
+        },
+        {
+          "type": "tzimgs3",
+          "base-temp-mc": -127000,
+          "jitter-mc": 0
+        },
+        {
+          "type": "tzimgs4",
+          "base-temp-mc": -127000,
+          "jitter-mc": 0
+        },
+        {
+          "type": "tzimgs5",
+          "base-temp-mc": -127000,
+          "jitter-mc": 0
+        },
+        {
+          "type": "tzimgs6",
+          "base-temp-mc": -127000,
+          "jitter-mc": 0
+        },
+        {
+          "type": "tzimgs7",
+          "base-temp-mc": -127000,
+          "jitter-mc": 0
+        },
+        {
+          "type": "tzimgs8",
+          "base-temp-mc": -127000,
+          "jitter-mc": 0
+        },
+        {
+          "type": "tzimgs9",
+          "base-temp-mc": -127000,
+          "jitter-mc": 0
+        },
+        {
+          "type": "tzimgs10",
+          "base-temp-mc": -127000,
+          "jitter-mc": 0
+        },
+        {
+          "type": "tzimgs11",
+          "base-temp-mc": -127000,
+          "jitter-mc": 0
+        },
+        {
+          "type": "tzimgs12",
+          "base-temp-mc": -127000,
+          "jitter-mc": 0
+        },
+        {
+          "type": "mtktsdctm",
+          "base-temp-mc": 28925,
+          "jitter-mc": 140
+        },
+        {
+          "type": "mtkcsCPU",
+          "base-temp-mc": 29941,
+          "jitter-mc": 280
+        }
+      ]
+    }
+  },
+  "odm": {
+    "build-prop-sets": {
+      "ro.odm.product.cpu.abilist": "arm64-v8a",
+      "ro.odm.product.cpu.abilist32": "",
+      "ro.odm.product.cpu.abilist64": "arm64-v8a"
+    },
+    "build-prop-unsets": {},
+    "img": "vendor_a.img",
+    "note": "本机无独立 odm 分区，odm 树在 vendor_a.img 的 /odm 子树；prop 是镜像内绝对路径，06 先取原件再套 sets/unsets",
+    "prop": "/odm/etc/build.prop"
+  },
+  "rom": {
+    "lineage": {
+      "images": [
+        "vendor_a.img",
+        "vendor_dlkm_a.img"
+      ],
+      "kernel": {
+        "borrowed-from": "lineage-22.1",
+        "borrowed-reason": "云机内核按厂商固件 uname-version 主次版本匹配 kernels/6.6（lineage-22.1），vendor_dlkm 由 08 全量自建。",
+        "version": "6.6"
+      },
+      "version": "lineage-22.2"
+    },
+    "official": {
+      "images": [
+        "boot.img",
+        "super.img",
+        "vendor_boot.img",
+        "cust.img"
+      ],
+      "kernel": {
+        "uname-version": "Linux localhost 6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k #1 SMP PREEMPT Thu May 28 07:48:46 UTC 2026 aarch64 Toybox"
+      }
+    }
+  },
+  "vda": {
+    "data-size": 115016171520,
+    "partitions": [
+      {
+        "image": "cust.img",
+        "mount": "/cust"
+      },
+      {
+        "image": "vendor_persist.img",
+        "name": "vendor_persist",
+        "mount": "/mnt/vendor/persist",
+        "fstype": "ext4",
+        "size": 33554432,
+        "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+        "flags": "wait,first_stage_mount,nofail",
+        "mode": "0771",
+        "uid": 1000,
+        "gid": 1000,
+        "label": "u:object_r:persist_file:s0"
+      },
+      {
+        "image": "protect_f.img",
+        "name": "protect_f",
+        "mount": "/mnt/vendor/protect_f",
+        "fstype": "ext4",
+        "size": 8388608,
+        "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+        "flags": "wait,first_stage_mount,nofail",
+        "mode": "0770",
+        "uid": 1000,
+        "gid": 1000,
+        "label": "u:object_r:mnt_vendor_file:s0"
+      },
+      {
+        "image": "protect_s.img",
+        "name": "protect_s",
+        "mount": "/mnt/vendor/protect_s",
+        "fstype": "ext4",
+        "size": 8388608,
+        "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+        "flags": "wait,first_stage_mount,nofail",
+        "mode": "0770",
+        "uid": 1000,
+        "gid": 1000,
+        "label": "u:object_r:mnt_vendor_file:s0"
+      },
+      {
+        "image": "nvdata.img",
+        "name": "nvdata",
+        "mount": "/mnt/vendor/nvdata",
+        "fstype": "ext4",
+        "size": 67108864,
+        "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+        "flags": "wait,first_stage_mount,nofail",
+        "mode": "0771",
+        "uid": 1000,
+        "gid": 1000,
+        "label": "u:object_r:mnt_vendor_file:s0"
+      },
+      {
+        "image": "nvcfg.img",
+        "name": "nvcfg",
+        "mount": "/mnt/vendor/nvcfg",
+        "fstype": "ext4",
+        "size": 33554432,
+        "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+        "flags": "wait,first_stage_mount,nofail",
+        "mode": "0771",
+        "uid": 1000,
+        "gid": 1000,
+        "label": "u:object_r:mnt_vendor_file:s0"
+      },
+      {
+        "image": "rescue.img",
+        "name": "rescue",
+        "mount": "/mnt/rescue",
+        "fstype": "ext4",
+        "size": 67108864,
+        "options": "noatime",
+        "flags": "wait,first_stage_mount,nofail",
+        "mode": "0770",
+        "uid": 1000,
+        "gid": 1000,
+        "label": "u:object_r:cache_file:s0"
+      }
+    ]
+  },
+  "vendor": {
+    "build-prop-sets": {
+      "dalvik.vm.background-dex2oat-threads": "4",
+      "debug.sf.vsync_reactor_ignore_present_fences": "true",
+      "persist.system.powerhal.applist_enable": "0",
+      "ro.bionic.2nd_arch": "",
+      "ro.bionic.2nd_cpu_variant": "",
+      "ro.frp.pst": "/dev/block/by-name/frp",
+      "ro.hardware.egl": "meow",
+      "ro.hardware.gatekeeper": "mitee",
+      "ro.hardware.gralloc": "minigbm",
+      "ro.hardware.hwcomposer": "mtk_common",
+      "ro.hardware.vulkan": "mali",
+      "ro.hw_timeout_multiplier": "10",
+      "ro.hwui.use_vulkan": "false",
+      "ro.soc.manufacturer": "Mediatek",
+      "ro.soc.model": "MT6833",
+      "ro.vendor.aee.build.info": "customer",
+      "ro.vendor.aee.enforcing": "default",
+      "ro.vendor.boot_security_patch": "2026-02-01",
+      "ro.vendor.build.security_patch": "2026-02-01",
+      "ro.vendor.cdh.display.default_refresh_rate": "120",
+      "ro.vendor.cdh.display.edid_name": "MTKDEV",
+      "ro.vendor.cdh.display.edid_pnp": "MTK",
+      "ro.vendor.cdh.display.edid_product_id": "35638",
+      "ro.vendor.cdh.display.edid_week": "42",
+      "ro.vendor.cdh.display.edid_year": "2021",
+      "ro.vendor.cdh.display.refresh_rates": "60,120,90",
+      "ro.vendor.cdh.display.wide_color_gamut": "true",
+      "ro.vendor.cdh.display.xdpi": "394.40994",
+      "ro.vendor.cdh.display.ydpi": "393.39185",
+      "ro.vendor.cdh.gpu.gl_extra_exts": "GL_ARM_mali_program_binary,GL_ARM_mali_shader_binary,GL_ARM_rgba8",
+      "ro.vendor.cdh.gpu.gl_extra_exts2": "GL_ARM_debug_assert,GL_ARM_shader_core_properties,GL_ARM_texture_unnormalized_coordinates",
+      "ro.vendor.cdh.gpu.gl_renderer": "Mali-G57 MC2",
+      "ro.vendor.cdh.gpu.gl_sl_version": "OpenGL ES GLSL ES 3.20",
+      "ro.vendor.cdh.gpu.gl_vendor": "ARM",
+      "ro.vendor.cdh.gpu.gl_version": "OpenGL ES 3.2 v1.r49p1-03bet0.569c83bf81f68e2ce8910542c6846b7e",
+      "ro.vendor.cdh.gpu.max_combined_texture_image_units": "96",
+      "ro.vendor.cdh.gpu.max_cube_map_texture_size": "16383",
+      "ro.vendor.cdh.gpu.max_renderbuffer_size": "16383",
+      "ro.vendor.cdh.gpu.max_texture_image_units": "16",
+      "ro.vendor.cdh.gpu.max_texture_size": "16383",
+      "ro.vendor.cdh.gpu.max_vertex_attribs": "32",
+      "ro.vendor.cdh.ifaa.response_b64": "AAAAADAAAAAQAAIACAABAKo6LCieTebE3yF3QFESAr7PjWODCqInwCQG7l8D1pQiaUKCAzOCtzA=",
+      "ro.vendor.cdh.oem.mac_oui": "3c:38:24",
+      "ro.vendor.cdh.vbmeta.device": "PARTUUID=d722c721-0dee-4cb8-8a83-2c63cd1393c7",
+      "ro.vendor.cdh.vbmeta.size": "11904",
+      "ro.vendor.cdh.vulkan.api_version": "0x00403116",
+      "ro.vendor.cdh.vulkan.conformance": "1.3.8.0",
+      "ro.vendor.cdh.vulkan.device_id": "0x90930010",
+      "ro.vendor.cdh.vulkan.device_type": "1",
+      "ro.vendor.cdh.vulkan.device_uuid": "10009390010000000000000000000000",
+      "ro.vendor.cdh.vulkan.driver_id": "9",
+      "ro.vendor.cdh.vulkan.driver_info": "v1.r49p1-03bet0.569c83bf81f68e2ce8910542c6846b7e",
+      "ro.vendor.cdh.vulkan.driver_name": "Mali-G57 MC2",
+      "ro.vendor.cdh.vulkan.driver_uuid": "c499a6791873ea7bcf8afda304b84d6d",
+      "ro.vendor.cdh.vulkan.driver_version": "0x0c401000",
+      "ro.vendor.cdh.vulkan.name": "Mali-G57 MC2",
+      "ro.vendor.cdh.vulkan.pipeline_uuid": "6998f5fda45512755f0601124d3f493d",
+      "ro.vendor.cdh.vulkan.vendor_id": "0x13b5",
+      "ro.vendor.cdh.wifi.disable_he": "1",
+      "ro.vendor.customer_logpath": "/data",
+      "ro.vendor.drm.widevine.oem_crypto_api_version": "18",
+      "ro.vendor.drm.widevine.security_level": "L3",
+      "ro.vendor.drm.widevine.system_id": "33098",
+      "ro.vendor.drm.widevine.version": "19.0.1@AV1A.240725.002",
+      "ro.vendor.md_mims_support": "2",
+      "ro.vendor.mtk_md1_support": "25",
+      "ro.vendor.product.cpu.abilist": "arm64-v8a",
+      "ro.vendor.product.cpu.abilist32": "",
+      "ro.vendor.product.cpu.abilist64": "arm64-v8a",
+      "ro.vendor.radio.5g": "3",
+      "ro.vendor.radio.fastdormancy": "true",
+      "ro.vendor.radio.features_common": "2",
+      "ro.vendor.radio.imei.svn": "78",
+      "ro.vendor.radio.imei.tac": "86717107",
+      "ro.vendor.radio.meid.prefix": "99002158",
+      "ro.vendor.ril.factory_id": "29",
+      "ro.vendor.soc.manufacturer": "Mediatek",
+      "ro.vendor.soc.model": "MT6833",
+      "ro.vendor.soc.model.external_name": "MT6833V/PNZA",
+      "ro.vendor.soc.model.part_name": "MT6833V/PNZA",
+      "ro.vendor.soc.model_ready": "1",
+      "ro.vendor.sys.current_rsc_path": "/system/etc/rsc/gold_cn_pa",
+      "ro.vendor.vnd.current_rsc_path": "/vendor/etc/rsc/gold_cn_pa",
+      "ro.zygote": "zygote64"
+    },
+    "build-prop-unsets": {
+      "ro.vndk.lite": null
+    },
+    "files": [
+      {
+        "from": "official",
+        "source": "lib64/egl/libGLES_mali.so"
+      },
+      {
+        "from": "official",
+        "source": "lib64/egl/libMEOW_data.so"
+      },
+      {
+        "from": "official",
+        "source": "lib64/egl/libMEOW_gift.so"
+      },
+      {
+        "from": "official",
+        "source": "lib64/egl/libMEOW_qt.so"
+      },
+      {
+        "from": "official",
+        "source": "lib64/egl/libMEOW_trace.so"
+      },
+      {
+        "from": "official",
+        "source": "lib64/libOpenCL.so"
+      },
+      {
+        "from": "official",
+        "source": "lib64/libpng.so"
+      },
+      {
+        "from": "official",
+        "source": "lib64/liblzma.so"
+      },
+      {
+        "from": "official",
+        "source": "lib64/libunwindstack.so"
+      },
+      {
+        "from": "official",
+        "source": "lib64/mt6833/libdpframework.so"
+      },
+      {
+        "from": "official",
+        "mode": "replace",
+        "source": "etc/permissions"
+      },
+      {
+        "from": "official",
+        "mode": "replace",
+        "source": "etc/security"
+      },
+      {
+        "from": "official",
+        "mode": "replace",
+        "source": "etc/md"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_dolby_audio.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_google_audio.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_google_video_le.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_performance.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_system_default.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/public.libraries.txt"
+      },
+      {
+        "mode": "delete",
+        "source": "etc/init/android.hardware.neuralnetworks-service.rc"
+      }
+    ],
+    "note": "build-prop-sets 里 abilist/abilist32/abilist64、ro.hwui.use_vulkan、ro.hw_timeout_multiplier 五条是云机相对厂商原件的本地改动（2026-11-03 从 vendor/build.prop 副本迁入）：abilist 锁纯 arm64-v8a、abilist32 置空，否则派生全局 abilist32 非空，framework 会硬连不存在的 32 位 zygote（证据 evidence/gold/issue-vendor-buildprop-props、issue-zygote-secondary-missing）；ro.hwui.use_vulkan=false 因 guest 无可用 Vulkan ICD，hwui 走 Vulkan 后端会 abort（同证据，popsicle 沿用此结论）；ro.hw_timeout_multiplier=10 放宽 Watchdog 30s 硬超时（实测一次 IO 抖动卡 118s 就会杀掉 system_server），AOSP emulator 产品同样取 10。vendor.files 是本机对 07 步骤 5 的唯一来源（引擎已无内置集合，未声明即空表）：6 个 GPU 身份扫描库 + lib64/libpng.so + etc/{permissions,security,md} 整目录 replace，外加 6 条厂商 media_codecs*.xml（与厂商原件逐字节相同，直接 from=official 取件）。改过的件不进这张表：media_codecs_c2.xml（c2.v4l2.* 三条声明）与 primary_audio_policy_configuration.xml（Remote Submix In）都整份放在机型静态树 vendor/etc 下，由步骤 4 落到装配树、步骤 5 不碰——本表里不要再为它们写条目，写了就会把静态树那份盖掉。要增删档位就改这里。",
+    "selinux-labels": {
+      "lib64/egl/libEGL_meow.so": "u:object_r:same_process_hal_file:s0",
+      "lib64/egl/libEGL_mesa.so": "u:object_r:same_process_hal_file:s0",
+      "lib64/egl/libGLESv1_CM_meow.so": "u:object_r:same_process_hal_file:s0",
+      "lib64/egl/libGLESv1_CM_mesa.so": "u:object_r:same_process_hal_file:s0",
+      "lib64/egl/libGLESv2_meow.so": "u:object_r:same_process_hal_file:s0",
+      "lib64/egl/libGLESv2_mesa.so": "u:object_r:same_process_hal_file:s0",
+      "lib64/hw/vulkan.mali.so": "u:object_r:same_process_hal_file:s0"
+    },
+    "vintf-drop": [
+      "android.hardware.drm-service.widevine.xml",
+      "android.hardware.audio.service.xml",
+      "android.hardware.neuralnetworks.xml"
+    ],
+    "vintf-version": "8.0"
+  },
+  "version-description": {
+    "android-version": "15",
+    "board": "mt6833",
+    "brand": "gold",
+    "build-date": "20260924",
+    "factory-dir": "OS3.0.11.0.VNQCNXM",
+    "factory-tgz": "gold_images_OS3.0.11.0.VNQCNXM_20260924.0000.00_15.0_cn_60017ed496.tgz",
+    "name": "Redmi Note 13 5G",
+    "os-version": "15-OS3.0.11.0.VNQCNXM",
+    "security-patch": "2026-02-01",
+    "vendor": "redmi"
+  }
+}

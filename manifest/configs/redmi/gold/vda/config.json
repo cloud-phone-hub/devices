@@ -1,0 +1,87 @@
+{
+  "data-size": 115016171520,
+  "partitions": [
+    {
+      "image": "cust.img",
+      "mount": "/cust"
+    },
+    {
+      "image": "vendor_persist.img",
+      "name": "vendor_persist",
+      "mount": "/mnt/vendor/persist",
+      "fstype": "ext4",
+      "size": 33554432,
+      "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+      "flags": "wait,first_stage_mount,nofail",
+      "mode": "0771",
+      "uid": 1000,
+      "gid": 1000,
+      "label": "u:object_r:persist_file:s0"
+    },
+    {
+      "image": "protect_f.img",
+      "name": "protect_f",
+      "mount": "/mnt/vendor/protect_f",
+      "fstype": "ext4",
+      "size": 8388608,
+      "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+      "flags": "wait,first_stage_mount,nofail",
+      "mode": "0770",
+      "uid": 1000,
+      "gid": 1000,
+      "label": "u:object_r:mnt_vendor_file:s0"
+    },
+    {
+      "image": "protect_s.img",
+      "name": "protect_s",
+      "mount": "/mnt/vendor/protect_s",
+      "fstype": "ext4",
+      "size": 8388608,
+      "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+      "flags": "wait,first_stage_mount,nofail",
+      "mode": "0770",
+      "uid": 1000,
+      "gid": 1000,
+      "label": "u:object_r:mnt_vendor_file:s0"
+    },
+    {
+      "image": "nvdata.img",
+      "name": "nvdata",
+      "mount": "/mnt/vendor/nvdata",
+      "fstype": "ext4",
+      "size": 67108864,
+      "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+      "flags": "wait,first_stage_mount,nofail",
+      "mode": "0771",
+      "uid": 1000,
+      "gid": 1000,
+      "label": "u:object_r:mnt_vendor_file:s0"
+    },
+    {
+      "image": "nvcfg.img",
+      "name": "nvcfg",
+      "mount": "/mnt/vendor/nvcfg",
+      "fstype": "ext4",
+      "size": 33554432,
+      "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+      "flags": "wait,first_stage_mount,nofail",
+      "mode": "0771",
+      "uid": 1000,
+      "gid": 1000,
+      "label": "u:object_r:mnt_vendor_file:s0"
+    },
+    {
+      "image": "rescue.img",
+      "name": "rescue",
+      "mount": "/mnt/rescue",
+      "fstype": "ext4",
+      "size": 67108864,
+      "options": "noatime",
+      "flags": "wait,first_stage_mount,nofail",
+      "mode": "0770",
+      "uid": 1000,
+      "gid": 1000,
+      "label": "u:object_r:cache_file:s0"
+    }
+  ]
+}

@@ -104,6 +104,36 @@
 * `buildVda`
     * `partitions` 数组：将里面的对象追加到 vda 镜像
 
+### 按 pipeline 步骤拆分的目录布局（可选）
+
+配置模版可以继续写成一个 `<name>.json`，也可以拆成「身份文件 + 每步骤一个子目录」。
+拆分后身份字段（`id`/`deviceId`/`name`/`androidVersion`/`lineageVersion`/`extra`/`updatedAt`）
+仍留在 `<name>.json`，其余各写入同目录下对应步骤的子目录：
+
+| 子目录 | 配置键 | file-map 字段（铺成真实文件） |
+| --- | --- | --- |
+| `unpack/` | `unpack` | — |
+| `kernel/` | `buildKernel` | — |
+| `module/` | `buildModules` | — |
+| `vendor_boot/` | `buildVendorBoot` | — |
+| `odm/` | `buildOdm` | `fileTrees` → `odm/<目标路径>` |
+| `vendor/` | `buildVendor` | `fileTrees` → `vendor/<目标路径>`；`sepolicy` → `vendor/sepolicy/<文件名>` |
+| `vendor_dlkm/` | `buildVendorDlkm` | — |
+| `patch/` | `buildPatch` | — |
+| `super/` | `buildSuper` | — |
+| `vda/` | `buildVda` | — |
+| `hardware/` | `buildVendor.hardware`（迁出存放） | — |
+
+* 每个子目录里的 `config.json` 是该步骤除 file-map 字段外剩下的字段，**不是**一条配置记录；
+  读取时按表合并回记录，写回时各回各的子目录。
+* file-map 字段（`fileTrees`/`sepolicy`）在磁盘上就是真实文件，按声明的目标路径摆放，
+  可以直接编辑与 diff；`config.json` 里不再保留这两个字段。
+* `hardware/config.json` 装的是 `{"hardware": [...]}`，即原本住在 `buildVendor` 里的 HAL 清单；
+  读时并回 `buildVendor.hardware`，`vendor/config.json` 里不再保留这一段。
+* 拆分只在「设备目录下只有一个配置 JSON」时生效；同机型多代际各有一份 `<name>.json` 时
+  （如 `oriole` 的 21/22）无法归属步骤目录，仍按单文件读写。
+* `prepare/`、`boot/` 是预留目录，当前没有对应配置键。
+
 ---
 
 ## 版本表 (`versions/<brand>/<device>/<buildId>.json`)
@@ -129,5 +159,5 @@
    * 若同代存在多个候选模版，依次按：① 关联版本的 `osVersion` 语义数字向量距离最近；② `buildDate` 时间差最小进行排序；
    * 若该设备首次跨 Android 大版本升级（尚无对应代际模版），则以最近一代模版为蓝本克隆派生新模版（自动更新 `androidVersion` 与 `lineageVersion`）。
 2. **合成有效版本配置（`ResolveEffectiveVersion`）**：
-   * 以 `configs` 模版的全部 10 个步骤为基底，注入 `versions` 的 `factoryTgz`、`factoryDir`、`securityPatch`（写入 `vendor.build-prop-sets["ro.vendor.boot_security_patch"]`），最后按步骤叠加 `versions.overrides`，并在构建期物化至 `<out>/tmp/db-manifest/` 供 `01_unpack` ~ `11_pack_vda` 透明消费。
+   * 以 `configs` 模版的全部 10 个步骤为基底，注入 `versions` 的 `factoryTgz`、`factoryDir`、`securityPatch`（写入 `vendor.build-prop-sets["ro.vendor.boot_security_patch"]`），最后按步骤叠加 `versions.overrides`，并在构建期物化至 `devices/manifest/<brand>/<device>/`（`device.json` + `baselines/<buildID>.json` + `vendor`/`sepolicy`/`odm` 静态树）供 `01_unpack` ~ `11_pack_vda` 透明消费。
 

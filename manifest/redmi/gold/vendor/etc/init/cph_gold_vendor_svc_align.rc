@@ -1,0 +1,282 @@
+# gold 纯厂商 init.svc.* 对齐（10 stopped + 34 running；全分区 .rc 审计无重名、无属性触发器）
+
+service board_id /system/bin/true
+    class main
+    user nobody
+    group nobody
+    oneshot
+    seclabel u:r:pioneer:s0
+
+service fuelgauged_nvram /system/bin/true
+    class main
+    user nobody
+    group nobody
+    oneshot
+    seclabel u:r:pioneer:s0
+
+service initprop_bin /system/bin/true
+    class main
+    user nobody
+    group nobody
+    oneshot
+    seclabel u:r:pioneer:s0
+
+service insmod_sh /system/bin/true
+    class main
+    user nobody
+    group nobody
+    oneshot
+    seclabel u:r:pioneer:s0
+
+service lightsensornvcfg /system/bin/true
+    class main
+    user nobody
+    group nobody
+    oneshot
+    seclabel u:r:pioneer:s0
+
+service mi_ric_init /system/bin/true
+    class main
+    user nobody
+    group nobody
+    oneshot
+    seclabel u:r:pioneer:s0
+
+service mi_ric_snapshot /system/bin/true
+    class main
+    user nobody
+    group nobody
+    oneshot
+    seclabel u:r:pioneer:s0
+
+service nvram_daemon /system/bin/true
+    class main
+    user nobody
+    group nobody
+    oneshot
+    seclabel u:r:pioneer:s0
+
+service thermal_manager /system/bin/true
+    class main
+    user nobody
+    group nobody
+    oneshot
+    seclabel u:r:pioneer:s0
+
+service wmt_loader /system/bin/true
+    class main
+    user nobody
+    group nobody
+    oneshot
+    seclabel u:r:pioneer:s0
+
+service agpsd /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service batterysecret /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service bluetooth_hal_service /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service camerahalserver /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service ccci_mdinit /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service charge_logger /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service citsensor-hal-1-1 /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service displayfeature /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service dms-hal /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service fuelgauged /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service gbe /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service ipsec_mon /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service jxnosfastswitch /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service mi_ric_run /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service mi_thermald /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service micharge-hal /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service mimd-service /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service miteelog /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service mnld /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service mtk_lbs_service /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service mtk_storageproxyd /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service netdagent /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service neuralnetworks_hal_service_shim_mtk /vendor/bin/hw/android.hardware.neuralnetworks-service mtk-neuron_shim
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_neuralnetworks_default:s0
+    interface aidl android.hardware.neuralnetworks.IDevice/mtk-neuron_shim
+
+service nvram-aidl /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service nwk_opt-hal-1-0 /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service tee-supplicant /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service thermal /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service thermalloadalgod /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service touchfeature-hal-1-0 /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service v3avpud /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service vender.mediatek.hardware.pq_aidl-default /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service vtservice_aidl /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service wlan_assistant /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service wmt_launcher /system/bin/sleep 2147483647
+    class hal
+    user nobody
+    group nobody
+    seclabel u:r:pioneer:s0
+
+service vndservicemanager /system/bin/sleep 2147483647
+    class core
+    user system
+    group system
+    seclabel u:r:pioneer:s0

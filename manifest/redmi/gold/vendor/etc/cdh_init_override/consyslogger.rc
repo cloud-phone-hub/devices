@@ -1,0 +1,8 @@
+on post-fs-data
+    mkdir /data/connsyslog 0775 system system
+
+service connsyslogger /system/bin/sleep 2147483647
+    class main
+    user shell
+    group log system shell
+    seclabel u:r:pioneer:s0
