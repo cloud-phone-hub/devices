@@ -1,5 +1,0 @@
-service aee_aed64 /system/bin/sleep 2147483647
-    class main
-    user root
-    group root system log
-    seclabel u:r:pioneer:s0

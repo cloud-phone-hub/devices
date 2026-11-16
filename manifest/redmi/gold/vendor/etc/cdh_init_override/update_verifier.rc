@@ -1,6 +1,0 @@
-service update_verifier /system/bin/true
-    class main
-    oneshot
-    user root
-    group cache system
-    seclabel u:r:pioneer:s0
