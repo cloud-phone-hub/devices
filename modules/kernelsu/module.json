@@ -1,7 +1,7 @@
 {
   "module": "kernelsu",
   "outputs": ["kernelsu.ko"],
-  "inject": "first-stage",
+  "inject": "vendor_boot",
   "options": ["allow_shell=1"],
   "kernel": ["5.10", "5.15", "6.1", "6.6", "6.12", "6.18"],
   "note": "KernelSU 内核模块（LKM 模式，CONFIG_KSU=m）：提供内核态 root 授权、sucompat 系统调用钩子、SELinux 策略热更新与模块挂载卸载管理。源码不落库：source/ 由 manifest/kernel.xml 声明从 tiann/KernelSU 拉取（v3.3.1），编译参数与补丁应用写在本目录 Kbuild 里，云机侧定制全部落 patches/。需在 init 早期阶段加载（避免晚于 SELinux 策略与服务启动，亦避免被 08_build_vendor_dlkm 当成外设驱动注入 /vendor_dlkm），故声明为 first-stage。上游引用 61 个未导出内核符号，由 patches/0003-ksym-shim.patch 在模块内改为 kprobe + trampoline 运行时解析（内核零补丁、不需要 ksuinit），故这里的 .ko 可直接由 modules.load 装载；su 的 userspace 侧仍依赖 /data/adb/ksud。options 里的 allow_shell=1 是 05 写给 modules.options 的加载参数（module_param 的 perm=0 不落 sysfs，只能在 insmod 时给）：云机的 shell 就是 adb shell（uid 2000），不开这个开关，sucompat 的前置门 ksu_is_allow_uid_for_current() 会直接放行到原生路径查 /system/bin/su，表现就是「su: inaccessible or not found」。"

@@ -26,27 +26,27 @@ modules/<目录>/
 | :--- | :--- | :--- |
 | `module` | 是 | 必须等于目录名（防复制粘贴错） |
 | `outputs` | 是 | 产物 `.ko`，可多个；**不必等于目录名**（`virtio_media` 产 `cdh_media.ko`） |
-| `inject` | 是 | `first-stage` 或 `vendor-dlkm`（见下） |
+| `inject` | 是 | `vendor_boot` 或 `vendor-dlkm`（见下） |
 | `kernel` | 否 | 支持的内核代际，如 `["6.6","6.12"]`；空表示不校验 |
 | `assets` | 否 | 伴随文件：`source` 相对**清单目录**，`target` 相对注入根；`from-device` / `from-manifest` 见下 |
 | `options` | 否 | `modules.options` 参数，如 `allow_userptr=1` |
 | `note` | 否 | 为什么这么注入（给后来者） |
 
-`inject` 只有两种取值，差别是**注入时机**，不是分区偏好：
+`inject` 只有两种取值，差别是**注入时机与目标分区**：
 
-- `first-stage` —— 由 `05_build_vendor_boot` 放进 vendor_ramdisk 根级
+- `vendor_boot` —— 由 `06_build_vendor_boot` 放进 vendor_ramdisk 根级
   `lib/modules/<release>/`。init 在 switchroot 之前、SELinux 策略加载之前就要读到，
   所以必须走这里；放 vendor_dlkm 会晚一步，且 `dlkm_loader` 可能重复加载。
-- `vendor-dlkm` —— 由 `08_build_vendor_dlkm` 注入 vendor_dlkm 分区，late-init 才被读。
+- `vendor-dlkm` —— 由 `10_build_vendor_dlkm` 注入 vendor_dlkm 分区，late-init 才被读。
 
 ## 当前模块
 
 | 模块 | 产物 | inject | kernel |
 | :--- | :--- | :--- | :--- |
-| `cdh_redirect` | `cdh_redirect.ko` | first-stage | 5.10 / 5.15 / 6.1 / 6.6 / 6.12 / 6.18 |
+| `cdh_redirect` | `cdh_redirect.ko` | vendor_boot | 5.10 / 5.15 / 6.1 / 6.6 / 6.12 / 6.18 |
 | `device_info` | `cdh_device_info.ko` | vendor-dlkm | 5.10 / 5.15 / 6.1 / 6.6 / 6.12 / 6.18 |
 | `input_identity` | `cdh_input_identity.ko` | vendor-dlkm | 5.10 / 5.15 / 6.1 / 6.6 / 6.12 / 6.18 |
-| `kernelsu` | `kernelsu.ko` | first-stage | 5.10 / 5.15 / 6.1 / 6.6 / 6.12 / 6.18 |
+| `kernelsu` | `kernelsu.ko` | vendor_boot | 5.10 / 5.15 / 6.1 / 6.6 / 6.12 / 6.18 |
 | `virtio_media` | `cdh_media.ko` | vendor-dlkm | 5.10 / 5.15 / 6.1 / 6.6 / 6.12 / 6.18 |
 
 `kernelsu` 的源码不在库里（`source/` 由 `manifest/kernel.xml` 从 `tiann/KernelSU` 拉取，
