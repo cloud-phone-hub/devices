@@ -14,7 +14,7 @@
 
 | 分组 | 机型 / 厂商 | 条目数 | 编号 | 索引 |
 | :--- | :--- | :--- | :--- | :--- |
-| `gold/` | Xiaomi Redmi Note 13 5G（MT6833），含同一物理机的 CN 变体 `note13-5G-15` | 51 | #2~#41、#72、#96~#100、#123、#146、#195、#222、#227 | [gold/README.md](gold/README.md) |
+| `gold/` | Xiaomi Redmi Note 13 5G（MT6833），含同一物理机的 CN 变体 `note13-5G-15` | 52 | #2~#41、#72、#96~#100、#123、#146、#195、#222、#227、#246 | [gold/README.md](gold/README.md) |
 | `m22/` | MEIZU 22（Flyme 12.5.0.0A / QTI `sun` / Android 16） | 34 | #42~#71、#73~#75、#— | [m22/README.md](m22/README.md) |
 | `ss9380/` | Samsung Galaxy S25 Ultra（SM-S9380 / OneUI 16，国行 CHC） | 12 | #83~#87、#89~#95 | [ss9380/README.md](ss9380/README.md) |
 | `cph2797/` | OPPO Find X9（ColorOS 16.0.8.301 / MT6993） | 9 | #76~#82、#153、#165 | [cph2797/README.md](cph2797/README.md) |

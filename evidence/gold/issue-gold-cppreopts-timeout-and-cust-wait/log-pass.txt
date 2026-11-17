@@ -1,0 +1,44 @@
+=== 改后冷启耗时采样：out/core/daemon/runtime/gold_15-OS3.0.11.0.VNQCNXM/1 (2026-11-17 12:55:01 干净重建) ===
+
+--- 1. guest 属性与 /system/etc/init/cppreopts.rc 实况 (adb -s 127.0.0.1:5911) ---
+getprop sys.boot_completed = 1
+getprop sys.cppreopt = finished
+getprop init.svc.cppreopts = (空)
+getprop ro.miui.cust_variant = cn
+
+ls -la /dev/block/bootdevice/by-name/:
+lrwxrwxrwx 1 root root 23 1970-01-01 08:00 cust -> /dev/block/by-name/cust
+lrwxrwxrwx 1 root root 15 1970-01-01 08:00 frp -> /dev/block/vda3
+
+mount | grep cust:
+/dev/block/vda12 on /cust type erofs (ro,seclabel,relatime,user_xattr,acl,cache_strategy=readaround)
+
+cat /system/etc/init/cppreopts.rc:
+# 覆写 /system/etc/init/cppreopts.rc：不定义 service cppreopts（保持 init.svc.cppreopts 不可见），
+# 同时保留 sys.cppreopt=requested 属性触发器并立即置为 finished，
+# 避免 PackageManagerService 因 ro.cp_system_other_odex=1 死等 100 秒超时。
+on property:sys.cppreopt=requested
+    setprop sys.cppreopt finished
+
+--- 2. logcat -b events 启动里程碑（pms_start -> pms_system_scan_start 降至 131ms，总耗时降至 73.05s） ---
+11-17 12:55:16.136   511   511 I boot_progress_start: 8809
+11-17 12:55:16.442   511   511 I boot_progress_preload_start: 9114
+11-17 12:55:17.132   511   511 I boot_progress_preload_end: 9805
+11-17 12:55:17.501   698   698 I boot_progress_system_run: 10173
+11-17 12:55:21.771   698   698 I boot_progress_pms_start: 14444
+11-17 12:55:21.903   698   698 I boot_progress_pms_system_scan_start: 14575
+11-17 12:55:30.165   698   698 I boot_progress_pms_data_scan_start: 22838
+11-17 12:55:41.292   698   698 I boot_progress_pms_scan_end: 33964
+11-17 12:55:41.592   698   698 I boot_progress_pms_ready: 34264
+11-17 12:56:13.564   698   698 I boot_progress_ams_ready: 66236
+11-17 12:56:16.266   698   736 I boot_progress_enable_screen: 68938
+11-17 12:56:20.379   678   689 I sf_stop_bootanim: 73051
+11-17 12:56:20.382   698   736 I wm_boot_animation_done: 73054
+
+--- 3. qemu.log 关键节点（cust 0ms + cppreopt 触发 + sys.boot_completed=1） ---
+1206:t: Parsing file /system/etc/init/cppreopts.rc...
+1481:[    2.081981][    T1] init: Parsing file /vendor/etc/init/cph_gold_cust_symlink.rc...
+1906:[    2.840512][    T1] init: processing action (init) from (/vendor/etc/init/cph_gold_cust_symlink.rc:4)
+2162:[    3.521097][    T1] init: wait for '/dev/block/bootdevice/by-name/cust' took 0ms
+6678:[   14.484203][    T1] init: processing action (sys.cppreopt=requested) from (/system/etc/init/cppreopts.rc:4)
+9905:[   73.725257][    T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:113)
