@@ -18,7 +18,7 @@
 #include <android/binder_status.h>
 #include <android/log.h>
 
-#include <fstream>
+#include <cstdio>
 #include <map>
 #include <memory>
 #include <string>
@@ -65,10 +65,24 @@ std::string TrimWhitespace(const std::string &input) {
   return input.substr(first, last - first + 1);
 }
 
+// 走 C stdio 而不是 std::ifstream：android14 线链接 lineage-21.0 的 libc++.so
+// 不导出 basic_filebuf / basic_ifstream，用 std::ifstream 会在链接期报 undefined symbol。
+bool ReadNextLine(std::FILE *file, std::string *out) {
+  out->clear();
+  char buf[4096];
+  while (std::fgets(buf, sizeof(buf), file) != nullptr) {
+    out->append(buf);
+    if (!out->empty() && out->back() == '\n') {
+      return true;
+    }
+  }
+  return !out->empty();
+}
+
 // 按行读取配置文件，为机型专属未实现 AIDL 名称注册通用空桩 binder（配置为空或缺失时跳过）
 void RegisterPlaceholdersFromFile(const char *path) {
-  std::ifstream file(path);
-  if (!file.is_open()) {
+  std::FILE *file = std::fopen(path, "r");
+  if (file == nullptr) {
     return;
   }
   static std::map<std::string, AIBinder_Class *> class_cache;
@@ -76,7 +90,7 @@ void RegisterPlaceholdersFromFile(const char *path) {
 
   std::string line;
   int registered = 0;
-  while (std::getline(file, line)) {
+  while (ReadNextLine(file, &line)) {
     const std::string name = TrimWhitespace(line);
     if (name.empty() || name[0] == '#') {
       continue;
@@ -125,6 +139,7 @@ void RegisterPlaceholdersFromFile(const char *path) {
     placeholder_refs.push_back(binder);
     ++registered;
   }
+  std::fclose(file);
   __android_log_print(ANDROID_LOG_INFO, kLogTag,
                       "registered %d radio placeholder services from %s",
                       registered, path);

@@ -36,6 +36,9 @@
 
 #ifdef CONFIG_ARM64
 #include <linux/hardirq.h>
+#ifndef in_hardirq
+#define in_hardirq() in_irq()
+#endif
 #include <linux/mm.h>
 #include <linux/mmap_lock.h>
 #include <linux/sched/task_stack.h>
