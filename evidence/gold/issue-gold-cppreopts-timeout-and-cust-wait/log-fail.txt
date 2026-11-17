@@ -1,0 +1,32 @@
+=== 改前冷启耗时采样：out/core/daemon/runtime/gold_15-OS3.0.11.0.VNQCNXM/1 (2026-11-17 12:23:14 启动) ===
+
+--- 1. guest 属性与 /system/etc/init/cppreopts.rc 实况 (adb -s 127.0.0.1:5911) ---
+getprop ro.cp_system_other_odex = 1
+getprop ro.postinstall.fstab.prefix = /system
+getprop sys.cppreopt = timed-out
+getprop init.svc.cppreopts = (空)
+cat /system/etc/init/cppreopts.rc:
+# 空 init 配置：由 cdh_redirect 供 init (uid=0) 屏蔽无需在云机注册的系统调试服务（如 mdnsd）。
+
+--- 2. logcat -b events 启动里程碑（boot_progress_pms_start -> boot_progress_pms_system_scan_start 卡死 100.075s） ---
+11-17 12:23:34.099   508   508 I boot_progress_start: 14575
+11-17 12:23:34.484   508   508 I boot_progress_preload_start: 14960
+11-17 12:23:35.318   508   508 I boot_progress_preload_end: 15794
+11-17 12:23:35.756   695   695 I boot_progress_system_run: 16232
+11-17 12:23:40.057   695   695 I boot_progress_pms_start: 20533
+11-17 12:25:20.132   695   695 I am_wtf  : [0,695,system_server,-1,PackageManager,cppreopt did not finish!]
+11-17 12:25:20.132   695   695 I boot_progress_pms_system_scan_start: 120608
+11-17 12:25:27.342   695   695 I boot_progress_pms_data_scan_start: 127818
+11-17 12:25:37.375   695   695 I boot_progress_pms_scan_end: 137851
+11-17 12:25:37.595   695   695 I boot_progress_pms_ready: 138071
+11-17 12:26:05.327   695   695 I boot_progress_ams_ready: 165803
+11-17 12:26:07.748   695   737 I boot_progress_enable_screen: 168224
+11-17 12:26:11.590   680   684 I sf_stop_bootanim: 172066
+11-17 12:26:11.590   695   737 I wm_boot_animation_done: 172066
+
+--- 3. qemu.log 关键节点（含 cust 5000ms 超时与 ro.cp_system_other_odex 覆盖） ---
+1022:[    1.409026][    T1] init: Overriding previous property 'ro.cp_system_other_odex':'0' with new value '1'
+1046:[    1.451155][    T1] init: Loading properties from /vendor/build.prop took 83ms.
+2181:[    8.664360][    T1] init: wait for '/dev/block/bootdevice/by-name/cust' timed out and took 5000ms
+2184:[    8.691688][    T1] /dev/block/bootdevice/by-name/cust: Can't lookup blockdev
+11059:[  172.706812][    T1] init: processing action (sys.boot_completed=1) from (/system/etc/init/hw/init.rc:113)

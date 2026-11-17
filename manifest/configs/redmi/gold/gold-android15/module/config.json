@@ -265,7 +265,7 @@
     },
     {
       "from": "/system/etc/init/cppreopts.rc",
-      "to": "/mnt/vendorpatch/vendor/etc/init/cph_empty.rc",
+      "to": "/mnt/vendorpatch/vendor/etc/cdh_init_override/cppreopts.rc",
       "type": "file"
     },
     {

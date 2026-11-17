@@ -1,0 +1,5 @@
+# 覆写 /system/etc/init/cppreopts.rc：不定义 service cppreopts（保持 init.svc.cppreopts 不可见），
+# 同时保留 sys.cppreopt=requested 属性触发器并立即置为 finished，
+# 避免 PackageManagerService 因 ro.cp_system_other_odex=1 死等 100 秒超时。
+on property:sys.cppreopt=requested
+    setprop sys.cppreopt finished

@@ -1,0 +1,7 @@
+# cust 分区路径补建：/cust 已于 first_stage_mount 按 /dev/block/by-name/cust 挂载，
+# 但 system_ext 的 init.miui.cust.rc 在 on fs 阶段会 wait ${ro.miui.block_device_path}/cust，
+# 若缺少该符号链接会导致 init 固定阻塞超时 5000ms。
+on init
+    mkdir /dev/block/bootdevice 0755 root root
+    mkdir /dev/block/bootdevice/by-name 0755 root root
+    symlink /dev/block/by-name/cust /dev/block/bootdevice/by-name/cust
