@@ -143,6 +143,12 @@
     "storage": [
       128000,
       256000
+    ],
+    "skuCombinations": [
+      "6GB+128GB",
+      "8GB+128GB",
+      "8GB+256GB",
+      "12GB+256GB"
     ]
   },
   "cpufreqModuleConfig": {

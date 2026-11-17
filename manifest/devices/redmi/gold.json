@@ -10,8 +10,9 @@
   "density": 400,
   "smp": 8,
   "memory": [
+    6144,
     8192,
-    16384
+    12288
   ],
   "storage": [
     128000,
@@ -32,6 +33,12 @@
       "host-hvc-radio": "hvc4",
       "host-hvc-wifi": "hvc9"
     },
+    "skuCombinations": [
+      "6GB+128GB",
+      "8GB+128GB",
+      "8GB+256GB",
+      "12GB+256GB"
+    ],
     "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
   },
   "updatedAt": "2026-11-05T04:33:33Z"
