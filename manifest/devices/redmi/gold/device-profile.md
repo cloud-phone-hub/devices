@@ -166,14 +166,33 @@
 - 存储/内存只有 128GB/256GB 与 6/8/12GB 四档组合，不要生成 512GB/1TB 或 16GB SKU（该机不存在，manifest 多出容量会在 02 校验阶段与真机 dump 对不上）。
 - kernelUnamne 实测 6.6.118-android15-8-…，与清单 kernel="6.6"、lineage-22.2 内核线同代，无需借用登记；GPU/CPU 频点与内核代际无关，可直接复用本表。
 
-## 三、官方固件包解包实测对账（`build.prop` + `boot.img`）
+## 三、官方固件包解包实测对账（`build.prop` + `boot.img` + `VINTF` + `DTB` + `fstab` + `vendor/etc`）
 
-- `marketName`: `` | `modelCode`: `gold` | `manufacturer`: `Xiaomi`
+- `marketName`: `Redmi Note 13 5G` | `modelCode`: `2312DRAABC` | `manufacturer`: `Xiaomi`
 - `board`: `mt6833` | `soc`: `  ()`
 - `densityDpi`: `480` | `egl`: `meow` | `vulkan`: `mali` | `abilist`: `arm64-v8a,armeabi-v7a,armeabi`
-- `securityPatch`: `2026-02-01` | `buildDate`: `20260924` | `kernelLine`: `6.6`
+- `securityPatch`: `2026-02-01` | `buildDate`: `20260924` | `kernelLine`: `6.6` | `vintfVersion`: `6.0`
 - `uname`: `Linux localhost 6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k #1 SMP PREEMPT Thu May 28 07:48:46 UTC 2026 aarch64 Toybox`
 - `fingerprint`: `Redmi/vnd_gold/gold:15/AP3A.240905.015.A2/OS3.0.11.0.VNQCNXM:user/release-keys`
+- `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=vnd_gold`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
+- `vda.partitions` (6 个附加分区): `cust.img->/cust`, `vendor_persist.img->/mnt/vendor/persist`, `protect_f.img->/mnt/vendor/protect_f`, `protect_s.img->/mnt/vendor/protect_s`, `nvdata.img->/mnt/vendor/nvdata`, `nvcfg.img->/mnt/vendor/nvcfg`
+- `vintfPlaceholders`: radio=`34` 项 · audio=`1` 项 · gnss=`1` 项 · nn=`57` 项
+
+### `vendor/etc` 与 `odm/etc` 硬件配置实测详情
+
+- **Permissions 硬件特性**（共 `80` 项）: 红外=`true` · NFC=`false` · 指纹=`true` · BLE=`true` · Wi-Fi Direct=`true` · Audio LowLatency=`true` · Vulkan Level=`1` (API `1.3`)
+  - 声明的传感器特性 (`7` 项): `accelerometer`, `compass`, `gyroscope`, `light`, `proximity`, `stepcounter`, `stepdetector`
+  - 区域/SKU 差异权限: `sku_iron_gl=[android.hardware.nfc, android.hardware.nfc.any, android.hardware.nfc.hce, android.hardware.nfc.hcef, android.hardware.nfc.uicc, android.hardware.se.omapi.uicc]；sku_iron_p_gl=[android.hardware.nfc, android.hardware.nfc.any, android.hardware.nfc.hce, android.hardware.nfc.hcef, android.hardware.nfc.uicc, android.hardware.se.omapi.uicc]`
+- **Sensors 原厂配置**: SubHALs=`[android.hardware.sensors@2.X-subhal-mediatek.so sensors.touch.detect.so]` · 芯片归属=`map[light:tcs3701]` · 屏下光感坐标 Center=`745,51` / Radius=`48,48,48`
+- **Audio 策略与音效配置**: 模块=`[primary]` · 采样率=`[44100 48000]` · 听筒=`true` · 有线耳机路由=`true` · 双麦=`true` · 音效描述符=`23` 项（源: `vendor/etc/audio_effects_config.xml`）
+  - 实测音效清单: `Acoustic Echo Canceler (The Android Open Source Project)`, `Alarm Volume Listener (Dolby Laboratories)`, `Automatic Gain Control V2 (The Android Open Source Project)`, `Auxiliary Environmental Reverb (NXP Software Ltd.)`, `Auxiliary Preset Reverb (NXP Software Ltd.)`, `DAP (Dolby Laboratories)`, `DAP_game (Dolby Laboratories)`, `Dynamic Bass Boost (NXP Software Ltd.)`, `DynamicsProcessing (The Android Open Source Project)`, `EqualizerBundle (NXP Software Ltd.)`, `ExtensionEffectExample (The Android Open Source Project)`, `Haptic Generator (The Android Open Source Project)`, `Insert Environmental Reverb (NXP Software Ltd.)`, `Insert Preset Reverb (NXP Software Ltd.)`, `Loudness Enhancer (The Android Open Source Project)`, `MiSound (MiSound Audio Effect)`, `Multichannel Downmix To Stereo (The Android Open Source Project)`, `Music Volume Listener (Dolby Laboratories)`, `Noise Suppression (The Android Open Source Project)`, `Ring Volume Listener (Dolby Laboratories)`, `Virtualizer (NXP Software Ltd.)`, `Visualizer (The Android Open Source Project)`, `Volume (NXP Software Ltd.)`
+- **Media Codec2 硬编解码配置**: Store实例=`[android.hardware.media.c2-mediatek->default1 vendor.dolby.media.c2-default-service-dax->default9]` · 厂商/杜比组件=`23` 项 (`c2.mtk.adpcm-ms.decoder`, `c2.mtk.adpcm-dvi-ima.decoder`, `c2.mtk.ape.decoder`, `c2.mtk.alac.decoder`, `c2.mtk.wma.decoder`, `c2.mtk.mp3.decoder`, `c2.mtk.hevc.decoder`, `c2.mtk.hevc.decoder.secure`, `c2.mtk.mpeg4.decoder`, `c2.mtk.mpeg2.decoder`, `c2.mtk.h263.decoder`, `c2.mtk.avc.decoder`, `c2.mtk.avc.decoder.secure`, `c2.mtk.heif.decoder`, `c2.mtk.vpx.decoder`, `c2.mtk.vp9.decoder`, `c2.mtk.vp9.decoder.secure`, `c2.mtk.vc1.decoder`, `c2.mtk.avc.encoder`, `c2.mtk.avc.encoder.secure`, `c2.mtk.hevc.encoder`, `c2.mtk.heif.encoder`, `c2.dolby.ac4.decoder`)
+- **Thermal 温控与冷却设备**: GPU Cooling=`devfreq-13000000.mali` · 冷却节点=`[devfreq-13000000.mali]` · 温控场景表=`18` 份
+- **GNSS 定位配置**: 源文件=`vendor/etc/MNL_Config.xml` · 版本=`20011001.6.00.99` · 模式=`6 (GPS+GLONASS+Galileo+BeiDou)` · L1Only=`true` · L5配置=`true`
+- **Display 面板与 GPU 平台配置**: DSI面板型号=`[dsi_n17_36_02_0a_dsc_vdo dsi_n17_36_0f_0c_dsc_vdo dsi_n17_42_0d_0b_dsc_vdo]` · screen_light.xml=`true` · Mali参数=`map[OSU_PROTECTED_MEMORY_HEAP_NAME:mtk_svp_region-aligned PLATFORM_AGT_FREQUENCY_KHZ:0]`
+- **ODM SKU / NFC / Wi-Fi / 影像场景**: NFC芯片=`STMicroelectronics ST21NFC` · RSC区域=`[gold_a_cn gold_a_cn_pa gold_a_in gold_a_in_old gold_a_in_pa gold_cn gold_cn_pa gold_in gold_in_pa iron_gl iron_gl_pa]` · 相机Tuning角色=`[bokeh front main ultra]` · ODM变体=`gold_a_cn(2311FRAFDC/Redmi Note 13R Pro)`, `gold_a_in(2312FRAFDI/POCO X6 Neo 5G)`, `gold_cn(2312DRAABC/Redmi Note 13 5G)`, `gold_in(2312DRAABI/Redmi Note 13 5G)`, `gold_p_in(/)`, `iron_gl(2312DRAABG/Redmi Note 13 5G)`, `iron_p_gl(2312DRAF3G/Redmi Note 13 5G)`
+- **Power 调频/核数控制表**: 各簇最大核数=`[6 2]` · 配置文件=`[vendor/etc/power_app_cfg.xml vendor/etc/powercontable.xml vendor/etc/powerscntbl.xml vendor/etc/task_profiles.json]`
+- **已扫描解析的 `vendor/etc` & `odm/etc` 配置文件**: 共 `119` 个
 
 ## 四、DSH 聊天界面回复原文
 
