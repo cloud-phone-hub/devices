@@ -239,9 +239,11 @@ static bool cdh_path_is_gfx_framework(const char *p)
 	return false;
 }
 
+#define CDH_USER_VA_MASK	(DEFAULT_MAP_WINDOW_64 - 1UL)
+
 static unsigned int cdh_vma_classify_addr(struct mm_struct *mm, u64 raw_addr)
 {
-	unsigned long addr = (unsigned long)(raw_addr & 0x0000ffffffffffffUL);
+	unsigned long addr = (unsigned long)(raw_addr & CDH_USER_VA_MASK);
 	struct vm_area_struct *vma;
 	char pathbuf[256];
 	char *p;
@@ -303,7 +305,7 @@ static bool cdh_sphal_caller_allowed(enum cdh_sphal_tier tier)
 	lr_flags = cdh_vma_classify_addr(mm, uregs->regs[30]);
 	chain_flags = pc_flags | lr_flags;
 
-	fp = uregs->regs[29] & 0x0000ffffffffffffUL;
+	fp = uregs->regs[29] & CDH_USER_VA_MASK;
 	for (hop = 0; hop < 32 && fp >= PAGE_SIZE && !(fp & 7); hop++) {
 		u64 frame[2];
 		u64 next_fp;
@@ -312,7 +314,7 @@ static bool cdh_sphal_caller_allowed(enum cdh_sphal_tier tier)
 					   sizeof(frame)))
 			break;
 		chain_flags |= cdh_vma_classify_addr(mm, frame[1]);
-		next_fp = frame[0] & 0x0000ffffffffffffUL;
+		next_fp = frame[0] & CDH_USER_VA_MASK;
 		if (next_fp <= fp || (next_fp - fp) > 0x40000)
 			break;
 		fp = next_fp;

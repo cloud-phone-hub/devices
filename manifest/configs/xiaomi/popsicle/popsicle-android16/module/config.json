@@ -108,6 +108,11 @@
       "type": "dir"
     },
     {
+      "from": "/vendor/lib64/android.hardware.graphics.common-V6-ndk.so",
+      "to": "/vendor/lib64/android.hardware.graphics.common-V6-ndk.so",
+      "type": "file"
+    },
+    {
       "from": "/vendor/lib64",
       "to": "/mnt/vendorpatch/vendor/lib64",
       "type": "dir"

@@ -19,7 +19,7 @@
 | `ss9380/` | Samsung Galaxy S25 Ultra（SM-S9380 / OneUI 16，国行 CHC） | 12 | #83~#87、#89~#95 | [ss9380/README.md](ss9380/README.md) |
 | `cph2797/` | OPPO Find X9（ColorOS 16.0.8.301 / MT6993） | 9 | #76~#82、#153、#165 | [cph2797/README.md](cph2797/README.md) |
 | `oriole/` | Google Pixel 6（lineage-21 / Android 14） | 17 | #101、#103~#106、#149、#150、#155、#159~#162、#164、#197、#198、#200、#201 | [oriole/README.md](oriole/README.md) |
-| `popsicle/` | Xiaomi 17 Pro Max（HyperOS 3 & 4 / Android 16，lineage-23.2 + kernel 6.12.81） | 8 | #125、#126、#135、#136、#139、#140、#166、#169 | [popsicle/README.md](popsicle/README.md) |
+| `popsicle/` | Xiaomi 17 Pro Max（HyperOS 3 & 4 / Android 16，lineage-23.2 + kernel 6.12.81） | 10 | #125、#126、#135、#136、#139、#140、#166、#169、#247、#248 | [popsicle/README.md](popsicle/README.md) |
 | `15r/` | OnePlus 15R（ColorOS 16.0.10.500_EX01 / 骁龙 SM8750 `canoe`，lineage-23.2 + kernel 6.12.81） | 9 | #127、#128、#129、#130、#131、#132、#133、#151、#158 | [15r/README.md](15r/README.md) |
 | `sun/` | Honor Magic7 RSR Porsche Design（MagicOS 9 / 骁龙 SM8750 `sun` / Android 15，lineage-22.2 + kernel 6.6） | 1 | #171 | [sun/README.md](sun/README.md) |
 | `g1170/` | BLU G75（MT6768 / Helio G81 / Coosea ODM Android 15，lineage-22.2 + kernel 6.6） | 1 | #185 | [g1170/README.md](g1170/README.md) |

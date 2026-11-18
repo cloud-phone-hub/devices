@@ -3,6 +3,7 @@
     "debug.config.media.video.dolby_vision_GPU_suports": "true",
     "debug.media.video.chipset": "0",
     "persist.radio.multisim.config": "dsds",
+    "persist.sys.boot_audio.enabled": "0",
     "persist.sys.gradient_blur_ddk": "false",
     "persist.sys.impeller.glass.legacy_render": "true",
     "persist.sys.rtc.onscreen_backdrop": "false",
@@ -32,7 +33,7 @@
     "ro.vendor.cdh.display.xdpi": "416.2",
     "ro.vendor.cdh.display.ydpi": "415.8",
     "ro.vendor.cdh.gpu.gl_extra_exts": "GL_QCOM_alpha_test,GL_QCOM_binning_control,GL_QCOM_driver_control,GL_QCOM_extended_get,GL_QCOM_extended_get2,GL_QCOM_framebuffer_foveated,GL_QCOM_motion_estimation,GL_QCOM_perfmon_global_mode,GL_QCOM_shader_framebuffer_fetch_noncoherent,GL_QCOM_shader_framebuffer_fetch_rate,GL_QCOM_texture_foveated,GL_QCOM_tiled_rendering,GL_QCOM_writeonly_rendering,GL_QCOM_YUV_texture_gather",
-    "ro.vendor.cdh.gpu.gl_extra_exts2": "GL_EXT_EGL_image_array,GL_EXT_YUV_target,GL_EXT_texture_cube_map_array,GL_EXT_geometry_shader,GL_EXT_tessellation_shader,GL_EXT_disjoint_timer_query,GL_OVR_multiview2,GL_EXT_multisampled_render_to_texture2",
+    "ro.vendor.cdh.gpu.gl_extra_exts2": "none",
     "ro.vendor.cdh.gpu.gl_renderer": "Adreno (TM) 840",
     "ro.vendor.cdh.gpu.gl_sl_version": "OpenGL ES GLSL ES 3.20",
     "ro.vendor.cdh.gpu.gl_vendor": "Qualcomm",
@@ -149,6 +150,12 @@
       "android.hardware.gpu": {
         "variant": "default",
         "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.graphics.allocator": {
+        "variant": "default",
+        "version": "2.0"
       }
     },
     {

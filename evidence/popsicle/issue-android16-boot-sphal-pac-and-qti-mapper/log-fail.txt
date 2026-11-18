@@ -1,0 +1,49 @@
+=== [阶段 1] 启动卡 Logo 现场：zygote64 在 eglGetDisplay 循环 SIGSEGV（gpu.go 双重 dlerror() 截断前） ===
+30054-[  321.638143][ T6976] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64/egl/libGLES_meow.so
+30055-[  321.639065][ T6976] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64/egl/libEGL_meow.so
+30058:[  321.640723][ T6976] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64/egl/libEGL_mesa.so
+30059-[  321.641437][ T6976] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64/libui.so
+30060-[  321.641766][ T6976] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64/libgallium_dri.so
+30061-[  321.642152][ T6976] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64/android.hardware.graphics.allocator@2.0.so
+30066-[  321.759219][    T1] init: Service 'zygote' (pid 6976) received SIGSEGV from uid 0 pid 6976
+30067-[  321.759548][    T1] init: Sending SIGKILL to service 'zygote' (pid 6976) process group...
+
+=== [阶段 1b] 修复 gpu.go 双重 dlerror() 后暴露出的真实 sphal 链接失败（卡点 #1） ===
+11-18 13:32:14.234   712   749 I cdh-gpu : egl: 47 个入口已接管
+11-18 13:32:14.236   712   749 I cdh-gpu : gles1: 145 个入口已接管
+11-18 13:32:14.238   712   749 I cdh-gpu : gles2: 358 个入口已接管
+11-18 13:32:14.582   655   655 E cdh-gpu : egl: dlopen 基座库失败: dlopen failed: library "android.hardware.graphics.common-V6-ndk.so" not found: needed by /vendor/lib64/android.hardware.graphics.allocator-V2-ndk.so in namespace sphal
+11-18 13:32:14.594   655   655 I cdh-gpu : gles1: 145 个入口已接管
+11-18 13:32:14.596   655   655 I cdh-gpu : gles2: 358 个入口已接管
+11-18 13:32:14.721   763   763 F DEBUG   :       #01 pc 0000000000021aa4  /system/lib64/libEGL.so (eglGetDisplay+68) (BuildId: fae9dc28c3bb146abafda31397155efc)
+11-18 13:32:18.995   869   869 E cdh-gpu : egl: dlopen 基座库失败: dlopen failed: library "android.hardware.graphics.common-V6-ndk.so" not found: needed by /vendor/lib64/android.hardware.graphics.allocator-V2-ndk.so in namespace sphal
+11-18 13:32:19.849   974   974 F DEBUG   :       #01 pc 0000000000021aa4  /system/lib64/libEGL.so (eglGetDisplay+68) (BuildId: fae9dc28c3bb146abafda31397155efc)
+
+=== [阶段 2] 配置化解决 common-V6-ndk.so 后：zygote64 进系统，com.miui.home (uid=10147) 因 39-bit VA PAC 高位签名拦截 vulkan.pastel.so（卡点 #2） ===
+sys.boot_completed=1
+dev.bootcomplete=1
+init.svc.bootanim=stopped
+init.svc.zygote=running
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+sphal_blocked: 4115
+11-18 13:57:10.356  3793  3793 E cdh-gpu : vulkan: dlopen(vulkan.pastel.so) 失败: dlopen failed: library "vulkan.pastel.so" not found
+
+=== [阶段 3] 修复 CDH_USER_VA_MASK 剥离 PAC 后：com.miui.home 成功拉起桌面，但 SystemUI / miwallpaper (uid > 10000) 缺自研 QTI Mapper 循环崩溃（卡点 #3） ===
+  ResumedActivity: ActivityRecord{218754752 u0 com.miui.home/.launcher.Launcher t138}
+11-18 14:09:02.407 13017 13017 I cdh-gpu : vulkan: 已接管，基座 vulkan.pastel.so
+11-18 14:09:02.446 13017 13017 I cdh-gpu : vulkan: SPIR-V Float16->Float32 已改写 (size=16700, fp16_types=1, consts=3, fconverts=18) -> 0
+11-18 14:09:02.446 13017 13017 I cdh-gpu : vulkan: SPIR-V Float16->Float32 已改写 (size=22816, fp16_types=1, consts=25, fconverts=35) -> 0
+11-18 14:09:02.446 13017 13017 I cdh-gpu : vulkan: SPIR-V Float16->Float32 已改写 (size=25400, fp16_types=1, consts=32, fconverts=48) -> 0
+--------- beginning of crash
+11-18 14:08:36.115  2909  3412 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 3412 (Thread-6), pid 2909 (iui.miwallpaper)
+11-18 14:08:37.140  3182  3531 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 3531 (hwuiTask1), pid 3182 (ndroid.systemui)
+11-18 14:08:37.649  3508  3508 F DEBUG   : Build fingerprint: 'Xiaomi/popsicle/popsicle:17/CP2A.260605.016/OS4.0.5.0.XPBCNXM:user/release-keys'
+11-18 14:08:37.649  3508  3508 F DEBUG   : Kernel Release: '6.12.69-android16-6-g43b5ab7e247d-abogki558343811-4k'
+11-18 14:08:37.649  3508  3508 F DEBUG   : Cmdline: com.miui.miwallpaper
+11-18 14:08:37.649  3508  3508 F DEBUG   : pid: 2909, ppid: 648, tid: 3412, name: Thread-6  >>> com.miui.miwallpaper <<<
+11-18 14:08:37.649  3508  3508 F DEBUG   : uid: 10185
+11-18 14:08:37.649  3508  3508 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+11-18 14:08:37.649  3508  3508 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+11-18 14:08:37.649  3508  3508 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+11-18 14:08:37.649  3508  3508 F DEBUG   : Abort message: 'gralloc-mapper is missing'
