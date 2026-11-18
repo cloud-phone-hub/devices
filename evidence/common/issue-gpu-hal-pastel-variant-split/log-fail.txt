@@ -1,0 +1,9 @@
+# 拆分前：单文件 cdh_vulkan_mali.c 混杂 SPIR-V Float16->Float32 与 1x MSAA 软光栅补丁，且 gpu_id.cfg 解析器在 GL/Vulkan 两端重复实现
+
+1) 源码耦合与重复统计（拆分前）
+- devices/hardware/android.hardware.gpu/src/cdh_vulkan_mali.c: 737 行
+  - 含约 280 行 SwiftShader (vulkan.pastel.so) 专属 SPIR-V Float16->Float32 字节码提升与 1x MSAA 采样钳制代码
+  - halbuild/gpu.go 硬编码只编 []string{filepath.Join(srcDir, "cdh_vulkan_mali.c")}，不支持 vk.Sources / IncludeDirs / Compile.Defines 变体覆盖
+  - 导致 gold / oriole / cph2797 等 Venus 常规机型的 default 产物也被迫编入全部软光栅SPIR-V钩子与字符串（约 +5 KB）
+- gpu_id.cfg 解析代码重复：
+  - cdh_gl_strings.c 与 cdh_vulkan_mali.c 各自维护一份 ~105 行完全相同的 fopen("/vendor/lib64/egl/gpu_id.cfg") 键值缓存解析实现

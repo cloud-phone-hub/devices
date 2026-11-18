@@ -1,0 +1,37 @@
+# 拆分后：go test 全绿 + Android 15/16 default 与 pastel 双变体实编及二进制符号隔离验证
+
+1) Go 与宿主 C 单元测试（30 个包全绿，含 TestRealGpuDefaultAndPastelVariants 与 TestGpuHostCUnitSuites）
+$ TMPDIR=/Volumes/work/cloud-phone-hub/out/agent/tmp go test -count=1 ./modules/pipeline/...
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/halbuild	8.693s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/spec	2.394s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/08_build_hardware	3.217s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	3.511s
+(全 30 个有测包 PASS)
+
+2) 双变体构建与 popsicle 09_build_vendor 装配日志
+--> android.hardware.gpu（gpu） [android15 default]
+    写 lib64/hw/vulkan.mali.so（13248 B，0644） -> out/devices/vendor/android15
+--> android.hardware.gpu（gpu） [android16 default]
+    写 lib64/hw/vulkan.mali.so（13248 B，0644） -> out/devices/vendor/android16
+--> android.hardware.gpu@pastel（gpu） [popsicle 16-OS4.0.5.0.XPBCN]
+    写 lib64/hw/vulkan.mali.so（18320 B，0644） -> out/devices/vendor/android16/pastel
+==> 09_build_vendor (popsicle):
+    编译产物 android.hardware.gpu@pastel: 写入 4，已存在同内容 0
+    [ok] vendor 目录树装配与 vendor.img 打包完成
+
+3) 二进制体积与字符串隔离复核
+=== out/devices/vendor/android15/lib64/hw/vulkan.mali.so (13248 B, default) ===
+vulkan.virtio.so
+/vendor/lib64/hw/vulkan.virtio.so
+(SPIR-V Float16 / keep_msaa 命中数 = 0)
+
+=== out/devices/vendor/android16/lib64/hw/vulkan.mali.so (13248 B, default) ===
+vulkan.virtio.so
+/vendor/lib64/hw/vulkan.virtio.so
+(SPIR-V Float16 / keep_msaa 命中数 = 0)
+
+=== out/devices/vendor/android16/pastel/lib64/hw/vulkan.mali.so (18320 B, pastel) ===
+/vendor/lib64/hw/vulkan.pastel.so
+vulkan[pastel]: SPIR-V Float16->Float32
+ro.vendor.cdh.vulkan.keep_msaa
+vulkan.pastel.so
