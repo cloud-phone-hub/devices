@@ -37,8 +37,9 @@
    - `agent/modules/pipeline/internal/halcore/halbuild/gpu.go`：新增 `resolveGpuVulkanSources` 与 `normalizeGpuDefines`，在 `compileGpuLib` 中透传去重后的 `IncludeDirs` 与 `Compile.Defines`；
    - `agent/modules/pipeline/stages/08_build_hardware/modules/android.hardware.gpu.json`：声明 `variants.pastel`（独立 `workSubdir: "gpu-interposer-pastel-work"`、`-DCDH_VK_PASTEL_COMPAT=1`、基座 `vulkan.pastel.so`、源 `["cdh_vulkan_mali.c", "pastel/cdh_vulkan_pastel.c"]`）；
    - `agent/modules/pipeline/stages/09_build_vendor/files_compat.go`：`alignVendorGpuConfig` 同步覆盖 `pastel` 属性替换与 `vulkan.pastel.so` 的 `same_process_hal_file` 标签。
-3. **切换 `popsicle` 清单并补齐同目录单测**：
-   - `devices/manifest/configs/xiaomi/popsicle/popsicle-android16/{hardware,vendor}/config.json` 将 `android.hardware.gpu` 的 `variant` 从 `"default"` 切为 `"pastel"`；
+3. **切换 `popsicle` 清单、清理 `vendor/config.json` 冗余 `hardware` 声明并补齐同目录单测**：
+   - `devices/manifest/configs/xiaomi/popsicle/popsicle-android16/hardware/config.json` 将 `android.hardware.gpu` 的 `variant` 从 `"default"` 切为 `"pastel"`；
+   - 修复 `agent/modules/pipeline/internal/device/config_split.go` 的 `applyJSONPairs`（原逻辑在键已从 `fields` 提升或删除时仍保留旧盘面键值，导致 35 份配置模版 `vendor/config.json` 残留已迁至 `hardware/config.json` 的 `"hardware"` 副本），在 `loadSplitSteps` / `manifestview.loadSplitStepFields` 忽略宿主文件遗留提升键，并清理全仓 35 份 `configs/*/*/*/vendor/config.json` 中的冗余 `"hardware"` 字段（与 `gold-android15` 口径完全对齐，由 `TestConfigSplitLiftHardware` 回归守护）；
    - 新增 `spec_test.go` 的 `TestRealGpuDefaultAndPastelVariants` 与 `halbuild/gpu_test.go`（含自动编译运行 `cdh_gl_strings_test.c` 与 `cdh_spv_fp16_test.c` 的 `TestGpuHostCUnitSuites`）。
 
 ## 5. 验证
