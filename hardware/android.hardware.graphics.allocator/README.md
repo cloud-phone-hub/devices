@@ -5,7 +5,7 @@
 - `/vendor/lib64/hw/mapper.minigbm.so`（无 `DT_SONAME`，装配期原样重命名为 `mapper.<suffix>.so`）
 - `/vendor/lib64/hw/gralloc.minigbm.so`（无 `DT_SONAME`，装配期原样重命名为 `gralloc.<suffix>.so`）
 
-适配 Android 13 / 14（`lineage-21.0`）与 Android 15（`lineage-22.2`）图形栈，**100% 脱离 `libminigbm_gralloc*.so` 共享库，无需任何 ELF `.text` / `.rodata` / `.dynamic` / `.dynstr` / `DT_SONAME` 二进制修补**。
+适配 Android 13 / 14（`lineage-21.0`）、Android 15（`lineage-22.2`）与 Android 16（`lineage-23.2`）图形栈，**100% 脱离 `libminigbm_gralloc*.so` 与 `libdmabufheap.so` 共享库，无需任何 ELF `.text` / `.rodata` / `.dynamic` / `.dynstr` / `DT_SONAME` 二进制修补**。
 
 ## 设计说明
 
@@ -17,11 +17,16 @@
    - `gralloc.minigbm.so` 由纯 C 轻量转发层 [`src/gralloc_proxy.c`](src/gralloc_proxy.c) 编译产出（不重复静态链接 `libminigbm_core.a`），运行态读取公开属性 `ro.hardware.gralloc`，`dlopen` 同目录下的 `mapper.<suffix>.so`（Bionic 按 inode 复用已加载的同一 `soinfo`）并通过 `dlsym("HMI")` 转发全部 `gralloc0` 操作（如 Mesa 的 `GRALLOC_DRM_GET_BUFFER_INFO`）。
 3. **运行态动态返回 Mapper 后缀**：
    - `CdhAllocator` 继承 `aidl::android::hardware::graphics::allocator::impl::Allocator`，覆写 `getIMapperLibrarySuffix()` 通过 `android::base::GetProperty("ro.hardware.gralloc", "minigbm")` 动态返回厂商后缀（如 `mediatek`、`qti`、`pixel`）。
-   - `mapper.minigbm.so` 与 `gralloc.minigbm.so` 均设置 `"soname": "-"`（不生成 `DT_SONAME`），`07_build_vendor` 仅执行纯文件 `os.Rename` 与纯文本配置对齐，产物二进制逐字节零修改。
+   - `mapper.minigbm.so` 与 `gralloc.minigbm.so` 均设置 `"soname": "-"`（不生成 `DT_SONAME`），`09_build_vendor` 仅执行纯文件 `os.Rename` 与纯文本配置对齐，产物二进制逐字节零修改。
+4. **零外部库依赖 `/dev/dma_heap/system` 元数据分配（`BufferAllocator/BufferAllocator.h`）**：
+   - 内置轻量头文件直调 Linux 内核 `DMA_HEAP_IOCTL_ALLOC` UAPI 开启 `-DHAS_DMABUF_SYSTEM_HEAP=1`，不引入 `libdmabufheap.so` `DT_NEEDED`，使缓冲区元数据 fd 落入 `dmabuf_system_heap_device`（避免 `mediaswcodec` 等沙盒进程触发 `hal_graphics_allocator_default_tmpfs` `{ map }` SELinux 拒绝）。
+5. **Vulkan Interposer 下 SwiftShader 软件渲染锁桥接（`cdh_os_option_wrap.cpp`）**：
+   - Android 16 上游 `cros_gralloc_driver::lock()` 在 `!is_running_with_software_rendering_` 时拒绝锁定未带 `CPU_*` 标志的缓冲区；通过 `-Wl,--wrap=drv_get_os_option` 桥接识别 `ro.kernel.qemu.vulkan.base=pastel` 与 `gpu_id.cfg` 中的 `ro.vendor.cdh.vulkan.base=pastel`，兼容 `ro.hardware.vulkan=mali` 拦截层模式。
 
 ## 构建命令
 
 ```bash
 cdh-vendor hal build android.hardware.graphics.allocator --android 14
 cdh-vendor hal build android.hardware.graphics.allocator --android 15
+cdh-vendor hal build android.hardware.graphics.allocator --android 16
 ```

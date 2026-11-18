@@ -47,3 +47,21 @@ sphal_blocked: 4115
 11-18 14:08:37.649  3508  3508 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
 11-18 14:08:37.649  3508  3508 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
 11-18 14:08:37.649  3508  3508 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+
+
+=== [阶段 4] 内核日志结束到 HyperOS Logo 之间 ~20.4 秒黑屏 + vendor_init 拒绝写入 persist.sys.* ===
+[    1.549218] [    T1] init: Do not have permissions to set 'persist.sys.boot_audio.enabled' to '0' in property file '/vendor/build.prop': SELinux permission check failed (source_context=u:r:vendor_init:s0, target_context=u:object_r:exported_system_prop:s0)
+[    1.554102] [    T1] init: Do not have permissions to set 'persist.sys.impeller.glass.legacy_render' to 'true' in property file '/vendor/build.prop': SELinux permission check failed (source_context=u:r:vendor_init:s0, target_context=u:object_r:system_prop:s0)
+[   24.737618] [    T1] init: Service 'unbind_fbcon' (pid 720) exited with status 0 oneshot service took 5.390000 seconds in background
+11-18 14:41:14.212   829   834 D BootAnimation: BootAnimationShownTiming start time: 44472ms
+11-18 14:41:14.185   829   851 W AudioSystem: AudioFlinger not published, waiting...
+[  120.293784] [  T267] type=1400 audit(1794984165.752:1667): avc:  denied  { map } for  comm="id.hevc.decoder" path="/memfd:SurfaceTexture-1-2895-0 reserved region (deleted)" dev="tmpfs" ino=7214 scontext=u:r:mediaswcodec:s0 tcontext=u:object_r:hal_graphics_allocator_default_tmpfs:s0 tclass=file permissive=0
+
+=== [阶段 5] 进入桌面仅显示纯绿壁纸、无图标小部件且桌面点击无响应（Android 16 minigbm lock() 拒绝非 CPU_* 缓冲区） ===
+11-18 15:54:30.605 15279 15408 E         : Attempted to lock() a buffer that was not allocated with a BufferUsage::CPU_* usage.
+11-18 15:54:30.605 15279 15408 E vulkan  : QueueSignalReleaseImageANDROID failed: -1000001004
+11-18 15:54:30.622 15279 15408 E hyper_launcher_app: : <1.raster-flutter:136>: [flutter] [ERROR:flutter/impeller/base/validation.cc(50)] Break on 'ImpellerValidationBreak' to inspect point of failure: Could not create swapchain: ErrorNativeWindowInUseKHR
+11-18 15:54:30.631 15279 15408 E hyper_launcher_app: : <1.raster-flutter:136>: [flutter] [IMPORTANT:flutter/impeller/renderer/backend/vulkan/swapchain/surface_context_vk.cc(94)] SurfaceContextVK::AcquireNextSurface abnormal ... surface=0x0
+Window #11 Window{a41d802 u0 com.miui.home/com.miui.home.launcher.Launcher}:
+  mHasSurface=false isReadyForDisplay()=false
+  ActivityRecordInputSink com.miui.home/.launcher.Launcher ... inputConfig=NO_INPUT_CHANNEL

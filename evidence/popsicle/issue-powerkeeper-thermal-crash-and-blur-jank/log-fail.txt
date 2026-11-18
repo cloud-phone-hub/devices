@@ -1,0 +1,29 @@
+=== [1] com.miui.powerkeeper 每 2.4 秒无限崩溃堆栈（ThermalLogService NPE） ===
+11-18 16:22:17.928 29330 29389 E AndroidRuntime: FATAL EXCEPTION: ThermalLogService
+11-18 16:22:17.928 29330 29389 E AndroidRuntime: Process: com.miui.powerkeeper, PID: 29330
+11-18 16:22:17.928 29330 29389 E AndroidRuntime: java.lang.NullPointerException: Attempt to get length of null array
+11-18 16:22:17.928 29330 29389 E AndroidRuntime: 	at com.miui.powerkeeper.thermal.dfscheck.CheckUtils.registerNtcAndDeviceMap(CheckUtils.java:43)
+11-18 16:22:17.928 29330 29389 E AndroidRuntime: 	at com.miui.powerkeeper.thermal.dfsreport.ThermalStateObserver.init(ThermalStateObserver.java:98)
+11-18 16:22:17.928 29330 29389 E AndroidRuntime: 	at com.miui.powerkeeper.thermal.dfsreport.ThermalStateObserver.checkAbnormal(ThermalStateObserver.java:46)
+11-18 16:22:17.928 29330 29389 E AndroidRuntime: 	at com.miui.powerkeeper.thermal.ThermalService.init(ThermalService.java:45)
+11-18 16:22:20.348 29443 29499 E AndroidRuntime: FATAL EXCEPTION: ThermalLogService
+11-18 16:22:20.348 29443 29499 E AndroidRuntime: Process: com.miui.powerkeeper, PID: 29443
+11-18 16:22:20.348 29443 29499 E AndroidRuntime: java.lang.NullPointerException: Attempt to get length of null array
+
+=== [2] CheckUtils.registerNtcAndDeviceMap 字节码（/sys/class/thermal listFiles() EACCES 返回 null） ===
+393b52: 6202 ad3c  |0015: sget-object v2, Lcom/miui/powerkeeper/thermal/dfscheck/CheckUtils;.mNtcAndDeviceHeadPath:Ljava/lang/String;
+393b74: 6e10 3399  |0026: invoke-virtual {v0}, Ljava/io/File;.listFiles:()[Ljava/io/File;
+393b7a: 0c00       |0029: move-result-object v0
+393b7e: 2103       |002b: array-length v3, v0
+drwxr-xr-x  2 root root u:object_r:sysfs_thermal:s0  0 2026-11-18 16:14 /sys/class/thermal
+
+=== [3] hypsys_system 持续打包写入 /data/mqsas（14 分钟堆积 658M）+ SELinux 审计丢失 ===
+11-18 16:24:39.900   301  2346 D HypSys-ZipFile: [AddFileContentToZip] Adding File To Zip, file path: /data/miuilog/stability/jetrace/2026-11-18-16-24-39-063_com.miui.powerkeeper_2239.trace
+11-18 16:24:39.901   301  2346 D HypSys-ZipFile: [AddFileContentToZip] Adding File To Zip, file path: /data/mqsas//je/online//-1_je_unknown_06d81617a81f833f9b5601a034fbe817_4.2.00_stable_popsicle_OS4.0.5.0.XPBCNXM_1794990279_1992030362
+658M	/data/mqsas
+[  553.156783][  T260] SELinux: avc:  denied  { find } for pid=756 uid=1000 name=vendor.xiaomi.hardware.displayfeature_aidl.IDisplayFeature/default scontext=u:r:system_server:s0 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0
+[  553.210500][  T260] SELinux: avc:  denied  { find } for pid=3785 uid=6110 name=vendor.xiaomi.hardware.aidl.mtdservice.IMTService/default scontext=u:r:platform_app_36:s0:c512,c768 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0
+[  554.128292][T27663] audit: audit_lost=183204 audit_rate_limit=5 audit_backlog_limit=64
+
+=== [4] 静置状态宿主 qemu-system-aarch64 常驻 243.5% CPU ===
+43451 243.5 13.4 /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/bin/qemu-system-aarch64

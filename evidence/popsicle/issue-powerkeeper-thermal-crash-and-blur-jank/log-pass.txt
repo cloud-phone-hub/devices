@@ -1,0 +1,38 @@
+=== [1] 全新冷启动（vda-5c8612688644 + patch.img sha256=f0edcb84c5ca）SELinux 编译装载与属性核验 ===
+[    1.083531][    T1] init: Compiling SELinux policy
+[    1.404127][    T1] init: Loading SELinux policy
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.surface_flinger.supports_background_blur=0
+debug.sf.disable_blur=1
+persist.sys.background_blur_supported=false
+persist.sys.background_blur_setting=0
+
+=== [2] com.miui.powerkeeper 稳定常驻零崩溃、/data/mqsas 无增长、审计刷屏清零 ===
+system        5351   657 3 16:41:42 ?     00:00:01 com.miui.powerkeeper
+powerkeeper_crashes=0
+thermal_npe=0
+4.3M	/data/mqsas
+328K	/data/miuilog
+default_android_service_avc=0
+
+=== [3] 静置状态 Guest 700%/800% idle（com.miui.home 0% CPU） ===
+Tasks: 446 total,   1 running, 445 sleeping,   0 stopped,   0 zombie
+800%cpu  19%user   4%nice  44%sys 700%idle   0%iow  33%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  717 system       -3  -8  12G 784M  79M S 11.1  10.3   0:39.80 surfaceflinger
+  764 system       18  -2  25G 748M 482M S  7.4   9.8   1:19.73 system_server
+  255 logd         30  10  10G  12M 4.8M S  3.7   0.1   0:19.27 logd
+
+=== [4] 稳定后宿主 qemu-system-aarch64 静置 CPU 从 243.5% 降至 6.1% ===
+48293   6.1  6.5 /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/bin/qemu-system-aarch64
+
+=== [5] vda-8013b9eeb46e 收敛 SwiftShader 1x 采样后 com.miui.home 渲染目标与显存减半 ===
+  Window #11 Window{b628f31 u0 com.miui.home/com.miui.home.launcher.Launcher}:
+    mHasSurface=true isReadyForDisplay()=true mWindowRemovalAllowed=false
+      Surface: shown=true      mDrawState=HAS_DRAWN       mLastHidden=false
+  RenderTarget     35.64 MB (61 allocations)   [修复前 78.03 MB / 97 allocations]
+    Color          10.47 MB (56)
+    MSAA            4.55 MB (2)                [修复前 18.53 MB / 8 allocations]
+    DepthStencil   20.61 MB (3)                [修复前 39.60 MB / 12 allocations]
+  Total:           42.82 MB (82 allocations)   [修复前 85.33 MB / 119 allocations]

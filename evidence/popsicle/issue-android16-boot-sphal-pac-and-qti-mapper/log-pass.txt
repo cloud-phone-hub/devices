@@ -1,38 +1,38 @@
-=== [1] 全新冷启动实例 #1（vda-d5f165d2f167 + patch.img sha256=ac51c5c3736e）启动与属性核验 ===
-6.12.69-android16-6-g43b5ab7e247d-abogki558343811-4k
+=== [1] 全新冷启动实例 #1（vda-0ec932c6010e + patch.img sha256=b2d8a2fcec4a）启动与持久化属性核验 ===
 sys.boot_completed=1
-sys.bootstat.first_boot_completed=1
 init.svc.bootanim=stopped
-ro.build.display.id=CP2A.260605.016
-ro.vendor.cdh.gpu.gl_extra_exts=
-ro.vendor.cdh.gpu.gl_extra_exts2=
+persist.sys.boot_audio.enabled=0
+persist.sys.impeller.glass.legacy_render=true
 ro.hardware.vulkan=mali
 ro.kernel.qemu.vulkan.base=pastel
 ro.hardware.egl=meow
 
-=== [2] 关键系统与桌面进程（全部首次拉起 PID，零崩溃重启） ===
-root           649     1 2 14:18:48 ?     00:00:02 zygote64
-system         710     1 18 14:18:49 ?    00:00:28 surfaceflinger
-system         752     1 1 14:18:50 ?     00:00:00 android.hardware.graphics.allocator-service.minigbm
-system         759   649 58 14:18:50 ?    00:01:34 system_server
-u0_a185       2891   649 15 14:20:28 ?    00:00:09 com.miui.miwallpaper
-u0_a224       3184   649 13 14:20:29 ?    00:00:08 com.android.systemui
-u0_a147       3745  1012 20 14:20:31 ?    00:00:12 com.miui.home
+=== [2] 开机控制台日志到 HyperOS Logo 零黑屏衔接核验（间隔 0.98s，原为 20.4s） ===
+[   15.990244] [  T267] type=1107 audit(15.960:228): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=persist.sys.boot_audio.enabled pid=606 uid=0 gid=0 scontext=u:r:pioneer:s0 tcontext=u:object_r:exported_system_prop:s0 tclass=property_service permissive=1'
+[   20.160734] [    T1] init: starting service 'vendor.cdh_system_props'...
+[   20.191577] [    T1] init: starting service 'unbind_fbcon'...
+[   20.239315] [    T1] init: Service 'vendor.cdh_system_props' (pid 755) exited with status 0 oneshot service took 0.069000 seconds in background
+[   20.320009] [    T1] init: Service 'unbind_fbcon' (pid 765) exited with status 0 oneshot service took 0.117000 seconds in background
+11-18 16:12:37.444   828   833 D BootAnimation: BootAnimationShownTiming start time: 21298ms
 
-=== [3] 首屏焦点与 ResumedActivity ===
-      topResumedActivity=ActivityRecord{94360679 u0 com.miui.home/.launcher.Launcher t10}
-  ResumedActivity: ActivityRecord{94360679 u0 com.miui.home/.launcher.Launcher t10}
-  mFocusedApp=ActivityRecord{94360679 u0 com.miui.home/.launcher.Launcher t10}
+=== [3] 首屏桌面 HAS_DRAWN 与触控分发就绪核验 ===
+      topResumedActivity=ActivityRecord{6480671 u0 com.miui.home/.launcher.Launcher t214}
+  ResumedActivity: ActivityRecord{6480671 u0 com.miui.home/.launcher.Launcher t214}
+  Window #11 Window{c112e63 u0 com.miui.home/com.miui.home.launcher.Launcher}:
+    mHasSurface=true isReadyForDisplay()=true mWindowRemovalAllowed=false
+    WindowStateAnimator{8efd1ef com.miui.home/com.miui.home.launcher.Launcher}:
+      Surface: shown=true      mDrawState=HAS_DRAWN       mLastHidden=false
+  FocusedWindows:
+    displayId=0, name='c112e63 com.miui.home/com.miui.home.launcher.Launcher' result='OK'
+    11: name=c112e63 com.miui.home/com.miui.home.launcher.Launcher, id=854, displayId=0, inputConfig=DUPLICATE_TOUCH_TO_WALLPAPER, alpha=1, frame=[0,0][1200,2608], touchableRegion=[0,0][1200,2608], ownerPid=10992, ownerUid=10147
+    1309: channelName='c112e63 com.miui.home/com.miui.home.launcher.Launcher', status=NORMAL, isFocusMonitor=false, responsive=true
 
-=== [4] 图形 HAL 服务注册与 QTI Mapper SELinux 标签核验 ===
-18	SurfaceFlinger: [android.ui.ISurfaceComposer]
-19	SurfaceFlingerAIDL: [android.gui.ISurfaceComposer]
-49	android.hardware.graphics.allocator.IAllocator/default: [android.hardware.graphics.allocator.IAllocator]
-50	android.hardware.graphics.composer3.IComposer/default: [android.hardware.graphics.composer3.IComposer]
--rw-r--r-- 1 root root u:object_r:vendor_configs_file:s0       243 2009-01-01 08:00 /mnt/vendorpatch/vendor/etc/vintf/manifest/mapper.qti.xml
--rw-r--r-- 1 root root u:object_r:same_process_hal_file:s0  368096 2009-01-01 08:00 /vendor/lib64/hw/mapper.qti.so
+=== [4] 桌面滑动与手势实时响应日志 ===
+11-18 16:16:27.981 10992 11128 I hyper_launcher_app: : <1.ui-flutter:136>: [Dart] [GestureBinding] MotionEvent:lC pointer=12 pos=(161.3,573.4) hitTargets=80 view=0
+11-18 16:16:28.068 10992 10992 I hyper_launcher_app: : <com.miui.home-engine_platform::embedding::scene:1157>: PlatformScene on_motion_event, ui_token:12970367440878857712, id:1020247141, action: Some(Move), source: 0x1002, pointer_count: 1, action_index: 0, tool_type: Some(Finger)
+11-18 16:16:28.152 10992 11128 I hyper_launcher_app: : <1.ui-flutter:136>: [Dart] [GestureBinding] MotionEvent:vC pointer=12 pos=(277.0,573.4) hitTargets=80 view=0
 
-=== [5] /proc/cdh_redirect 声明式重定向表与运行态统计（sphal_blocked=0） ===
+=== [5] /proc/cdh_redirect 声明式重定向表与零异常计数 ===
 rules: 11/32
   dir  /vendor/etc -> /mnt/vendorpatch/vendor/etc
   dir  /vendor/bin -> /mnt/vendorpatch/vendor/bin
@@ -46,58 +46,21 @@ rules: 11/32
   dir  /odm -> /mnt/vendorpatch/odm
   file /system/bin/update_verifier -> /mnt/vendorpatch/system/bin/update_verifier
 max_uid: 10000
-forward_hits: 23796
-reverse_hits: 6514
-uid_skipped: 719
+forward_hits: 30624
+reverse_hits: 15909
+uid_skipped: 683
 forward_missed: 0
 reverse_missed: 0
-mount_hidden: 0
-peergroup_rewrites: 0
-dirent_hidden: 0
-sphal_blocked: 0
-maps_ino_rewrites: 317
-readlink[proc]: entries=129199 rets=129199 hits=11 skipped=129188
-readlink[vfs]: entries=133104 rets=133104 hits=11 skipped=133093
 
-=== [6] Native Crash / Mapper / EGL / Vulkan 零报错核验 ===
-native_F_DEBUG: 0
+attempted_to_lock: 0
+acquire_next_surface_abnormal: 0
+error_native_window_in_use_khr: 0
 gralloc_mapper_missing: 0
-zygote_dlopen_fail: 0
-pastel_dlopen_fail: 0
+allocator_tmpfs_avc: 0
+vendor_init_boot_audio_denied: 0
 
-=== [7] QEMU cgl-headless 1200x2608 桌面帧连续输出 ===
-qemu-system-aarch64: cgl-headless 大帧 1200x2608: blit=0.2 read=1.9 flush=0.0 update=0.0 end=0.0 总=2.1 ms
-qemu-system-aarch64: cgl-headless 大帧 1200x2608: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
-qemu-system-aarch64: cgl-headless 大帧 1200x2608: blit=0.2 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.8 ms
-
-=== [8] Go Pipeline 全量单元测试通过 ===
-ok  	cloud-phone-hub/agent/modules/pipeline/cli	1.337s
-ok  	cloud-phone-hub/agent/modules/pipeline/internal/buildctx	1.583s
-ok  	cloud-phone-hub/agent/modules/pipeline/internal/device	5.340s
-ok  	cloud-phone-hub/agent/modules/pipeline/internal/engine	1.219s
-ok  	cloud-phone-hub/agent/modules/pipeline/internal/env	2.128s
-ok  	cloud-phone-hub/agent/modules/pipeline/internal/fsimg	0.580s
-ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/deps	1.483s
-ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/halbuild	(cached)
-ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/profile	0.585s
-ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/spec	2.763s
-ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/toolchain	2.469s
-ok  	cloud-phone-hub/agent/modules/pipeline/internal/kmod	3.404s
-ok  	cloud-phone-hub/agent/modules/pipeline/internal/manifest	1.810s
-ok  	cloud-phone-hub/agent/modules/pipeline/internal/pipeline	4.115s
-ok  	cloud-phone-hub/agent/modules/pipeline/internal/stagekit	3.029s
-ok  	cloud-phone-hub/agent/modules/pipeline/internal/task	3.672s
-ok  	cloud-phone-hub/agent/modules/pipeline/internal/toolfind	3.974s
-ok  	cloud-phone-hub/agent/modules/pipeline/stages/01_unpack	4.196s
-ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	(cached)
-ok  	cloud-phone-hub/agent/modules/pipeline/stages/03_build_kernel	5.248s
-ok  	cloud-phone-hub/agent/modules/pipeline/stages/04_build_modules	4.402s
-ok  	cloud-phone-hub/agent/modules/pipeline/stages/05_build_boot	4.084s
-ok  	cloud-phone-hub/agent/modules/pipeline/stages/06_build_vendor_boot	(cached)
-ok  	cloud-phone-hub/agent/modules/pipeline/stages/07_build_odm	4.446s
-ok  	cloud-phone-hub/agent/modules/pipeline/stages/08_build_hardware	3.962s
-ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	(cached)
-ok  	cloud-phone-hub/agent/modules/pipeline/stages/10_build_vendor_dlkm	5.157s
-ok  	cloud-phone-hub/agent/modules/pipeline/stages/11_build_patch	4.139s
-ok  	cloud-phone-hub/agent/modules/pipeline/stages/12_pack_super	3.639s
-ok  	cloud-phone-hub/agent/modules/pipeline/stages/13_pack_vda	4.530s
+=== [6] Go Pipeline 全量单元测试通过 ===
+ok  	cloud-phone-hub/agent/modules/pipeline/cli	1.077s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	0.558s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/08_build_hardware	0.583s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	0.956s

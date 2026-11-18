@@ -50,7 +50,10 @@ static PFN_vkGetInstanceProcAddr cdh_base_gipa;
 static PFN_vkGetDeviceProcAddr cdh_real_gdpa;
 static PFN_vkGetPhysicalDeviceProperties cdh_real_gppd;
 static PFN_vkGetPhysicalDeviceProperties2 cdh_real_gppd2;
+static PFN_vkGetPhysicalDeviceImageFormatProperties cdh_real_gpifp;
+static PFN_vkGetPhysicalDeviceImageFormatProperties2 cdh_real_gpifp2;
 static PFN_vkCreateShaderModule cdh_real_csm;
+static int cdh_vk_is_pastel_base;
 
 #if defined(__LP64__)
 #define CDH_VK_CFG_PATH "/vendor/lib64/egl/gpu_id.cfg"
@@ -245,6 +248,25 @@ static void cdh_stamp(VkPhysicalDeviceProperties *p) {
         cdh_parse_uuid16(uuid_prop, uuid_bytes)) {
         memcpy(p->pipelineCacheUUID, uuid_bytes, VK_UUID_SIZE);
     }
+
+    // 当底层为 SwiftShader (vulkan.pastel.so) 纯 CPU 软光栅时，将帧缓冲与采样器多重采样上限
+    // 收敛为 1x (VK_SAMPLE_COUNT_1_BIT)，避免 Flutter Impeller 开启 4x SwapchainMSAA /
+    // Offscreen MSAA 导致每帧像素光栅与 Resolve 开销放大 4 倍（1200x2608 整屏达 1252 万采样点）。
+    if (cdh_vk_is_pastel_base) {
+        uint32_t keep_msaa = 0;
+        if (!cdh_prop_u32("ro.vendor.cdh.vulkan.keep_msaa", &keep_msaa) || keep_msaa == 0) {
+            p->limits.framebufferColorSampleCounts = VK_SAMPLE_COUNT_1_BIT;
+            p->limits.framebufferDepthSampleCounts = VK_SAMPLE_COUNT_1_BIT;
+            p->limits.framebufferStencilSampleCounts = VK_SAMPLE_COUNT_1_BIT;
+            p->limits.framebufferNoAttachmentsSampleCounts = VK_SAMPLE_COUNT_1_BIT;
+            p->limits.sampledImageColorSampleCounts = VK_SAMPLE_COUNT_1_BIT;
+            p->limits.sampledImageIntegerSampleCounts = VK_SAMPLE_COUNT_1_BIT;
+            p->limits.sampledImageDepthSampleCounts = VK_SAMPLE_COUNT_1_BIT;
+            p->limits.sampledImageStencilSampleCounts = VK_SAMPLE_COUNT_1_BIT;
+            p->limits.storageImageSampleCounts = VK_SAMPLE_COUNT_1_BIT;
+            p->limits.maxSamplerAnisotropy = 1.0f;
+        }
+    }
 }
 
 static void cdh_parse_conformance(const char *s, VkConformanceVersion *out) {
@@ -326,6 +348,12 @@ static void cdh_stamp_pnext(void *pNext) {
             if (conf_ver[0] != '\0') {
                 cdh_parse_conformance(conf_ver, &v12->conformanceVersion);
             }
+            if (cdh_vk_is_pastel_base) {
+                uint32_t keep_msaa = 0;
+                if (!cdh_prop_u32("ro.vendor.cdh.vulkan.keep_msaa", &keep_msaa) || keep_msaa == 0) {
+                    v12->framebufferIntegerColorSampleCounts = VK_SAMPLE_COUNT_1_BIT;
+                }
+            }
             break;
         }
         case VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES: {
@@ -377,6 +405,45 @@ static void VKAPI_CALL cdh_gppd2(VkPhysicalDevice physicalDevice,
         cdh_stamp(&pProperties->properties);
         cdh_stamp_pnext(pProperties->pNext);
     }
+}
+
+static VkResult VKAPI_CALL cdh_gpifp(
+    VkPhysicalDevice physicalDevice, VkFormat format, VkImageType type,
+    VkImageTiling tiling, VkImageUsageFlags usage, VkImageCreateFlags flags,
+    VkImageFormatProperties *pImageFormatProperties) {
+    if (!cdh_real_gpifp) {
+        return VK_ERROR_INITIALIZATION_FAILED;
+    }
+    VkResult res = cdh_real_gpifp(physicalDevice, format, type, tiling, usage,
+                                  flags, pImageFormatProperties);
+    if (res == VK_SUCCESS && pImageFormatProperties && cdh_vk_is_pastel_base) {
+        uint32_t keep_msaa = 0;
+        if (!cdh_prop_u32("ro.vendor.cdh.vulkan.keep_msaa", &keep_msaa) ||
+            keep_msaa == 0) {
+            pImageFormatProperties->sampleCounts = VK_SAMPLE_COUNT_1_BIT;
+        }
+    }
+    return res;
+}
+
+static VkResult VKAPI_CALL cdh_gpifp2(
+    VkPhysicalDevice physicalDevice,
+    const VkPhysicalDeviceImageFormatInfo2 *pImageFormatInfo,
+    VkImageFormatProperties2 *pImageFormatProperties) {
+    if (!cdh_real_gpifp2) {
+        return VK_ERROR_INITIALIZATION_FAILED;
+    }
+    VkResult res = cdh_real_gpifp2(physicalDevice, pImageFormatInfo,
+                                   pImageFormatProperties);
+    if (res == VK_SUCCESS && pImageFormatProperties && cdh_vk_is_pastel_base) {
+        uint32_t keep_msaa = 0;
+        if (!cdh_prop_u32("ro.vendor.cdh.vulkan.keep_msaa", &keep_msaa) ||
+            keep_msaa == 0) {
+            pImageFormatProperties->imageFormatProperties.sampleCounts =
+                VK_SAMPLE_COUNT_1_BIT;
+        }
+    }
+    return res;
 }
 
 // SwiftShader (vulkan.pastel.so) 未实现 SPIR-V Float16 / OpFConvert：
@@ -533,6 +600,19 @@ static PFN_vkVoidFunction VKAPI_CALL cdh_gipa(VkInstance instance,
                 instance, pName);
             return cdh_real_gppd2 ? (PFN_vkVoidFunction)cdh_gppd2 : NULL;
         }
+        if (strcmp(pName, "vkGetPhysicalDeviceImageFormatProperties") == 0) {
+            cdh_real_gpifp =
+                (PFN_vkGetPhysicalDeviceImageFormatProperties)cdh_base_gipa(
+                    instance, pName);
+            return cdh_real_gpifp ? (PFN_vkVoidFunction)cdh_gpifp : NULL;
+        }
+        if (strcmp(pName, "vkGetPhysicalDeviceImageFormatProperties2") == 0 ||
+            strcmp(pName, "vkGetPhysicalDeviceImageFormatProperties2KHR") == 0) {
+            cdh_real_gpifp2 =
+                (PFN_vkGetPhysicalDeviceImageFormatProperties2)cdh_base_gipa(
+                    instance, pName);
+            return cdh_real_gpifp2 ? (PFN_vkVoidFunction)cdh_gpifp2 : NULL;
+        }
         if (strcmp(pName, "vkGetDeviceProcAddr") == 0) {
             cdh_real_gdpa =
                 (PFN_vkGetDeviceProcAddr)cdh_base_gipa(instance, pName);
@@ -575,6 +655,7 @@ static int cdh_open(const cdh_hw_module_t *module, const char *id,
         base_path = path_buf;
         base_soname = soname_buf;
     }
+    cdh_vk_is_pastel_base = (strstr(base_soname, "pastel") != NULL) ? 1 : 0;
     // 直接加载原样未修改的基座驱动（/proc/<pid>/maps 逆向伪装由内核 cdh_redirect 处理）。
     void *h = dlopen(base_path, RTLD_NOW | RTLD_LOCAL);
     if (!h) {
