@@ -1,0 +1,79 @@
+# 修复与验证（运行时补齐依赖，零代码改动）
+# 采集时间: 2026-11-18 11:50 ~ 12:11
+# 机型: xiaomi/popsicle · 清单 16-OS4.0.5.0.XPBCN · Android 16 / lineage-23.2 / kernel 6.12.81
+
+## 1. 链接期 ABI 库（离线，从 lineage-23.2 镜像提取）
+$ time out/agent/dist/cdh-pipeline vendor-deps --android 16 --abi
+[..] 日志: out/devices/hal/android16/vendor-deps-abi-log.txt
+[..] 从 lineage 镜像提取 ABI 库: /Volumes/work/cloud-phone-hub/out/devices/roms/lineage/lineage-23.2/super/system_a.img
+[..] 从 lineage vendor 提取模块专属运行库: /Volumes/work/cloud-phone-hub/out/devices/roms/lineage/lineage-23.2/super/vendor_a.img
+[ok] ABI 依赖就绪: /Volumes/work/cloud-phone-hub/out/devices/vendor/android16/abi/system/lib64（4 库，专属 3 库）
+real 0m0.138s
+
+落盘核对：
+  abi/system/lib64: libbinder_ndk.so 187832  libc++.so 1109112  liblog.so 102600  libnativewindow.so 68240
+  abi/vendor/lib64: libbase.so 218624  libcrypto.so 1642792  libkeymaster_messages.so 134624
+  `file` 全部为 ELF 64-bit LSB shared object, ARM aarch64
+  清单: out/devices/vendor/android16/abi/.abi-complete（source 指向 lineage-23.2 system_a.img）
+
+## 2. platform-source + 20 个 HAL 的 AIDL（联网）
+$ out/agent/dist/cdh-pipeline vendor-deps --android 16
+[..] 拉取 platform 仓 external/libcxx / external/libcxxabi / external/libxml2 / hardware/interfaces /
+     system/core / system/libbase / system/libfmq / system/logging /
+     external/drm_hwcomposer / external/libdrm / external/minigbm / frameworks/native …
+[ok] platform-source 就绪: /Volumes/work/cloud-phone-hub/out/devices/hal/android16/aosp/platform（15 仓）
+[..] ABI 依赖已就绪: /Volumes/work/cloud-phone-hub/out/devices/vendor/android16/abi/system/lib64
+[ok] audio: AIDL 依赖就绪（6 包）  …  [ok] wifi: AIDL 依赖就绪（4 包）
+
+## 3. media-v412 全套（platform 扩展仓 + hidl-gen + HIDL 头 + v412 ABI）
+$ out/agent/dist/cdh-pipeline vendor-deps --android 16 --v412
+[..] 拉取 v412 platform 仓 external/googletest / external/libchrome / external/libyuv / frameworks/av
+[ok] v412 platform-source 就绪（16 仓）
+[ok] hidl 头生成 219 个
+[ok] v412 AIDL / platform-source / hidl-gen / HIDL 头就绪
+[ok] swcodec payload 就地解出: /Volumes/work/cloud-phone-hub/out/devices/roms/lineage/lineage-23.2/super/swcodec-work/apex_payload.img（31211520 B）
+[ok] v412 ABI 就绪: system(18) + apex(9)
+
+## 4. 依赖复核（只校验不下载）
+$ out/agent/dist/cdh-pipeline vendor-deps --android 16 --check
+[ok] platform-source 齐全（15 仓）
+[ok] ABI 依赖齐全（4 库）: /Volumes/work/cloud-phone-hub/out/devices/vendor/android16/abi/system/lib64
+[ok] audio: AIDL 依赖齐全（6 包） …… [ok] wifi: AIDL 依赖齐全（4 包）
+（20+ 个 HAL 表项全绿，无 [err]）
+
+## 5. 整线重跑 01→13
+$ out/agent/dist/cdh-pipeline device build popsicle --manifest 16-OS4.0.5.0.XPBCN \
+    --report out/devices/tmp/popsicle-16-OS4.0.5.0.XPBCN-build-report.json
+01 unpack            cached       3 ms
+02 prepare           ok        1365 ms
+03 build_kernel      cached    2263 ms
+04 build_modules     ok       62920 ms
+05 build_boot        ok        7477 ms
+06 build_vendor_boot ok        8150 ms
+07 build_odm         cached       7 ms
+08 build_hardware    ok      384881 ms
+09 build_vendor      ok       16059 ms
+10 build_vendor_dlkm ok        7684 ms
+11 build_patch       ok       11166 ms
+12 pack_super        ok       14299 ms
+13 pack_vda          ok       66630 ms
+[ok] 已完成（582909 ms，report.ok=true，13/13 阶段无 failed）
+
+08 汇总：
+==> HAL 构建完成: 新编 20，复用 0，总计 20 个模块   ← 含 android.hardware.media.v412
+
+## 6. 产物与只读校验
+out/devices/devices/xiaomi/popsicle/16-OS4.0.5.0.XPBCN/img/
+  boot.img          83886080 B
+  vendor_boot.img   22395141 B（21 MiB）
+  odm.img            8388608 B   e2fsck -fn 干净（14/512 文件）
+  vendor.img       303128576 B   e2fsck -fn 干净（703/768 文件）
+  vendor_dlkm.img   15831040 B   sha256 c94350e57418   e2fsck -fn 干净（36/144 文件）
+  patch.img        402653184 B   sha256 b87a51125b03   e2fsck -fn 干净（755/98304 文件）
+  super.img        13421772800 B（12.50 GiB，mode=copy：官方 super.img 原样复制）
+
+out/devices/dist/xiaomi/popsicle/16-OS4.0.5.0.XPBCN/
+  vda.img      15.67 GiB（6 个分区已刷新：super/boot_a/boot_b/vendor_boot_a/vendor_boot_b/cust）
+  patch.img    384.0 MiB
+  data.qcow2   193.7 KiB（虚拟 110.27 GiB）
+  device.json  id=popsicle_16-OS4.0.5.0.XPBCN

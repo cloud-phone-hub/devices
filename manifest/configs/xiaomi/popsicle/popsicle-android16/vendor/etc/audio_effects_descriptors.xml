@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Xiaomi 17 Pro Max (xiaomi/popsicle) AI 对标 gold 对齐生成的 7 项音效描述符 -->
+<audio-effects-descriptors>
+  <effect name="Dolby Atmos" implementor="The Android Open Source Project" type="dolby_atmos" uuid="9d1d0a3e-6d3f-4b1a-9a1e-2c4a1f5a8e01" connect="Insert"/>
+  <effect name="MiSound" implementor="The Android Open Source Project" type="misound" uuid="1b7f4c62-85a9-4d3e-b6c1-7e2d9f0a4b13" connect="Insert"/>
+  <effect name="Equalizer" implementor="The Android Open Source Project" type="equalizer" uuid="f5a05e57-2b1c-4a8d-9c33-6d0e7b1f2a45" connect="Insert"/>
+  <effect name="Bass Boost" implementor="The Android Open Source Project" type="bassboost" uuid="8634d5a0-4e6f-4c1b-8f2a-1b3c5d7e9f06" connect="Insert"/>
+  <effect name="Virtualizer" implementor="The Android Open Source Project" type="virtualizer" uuid="7c5b2e91-3a4d-4f68-b9c2-5e8d1f3a6b27" connect="Insert"/>
+  <effect name="Environmental Reverb" implementor="The Android Open Source Project" type="reverb" uuid="2f6a8c14-9d3b-4e57-8a1c-4b2d6f9e0c38" connect="Insert"/>
+  <effect name="Loudness Enhancer" implementor="The Android Open Source Project" type="loudness_enhancer" uuid="4a9c1e63-7b2d-4f85-a3e9-8c1b5d7f2e49" connect="Insert"/>
+</audio-effects-descriptors>

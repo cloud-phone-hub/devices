@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Xiaomi 17 Pro Max (xiaomi/popsicle) Codec2 Store 实例与组件登记（rank=1 确保软解优先，且保证每个 store 非空） -->
+<media-c2-config>
+    <instance binary="vendor.hardware.media.c2.custom" store="vendor0_software"/>
+    <instance binary="vendor.qti.hardware.c2pa-aidl-service-qti" store="vendor0_software"/>
+    <instance binary="vendor.qti.media.c2@1.0-service" store="vendor0_software"/>
+    <component store="vendor0_software" name="c2.qti.avc.decoder" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="OMX.qcom.video.decoder.avc" profiles="" levels=""/>
+    <component store="vendor0_software" name="c2.qti.avc.decoder.secure" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="OMX.qcom.video.decoder.avc.secure" profiles="" levels=""/>
+    <component store="vendor0_software" name="c2.qti.hevc.decoder" kind="decoder" domain="video" media-type="video/hevc" rank="1" aliases="OMX.qcom.video.decoder.hevc" profiles="" levels=""/>
+    <component store="vendor0_software" name="c2.qti.hevc.decoder.secure" kind="decoder" domain="video" media-type="video/hevc" rank="1" aliases="OMX.qcom.video.decoder.hevc.secure" profiles="" levels=""/>
+    <component store="vendor0_software" name="c2.qti.vp9.decoder" kind="decoder" domain="video" media-type="video/x-vnd.on2.vp9" rank="1" aliases="OMX.qcom.video.decoder.vp9" profiles="" levels=""/>
+    <component store="vendor0_software" name="c2.qti.av1.decoder" kind="decoder" domain="video" media-type="video/av01" rank="1" aliases="" profiles="" levels=""/>
+    <component store="vendor0_software" name="c2.qti.apv.decoder" kind="decoder" domain="video" media-type="video/apv" rank="1" aliases="OMX.qcom.video.decoder.apv" profiles="" levels=""/>
+    <component store="vendor0_software" name="c2.qti.avc.encoder" kind="encoder" domain="video" media-type="video/avc" rank="1" aliases="OMX.qcom.video.encoder.avc" profiles="" levels=""/>
+    <component store="vendor0_software" name="c2.qti.hevc.encoder" kind="encoder" domain="video" media-type="video/hevc" rank="1" aliases="OMX.qcom.video.encoder.hevc" profiles="" levels=""/>
+    <component store="vendor0_software" name="c2.qti.heic.encoder" kind="encoder" domain="video" media-type="image/vnd.android.heic" rank="1" aliases="OMX.qcom.video.encoder.heic" profiles="" levels=""/>
+    <component store="vendor0_software" name="c2.qti.apv.encoder" kind="encoder" domain="video" media-type="video/apv" rank="1" aliases="OMX.qcom.video.encoder.apv" profiles="" levels=""/>
+</media-c2-config>

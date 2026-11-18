@@ -1,0 +1,48 @@
+# 08_build_hardware 失败现场（修复前）
+# 运行: r_20261118_034335758（2026-11-18 11:43:36 → 11:50:02，386046 ms）
+# 机型: xiaomi/popsicle · 清单 16-OS4.0.5.0.XPBCN · Android 16 / lineage-23.2 / kernel 6.12
+
+## 命令与退出码
+$ out/agent/dist/cdh-pipeline device build popsicle --manifest 16-OS4.0.5.0.XPBCN \
+    --report out/agent/web/runs/r_20261118_034335758/artifacts/build-report.json
+构建进程以非零状态码退出: exitCode=1
+
+## 各阶段结果（build-report.json）
+01 unpack             ok        125288 ms
+02 prepare            ok          4325 ms   [warn] 真机设备规格采集留档失败（dshsdk: unknown option '--patch'）
+03 build_kernel       ok        256211 ms
+04 build_modules      skipped          0 ms   ← 尚未调度（08 在更早的波次失败）
+05 build_boot         skipped          0 ms
+06 build_vendor_boot  skipped          0 ms
+07 build_odm          ok           218 ms
+08 build_hardware     failed           2 ms   ← 本次断点
+09 build_vendor       skipped          0 ms
+10 build_vendor_dlkm  skipped          0 ms
+11 build_patch        skipped          0 ms
+12 pack_super         skipped          0 ms
+13 pack_vda           skipped          0 ms
+
+## 08 的完整输出（失败点）
+==> [5/13] build_hardware  (08_build_hardware)
+  + 进程内调用 build_hardware
+==> HAL 构建: android16，20 个模块
+==> 源码树: /Volumes/work/cloud-phone-hub/devices/hardware
+==> 产物根: /Volumes/work/cloud-phone-hub/out/devices/vendor/android16
+==> 构建报告: out/agent/web/runs/r_20261118_034335758/artifacts/build-report.json
+[err] 阶段 build_hardware 失败: ABI 依赖库未就绪（/Volumes/work/cloud-phone-hub/out/devices/vendor/android16/abi/system/lib64）: libc++.so（缺失）; libbinder_ndk.so（缺失）; liblog.so（缺失）; libnativewindow.so（缺失）；先跑 cdh-pipeline vendor-deps --android 16 --abi
+
+## 失败前依赖现场：整代 android16 缓存都不存在（不是 4 个库个别丢失）
+$ ls out/devices/vendor/android16/abi/system/lib64
+ls: out/devices/vendor/android16/: No such file or directory
+$ ls out/devices/hal/android16/
+ls: out/devices/hal/android16/: No such file or directory
+$ ls out/devices/vendor/
+android14  android15  hal-src          # 只有 14/15 两代缓存
+$ ls out/devices/hal/
+android14  android15                  # 同样没有 android16
+
+## 判据
+- 08 在 2 ms 内失败，说明是「开工前的硬校验」而不是某个模块编译报错。
+- 缺的不是一个库：ABI（4 库）、platform-source、20 个 HAL 的 AIDL、v412 全套目录
+  都在同一次构建里整体缺席；android14/15 的现成缓存无法跨代复用。
+- 错误提示只指向 `--abi`，但按该提示只补 ABI 会在紧接着的 AIDL/platform/v412 关卡再次失败。

@@ -4,5 +4,6 @@
       "image": "cust.img",
       "mount": "/cust"
     }
-  ]
+  ],
+  "data-size": 230032343040
 }
