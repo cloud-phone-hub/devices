@@ -1,0 +1,114 @@
+;; cdh oriole：Widevine AIDL HAL（07 自建 /vendor/bin/hw 二进制）SELinux 补丁。
+;; 由 07_build_vendor 追加到 /vendor/etc/selinux/vendor_sepolicy.cil 末尾（机型层，
+;; marker 为 `;; vendor_sepolicy.cil`）。
+;;
+;; 背景：engine/vendor 移植的 widevine 检测模拟服务（hardware/android.hardware.drm，
+;; drm_widevine_service.cpp）由 07 编进 /vendor/bin/hw、rc 带 seclabel u:r:hal_drm_widevine:s0。
+;; 基座 lineage-21.0（A14）vendor 策略自带 clearkey，但没有 hal_drm_widevine 域与
+;; hal_drm_widevine_exec 标签类型，且 07 注入的二进制不在基座 file_contexts 里。缺这些
+;; 声明时 init 会报 `Context ...hal_drm_widevine_exec... is not valid (left unmapped)`、
+;; 拒绝起服务。本片段补齐类型与启动链、注册授权、模型目录访问。
+;;
+;; 与 gold #40 的差异（gold 是 com.google.android.widevine APEX，本机型是 07 自建件）：
+;;   - 启动链：本机型二进制由 vendor_file_contexts 标注 hal_drm_widevine_exec（见同目录
+;;     vendor_file_contexts），rc 显式带 seclabel，故保留 init→exec→域 的 typetransition 与
+;;     entrypoint；不再依赖 APEX 内烘好的标签。
+;;   - 去掉 MTK Android15 才有的 base_typeattr_232_{{vers}} fd 授权（gs101/A14 无此编号属性）。
+;;   - 去掉 gold 独有的 (typepermissive crash_dump / surfaceflinger)：那是 gold 云机无 su 的
+;;     bring-up 放宽，Pixel 线历史上没标过，不跟加。
+;;   - 平台类型按 vendor CIL 约定用 {{vers}} 影子名，构建阶段按 plat_sepolicy_vers.txt 替换。
+;;
+;; 状态：本片段是移植首稿，未在本环境起机验证。域类型/注册授权/数据目录标签需装配镜像后
+;; 按 run-time avc 迭代收敛（尤其 /data/vendor/mediadrm 在 oriole 基座的实际标签，见下）。
+
+;; ---- 类型与属性 ----
+(type hal_drm_widevine)
+(roletype object_r hal_drm_widevine)
+(type hal_drm_widevine_exec)
+(roletype object_r hal_drm_widevine_exec)
+(typeattributeset domain (hal_drm_widevine))
+(typeattributeset halserverdomain (hal_drm_widevine))
+(typeattributeset halclientdomain (hal_drm_widevine))
+(typeattributeset hal_drm (hal_drm_widevine))
+(typeattributeset hal_drm_server (hal_drm_widevine))
+(typeattributeset hal_allocator_client (hal_drm_widevine))
+(typeattributeset file_type (hal_drm_widevine_exec))
+(typeattributeset exec_type (hal_drm_widevine_exec))
+(typeattributeset vendor_file_type (hal_drm_widevine_exec))
+
+;; ---- 启动链：init 读/执行 file_contexts 标注的 exec 件，按 rc seclabel 换域 ----
+(allow init_{{vers}} hal_drm_widevine_exec (file (read getattr map execute open)))
+(allow init_{{vers}} hal_drm_widevine (process (transition siginh rlimitinh noatsecure)))
+(typetransition init_{{vers}} hal_drm_widevine_exec process hal_drm_widevine)
+(allow hal_drm_widevine hal_drm_widevine_exec (file (read getattr map execute open entrypoint)))
+
+;; ---- 只读映射 vendor 侧库（NDK 运行期若回落取 /vendor/lib 私有件；libc++/libbinder_ndk 走 ldconfig 不在这里）----
+(allow hal_drm_widevine vendor_file_{{vers}} (file (read getattr map open)))
+
+;; ---- vndbinder（vendor 进程默认 binder 设备）----
+(allow hal_drm_widevine vndbinder_device_{{vers}} (chr_file (ioctl read write getattr lock append map open watch watch_reads)))
+
+;; ---- 服务注册：AIDL DRM factory 实际向 framework servicemanager 注册，实例名未在
+;; vendor_service_contexts 映射，落 default_android_service。缺 add/find 时
+;; AServiceManager_addService 返回错误、进程 CHECK 失败 abort。保留 vndservicemanager
+;; 一组以兼容按 vndbinder 注册的路径（gold 同口径，二者按实际 avc 复验可裁一）。
+(allow hal_drm_widevine servicemanager_{{vers}} (binder (call transfer)))
+(allow hal_drm_widevine hal_drm_service_{{vers}} (service_manager (add find)))
+(allow hal_drm_widevine mediaserver_service_{{vers}} (service_manager (add find)))
+(allow hal_drm_widevine default_android_service_{{vers}} (service_manager (add find)))
+(allow hal_drm_widevine pioneer (binder (call transfer)))
+(allow pioneer hal_drm_widevine (binder (call transfer)))
+(allow hal_drm_widevine vndservicemanager_{{vers}} (binder (call transfer)))
+(allow vndservicemanager_{{vers}} hal_drm_widevine (dir (search)))
+(allow vndservicemanager_{{vers}} hal_drm_widevine (file (read map open)))
+(allow vndservicemanager_{{vers}} hal_drm_widevine (process (getattr)))
+
+;; ---- 安全缓冲/分配器 fd 传递 ----
+(allow hal_drm_widevine hal_allocator_server (fd (use)))
+(allow hal_drm_widevine mediacodec (fd (use)))
+
+;; ---- 设备身份模型目录 /data/vendor/mediadrm/model（rc on post-fs-data mkdir 0700 media/mediadrm，进程 user=media group=mediadrm）----
+;; gold 上 /data/vendor/mediadrm 标签是 vendor_data_file（其盘未声明 mediadrm_vendor_data_file）。
+;; oriole 基座若声明了 mediadrm_vendor_data_file，起机 avc 复验时把它替换/补进下列两条。
+(allow hal_drm_widevine vendor_data_file_{{vers}} (dir (ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir)))
+(allow hal_drm_widevine vendor_data_file_{{vers}} (file (ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads)))
+
+;; ---- 诊断与只读设备树 ----
+(allow hal_drm_widevine debugfs_tracing_{{vers}} (file (write)))
+(allow hal_drm_widevine mnt_vendor_file_{{vers}} (dir (search)))
+(allow hal_drm_widevine block_device_{{vers}} (dir (search)))
+
+;; ---- Pixel 电话栈 App（/system_ext/priv-app：OemRilService、ShannonIms、ShannonRcs 等常驻）厂商属性 ----
+;; 官方 gs101 vendor：vendor.radio. / persist.vendor.radio. / vendor.ril. 等 → vendor_rild_prop；
+;; oemrilservice_app / vendor_ims_app / vendor_rcs_app 均 set vendor_rild_prop，ims/rcs 另 set radio_prop。
+;; lineage-21 基座既无该类型也无 vendor_seapp_contexts 条目：这些 App 落 priv_app 域、属性落
+;; vendor_default_prop，SystemProperties.set 抛 RuntimeException → 常驻进程崩溃循环 →
+;; PackageWatchdog → reboot,rescueparty（实测 oemril 写 vendor.radio.allowed_types_loaded、
+;; imsservice 写 persist.vendor.radio.call_waiting_for_sync_<slot>）。
+;; 不新造 oemrilservice_app 等域（CIL 无法继承 priv_app 全量规则），只给 priv_app 补这两类 set/read。
+(type vendor_rild_prop)
+(roletype object_r vendor_rild_prop)
+(typeattributeset property_type (vendor_rild_prop))
+(typeattributeset vendor_property_type (vendor_rild_prop))
+(allow priv_app_{{vers}} vendor_rild_prop (property_service (set)))
+(allow priv_app_{{vers}} vendor_rild_prop (file (read getattr map open)))
+(allow priv_app_{{vers}} radio_prop_{{vers}} (property_service (set)))
+(allow priv_app_{{vers}} radio_prop_{{vers}} (file (read getattr map open)))
+(allow priv_app_{{vers}} property_socket_{{vers}} (sock_file (write)))
+(allow priv_app_{{vers}} init_{{vers}} (unix_stream_socket (connectto)))
+(allow radio_{{vers}} vendor_rild_prop (property_service (set)))
+(allow radio_{{vers}} vendor_rild_prop (file (read getattr map open)))
+(allow hal_radio_default vendor_rild_prop (file (read getattr map open)))
+
+;; ---- vendor.mali.*（Mali GPU 运行时选项，真机 Pixel 6 口径）----
+;; 真机 vendor_property_contexts: vendor.mali. -> vendor_arm_runtime_option_prop(prefix)，
+;; 全域可读、仅 vendor_init 可写。云机此前缺该类型，vendor.mali.* 落 default_prop，
+;; untrusted_app 读不到（checker getprop 缺 5 键、run-as 直读 SIGSEGV）。
+(type vendor_arm_runtime_option_prop)
+(roletype object_r vendor_arm_runtime_option_prop)
+(typeattributeset property_type (vendor_arm_runtime_option_prop))
+(typeattributeset vendor_property_type (vendor_arm_runtime_option_prop))
+(typeattributeset vendor_restricted_property_type (vendor_arm_runtime_option_prop))
+(allow domain vendor_arm_runtime_option_prop (file (read getattr map open)))
+(allow vendor_init_{{vers}} vendor_arm_runtime_option_prop (property_service (set)))
+(allow vendor_init_{{vers}} vendor_arm_runtime_option_prop (file (read getattr map open)))

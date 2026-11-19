@@ -46,3 +46,18 @@
 
 ;; 3) FRP 承载块设备（PersistentDataBlockService 读写软链到 vda3/misc 的节点）
 (allow system_server_202404 misc_block_device_202404 (blk_file (open read write append getattr ioctl map lock)))
+
+;; 4) 允许 vendor_init 执行 init.honor.chrproduct.rc 设置 persist.sys.chr.chipsettype=1，避免 HnChrService 空指针触发 RescueParty
+(allow vendor_init_202404 system_prop_202404 (property_service (set)))
+(allow vendor_init_202404 system_prop_202404 (file (read getattr map open)))
+
+;; 5) 荣耀温控与 dubaid 只读访问温区 sysfs 节点
+(allow system_app_202404 sysfs_thermal_202404 (dir (read getattr open search)))
+(allow system_app_202404 sysfs_thermal_202404 (file (read getattr open)))
+(allow system_app_202404 sysfs_thermal_202404 (lnk_file (read getattr)))
+(allow dubaid_202404 sysfs_hwthermal_202404 (dir (read getattr open search)))
+(allow dubaid_202404 sysfs_hwthermal_202404 (file (read getattr open)))
+(allow dubaid_202404 sysfs_hwthermal_202404 (lnk_file (read getattr)))
+(allow dubaid_202404 sysfs_thermal_202404 (dir (read getattr open search)))
+(allow dubaid_202404 sysfs_thermal_202404 (file (read getattr open)))
+(allow dubaid_202404 sysfs_thermal_202404 (lnk_file (read getattr)))

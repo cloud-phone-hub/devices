@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lights-config>
+    <light id="0" ordinal="0" type="BACKLIGHT"/>
+    <light id="1" ordinal="0" type="NOTIFICATIONS"/>
+    <light id="2" ordinal="0" type="ATTENTION"/>
+    <light id="3" ordinal="0" type="BATTERY"/>
+    <light id="4" ordinal="1" type="BLUETOOTH"/>
+    <light id="5" ordinal="1" type="WIFI"/>
+</lights-config>

@@ -1,3 +1,9 @@
 {
-  "fstab": "oriole"
+  "fstab": "gs101",
+  "cmdline": [
+    "androidboot.product.hardware.sku=oriole",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ]
 }

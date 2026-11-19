@@ -1,0 +1,25 @@
+=== 1. 构建产物校验（honor/sun 15-AQ3A.250214.001-20260904） ===
+vda.img: 14.94 GiB, patch.img: 384.0 MiB (sha256 66ad5862a138)
+vendor.files: 16 项（含 etc/init/init.honor.chrproduct.rc）
+vendor/build.prop: persist.sys.chr.chipsettype=1
+
+=== 2. verify_boot.py 冷启动验收（index=2）===
+spec=sun_15-AQ3A.250214.001-20260904
+bootCompleted=true, postBootCompleted=1, surfaceFlingerState=running, bootanim=stopped
+topActivity=com.hihonor.android.launcher/.unihome.UniHomeLauncher
+bootReason=reboot,factory_reset
+meanBrightness=32.28, peak=255, pngBytes=3568135, passed=true
+
+=== 3. 93.66s 稳态现场复核（hvc_exec）===
+93.66 272.88
+chipsettype=1
+boot_completed=1
+bootreason=reboot,factory_reset
+RescueParty_logcat=0
+chr_crash_count=0
+root           590     1   12477664   5884 binder_thread_read  0 S vendor.honor.hardware.hwfactoryinterface-service
+root           678     1   12714144  18924 __arm64_sys_nanosleep 0 S hiview
+system        3272   532   19366872 174172 do_epoll_wait       0 S com.hihonor.hiview
+Service wifi: found
+Service phone: found
+Service SurfaceFlinger: found

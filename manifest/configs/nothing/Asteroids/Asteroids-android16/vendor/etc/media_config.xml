@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nothing Phone (3a) (nothing/Asteroids) Codec2 Store 实例与组件登记（rank=1 确保软解优先，且保证每个 store 非空） -->
+<media-c2-config>
+    <instance binary="android.hardware.media.c2-mediatek" store="default1"/>
+    <instance binary="vendor.dolby.media.c2-default-service-dax" store="default9"/>
+    <instance binary="vendor.qti.media.c2@1.0-service" store="default2"/>
+    <instance binary="vendor.qti.media.c2audio@1.0-service" store="default2"/>
+    <component store="default2" name="c2.qti.avc.decoder" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="OMX.qcom.video.decoder.avc" profiles="20480,20481,20482,20484,20487" levels="20495"/>
+    <component store="default2" name="c2.qti.avc.decoder.low_latency" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="OMX.qcom.video.decoder.avc.low_latency" profiles="20480,20481,20482,20484,20487" levels="20495"/>
+    <component store="default2" name="c2.qti.avc.decoder.secure" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="OMX.qcom.video.decoder.avc.secure" profiles="20480,20481,20482,20484,20487" levels="20495"/>
+    <component store="default2" name="c2.qti.hevc.decoder" kind="decoder" domain="video" media-type="video/hevc" rank="1" aliases="OMX.qcom.video.decoder.hevc" profiles="24576,24578,24577" levels="24835"/>
+    <component store="default2" name="c2.qti.hevc.decoder.low_latency" kind="decoder" domain="video" media-type="video/hevc" rank="1" aliases="OMX.qcom.video.decoder.hevc.low_latency" profiles="24576,24578,24577" levels="24835"/>
+    <component store="default2" name="c2.qti.hevc.decoder.secure" kind="decoder" domain="video" media-type="video/hevc" rank="1" aliases="OMX.qcom.video.decoder.hevc.secure" profiles="24576,24578,24577" levels="24835"/>
+    <component store="default2" name="c2.qti.vp9.decoder" kind="decoder" domain="video" media-type="video/x-vnd.on2.vp9" rank="1" aliases="OMX.qcom.video.decoder.vp9" profiles="28672,28673,28674" levels="28680"/>
+    <component store="default2" name="c2.qti.vp9.decoder.low_latency" kind="decoder" domain="video" media-type="video/x-vnd.on2.vp9" rank="1" aliases="OMX.qcom.video.decoder.vp9.low_latency" profiles="28672,28673,28674" levels="28680"/>
+    <component store="default2" name="c2.qti.vp9.decoder.secure" kind="decoder" domain="video" media-type="video/x-vnd.on2.vp9" rank="1" aliases="OMX.qcom.video.decoder.vp9.secure" profiles="28672,28673,28674" levels="28680"/>
+    <component store="default2" name="c2.qti.av1.decoder" kind="decoder" domain="video" media-type="video/av01" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default2" name="c2.qti.av1.decoder.low_latency" kind="decoder" domain="video" media-type="video/av01" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default2" name="c2.qti.av1.decoder.secure" kind="decoder" domain="video" media-type="video/av01" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default2" name="c2.qti.avc.encoder" kind="encoder" domain="video" media-type="video/avc" rank="1" aliases="OMX.qcom.video.encoder.avc" profiles="20480,20482,20484" levels="20494"/>
+    <component store="default2" name="c2.qti.hevc.encoder" kind="encoder" domain="video" media-type="video/hevc" rank="1" aliases="OMX.qcom.video.encoder.hevc" profiles="24576" levels="24834"/>
+    <component store="default2" name="c2.qti.hevc.encoder.cq" kind="encoder" domain="video" media-type="video/hevc" rank="1" aliases="OMX.qcom.video.encoder.hevc.cq" profiles="24576" levels="24834"/>
+    <component store="default2" name="c2.qti.heic.encoder" kind="encoder" domain="image" media-type="image/vnd.android.heic" rank="1" aliases="OMX.qcom.video.encoder.heic" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.avc.decoder" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="OMX.MTK.VIDEO.DECODER.AVC" profiles="20480,20481,20482,20484,20487" levels="20495"/>
+    <component store="default9" name="c2.dolby.eac3.decoder" kind="decoder" domain="audio" media-type="audio/eac3" rank="1" aliases="" profiles="" levels=""/>
+</media-c2-config>

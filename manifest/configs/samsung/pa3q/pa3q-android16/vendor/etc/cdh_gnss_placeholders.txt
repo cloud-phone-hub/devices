@@ -1,0 +1,2 @@
+vendor.qti.gnss.ILocAidlGnss/default
+vendor.samsung.hardware.gnss.ISehGnss/default

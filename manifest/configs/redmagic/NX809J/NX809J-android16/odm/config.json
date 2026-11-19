@@ -1,5 +1,9 @@
 {
-  "build-prop-sets": {},
+  "build-prop-sets": {
+    "ro.odm.product.cpu.abilist": "arm64-v8a",
+    "ro.odm.product.cpu.abilist32": "",
+    "ro.odm.product.cpu.abilist64": "arm64-v8a"
+  },
   "build-prop-unsets": [],
   "buildProp": "/etc/build.prop",
   "img": "odm_a.img"

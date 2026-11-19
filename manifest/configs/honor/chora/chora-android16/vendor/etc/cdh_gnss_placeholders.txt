@@ -1,0 +1,2 @@
+vendor.honor.hardware.gnss.IHnGnss/dbd
+vendor.qti.gnss.ILocAidlGnss/default

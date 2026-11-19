@@ -61,20 +61,34 @@
     }
   ],
   "input": {
-    "keyboard": {},
+    "keyboard": {
+      "bus": 25,
+      "name": "gpio-keys",
+      "product": 1,
+      "vendor": 1,
+      "version": 1
+    },
     "tablet": false,
     "touch": {
       "abs-to-mt": true,
-      "bus": 28,
-      "name": "fts",
-      "product": 0,
-      "vendor": 0,
-      "version": 0
+      "abs-x-max": 17280,
+      "abs-xy": true,
+      "abs-y-max": 38400,
+      "bus": 2,
+      "mt-pressure": true,
+      "mt-slots": 10,
+      "name": "synaptics_tcm2",
+      "product": 1,
+      "touch-keys": [
+        116,
+        143,
+        354
+      ],
+      "vendor": 1739,
+      "version": 256
     }
   },
   "cpufreq": {
-    "driver": "exynos_cpufreq",
-    "governor": "sched_pixel",
     "available-governors": [
       "sched_pixel",
       "conservative",
@@ -82,22 +96,12 @@
       "performance",
       "schedutil"
     ],
-    "transition-latency": 5000000,
-    "scaling-readable": true,
-    "package-per-cluster": true,
     "bogo-mips": "49.15",
+    "driver": "exynos_cpufreq",
+    "governor": "sched_pixel",
+    "package-per-cluster": true,
     "policies": [
       {
-        "id": 0,
-        "cpus": [
-          0,
-          1,
-          2,
-          3
-        ],
-        "min-freq": 300000,
-        "max-freq": 1803000,
-        "cur-freq": 1803000,
         "available-frequencies": [
           300000,
           574000,
@@ -111,23 +115,25 @@
           1704000,
           1803000
         ],
-        "implementer": "0x41",
-        "variant": 2,
-        "part": "0xd05",
-        "revision": 0,
         "capacity": 160,
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "cur-freq": 1803000,
+        "id": 0,
+        "implementer": "0x41",
+        "max-freq": 1803000,
         "midr": "0x00000000412fd050",
-        "revidr": "0x0000000000000000"
+        "min-freq": 300000,
+        "part": "0xd05",
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 2
       },
       {
-        "id": 4,
-        "cpus": [
-          4,
-          5
-        ],
-        "min-freq": 400000,
-        "max-freq": 2253000,
-        "cur-freq": 2253000,
         "available-frequencies": [
           400000,
           553000,
@@ -144,23 +150,23 @@
           2130000,
           2253000
         ],
-        "implementer": "0x41",
-        "variant": 4,
-        "part": "0xd0b",
-        "revision": 0,
         "capacity": 498,
+        "cpus": [
+          4,
+          5
+        ],
+        "cur-freq": 2253000,
+        "id": 4,
+        "implementer": "0x41",
+        "max-freq": 2253000,
         "midr": "0x00000000414fd0b0",
-        "revidr": "0x0000000000000000"
+        "min-freq": 400000,
+        "part": "0xd0b",
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 4
       },
       {
-        "id": 6,
-        "cpus": [
-          6,
-          7
-        ],
-        "min-freq": 500000,
-        "max-freq": 2802000,
-        "cur-freq": 500000,
         "available-frequencies": [
           500000,
           851000,
@@ -180,50 +186,94 @@
           2704000,
           2802000
         ],
-        "implementer": "0x41",
-        "variant": 1,
-        "part": "0xd44",
-        "revision": 0,
         "capacity": 1024,
+        "cpus": [
+          6,
+          7
+        ],
+        "cur-freq": 500000,
+        "id": 6,
+        "implementer": "0x41",
+        "max-freq": 2802000,
         "midr": "0x00000000411fd440",
-        "revidr": "0x0000000000000001"
+        "min-freq": 500000,
+        "part": "0xd44",
+        "revidr": "0x0000000000000001",
+        "revision": 0,
+        "variant": 1
       }
-    ]
+    ],
+    "scaling-readable": true,
+    "transition-latency": 5000000
   },
   "input_identity": {
-    "touch_major": true,
-    "goodix_fp": false,
+    "aligns": [],
     "devices": [
       {
-        "name": "goodix_fingerprint",
         "keys": [
           "KEY_POWER",
           "KEY_WAKEUP"
         ],
         "msc": [
           "MSC_SCAN"
-        ]
+        ],
+        "name": "goodix_fingerprint"
       },
       {
-        "name": "gpio_keys",
         "bus": 25,
-        "vendor": 1,
-        "product": 1,
-        "version": 1,
         "keys": [
           "KEY_VOLUMEUP",
           "KEY_VOLUMEDOWN",
           "KEY_POWER"
-        ]
+        ],
+        "name": "gpio_keys",
+        "product": 1,
+        "vendor": 1,
+        "version": 1
       }
     ],
-    "aligns": []
+    "goodix_fp": false,
+    "touch_major": true
   },
   "display": {
+    "edid-native-only": true,
     "refresh-rates": [
       60,
       90
-    ],
-    "edid-native-only": true
+    ]
+  },
+  "thermal": {
+    "zones": [
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "BIG"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "MID"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "LITTLE"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "G3D"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "ISP"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "TPU"
+      }
+    ]
   }
 }

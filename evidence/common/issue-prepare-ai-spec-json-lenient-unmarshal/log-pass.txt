@@ -1,0 +1,15 @@
+$ cd /Volumes/work/cloud-phone-hub/agent && TMPDIR=/Volumes/work/cloud-phone-hub/out/agent/tmp go test -count=1 ./modules/pipeline/stages/02_prepare/...
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	1.182s
+
+$ TMPDIR=/Volumes/work/cloud-phone-hub/out/devices/tmp /Volumes/work/cloud-phone-hub/out/agent/dist/cdh-pipeline device apply-profile google/oriole --manifest 14-AP2A.240905.003.F1-20240815 --recollect
+==> [prepare] 正在通过 DSH 聊天界面（以 redmi/gold 已对齐全景为参考标杆）收集并对齐新机器规格: google/oriole (Pixel 6)...
+  [dsh-chat] 已连接运行中的 DSH 聊天界面 (http://127.0.0.1:53552)
+  [dsh-chat] 已在 DSH 聊天界面创建会话 sessionId=session-ced36e45-d244-4a35-8701-a47fb3e7d257 ([02_prepare] 真机规格采集 · Pixel 6 (google/oriole · 14-AP2A.240905.003.F1-20240815))
+  [ok] DSH AI 对齐完成 (session=session-ced36e45-d244-4a35-8701-a47fb3e7d257): Google Pixel 6 | 分辨率=1080x2400 | 面板=67x148mm (6.40") | DPI=420 | 内存=[8192] MB | 存储=[128000 256000] | CPU频点=policy0=17档/policy4=20档/policy6=24档 | Sensors=22项
+==> [prepare] 真机设备规格已留档:
+  - out/devices/prepare/google/oriole/14-AP2A.240905.003.F1-20240815/device-profile.json
+  - out/devices/prepare/google/oriole/14-AP2A.240905.003.F1-20240815/device-profile.md
+==> [apply-profile] 已同步机型真机档案到 manifest:
+  - devices/manifest/devices/google/oriole/device-profile.json
+  - devices/manifest/devices/google/oriole/device-profile.md
+==> [apply-profile] 一键反补完成: google/oriole（更新设备表=true，更新配置模版=1）

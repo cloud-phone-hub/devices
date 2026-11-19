@@ -1,0 +1,138 @@
+=== verify_boot.py 输出 ===
+Command exited with code 0.
+
+Command output:
+==> 创建并冷启动实例: match=Asteroids_14-UKQ1.241011.001-20251013
+    spec=Asteroids_14-UKQ1.241011.001-20251013 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/Asteroids_14-UKQ1.241011.001-20251013/1
+{
+  "spec": "Asteroids_14-UKQ1.241011.001-20251013",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/Asteroids_14-UKQ1.241011.001-20251013/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{59a1c4c u0 com.nothing.introduction/com.nothing.introduction.MainActivity}\n  mFocusedApp=ActivityRecord{c31b30a u0 com.nothing.introduction/.MainActivity t6}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "adreno",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2392,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 88.26,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/nothing_Asteroids_2.png",
+    "pngBytes": 93497
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+=== hvc7 复核与桌面切换 ===
+Command exited with code 0.
+
+Command output:
+=== INITIAL CHECK ===
+mCurrentFocus=Window{59a1c4c u0 com.nothing.introduction/com.nothing.introduction.MainActivity}
+  mFocusedApp=ActivityRecord{c31b30a u0 com.nothing.introduction/.MainActivity t6}
+Physical size: 1080x2392
+Physical density: 388
+  DisplayDeviceInfo{"Built-in Screen": uniqueId="local:4614472165855940608", 1080 x 2392, modeId 2, renderFrameRate 90.0, defaultModeId 3, userPreferredModeId -1, supportedModes [{id=1, width=1080, height=2392, fps=60.0, vsync=60.0, synthetic=false, alternativeRefreshRates=[90.0, 120.00001], supportedHdrTypes=[]}, {id=2, width=1080, height=2392, fps=90.0, vsync=90.0, synthetic=false, alternativeRefreshRates=[60.0, 120.00001], supportedHdrTypes=[]}, {id=3, width=1080, height=2392, fps=120.00001, vsync=120.00001, synthetic=false, alternativeRefreshRates=[60.0, 90.0], supportedHdrTypes=[]}], colorMode 0, supportedColorModes [0, 7, 9], hdrCapabilities HdrCapabilities{mSupportedHdrTypes=[], mMaxLuminance=500.0, mMaxAverageLuminance=500.0, mMinLuminance=0.0}, allmSupported false, gameContentTypeSupported false, density 388, 387.67 x 387.67 dpi, appVsyncOff 9166667, presDeadline 11500000, cutout DisplayCutout{insets=Rect(0, 126 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(454, 0 - 540, 126), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1080 displayHeight=2392 physicalDisplayWidth=1080 physicalDisplayHeight=2392 density={2.425} cutoutSpec={M540,68.6m-21.5,0a21.5,21.5 0,1 1,43 0a21.5,21.5 0,1 1,-43 0 @left} rotation={0} scale={1.0} physicalPixelDisplaySizeRatio={1.0}}} sideOverrides={}}, touch INTERNAL, rotation 0, type INTERNAL, address {port=0, model=0x4009e5fc7fc550}, deviceProductInfo DeviceProductInfo{name=BOE, manufacturerPnpId=BOE, productId=2591, modelYear=null, manufactureDate=ManufactureDate{week=12, year=2025}, connectionToSinkType=0}, state ON, committedState ON, frameRateOverride , brightnessMinimum 0.0, brightnessMaximum 1.0, brightnessDefault 0.4, hdrSdrRatio NaN, roundedCorners RoundedCorners{[RoundedCorner{position=TopLeft, radius=100, center=Point(100, 100)}, RoundedCorner{position=TopRight, radius=100, center=Point(980, 100)}, RoundedCorner{position=BottomRight, radius=100, center=Point(980, 2292)}, RoundedCorner{position=BottomLeft, radius=100, center=Point(100, 2292)}]}, FLAG_ALLOWED_TO_BE_DEFAULT_DISPLAY, FLAG_ROTATES_WITH_CONTENT, FLAG_SECURE, FLAG_SUPPORTS_PROTECTED_BUFFERS, FLAG_TRUSTED, installOrientation 0, displayShape DisplayShape{ spec=1406003047 displayWidth=1080 displayHeight=2392 physicalPixelDisplaySizeRatio=1.0 rotation=0 offsetX=0 offsetY=0 scale=1.0}}
+    mActiveModeId=2
+Service vendor.qti.hardware.radio.qtiradio.IQtiRadioStable/slot1: found
+309
+total 447
+drwx------  2 system system  3452 2026-11-19 07:56 .
+drwxrwxr-x 30 system system  4096 2026-11-19 07:56 ..
+-rw-------  1 system system   494 2026-11-19 07:56 SYSTEM_BOOT@2026-11-19-07_56_32_619.txt
+-rw-------  1 system system  9745 2026-11-19 07:56 SYSTEM_TOMBSTONE@2026-11-19-07_56_17_222.txt.gz
+-rw-------  1 system system 10179 2026-11-19 07:56 SYSTEM_TOMBSTONE@2026-11-19-07_56_18_577.txt.gz
+-rw-------  1 system system 10046 2026-11-19 07:56 SYSTEM_TOMBSTONE@2026-11-19-07_56_20_448.txt.gz
+-rw-------  1 system system 10052 2026-11-19 07:56 SYSTEM_TOMBSTONE@2026-11-19-07_56_22_494.txt.gz
+-rw-------  1 system system 10055 2026-11-19 07:56 SYSTEM_TOMBSTONE@2026-11-19-07_56_25_003.txt.gz
+-rw-------  1 system system 10028 2026-11-19 07:56 SYSTEM_TOMBSTONE@2026-11-19-07_56_26_792.txt.gz
+-rw-------  1 system system 13784 2026-11-19 07:56 SYSTEM_TOMBSTONE_PROTO_WITH_HEADERS@2026-11-19-07_56_16_975.dat.gz
+-rw-------  1 system system 68294 2026-11-19 07:56 SYSTEM_TOMBSTONE_PROTO_WITH_HEADERS@2026-11-19-07_56_18_541.dat.gz
+-rw-------  1 system system 67621 2026-11-19 07:56 SYSTEM_TOMBSTONE_PROTO_WITH_HEADERS@2026-11-19-07_56_20_286.dat.gz
+-rw-------  1 system system 67607 2026-11-19 07:56 SYSTEM_TOMBSTONE_PROTO_WITH_HEADERS@2026-11-19-07_56_22_432.dat.gz
+-rw-------  1 system system 67595 2026-11-19 07:56 SYSTEM_TOMBSTONE_PROTO_WITH_HEADERS@2026-11-19-07_56_24_978.dat.gz
+-rw-------  1 system system 67553 2026-11-19 07:56 SYSTEM_TOMBSTONE_PROTO_WITH_HEADERS@2026-11-19-07_56_26_779.dat.gz
+-rw-------  1 system system    23 2026-11-19 07:56 storage_trim@2026-11-18-23_56_09_410.txt
+-rw-------  1 system system    20 2026-11-19 07:56 storage_trim@2026-11-18-23_56_09_411.txt
+=== crash buf ===
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #09 pc 0000000000125bd2  /system_ext/priv-app/Nfc_st/Nfc_st.apk (com.android.nfc.dhimpl.StNativeNfcManager.initialize+38)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #10 pc 000000000078093c  /apex/com.android.art/lib64/libart.so (nterp_helper+9292) (BuildId: 31eac738ce2c7ea2458e525c9212337b)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #11 pc 000000000010061a  /system_ext/priv-app/Nfc_st/Nfc_st.apk (com.android.nfc.NfcService$EnableDisableTask.enableInternal+370)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #12 pc 000000000077f444  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 31eac738ce2c7ea2458e525c9212337b)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #13 pc 0000000000100c5c  /system_ext/priv-app/Nfc_st/Nfc_st.apk (com.android.nfc.NfcService$EnableDisableTask.doInBackground+324)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #14 pc 000000000077f444  /apex/com.android.art/lib64/libart.so (nterp_helper+3924) (BuildId: 31eac738ce2c7ea2458e525c9212337b)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #15 pc 0000000000100afc  /system_ext/priv-app/Nfc_st/Nfc_st.apk (com.android.nfc.NfcService$EnableDisableTask.doInBackground+4)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #16 pc 00000000005b2a08  /system/framework/arm64/boot-framework.oat (android.os.AsyncTask$3.call+136) (BuildId: 29497ca04e2f7425ce62e68d116cbbb55e5b1fec)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #17 pc 0000000000233194  /system/framework/arm64/boot.oat (java.util.concurrent.FutureTask.run+164) (BuildId: ee40d49a23211f900dad92102d1012c99322b33a)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #18 pc 000000000051cfc0  /system/framework/arm64/boot-framework.oat (android.os.AsyncTask$SerialExecutor$1.run+64) (BuildId: 29497ca04e2f7425ce62e68d116cbbb55e5b1fec)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #19 pc 000000000027cd84  /system/framework/arm64/boot.oat (java.util.concurrent.ThreadPoolExecutor.runWorker+724) (BuildId: ee40d49a23211f900dad92102d1012c99322b33a)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #20 pc 000000000027a538  /system/framework/arm64/boot.oat (java.util.concurrent.ThreadPoolExecutor$Worker.run+56) (BuildId: ee40d49a23211f900dad92102d1012c99322b33a)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #21 pc 0000000000155120  /system/framework/arm64/boot.oat (java.lang.Thread.run+64) (BuildId: ee40d49a23211f900dad92102d1012c99322b33a)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #22 pc 0000000000362974  /apex/com.android.art/lib64/libart.so (art_quick_invoke_stub+612) (BuildId: 31eac738ce2c7ea2458e525c9212337b)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #23 pc 000000000034e064  /apex/com.android.art/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+132) (BuildId: 31eac738ce2c7ea2458e525c9212337b)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #24 pc 0000000000943258  /apex/com.android.art/lib64/libart.so (art::detail::ShortyTraits<(char)86>::Type art::ArtMethod::InvokeInstance<(char)86>(art::Thread*, art::ObjPtr<art::mirror::Object>, art::detail::ShortyTraits<>::Type...)+60) (BuildId: 31eac738ce2c7ea2458e525c9212337b)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #25 pc 000000000063b1c8  /apex/com.android.art/lib64/libart.so (art::Thread::CreateCallback(void*)+1344) (BuildId: 31eac738ce2c7ea2458e525c9212337b)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #26 pc 000000000063ac78  /apex/com.android.art/lib64/libart.so (art::Thread::CreateCallbackWithUffdGc(void*)+8) (BuildId: 31eac738ce2c7ea2458e525c9212337b)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #27 pc 0000000000071b3c  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+196) (BuildId: f98650a65aa2ec2d87236752af90aa7e)
+11-19 07:56:54.754  7402  7402 F DEBUG   :       #28 pc 0000000000063c38  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+68) (BuildId: f98650a65aa2ec2d87236752af90aa7e)
+=== SETUP SKIP + HOME ===
+Starting: Intent { act=android.intent.action.MAIN cat=[android.intent.category.HOME] }
+  mCurrentFocus=Window{6ac929e u0 com.nothing.launcher/com.android.searchlauncher.SearchLauncher}
+  mFocusedApp=ActivityRecord{d91c52c u0 com.nothing.launcher/com.android.searchlauncher.SearchLauncher t7}
+=== RE-GRABBED PNG ===
+{'width': 1088, 'height': 2392, 'bpp': 32, 'shifts': [16, 8, 0], 'meanBrightness': 112.99, 'peak': 255, 'pngPath': '/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/nothing_Asteroids_2.png', 'pngBytes': 4078082}
+after destroy running: []
+
+=== patch-info.txt ===
+vendor: nothing
+brand: Asteroids
+version: 14-UKQ1.241011.001-20251013
+vendor-img: out/devices/devices/nothing/Asteroids/14-UKQ1.241011.001-20251013/img/vendor.img
+vendor-sha256: aa459f6be47110f58ee2ae48a8308f8d8d10d53a6f596e2d074ce4bbe76e1460
+vendor-size: 157597696
+dlkm-img: out/devices/devices/nothing/Asteroids/14-UKQ1.241011.001-20251013/img/vendor_dlkm.img
+dlkm-sha256: a354a9fa6ccadedb1889f7087827aacac58a2cc61d24fecc6bcc2df1297be99d
+dlkm-size: 14143488
+odm-img: out/devices/devices/nothing/Asteroids/14-UKQ1.241011.001-20251013/img/odm.img
+odm-sha256: 34ea5dcf348331e96d82368d9943e865e47ad03ee41ebf528d12325b55b7ff6f
+odm-size: 8388608
+size-mib: 384
+layout: root=container;vendor=subtree;vendor_dlkm=subtree;odm=subtree;lib-modules=real-dir;odm-selinux=none
+trees: / <- 容器根（自供），/vendor <- vendor.img，/vendor_dlkm <- vendor_dlkm.img，/odm <- odm.img
+must-absent: odm/etc/selinux/odm_sepolicy.cil odm/etc/selinux/precompiled_sepolicy
+debugfs: /opt/homebrew/opt/e2fsprogs/sbin/debugfs
+e2fsck: /opt/homebrew/opt/e2fsprogs/sbin/e2fsck
+mkfs.ext4: /opt/homebrew/opt/e2fsprogs/sbin/mkfs.ext4
+tree: 文件 583 / 链接 199 / 目录 54
+entries: 837（源 835 + 固定 2）
+label-files: 36
+readback: 837/837
+fsck: true
+image: out/devices/devices/nothing/Asteroids/14-UKQ1.241011.001-20251013/img/patch.img
+image_sha256: 05731e2fe4ae95b4f85a184d35bfbca055ae3b793526c9b0d0c23dd591d3af31
+image_size: 402653184
+recipe: patch-0db27b4caefe
+refresh: false
+note: patch.img 根是容器：/vendor、/vendor_dlkm、/odm 三棵并列子树分别来自 vendor.img / vendor_dlkm.img / odm.img
+note: mke2fs -d 不保留 uid/gid：属主与标签由步骤 11.5 的 debugfs 会话统一回填（标签用 -f 值文件带 NUL）
+note: 容器根、/vendor/odm、/vendor/lib/modules 的元数据固定，不取自源镜像
+note: /vendor/odm 在 vendor.img 里是绝对软链接，组装时换成真实空目录；odm 内容由 /odm 子树承载
+note: /vendor/lib/modules 在 vendor.img 里是软链接，组装时替换为真实目录并从 vendor_dlkm 复制；其子项元数据取自 vendor_dlkm.img
+note: odm 子树（odm.img）由 07_build_odm 产出：清单 odm/ 整棵就是 patch 的 /odm（机型规则 `file /odm /odm` 自映射保住挂载点、`dir /odm` 整棵重定向到/mnt/vendorpatch/odm，官方 odm 内容不参与）
+note: 屏蔽落点（odm/etc/selinux/odm_sepolicy.cil）用 exists 校验；/system/bin/update_verifier 由内核 getname 直接返回 ENOENT，与镜像内容无关
+note: 镜像大小固定 384 MiB（--size 可调）；ext4 只按内容占用，剩余空间留白供 vdc 只读挂载
+note: /mnt/vendor 不再被 patch 覆盖，EFI/persist/shared/mi_ext 由 first_stage_init 的 tmpfs + 官方 fstab 挂载

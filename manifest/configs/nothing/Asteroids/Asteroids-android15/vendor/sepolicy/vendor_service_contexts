@@ -1,0 +1,5 @@
+# 官方 vendor 是 A14/34.0，07 的跨代收口会删掉引用 hal_graphics_mapper_service 的行；
+# 本机系统 plat_sepolicy.cil（A15）实际声明了该类型，minigbm/qti mapper 服务必须保留映射，
+# 否则 hwc3 与 SurfaceFlinger 查 mapper/qti 落到 default_android_service 并被 SELinux 拒。
+mapper/minigbm_upstream	u:object_r:hal_graphics_mapper_service:s0
+mapper/minigbm	u:object_r:hal_graphics_mapper_service:s0

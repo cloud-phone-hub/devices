@@ -1,3 +1,9 @@
 {
-  "fstab": "mt6877"
+  "fstab": "mt6877",
+  "cmdline": [
+    "androidboot.product.hardware.sku=XPLORE_X1_NEU",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ]
 }

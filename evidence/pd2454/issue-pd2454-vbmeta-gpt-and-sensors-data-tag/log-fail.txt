@@ -1,0 +1,35 @@
+=== [Fail 1] 一阶段 VMountVerifyPartitions open AvbHandle fail (pd2454-vmount-fail.log) ===
+[    1.108983][    T1] init: Running vmount verify partitions start
+[    1.109992][    T1] init: [libfstab] Using Android DT directory /proc/device-tree/firmware/android/
+[    2.162123][    T1] init: [libfs_avb] Device path not found: /dev/block/by-name/vbmeta_a
+[    3.223663][    T1] init: [libfs_avb] Device path not found: /dev/block/by-name/boot_a
+[    3.226619][    T1] init: [libfs_avb] avb_slot_verify failed, result: 2
+[    3.233686][    T1] init: VMountVerifyPartitionsError: open AvbHandle fail, reboot into fastboot!: No such file or directory
+[    3.250761][    T1] init: InitFatalReboot: signal 6
+[    3.308384][    T1] init: Reboot ending, jumping to kernel
+[    3.933133][    T1] reboot: Restarting system with command 'bootloader'
+
+=== [Fail 2] 二阶段 system_server SensorService SIGABRT (/data/tombstones/tombstone_00) ===
+Build fingerprint: 'vivo/PD2454/PD2454:15/AP3A.240905.015.A2_V000L1/compiler250417003748:user/release-keys'
+Process uptime: 2s
+Cmdline: system_server
+pid: 5206, tid: 5316, name: SensorService  >>> system_server <<<
+signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+Abort message: 'out/soong/.intermediates/hardware/interfaces/sensors/aidl/android.hardware.sensors-V2-ndk-source/gen/include/aidl/android/hardware/sensors/Event.h:695: const _at<_Tag> &aidl::android::hardware::sensors::Event::EventPayload::get() const [_Tag = aidl::android::hardware::sensors::Event::EventPayload::Tag::data]: assertion "bad access: a wrong tag" failed'
+backtrace:
+      #00 pc 00000000000a809c  /apex/com.android.runtime/lib64/bionic/libc.so (abort+172)
+      #01 pc 00000000000a8938  /apex/com.android.runtime/lib64/bionic/libc.so (__assert2+40)
+      #02 pc 0000000000064200  /system/lib64/libsensorservice.so (android::hardware::sensors::implementation::convertToSensorEvent(aidl::android::hardware::sensors::Event const&, sensors_event_t*)+2100)
+      #03 pc 0000000000028360  /system/lib64/libsensorservice.so (android::AidlSensorHalWrapper::pollFmq(sensors_event_t*, unsigned long)+868)
+      #04 pc 000000000003c158  /system/lib64/libsensorservice.so (android::SensorDevice::poll(sensors_event_t*, unsigned long)+160)
+      #05 pc 0000000000053994  /system/lib64/libsensorservice.so (android::SensorService::threadLoop()+364)
+
+=== [Fail 3] 二阶段守护进程重启风暴 (pd2454-boot2-qemu.log) ===
+[   14.196138][    T1] init: Service 'android-hardware-media-c2-hal' (pid 533) exited with status 1
+[   14.206922][    T1] init: Service 'vendor-dolby-media-c2-hal' (pid 537) exited with status 1
+[   14.325938][    T1] init: Service 'zygote_tango' (pid 494) received signal 4
+[   24.963519][    T1] init: Service 'netboosterd' (pid 826) exited with status 1
+[   40.006587][    T1] init: process with updatable components 'vendor-dolby-media-c2-hal' exited 4 times before boot completed
+[   40.009055][    T1] init: process with updatable components 'android-hardware-media-c2-hal' exited 4 times before boot completed
+[   40.510913][    T1] init: process with updatable components 'zygote_tango' exited 4 times before boot completed
+[   44.990008][    T1] init: process with updatable components 'netboosterd' exited 4 times before boot completed

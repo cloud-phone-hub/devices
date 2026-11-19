@@ -1,0 +1,68 @@
+=== [失败现场 1] honor/chora 第 1 次冷启动 secilc 退出 254 (来自 chora_fail_qemu.log) ===
+[    1.440435][    T1] init: No precompiled sepolicy at /vendor/etc/selinux/precompiled_sepolicy: No such file or directory
+[    1.441446][    T1] init: Compiling SELinux policy
+qemu-system-aarch64: cgl-headless 大帧 1280x2788: blit=0.1 read=2.7 flush=0.0 update=0.0 end=0.0 总=2.7 ms
+[    1.449651][    T1] init: Using /system/etc/selinux/plat_sepolicy_genfs_202504.cil for genfs labels
+qemu-system-aarch64: cgl-headless 大帧 1280x2788: blit=0.1 read=2.8 flush=0.0 update=0.0 end=0.0 总=2.9 ms
+[    1.588193][    T1] init: /system/bin/secilc: linker: Warning: failed to find generated linker configuration from "/linkerconfig/ld.config.txt"
+[    1.589413][    T1] init: /system/bin/secilc: WARNING: linker: Warning: failed to find generated linker configuration from "/linkerconfig/ld.config.txt"
+[    1.590571][    T1] init: /system/bin/secilc: Failed to resolve permission nlmsg
+[    1.591338][    T1] init: /system/bin/secilc: Failed to resolve allow statement at /vendor/etc/selinux/vendor_sepolicy.cil:2423 from system/sepolicy/vendor/ot_rcp.te:21 from out/soong/.intermediates/system/sepolicy/vendor_sepolicy.cil.raw/android_common/virtio_arm64/vendor_sepolicy.cil.raw:1913
+qemu-system-aarch64: cgl-headless 大帧 1280x2788: blit=0.1 read=2.8 flush=0.0 update=0.0 end=0.0 总=2.9 ms
+[    1.593530][    T1] init: /system/bin/secilc: Failed to resolve AST
+qemu-system-aarch64: cgl-headless 大帧 1280x2788: blit=0.1 read=2.9 flush=0.0 update=0.0 end=0.0 总=3.0 ms
+[    1.600940][    T1] init: /system/bin/secilc: Failed to compile cildb: -2
+[    1.608067][    T1] init: /system/bin/secilc exited with status 254
+[    1.608913][    T1] init: Unable to open SELinux policy
+[    1.609629][    T1] [BOOTTRACE][I] handle boot error: init abort, Unable to open SELinux policy
+[    1.610432][    T1] [BOOTTRACE][E] HandleBootError:148: boot log alog dump fail, -62
+[    1.611179][    T1] [BOOTTRACE][E] BootErrorInfoFormat:129: get boot stage fail, -62
+[    1.611957][    T1] [BOOTTRACE][E] HandleBootError:160: handle cur boot error fail, -62
+[    1.613120][    T1] init: InitFatalReboot: signal 6
+
+=== [失败现场 2] honor/chora 第 2 次冷启动 system_server HintManagerService NPE (来自 chora_boot2_diag.txt) ===
+582:u:r:hal_hwfactoryinterface_default:s0 root    594     1   12455248   6172 binder_thread_read  0 S vendor.honor.hardware.hwfactoryinterface-service
+615:[    3.220182] init 21: Parsing file /vendor/etc/init/vendor.honor.hardware.hwfactoryinterface-service.rc...
+674:=== CMD (ok=True): logcat -d -b crash,system,main -v threadtime | grep -E 'FATAL EXCEPTION|HintManagerService|SupportInfo|hwfactory|cust_init|power|avc' | tail -n 80 ===
+680:11-18 20:06:30.600  1841  1841 E PowerStatsService: Unable to get power.stats HAL service.
+681:11-18 20:06:30.600  1841  1841 E PowerStatsService: nativeInit failed to connect to power.stats HAL
+682:11-18 20:06:30.692   594   594 E vendor.honor.hardware.hwfactoryinterface-service: oeminfo_Read:dlopen lib:liboeminfo.so, err:dlopen failed: library "liboeminfo.so" not found
+685:11-18 20:06:30.979  1841  1841 E System  : java.lang.RuntimeException: Failed to create service com.android.server.power.hint.HintManagerService: service constructor threw an exception
+686:11-18 20:06:30.979  1841  1841 E System  : Caused by: java.lang.NullPointerException: Attempt to read from field 'android.hardware.power.SupportInfo$HeadroomSupportInfo android.hardware.power.SupportInfo.headroom' on a null object reference in method 'void com.android.server.power.hint.HintManagerService.<init>(android.content.Context, com.android.server.power.hint.HintManagerService$Injector)'
+687:11-18 20:06:30.979  1841  1841 E System  : 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:343)
+688:11-18 20:06:30.979  1841  1841 E System  : 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:300)
+689:11-18 20:06:30.979  1841  1841 E Zygote  : java.lang.RuntimeException: Failed to create service com.android.server.power.hint.HintManagerService: service constructor threw an exception
+690:11-18 20:06:30.979  1841  1841 E Zygote  : Caused by: java.lang.NullPointerException: Attempt to read from field 'android.hardware.power.SupportInfo$HeadroomSupportInfo android.hardware.power.SupportInfo.headroom' on a null object reference in method 'void com.android.server.power.hint.HintManagerService.<init>(android.content.Context, com.android.server.power.hint.HintManagerService$Injector)'
+691:11-18 20:06:30.979  1841  1841 E Zygote  : 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:343)
+692:11-18 20:06:30.979  1841  1841 E Zygote  : 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:300)
+693:11-18 20:06:30.979  1841  1841 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+694:11-18 20:06:30.979  1841  1841 E AndroidRuntime: java.lang.RuntimeException: Failed to create service com.android.server.power.hint.HintManagerService: service constructor threw an exception
+695:11-18 20:06:30.979  1841  1841 E AndroidRuntime: Caused by: java.lang.NullPointerException: Attempt to read from field 'android.hardware.power.SupportInfo$HeadroomSupportInfo android.hardware.power.SupportInfo.headroom' on a null object reference in method 'void com.android.server.power.hint.HintManagerService.<init>(android.content.Context, com.android.server.power.hint.HintManagerService$Injector)'
+696:11-18 20:06:30.979  1841  1841 E AndroidRuntime: 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:343)
+697:11-18 20:06:30.979  1841  1841 E AndroidRuntime: 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:300)
+698:11-18 20:06:35.589  2036  2036 E PowerStatsService: Unable to get power.stats HAL service.
+699:11-18 20:06:35.589  2036  2036 E PowerStatsService: nativeInit failed to connect to power.stats HAL
+700:11-18 20:06:35.696   594   594 E vendor.honor.hardware.hwfactoryinterface-service: oeminfo_Read:dlopen lib:liboeminfo.so, err:dlopen failed: library "liboeminfo.so" not found
+703:11-18 20:06:35.979  2036  2036 E System  : java.lang.RuntimeException: Failed to create service com.android.server.power.hint.HintManagerService: service constructor threw an exception
+704:11-18 20:06:35.979  2036  2036 E System  : Caused by: java.lang.NullPointerException: Attempt to read from field 'android.hardware.power.SupportInfo$HeadroomSupportInfo android.hardware.power.SupportInfo.headroom' on a null object reference in method 'void com.android.server.power.hint.HintManagerService.<init>(android.content.Context, com.android.server.power.hint.HintManagerService$Injector)'
+705:11-18 20:06:35.979  2036  2036 E System  : 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:343)
+706:11-18 20:06:35.979  2036  2036 E System  : 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:300)
+707:11-18 20:06:35.979  2036  2036 E Zygote  : java.lang.RuntimeException: Failed to create service com.android.server.power.hint.HintManagerService: service constructor threw an exception
+708:11-18 20:06:35.979  2036  2036 E Zygote  : Caused by: java.lang.NullPointerException: Attempt to read from field 'android.hardware.power.SupportInfo$HeadroomSupportInfo android.hardware.power.SupportInfo.headroom' on a null object reference in method 'void com.android.server.power.hint.HintManagerService.<init>(android.content.Context, com.android.server.power.hint.HintManagerService$Injector)'
+709:11-18 20:06:35.979  2036  2036 E Zygote  : 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:343)
+710:11-18 20:06:35.979  2036  2036 E Zygote  : 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:300)
+711:11-18 20:06:35.979  2036  2036 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+712:11-18 20:06:35.979  2036  2036 E AndroidRuntime: java.lang.RuntimeException: Failed to create service com.android.server.power.hint.HintManagerService: service constructor threw an exception
+713:11-18 20:06:35.979  2036  2036 E AndroidRuntime: Caused by: java.lang.NullPointerException: Attempt to read from field 'android.hardware.power.SupportInfo$HeadroomSupportInfo android.hardware.power.SupportInfo.headroom' on a null object reference in method 'void com.android.server.power.hint.HintManagerService.<init>(android.content.Context, com.android.server.power.hint.HintManagerService$Injector)'
+714:11-18 20:06:35.979  2036  2036 E AndroidRuntime: 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:343)
+715:11-18 20:06:35.979  2036  2036 E AndroidRuntime: 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:300)
+716:11-18 20:06:40.582  2240  2240 E PowerStatsService: Unable to get power.stats HAL service.
+717:11-18 20:06:40.582  2240  2240 E PowerStatsService: nativeInit failed to connect to power.stats HAL
+718:11-18 20:06:40.694   594   594 E vendor.honor.hardware.hwfactoryinterface-service: oeminfo_Read:dlopen lib:liboeminfo.so, err:dlopen failed: library "liboeminfo.so" not found
+721:11-18 20:06:40.968  2240  2240 E System  : java.lang.RuntimeException: Failed to create service com.android.server.power.hint.HintManagerService: service constructor threw an exception
+722:11-18 20:06:40.968  2240  2240 E System  : Caused by: java.lang.NullPointerException: Attempt to read from field 'android.hardware.power.SupportInfo$HeadroomSupportInfo android.hardware.power.SupportInfo.headroom' on a null object reference in method 'void com.android.server.power.hint.HintManagerService.<init>(android.content.Context, com.android.server.power.hint.HintManagerService$Injector)'
+723:11-18 20:06:40.968  2240  2240 E System  : 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:343)
+724:11-18 20:06:40.968  2240  2240 E System  : 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:300)
+725:11-18 20:06:40.968  2240  2240 E Zygote  : java.lang.RuntimeException: Failed to create service com.android.server.power.hint.HintManagerService: service constructor threw an exception
+726:11-18 20:06:40.968  2240  2240 E Zygote  : Caused by: java.lang.NullPointerException: Attempt to read from field 'android.hardware.power.SupportInfo$HeadroomSupportInfo android.hardware.power.SupportInfo.headroom' on a null object reference in method 'void com.android.server.power.hint.HintManagerService.<init>(android.content.Context, com.android.server.power.hint.HintManagerService$Injector)'
+727:11-18 20:06:40.968  2240  2240 E Zygote  : 	at com.android.server.power.hint.HintManagerService.<init>(HintManagerService.java:343)

@@ -1,0 +1,49 @@
+=== [Pass 1] apply-profile 重对齐与构建产物验证 ===
+       - vendor/config.json: vintf-version=8.0
+       - vendor/config.json: 写入 15 项官方固件实测 files（库/权限/编解码配置）
+vintf-version: 8.0
+abilist: arm64-v8a abilist32: '' abilist64: arm64-v8a
+deletes: []
+
+<!-- built vendor/etc/vintf/manifest.xml -->
+<manifest version="8.0" type="device" target-level="202404">
+    <sepolicy>
+        <version>202404</version>
+    </sepolicy>
+</manifest>
+OK: no version=9.x left
+-rw-r--r--@ 1 cuimingqiang  staff  1058 Nov 19 03:08 /Volumes/work/cloud-phone-hub/out/devices/devices/blackview/XPLORE_X1/15-AP3A.240905.015.A2-20251126/vendor/etc/init/android.hardware.media.c2-mediatek.rc
+
+=== [Pass 2] verify_boot.py 验收输出 ===
+{
+  "spec": "XPLORE_X1_15-AP3A.240905.015.A2-20251126",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/XPLORE_X1_15-AP3A.240905.015.A2-20251126/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "topActivity": "mCurrentFocus=Window{9583676 u0 com.blackview.launcher/com.android.searchlauncher.SearchLauncher}\n  mFocusedApp=ActivityRecord{ee8dc71 u0 com.blackview.launcher/com.android.searchlauncher.SearchLauncher t6}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "351",
+  "vnc": {
+    "width": 1088,
+    "height": 2460,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 71.52,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/blackview_XPLORE_X1.png",
+    "pngBytes": 1053362
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+==> 销毁测试实例 XPLORE_X1_15-AP3A.240905.015.A2-20251126/1

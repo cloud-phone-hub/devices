@@ -1,3 +1,18 @@
 {
-  "partitions": []
+  "partitions": [
+    {
+      "flags": "wait,first_stage_mount,nofail",
+      "fstype": "ext4",
+      "gid": 1000,
+      "image": "vendor_persist.img",
+      "label": "u:object_r:persist_file:s0",
+      "mode": "0771",
+      "mount": "/mnt/vendor/persist",
+      "name": "vendor_persist",
+      "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+      "size": 33554432,
+      "uid": 1000
+    }
+  ],
+  "data-size": 115016171520
 }

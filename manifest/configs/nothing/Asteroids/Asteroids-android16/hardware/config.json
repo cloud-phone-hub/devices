@@ -37,12 +37,6 @@
       }
     },
     {
-      "android.hardware.ir": {
-        "variant": "default",
-        "version": "1.0"
-      }
-    },
-    {
       "android.hardware.keymint": {
         "variant": "default",
         "version": "1.0"
@@ -110,6 +104,18 @@
     },
     {
       "vendor.qti.hardware.perf2": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.graphics.allocator": {
+        "variant": "default",
+        "version": "2.0"
+      }
+    },
+    {
+      "android.hardware.nfc": {
         "variant": "default",
         "version": "1.0"
       }

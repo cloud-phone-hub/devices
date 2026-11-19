@@ -7,85 +7,77 @@
     "virtio_media"
   ],
   "input_identity": {
-    "touch_major": true,
-    "goodix_fp": true,
+    "aligns": [
+      {
+        "keys": [
+          "KEY_VOLUMEDOWN"
+        ],
+        "name": "qcom-pmic-keys"
+      }
+    ],
     "devices": [
       {
-        "name": "uinput-fpc",
+        "abs": [
+          {
+            "axis": "ABS_Z",
+            "flat": 0,
+            "fuzz": 0,
+            "max": 255,
+            "min": 0
+          }
+        ],
         "bus": 6,
-        "vendor": 1638,
-        "product": 2184,
-        "version": 0,
         "keys": [
           "KEY_UP",
           "KEY_LEFT",
           "KEY_RIGHT",
           "KEY_DOWN"
         ],
-        "abs": [
-          {
-            "axis": "ABS_Z",
-            "min": 0,
-            "max": 255,
-            "fuzz": 0,
-            "flat": 0
-          }
-        ]
+        "name": "uinput-goodix",
+        "product": 2184,
+        "vendor": 1638,
+        "version": 0
       },
       {
-        "name": "fpc_irq@fingerprint",
         "keys": [
           "KEY_POWER",
           "KEY_WAKEUP"
         ],
         "msc": [
           "MSC_SCAN"
-        ]
+        ],
+        "name": "goodix_fp"
       },
       {
-        "name": "swtp",
-        "keys": [
-          249,
-          250
-        ]
-      },
-      {
-        "name": "mt6833-mt6359 Headset Jack",
         "bus": 25,
-        "phys": "ALSA",
         "keys": [
           "KEY_PLAYPAUSE",
           "BTN_1",
           "BTN_2",
           "KEY_VOICECOMMAND"
         ],
+        "name": "chora-snd-card Headset Jack",
+        "phys": "ALSA",
         "switches": [
           "SW_HEADPHONE_INSERT",
           "SW_MICROPHONE_INSERT",
-          "SW_LINEOUT_INSERT",
-          "SW_JACK_PHYSICAL_INSERT"
+          "SW_LINEOUT_INSERT"
         ]
       },
       {
-        "name": "mtk-pmic-keys",
         "bus": 25,
-        "vendor": 1,
-        "product": 1,
-        "version": 1,
         "keys": [
           "KEY_VOLUMEUP",
           "KEY_POWER"
-        ]
+        ],
+        "name": "qcom-pmic-keys",
+        "product": 1,
+        "vendor": 1,
+        "version": 1
       }
     ],
-    "aligns": [
-      {
-        "name": "mtk-kpd",
-        "keys": [
-          "KEY_VOLUMEDOWN"
-        ]
-      }
-    ]
+    "goodix_fp": true,
+    "touch_major": true
   },
   "redirect": [
     {
@@ -102,6 +94,11 @@
       "from": "/vendor/lib",
       "to": "/mnt/vendorpatch/vendor/lib",
       "type": "dir"
+    },
+    {
+      "from": "/vendor/lib64/android.hardware.graphics.common-V6-ndk.so",
+      "to": "/vendor/lib64/android.hardware.graphics.common-V6-ndk.so",
+      "type": "file"
     },
     {
       "from": "/vendor/lib64",
@@ -137,6 +134,179 @@
       "from": "/system/bin/update_verifier",
       "to": "/mnt/vendorpatch/system/bin/update_verifier",
       "type": "file"
+    },
+    {
+      "from": "/vendor/app",
+      "to": "/mnt/vendorpatch/vendor/app",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/lib64/libunwindstack.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/libui.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/lib64/liblzma.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/android.hardware.graphics.allocator@4.0.so",
+      "type": "maps"
     }
-  ]
+  ],
+  "cpufreq": {
+    "available-governors": [
+      "schedutil",
+      "performance",
+      "powersave",
+      "ondemand",
+      "conservative",
+      "interactive",
+      "userspace"
+    ],
+    "bogo-mips": "38.40",
+    "driver": "qcom-cpufreq-hw",
+    "governor": "schedutil",
+    "package-per-cluster": false,
+    "policies": [
+      {
+        "available-frequencies": [
+          1900800,
+          1804800,
+          1708800,
+          1612800,
+          1516800,
+          1401600,
+          1305600,
+          1209600,
+          1113600,
+          1036800,
+          940800,
+          844800,
+          787200,
+          710400,
+          652800,
+          595200,
+          518400,
+          403200,
+          300000
+        ],
+        "capacity": 868,
+        "cpus": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "cur-freq": 1113600,
+        "implementer": "0x41",
+        "max-freq": 1900800,
+        "midr": "0x00000000411fd050",
+        "min-freq": 300000,
+        "part": "0xd05",
+        "policy": 0,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 2
+      },
+      {
+        "available-frequencies": [
+          2208000,
+          2112000,
+          2016000,
+          1920000,
+          1804800,
+          1708800,
+          1612800,
+          1516800,
+          1401600,
+          1305600,
+          1209600,
+          1113600,
+          1036800,
+          940800,
+          844800,
+          787200,
+          710400,
+          652800,
+          518400,
+          403200,
+          300000
+        ],
+        "capacity": 1024,
+        "cpus": [
+          6,
+          7
+        ],
+        "cur-freq": 1209600,
+        "implementer": "0x41",
+        "max-freq": 2208000,
+        "midr": "0x00000000414fd0b0",
+        "min-freq": 300000,
+        "part": "0xd0b",
+        "policy": 6,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 4
+      }
+    ],
+    "scaling-readable": true,
+    "transition-latency": 1000
+  },
+  "input": {
+    "keyboard": {
+      "bus": 25,
+      "name": "qcom-pmic-keys",
+      "product": 0,
+      "vendor": 0,
+      "version": 0
+    },
+    "tablet": false,
+    "touch": {
+      "abs-to-mt": true,
+      "abs-x-max": 17280,
+      "abs-xy": true,
+      "abs-y-max": 38592,
+      "bus": 24,
+      "mt-pressure": true,
+      "mt-slots": 10,
+      "name": "fts_ts",
+      "product": 17,
+      "touch-keys": [
+        116,
+        143,
+        354
+      ],
+      "vendor": 3823,
+      "version": 512
+    }
+  },
+  "thermal": {
+    "zones": [
+      {
+        "base-temp-mc": 30000,
+        "jitter-mc": 120,
+        "type": "battery"
+      },
+      {
+        "base-temp-mc": 33500,
+        "jitter-mc": 320,
+        "type": "cpu-0-0"
+      },
+      {
+        "base-temp-mc": 32800,
+        "jitter-mc": 280,
+        "type": "gpuss-0"
+      },
+      {
+        "base-temp-mc": 30500,
+        "jitter-mc": 200,
+        "type": "skin-therm"
+      },
+      {
+        "base-temp-mc": 33200,
+        "jitter-mc": 260,
+        "type": "xo-therm"
+      }
+    ]
+  }
 }

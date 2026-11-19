@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thermal-config skin-name="SKIN" skin-celsius="28.5" model-maximum-celsius="50"
+                model-heating-seconds="20" model-cooling-seconds="45" model-sample-interval-ms="1000">
+    <sensor id="0" name="CPU" value="33.6"
+            thresholds="nan;nan;nan;85;90;100;117"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="1" name="GPU" value="32.8"
+            thresholds="nan;nan;nan;85;90;100;117"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="2" name="BATTERY" value="29.1"
+            thresholds="nan;nan;nan;50;55;59;60"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="3" name="SKIN" value="28.5"
+            thresholds="nan;43;45;50;70;80;90"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="5" name="POWER_AMPLIFIER" value="30.2"
+            thresholds="nan;nan;nan;68;90;100;110"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="9" name="NPU" value="33.6"
+            thresholds="nan;nan;nan;85;90;100;117"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="13" name="SOC" value="33.6"
+            thresholds="nan;nan;nan;85;90;100;117"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="16" name="CHARGER" value="30.2"
+            thresholds="nan;nan;nan;70;90;110;120"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <cooling id="3" name="devfreq-13c00000.mali" value="0"/>
+</thermal-config>

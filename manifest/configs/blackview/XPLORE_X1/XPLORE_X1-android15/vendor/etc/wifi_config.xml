@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wifi-config channel="/dev/hvc9"
+             scan-profile="/sys/module/mac80211_hwsim/parameters/scan_profile"
+             frame-max="1048576"
+             reconnect-delay-ms="1000"
+             read-timeout-ms="30000"
+             protocol-version="1"/>

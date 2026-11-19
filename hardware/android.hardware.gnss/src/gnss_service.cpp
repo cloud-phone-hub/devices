@@ -51,6 +51,11 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+extern "C" {
+void AIBinder_markVintfStability(AIBinder *binder);
+void AIBinder_Class_disableInterfaceTokenHeader(AIBinder_Class *clazz);
+}
+
 // ---- libxml2 读取便利层（本模块自用，不进公共头）----
 // 读整个文件成 DOM；失败返回 nullptr（调用方回退内置默认）。
 static xmlDocPtr loadXmlDoc(const std::string &path) {
@@ -1084,6 +1089,7 @@ static void RegisterPlaceholdersFromFile(const char *path) {
         class_cache.erase(it);
         continue;
       }
+      AIBinder_Class_disableInterfaceTokenHeader(it->second);
     }
     AIBinder *binder = AIBinder_new(it->second, nullptr);
     if (binder == nullptr) {
@@ -1092,6 +1098,7 @@ static void RegisterPlaceholdersFromFile(const char *path) {
                           name.c_str());
       continue;
     }
+    AIBinder_markVintfStability(binder);
     const binder_exception_t status =
         AServiceManager_addService(binder, name.c_str());
     if (status != EX_NONE) {

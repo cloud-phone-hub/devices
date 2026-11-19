@@ -1,0 +1,103 @@
+=== UNIT TESTS (2026-11-18) ===
+=== RUN   TestDefaultHardwareForAndroid
+--- PASS: TestDefaultHardwareForAndroid (0.00s)
+PASS
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/device	0.933s
+=== RUN   TestApplyProfileCopiesToManifestDevicesAndAlignsConfigs
+--- PASS: TestApplyProfileCopiesToManifestDevicesAndAlignsConfigs (0.03s)
+=== RUN   TestAlignHardwareHALListAutoCompletesGraphics
+=== RUN   TestAlignHardwareHALListAutoCompletesGraphics/A14_补齐_allocator_与_composer@2.4_与_gpu
+=== RUN   TestAlignHardwareHALListAutoCompletesGraphics/A15_补齐_allocator_与_composer3@3.0_与_gpu
+=== RUN   TestAlignHardwareHALListAutoCompletesGraphics/A16_hasReadme_机型补齐_allocator_且不强加_gpu
+--- PASS: TestAlignHardwareHALListAutoCompletesGraphics (0.00s)
+    --- PASS: TestAlignHardwareHALListAutoCompletesGraphics/A14_补齐_allocator_与_composer@2.4_与_gpu (0.00s)
+    --- PASS: TestAlignHardwareHALListAutoCompletesGraphics/A15_补齐_allocator_与_composer3@3.0_与_gpu (0.00s)
+    --- PASS: TestAlignHardwareHALListAutoCompletesGraphics/A16_hasReadme_机型补齐_allocator_且不强加_gpu (0.00s)
+PASS
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	1.111s
+
+=== CPH2767 BUILD LOG (09_build_vendor graphics.allocator + APEX cleanup) ===
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:32:[skip] android.hardware.graphics.allocator（变体 default）产物与源码指纹一致
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:33:==> HAL 构建完成: 新编 0，复用 21，总计 21 个模块
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:47:    编译产物:   out/devices/vendor/android16（android.hardware.audio@default 4 项、android.hardware.bluetooth@default 3 项、android.hardware.camera@default 3 项、android.hardware.gnss@default 3 项、android.hardware.gpu@default 4 项、android.hardware.ir@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.media.v412@default 46 项、android.hardware.memtrack@default 3 项、android.hardware.nfc@default 3 项、android.hardware.power@default 3 项、android.hardware.power.stats@default 2 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.vibrator@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 15 项、android.hardware.graphics.allocator@default 3 项）；out/devices/vendor/android16/oplus（android.hardware.health@oplus 3 项）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:50:    vendor APEX: default（预计摊平 3/12：com.android.hardware.graphics.composer.drm_hwcomposer_upstream / com.android.hardware.wpa_supplicant.mainline_common / org.lineageos.device.gralloc.minigbm_upstream）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:111:        期望产物 out/devices/vendor/android16/lib64/android.hardware.graphics.allocator-V2-ndk.so
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:112:        期望产物 out/devices/vendor/android16/lib64/android.hardware.graphics.allocator@2.0.so
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:113:        期望产物 out/devices/vendor/android16/lib64/android.hardware.graphics.allocator@3.0.so
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:114:        期望产物 out/devices/vendor/android16/lib64/android.hardware.graphics.allocator@4.0.so
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:140:        期望产物 out/devices/vendor/android16/lib64/libgralloctypes.so
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:200:    HAL 模块:  android.hardware.graphics.allocator（变体 default，变体产物根 out/devices/vendor/android16，3 项齐全（编译产物 3 + vendor 静态树 0，源码指纹一致）-> 复用）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:201:        期望产物 out/devices/vendor/android16/bin/hw/android.hardware.graphics.allocator-service.minigbm
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:202:        期望产物 out/devices/vendor/android16/lib64/hw/mapper.minigbm.so
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:203:        期望产物 out/devices/vendor/android16/lib64/hw/gralloc.minigbm.so
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:219:    输入: out/devices/roms/lineage/lineage-23.2/super/unpack_vendor/apex（共 12 个 .apex，选中 3 个：com.android.hardware.graphics.composer.drm_hwcomposer_upstream / com.android.hardware.wpa_supplicant.mainline_common / org.lineageos.device.gralloc.minigbm_upstream）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:223:    org.lineageos.device.gralloc.minigbm_upstream.apex: 新增 4 / 覆盖 16 / 跳过 2，rc 改写 1 个文件 1 行
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:226:    输入: db://oneplus/CPH2767/16-BP2A.250605.015-20260810（hardware 21 项：android.hardware.audio@default、android.hardware.bluetooth@default、android.hardware.camera@default、android.hardware.gnss@default、android.hardware.gpu@default、android.hardware.health@oplus、android.hardware.ir@default、android.hardware.keymint@default、android.hardware.light@default、android.hardware.media@default、android.hardware.media.v412@default、android.hardware.memtrack@default、android.hardware.nfc@default、android.hardware.power@default、android.hardware.power.stats@default、android.hardware.sensors@default、android.hardware.thermal@default、android.hardware.vibrator@default、android.hardware.wifi@default、android.service.daemon@default、android.hardware.graphics.allocator@default）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:227:    输出: out/devices/vendor/android16（android.hardware.audio@default 4 项、android.hardware.bluetooth@default 3 项、android.hardware.camera@default 3 项、android.hardware.gnss@default 3 项、android.hardware.gpu@default 4 项、android.hardware.ir@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.media.v412@default 46 项、android.hardware.memtrack@default 3 项、android.hardware.nfc@default 3 项、android.hardware.power@default 3 项、android.hardware.power.stats@default 2 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.vibrator@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 15 项、android.hardware.graphics.allocator@default 3 项）；out/devices/vendor/android16/oplus（android.hardware.health@oplus 3 项）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:249:[skip] android.hardware.graphics.allocator 已编译（3 个编译产物 + 0 个 vendor 静态树文件齐全，源码指纹一致）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:251:    输入: 机型静态树 devices/manifest/configs/oneplus/CPH2767/CPH2767-android16/vendor；编译产物 out/devices/vendor/android16（android.hardware.audio@default 4 项、android.hardware.bluetooth@default 3 项、android.hardware.camera@default 3 项、android.hardware.gnss@default 3 项、android.hardware.gpu@default 4 项、android.hardware.ir@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.media.v412@default 46 项、android.hardware.memtrack@default 3 项、android.hardware.nfc@default 3 项、android.hardware.power@default 3 项、android.hardware.power.stats@default 2 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.vibrator@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 15 项、android.hardware.graphics.allocator@default 3 项）；out/devices/vendor/android16/oplus（android.hardware.health@oplus 3 项）；平台覆盖层 out/devices/vendor/android16/qcom
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:264:    写 out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/vendor/bin/hw/android.hardware.graphics.allocator-service.minigbm（0755）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:347:    写 out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/vendor/lib64/android.hardware.graphics.allocator-V2-ndk.so（0644）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:348:    写 out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/vendor/lib64/android.hardware.graphics.allocator@2.0.so（0644）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:349:    写 out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/vendor/lib64/android.hardware.graphics.allocator@3.0.so（0644）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:350:    写 out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/vendor/lib64/android.hardware.graphics.allocator@4.0.so（0644）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:363:    写 out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/vendor/lib64/hw/gralloc.minigbm.so（0644）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:364:    写 out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/vendor/lib64/hw/mapper.minigbm.so（0644）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:379:    写 out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/vendor/lib64/libgralloctypes.so（0644）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:403:    [prop] 追加 ro.hardware.gralloc=minigbm
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:508:[delete] vendor/lib64/libminigbm_gralloc_upstream.so（自编 allocator 已静态内聚，移除底包残留库）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:509:[delete] vendor/lib64/libminigbm_gralloc4_utils_upstream.so（自编 allocator 已静态内聚，移除底包残留库）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:510:[delete] vendor/lib/libminigbm_gralloc_upstream.so（自编 allocator 已静态内聚，移除底包残留库）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:511:[delete] vendor/lib64/hw/mapper.minigbm_upstream.so（自编 allocator 已静态内聚，移除底包残留库）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:512:[delete] vendor/lib/hw/mapper.minigbm_upstream.so（自编 allocator 已静态内聚，移除底包残留库）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:513:[delete] vendor/bin/hw/android.hardware.graphics.allocator-service.minigbm_upstream（自编 allocator 已静态内聚，移除底包残留库）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:514:[rename] vendor/lib64/hw/mapper.minigbm.so -> lib64/hw/mapper.qti.so（源码自编无 SONAME 库对齐厂商名称）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:515:[rename] vendor/lib64/hw/gralloc.minigbm.so -> lib64/hw/gralloc.default.so（源码自编无 SONAME 库对齐厂商名称）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:516:[config] vendor/etc/vintf/manifest/mapper.qti.xml（mapper.minigbm_upstream.xml -> @5.0/qti）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:517:[config] vendor/build.prop: 移除云机默认 ro.hardware.gralloc（对齐原厂无此属性）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:518:[config] vendor/etc/selinux/vendor_service_contexts: mapper/minigbm* -> mapper/qti
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:519:[config] vendor/etc/selinux/vendor_file_contexts: 补齐 mapper.qti.so / gralloc.default.so same_process_hal_file 标签
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:574:    编译产物 android.hardware.graphics.allocator@default: 写入 3，已存在同内容 0
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:602:    镜像产物:    out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/img/patch.img（384 MiB，ext4）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:643:    输出: out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/img/{patch.img、patch-info.txt、patch-recipe.txt、SHA256SUMS}
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:644:[ok] patch.img 发布完成: out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/img/patch.img（402653184 字节，sha256 02fa23ebc2bf）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:645:[ok] patch.img 构建完成: out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/img/patch.img
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:647:    备注: patch.img 根是容器：/vendor、/vendor_dlkm、/odm 三棵并列子树分别来自 vendor.img / vendor_dlkm.img / odm.img
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:661:==> 阶段日志: out/devices/dist/oneplus/CPH2767/16-BP2A.250605.015-20260810/vda-log.txt（边写边变，不在 SHA256SUMS 之内）
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:671:    缓存配方:   记录为 vda-2ac0d0e55dfc，实跑时重新计算比对
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:673:    重建原因: 配方变化: vda-2ac0d0e55dfc -> vda-b16325c746b5
+/Volumes/work/cloud-phone-hub/out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/build.log:678:    [ok] patch.img 384.0 MiB（out/devices/devices/oneplus/CPH2767/16-BP2A.250605.015-20260810/img/patch.img）
+
+=== CPH2767 COLD BOOT + VNC VERIFY PASS ===
+==> 创建并冷启动实例: match=oneplus/CPH2767/16-BP2A.250605.015-20260810
+    spec=CPH2767_16-BP2A.250605.015-20260810 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/CPH2767_16-BP2A.250605.015-20260810/1
+{
+  "spec": "CPH2767_16-BP2A.250605.015-20260810",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/CPH2767_16-BP2A.250605.015-20260810/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{e5b176b u0 com.oplus.battery}\n  mFocusedApp=ActivityRecord{257021321 u0 com.google.android.setupwizard/.SetupWizardActivity t6}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "adreno",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1280,
+    "height": 2800,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 50.28,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/oneplus_CPH2767.png",
+    "pngBytes": 428513
+  },
+  "passed": true
+}
+==> 销毁测试实例 CPH2767_16-BP2A.250605.015-20260810/1

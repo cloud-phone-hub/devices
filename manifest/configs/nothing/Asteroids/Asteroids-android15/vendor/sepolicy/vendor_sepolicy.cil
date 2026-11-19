@@ -1,0 +1,22 @@
+;; cdh Asteroids (Nothing Phone (3a), Android 15 / GRF vendor 34.0) SELinux 补丁：
+;; 1. 声明官方受限属性 vendor_display_prop 并对齐官方 vendor_sepolicy.cil 读/写授权，
+;;    防止 ro.vendor.display.array.auto.nits 落入 vendor_default_prop 被静默拒读导致
+;;    BrightnessMappingStrategy$SimpleMappingStrategy 空指针崩溃循环。
+;; 2. 补齐 system_server / platform_app 对 vendor_display_notch_prop 的读授权。
+(type vendor_display_prop)
+(roletype object_r vendor_display_prop)
+(typeattributeset property_type (vendor_display_prop))
+(typeattributeset vendor_property_type (vendor_display_prop))
+(typeattributeset vendor_restricted_property_type (vendor_display_prop))
+(allow appdomain vendor_display_prop (file (read getattr map open)))
+(allow bootanim_{{vers}} vendor_display_prop (file (read getattr map open)))
+(allow charger_{{vers}} vendor_display_prop (file (read getattr map open)))
+(allow hal_graphics_composer vendor_display_prop (file (read getattr map open)))
+(allow surfaceflinger_{{vers}} vendor_display_prop (file (read getattr map open)))
+(allow system_server_{{vers}} vendor_display_prop (file (read getattr map open)))
+(allow system_app_{{vers}} vendor_display_prop (file (read getattr map open)))
+(allow vendor_init_{{vers}} vendor_display_prop (property_service (set)))
+(allow vendor_init_{{vers}} vendor_display_prop (file (read getattr map open)))
+
+(allow platform_app_{{vers}} vendor_display_notch_prop_{{vers}} (file (read getattr map open)))
+(allow system_server_{{vers}} vendor_display_notch_prop_{{vers}} (file (read getattr map open)))

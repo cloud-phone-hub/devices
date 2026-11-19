@@ -1,0 +1,58 @@
+=== 1. fsimg 与 09_build_vendor 新增单测全通过 ===
+Command exited with code 0.
+
+Command output:
+=== RUN   TestExtractExt4DirOverPreexistingPartialDir
+
+--- PASS: TestExtractExt4DirOverPreexistingPartialDir (0.03s)
+
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/fsimg	1.285s
+
+
+=== 2. 强制重打 vendor.img 完整抽出 62 个官方 permissions 文件且无戳记泄漏 ===
+
+=== 3. oriole 16-CP1A 最终冷启通过与 91.69s 稳态验证 ===
+Command exited with code 0.
+
+Command output:
+==> 创建并冷启动实例: match=google/oriole/16-CP1A.260405.005-20260310
+    spec=oriole_16-CP1A.260405.005-20260310 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/oriole_16-CP1A.260405.005-20260310/1
+{
+  "spec": "oriole_16-CP1A.260405.005-20260310",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/oriole_16-CP1A.260405.005-20260310/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{2a56d97 u0 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}\n  mFocusedApp=ActivityRecord{182432628 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t6}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 86.75,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/oriole_16_CP1A.png",
+    "pngBytes": 1783992
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+proc_uptime=91.69 380.69
+boot_completed=1 bootreason=reboot,factory_reset
+Service wifi: found
+Service phone: found
+perm_count=62
+qemu.log RescueParty=0 powerctl=0 0x8d56=0

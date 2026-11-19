@@ -1,10 +1,16 @@
 {
   "images": [
-    "odm.img",
-    "product.img",
     "system.img",
-    "system_dlkm.img",
     "system_ext.img",
-    "vendor.img"
+    "product.img",
+    "product_h.img",
+    "vendor.img",
+    "vendor_dlkm.img",
+    "system_dlkm.img",
+    "odm.img",
+    "preas.img",
+    "cust.img",
+    "version.img",
+    "preload.img"
   ]
 }

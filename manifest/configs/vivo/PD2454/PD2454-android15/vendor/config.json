@@ -1,10 +1,180 @@
 {
   "build-prop-sets": {
+    "persist.radio.multisim.config": "dsds",
     "ro.hardware.egl": "mesa",
-    "ro.hwui.use_vulkan": "false"
+    "ro.hardware.vulkan": "adreno",
+    "ro.hw_timeout_multiplier": "10",
+    "ro.hwui.use_vulkan": "false",
+    "ro.soc.manufacturer": "Qualcomm",
+    "ro.soc.model": "SM8750",
+    "ro.vendor.boot_security_patch": "2025-03-01",
+    "ro.vendor.build.security_patch": "2025-03-01",
+    "ro.vendor.cdh.display.default_refresh_rate": "120",
+    "ro.vendor.cdh.display.edid_name": "BOE_X200U",
+    "ro.vendor.cdh.display.edid_pnp": "BOE",
+    "ro.vendor.cdh.display.edid_product_id": "4131",
+    "ro.vendor.cdh.display.edid_week": "12",
+    "ro.vendor.cdh.display.edid_year": "2025",
+    "ro.vendor.cdh.display.refresh_rates": "1,30,60,90,120",
+    "ro.vendor.cdh.display.wide_color_gamut": "true",
+    "ro.vendor.cdh.display.xdpi": "509.94",
+    "ro.vendor.cdh.display.ydpi": "510.18",
+    "ro.vendor.cdh.gpu.gl_extra_exts": "GL_QCOM_alpha_test,GL_QCOM_binning_control,GL_QCOM_driver_control,GL_QCOM_extended_get,GL_QCOM_extended_get2,GL_QCOM_tiled_rendering",
+    "ro.vendor.cdh.gpu.gl_extra_exts2": "GL_AMD_compressed_ATC_texture,GL_AMD_performance_monitor,GL_APPLE_texture_2D_limited_npot,GL_EXT_texture_filter_anisotropic",
+    "ro.vendor.cdh.gpu.gl_renderer": "Adreno (TM) 830",
+    "ro.vendor.cdh.gpu.gl_sl_version": "OpenGL ES GLSL ES 3.20",
+    "ro.vendor.cdh.gpu.gl_vendor": "Qualcomm",
+    "ro.vendor.cdh.gpu.gl_version": "OpenGL ES 3.2 V@0762.0 (GIT@0b6f8e5f8a, I4b2c1e2f47) (Date:01/21/25)",
+    "ro.vendor.cdh.gpu.max_combined_texture_image_units": "96",
+    "ro.vendor.cdh.gpu.max_cube_map_texture_size": "16384",
+    "ro.vendor.cdh.gpu.max_renderbuffer_size": "16384",
+    "ro.vendor.cdh.gpu.max_texture_image_units": "16",
+    "ro.vendor.cdh.gpu.max_texture_size": "16384",
+    "ro.vendor.cdh.gpu.max_vertex_attribs": "32",
+    "ro.vendor.cdh.oem.mac_oui": "f4:8c:50",
+    "ro.vendor.cdh.vulkan.api_version": "0x00403116",
+    "ro.vendor.cdh.vulkan.conformance": "1.3.9.0",
+    "ro.vendor.cdh.vulkan.device_id": "0x51430830",
+    "ro.vendor.cdh.vulkan.device_type": "1",
+    "ro.vendor.cdh.vulkan.device_uuid": "6f3c2e91b8a45d70c1e49f2a7b83d560",
+    "ro.vendor.cdh.vulkan.driver_id": "6",
+    "ro.vendor.cdh.vulkan.driver_info": "Adreno (TM) 830",
+    "ro.vendor.cdh.vulkan.driver_name": "Adreno (TM) 830",
+    "ro.vendor.cdh.vulkan.driver_uuid": "2c7f9ab34d1e85f60a3b7c9d21e4f856",
+    "ro.vendor.cdh.vulkan.driver_version": "0x01dc0000",
+    "ro.vendor.cdh.vulkan.name": "Adreno (TM) 830",
+    "ro.vendor.cdh.vulkan.pipeline_uuid": "9b1e4c7a2f6d80351c8e7b4a90d2f63c",
+    "ro.vendor.cdh.vulkan.vendor_id": "0x5143",
+    "ro.vendor.drm.widevine.oem_crypto_api_version": "18",
+    "ro.vendor.drm.widevine.security_level": "L3",
+    "ro.vendor.drm.widevine.system_id": "25394",
+    "ro.vendor.drm.widevine.version": "18.0.0",
+    "ro.vendor.product.cpu.abilist": "arm64-v8a",
+    "ro.vendor.product.cpu.abilist32": "",
+    "ro.vendor.product.cpu.abilist64": "arm64-v8a",
+    "ro.vendor.radio.5g": "3",
+    "ro.vendor.radio.imei.svn": "81",
+    "ro.vendor.radio.imei.tac": "86948203",
+    "ro.vendor.radio.meid.prefix": "99001234",
+    "ro.vendor.soc.manufacturer": "Qualcomm",
+    "ro.vendor.soc.model": "SM8750",
+    "ro.vendor.soc.model.external_name": "SM8750-AB",
+    "ro.vendor.soc.model.part_name": "SM8750-AB",
+    "ro.vendor.soc.model_ready": "1"
   },
-  "build-prop-unsets": [],
-  "files": [],
+  "build-prop-unsets": [
+    "ro.frp.pst",
+    "ro.gfx.driver.0",
+    "ro.gfx.driver.1",
+    "ro.vndk.lite"
+  ],
+  "files": [
+    {
+      "from": "official",
+      "source": "lib64/libOpenCL.so"
+    },
+    {
+      "from": "official",
+      "source": "lib64/libpng.so"
+    },
+    {
+      "from": "official",
+      "source": "lib64/liblzma.so"
+    },
+    {
+      "from": "official",
+      "source": "lib64/libunwindstack.so"
+    },
+    {
+      "from": "official",
+      "mode": "replace",
+      "source": "etc/permissions"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_dolby_filter_dpu_decoder.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_dolby_filter_dpu_encoder.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_audio.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_c2.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_c2_audio.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_c2_video.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_telephony.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_video.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_video_le.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_performance_sun.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_performance_sun_vendor.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_sun.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_sun_vendor.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_vendor_audio.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_vivo_audio.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_vivo_c2_audio.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_vivo_c2_video.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_vivo_video.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/public.libraries.txt"
+    }
+  ],
   "lib64-backfills": [],
-  "selinux-labels": {}
+  "selinux-labels": {
+    "lib64/egl/libEGL_mesa.so": "u:object_r:same_process_hal_file:s0",
+    "lib64/egl/libGLESv1_CM_mesa.so": "u:object_r:same_process_hal_file:s0",
+    "lib64/egl/libGLESv2_mesa.so": "u:object_r:same_process_hal_file:s0"
+  }
 }

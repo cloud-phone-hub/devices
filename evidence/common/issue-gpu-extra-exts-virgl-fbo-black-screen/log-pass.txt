@@ -1,0 +1,101 @@
+=== 1. C 与 Go 单测通过 ===
+Created At: 2026-11-18T20:29:33+08:00
+Completed At: 2026-11-18T20:29:39+08:00
+Command exited with code 0.
+
+Command output:
+[pass] cdh_gl_strings_test: 6/6 passed
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	0.600s
+
+=== 2. apply-profile 幂等清洗 oriole-android15 与 CPH2797-android16 配置 ===
+Created At: 2026-11-18T20:29:49+08:00
+Completed At: 2026-11-18T20:29:52+08:00
+Command exited with code 0.
+
+Command output:
+==> [apply-profile] 已同步机型真机档案到 manifest:
+  - devices/manifest/devices/google/oriole/device-profile.json
+  - devices/manifest/devices/google/oriole/device-profile.md
+  [=] 设备表 devices/manifest/devices/google/oriole.json 已对齐，无需改动
+  [ok] 已对齐配置模版 devices/manifest/configs/google/oriole/oriole-android15:
+       - vendor/config.json: 同步 2 项真机属性（SoC / Display / GPU / Vulkan / DRM / Radio）
+==> [apply-profile] 一键反补完成: google/oriole（更新设备表=false，更新配置模版=1）
+==> [apply-profile] 已同步机型真机档案到 manifest:
+  - devices/manifest/devices/oppo/CPH2797/device-profile.json
+  - devices/manifest/devices/oppo/CPH2797/device-profile.md
+  [=] 设备表 devices/manifest/devices/oppo/CPH2797.json 已对齐，无需改动
+  [ok] 已对齐配置模版 devices/manifest/configs/oppo/CPH2797/CPH2797-android16:
+       - vendor/config.json: 同步 2 项真机属性（SoC / Display / GPU / Vulkan / DRM / Radio）
+==> [apply-profile] 一键反补完成: oppo/CPH2797（更新设备表=false，更新配置模版=1）
+/Volumes/work/cloud-phone-hub/devices/manifest/configs/google/oriole/oriole-android15/vendor/config.json:26:    "ro.vendor.cdh.gpu.gl_extra_exts": "GL_ARM_mali_program_binary,GL_ARM_mali_shader_binary,GL_ARM_rgba8,GL_EXT_debug_marker,GL_EXT_texture_border_clamp,GL_EXT_texture_filter_anisotropic,GL_KHR_debug,GL_KHR_texture_compression_astc_ldr",
+/Volumes/work/cloud-phone-hub/devices/manifest/configs/google/oriole/oriole-android15/vendor/config.json:27:    "ro.vendor.cdh.gpu.gl_extra_exts2": "GL_EXT_color_buffer_half_float,GL_OES_EGL_image_external_essl3",
+/Volumes/work/cloud-phone-hub/devices/manifest/configs/oppo/CPH2797/CPH2797-android16/vendor/config.json:26:    "ro.vendor.cdh.gpu.gl_extra_exts": "GL_ARM_mali_program_binary,GL_ARM_mali_shader_binary,GL_ARM_rgba8,GL_KHR_debug,GL_OES_depth24,GL_OES_texture_float",
+/Volumes/work/cloud-phone-hub/devices/manifest/configs/oppo/CPH2797/CPH2797-android16/vendor/config.json:27:    "ro.vendor.cdh.gpu.gl_extra_exts2": "GL_ARM_debug_assert,GL_ARM_shader_core_properties,GL_ARM_texture_unnormalized_coordinates",
+
+=== 3. oriole 15-BP1A 验证通过与 qemu.log/gpu_id.cfg 回查 ===
+Command exited with code 0.
+
+Command output:
+==> 创建并冷启动实例: match=google/oriole/15-BP1A.250505.005-20250326
+    spec=oriole_15-BP1A.250505.005-20250326 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/oriole_15-BP1A.250505.005-20250326/1
+{
+  "spec": "oriole_15-BP1A.250505.005-20250326",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/oriole_15-BP1A.250505.005-20250326/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{c33afbe u0 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}\n  mFocusedApp=ActivityRecord{259340671 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t7}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 91.4,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/oriole_15_BP1A.png",
+    "pngBytes": 2144077
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+Created At: 2026-11-18T20:32:48+08:00
+Completed At: 2026-11-18T20:33:00+08:00
+Command exited with code 0.
+
+Command output:
+$ uptime; getprop sys.boot_completed; getprop init.svc.bootanim; getprop ro.boot.bootreason; getprop persist.vendor.radio.call_waiting_for_sync_0; getprop -Z persist.vendor.radio.call_waiting_for_sync_0; getprop -Z vendor.radio.allowed_types_loaded0
+12:32:51 up 1 min,  0 users,  load average: 9.98, 3.94, 1.43
+1
+stopped
+reboot,factory_reset
+
+u:object_r:vendor_rild_prop:s0
+u:object_r:vendor_rild_prop:s0
+$ logcat -d -b all | grep -c RescueParty || true
+0
+$ screencap -p /data/local/tmp/pass_sc.png && ls -l /data/local/tmp/pass_sc.png
+
+$ cat /vendor/lib64/egl/gpu_id.cfg | grep gl_extra_exts
+ro.vendor.cdh.gpu.gl_extra_exts2=GL_EXT_color_buffer_half_float,GL_OES_EGL_image_external_essl3
+ro.vendor.cdh.gpu.gl_extra_exts=GL_ARM_mali_program_binary,GL_ARM_mali_shader_binary,GL_ARM_rgba8,GL_EXT_debug_marker,GL_EXT_texture_border_clamp,GL_EXT_texture_filter_anisotropic,GL_KHR_debug,GL_KHR_texture_compression_astc_ldr
+$ ps -AZ | grep -E 'surfaceflinger|composer|allocator|imsservice'
+u:r:hal_graphics_allocator_default:s0 system  524     1   10932252   8904 binder_thread_read  0 S android.hardware.graphics.allocator-service.minigbm
+u:r:hal_graphics_composer_default:s0 system   548     1   10985376  10544 binder_thread_read  0 S android.hardware.composer.hwc3-service.drm
+u:r:surfaceflinger:s0          system         564     1   11541924 193320 do_epoll_wait       0 S surfaceflinger
+u:r:priv_app:s0:c512,c768      u0_a229       3421   494   16338096 111456 do_epoll_wait       0 S com.shannon.imsservice
+qemu.log count(0x8d56)=0 count(Illegal command buffer)=0 count(RescueParty)=0 count(hal_drm_widevine_exec)=0
+
+Destroying instance...

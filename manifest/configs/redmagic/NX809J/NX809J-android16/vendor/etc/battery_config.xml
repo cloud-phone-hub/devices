@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- REDMAGIC 11 Pro (redmagic/NX809J) AI 对标 gold 真机电池配置 -->
+<battery>
+  <identity technology="Li-poly" cycle_count="128" level="100" health="GOOD"
+            capacity_level="FULL" charging_state="INVALID" present="1"/>
+  <charger ac="1" usb="0" wireless="1" dock="0"
+           max_current_ua="0" max_voltage_uv="0"/>
+  <capacity full_uah="7500" counter_min="7420" counter_max="7480"/>
+  <cycle full_mv="8900" charge_mv="9000" temperature_full_decic="310"
+         temperature_charge_decic="380" current_full_ua="-95000"
+         current_charge_ua="-11000000" seconds="600"/>
+  <health_data state_of_health="99" part_status="UNSUPPORTED"
+               manufacturing_date_seconds="0" first_usage_seconds="0"/>
+</battery>

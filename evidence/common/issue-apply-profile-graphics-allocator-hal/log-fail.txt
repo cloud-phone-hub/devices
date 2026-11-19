@@ -1,0 +1,105 @@
+=== SPEC: CPH2767_16-BP2A.250605.015-20260810 ===
+=== GETPROP ===
+[init.svc.bootanim]: [stopped]
+[ro.hardware.egl]: [meow]
+[ro.hardware.gralloc]: [minigbm]
+[ro.hardware.vulkan]: [adreno]
+[ro.hwui.use_vulkan]: [false]
+[sys.boot_completed]: [1]
+=== MAPPER & GRALLOC FILES ===
+-rwxr-xr-x 1 root shell u:object_r:hal_graphics_allocator_default_exec:s0   52648 2008-12-31 19:00 /vendor/bin/hw/android.hardware.graphics.allocator-service.minigbm_upstream
+-rw-r--r-- 1 root root  u:object_r:vendor_configs_file:s0                     397 2008-12-31 19:00 /vendor/etc/vintf/manifest/allocator.minigbm_upstream.xml
+-rw-r--r-- 1 root root  u:object_r:vendor_configs_file:s0                     273 2008-12-31 19:00 /vendor/etc/vintf/manifest/mapper.minigbm_upstream.xml
+-rw-r--r-- 1 root root  u:object_r:same_process_hal_file:s0                 52432 2026-08-10 08:30 /vendor/lib64/hw/gralloc.default.so
+-rw-r--r-- 1 root root  u:object_r:same_process_hal_file:s0                153816 2008-12-31 19:00 /vendor/lib64/hw/mapper.minigbm_upstream.so
+-rw-r--r-- 1 root root  u:object_r:same_process_hal_file:s0                 68720 2008-12-31 19:00 /vendor/lib64/libminigbm_gralloc4_utils_upstream.so
+-rw-r--r-- 1 root root  u:object_r:same_process_hal_file:s0                135176 2008-12-31 19:00 /vendor/lib64/libminigbm_gralloc_upstream.so
+=== PS ===
+  644  1000 system       u:r:hal_graphics_composer_default:s0 android.hardware.composer.hwc3-service.drm_upstream
+  659  1000 system       u:r:surfaceflinger:s0          surfaceflinger
+  709  1000 system       u:r:hal_graphics_allocator_default:s0 android.hardware.graphics.allocator-service.minigbm_upstream
+  719  1000 system       u:r:system_server:s0           system_server
+ 6752 10125 u0_a125      u:r:platform_app:s0:c512,c768  com.android.systemui
+ 6905 10119 u0_a119      u:r:platform_app:s0:c512,c768  com.android.launcher
+ 6939 10125 u0_a125      u:r:platform_app:s0:c512,c768  com.android.systemui
+=== LOGCAT MAPPER CRASH ===
+I/OplusAppSwitchManagerService(  719): appswitch unregisterAppSwitchObserver pkgName = com.android.systemui_6137464 config = OplusAppSwitchConfig = {  mConfigs:1 mActivitySet:0 mPackageSet:29 observerFingerPrint = 99777499}
+I/OplusAppSwitchStateDispatcher(  719): unregisterAppSwitchObserver ok, pkgName = com.android.systemui info = OplusAppSwitchRuleInfo = {  observer = null observerFingerPrint = 99777499}
+E/LockoutResetTracker(  719): Removing dead callback for: com.android.systemui
+I/ActivityManager(  719): Death received, pid = 7014, processName = com.android.systemui for thread android.os.BinderProxy@38b70c9
+I/ActivityManager(  719): Process com.android.systemui (pid 7014) has died: pers PERU
+D/ConnectivityService(  719): releasing NetworkRequest [ REQUEST id=6981, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10125 RequestorUid: 10125 RequestorPkg: com.android.systemui UnderlyingNetworks: Null] ] (release request)
+D/ConnectivityService(  719): releasing NetworkRequest [ REQUEST id=6983, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10125 RequestorUid: 10125 RequestorPkg: com.android.systemui UnderlyingNetworks: Null] ] (release request)
+D/ConnectivityService(  719): releasing NetworkRequest [ REQUEST id=6976, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED Uid: 10125 RequestorUid: 10125 RequestorPkg: com.android.systemui UnderlyingNetworks: Null] ] (release request)
+E/ActivityManager(  719): Service ServiceRecord{f486ab1 u0 com.android.systemui/com.oplusos.wallpaperserver.DyWallpaperService c:com.android.wallpaper.livepicker} in process ProcessRecord{80e6bc2 7014:com.android.systemui/u0a125} not same as in map: ServiceRecord{84cdad5 u0 com.android.systemui/com.oplusos.wallpaperserver.DyWallpaperService c:com.android.wallpaper.livepicker}
+E/ActivityManager(  719): Service ServiceRecord{c7a5481 u0 com.android.systemui/com.oplusos.wallpaperserver.DyWallpaperService c:com.android.wallpaper.livepicker} in process ProcessRecord{80e6bc2 7014:com.android.systemui/u0a125} not same as in map: ServiceRecord{84cdad5 u0 com.android.systemui/com.oplusos.wallpaperserver.DyWallpaperService c:com.android.wallpaper.livepicker}
+E/ActivityManager(  719): Service ServiceRecord{bc236c4 u0 com.android.systemui/com.oplusos.wallpaperserver.DyWallpaperService c:com.android.wallpaper.livepicker} in process ProcessRecord{80e6bc2 7014:com.android.systemui/u0a125} not same as in map: ServiceRecord{84cdad5 u0 com.android.systemui/com.oplusos.wallpaperserver.DyWallpaperService c:com.android.wallpaper.livepicker}
+E/ActivityManager(  719): Service ServiceRecord{a0fd52e u0 com.android.systemui/com.oplusos.wallpaperserver.DyWallpaperService c:com.android.wallpaper.livepicker} in process ProcessRecord{80e6bc2 7014:com.android.systemui/u0a125} not same as in map: ServiceRecord{84cdad5 u0 com.android.systemui/com.oplusos.wallpaperserver.DyWallpaperService c:com.android.wallpaper.livepicker}
+E/ActivityManager(  719): Service ServiceRecord{76dfe98 u0 com.android.systemui/com.oplusos.wallpaperserver.DyWallpaperService c:com.android.wallpaper.livepicker} in process ProcessRecord{80e6bc2 7014:com.android.systemui/u0a125} not same as in map: ServiceRecord{84cdad5 u0 com.android.systemui/com.oplusos.wallpaperserver.DyWallpaperService c:com.android.wallpaper.livepicker}
+E/ActivityManager(  719): Service ServiceRecord{4ed23a4 u0 com.android.systemui/com.oplusos.wallpaperserver.DyWallpaperService c:com.android.wallpaper.livepicker} in process ProcessRecord{80e6bc2 7014:com.android.systemui/u0a125} not same as in map: ServiceRecord{84cdad5 u0 com.android.systemui/com.oplusos.wallpaperserver.DyWallpaperService c:com.android.wallpaper.livepicker}
+E/ActivityManager(  719): Service ServiceRecord{40c89d7 u0 com.android.systemui/com.oplusos.wallpaperserver.DyWallpaperService c:com.android.wallpaper.livepicker} in process ProcessRecord{80e6bc2 7014:com.android.systemui/u0a125} not same as in map: ServiceRecord{84cdad5 u0 com.android.systemui/com.oplusos.wallpaperserver.DyWallpaperService c:com.android.wallpaper.livepicker}
+W/ActivityManager(  719): Re-adding persistent process ProcessRecord{80e6bc2 7014:com.android.systemui/u0a125}
+I/UserAwareMgr(  719): process killed: {pkgName='com.android.systemui', serviceName='', procName=com.android.systemui, pid=7014, uid=10125, appId=0, owner='systemui', flags='system_app', renderTid=7097, hwuiTids=[7094, 7095], glTids=null, threadInfos={wmshell.main={threadName='wmshell.main', tid=7052, reporterPid=7014, currentThreadCount=1, maxThreadCount=1, extendTids=null}, ll.splashworker={threadName='ll.splashworker', tid=7061, reporterPid=719, currentThreadCount=1, maxThreadCount=16, extendTids=null}, wmshell.anim={threadName='wmshell.anim', tid=7058, reporterPid=719, currentThreadCount=1, maxThreadCount=16, extendTids=null}, ll.splashscreen={threadName='ll.splashscreen', tid=7060, reporterPid=719, currentThreadCount=1, maxThreadCount=16, extendTids=null}, KeyguardWorkerThread={threadName='KeyguardWorkerThread', tid=7160, reporterPid=7014, currentThreadCount=1, maxThreadCount=1, extendTids=null}, KgdAnimThread={threadName='KgdAnimThread', tid=7161, reporterPid=7014, currentThreadCount=1, maxThreadCount=1, extendTids=null}, SysUiQsBg={threadName='SysUiQsBg', tid=7235, reporterPid=7014, currentThreadCount=1, maxThreadCount=1, extendTids=null}}, mVideoActivityList=[], mStates=0}
+I/UserAwareMgr(  719): handleProcessKilled, pkgName: com.android.systemui, pid: 7014
+E/Athena  (  719): athena_optimize: pkg: com.android.systemui, processName: com.android.systemuigetPercentage: 100
+I/OStatsManager_OplusBatteryStatsManager(  719): updateStateTime: PkgName = com.android.systemui, uid = 10125, state to em, mForegroundCnt = 0, isFg = false
+D/OplusDexOptimizeManager(  719): Opt verify  for package :com.android.systemui
+D/ITheiaManagerExt(  719): recordAnrOrCrashEventStamp: pnIndex: 0 pkIndex: 33 packageName: com.android.systemui
+W/ITheiaManagerExt(  719): [sendEvent] {0x701 1767244146905 0x1003 0 10125 processName:com.android.systemui|packageVersion:16.99.12|eventType:native_crash} reported frequently, then we return.
+W/OplusEapManager handleErrorInfo sendEvent: (  719): com.android.systemui happenednative_crash
+I/ActivityManager(  719): Start proc 7251:com.android.systemui/u0a125 for restart com.android.systemui
+I/OStatsManager_OplusBatteryStatsManager(  719): updateStateTime: PkgName = com.android.systemui, uid = 10125, state to bg, mForegroundCnt = 0, isFg = false
+I/Quality ( 6905): InflateViewInfo:226090084,com.android.launcher3.OplusLauncherRootView
+D/b/223498680( 6905): LauncherRecentsView init setContentAlpha=0
+E/vndksupport( 7134): Could not load mapper.minigbm_upstream.so from sphal namespace: dlopen failed: library "libminigbm_gralloc_upstream.so" not found: needed by /vendor/lib64/hw/mapper.minigbm_upstream.so in namespace sphal.
+E/Gralloc5( 7134): Failed to load mapper.minigbm_upstream.so
+F/GraphicBufferMapper( 7134): gralloc-mapper is missing
+W/LauncherBooster( 6905): FetchIcon is not key thread, skip reportKeyThread2UAF
+E/ndroid.systemui( 7251): Unknown bits set in runtime_flags: 0x40000000
+I/ndroid.systemui( 7251): Using CollectorTypeCMC GC.
+D/SplitScreenAppReader(  719): SPLIT_TOUCH support check:com.android.systemui = false
+D/ResourcesManagerCache(  719): For package com.android.systemui we got cacheList [com.ss.android.ugc.aweme.lite] appInfoExt is null ? false hasFeature ? false
+E/LauncherClient-LauncherCallbacksImp[u0]( 6905): isAssistScreenShown mClient is null
+D/nativeloader( 7251): Configuring clns-shared-9 for other apk /system/system_ext/framework/vendor.oplus.hardware.cryptoeng-V1.0-java.jar. target_sdk_version=36, uses_libraries=ALL, library_path=/system_ext/priv-app/SystemUI/lib/arm64:/system_ext/priv-app/SystemUI/SystemUI.apk!/lib/arm64-v8a:/system/lib64:/system_ext/lib64, permitted_path=/data:/mnt/expand:/data/user_de/0/com.android.systemui:/system_ext/priv-app/SystemUI:/system/lib64:/system_ext/lib64
+D/nativeloader( 7251): Configuring clns-shared-10 for other apk /system/system_ext/framework/vendor.oplus.hardware.charger-V1-java.jar. target_sdk_version=36, uses_libraries=ALL, library_path=/system_ext/priv-app/SystemUI/lib/arm64:/system_ext/priv-app/SystemUI/SystemUI.apk!/lib/arm64-v8a:/system/lib64:/system_ext/lib64, permitted_path=/data:/mnt/expand:/data/user_de/0/com.android.systemui:/system_ext/priv-app/SystemUI:/system/lib64:/system_ext/lib64
+E/SideSlipGesturesGuideHelper[u0]( 6905): getLauncher launcher is null
+D/b/223498680( 6905): LRV onStateTransitionComplete finalState=Normal; isSpringAnimToRecent=false; isRecentAnimateDragging=false; isInterceptSomeUIUpdate=false; isLauncherBehindOrientation=; isInGoRecentsAnim=false; isLastOverView=false; isDeskGoRecentsAnim=false
+F/libc    ( 7134): Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 7169 (binder:7134_3), pid 7134 (allpaperService)
+D/b/223498680( 6905): Launcher onCreate not binding sync, prevent drawing
+D/nativeloader( 7251): Configuring clns-shared-11 for other apk /system_ext/priv-app/SystemUI/SystemUI.apk. target_sdk_version=36, uses_libraries=, library_path=/system_ext/priv-app/SystemUI/lib/arm64:/system_ext/priv-app/SystemUI/SystemUI.apk!/lib/arm64-v8a:/system/lib64:/system_ext/lib64, permitted_path=/data:/mnt/expand:/data/user_de/0/com.android.systemui:/system_ext/priv-app/SystemUI:/system/lib64:/system_ext/lib64
+I/ndroid.systemui( 7251): AssetManager2(0xb400007dedea0128) locale list changing from [] to [en-US]
+V/GraphicsEnvironment( 7251): com.android.systemui is not listed in per-application setting
+V/GraphicsEnvironment( 7251): com.android.systemui is not listed in ANGLE allowlist or settings, returning default
+I/FeatureOption( 7251): init feature option start, appContext: com.android.systemui.SystemUIApplication@485ac92
+D/OplusCustomizeRestrictionManagerService(  719): getApplicationDisabledInLauncherOrRecentTask flag = 4097
+D/OplusCustomizeRestrictionManagerService(  719): getApplicationDisabledInLauncherOrRecentTask flag = 268500992
+E/OplusCustomizeRestrictionManagerService(  719): isLongPressLauncherDisabled start
+I/FeatureOption( 7251): keyguard loadAppFeature start, context: com.android.systemui.SystemUIApplication@485ac92
+W/PackageManager(  719): package com.android.systemui uid 10125 pid 7251 call SetEnabledSetting(com.google.android.gms component = com.google.android.gms.auth.trustagent.GoogleTrustAgent, 1, 0)
+D/PackageManager_InfoGetNullLogPrint(  719): Target:ComponentInfo{com.oplus.safecenter/com.oplus.safecenter.privacy.view.space.AppHideLauncherActivity} callingUid=10119 userid=0 flag=0x2400c0000 reason is ActivityInfo isEnabledAndMatch false
+W/LauncherBooster( 6905): BindServerThread is not key thread, skip reportKeyThread2UAF
+I/ObserverDispatcher( 7251): init context: com.android.systemui.SystemUIApplication@485ac92
+I/SplitScreenManager( 6905): Attached Launcher#944b3c7 ON_START
+D/ActivityThread( 6905): ComponentInfo{com.android.launcher/com.android.launcher.Launcher} checkFinished=false 2
+I/MSP-LOG-SDK-ActivityLifeCallBack( 6905): onActivityResumed Launcher
+I/SplitScreenManager( 6905): Attached Launcher#944b3c7 ON_RESUME
+W/LauncherClient[u0]( 6905): isConnected false because mOverlay is null
+W/LauncherClient[u0]( 6905): isConnected false because mOverlay is null
+W/LauncherClient[u0]( 6905): isConnected false because mOverlay is null
+I/SurfaceFlinger(  659): [SF client] NEW(0xb400006f49535ac0) for (7251:com.android.systemui)
+D/OplusSmartLogManager( 7251): enableDynamicLogger init = com.android.systemui
+D/nativeloader( 6905): Load /system_ext/priv-app/OplusLauncher/OplusLauncher.apk!/lib/arm64-v8a/liblauncher-imagelib.so using class loader ns clns-shared-9 (caller=/system_ext_app/priv-app/OplusLauncher/OplusLauncher.apk!classes2.dex): ok
+D/WindowManager( 6905): Add to mViews: com.android.internal.policy.DecorView{a51a7b8 I.E...... R.....I. 0,0-0,0 alpha=1.0 viewInfo = }[Launcher],pkg= com.android.launcher
+F/DEBUG   ( 7227): signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+F/DEBUG   ( 7227): Abort message: 'gralloc-mapper is missing'
+W/ActivityTaskManager(  719):   Not force finishing home activity com.android.launcher/.Launcher
+I/AstScreen.AddLauncherCardManager( 6870): setDragCallback: false
+I/AstScreen.AddLauncherCardManager( 6870): setDragCallback origin = null, new = null 
+W/ActivityTaskManager(  719): Activity top resumed state loss timeout for ActivityRecord{80450868 u0 com.android.launcher/.Launcher t2755}
+W/ActivityTaskManager(  719): Activity pause timeout for ActivityRecord{80450868 u0 com.android.launcher/.Launcher t2755}
+W/ActivityTaskManager(  719): Force removing ActivityRecord{80450868 u0 com.android.launcher/.Launcher t2755}: app died, no saved state
+D/ActivityTaskManager(  719): removeAppToken: ActivityRecord{80450868 u0 com.android.launcher/.Launcher t2755 f}} delayed=false parent=Task{60590d2 #2755 type=home I=com.android.launcher/.Launcher} animating=false Callers=com.android.server.wm.DisplayContent.removeAppToken:1757 com.android.server.wm.ActivityRecord.removeFromHistory:4998 com.android.server.wm.ActivityRecord.handleAppDied:5357 com.android.server.wm.WindowProcessController.handleAppDied:1723 
+D/ActivityTaskManager(  719): notifyTaskRemoved, task: Task{60590d2 #2755 type=home I=com.android.launcher/.Launcher} trace:com.android.server.wm.RecentTasks.notifyTaskRemoved:571 com.android.server.wm.RecentTasks.remove:1517 com.android.server.wm.Task.cleanUpResourcesForDestroy:802 com.android.server.wm.Task.onParentChanged:1218 com.android.server.wm.WindowContainer.setParent:758 
+D/OplusCommandQueue( 7251): registerStatusBar: processName = com.android.systemui, pkgName = com.android.systemui
+D/OplusAlwaysAliveManager(  719): removing: 2755, ComponentInfo{com.android.launcher/com.android.launcher.Launcher}
+I/ndroid.systemui( 7251): AssetManager2(0xb400007dace40f28) locale list changing from [] to [en-US]

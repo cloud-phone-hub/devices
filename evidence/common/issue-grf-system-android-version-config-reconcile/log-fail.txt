@@ -1,0 +1,3 @@
+=== #269 GRF 校准前历史现象 ===
+vendor/build.prop 为 Android 14 (ro.vendor.build.version.release=14), system_a.img 为 Android 15。
+未启用 system_a.img 实测代际探测前，02_prepare 仅读 vendor/build.prop 生成 *-android14 (lineage-21.0 + graphics.composer@2.4)，导致 GRF 机型选错 lineage 版本与异代 HAL。

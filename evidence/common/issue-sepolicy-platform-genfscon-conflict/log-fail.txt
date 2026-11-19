@@ -1,0 +1,49 @@
+916-[    1.662387][    T1] init: No precompiled sepolicy at /vendor/etc/selinux/precompiled_sepolicy: No such file or directory
+917-[    1.663387][    T1] init: Compiling SELinux policy
+918-qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.5 flush=0.0 update=0.0 end=0.0 总=2.6 ms
+919-[    1.672415][    T1] init: Missing /system/etc/selinux/plat_sepolicy_genfs_202404.cil; skipping
+920-qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.5 flush=0.0 update=0.0 end=0.0 总=2.6 ms
+921:[    1.848823][    T1] init: /system/bin/secilc: linker: Warning: failed to find generated linker configuration from "/linkerconfig/ld.config.txt"
+922:[    1.849827][    T1] init: /system/bin/secilc: WARNING: linker: Warning: failed to find generated linker configuration from "/linkerconfig/ld.config.txt"
+923:[    1.850784][    T1] init: /system/bin/secilc: Problems processing genfscon rules
+924:[    1.851466][    T1] init: /system/bin/secilc: Failed post db handling
+925:[    1.852075][    T1] init: /system/bin/secilc: Post process failed
+926:[    1.852671][    T1] init: /system/bin/secilc: Failed to compile cildb: -1
+927:[    1.853353][    T1] init: /system/bin/secilc exited with status 255
+928-qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.5 flush=0.0 update=0.0 end=0.0 总=2.6 ms
+929-[    1.854897][    T1] init: Unable to open SELinux policy
+930-[    1.861747][    T1] [BOOTTRACE][I] handle boot error: init abort, Unable to open SELinux policy
+931-[    1.862606][    T1] [BOOTTRACE][E] HandleBootError:148: boot log alog dump fail, -62
+932-[    1.863478][    T1] [BOOTTRACE][E] BootErrorInfoFormat:129: get boot stage fail, -62
+933-[    1.864206][    T1] [BOOTTRACE][E] HandleBootError:160: handle cur boot error fail, -62
+934:[    1.865095][    T1] init: InitFatalReboot: signal 6
+935-qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.9 flush=0.0 update=0.0 end=0.0 总=3.0 ms
+936:[    1.876220][    T1] init:   #00 pc 00000000001c6e60  /system/bin/init (android::init::InitFatalReboot(int)+208) (BuildId: 68c8854b64ddfdd662b5a6e362f6ba2a)
+937-[    1.877202][    T1] init:   #01 pc 000000000013a158  /system/bin/init (android::init::InitAborter(char const*)+144) (BuildId: 68c8854b64ddfdd662b5a6e362f6ba2a)
+938-[    1.878639][    T1] init:   #02 pc 0000000000015188  /system/lib64/libbase.so (android::base::SetAborter(std::__1::function<void (char const*)>&&)::$_0::__invoke(char const*)+80) (BuildId: dcd8cae7d3ad6d52e6e8d734f99aca3f)
+939-[    1.880469][    T1] init:   #03 pc 0000000000014730  /system/lib64/libbase.so (android::base::LogMessage::~LogMessage()+544) (BuildId: dcd8cae7d3ad6d52e6e8d734f99aca3f)
+940-[    1.881891][    T1] init:   #04 pc 00000000001ca67c  /system/bin/init (android::init::SetupSelinux(char**)+4992) (BuildId: 68c8854b64ddfdd662b5a6e362f6ba2a)
+941-qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.8 flush=0.0 update=0.0 end=0.0 总=3.0 ms
+--
+1846-[    1.578187][    T1] init: No precompiled sepolicy at /vendor/etc/selinux/precompiled_sepolicy: No such file or directory
+1847-[    1.579178][    T1] init: Compiling SELinux policy
+1848-qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.6 flush=0.0 update=0.0 end=0.0 总=2.7 ms
+1849-[    1.588140][    T1] init: Missing /system/etc/selinux/plat_sepolicy_genfs_202404.cil; skipping
+1850-qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.5 flush=0.0 update=0.0 end=0.0 总=2.6 ms
+1851:[    1.745923][    T1] init: /system/bin/secilc: linker: Warning: failed to find generated linker configuration from "/linkerconfig/ld.config.txt"
+1852:[    1.746977][    T1] init: /system/bin/secilc: WARNING: linker: Warning: failed to find generated linker configuration from "/linkerconfig/ld.config.txt"
+1853:[    1.747927][    T1] init: /system/bin/secilc: Problems processing genfscon rules
+1854:[    1.748841][    T1] init: /system/bin/secilc: Failed post db handling
+1855:[    1.749545][    T1] init: /system/bin/secilc: Post process failed
+1856:[    1.750150][    T1] init: /system/bin/secilc: Failed to compile cildb: -1
+1857:[    1.751371][    T1] init: /system/bin/secilc exited with status 255
+1858-qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.7 flush=0.0 update=0.0 end=0.0 总=2.8 ms
+1859-[ qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.8 flush=0.0 update=0.0 end=0.0 总=2.9 ms
+1860-   1.752515][    T1] init: Unable to open SELinux policy
+1861-qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.9 flush=0.0 update=0.0 end=0.0 总=3.0 ms
+1862-[ qemu-system-aarch64: cgl-headless 大帧 1280x2800: blit=0.1 read=2.6 flush=0.0 update=0.0 end=0.0 总=2.7 ms
+--
+
+=== 跨分区 .cil 重复 genfscon 定位 ===
+system_ext_a:/etc/selinux/system_ext_sepolicy.cil:269: (genfscon sysfs "/class/thermal" (u object_r sysfs_hwthermal ((s0) (s0))))
+vendor_sepolicy.cil:2969 (android.hardware.thermal): (genfscon sysfs "/class/thermal" (u object_r sysfs_thermal ((s0) (s0))))

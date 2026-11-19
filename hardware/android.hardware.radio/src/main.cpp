@@ -24,6 +24,11 @@
 #include <string>
 #include <vector>
 
+extern "C" {
+void AIBinder_markVintfStability(AIBinder *binder);
+void AIBinder_Class_disableInterfaceTokenHeader(AIBinder_Class *clazz);
+}
+
 namespace {
 
 constexpr char kLogTag[] = "cdh-radio";
@@ -100,10 +105,13 @@ void RegisterPlaceholdersFromFile(const char *path) {
       continue;
     }
     const std::string::size_type slash = name.find('/');
-    const std::string descriptor =
+    std::string descriptor =
         slash == std::string::npos ? name : name.substr(0, slash);
     if (descriptor.empty()) {
       continue;
+    }
+    if (descriptor == "vendor.qti.hardware.radio.qtiradio.IQtiRadioStable") {
+      descriptor = "vendor.qti.hardware.radio.qtiradio.IQtiRadio";
     }
     auto it = class_cache.find(descriptor);
     if (it == class_cache.end()) {
@@ -119,6 +127,7 @@ void RegisterPlaceholdersFromFile(const char *path) {
         class_cache.erase(it);
         continue;
       }
+      AIBinder_Class_disableInterfaceTokenHeader(it->second);
     }
     AIBinder *binder = AIBinder_new(it->second, nullptr);
     if (binder == nullptr) {
@@ -127,6 +136,7 @@ void RegisterPlaceholdersFromFile(const char *path) {
                           name.c_str());
       continue;
     }
+    AIBinder_markVintfStability(binder);
     const binder_exception_t status =
         AServiceManager_addService(binder, name.c_str());
     if (status != EX_NONE) {

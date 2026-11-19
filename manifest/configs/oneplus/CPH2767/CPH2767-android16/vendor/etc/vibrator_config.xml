@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vibrator-config register-manager="true"
+                 capabilities="63"
+                 manager-capabilities="0"
+                 composition-delay-max="1000"
+                 composition-size-max="512">
+    <vibrator id="1"/>
+    <effect name="CLICK"/>
+    <effect name="DOUBLE_CLICK"/>
+    <effect name="TICK"/>
+    <effect name="HEAVY_CLICK"/>
+    <effect name="TEXTURE_TICK"/>
+    <effect name="THUD"/>
+    <effect name="SPIN"/>
+    <effect name="QUICK_RISE"/>
+    <effect name="SLOW_RISE"/>
+    <effect name="POP"/>
+    <effect name="TEXTURE"/>
+</vibrator-config>

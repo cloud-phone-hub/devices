@@ -201,6 +201,91 @@ static void cdh_append_ext_token(const char *ext, size_t len, size_t *used,
     cdh_ext_list[(*count)++] = item_ptr;
 }
 
+// 过滤宿主 Apple GL 4.1 / VirGL 不具备完整硬件实现、且会诱发 Skia/HWUI/App
+// 走错误 FBO 或着色器路径导致 0x8d56 黑屏或指令流中止的危险扩展（不改动 Mesa src 原生扩展）。
+static int cdh_is_virgl_unsafe_extra_ext(const char *ext, size_t len) {
+    static const char *const kUnsafeExts[] = {
+        "GL_ANDROID_extension_pack_es31a",
+        "GL_EXT_geometry_shader",
+        "GL_OES_geometry_shader",
+        "GL_EXT_tessellation_shader",
+        "GL_OES_tessellation_shader",
+        "GL_EXT_texture_cube_map_array",
+        "GL_OES_texture_cube_map_array",
+        "GL_EXT_disjoint_timer_query",
+        "GL_EXT_multisampled_render_to_texture",
+        "GL_EXT_multisampled_render_to_texture2",
+        "GL_IMG_multisampled_render_to_texture",
+        "GL_OVR_multiview",
+        "GL_OVR_multiview2",
+        "GL_OVR_multiview_multisampled_render_to_texture",
+        "GL_EXT_shader_framebuffer_fetch",
+        "GL_EXT_shader_framebuffer_fetch_non_coherent",
+        "GL_ARM_shader_framebuffer_fetch",
+        "GL_ARM_shader_framebuffer_fetch_depth_stencil",
+        "GL_EXT_shader_pixel_local_storage",
+        "GL_EXT_shader_pixel_local_storage2",
+        "GL_KHR_blend_equation_advanced",
+        "GL_KHR_blend_equation_advanced_coherent",
+        "GL_EXT_buffer_storage",
+        "GL_EXT_external_buffer",
+        "GL_EXT_EGL_image_storage",
+        "GL_EXT_protected_textures",
+        "GL_EXT_YUV_target",
+        "GL_EXT_clear_texture",
+        "GL_EXT_clip_control",
+        "GL_EXT_polygon_offset_clamp",
+        "GL_EXT_sRGB",
+        "GL_EXT_robustness",
+        "GL_KHR_robustness",
+        "GL_KHR_robust_buffer_access_behavior",
+        "GL_OES_sample_shading",
+        "GL_OES_gpu_shader5",
+        "GL_EXT_gpu_shader5",
+        "GL_OES_texture_view",
+        "GL_EXT_texture_view",
+        "GL_OES_texture_storage_multisample_2d_array",
+        "GL_KHR_shader_subgroup",
+        "GL_KHR_texture_compression_astc_hdr",
+        "GL_KHR_texture_compression_astc_sliced_3d",
+        "GL_OES_texture_compression_astc",
+        "GL_QCOM_shader_framebuffer_fetch_noncoherent",
+        "GL_QCOM_shader_framebuffer_fetch_rate",
+    };
+    const size_t n = sizeof(kUnsafeExts) / sizeof(kUnsafeExts[0]);
+    for (size_t i = 0; i < n; i++) {
+        if (strlen(kUnsafeExts[i]) == len && memcmp(ext, kUnsafeExts[i], len) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static void cdh_append_filtered_extra_exts(const char *csv, size_t *used,
+                                           size_t *items_used, unsigned int *count) {
+    if (!csv) {
+        return;
+    }
+    const char *ep = csv;
+    while (*ep) {
+        while (*ep == ' ' || *ep == ',') {
+            ep++;
+        }
+        if (!*ep) {
+            break;
+        }
+        const char *estart = ep;
+        while (*ep && *ep != ' ' && *ep != ',') {
+            ep++;
+        }
+        size_t elen = (size_t)(ep - estart);
+        if (cdh_is_virgl_unsafe_extra_ext(estart, elen)) {
+            continue;
+        }
+        cdh_append_ext_token(estart, elen, used, items_used, count);
+    }
+}
+
 // 惰性构建过滤后的扩展表；只在首次查询时做一次，之后走缓存。
 // 需要 cdh_ext_lock 之类的同步吗？—— glGetString 可能在多线程被调，但构建过程
 // 是幂等的（同样的输入得同样的结果），最坏情况是重复构建一次，不会读到半成品：
@@ -249,39 +334,11 @@ static void cdh_build_ext(void) {
     } else if (strcmp(cdh_gl_vendor_buf, "ARM") == 0) {
         extra_src = "GL_ARM_mali_program_binary,GL_ARM_mali_shader_binary,GL_ARM_rgba8";
     }
-    if (extra_src) {
-        const char *ep = extra_src;
-        while (*ep) {
-            while (*ep == ' ' || *ep == ',') {
-                ep++;
-            }
-            if (!*ep) {
-                break;
-            }
-            const char *estart = ep;
-            while (*ep && *ep != ' ' && *ep != ',') {
-                ep++;
-            }
-            cdh_append_ext_token(estart, (size_t)(ep - estart), &used, &items_used, &count);
-        }
-    }
+    cdh_append_filtered_extra_exts(extra_src, &used, &items_used, &count);
     char extra_prop2[512] = {0};
     if (cdh_cfg_get("ro.vendor.cdh.gpu.gl_extra_exts2", extra_prop2, sizeof(extra_prop2)) > 0 &&
         extra_prop2[0] != '\0' && strcmp(extra_prop2, "none") != 0) {
-        const char *ep = extra_prop2;
-        while (*ep) {
-            while (*ep == ' ' || *ep == ',') {
-                ep++;
-            }
-            if (!*ep) {
-                break;
-            }
-            const char *estart = ep;
-            while (*ep && *ep != ' ' && *ep != ',') {
-                ep++;
-            }
-            cdh_append_ext_token(estart, (size_t)(ep - estart), &used, &items_used, &count);
-        }
+        cdh_append_filtered_extra_exts(extra_prop2, &used, &items_used, &count);
     }
     cdh_ext_joined[used] = '\0';
     cdh_ext_count = count;

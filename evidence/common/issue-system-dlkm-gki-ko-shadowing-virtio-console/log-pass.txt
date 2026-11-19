@@ -1,0 +1,68 @@
+=== [通过日志 1] 15 条 cdh_redirect 规则启用及 dlkm_loader_mainline 加载 11 模块实录 ===
+1:==== 2026-11-19 06:39:34 daemon 拉起: /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/bin/qemu-system-aarch64 [-L /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/share/qemu -machine virt -rtc base=localtime -m 12288 -smp 8 -accel hvf -object memory-backend-shm,id=stage-ram,size=12288M,share=on -numa node,memdev=stage-ram -chardev socket,id=stage-media-dec,path=/tmp/stage-3150b5fd/media-decoder.sock -device vhost-user-media-pci,chardev=stage-media-dec,id=media-dec -chardev socket,id=stage-media-enc,path=/tmp/stage-3150b5fd/media-encoder.sock -device vhost-user-media-pci,chardev=stage-media-enc,id=media-enc -device virtio-gpu-gl-pci,blob=on,hostmem=256M,venus=on,edid=on,xres=1216,yres=2688,xmax=1216,ymax=2688,refresh-rates=60,width-mm=71,height-mm=159 -display cgl-headless,gl=on,readback=on -vnc 127.0.0.1:12,websocket=5913,share=force-shared -qmp unix:/tmp/stage-3150b5fd/qmp.sock,server=on,wait=off -drive if=pflash,unit=0,file=/Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/firmware/edk2-aarch64-code.fd,file.locking=off,format=raw,readonly=on -drive if=pflash,unit=1,file=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/NX809J_16-BQ2A.250705.001-BP2A.250605.031.A3-20260527/1/efi-vars.fd -drive file=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/NX809J_16-BQ2A.250705.001-BP2A.250605.031.A3-20260527/1/writable-base.qcow2,if=none,id=vda,format=qcow2,node-name=stage-vda,discard=unmap,detect-zeroes=unmap -device virtio-blk-pci,drive=vda,bootindex=0 -drive file=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/NX809J_16-BQ2A.250705.001-BP2A.250605.031.A3-20260527/1/writable-data.qcow2,if=none,id=vdb,format=qcow2,node-name=stage-vdb,discard=unmap,detect-zeroes=unmap -device virtio-blk-pci,drive=vdb,bootindex=1 -drive file=/Volumes/work/cloud-phone-hub/out/devices/dist/redmagic/NX809J/16-BQ2A.250705.001-BP2A.250605.031.A3-20260527/patch.img,if=none,id=vdc,format=raw,readonly=on -device virtio-blk-pci,drive=vdc,bootindex=2 -device virtio-net-pci,netdev=net0,romfile= -netdev user,id=net0,restrict=on,ipv6=off,hostfwd=tcp::5911-:5555 -device virtio-net-pci,netdev=net2,romfile=,mac=c2:36:b4:12:34:58 -netdev user,id=net2,net=100.64.155.0/24,dhcpstart=100.64.155.15,ipv6=off -device virtio-multitouch-pci,input-name=goodix_ts,input-bus=24,input-vendor=10182,input-product=1,input-version=256,abs-to-mt=on,abs-x-max=20160,abs-y-max=44800,mt-slots=10,mt-pressure=off,abs-xy=on,touch-keys=116:143:354 -device virtio-keyboard-pci,input-name=gpio-keys,input-bus=25,input-vendor=1,input-product=1,input-version=256 -device virtio-serial,id=stage-vserial -chardev null,id=stage-hvc0 -device virtconsole,chardev=stage-hvc0,id=stage-hvc0-console -chardev null,id=stage-hvc1 -device virtconsole,chardev=stage-hvc1,id=stage-hvc1-console -chardev socket,id=stage-adbkey,fd=3 -device virtconsole,chardev=stage-adbkey,id=stage-hvc2-adbkey -chardev socket,id=stage-keymint,fd=4,logfile=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/NX809J_16-BQ2A.250705.001-BP2A.250605.031.A3-20260527/1/secure-env/keymint-wire.log,logappend=on -device virtconsole,chardev=stage-keymint,id=stage-hvc3-keymint -chardev socket,id=stage-radio,fd=5 -device virtconsole,chardev=stage-radio,id=stage-hvc4-radio -chardev null,id=stage-hvc5 -device virtconsole,chardev=stage-hvc5,id=stage-hvc5-console -chardev null,id=stage-hvc6 -device virtconsole,chardev=stage-hvc6,id=stage-hvc6-console -chardev socket,id=stage-event,path=/tmp/stage-3150b5fd/event.sock,server=on,wait=off,logfile=/tmp/stage-3150b5fd/event.sock.log,logappend=on -device virtconsole,chardev=stage-event,id=stage-hvc7-event -chardev null,id=stage-hvc8 -device virtconsole,chardev=stage-hvc8,id=stage-hvc8-console -chardev socket,id=stage-wifi,path=/tmp/stage-3150b5fd/wifi.sock,server=on,wait=off,logfile=/tmp/stage-3150b5fd/wifi.sock.log,logappend=on -device virtconsole,chardev=stage-wifi,id=stage-hvc9-wifi -chardev socket,id=stage-wifi-data,path=/tmp/stage-3150b5fd/wifi-data.sock,server=on,wait=off,logfile=/tmp/stage-3150b5fd/wifi-data.sock.log,logappend=on -device virtconsole,chardev=stage-wifi-data,id=stage-hvc10-wifi-data -device virtio-rng-pci -audiodev none,id=cdhsnd -device intel-hda -device hda-duplex,audiodev=cdhsnd -chardev stdio,mux=on,id=charconsole -serial chardev:charconsole]
+533:[    0.516568][    T1] cdh_redirect: 规则来自 /lib/modules/cdh_redirect.rules：15 条
+543:[    0.544051][    T1] cdh_redirect: 已加载：15 条规则（/lib/modules/cdh_redirect.rules），内核未打补丁
+1255:[    2.554187][    T1] init: Parsing file /vendor/etc/init/dlkm_loader_mainline.rc...
+1636:[    3.658547][    T1] init: processing action (init) from (/vendor/etc/init/dlkm_loader_mainline.rc:13)
+1638:[    3.665780][    T1] init: Command 'write /proc/sys/kernel/firmware_config/force_sysfs_fallback 1' action=init (/vendor/etc/init/dlkm_loader_mainline.rc:15) took 5ms and failed: Unable to write to file '/proc/sys/kernel/firmware_config/force_sysfs_fallback': open() failed: Permission denied
+1641:[    3.667055][    T1] init: starting service 'vendor.dlkm_loader_mainline'...
+1643:[    3.668148][  T256] KernelSU: hook_manager: unmark 256 exec /vendor/bin/dlkm_loader_mainline
+1644:[    3.668370][    T1] init: ... started service 'vendor.dlkm_loader_mainline' has pid 256
+1657:[    3.679180][  T256] dlkm_loader_mainline: dlkm loader successfully initialized
+1659:[    3.685925][  T256] dlkm_loader_mainline: multiple options lines present for module cdh_media
+1660:[    3.685990][  T256] dlkm_loader_mainline: Loading module /vendor_dlkm/lib/modules/cdh_device_info.ko with args ''
+1717:[    4.045909][  T256] dlkm_loader_mainline: Loaded kernel module /vendor_dlkm/lib/modules/cdh_device_info.ko
+1718:[    4.045942][  T256] dlkm_loader_mainline: Loading module /vendor_dlkm/lib/modules/cdh_input_identity.ko with args ''
+1741:[    4.112699][  T256] dlkm_loader_mainline: Loaded kernel module /vendor_dlkm/lib/modules/cdh_input_identity.ko
+1743:[    4.116619][  T256] dlkm_loader_mainline: Loading module /vendor_dlkm/lib/modules/cdh_media.ko with args 'allow_userptr=1'
+1750:[    4.146672][  T256] dlkm_loader_mainline: Loaded kernel module /vendor_dlkm/lib/modules/cdh_media.ko
+1752:[    4.148354][  T256] dlkm_loader_mainline: Loading module /vendor_dlkm/lib/modules/rfkill.ko with args ''
+1758:[    4.176559][  T256] dlkm_loader_mainline: Loaded kernel module /vendor_dlkm/lib/modules/rfkill.ko
+1760:[    4.177156][  T256] dlkm_loader_mainline: Loading module /vendor_dlkm/lib/modules/cfg80211.ko with args ''
+1776:[    4.224951][  T256] dlkm_loader_mainline: Loaded kernel module /vendor_dlkm/lib/modules/cfg80211.ko
+1777:[    4.224985][  T256] dlkm_loader_mainline: Loading module /vendor_dlkm/lib/modules/libarc4.ko with args ''
+1782:[    4.229455][  T256] dlkm_loader_mainline: Loaded kernel module /vendor_dlkm/lib/modules/libarc4.ko
+1784:[    4.235439][  T256] dlkm_loader_mainline: Loading module /vendor_dlkm/lib/modules/mac80211.ko with args ''
+1787:  4.243687][  T256] dlkm_loader_mainline: Loaded kernel module /vendor_dlkm/lib/modules/mac80211.ko
+1789:[    4.250917][  T256] dlkm_loader_mainline: Loading module /vendor_dlkm/lib/modules/mac80211_hwsim.ko with args ''
+1798:[    4.278465][  T256] dlkm_loader_mainline: Loaded kernel module /vendor_dlkm/lib/modules/mac80211_hwsim.ko
+1800:[    4.279440][  T256] dlkm_loader_mainline: Loading module /vendor_dlkm/lib/modules/virtio_console.ko with args ''
+1804:[    4.294056][  T256] dlkm_loader_mainline: Loaded kernel module /vendor_dlkm/lib/modules/virtio_console.ko
+1806:[    4.295478][  T256] dlkm_loader_mainline: Loading module /vendor_dlkm/lib/modules/zsmalloc.ko with args ''
+1809:[    4.310327][  T256] dlkm_loader_mainline: Loaded kernel module /vendor_dlkm/lib/modules/zsmalloc.ko
+1811:[    4.311012][  T256] dlkm_loader_mainline: Loading module /vendor_dlkm/lib/modules/zram.ko with args ''
+1818:[    4.333023][  T256] dlkm_loader_mainline: Loaded kernel module /vendor_dlkm/lib/modules/zram.ko
+1820:[    4.333799][  T256] dlkm_loader_mainline: module load count is 11
+1826:[    4.350989][    T1] init: Service 'vendor.dlkm_loader_mainline' (pid 256) exited with status 0 oneshot service took 0.683000 seconds in background
+1827:[    4.352135][    T1] init: Sending signal 9 to service 'vendor.dlkm_loader_mainline' (pid 256) process group...
+
+=== [通过日志 2] 运行态 /proc/modules 与验收状态 ===
+=== WM & DISPLAY PASS ===
+Physical size: 1216x2688
+Physical density: 520
+  DisplayDeviceInfo{"Built-in Screen": uniqueId="local:4632256312697818880", 1216 x 2688, modeId 1, renderFrameRate 60.0, hasArrSupport false, frameRateCategoryRate FrameRateCategoryRate {normal=60.0, high=90.0}, supportedRefreshRates [60.0, 60.00384, 60.316544, 60.0, 59.94048], defaultModeId 1, userPreferredModeId -1, supportedModes [{id=1, width=1216, height=2688, fps=60.0, vsync=60.0, synthetic=false, alternativeRefreshRates=[], supportedHdrTypes=[]}, {id=2, width=1024, height=768, fps=60.00384, vsync=60.00384, synthetic=false, alternativeRefreshRates=[], supportedHdrTypes=[]}, {id=3, width=800, height=600, fps=60.316544, vsync=60.316544, synthetic=false, alternativeRefreshRates=[], supportedHdrTypes=[]}, {id=4, width=640, height=480, fps=60.0, vsync=60.0, synthetic=false, alternativeRefreshRates=[], supportedHdrTypes=[]}, {id=5, width=640, height=480, fps=59.94048, vsync=59.94048, synthetic=false, alternativeRefreshRates=[], supportedHdrTypes=[]}], colorMode 0, supportedColorModes [0], hdrCapabilities HdrCapabilities{mSupportedHdrTypes=[], mMaxLuminance=500.0, mMaxAverageLuminance=500.0, mMinLuminance=0.0}, isForceSdr false, allmSupported false, gameContentTypeSupported false, density 520, 435.0197 x 429.40375 dpi, appVsyncOff 9166668, presDeadline 11500000, touch INTERNAL, rotation 0, type INTERNAL, address {port=0, model=0x40491492daea0f}, deviceProductInfo DeviceProductInfo{name=QEMU Monitor, manufacturerPnpId=RHT, productId=4660, modelYear=null, manufactureDate=ManufactureDate{week=42, year=2014}, connectionToSinkType=1}, state ON, committedState ON, frameRateOverride , brightnessMinimum 0.0, brightnessMaximum 1.0, brightnessDefault 0.39763778, brightnessDim 0.05, hdrSdrRatio NaN, roundedCorners RoundedCorners{[RoundedCorner{position=TopLeft, radius=23, center=Point(23, 23)}, RoundedCorner{position=TopRight, radius=23, center=Point(1193, 23)}, RoundedCorner{position=BottomRight, radius=23, center=Point(1193, 2665)}, RoundedCorner{position=BottomLeft, radius=23, center=Point(23, 2665)}]}, FLAG_ALLOWED_TO_BE_DEFAULT_DISPLAY, FLAG_ROTATES_WITH_CONTENT, FLAG_SECURE, FLAG_SUPPORTS_PROTECTED_BUFFERS, FLAG_TRUSTED, installOrientation 0, displayShape DisplayShape{ spec=1406003047 displayWidth=1216 displayHeight=2688 physicalPixelDisplaySizeRatio=1.0 rotation=0 offsetX=0 offsetY=0 scale=1.0}}
+    mActiveModeId=1
+    mDefaultModeId=1
+    mDesiredDisplayModeSpecs={baseModeId=1 allowGroupSwitching=false primary=physical: (0.0 240.0) render:  (0.0 120.0) appRequest=physical: (0.0 240.0) render:  (0.0 240.0) idleScreenRefreshRateConfig=null}
+=== DLKM & REDIRECT & PLACEHOLDERS ===
+zram 73728 0 - Live 0x0000000000000000 (E)
+zsmalloc 40960 1 zram, Live 0x0000000000000000 (E)
+virtio_console 45056 0 - Live 0x0000000000000000 (E)
+mac80211_hwsim 110592 0 - Live 0x0000000000000000 (E)
+mac80211 1056768 1 mac80211_hwsim, Live 0x0000000000000000 (E)
+libarc4 16384 1 mac80211, Live 0x0000000000000000 (E)
+cfg80211 1093632 2 mac80211_hwsim,mac80211, Live 0x0000000000000000 (E)
+rfkill 40960 1 cfg80211, Live 0x0000000000000000 (E)
+cdh_media 49152 0 - Live 0x0000000000000000 (OE)
+cdh_input_identity 32768 0 - Live 0x0000000000000000 (OE)
+cdh_device_info 77824 1 - Live 0x0000000000000000 (OE)
+kernelsu 204800 0 - Live 0x0000000000000000 (OE)
+cdh_redirect 151552 0 - Live 0x0000000000000000 (OE)
+Service vendor.qti.hardware.radio.qtiradio.IQtiRadioStable/slot1: found
+Service vendor.qti.hardware.radio.qtiradio.IQtiRadioStable/slot2: found
+NO_DROPBOX_CRASH
+=== TRIGGER LAUNCHER CHOICE FOR FULL DESKTOP CAPTURE ===
+Starting: Intent { cmp=com.zte.mifavor.launcher/com.android.launcher3.uioverrides.QuickstepLauncher }
+Warning: Activity not started, its current task has been brought to the front
+  mCurrentFocus=Window{fb7bad8 u0 com.zte.mifavor.launcher/com.android.launcher3.uioverrides.QuickstepLauncher}
+  mFocusedApp=ActivityRecord{90635587 u0 com.zte.mifavor.launcher/com.android.launcher3.uioverrides.QuickstepLauncher t7}

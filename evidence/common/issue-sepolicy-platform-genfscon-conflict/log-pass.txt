@@ -1,0 +1,22 @@
+=== 1. Go 单元测试 ===
+$ cd /Volumes/work/cloud-phone-hub/agent && TMPDIR=/Volumes/work/cloud-phone-hub/out/agent/tmp go test -v -count=1 ./modules/pipeline/stages/09_build_vendor/...
+=== RUN   TestReconcilePlatformGenfsconConflictsCIL
+--- PASS: TestReconcilePlatformGenfsconConflictsCIL (0.00s)
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	1.274s
+
+=== 2. 离线原厂 /system/bin/secilc 验证 ===
+- 剔除 (genfscon sysfs "/class/thermal" ...) 并补充 (allow hal_thermal_default sysfs_hwthermal_202404 ...) 后：
+  out/devices/tmp/sun-secilc-debug/sepolicy.fixed (1.1M, exit 0)
+
+=== 3. honor/sun 构建日志（vendor-log.txt）===
+    追加 out/devices/devices/honor/sun/15-AQ3A.250214.001-20260904/vendor/etc/selinux/vendor_file_contexts <- devices/hardware/android.hardware.power/sepolicy/vendor_file_contexts（989 字节，marker # vendor_file_contexts@android.hardware.power）
+    追加 out/devices/devices/honor/sun/15-AQ3A.250214.001-20260904/vendor/etc/selinux/vendor_sepolicy.cil <- devices/manifest/configs/honor/sun/sun-android15/vendor/sepolicy/vendor_sepolicy.cil（3721 字节，marker ;; vendor_sepolicy.cil）
+    追加 out/devices/devices/honor/sun/15-AQ3A.250214.001-20260904/vendor/etc/selinux/vendor_file_contexts <- devices/manifest/configs/honor/sun/sun-android15/vendor/sepolicy/vendor_file_contexts（198 字节，marker # vendor_file_contexts）
+    消解跨分区 genfscon 冲突 1 条（补齐平台类型别名授权 3 条）
+[add] vendor/lib64/libapexsupport.so <- 官方 system:/system/lib64/libapexsupport.so（161456 B，原样回填供 vendor 命名空间解析）
+[delete] vendor/lib64/libminigbm_gralloc.so（自编 allocator 已静态内聚，移除底包残留库）
+[delete] vendor/lib64/libminigbm_gralloc4_utils.so（自编 allocator 已静态内聚，移除底包残留库）
+
+=== 4. 实机启动穿透 secilc 并进入 MagicOS 桌面 ===
+bootCompleted=true, bootanim=stopped, topActivity=com.hihonor.android.launcher/.unihome.UniHomeLauncher
+out/devices/tmp/sun_now.png: meanBrightness=47.78, peak=255, pngBytes=3022813

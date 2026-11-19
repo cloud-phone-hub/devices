@@ -1,0 +1,43 @@
+=== props ===
+asus/ZWWAI2501/ASUSAI2501:15/AQ3A.240829.003/35.1810.1810.243-0:user/release-keys
+ZWWAI2501
+meow
+adreno
+60,120,144
+120
+1
+1
+reboot,factory_reset
+=== service list ===
+=== verify_boot.py result (task-1903) ===
+  "spec": "ASUSAI2501_15-AQ3A.240829.003-20250122",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/ASUSAI2501_15-AQ3A.240829.003-20250122/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{82e7f1 u0 NotificationShade}\n  mFocusedApp=ActivityRecord{c59dd14 u0 com.asus.launcher/com.android.launcher3.uioverrides.QuickstepLauncher t7}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "adreno",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 10.06,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/asus_ASUSAI2501.png",
+    "pngBytes": 133319
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}

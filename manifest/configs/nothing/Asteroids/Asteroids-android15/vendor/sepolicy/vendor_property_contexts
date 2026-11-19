@@ -1,0 +1,6 @@
+# cdh Asteroids (Nothing OS 3.2 / Android 15, GRF vendor 34.0)：
+# 对齐官方 vendor_property_contexts 的 vendor_display_prop 前缀，使 system_server
+# 能读取 ro.vendor.display.array.auto.nits 等自适应亮度曲线属性。
+vendor.display.               u:object_r:vendor_display_prop:s0
+ro.vendor.display.            u:object_r:vendor_display_prop:s0
+persist.vendor.display.       u:object_r:vendor_display_prop:s0

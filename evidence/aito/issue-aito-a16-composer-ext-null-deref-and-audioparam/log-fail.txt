@@ -1,0 +1,312 @@
+=== Round 1 Failure (mapper/minigbm missing service_contexts & platform=qcom) ===
+Command exited with code 1.
+
+Command output:
+running: None
+==> 创建并冷启动实例: match=aito_14-W1UCS36H.96-35-8-9-20260801
+    spec=aito_14-W1UCS36H.96-35-8-9-20260801 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/aito_14-W1UCS36H.96-35-8-9-20260801/1
+==> [诊断] 提取 qemu.log 尾部与关键字:
+{
+  "spec": "aito_14-W1UCS36H.96-35-8-9-20260801",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/aito_14-W1UCS36H.96-35-8-9-20260801/1/qemu.log",
+  "bootCompleted": false,
+  "failReason": "检测到系统服务崩溃循环 (UPDATABLE_CRASHING / abort_fuse >= 3)",
+  "qemuLogLines": 4617,
+  "qemuTail": "[   17.840793][  T256] servicemanager: Caller(pid=753,uid=1000,sid=u:r:system_server:s0) Found android.frameworks.stats.IStats/default in framework VINTF manifest.\n[   17.841095][  T261] type=1400 audit(1795047334.556:1002): avc:  granted  { map } for  comm=\"sleep\" path=\"/system/bin/toybox\" dev=\"dm-1\" ino=9730849 scontext=u:r:pioneer:s0 tcontext=u:object_r:toolbox_exec:s0 tclass=file\n[   17.841753][  T256] servicemanager: Add service successfully: android.frameworks.stats.IStats/default\n[   17.842128][  T261] type=1400 audit(1795047334.556:1003): avc:  granted  { read execute } for  comm=\"sleep\" path=\"/system/bin/toybox\" dev=\"dm-1\" ino=9730849 scontext=u:r:pioneer:s0 tcontext=u:object_r:toolbox_exec:s0 tclass=file\n[   17.842932][  T256] servicemanager: Caller(pid=753,uid=1000,sid=u:r:system_server:s0) Could not find android.hardware.memtrack.IMemtrack/default in the VINTF manifest. No alternative instances declared in VINTF.\n[   17.843010][  T261] type=1400 audit(1795047334.556:1004): avc:  granted  { map } for  comm=\"sleep\" path=\"/system/bin/toybox\" dev=\"dm-1\" ino=9730849 scontext=u:r:pioneer:s0 tcontext=u:object_r:toolbox_exec:s0 tclass=file\n[   17.843800][  T256] servicemanager: Add service begin: name=memtrack.proxy,allowIsolated=0,dumpPriority=8\n[   17.844164][  T261] type=1400 audit(1795047334.556:1005): avc:  granted  { read } for  comm=\"sleep\" path=\"/system/bin/toybox\" dev=\"dm-1\" ino=9730849 scontext=u:r:pioneer:s0 tcontext=u:object_r:toolbox_exec:s0 tclass=file\n[   17.844668][  T256] servicemanager: Add service successfully: memtrack.proxy\n[   17.844899][  T261] type=1400 audit(1795047334.556:1006): avc:  granted  { map } for  comm=\"sleep\" path=\"/system/bin/toybox\" dev=\"dm-1\" ino=9730849 scontext=u:r:pioneer:s0 tcontext=u:object_r:toolbox_exec:s0 tclass=file\n[   17.851261][  T256] servicemanager: Add service begin: name=activity_task,allowIsolated=0,dumpPriority=8\n[   17.861645][  T261] type=1400 audit(1795047334.560:1007): avc:  granted  { read } for  comm=\"sleep\" path=\"/system/bin/toybox\" dev=\"dm-1\" ino=9730849 scontext=u:r:pioneer:s0 tcontext=u:object_r:toolbox_exec:s0 tclass=file\n[   17.866963][  T256] servicemanager: Add service successfully: activity_task\n[   17.872568][  T261] type=1400 audit(1795047334.560:1008): avc:  granted  { getattr } for  comm=\"sleep\" path=\"/system/bin/toybox\" dev=\"dm-1\" ino=9730849 scontext=u:r:pioneer:s0 tcontext=u:object_r:toolbox_exec:s0 tclass=file\n[   17.879976][  T256] SELinux: avc:  denied  { find } for pid=753 uid=1000 name=batterymanager scontext=u:r:system_server:s0 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0\n[   17.880592][  T261] type=1400 audit(1795047334.560:1009): avc:  granted  { getattr } for  comm=\"sleep\" path=\"/system/bin/toybox\" dev=\"dm-1\" ino=9730849 scontext=u:r:pioneer:s0 tcontext=u:object_r:toolbox_exec:s0 tclass=file\n[   17.905638][  T256] SELinux: avc:  denied  { find } for pid=652 uid=1013 name=motorola.hardware.sxf.IMotoSxf/default scontext=u:r:mediaserver:s0 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0\n[   17.907453][  T261] type=1400 audit(1795047334.560:1010): avc:  granted  { getattr } for  comm=\"sleep\" path=\"/system/bin/toybox\" dev=\"dm-1\" ino=9730849 scontext=u:r:pioneer:s0 tcontext=u:object_r:toolbox_exec:s0 tclass=file\n[   17.913796][  T256] servicemanager: Add service begin: name=batterystats,allowIsolated=0,dumpPriority=8\n[   17.914329][  T261] type=1400 audit(1795047334.560:1011): avc:  granted  { read } for  comm=\"sleep\" path=\"/system/bin/toybox\" dev=\"dm-1\" ino=9730849 scontext=u:r:pioneer:s0 tcontext=u:object_r:toolbox_exec:s0 tclass=file\n[   17.914622][  T256] servicemanager: Add service successfully: batterystats\n[   17.915096][  T261] type=1400 audit(1795047334.568:1012): avc:  denied  { read } for  comm=\"binder:680_2\" name=\"u:object_r:hwservicemanager_prop:s0\" dev=\"tmpfs\" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0\n[   17.915334][  T256] servicemanager: Add service begin: name=appops,allowIsolated=0,dumpPriority=8\n[   17.915902][  T261] type=1400 audit(1795047334.568:1013): avc:  denied  { read } for  comm=\"binder:680_2\" name=\"u:object_r:hwservicemanager_prop:s0\" dev=\"tmpfs\" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0\n[   17.916168][  T256] servicemanager: Add service successfully: appops\n[   17.916824][  T261] type=1400 audit(1795047334.572:1014): avc:  denied  { read } for  comm=\"ls\" name=\"/\" dev=\"dm-1\" ino=56 scontext=u:r:init_elabel:s0 tcontext=u:object_r:rootfs:s0 tclass=dir permissive=0\n[   17.917474][  T256] servicemanager: Add service begin: name=moto_battery_care_service,allowIsolated=0,dumpPriority=8\n[   17.918121][  T261] type=1400 audit(1795047334.572:1015): avc:  denied  { read } for  comm=\"binder:680_2\" name=\"u:object_r:hwservicemanager_prop:s0\" dev=\"tmpfs\" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0\n[   17.918470][  T256] servicemanager: Add service successfully: moto_battery_care_service\n[   17.919127][  T261] type=1400 audit(1795047334.572:1016): avc:  denied  { read } for  comm=\"binder:680_2\" name=\"u:object_r:hwservicemanager_prop:s0\" dev=\"tmpfs\" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0\n[   17.921097][  T256] servicemanager: Add service begin: name=dataloader_manager,allowIsolated=0,dumpPriority=8\n[   17.931298][  T261] type=1400 audit(1795047334.576:1017): avc:  denied  { read } for  comm=\"binder:680_2\" name=\"u:object_r:hwservicemanager_prop:s0\" dev=\"tmpfs\" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0\n[   17.931307][  T261] type=1400 audit(1795047334.580:1018): avc:  denied  { read } for  comm=\"binder:680_2\" name=\"u:object_r:hwservicemanager_prop:s0\" dev=\"tmpfs\" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0\n[   17.931313][  T261] type=1400 audit(1795047334.580:1019): avc:  denied  { read } for  comm=\"binder:680_2\" name=\"u:object_r:hwservicemanager_prop:s0\" dev=\"tmpfs\" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0\n[   17.931319][  T261] type=1400 audit(1795047334.592:1020): avc:  denied  { read } for  comm=\"binder:680_2\" name=\"u:object_r:hwservicemanager_prop:s0\" dev=\"tmpfs\" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0\n[   17.931325][  T261] type=1400 audit(1795047334.596:1021): avc:  denied  { read } for  comm=\"binder:680_2\" name=\"u:object_r:hwservicemanager_prop:s0\" dev=\"tmpfs\" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0\n[   17.931346][  T261] type=1400 audit(1795047334.596:1022): avc:  denied  { create } for  comm=\"update_engine\" name=\"update_engine.log\" scontext=u:r:update_engine:s0 tcontext=u:object_r:update_engine_log_data_file:s0 tclass=lnk_file permissive=0\n[   17.931364][  T261] type=1400 audit(1795047334.704:1023): avc:  denied  { read } for  comm=\"main\" name=\"u:object_r:vendor_default_prop:s0\" dev=\"tmpfs\" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0\n[   17.931370][  T261] type=1400 audit(1795047334.704:1024): avc:  denied  { read } for  comm=\"main\" name=\"u:object_r:vendor_default_prop:s0\" dev=\"tmpfs\" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0\n[   17.931376][  T261] type=1400 audit(1795047334.704:1025): avc:  denied  { read } for  comm=\"main\" name=\"u:object_r:vendor_default_prop:s0\" dev=\"tmpfs\" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0\n[   17.931381][  T261] type=1400 audit(1795047334.704:1026): avc:  denied  { read } for  comm=\"main\" name=\"u:object_r:vendor_default_prop:s0\" dev=\"tmpfs\" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0\n[   17.931386][  T261] type=1400 audit(1795047334.928:1027): avc:  denied  { read } for  comm=\"main\" name=\"u:object_r:vendor_default_prop:s0\" dev=\"tmpfs\" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0\n[   17.931392][  T261] type=1400 audit(1795047334.936:1028): avc:  denied  { read } for  comm=\"main\" name=\"u:object_r:vendor_default_prop:s0\" dev=\"tmpfs\" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0\n[   17.931397][  T261] type=1400 audit(1795047334.940:1029): avc:  denied  { read } for  comm=\"main\" name=\"u:object_r:vendor_default_prop:s0\" dev=\"tmpfs\" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0\n[   17.931402][  T261] type=1400 audit(1795047334.940:1030): avc:  denied  { read } for  comm=\"main\" name=\"u:object_r:vendor_default_prop:s0\" dev=\"tmpfs\" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0\n[   17.931407][  T261] type=1400 audit(1795047334.956:1031): avc:  denied  { read } for  comm=\"main\" name=\"u:object_r:vendor_default_prop:s0\" dev=\"tmpfs\" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0\n[   17.931419][  T261] type=1400 audit(1795047334.968:1032): avc:  denied  { read } for  comm=\"vtservice\" name=\"u:object_r:vendor_default_prop:s0\" dev=\"tmpfs\" ino=547 scontext=u:r:vtservice:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0\n[   17.931461][  T261] type=1400 audit(1795047334.968:1033): avc:  denied  { read } for  comm=\"vtservice\" name=\"u:object_r:vendor_default_prop:s0\" dev=\"tmpfs\" ino=547 scontext=u:r:vtservice:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0\n[   17.931468][  T261] type=1400 audit(1795047334.968:1034): avc:  denied  { read } for  comm=\"vtservice\" name=\"u:object_r:vendor_default_prop:s0\" dev=\"tmpfs\" ino=547 scontext=u:r:vtservice:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0\n[   17.931474][  T261] type=1400 audit(1795047334.972:1035): avc:  denied  { read } for  comm=\"main\" name=\"u:object_r:vendor_default_prop:s0\" dev=\"tmpfs\" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0\n[   17.931484][  T261] type=1400 audit(1795047335.356:1036): avc:  granted  { getattr } for  comm=\"sh\" path=\"/system/bin/toolbox\" dev=\"dm-1\" ino=9730840 scontext=u:r:pioneer:s0 tcontext=u:object_r:toolbox_exec:s0 tclass=file\n[   17.931491][  T261] type=1400 audit(1795047335.356:1037): avc:  granted  { execute } for  comm=\"sh\" name=\"toolbox\" dev=\"dm-1\" ino=9730840 scontext=u:r:pioneer:s0 tcontext=u:object_r:toolbox_exec:s0 tclass=file\n[   17.931497][  T261] type=1400 audit(1795047335.356:1038): avc:  granted  { execute } for  comm=\"sh\" name=\"toolbox\" dev=\"dm-1\" ino=9730840 scontext=u:r:pioneer:s0 tcontext=u:object_r:too
+...[truncated]...
+
+=== Round 2 verify_boot (--timeout 120) Result ===
+failReason: 检测到系统服务崩溃循环 (UPDATABLE_CRASHING / abort_fuse >= 3)
+bootCompleted: False
+
+--- logcatErrorsTail ---
+F/DEBUG   (  885):       #18 pc 000000000006bc18  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: 4740301183e36162080bd774fc515f34)
+E/crash_dump64(  885): unable to connect to activity manager: No such file or directory
+E/tombstoned(  385): Tombstone written to: tombstone_01
+E/libcomposer_ext(  613): Can't get Composer Ext, tried(22) times
+E/SurfaceFlinger(  613): ComposerExt HIDL not present
+E/AVSync  (  647): open dev failed: retry=8, g_fd_avsync=-1, errno=2, No such file or directory
+E/LocalDisplayAdapter(  741): Can't find display mode with id -1
+E/HidlServiceManagement(  613): Service android.frameworks.displayservice@1.0::IDisplayService/default must be in VINTF manifest in order to register/get.
+E/SurfaceFlinger(  613): Did not register (deprecated) IDisplayService service.
+F/libc    (  613): Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 613 (surfaceflinger), pid 613 (surfaceflinger)
+E/DisplayManagerService(  741): Default display is null for info request from uid 1000
+E/UserManagerService(  741): No user list file
+E/UserManagerService(  741): userlist.xml not found, fallback to single user
+F/DEBUG   (  893): *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+F/DEBUG   (  893): Build fingerprint: 'motorola/aito_g_sys/aito:16/W1UCS36H.96-35-8-9/4907d6-43c152:user/release-keys'
+F/DEBUG   (  893): Revision: '0'
+F/DEBUG   (  893): ABI: 'arm64'
+F/DEBUG   (  893): Timestamp: 2026-11-19 00:23:02.314330336+0000
+F/DEBUG   (  893): Process uptime: 6s
+F/DEBUG   (  893): Cmdline: /system/bin/surfaceflinger
+F/DEBUG   (  893): pid: 613, tid: 613, name: surfaceflinger  >>> /system/bin/surfaceflinger <<<
+F/DEBUG   (  893): uid: 1000
+F/DEBUG   (  893): tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+F/DEBUG   (  893): pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+F/DEBUG   (  893): signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000
+F/DEBUG   (  893): Cause: null pointer dereference
+F/DEBUG   (  893):     x0  0000000000000000  x1  0000000000000000  x2  0000007fd0aedfa0  x3  0000007fd0aedf98
+F/DEBUG   (  893):     x4  00000000000003b8  x5  0000000040100401  x6  0000000000000022  x7  7f7f7f7f7fff7fff
+F/DEBUG   (  893):     x8  0000000000000000  x9  0000000000000001  x10 0000000000000002  x11 b40000792a021e50
+F/DEBUG   (  893):     x12 0000006172227868  x13 000000007fffffff  x14 0000000000001efe  x15 0000000033df3036
+F/DEBUG   (  893):     x16 00000061722532c0  x17 0000007baa8a0900  x18 0000007bb69d8000  x19 b40000792a020010
+F/DEBUG   (  893):     x20 b400007b1a02a6f0  x21 b400007b1a02a830  x22 0000007bb5d5ce40  x23 b40000791a02ed70
+F/DEBUG   (  893):     x24 b40000791a02ed70  x25 b40000791a02ece0  x26 b40000795a029938  x27 0000000000000048
+F/DEBUG   (  893):     x28 0000000000000000  x29 0000007fd0aee340
+F/DEBUG   (  893):     lr  0000006171d407f4  sp  0000007fd0aee180  pc  0000006171d407fc  pst 0000000080000000
+F/DEBUG   (  893): 8 total frames
+F/DEBUG   (  893): backtrace:
+F/DEBUG   (  893):       #00 pc 00000000002c07fc  /system/bin/surfaceflinger (android::SurfaceFlinger::initializeDisplays()+2460) (BuildId: b247754520e11f834990f717c365b5e0)
+F/DEBUG   (  893):       #01 pc 000000000027a968  /system/bin/surfaceflinger (android::Task<android::SurfaceFlinger::binderDied(android::wp<android::IBinder> const&)::$_0>::handleMessage(android::Message const&) (.__uniq.59679109406690186319419933358127648880.e8594c02d6cb4ed1711db2003e8e0b7c)+88) (BuildId: b247754520e11f834990f717c365b5e0)
+F/DEBUG   (  893):       #02 pc 0000000000013fec  /system/lib64/libutils.so (android::Looper::pollInner(int)+556) (BuildId: 6fad788963cfc2c15e1dbed4e3988d48)
+F/DEBUG   (  893):       #03 pc 0000000000013d60  /system/lib64/libutils.so (android::Looper::pollOnce(int, int*, int*, void**)+128) (BuildId: 6fad788963cfc2c15e1dbed4e3988d48)
+F/DEBUG   (  893):       #04 pc 0000000000250584  /system/bin/surfaceflinger (android::impl::MessageQueue::waitMessage()+84) (BuildId: b247754520e11f834990f717c365b5e0)
+F/DEBUG   (  893):       #05 pc 000000000026a3bc  /system/bin/surfaceflinger (android::scheduler::Scheduler::run()+28) (BuildId: b247754520e11f834990f717c365b5e0)
+F/DEBUG   (  893):       #06 pc 00000000003210d4  /system/bin/surfaceflinger (main+2516) (BuildId: b247754520e11f834990f717c365b5e0)
+F/DEBUG   (  893):       #07 pc 000000000006bc18  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: 4740301183e36162080bd774fc515f34)
+E/crash_dump64(  893): unable to connect to activity manager: No such file or directory
+E/tombstoned(  385): Tombstone written to: tombstone_02
+E/IPCThreadState(  605): Binder transaction failure. id: 2570, BR_*: 29189, error: -22 (Invalid argument)
+E/SfCpu   (  912): Can not open /proc/perfmgr/xgff_ioctl
+E/HwcComposer(  912): getOverlaySupport failed Status(-8, EX_SERVICE_SPECIFIC): '8: '
+E/HwcComposer(  912): getHdrConversionCapabilities failed Status(-8, EX_SERVICE_SPECIFIC): '8: '
+E/HWComposer(  912): Error in fetching HDR conversion capabilities UNSUPPORTED
+E/drmhwc  (  605): Client requested HDCP, but HDCP properties not available on that display
+E/HwcComposer(  912): getMaxLayerPictureProfiles failed Status(-8, EX_SERVICE_SPECIFIC): '8: '
+E/HWComposer(  912): getMaxLayerPictureProfiles: getMaxLayerPictureProfiles failed for display 4632256312697818880: UNSUPPORTED (8)
+E/GED     (  912): failed to open /proc/ged
+E/GED     (  912): Failed to open ged device
+E/surfaceflinger(  912): [onConstructor]: an error ged handle
+E/surfaceflinger(  912): [perfctl] 912 912 FPSGO ver:-1
+E/surfaceflinger(  912): [perfctl] 0 0 0 0
+
+--- dmesgAvcTail ---
+[   20.718096] type=1400 audit(1795047782.644:1414): avc:  denied  { read } for  comm="main" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+[   20.722120] SELinux: avc:  denied  { find } for pid=912 uid=1000 name=vendor.mediatek.hardware.composer_ext.IComposerExt/default scontext=u:r:surfaceflinger:s0 tcontext=u:object_r:mtk_hal_composer_ext_service:s0 tclass=service_manager permissive=0
+[   20.796542] type=1400 audit(1795047782.656:1435): avc:  denied  { read } for  comm="sh" name="/" dev="dm-1" ino=56 scontext=u:r:pioneer:s0 tcontext=u:object_r:rootfs:s0 tclass=dir permissive=1
+[   20.796553] type=1400 audit(1795047782.656:1437): avc:  denied  { open } for  comm="sh" path="/" dev="dm-1" ino=56 scontext=u:r:pioneer:s0 tcontext=u:object_r:rootfs:s0 tclass=dir permissive=1
+[   20.796564] type=1400 audit(1795047782.656:1439): avc:  denied  { getattr } for  comm="sh" path="/system/bin/logcat" dev="dm-1" ino=9729631 scontext=u:r:pioneer:s0 tcontext=u:object_r:logcat_exec:s0 tclass=file permissive=1
+[   20.796569] type=1400 audit(1795047782.656:1440): avc:  denied  { execute } for  comm="sh" name="logcat" dev="dm-1" ino=9729631 scontext=u:r:pioneer:s0 tcontext=u:object_r:logcat_exec:s0 tclass=file permissive=1
+[   20.796579] type=1400 audit(1795047782.656:1442): avc:  denied  { read open } for  comm="sh" path="/system/bin/logcat" dev="dm-1" ino=9729631 scontext=u:r:pioneer:s0 tcontext=u:object_r:logcat_exec:s0 tclass=file permissive=1
+[   20.796584] type=1400 audit(1795047782.656:1443): avc:  denied  { execute_no_trans } for  comm="sh" path="/system/bin/logcat" dev="dm-1" ino=9729631 scontext=u:r:pioneer:s0 tcontext=u:object_r:logcat_exec:s0 tclass=file permissive=1
+[   20.796636] type=1400 audit(1795047782.656:1453): avc:  denied  { map } for  comm="logcat" path="/system/bin/logcat" dev="dm-1" ino=9729631 scontext=u:r:pioneer:s0 tcontext=u:object_r:logcat_exec:s0 tclass=file permissive=1
+[   20.796720] type=1400 audit(1795047782.660:1469): avc:  denied  { read } for  comm="logcat" name="u:object_r:default_prop:s0" dev="tmpfs" ino=169 scontext=u:r:pioneer:s0 tcontext=u:object_r:default_prop:s0 tclass=file permissive=1
+[   20.796726] type=1400 audit(1795047782.660:1470): avc:  denied  { open } for  comm="logcat" path="/dev/__properties__/u:object_r:default_prop:s0" dev="tmpfs" ino=169 scontext=u:r:pioneer:s0 tcontext=u:object_r:default_prop:s0 tclass=file permissive=1
+[   20.796731] type=1400 audit(1795047782.660:1471): avc:  denied  { getattr } for  comm="logcat" path="/dev/__properties__/u:object_r:default_prop:s0" dev="tmpfs" ino=169 scontext=u:r:pioneer:s0 tcontext=u:object_r:default_prop:s0 tclass=file permissive=1
+[   20.796737] type=1400 audit(1795047782.660:1472): avc:  denied  { map } for  comm="logcat" path="/dev/__properties__/u:object_r:default_prop:s0" dev="tmpfs" ino=169 scontext=u:r:pioneer:s0 tcontext=u:object_r:default_prop:s0 tclass=file permissive=1
+[   20.796742] type=1400 audit(1795047782.660:1473): avc:  denied  { write } for  comm="logcat" name="logdr" dev="tmpfs" ino=956 scontext=u:r:pioneer:s0 tcontext=u:object_r:logdr_socket:s0 tclass=sock_file permissive=1
+[   20.796748] type=1400 audit(1795047782.660:1474): avc:  denied  { connectto } for  comm="logcat" path="/dev/socket/logdr" scontext=u:r:pioneer:s0 tcontext=u:r:logd:s0 tclass=unix_stream_socket permissive=1
+[   20.796754] type=1400 audit(1795047782.728:1475): avc:  denied  { read } for  comm="binder:671_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[   20.851529] type=1400 audit(1795047782.780:1476): avc:  denied  { read } for  comm="main" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+[   20.860360] type=1400 audit(1795047782.780:1477): avc:  denied  { read } for  comm="binder:671_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[   20.860369] type=1400 audit(1795047782.780:1478): avc:  denied  { read } for  comm="binder:671_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[   20.860377] type=1400 audit(1795047782.784:1479): avc:  denied  { read } for  comm="main" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+[   20.860446] type=1400 audit(1795047782.784:1492): avc:  denied  { read } for  comm="main" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+[   20.860466] type=1400 audit(1795047782.788:1496): avc:  denied  { read } for  comm="main" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+[   20.871952] type=1400 audit(1795047782.792:1534): avc:  denied  { read } for  comm="main" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+[   20.871958] type=1400 audit(1795047782.792:1535): avc:  denied  { read } for  comm="dmesg" name="kmsg" dev="tmpfs" ino=5 scontext=u:r:pioneer:s0 tcontext=u:object_r:kmsg_device:s0 tclass=chr_file permissive=1
+[   20.871963] type=1400 audit(1795047782.792:1536): avc:  denied  { open } for  comm="dmesg" path="/dev/kmsg" dev="tmpfs" ino=5 scontext=u:r:pioneer:s0 tcontext=u:object_r:kmsg_device:s0 tclass=chr_file permissive=1
+[   20.871968] type=1400 audit(1795047782.792:1537): avc:  denied  { syslog_read } for  comm="dmesg" scontext=u:r:pioneer:s0 tcontext=u:r:kernel:s0 tclass=system permissive=1
+[   20.871973] type=1400 audit(1795047782.792:1538): avc:  denied  { read } for  comm="main" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=547 scontext=u:r:zygote:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+[   20.871981] type=1400 audit(1795047782.796:1539): avc:  denied  { read } for  comm="binder:671_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[   20.871988] type=1400 audit(1795047782.796:1540): avc:  denied  { read } for  comm="binder:671_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[   20.899569] type=1400 audit(1795047782.828:1559): avc:  denied  { read } for  comm="binder:671_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+
+=== Round 2 hvc7 Diagnostic Log ===
+Command exited with code 0.
+
+Command output:
+created: aito_14-W1UCS36H.96-35-8-9-20260801 1 /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/aito_14-W1UCS36H.96-35-8-9-20260801/1
+--- t=14s exc=hvc7 等待 ack 超时 (12s) ---
+--- t=18s rc=0 len=737 ---
+--- t=24s rc=0 len=20884 ---
+--- t=32s rc=0 len=34430 ---
+=== CRASH ===
+11-19 00:23:45.141   748   748 F DEBUG   :       #05 pc 000000000007f2c4  /system/lib64/libc++.so (__cxa_throw+96) (BuildId: ada37e5198285720b02f7d77fd27626c7782fe29)
+11-19 00:23:45.141   748   748 F DEBUG   :       #06 pc 000000000009f2c0  /system/lib64/libc++.so (std::__1::__throw_invalid_argument[abi:ne200000](char const*)+124) (BuildId: ada37e5198285720b02f7d77fd27626c7782fe29)
+11-19 00:23:45.141   748   748 F DEBUG   :       #07 pc 000000000009f22c  /system/lib64/libc++.so (std::__1::(anonymous namespace)::throw_from_string_invalid_arg(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)+240) (BuildId: ada37e5198285720b02f7d77fd27626c7782fe29)
+11-19 00:23:45.141   748   748 F DEBUG   :       #08 pc 000000000009bcf0  /system/lib64/libc++.so (std::__1::stoi(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, unsigned long*, int)+248) (BuildId: ada37e5198285720b02f7d77fd27626c7782fe29)
+11-19 00:23:45.141   748   748 F DEBUG   :       #09 pc 00000000000154dc  /system_ext/lib64/libaudioutilmtk.so (android::FeatureOption::getValues() (.cfi)+268) (BuildId: 62196e4fa1af5bb92e41dd076fc0c0c7)
+11-19 00:23:45.141   748   748 F DEBUG   :       #10 pc 00000000000cd378  /system/bin/audioserver (android::AudioFlinger::openOutput(android::media::OpenOutputRequest const&, android::media::OpenOutputResponse*)+1256) (BuildId: e5f12dee2825330b2e1e6bbe19988c91)
+11-19 00:23:45.141   748   748 F DEBUG   :       #11 pc 0000000000282ac8  /system/bin/audioserver (android::AudioPolicyService::AudioPolicyClient::openOutput(int, int*, audio_config*, audio_config_base*, android::sp<android::DeviceDescriptorBase> const&, unsigned int*, audio_output_flags_t*, audio_attributes_t)+3064) (BuildId: e5f12dee2825330b2e1e6bbe19988c91)
+11-19 00:23:45.141   748   748 F DEBUG   :       #12 pc 0000000000045b50  /system/lib64/libaudiopolicycomponents.so (android::SwAudioOutputDescriptor::open(audio_config const*, audio_config_base const*, android::DeviceVector const&, audio_stream_type_t, audio_output_flags_t*, int*, audio_attributes_t)+944) (BuildId: 6c00e7f360fbc98f780c1ba839058e02)
+11-19 00:23:45.141   748   748 F DEBUG   :       #13 pc 00000000000aabc0  /system/lib64/libaudiopolicymanagerdefault.so (android::AudioPolicyManager::onNewAudioModulesAvailableInt(android::DeviceVector*)+2976) (BuildId: 54b17bb565fd7c53071911311bd63f3d)
+11-19 00:23:45.141   748   748 F DEBUG   :       #14 pc 00000000000adc00  /system/lib64/libaudiopolicymanagerdefault.so (android::AudioPolicyManager::initialize()+272) (BuildId: 54b17bb565fd7c53071911311bd63f3d)
+11-19 00:23:45.141   748   748 F DEBUG   :       #15 pc 00000000002330a0  /system/bin/audioserver (android::createAudioPolicyManager(android::AudioPolicyClientInterface*) (.cfi)+880) (BuildId: e5f12dee2825330b2e1e6bbe19988c91)
+11-19 00:23:45.141   748   748 F DEBUG   :       #16 pc 00000000002362a8  /system/bin/audioserver (android::AudioPolicyService::onFirstRef()+488) (BuildId: e5f12dee2825330b2e1e6bbe19988c91)
+
+11-19 00:23:45.141   748   748 F DEBUG   :       #17 pc 0000000000085a10  /system/bin/audioserver (main.cfi+624) (BuildId: e5f12dee2825330b2e1e6bbe19988c91)
+11-19 00:23:45.141   748   748 F DEBUG   :       #18 pc 000000000006bc18  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: 4740301183e36162080bd774fc515f34)
+11-19 00:23:49.324   611   611 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 611 (surfaceflinger), pid 611 (surfaceflinger)
+11-19 00:23:49.364   881   881 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+11-19 00:23:49.364   881   881 F DEBUG   : Build fingerprint: 'motorola/aito_g_sys/aito:16/W1UCS36H.96-35-8-9/4907d6-43c152:user/release-keys'
+11-19 00:23:49.364   881   881 F DEBUG   : Revision: '0'
+11-19 00:23:49.364   881   881 F DEBUG   : ABI: 'arm64'
+11-19 00:23:49.364   881   881 F DEBUG   : Timestamp: 2026-11-19 00:23:49.339077795+0000
+11-19 00:23:49.364   881   881 F DEBUG   : Process uptime: 6s
+11-19 00:23:49.364   881   881 F DEBUG   : Cmdline: /system/bin/surfaceflinger
+11-19 00:23:49.364   881   881 F DEBUG   : pid: 611, tid: 611, name: surfaceflinger  >>> /system/bin/surfaceflinger <<<
+11-19 00:23:49.364   881   881 F DEBUG   : uid: 1000
+11-19 00:23:49.364   881   881 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+11-19 00:23:49.364   881   881 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+11-19 00:23:49.364   881   881 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000
+11-19 00:23:49.364   881   881 F DEBUG   : Cause: null pointer dereference
+11-19 00:23:49.364   881   881 F DEBUG   :     x0  0000000000000000  x1  0000000000000000  x2  0000007fd3d74a40  x3  0000007fd3d74a38
+11-19 00:23:49.364   881   881 F DEBUG   :     x4  00000000000003b8  x5  0000000040100401  x6  0000000000000022  x7  7f7f7f7f7fff7fff
+11-19 00:23:49.364   881   881 F DEBUG   :     x8  0000000000000000  x9  0000000000000001  x10 0000000000000002  x11 b400007031b98700
+11-19 00:23:49.364   881   881 F DEBUG   :     x12 0000005a39f67868  x13 000000007fffffff  x14 0000000000001d76  x15 00000000333fd311
+11-19 00:23:49.364   881   881 F DEBUG   :     x16 0000005a39f932c0  x17 00000071a5147900  x18 00000071a912c000  x19 b400007031b968c0
+11-19 00:23:49.364   881   881 F DEBUG   :     x20 b400006f91b8e350  x21 b400006f91b8e490  x22 00000071a81cbe40  x23 b400007061b9f070
+11-19 00:23:49.365   881   881 F DEBUG   :     x24 b400007061b9f070  x25 b400007061b9efe0  x26 b400006fa1b95378  x27 0000000000000048
+11-19 00:23:49.365   881   881 F DEBUG   :     x28 0000000000000000  x29 0000007fd3d74de0
+11-19 00:23:49.365   881   881 F DEBUG   :     lr  0000005a39a807f4  sp  0000007fd3d74c20  pc  0000005a39a807fc  pst 0000000080000000
+11-19 00:23:49.365   881   881 F DEBUG   : 8 total frames
+11-19 00:23:49.365   881   881 F DEBUG   : backtrace:
+11-19 00:23:49.365   881   881 F DEBUG   :       #00 pc 00000000002c07fc  /system/bin/surfaceflinger (android::SurfaceFlinger::initializeDisplays()+2460) (BuildId: b247754520e11f834990f717c365b5e0)
+11-19 00:23:49.365   881   881 F DEBUG   :       #01 pc 000000000027a968  /system/bin/surfaceflinger (android::Task<android::SurfaceFlinger::binderDied(android::wp<android::IBinder> const&)::$_0>::handleMessage(android::Message const&) (.__uniq.59679109406690186319419933358127648880.e8594c02d6cb4ed1711db2003e8e0b7c)+88) (BuildId: b247754520e11f834990f717c365b5e0)
+11-19 00:23:49.365   881   881 F DEBUG   :       #02 pc 0000000000013fec  /system/lib64/libutils.so (android::Looper::pollInner(int)+556) (BuildId: 6fad788963cfc2c15e1dbed4e3988d48)
+11-19 00:23:49.365   881   881 F DEBUG   :       #03 pc 0000000000013d60  /system/lib64/libutils.so (android::Looper::pollOnce(int, int*, int*, void**)+128) (BuildId: 6fad788963cfc2c15e1dbed4e3988d48)
+11-19 00:23:49.365   881   881 F DEBUG   :       #04 pc 0000000000250584  /system/bin/surfaceflinger (android::impl::MessageQueue::waitMessage()+84) (BuildId: b247754520e11f834990f717c365b5e0)
+11-19 00:23:49.365   881   881 F DEBUG   :       #05 pc 000000000026a3bc  /system/bin/surfaceflinger (android::scheduler::Scheduler::run()+28) (BuildId: b247754520e11f834990f717c365b5e0)
+11-19 00:23:49.365   881   881 F DEBUG   :       #06 pc 00000000003210d4  /system/bin/surfaceflinger (main+2516) (BuildId: b247754520e11f834990f717c365b5e0)
+11-19 00:23:49.365   881   881 F DEBUG   :       #07 pc 000000000006bc18  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: 4740301183e36162080bd774fc515f34)
+11-19 00:23:54.082   897   897 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 897 (surfaceflinger), pid 897 (surfaceflinger)
+11-19 00:23:54.125  1085  1085 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+11-19 00:23:54.125  1085  1085 F DEBUG   : Build fingerprint: 'motorola/aito_g_sys/aito:16/W1UCS36H.96-35-8-9/4907d6-43c152:user/release-keys'
+11-19 00:23:54.125  1085  1085 F DEBUG   : Revision: '0'
+11-19 00:23:54.125  1085  1085 F DEBUG   : ABI: 'arm64'
+11-19 00:23:54.125  1085  1085 F DEBUG   : Timestamp: 2026-11-19 00:23:54.107573672+0000
+11-19 00:23:54.125  1085  1085 F DEBUG   : Process uptime: 5s
+11-19 00:23:54.125  1085  1085 F DEBUG   : Cmdline: /system/bin/surfaceflinger
+11-19 00:23:54.125  1085  1085 F DEBUG   : pid: 897, tid: 897, name: surfaceflinger  >>> /system/bin/surfaceflinger <<<
+11-19 00:23:54.125  1085  1085 F DEBUG   : uid: 1000
+11-19 00:23:54.125  1085  1085 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+11-19 00:23:54.125  1085  1085 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+11-19 00:23:54.125  1085  1085 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000
+11-19 00:23:54.125  1085  1085 F DEBUG   : Cause: null pointer dereference
+11-19 00:23:54.125  1085  1085 F DEBUG   :     x0  0000000000000000  x1  0000000000000000  x2  0000007ff6772200  x3  0000007ff67721f8
+11-19 00:23:54.125  1085  1085 F DEBUG   :     x4  00000000000003b8  x5  0000000040100401  x6  0000000000000022  x7  ff7f7f7f7fff7fff
+11-19 00:23:54.125  1085  1085 F DEBUG   :     x8  0000000000000000  x9  0000000000000001  x10 0000000000000002  x11 b400007625f95be0
+11-19 00:23:54.125  1085  1085 F DEBUG   :     x12 0000005c53dbf868  x13 000000007fffffff  x14 00000000000023c8  x15 000000003a0e2de0
+11-19 00:23:54.125  1085  1085 F DEBUG   :     x16 0000005c53deb2c0  x17 00000078888d8900  x18 000000788d8cc000  x19 b400007625f93da0
+11-19 00:23:54.125  1085  1085 F DEBUG   :     x20 b400007675f97c10  x21 b400007675f97d50  x22 000000788ce22e40  x23 b4000076b5f93fb0
+11-19 00:23:54.125  1085  1085 F DEBUG   :     x24 b4000076b5f93fb0  x25 b4000076b5f93f20  x26 b400007775f909d8  x27 0000000000000048
+11-19 00:23:54.125  1085  1085 F DEBUG   :     x28 0000000000000000  x29 0000007ff67725a0
+11-19 00:23:54.125  1085  1085 F DEBUG   :     lr  0000005c538d87f4  sp  0000007ff67723e0  pc  0000005c538d87fc  pst 0000000080000000
+11-19 00:23:54.125  1085  1085 F DEBUG   : 8 total frames
+11-19 00:23:54.125  1085  1085 F DEBUG   : backtrace:
+11-19 00:23:54.125  1085  1085 F DEBUG   :       #00 pc 00000000002c07fc  /system/bin/surfaceflinger (android::SurfaceFlinger::initializeDisplays()+2460) (BuildId: b247754520e11f834990f717c365b5e0)
+11-19 00:23:54.125  1085  1085 F DEBUG   :       #01 pc 000000000027a968  /system/bin/surfaceflinger (android::Task<android::SurfaceFlinger::binderDied(android::wp<android::IBinder> const&)::$_0>::handleMessage(android::Message const&) (.__uniq.59679109406690186319419933358127648880.e8594c02d6cb4ed1711db2003e8e0b7c)+88) (BuildId: b247754520e11f834990f717c365b5e0)
+11-19 00:23:54.125  1085  1085 F DEBUG   :       #02 pc 0000000000013fec  /system/lib64/libutils.so (android::Looper::pollInner(int)+556) (BuildId: 6fad788963cfc2c15e1dbed4e3988d48)
+11-19 00:23:54.125  1085  1085 F DEBUG   :       #03 pc 0000000000013d60  /system/lib64/libutils.so (android::Looper::pollOnce(int, int*, int*, void**)+128) (BuildId: 6fad788963cfc2c15e1dbed4e3988d48)
+11-19 00:23:54.125  1085  1085 F DEBUG   :       #04 pc 0000000000250584  /system/bin/surfaceflinger (android::impl::MessageQueue::waitMessage()+84) (BuildId: b247754520e11f834990f717c365b5e0)
+11-19 00:23:54.125  1085  1085 F DEBUG   :       #05 pc 000000000026a3bc  /system/bin/surfaceflinger (android::scheduler::Scheduler::run()+28) (BuildId: b247754520e11f834990f717c365b5e0)
+11-19 00:23:54.125  1085  1085 F DEBUG   :       #06 pc 00000000003210d4  /system/bin/surfaceflinger (main+2516) (BuildId: b247754520e11f834990f717c365b5e0)
+11-19 00:23:54.125  1085  1085 F DEBUG   :       #07 pc 000000000006bc18  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: 4740301183e36162080bd774fc515f34)
+=== SYS FATAL ===
+11-19 00:23:59.201  5723  5723 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoBtAptxMode/oat/arm64/MotoBtAptxMode.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoBtAptxMode@MotoBtAptxMode.apk@classes.dex.tmp
+11-19 00:23:59.204  5732  5732 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoDesktopCore/oat/arm64/MotoDesktopCore.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoDesktopCore@MotoDesktopCore.apk@classes.dex.tmp
+11-19 00:23:59.213  5742  5742 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoCare/oat/arm64/MotoCare.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoCare@MotoCare.apk@classes.dex.tmp
+11-19 00:23:59.213  5736  5736 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoClockFace/oat/arm64/MotoClockFace.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoClockFace@MotoClockFace.apk@classes.vdex.tmp
+11-19 00:23:59.214  5738  5738 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoFreeForm/oat/arm64/MotoFreeForm.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoFreeForm@MotoFreeForm.apk@classes.dex.tmp
+11-19 00:23:59.220  5746  5746 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoCare/oat/arm64/MotoCare.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoCare@MotoCare.apk@classes.vdex.tmp
+11-19 00:23:59.225  5754  5754 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoDesktopCore/oat/arm64/MotoDesktopCore.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoDesktopCore@MotoDesktopCore.apk@classes.vdex.tmp
+11-19 00:23:59.225  5761  5761 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoFreeForm/oat/arm64/MotoFreeForm.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoFreeForm@MotoFreeForm.apk@classes.vdex.tmp
+11-19 00:23:59.228  5752  5752 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoClockFace/oat/arm64/MotoClockFace.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoClockFace@MotoClockFace.apk@classes.dex.tmp
+11-19 00:23:59.228  5760  5760 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoInstaller/oat/arm64/MotoInstaller.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoInstaller@MotoInstaller.apk@classes.dex.tmp
+11-19 00:23:59.231  5741  5741 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoBtAptxMode/oat/arm64/MotoBtAptxMode.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoBtAptxMode@MotoBtAptxMode.apk@classes.vdex.tmp
+11-19 00:23:59.258  5798  5798 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoInstaller/oat/arm64/MotoInstaller.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoInstaller@MotoInstaller.apk@classes.vdex.tmp
+11-19 00:23:59.264  5805  5805 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoBtAptxMode@MotoBtAptxMode.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoBtAptxMode@MotoBtAptxMode.apk@classes.dex
+11-19 00:23:59.264  5807  5807 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoLiveWallpaper3/oat/arm64/MotoLiveWallpaper3.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoLiveWallpaper3@MotoLiveWallpaper3.apk@classes.dex.tmp
+11-19 00:23:59.269  5811  5811 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoLiveWallpaper3/oat/arm64/MotoLiveWallpaper3.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoLiveWallpaper3@MotoLiveWallpaper3.apk@classes.vdex.tmp
+11-19 00:23:59.271  5822  5822 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoMagicWordsStub/oat/arm64/MotoMagicWordsStub.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoMagicWordsStub@MotoMagicWordsStub.apk@classes.dex.tmp
+11-19 00:23:59.282  5821  5821 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoMagicWordsStub/oat/arm64/MotoMagicWordsStub.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoMagicWordsStub@MotoMagicWordsStub.apk@classes.vdex.tmp
+11-19 00:23:59.286  5823  5823 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoMigrate/oat/arm64/MotoMigrate.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoMigrate@MotoMigrate.apk@classes.dex.tmp
+11-19 00:23:59.287  5828  5828 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoSecureCore/oat/arm64/MotoSecureCore.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecureCore@MotoSecureCore.apk@classes.dex.tmp
+11-19 00:23:59.300  5860  5860 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoSecurityHub/oat/arm64/MotoSecurityHub.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecurityHub@MotoSecurityHub.apk@classes.dex.tmp
+11-19 00:23:59.302  5866  5866 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoMigrate/oat/arm64/MotoMigrate.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoMigrate@MotoMigrate.apk@classes.vdex.tmp
+11-19 00:23:59.307  5865  5865 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoSecureVault/oat/arm64/MotoSecureVault.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecureVault@MotoSecureVault.apk@classes.vdex.tmp
+11-19 00:23:59.308  5842  5842 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoSecureVault/oat/arm64/MotoSecureVault.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecureVault@MotoSecureVault.apk@classes.dex.tmp
+11-19 00:23:59.313  5843  5843 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoSecureCore/oat/arm64/MotoSecureCore.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecureCore@MotoSecureCore.apk@classes.vdex.tmp
+11-19 00:23:59.412  5989  5989 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoCare@MotoCare.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoCare@MotoCare.apk@classes.dex
+11-19 00:23:59.414  6013  6013 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoLiveWallpaper3@MotoLiveWallpaper3.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoLiveWallpaper3@MotoLiveWallpaper3.apk@classes.dex
+11-19 00:23:59.415  6003  6003 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoMagicWordsStub@MotoMagicWordsStub.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoMagicWordsStub@MotoMagicWordsStub.apk@classes.dex
+11-19 00:23:59.424  6004  6004 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoDesktopCore@MotoDesktopCore.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoDesktopCore@MotoDesktopCore.apk@classes.dex
+11-19 00:23:59.425  6027  6027 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoSmart5G/oat/arm64/MotoSmart5G.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSmart5G@MotoSmart5G.apk@classes.dex.tmp
+11-19 00:23:59.428  5995  5995 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoFreeForm@MotoFreeForm.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoFreeForm@MotoFreeForm.apk@classes.dex
+11-19 00:23:59.428  5999  5999 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoMigrate@MotoMigrate.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoMigrate@MotoMigrate.apk@classes.dex
+11-19 00:23:59.431  6012  6012 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoThinkUEM/oat/arm64/MotoThinkUEM.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoThinkUEM@MotoThinkUEM.apk@classes.dex.tmp
+11-19 00:23:59.431  6009  6009 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoClockFace@MotoClockFace.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoClockFace@MotoClockFace.apk@classes.vdex
+11-19 00:23:59.431  5998  5998 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoInstaller@MotoInstaller.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoInstaller@MotoInstaller.apk@classes.vdex
+11-19 00:23:59.431  6015  6015 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoTaskBar/oat/arm64/MotoTaskBar.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoTaskBar@MotoTaskBar.apk@classes.vdex.tmp
+11-19 00:23:59.432  6046  6046 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoSecurityHubExt/oat/arm64/MotoSecurityHubExt.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecurityHubExt@MotoSecurityHubExt.apk@classes.dex.tmp
+11-19 00:23:59.433  6006  6006 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoLiveWallpaper3@MotoLiveWallpaper3.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoLiveWallpaper3@MotoLiveWallpaper3.apk@classes.vdex
+11-19 00:23:59.433  6029  6029 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoSmart5G/oat/arm64/MotoSmart5G.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSmart5G@MotoSmart5G.apk@classes.vdex.tmp
+11-19 00:23:59.435  6007  6007 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoFreeForm@MotoFreeForm.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoFreeForm@MotoFreeForm.apk@classes.vdex
+11-19 00:23:59.436  6033  6033 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoWifiMetrics/oat/arm64/MotoWifiMetrics.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoWifiMetrics@MotoWifiMetrics.apk@classes.dex.tmp
+11-19 00:23:59.437  6017  6017 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoDesktopCore@MotoDesktopCore.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoDesktopCore@MotoDesktopCore.apk@classes.vdex
+11-19 00:23:59.442  6035  6035 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoWifiMetrics/oat/arm64/MotoWifiMetrics.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoWifiMetrics@MotoWifiMetrics.apk@classes.vdex.tmp
+11-19 00:23:59.443  6031  6031 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoSstSoundService/oat/arm64/MotoSstSoundService.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSstSoundService@MotoSstSoundService.apk@classes.vdex.tmp
+11-19 00:23:59.446  6016  6016 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoThinkUEM/oat/arm64/MotoThinkUEM.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoThinkUEM@MotoThinkUEM.apk@classes.vdex.tmp
+11-19 00:23:59.448  6002  6002 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoCare@MotoCare.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoCare@MotoCare.apk@classes.vdex
+11-19 00:23:59.450  6011  6011 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotorolaSettingsProvider/oat/arm64/MotorolaSettingsProvider.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotorolaSettingsProvider@MotorolaSettingsProvider.apk@classes.dex.tmp
+11-19 00:23:59.450  6070  6070 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecurityHub@MotoSecurityHub.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecurityHub@MotoSecurityHub.apk@classes.dex
+11-19 00:23:59.462  6005  6005 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoClockFace@MotoClockFace.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoClockFace@MotoClockFace.apk@classes.dex
+11-19 00:23:59.466  6041  6041 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoSstSoundService/oat/arm64/MotoSstSoundService.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSstSoundService@MotoSstSoundService.apk@classes.dex.tmp
+11-19 00:23:59.492  6042  6042 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoTaskBar/oat/arm64/MotoTaskBar.odex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoTaskBar@MotoTaskBar.apk@classes.dex.tmp
+11-19 00:23:59.493  6040  6040 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoSecurityHub/oat/arm64/MotoSecurityHub.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecurityHub@MotoSecurityHub.apk@classes.vdex.tmp
+11-19 00:23:59.493  6075  6075 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoInstaller@MotoInstaller.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoInstaller@MotoInstaller.apk@classes.dex
+11-19 00:23:59.500  6072  6072 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotoSecurityHubExt/oat/arm64/MotoSecurityHubExt.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecurityHubExt@MotoSecurityHubExt.apk@classes.vdex.tmp
+11-19 00:23:59.498  6043  6043 I cppreopts: Copied file from /postinstall/system_ext/priv-app/MotorolaSettingsProvider/oat/arm64/MotorolaSettingsProvider.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@MotorolaSettingsProvider@MotorolaSettingsProvider.apk@classes.vdex.tmp
+11-19 00:23:59.502  6131  6131 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoBtAptxMode@MotoBtAptxMode.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoBtAptxMode@MotoBtAptxMode.apk@classes.vdex
+11-19 00:23:59.505  6102  6102 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoMagicWordsStub@MotoMagicWordsStub.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoMagicWordsStub@MotoMagicWordsStub.apk@classes.vdex
+11-19 00:23:59.509  6104  6104 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecureVault@MotoSecureVault.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecureVault@MotoSecureVault.apk@classes.vdex
+11-19 00:23:59.511  6139  6139 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecureVault@MotoSecureVault.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecureVault@MotoSecureVault.apk@classes.dex
+11-19 00:23:59.521  6118  6118 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecureCore@MotoSecureCore.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecureCore@MotoSecureCore.apk@classes.dex
+11-19 00:23:59.524  6117  6117 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoWifiMetrics@MotoWifiMetrics.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoWifiMetrics@MotoWifiMetrics.apk@classes.dex
+11-19 00:23:59.528  6147  6147 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoThinkUEM@MotoThinkUEM.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoThinkUEM@MotoThinkUEM.apk@classes.vdex
+11-19 00:23:59.528  6155  6155 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/product@priv-app@MotoSmartMode@MotoSmartMode.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/product@priv-app@MotoSmartMode@MotoSmartMode.apk@classes.vdex
+11-19 00:23:59.530  6159  6159 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecurityHubExt@MotoSecurityHubExt.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecurityHubExt@MotoSecurityHubExt.apk@classes.dex
+11-19 00:23:59.535  6168  6168 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoSmart5G@MotoSmart5G.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSmart5G@MotoSmart5G.apk@classes.dex
+11-19 00:23:59.536  6162  6162 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecureCore@MotoSecureCore.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecureCore@MotoSecureCore.apk@classes.vdex
+11-19 00:23:59.538  6178  6178 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoSstSoundService@MotoSstSoundService.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSstSoundService@MotoSstSoundService.apk@classes.vdex
+11-19 00:23:59.557  6194  6194 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecurityHub@MotoSecurityHub.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecurityHub@MotoSecurityHub.apk@classes.vdex
+11-19 00:23:59.602  6256  6256 I cppreopts: Copied file from /postinstall/system_ext/priv-app/SettingsMoto/oat/arm64/SettingsMoto.vdex to /data/dalvik-cache/arm64/system_ext@priv-app@SettingsMoto@SettingsMoto.apk@classes.vdex.tmp
+11-19 00:23:59.643  6294  6294 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoMigrate@MotoMigrate.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoMigrate@MotoMigrate.apk@classes.vdex
+11-19 00:23:59.645  6302  6302 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoThinkUEM@MotoThinkUEM.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoThinkUEM@MotoThinkUEM.apk@classes.dex
+11-19 00:23:59.664  6301  6301 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoSmart5G@MotoSmart5G.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSmart5G@MotoSmart5G.apk@classes.vdex
+11-19 00:23:59.672  6300  6300 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoSstSoundService@MotoSstSoundService.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSstSoundService@MotoSstSoundService.apk@classes.dex
+11-19 00:23:59.673  6329  6329 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoTaskBar@MotoTaskBar.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoTaskBar@MotoTaskBar.apk@classes.dex
+11-19 00:23:59.676  6292  6292 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecurityHubExt@MotoSecurityHubExt.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoSecurityHubExt@MotoSecurityHubExt.apk@classes.vdex
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: WaitForDisplay
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.android.server.security.FileIntegrityService
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.android.server.pm.Installer
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.android.server.os.DeviceIdentifiersPolicyService
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.android.server.flags.FeatureFlagsService
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.android.server.uri.UriGrantsManagerService$Lifecycle
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.android.server.powerstats.PowerStatsService
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.android.server.permission.access.AccessCheckingService
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.android.server.wm.ActivityTaskManagerService$Lifecycle
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.android.server.am.ActivityManagerService$Lifecycle
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.android.server.pm.DataLoaderManagerService
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.android.server.power.PowerManagerService
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.android.server.power.ThermalManagerService
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.android.server.recoverysystem.RecoverySystemService$Lifecycle
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.android.server.lights.LightsService
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.motorola.server.display.PanelsService
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.motorola.server.enhancedconnectivity.EnhancedConnectivityService
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.motorola.server.wirelessservice.MotoWirelessService
+11-19 00:23:59.708  1519  1519 D SystemServerTiming: OnBootPhase_100_com.android.server.display.DisplayManagerService
+11-19 00:23:59.852  6406  6406 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotorolaSettingsProvider@MotorolaSettingsProvider.apk@classes.dex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotorolaSettingsProvider@MotorolaSettingsProvider.apk@classes.dex
+11-19 00:23:59.852  6409  6409 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoTaskBar@MotoTaskBar.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoTaskBar@MotoTaskBar.apk@classes.vdex
+11-19 00:23:59.855  6408  6408 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@SettingsMoto@SettingsMoto.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@SettingsMoto@SettingsMoto.apk@classes.vdex
+11-19 00:23:59.858  6414  6414 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotoWifiMetrics@MotoWifiMetrics.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotoWifiMetrics@MotoWifiMetrics.apk@classes.vdex
+11-19 00:23:59.860  6410  6410 I cppreopts: Renamed temporary file from /data/dalvik-cache/arm64/system_ext@priv-app@MotorolaSettingsProvider@MotorolaSettingsProvider.apk@classes.vdex.tmp to /data/dalvik-cache/arm64/system_ext@priv-app@MotorolaSettingsProvider@MotorolaSettingsProvider.apk@classes.vdex
+11-19 00:23:59.955  6445  6445 I cppreopts: Copied file from /postinstall/system_ext/priv-app/SettingsMoto/oat/arm64/SettingsMoto.odex to /data/dalvik-cache/arm64/system_ext@priv-app@SettingsMoto@SettingsMoto.apk@classes.dex.tmp
+after destroy running: []
+

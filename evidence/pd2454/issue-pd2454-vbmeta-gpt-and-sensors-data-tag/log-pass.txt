@@ -1,0 +1,57 @@
+=== [Pass 1] vendor_boot fstab (merge-v14) 与 vda.img vbmeta_a GPT 真块设备打包 ===
+# vendor_boot/fstab.qcom:
+# fstab-rev: merge-v14
+/dev/block/vdc /mnt/vendorpatch ext4 ro first_stage_mount,avb=vbmeta
+
+# vda-log.txt:
+    vbmeta_a:   GPT 真分区 <- 内置禁用签名 vbmeta（4 KiB）
+==> [步骤 13.5b] 装配禁用校验块设备分区 vbmeta_a
+    [grow] 追加分区 vbmeta_a 容量 1.0 MiB（LBA 27688960-27691007），backup GPT 已重建
+    [ok] vbmeta_a        4.0 KiB @ 13.20 GiB（容量 1.0 MiB，余量 1020.0 KiB），回读一致
+
+=== [Pass 2] 一阶段 VMountVerifyPartitions 放行 (pd2454-boot2-qemu.log) ===
+[    1.166212][    T1] init: VMountVerifyPartitions: verify fstab empty
+
+=== [Pass 3] 修复 sensors payload="data" / media_config.xml / tango&netboosterd 重定向后 verify_boot.py 验收 ===
+cph_empty.rc:
+# 空 init 配置：由 cdh_redirect 供 init (uid=0) 屏蔽无需在云机注册的系统调试服务（如 mdnsd）。
+payload=data count:
+3
+media_config.xml instances:
+    <instance binary="android.hardware.media.c2-mediatek" store="default1"/>
+    <instance binary="vendor.dolby.media.c2-default-service-dax" store="default9"/>
+==> 创建并冷启动实例: match=PD2454_15-AP3A.240905.015.A2-20250416
+    spec=PD2454_15-AP3A.240905.015.A2-20250416 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/PD2454_15-AP3A.240905.015.A2-20250416/1
+{
+  "spec": "PD2454_15-AP3A.240905.015.A2-20250416",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/PD2454_15-AP3A.240905.015.A2-20250416/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{c398f4c u0 com.vivo.setupwizard/com.vivo.setupwizard.ui.SetupWizardActivity type=1 }\n  mFocusedApp=ActivityRecord{c799dfa u0 com.vivo.setupwizard/.ui.SetupWizardActivity t2 d0}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "adreno",
+  "serviceCount": "387",
+  "vnc": {
+    "width": 1440,
+    "height": 3168,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 225.25,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/vivo_PD2454.png",
+    "pngBytes": 97148
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+==> 销毁测试实例 PD2454_15-AP3A.240905.015.A2-20250416/1

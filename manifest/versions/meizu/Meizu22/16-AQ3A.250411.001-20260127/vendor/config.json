@@ -1,0 +1,16 @@
+{
+  "build-prop-sets": {
+    "ro.bionic.2nd_arch": "",
+    "ro.bionic.2nd_cpu_variant": "",
+    "ro.hardware.gralloc": "minigbm",
+    "ro.hardware.vulkan": "virtio",
+    "ro.vendor.product.cpu.abilist": "arm64-v8a",
+    "ro.vendor.product.cpu.abilist32": "",
+    "ro.vendor.product.cpu.abilist64": "arm64-v8a",
+    "ro.zygote": "zygote64"
+  },
+  "build-prop-unsets": [
+    "ro.frp.pst",
+    "ro.vndk.lite"
+  ]
+}

@@ -1,0 +1,95 @@
+=== 1. verify_boot 首次冷启全黑屏结果（google/oriole 15-BP1A.250505.005-20250326）===
+Command exited with code 1.
+
+Command output:
+==> 创建并冷启动实例: match=google/oriole/15-BP1A.250505.005-20250326
+    spec=oriole_15-BP1A.250505.005-20250326 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/oriole_15-BP1A.250505.005-20250326/1
+==> [诊断] 提取 qemu.log 尾部与关键字:
+{
+  "spec": "oriole_15-BP1A.250505.005-20250326",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/oriole_15-BP1A.250505.005-20250326/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "截图过暗（平均亮度 0.0 < 2.0）",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{3d00736 u0 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}\n  mFocusedApp=ActivityRecord{76755203 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t7}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 0.0,
+    "peak": 0,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/oriole_15_BP1A.png",
+    "pngBytes": 7685
+
+=== 2. qemu.log 宿主 VirGL FBO 0x8d56 与 Illegal command buffer 524295 ===
+373:[    0.109506][    T1] [drm] features: +virgl +edid +resource_blob +host_visible
+3995:Failed to complete framebuffer 0x8d56 surfaceflinger
+3996:fbo-diag ctx=3 name=surfaceflinger fbo=18 status=0x8d56 colors=1 gles=0 gl=4.1
+3997:fbo-diag ctx=3 name=surfaceflinger attach=0x8ce0 type=0x1702 object=22 res-id=22 surf-id=22 res-samples=0 surf-samples=4 target=0xde1 format=64 surf-format=64 level=0 size=512x256 internal=0x8229 samples=0 fixed=-1 implicit=-1
+3998:fbo-diag ctx=3 name=surfaceflinger attach=0x8d00 type=0x1702 object=25 res-id=25 surf-id=25 res-samples=4 surf-samples=0 target=0x9100 format=20 surf-format=20 level=0 size=512x256 internal=0x88f0 samples=4 fixed=1 implicit=-1
+3999:fbo-diag ctx=3 name=surfaceflinger attach=0x8d20 type=0x1702 object=25 res-id=25 surf-id=25 res-samples=4 surf-samples=0 target=0x9100 format=20 surf-format=20 level=0 size=512x256 internal=0x88f0 samples=4 fixed=1 implicit=-1
+4000:vrend_check_no_error: context error reported 3 "surfaceflinger" Unknown 1286
+4002:vrend_decode_ctx_submit_cmd: context error reported 3 "surfaceflinger" Illegal command buffer 524295
+6848:Failed to complete framebuffer 0x8d56 RenderThread
+6849:fbo-diag ctx=10 name=RenderThread fbo=39 status=0x8d56 colors=1 gles=0 gl=4.1
+6850:fbo-diag ctx=10 name=RenderThread attach=0x8ce0 type=0x1702 object=139 res-id=139 surf-id=139 res-samples=0 surf-samples=4 target=0xde1 format=64 surf-format=64 level=0 size=128x128 internal=0x8229 samples=0 fixed=-1 implicit=-1
+6851:fbo-diag ctx=10 name=RenderThread attach=0x8d00 type=0x1702 object=143 res-id=143 surf-id=143 res-samples=4 surf-samples=0 target=0x9100 format=20 surf-format=20 level=0 size=128x128 internal=0x88f0 samples=4 fixed=1 implicit=-1
+6852:fbo-diag ctx=10 name=RenderThread attach=0x8d20 type=0x1702 object=143 res-id=143 surf-id=143 res-samples=4 surf-samples=0 target=0x9100 format=20 surf-format=20 level=0 size=128x128 internal=0x88f0 samples=4 fixed=1 implicit=-1
+6853:vrend_check_no_error: context error reported 10 "RenderThread" Unknown 1286
+6855:vrend_decode_ctx_submit_cmd: context error reported 10 "RenderThread" Illegal command buffer 524295
+10786:[    0.120162][    T1] [drm] features: +virgl +edid +resource_blob +host_visible
+14277:Failed to complete framebuffer 0x8d56 surfaceflinger
+14278:fbo-diag ctx=3 name=surfaceflinger fbo=18 status=0x8d56 colors=1 gles=0 gl=4.1
+14279:fbo-diag ctx=3 name=surfaceflinger attach=0x8ce0 type=0x1702 object=22 res-id=22 surf-id=22 res-samples=0 surf-samples=4 target=0xde1 format=64 surf-format=64 level=0 size=512x256 internal=0x8229 samples=0 fixed=-1 implicit=-1
+14280:fbo-diag ctx=3 name=surfaceflinger attach=0x8d00 type=0x1702 object=25 res-id=25 surf-id=25 res-samples=4 surf-samples=0 target=0x9100 format=20 surf-format=20 level=0 size=512x256 internal=0x88f0 samples=4 fixed=1 implicit=-1
+14281:fbo-diag ctx=3 name=surfaceflinger attach=0x8d20 type=0x1702 object=25 res-id=25 surf-id=25 res-samples=4 surf-samples=0 target=0x9100 format=20 surf-format=20 level=0 size=512x256 internal=0x88f0 samples=4 fixed=1 implicit=-1
+14282:vrend_check_no_error: context error reported 3 "surfaceflinger" Unknown 1286
+14284:vrend_decode_ctx_submit_cmd: context error reported 3 "surfaceflinger" Illegal command buffer 524295
+14647: 14.001542][  T206] servicemanager: Caller(piFailed to complete framebuffer 0x8d56 RenderThread
+14648:fbo-diag ctx=9 name=RenderThread fbo=39 status=0x8d56 colors=1 gles=0 gl=4.1
+14649:fbo-diag ctx=9 name=RenderThread attach=0x8ce0 type=0x1702 object=41 res-id=41 surf-id=41 res-samples=0 surf-samples=4 target=0xde1 format=64 surf-format=64 level=0 size=128x128 internal=0x8229 samples=0 fixed=-1 implicit=-1
+14650:fbo-diag ctx=9 name=RenderThread attach=0x8d00 type=0x1702 object=45 res-id=45 surf-id=45 res-samples=4 surf-samples=0 target=0x9100 format=20 surf-format=20 level=0 size=128x128 internal=0x88f0 samples=4 fixed=1 implicit=-1
+14651:fbo-diag ctx=9 name=RenderThread attach=0x8d20 type=0x1702 object=45 res-id=45 surf-id=45 res-samples=4 surf-samples=0 target=0x9100 format=20 surf-format=20 level=0 size=128x128 internal=0x88f0 samples=4 fixed=1 implicit=-1
+14652:vrend_check_no_error: context error reported 9 "RenderThread" Unknown 1286
+14654:vrend_decode_ctx_submit_cmd: context error reported 9 "RenderThread" Illegal command buffer 524295
+28738:[  209.836957][T14300] apexd: Found pre-installed APEX /system/apex/com.google.android.tzdata6.aFailed to complete framebuffer 0x8d56 surfaceflinger
+28739:fbo-diag ctx=3 name=surfaceflinger fbo=11 status=0x8d56 colors=1 gles=0 gl=4.1
+28740:fbo-diag ctx=3 name=surfaceflinger attach=0x8ce0 type=0x1702 object=22 res-id=22 surf-id=22 res-samples=0 surf-samples=4 target=0xde1 format=64 surf-format=64 level=0 size=512x256 internal=0x8229 samples=0 fixed=-1 implicit=-1
+28741:fbo-diag ctx=3 name=surfaceflinger attach=0x8d00 type=0x1702 object=25 res-id=25 surf-id=25 res-samples=4 surf-samples=0 target=0x9100 format=20 surf-format=20 level=0 size=512x256 internal=0x88f0 samples=4 fixed=1 implicit=-1
+28742:fbo-diag ctx=3 name=surfaceflinger attach=0x8d20 type=0x1702 object=25 res-id=25 surf-id=25 res-samples=4 surf-samples=0 target=0x9100 format=20 surf-format=20 level=0 size=512x256 internal=0x88f0 samples=4 fixed=1 implicit=-1
+28743:vrend_check_no_error: context error reported 3 "surfaceflinger" Unknown 1286
+28745:vrend_decode_ctx_submit_cmd: context error reported 3 "surfaceflinger" Illegal command buffer 524295
+29056:vrend_check_no_error: context error reported 11 "RenderThread" Unknown 1286
+29058:vrend_decode_ctx_submit_cmd: context error reported 11 "RenderThread" Illegal command buffer 786440
+31483:Failed to complete framebuffer 0x8d56 surfaceflinger
+31484:fbo-diag ctx=3 name=surfaceflinger fbo=11 status=0x8d56 colors=1 gles=0 gl=4.1
+31485:fbo-diag ctx=3 name=surfaceflinger attach=0x8ce0 type=0x1702 object=22 res-id=22 surf-id=22 res-samples=0 surf-samples=4 target=0xde1 format=64 surf-format=64 level=0 size=512x256 internal=0x8229 samples=0 fixed=-1 implicit=-1
+31486:fbo-diag ctx=3 name=surfaceflinger attach=0x8d00 type=0x1702 object=25 res-id=25 surf-id=25 res-samples=4 surf-samples=0 target=0x9100 format=20 surf-format=20 level=0 size=512x256 internal=0x88f0 samples=4 fixed=1 implicit=-1
+31487:fbo-diag ctx=3 name=surfaceflinger attach=0x8d20 type=0x1702 object=25 res-id=25 surf-id=25 res-samples=4 surf-samples=0 target=0x9100 format=20 surf-format=20 level=0 size=512x256 internal=0x88f0 samples=4 fixed=1 implicit=-1
+31488:vrend_check_no_error: context error reported 3 "surfaceflinger" Unknown 1286
+31490:vrend_decode_ctx_submit_cmd: context error reported 3 "surfaceflinger" Illegal command buffer 524295
+31755:[  239.129Failed to complete framebuffer 0x8d56 RenderThread
+31756:fbo-diag ctx=11 name=RenderThread fbo=48 status=0x8d56 colors=1 gles=0 gl=4.1
+31757:fbo-diag ctx=11 name=RenderThread attach=0x8ce0 type=0x1702 object=50 res-id=50 surf-id=50 res-samples=0 surf-samples=4 target=0xde1 format=64 surf-format=64 level=0 size=128x128 internal=0x8229 samples=0 fixed=-1 implicit=-1
+31758:fbo-diag ctx=11 name=RenderThread attach=0x8d00 type=0x1702 object=53 res-id=53 surf-id=53 res-samples=4 surf-samples=0 target=0x9100 format=20 surf-format=20 level=0 size=128x128 internal=0x88f0 samples=4 fixed=1 implicit=-1
+31759:fbo-diag ctx=11 name=RenderThread attach=0x8d20 type=0x1702 object=53 res-id=53 surf-id=53 res-samples=4 surf-samples=0 target=0x9100 format=20 surf-format=20 level=0 size=128x128 internal=0x88f0 samples=4 fixed=1 implicit=-1
+31760:vrend_check_no_error: context error reported 11 "RenderThread" Unknown 1286
+31762:vrend_decode_ctx_submit_cmd: context error reported 11 "RenderThread" Illegal command buffer 524295
+
+=== 3. 诊断阶段 fbo-diag 状态 ===
+Failed to complete framebuffer 0x8d56 surfaceflinger
+fbo-diag ctx=3 name=surfaceflinger fbo=18 status=0x8d56 colors=1 gles=0 gl=4.1
+fbo-diag ctx=3 name=surfaceflinger attach=0x8ce0 type=0x1702 object=22 res-id=22 surf-id=22 res-samples=0 surf-samples=4 target=0xde1 format=64 surf-format=64 level=0 size=512x256 internal=0x8229 samples=0 fixed=-1 implicit=-1
+fbo-diag ctx=3 name=surfaceflinger attach=0x8d00 type=0x1702 object=25 res-id=25 surf-id=25 res-samples=4 surf-samples=0 target=0x9100 format=20 surf-format=20 level=0 size=512x256 internal=0x88f0 samples=4 fixed=1 implicit=-1
+fbo-diag ctx=3 name=surfaceflinger attach=0x8d20 type=0x1702 object=25 res-id=25 surf-id=25 res-samples=4 surf-samples=0 target=0x9100 format=20 surf-format=20 level=0 size=512x256 internal=0x88f0 samples=4 fixed=1 implicit=-1

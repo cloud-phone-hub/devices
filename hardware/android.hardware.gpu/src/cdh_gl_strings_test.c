@@ -151,12 +151,50 @@ static void test_ext_strip_exact_and_glgetstringi(void) {
     assert(glGetStringi(CDH_GL_EXTENSIONS, (unsigned int)num_exts) == NULL);
 }
 
+static void test_virgl_unsafe_extra_exts_filtered(void) {
+    assert(cdh_is_virgl_unsafe_extra_ext("GL_EXT_multisampled_render_to_texture",
+                                         strlen("GL_EXT_multisampled_render_to_texture")) == 1);
+    assert(cdh_is_virgl_unsafe_extra_ext("GL_EXT_multisampled_render_to_texture2",
+                                         strlen("GL_EXT_multisampled_render_to_texture2")) == 1);
+    assert(cdh_is_virgl_unsafe_extra_ext("GL_EXT_shader_framebuffer_fetch",
+                                         strlen("GL_EXT_shader_framebuffer_fetch")) == 1);
+    assert(cdh_is_virgl_unsafe_extra_ext("GL_EXT_shader_pixel_local_storage",
+                                         strlen("GL_EXT_shader_pixel_local_storage")) == 1);
+    assert(cdh_is_virgl_unsafe_extra_ext("GL_KHR_blend_equation_advanced",
+                                         strlen("GL_KHR_blend_equation_advanced")) == 1);
+    assert(cdh_is_virgl_unsafe_extra_ext("GL_QCOM_shader_framebuffer_fetch_noncoherent",
+                                         strlen("GL_QCOM_shader_framebuffer_fetch_noncoherent")) == 1);
+    assert(cdh_is_virgl_unsafe_extra_ext("GL_QCOM_shader_framebuffer_fetch_rate",
+                                         strlen("GL_QCOM_shader_framebuffer_fetch_rate")) == 1);
+    assert(cdh_is_virgl_unsafe_extra_ext("GL_ARM_mali_shader_binary",
+                                         strlen("GL_ARM_mali_shader_binary")) == 0);
+    assert(cdh_is_virgl_unsafe_extra_ext("GL_QCOM_tiled_rendering",
+                                         strlen("GL_QCOM_tiled_rendering")) == 0);
+
+    size_t used = 0;
+    size_t items_used = 0;
+    unsigned int count = 0;
+    cdh_ext_ready = 0;
+    cdh_ext_count = 0;
+    cdh_ext_joined[0] = '\0';
+    cdh_append_filtered_extra_exts(
+        "GL_ARM_mali_shader_binary,GL_EXT_multisampled_render_to_texture,"
+        "GL_EXT_shader_framebuffer_fetch,GL_KHR_blend_equation_advanced,"
+        "GL_QCOM_shader_framebuffer_fetch_noncoherent,GL_QCOM_shader_framebuffer_fetch_rate,"
+        "GL_QCOM_tiled_rendering",
+        &used, &items_used, &count);
+    assert(count == 2);
+    assert(strcmp(cdh_ext_list[0], "GL_ARM_mali_shader_binary") == 0);
+    assert(strcmp(cdh_ext_list[1], "GL_QCOM_tiled_rendering") == 0);
+}
+
 int main(void) {
     test_single_chunk_320_with_extension();
     test_explicit_length_array_prevents_truncation();
     test_no_newline_header_chunk();
     test_300_es_untouched();
     test_ext_strip_exact_and_glgetstringi();
-    printf("[pass] cdh_gl_strings_test: 5/5 passed\n");
+    test_virgl_unsafe_extra_exts_filtered();
+    printf("[pass] cdh_gl_strings_test: 6/6 passed\n");
     return 0;
 }

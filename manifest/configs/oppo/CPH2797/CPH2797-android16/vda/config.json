@@ -1,3 +1,70 @@
 {
-  "partitions": []
+  "partitions": [
+    {
+      "flags": "wait,first_stage_mount,nofail",
+      "fstype": "ext4",
+      "gid": 1000,
+      "image": "vendor_persist.img",
+      "label": "u:object_r:persist_file:s0",
+      "mode": "0771",
+      "mount": "/mnt/vendor/persist",
+      "name": "vendor_persist",
+      "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+      "size": 33554432,
+      "uid": 1000
+    },
+    {
+      "flags": "wait,first_stage_mount,nofail",
+      "fstype": "ext4",
+      "gid": 1000,
+      "image": "protect_f.img",
+      "label": "u:object_r:mnt_vendor_file:s0",
+      "mode": "0770",
+      "mount": "/mnt/vendor/protect_f",
+      "name": "protect_f",
+      "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+      "size": 8388608,
+      "uid": 1000
+    },
+    {
+      "flags": "wait,first_stage_mount,nofail",
+      "fstype": "ext4",
+      "gid": 1000,
+      "image": "protect_s.img",
+      "label": "u:object_r:mnt_vendor_file:s0",
+      "mode": "0770",
+      "mount": "/mnt/vendor/protect_s",
+      "name": "protect_s",
+      "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+      "size": 8388608,
+      "uid": 1000
+    },
+    {
+      "flags": "wait,first_stage_mount,nofail",
+      "fstype": "ext4",
+      "gid": 1000,
+      "image": "nvdata.img",
+      "label": "u:object_r:mnt_vendor_file:s0",
+      "mode": "0771",
+      "mount": "/mnt/vendor/nvdata",
+      "name": "nvdata",
+      "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+      "size": 67108864,
+      "uid": 1000
+    },
+    {
+      "flags": "wait,first_stage_mount,nofail",
+      "fstype": "ext4",
+      "gid": 1000,
+      "image": "nvcfg.img",
+      "label": "u:object_r:mnt_vendor_file:s0",
+      "mode": "0771",
+      "mount": "/mnt/vendor/nvcfg",
+      "name": "nvcfg",
+      "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+      "size": 33554432,
+      "uid": 1000
+    }
+  ],
+  "data-size": 230032343040
 }

@@ -1,0 +1,19 @@
+=== [Fail 1] blackview/XPLORE_X1 vendor-log.txt 误删自编 HAL .rc ===
+312:[delete] vendor/etc/init/android.hardware.media.c2-mediatek.rc（已删除）
+
+=== [Fail 2] xplore-boot1-qemu.log VINTF 9.0 解析失败导致 NULL VINTF MANIFEST 与 keystore2/vold 卡死 ===
+[    4.844533][    T1] init: ... started service 'keystore2' has pid 289
+[    4.850220][  T209] servicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 9.0 (libvintf@8.0)
+[    4.854959][    T1] init: Command 'class_start early_hal' action=late-fs (/system/etc/init/hw/init.rc:652) took 66ms and succeeded
+[    4.884150][  T209] servicemanager: getDeviceHalManifest: status from fetching VINTF information: -22
+[    4.884739][  T209] servicemanager: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 9.0 (libvintf@8.0)
+[    4.885500][  T209] servicemanager: Cannot fetch device manifest to determine target FCM version to filter framework manifest HALs properly. Treating as infinitely old device.
+[    4.887785][  T209] servicemanager: NULL VINTF MANIFEST!: device
+[    4.889080][    T1] init: Calling: /system/bin/vdc checkpoint needsCheckpoint
+
+=== [Fail 3] verify_boot.py 300s 超时尾部 (steps/2802) ===
+  "bootCompleted": false,
+  "failReason": "等待 300s 未见 sys.boot_completed=1",
+  "qemuLogLines": 2776,
+[  283.758239][  T216] ServiceManagerCppClient: Waited one second for android.system.keystore2.IKeystoreService/default (is service started? Number of threads started in the threadpool: 17. Are binder threads started and available?)
+[  283.801046][  T138] init: NtQ Control message: Could not find 'aidl/android.system.keystore2.IKeystoreService/default' for ctl.interface_start from pid: 209 (/system/bin/servicemanager)

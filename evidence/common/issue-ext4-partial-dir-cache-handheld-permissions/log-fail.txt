@@ -1,0 +1,102 @@
+=== 1. verify_boot 拦截抓帧后重启 (fbcon 关机画面 21.61) ===
+Command exited with code 1.
+
+Command output:
+==> 创建并冷启动实例: match=google/oriole/16-CP1A.260405.005-20260310
+    spec=oriole_16-CP1A.260405.005-20260310 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/oriole_16-CP1A.260405.005-20260310/1
+==> [诊断] 提取 qemu.log 尾部与关键字:
+{
+  "spec": "oriole_16-CP1A.260405.005-20260310",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/oriole_16-CP1A.260405.005-20260310/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "抓帧后系统处于重启/关机状态 (boot_completed='', surfaceflinger='')",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{f77e7e1 u0 com.android.systemui}\n  mFocusedApp=ActivityRecord{130078093 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t6}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 21.61,
+    "peak": 170,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/oriole_16_CP1A.png",
+    "pngBytes": 162842
+  },
+  "postBootCompleted": "",
+  "surfaceFlingerState": "",
+
+=== 2. 实例内 /vendor/etc/permissions 仅剩 1 个文件、WifiManager == null 致多进程 NPE 与 RescueParty ===
+      6 Process: com.google.android.apps.docs
+      1 Process: com.google.android.apps.nexuslauncher
+      4 Process: com.google.android.apps.scone
+      3 Process: com.google.android.apps.work.clouddpc
+     12 Process: com.google.android.connectivitythermalpowermanager
+      4 Process: com.google.android.gms.persistent
+      2 Process: com.google.android.settings.intelligence
+u:r:priv_app:s0:c512,c768      u0_a128       5396   589   16981088 124076 do_freezer_trap     0 S com.google.android.apps.carrier.carrierwifi
+E/AndroidRuntime( 1693): Process: com.google.android.connectivitythermalpowermanager, PID: 1693
+E/AndroidRuntime( 1693): java.lang.RuntimeException: Unable to create service com.google.android.connectivitythermalpowermanager.ConnectivityThermalPowerManagerService
+E/AndroidRuntime( 1693): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerIntentReceiver.getWifiHotspotState(PowerManagerIntentReceiver.java:266)
+E/AndroidRuntime( 1693): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerIntentReceiver.reportInitialState(PowerManagerIntentReceiver.java:131)
+E/AndroidRuntime( 1693): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerIntentReceiver.startListeningForDeviceStateChanges(PowerManagerIntentReceiver.java:105)
+E/AndroidRuntime( 1693): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerListener.startListening(PowerManagerListener.java:206)
+E/AndroidRuntime( 1693): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerListener.initializePowerManagerListener(PowerManagerListener.java:185)
+E/AndroidRuntime( 1693): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerListener.<init>(PowerManagerListener.java:108)
+E/AndroidRuntime( 1693): 	at com.google.android.connectivitythermalpowermanager.power.cellular.CellularPowerManager.<init>(CellularPowerManager.java:50)
+E/AndroidRuntime( 1693): 	at com.google.android.connectivitythermalpowermanager.ConnectivityThermalPowerManagerService.onCreate(ConnectivityThermalPowerManagerService.java:90)
+E/AndroidRuntime( 1824): Process: com.google.android.connectivitythermalpowermanager, PID: 1824
+E/AndroidRuntime( 1824): java.lang.RuntimeException: Unable to create service com.google.android.connectivitythermalpowermanager.ConnectivityThermalPowerManagerService
+E/AndroidRuntime( 1824): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerIntentReceiver.getWifiHotspotState(PowerManagerIntentReceiver.java:266)
+E/AndroidRuntime( 1824): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerIntentReceiver.reportInitialState(PowerManagerIntentReceiver.java:131)
+E/AndroidRuntime( 1824): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerIntentReceiver.startListeningForDeviceStateChanges(PowerManagerIntentReceiver.java:105)
+E/AndroidRuntime( 1824): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerListener.startListening(PowerManagerListener.java:206)
+E/AndroidRuntime( 1824): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerListener.initializePowerManagerListener(PowerManagerListener.java:185)
+E/AndroidRuntime( 1824): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerListener.<init>(PowerManagerListener.java:108)
+E/AndroidRuntime( 1824): 	at com.google.android.connectivitythermalpowermanager.power.cellular.CellularPowerManager.<init>(CellularPowerManager.java:50)
+E/AndroidRuntime( 1824): 	at com.google.android.connectivitythermalpowermanager.ConnectivityThermalPowerManagerService.onCreate(ConnectivityThermalPowerManagerService.java:90)
+E/AndroidRuntime( 2015): Process: com.google.android.connectivitythermalpowermanager, PID: 2015
+E/AndroidRuntime( 2015): java.lang.RuntimeException: Unable to create service com.google.android.connectivitythermalpowermanager.ConnectivityThermalPowerManagerService
+E/AndroidRuntime( 2015): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerIntentReceiver.getWifiHotspotState(PowerManagerIntentReceiver.java:266)
+E/AndroidRuntime( 2015): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerIntentReceiver.reportInitialState(PowerManagerIntentReceiver.java:131)
+E/AndroidRuntime( 2015): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerIntentReceiver.startListeningForDeviceStateChanges(PowerManagerIntentReceiver.java:105)
+E/AndroidRuntime( 2015): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerListener.startListening(PowerManagerListener.java:206)
+E/AndroidRuntime( 2015): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerListener.initializePowerManagerListener(PowerManagerListener.java:185)
+E/AndroidRuntime( 2015): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerListener.<init>(PowerManagerListener.java:108)
+E/AndroidRuntime( 2015): 	at com.google.android.connectivitythermalpowermanager.power.cellular.CellularPowerManager.<init>(CellularPowerManager.java:50)
+E/AndroidRuntime( 2015): 	at com.google.android.connectivitythermalpowermanager.ConnectivityThermalPowerManagerService.onCreate(ConnectivityThermalPowerManagerService.java:90)
+E/AndroidRuntime( 2079): Process: com.google.android.connectivitythermalpowermanager, PID: 2079
+E/AndroidRuntime( 2079): java.lang.RuntimeException: Unable to create service com.google.android.connectivitythermalpowermanager.ConnectivityThermalPowerManagerService
+E/AndroidRuntime( 2079): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerIntentReceiver.getWifiHotspotState(PowerManagerIntentReceiver.java:266)
+E/AndroidRuntime( 2079): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerIntentReceiver.reportInitialState(PowerManagerIntentReceiver.java:131)
+E/AndroidRuntime( 2079): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerIntentReceiver.startListeningForDeviceStateChanges(PowerManagerIntentReceiver.java:105)
+E/AndroidRuntime( 2079): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerListener.startListening(PowerManagerListener.java:206)
+E/AndroidRuntime( 2079): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerListener.initializePowerManagerListener(PowerManagerListener.java:185)
+E/AndroidRuntime( 2079): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerListener.<init>(PowerManagerListener.java:108)
+E/AndroidRuntime( 2079): 	at com.google.android.connectivitythermalpowermanager.power.cellular.CellularPowerManager.<init>(CellularPowerManager.java:50)
+E/AndroidRuntime( 2079): 	at com.google.android.connectivitythermalpowermanager.ConnectivityThermalPowerManagerService.onCreate(ConnectivityThermalPowerManagerService.java:90)
+E/AndroidRuntime( 2190): Process: com.google.android.connectivitythermalpowermanager, PID: 2190
+E/AndroidRuntime( 2190): java.lang.RuntimeException: Unable to create service com.google.android.connectivitythermalpowermanager.ConnectivityThermalPowerManagerService
+E/AndroidRuntime( 2190): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerIntentReceiver.getWifiHotspotState(PowerManagerIntentReceiver.java:266)
+E/AndroidRuntime( 2190): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerIntentReceiver.reportInitialState(PowerManagerIntentReceiver.java:131)
+E/AndroidRuntime( 2190): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerIntentReceiver.startListeningForDeviceStateChanges(PowerManagerIntentReceiver.java:105)
+E/AndroidRuntime( 2190): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerListener.startListening(PowerManagerListener.java:206)
+E/AndroidRuntime( 2190): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerListener.initializePowerManagerListener(PowerManagerListener.java:185)
+E/AndroidRuntime( 2190): 	at com.google.android.connectivitythermalpowermanager.power.cellular.listener.PowerManagerListener.<init>(PowerManagerListener.java:108)
+E/AndroidRuntime( 2190): 	at com.google.android.connectivitythermalpowermanager.power.cellular.CellularPowerManager.<init>(CellularPowerManager.java:50)
+E/AndroidRuntime( 2190): 	at com.google.android.connectivitythermalpowermanager.ConnectivityThermalPowerManagerService.onCreate(ConnectivityThermalPowerManagerService.java:90)
+
+=== 3. connectivitythermalpowermanager NPE 片段 ===
+11-18 12:50:19.194  9922  9922 E AndroidRuntime: FATAL EXCEPTION: main
+
+=== 4. RescueParty 触发 ===
+7863:[   46.883153][  T129] init: Received sys.powerctl='reboot,RescueParty' from pid: 774 (system_server)

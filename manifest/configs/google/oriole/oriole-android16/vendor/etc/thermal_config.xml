@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thermal-config skin-name="SKIN" skin-celsius="28.8" model-maximum-celsius="50"
+                model-heating-seconds="20" model-cooling-seconds="45" model-sample-interval-ms="1000">
+    <sensor id="0" name="LITTLE" value="29"
+            thresholds="nan;nan;nan;85;90;100;117"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="1" name="MID" value="29"
+            thresholds="nan;nan;nan;85;90;100;117"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="2" name="BIG" value="29"
+            thresholds="nan;nan;nan;85;90;100;117"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="3" name="G3D" value="28.9"
+            thresholds="nan;nan;nan;85;90;100;117"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="4" name="ISP" value="28.9"
+            thresholds="nan;nan;nan;85;90;100;117"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="5" name="TPU" value="28.9"
+            thresholds="nan;nan;nan;85;90;100;117"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="6" name="BATTERY" value="28"
+            thresholds="nan;nan;nan;50;55;59;60"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="7" name="SKIN" value="28.8"
+            thresholds="nan;43;45;50;70;80;90"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <cooling id="3" name="thermal-gpufreq-0" value="0"/>
+</thermal-config>

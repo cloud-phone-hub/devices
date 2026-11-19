@@ -1,0 +1,46 @@
+=== [通过日志 1] servicemanager VINTF 注册 IQtiRadioStable/slot1..2 成功（零 RescueParty） ===
+3861:[   14.362951][  T250] servicemanager: Caller(pid=612,uid=1001,sid=u:r:hal_radio_default:s0) Found vendor.qti.hardware.radio.qtiradio.IQtiRadioStable/slot1 in device VINTF manifest.
+3863:[   14.366838][  T250] servicemanager: Caller(pid=612,uid=1001,sid=u:r:hal_radio_default:s0) Found vendor.qti.hardware.radio.qtiradio.IQtiRadioStable/slot2 in device VINTF manifest.
+3865:[   14.370691][  T250] servicemanager: Caller(pid=612,uid=1001,sid=u:r:hal_radio_default:s0) Could not find vendor.qti.hardware.radio.qtiradioconfig.IQtiRadioConfig/default in the VINTF manifest. No alternative instances declared in VINTF.
+
+=== [通过日志 2] 运行态 service check 与 /data/system/dropbox 零崩溃核验 ===
+22:Service vendor.qti.hardware.radio.qtiradio.IQtiRadioStable/slot1: found
+23:Service vendor.qti.hardware.radio.qtiradio.IQtiRadioStable/slot2: found
+24:NO_DROPBOX_CRASH
+
+=== [通过日志 3] verify_boot.py 与单测通过摘录 ===
+running: []
+==> 创建并冷启动实例: match=redmagic/NX809J/16-BQ2A.250705.001-BP2A.250605.031.A3-20260527
+    spec=NX809J_16-BQ2A.250705.001-BP2A.250605.031.A3-20260527 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/NX809J_16-BQ2A.250705.001-BP2A.250605.031.A3-20260527/1
+{
+  "spec": "NX809J_16-BQ2A.250705.001-BP2A.250605.031.A3-20260527",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/NX809J_16-BQ2A.250705.001-BP2A.250605.031.A3-20260527/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{d7c42b1 u0 android/com.android.internal.app.ResolverActivity}\n  mFocusedApp=ActivityRecord{154732367 u0 android/com.android.internal.app.ResolverActivity t9}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "adreno",
+  "serviceCount": "358",
+  "vnc": {
+    "width": 1216,
+    "height": 2688,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 62.82,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/redmagic_NX809J.png",
+    "pngBytes": 973559
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}

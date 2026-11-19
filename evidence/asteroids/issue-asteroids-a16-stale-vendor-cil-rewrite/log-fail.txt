@@ -1,0 +1,35 @@
+==> vendor 源镜像（09 产物）: out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/img/vendor.img（303677440 B，sha256 4c4a5fc3aaca，产物目录缺省）
+==> vendor_dlkm 源镜像（10 产物）: out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/img/vendor_dlkm.img（15831040 B，sha256 6e0d00986b9c，产物目录缺省）
+==> odm 源镜像（07 产物）: out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/img/odm.img（8388608 B，sha256 2f97606a4029，产物目录缺省）
+    基线清单: db://nothing/Asteroids/14-UKQ1.250612.001-20260810（patch.vendor-cil-rewrite 4 条）
+      #1 (allow ot_rcp self (netlink_route_socket (nlmsg)))
+      #2 (allowx ot_rcp self (nlmsg netlink_route_socket (0x16 0x1a 0x22 0x26 0x2a 0x2e 0x32 0x3a 0x3e 0x4a 0x4e 0x52 0x56 0x5a 0x5c 0x5e 0x60 0x66 0x6a 0x72 0x76 0x7a)))
+      #3 (allowx ot_rcp self (nlmsg netlink_route_socket (0x12)))
+      #4 (allow kernel_34_0 vendor_firmware_file (system (firmware_load)))
+    输入: 缓存配方 patch-58db89251667（输入哈希）
+==> 阶段日志: out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/img/patch-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 11.0] 解析计划
+    载体:        /dev/block/vdc -> /mnt/vendorpatch（first_stage_mount；名以 /mnt/vendor 为前缀命中 vold 白名单，避开强拆）
+    子树 vendor: out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/img/vendor.img（303677440 B，已存在，sha256 4c4a5fc3aaca） -> /vendor
+    子树 dlkm:   out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/img/vendor_dlkm.img（15831040 B，已存在，sha256 6e0d00986b9c） -> /vendor_dlkm
+    子树 odm:    out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/img/odm.img（8388608 B，已存在，sha256 2f97606a4029） -> /odm
+    形态修正:    /vendor/odm 软链接换真实空目录；/vendor/lib/modules 由 vendor_dlkm 复制实体
+    屏蔽落点:    odm/etc/selinux/odm_sepolicy.cil、odm/etc/selinux/precompiled_sepolicy（必须不存在，否则反噬引导）
+    工具:        debugfs=/opt/homebrew/opt/e2fsprogs/sbin/debugfs，e2fsck=/opt/homebrew/opt/e2fsprogs/sbin/e2fsck，mkfs.ext4=/opt/homebrew/opt/e2fsprogs/sbin/mkfs.ext4
+    镜像产物:    out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/img/patch.img（384 MiB，ext4）
+    缓存配方:    patch-58db89251667
+==> [步骤 11.1] 解包三棵源树
+    输入: out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/img/vendor.img（303677440 B）+ out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/img/vendor_dlkm.img（15831040 B）+ out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/img/odm.img（8388608 B）
+    输出: out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/patch/stage/{raw_vendor、raw_vendor_dlkm、raw_odm}（debugfs rdump）
+    vendor: out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/patch/stage/raw_vendor（705 条目：文件 467 / 链接 201 / 目录 37）
+    vendor_dlkm: out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/patch/stage/raw_vendor_dlkm（28 条目：文件 24 / 链接 0 / 目录 4）
+    odm: out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/patch/stage/raw_odm（3 条目：文件 1 / 链接 0 / 目录 2）
+[ok] 源树已解包
+==> [步骤 11.2] 组装 patch 容器根
+    输入: out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/patch/stage/raw_vendor -> /vendor，out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/patch/stage/raw_vendor_dlkm -> /vendor_dlkm，out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/patch/stage/raw_odm -> /odm
+    输出: out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/patch/stage/root（= 运行态 /mnt/vendorpatch）
+    /vendor/lib/modules 符号链接（-> /vendor_dlkm/lib/modules）替换为真实目录（从 /vendor_dlkm/lib/modules 复制 20 条目）
+    屏蔽落点校验通过（2 项均不存在）
+    改写 /vendor/etc/selinux/vendor_sepolicy.cil（清单 4 条规则）
+==> 构建报告: out/devices/devices/nothing/Asteroids/14-UKQ1.250612.001-20260810/build-report.json
+[err] 阶段 build_patch 失败: vendor cil 改写规则 #1 命中 0 次（期望 1）: (allow ot_rcp self (netlink_route_socket (nlmsg)))

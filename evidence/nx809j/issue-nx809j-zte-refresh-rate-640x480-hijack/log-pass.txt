@@ -1,0 +1,88 @@
+=== [通过日志 1] 设 ro.vendor.feature.zte_feature_screen_refresh_rate_enabled=false 后全程 1216x2688 ===
+13:[2J[01;01H[=3h[2J[01;01H[2J[01;01H[=3h[2J[01;01Hqemu-system-aarch64: cgl-headless flush #1: rect=0,0 1216x2688 surface=1216x2688 backing=1216x2688 y0top=1
+15:qemu-system-aarch64: cgl-headless flush #2: rect=0,0 1216x2688 surface=1216x2688 backing=1216x2688 y0top=1
+20:qemu-system-aarch64: cgl-headless flush #3: rect=511,1315 193x58 surface=1216x2688 backing=1216x2688 y0top=1
+21:qemu-system-aarch64: cgl-headless flush #4: rect=0,2560 1216x128 surface=1216x2688 backing=1216x2688 y0top=1
+22:qemu-system-aarch64: cgl-headless flush #5: rect=540,2560 136x19 surface=1216x2688 backing=1216x2688 y0top=1
+23:qemu-system-aarch64: cgl-headless flush #200: rect=852,2580 11x53 surface=1216x2688 backing=1216x2688 y0top=1
+29:error: can'tqemu-system-aarch64: cgl-headless flush #400: rect=376,907 8x19 surface=1216x2688 backing=1216x2688 y0top=1
+503:qemu-system-aarch64: cgl-headless flush #600: rect=0,0 1216x2688 surface=1216x2688 backing=1216x2688 y0top=1
+1087:qemu-system-aarch64: cgl-headless flush #800: rect=0,0 1216x2688 surface=1216x2688 backing=1216x2688 y0top=1
+1570:qemu-system-aarch64: cgl-headless flush #1000: rect=0,0 1216x2688 surface=1216x2688 backing=1216x2688 y0top=1
+2193:qemu-system-aarch64: cgl-headless flush #1200: rect=0,0 1216x2688 surface=1216x2688 backing=1216x2688 y0top=1
+2823:qemu-system-aarch64: cgl-headless flush #1400: rect=0,0 1216x2688 surface=1216x2688 backing=1216x2688 y0top=1
+3640:qemu-system-aarch64: cgl-headless flush #1600: rect=0,0 1216x2688 surface=1216x2688 backing=1216x2688 y0top=1
+4268:qemu-system-aarch64: cgl-headless flush #1800: rect=0,0 1216x2688 surface=1216x2688 backing=1216x2688 y0top=0
+4784:qemu-system-aarch64: cgl-headless flush #2000: rect=0,0 1216x2688 surface=1216x2688 backing=1216x2688 y0top=0
+5259:qemu-system-aarch64: cgl-headless flush #2200: rect=0,0 1216x2688 surface=1216x2688 backing=1216x2688 y0top=0
+6039:[   45.407172][  T255] type=1400 audit(1795041633.588:1311): avc:  denied  { open } for  comm="pidof" path="/proc/516/cmdline" dev="proc" ino=7614 scontext=u:r:pioneer:s0 tcontextqemu-system-aarch64: cgl-headless flush #2400: rect=0,0 1216x2688 surface=1216x2688 backing=1216x2688 y0top=0
+6716:qemu-system-aarch64: cgl-headless flush #2600: rect=0,0 1216x2688 surface=1216x2688 backing=1216x2688 y0top=0
+7069:qemu-system-aarch64: cgl-headless flush #2800: rect=0,0 1216x2688 surface=1216x2688 backing=1216x2688 y0top=0
+7385:qemu-system-aarch64: cgl-headless flush #3000: rect=0,0 1216x2688 surface=1216x2688 backing=1216x2688 y0top=0
+
+=== [通过日志 2] 运行态 wm size 与 dumpsys display modeId=1 (1216x2688) ===
+=== WM & DISPLAY PASS ===
+Physical size: 1216x2688
+Physical density: 520
+  DisplayDeviceInfo{"Built-in Screen": uniqueId="local:4632256312697818880", 1216 x 2688, modeId 1, renderFrameRate 60.0, hasArrSupport false, frameRateCategoryRate FrameRateCategoryRate {normal=60.0, high=90.0}, supportedRefreshRates [60.0, 60.00384, 60.316544, 60.0, 59.94048], defaultModeId 1, userPreferredModeId -1, supportedModes [{id=1, width=1216, height=2688, fps=60.0, vsync=60.0, synthetic=false, alternativeRefreshRates=[], supportedHdrTypes=[]}, {id=2, width=1024, height=768, fps=60.00384, vsync=60.00384, synthetic=false, alternativeRefreshRates=[], supportedHdrTypes=[]}, {id=3, width=800, height=600, fps=60.316544, vsync=60.316544, synthetic=false, alternativeRefreshRates=[], supportedHdrTypes=[]}, {id=4, width=640, height=480, fps=60.0, vsync=60.0, synthetic=false, alternativeRefreshRates=[], supportedHdrTypes=[]}, {id=5, width=640, height=480, fps=59.94048, vsync=59.94048, synthetic=false, alternativeRefreshRates=[], supportedHdrTypes=[]}], colorMode 0, supportedColorModes [0], hdrCapabilities HdrCapabilities{mSupportedHdrTypes=[], mMaxLuminance=500.0, mMaxAverageLuminance=500.0, mMinLuminance=0.0}, isForceSdr false, allmSupported false, gameContentTypeSupported false, density 520, 435.0197 x 429.40375 dpi, appVsyncOff 9166668, presDeadline 11500000, touch INTERNAL, rotation 0, type INTERNAL, address {port=0, model=0x40491492daea0f}, deviceProductInfo DeviceProductInfo{name=QEMU Monitor, manufacturerPnpId=RHT, productId=4660, modelYear=null, manufactureDate=ManufactureDate{week=42, year=2014}, connectionToSinkType=1}, state ON, committedState ON, frameRateOverride , brightnessMinimum 0.0, brightnessMaximum 1.0, brightnessDefault 0.39763778, brightnessDim 0.05, hdrSdrRatio NaN, roundedCorners RoundedCorners{[RoundedCorner{position=TopLeft, radius=23, center=Point(23, 23)}, RoundedCorner{position=TopRight, radius=23, center=Point(1193, 23)}, RoundedCorner{position=BottomRight, radius=23, center=Point(1193, 2665)}, RoundedCorner{position=BottomLeft, radius=23, center=Point(23, 2665)}]}, FLAG_ALLOWED_TO_BE_DEFAULT_DISPLAY, FLAG_ROTATES_WITH_CONTENT, FLAG_SECURE, FLAG_SUPPORTS_PROTECTED_BUFFERS, FLAG_TRUSTED, installOrientation 0, displayShape DisplayShape{ spec=1406003047 displayWidth=1216 displayHeight=2688 physicalPixelDisplaySizeRatio=1.0 rotation=0 offsetX=0 offsetY=0 scale=1.0}}
+    mActiveModeId=1
+    mDefaultModeId=1
+    mDesiredDisplayModeSpecs={baseModeId=1 allowGroupSwitching=false primary=physical: (0.0 240.0) render:  (0.0 120.0) appRequest=physical: (0.0 240.0) render:  (0.0 240.0) idleScreenRefreshRateConfig=null}
+=== DLKM & REDIRECT & PLACEHOLDERS ===
+zram 73728 0 - Live 0x0000000000000000 (E)
+zsmalloc 40960 1 zram, Live 0x0000000000000000 (E)
+virtio_console 45056 0 - Live 0x0000000000000000 (E)
+mac80211_hwsim 110592 0 - Live 0x0000000000000000 (E)
+mac80211 1056768 1 mac80211_hwsim, Live 0x0000000000000000 (E)
+libarc4 16384 1 mac80211, Live 0x0000000000000000 (E)
+cfg80211 1093632 2 mac80211_hwsim,mac80211, Live 0x0000000000000000 (E)
+rfkill 40960 1 cfg80211, Live 0x0000000000000000 (E)
+cdh_media 49152 0 - Live 0x0000000000000000 (OE)
+cdh_input_identity 32768 0 - Live 0x0000000000000000 (OE)
+cdh_device_info 77824 1 - Live 0x0000000000000000 (OE)
+kernelsu 204800 0 - Live 0x0000000000000000 (OE)
+cdh_redirect 151552 0 - Live 0x0000000000000000 (OE)
+Service vendor.qti.hardware.radio.qtiradio.IQtiRadioStable/slot1: found
+Service vendor.qti.hardware.radio.qtiradio.IQtiRadioStable/slot2: found
+NO_DROPBOX_CRASH
+=== TRIGGER LAUNCHER CHOICE FOR FULL DESKTOP CAPTURE ===
+Starting: Intent { cmp=com.zte.mifavor.launcher/com.android.launcher3.uioverrides.QuickstepLauncher }
+Warning: Activity not started, its current task has been brought to the front
+  mCurrentFocus=Window{fb7bad8 u0 com.zte.mifavor.launcher/com.android.launcher3.uioverrides.QuickstepLauncher}
+  mFocusedApp=ActivityRecord{90635587 u0 com.zte.mifavor.launcher/com.android.launcher3.uioverrides.QuickstepLauncher t7}
+=== [通过日志 3] verify_boot.py 与桌面复抓结果 ===
+running: []
+==> 创建并冷启动实例: match=redmagic/NX809J/16-BQ2A.250705.001-BP2A.250605.031.A3-20260527
+    spec=NX809J_16-BQ2A.250705.001-BP2A.250605.031.A3-20260527 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/NX809J_16-BQ2A.250705.001-BP2A.250605.031.A3-20260527/1
+{
+  "spec": "NX809J_16-BQ2A.250705.001-BP2A.250605.031.A3-20260527",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/NX809J_16-BQ2A.250705.001-BP2A.250605.031.A3-20260527/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{d7c42b1 u0 android/com.android.internal.app.ResolverActivity}\n  mFocusedApp=ActivityRecord{154732367 u0 android/com.android.internal.app.ResolverActivity t9}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "adreno",
+  "serviceCount": "358",
+  "vnc": {
+    "width": 1216,
+    "height": 2688,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 62.82,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/redmagic_NX809J.png",
+    "pngBytes": 973559
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}

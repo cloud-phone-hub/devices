@@ -4,7 +4,7 @@
   "brand": "infinix",
   "model": "Infinix X6876",
   "device": "Infinix-X6876",
-  "platform": "qcom",
+  "platform": "mtk",
   "resolution": "1080x2400",
   "inch": "72x160",
   "density": 480,

@@ -1,0 +1,17 @@
+android.hardware.radio.sap.ISap/slot1
+android.hardware.radio.sap.ISap/slot2
+vendor.samsung.hardware.radio.bridge.ISehRadioBridge/slot1
+vendor.samsung.hardware.radio.bridge.ISehRadioBridge/slot2
+vendor.samsung.hardware.radio.channel.ISehRadioChannel/epdgd
+vendor.samsung.hardware.radio.channel.ISehRadioChannel/epdgd2
+vendor.samsung.hardware.radio.channel.ISehRadioChannel/imsd
+vendor.samsung.hardware.radio.channel.ISehRadioChannel/imsd2
+vendor.samsung.hardware.radio.data.ISehRadioData/slot1
+vendor.samsung.hardware.radio.data.ISehRadioData/slot2
+vendor.samsung.hardware.radio.messaging.ISehRadioMessaging/slot1
+vendor.samsung.hardware.radio.messaging.ISehRadioMessaging/slot2
+vendor.samsung.hardware.radio.network.ISehRadioNetwork/slot1
+vendor.samsung.hardware.radio.network.ISehRadioNetwork/slot2
+vendor.samsung.hardware.radio.satellite.ISehRadioSatellite/default
+vendor.samsung.hardware.radio.sim.ISehRadioSim/slot1
+vendor.samsung.hardware.radio.sim.ISehRadioSim/slot2

@@ -10,14 +10,20 @@
   "density": 560,
   "smp": 8,
   "memory": [
-    8192
+    16384,
+    24576
   ],
   "storage": [
-    128000,
-    256000
+    512000,
+    1024000
   ],
   "extra": {
     "board": "qcom",
+    "cmdline": [
+      "vendorcountry=porsche/normal",
+      "devmodel=PTP-N59",
+      "androidboot.product.hardware.sku=PTP-N59"
+    ],
     "hostHvc": {
       "host-hvc-adbkey": "hvc2",
       "host-hvc-bluetooth": "hvc5",
@@ -27,12 +33,11 @@
       "host-hvc-wifi": "hvc9",
       "host-hvc-wifi-data": "hvc10"
     },
-    "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f",
-    "cmdline": [
-      "vendorcountry=porsche/normal",
-      "devmodel=PTP-N59",
-      "androidboot.product.hardware.sku=PTP-N59"
-    ]
+    "skuCombinations": [
+      "16GB+512GB",
+      "24GB+1TB"
+    ],
+    "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
   },
   "updatedAt": "2026-11-05T04:33:32Z"
 }

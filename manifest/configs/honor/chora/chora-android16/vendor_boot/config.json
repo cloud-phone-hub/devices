@@ -1,3 +1,11 @@
 {
-  "fstab": "chora"
+  "fstab": "qcom",
+  "cmdline": [
+    "vendorcountry=def/meafnaf",
+    "devmodel=BSN-N31",
+    "androidboot.product.hardware.sku=BSN-N31",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ]
 }

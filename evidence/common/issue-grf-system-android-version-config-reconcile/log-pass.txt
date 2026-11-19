@@ -1,0 +1,41 @@
+=== #269 go test (02_prepare & internal/device) ===
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	0.589s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/device	1.127s
+=== #269 实机 verify_boot.py 输出 (nothing/Asteroids 14-UKQ1.241011.001-20251013 -> Asteroids-android15 / lineage-22.2) ===
+Command exited with code 0.
+
+Command output:
+==> 创建并冷启动实例: match=Asteroids_14-UKQ1.241011.001-20251013
+    spec=Asteroids_14-UKQ1.241011.001-20251013 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/Asteroids_14-UKQ1.241011.001-20251013/1
+{
+  "spec": "Asteroids_14-UKQ1.241011.001-20251013",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/Asteroids_14-UKQ1.241011.001-20251013/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{59a1c4c u0 com.nothing.introduction/com.nothing.introduction.MainActivity}\n  mFocusedApp=ActivityRecord{c31b30a u0 com.nothing.introduction/.MainActivity t6}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "adreno",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2392,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 88.26,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/nothing_Asteroids_2.png",
+    "pngBytes": 93497
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}

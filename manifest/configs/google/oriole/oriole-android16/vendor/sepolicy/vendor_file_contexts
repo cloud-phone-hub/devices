@@ -1,0 +1,11 @@
+# cdh oriole：Widevine AIDL HAL（07 自建 /vendor/bin/hw 二进制）file_contexts 补丁。
+# 由 07_build_vendor 追加到 /vendor/etc/selinux/vendor_file_contexts 末尾（机型层，
+# marker 为 `# vendor_file_contexts`）。
+#
+# 与 gold #40 的差异：gold 用 com.google.android.widevine APEX，二进制在 /apex 内、
+# 标签已烘进 APEX 镜像，无需 vendor_file_contexts。本机型是 engine/vendor 编译、由 07
+# 落进 /vendor/bin/hw 的自建服务，基座 lineage-21.0 的 vendor_file_contexts 不认识它，
+# 不显式标注会落到默认 vendor_file，init 按 rc 的 seclabel 换域时缺 entrypoint。
+# 这里只标注 widevine：clearkey 服务沿用基座已有的 hal_drm_clearkey(_exec)（若基座缺失，
+# 起机 avc 复验时再补，避免与基座重复声明类型）。
+/(vendor|system/vendor)/bin/hw/android\.hardware\.drm-service\.widevine  u:object_r:hal_drm_widevine_exec:s0

@@ -1,0 +1,68 @@
+==> ROM 输出根: out/devices/roms（命令行）
+==> 阶段日志: out/devices/tmp/（X200 Ultra）PD2454_MA_15.0.10.24.W10.V000L1/unpack-log.txt（边写边变，不计入校验和）
+==> [步骤 1.0] 解析计划
+    输出根:     out/devices/roms
+    任务:       1 个（official）
+    衍生来源:   boot.img、odm.img、oem.img、product.img、system.img、system_dlkm.img、system_ext.img、vendor.img、vendor_boot.img、vendor_dlkm.img、vgc.img
+    步骤 1.1 厂商固件: roms/devices/vivo/（X200 Ultra）PD2454_MA_15.0.10.24.W10.V000L1.zip -> out/devices/tmp/（X200 Ultra）PD2454_MA_15.0.10.24.W10.V000L1
+            命令: cdh-pipeline unpack-official --rom /Volumes/work/cloud-phone-hub/roms/devices/vivo/（X200 Ultra）PD2454_MA_15.0.10.24.W10.V000L1.zip --out /Volumes/work/cloud-phone-hub/out/devices/tmp/（X200 Ultra）PD2454_MA_15.0.10.24.W10.V000L1
+==> [步骤 1.1] 解包厂商固件
+    输入: roms/devices/vivo/（X200 Ultra）PD2454_MA_15.0.10.24.W10.V000L1.zip
+    输出: out/devices/tmp/（X200 Ultra）PD2454_MA_15.0.10.24.W10.V000L1
+==> 固件包: roms/devices/vivo/（X200 Ultra）PD2454_MA_15.0.10.24.W10.V000L1.zip
+==> 包类型: tar（gzip）
+==> 清单衍生来源: boot.img、odm.img、oem.img、product.img、system.img、system_dlkm.img、system_ext.img、vendor.img、vendor_boot.img、vendor_dlkm.img、vgc.img（白名单之外按包抽出，供 02 剖出目标镜像）
+==> 输出: out/devices/tmp/（X200 Ultra）PD2454_MA_15.0.10.24.W10.V000L1
+  + PD2454_A_15.0.10.24.W10.V000L1_vivo_qcom_LA.VENDOR.15.4.0.r1-01000-pakala.0-1-sm8750_split/vgc.img（0.03 MiB，平铺分区 -> super/vgc_a.img）
+    (sparse) 已转 raw: vgc_a.img
+  + PD2454_A_15.0.10.24.W10.V000L1_vivo_qcom_LA.VENDOR.15.4.0.r1-01000-pakala.0-1-sm8750_split/vendor_boot.img（96.00 MiB）
+  vendor_boot.img   10.0%  0.01 GiB
+  vendor_boot.img   20.0%  0.02 GiB
+  vendor_boot.img   30.0%  0.03 GiB
+  vendor_boot.img   40.0%  0.04 GiB
+  vendor_boot.img   50.0%  0.05 GiB
+  vendor_boot.img   60.0%  0.06 GiB
+  vendor_boot.img   70.0%  0.07 GiB
+  vendor_boot.img   80.0%  0.08 GiB
+  vendor_boot.img   90.0%  0.08 GiB
+  vendor_boot.img  100.0%  0.09 GiB
+  + PD2454_A_15.0.10.24.W10.V000L1_vivo_qcom_LA.VENDOR.15.4.0.r1-01000-pakala.0-1-sm8750_split/super_6.img（7.25 MiB，LP分片 -> super/system_dlkm_a.img）
+  + PD2454_A_15.0.10.24.W10.V000L1_vivo_qcom_LA.VENDOR.15.4.0.r1-01000-pakala.0-1-sm8750_split/super_8.img（4661.28 MiB，LP分片 -> super/vendor_a.img）
+  vendor_a.img   10.0%  0.46 GiB
+  vendor_a.img   20.0%  0.91 GiB
+  vendor_a.img   30.0%  1.37 GiB
+  vendor_a.img   40.0%  1.82 GiB
+  vendor_a.img   50.0%  2.28 GiB
+  vendor_a.img   60.0%  2.73 GiB
+  vendor_a.img   70.0%  3.19 GiB
+  vendor_a.img   80.0%  3.64 GiB
+  vendor_a.img   90.0%  4.10 GiB
+  vendor_a.img  100.0%  4.55 GiB
+  + PD2454_A_15.0.10.24.W10.V000L1_vivo_qcom_LA.VENDOR.15.4.0.r1-01000-pakala.0-1-sm8750_split/odm.img（20.35 MiB，平铺分区 -> super/odm_a.img）
+    (sparse) 已转 raw: odm_a.img
+  + PD2454_A_15.0.10.24.W10.V000L1_vivo_qcom_LA.VENDOR.15.4.0.r1-01000-pakala.0-1-sm8750_split/boot.img（96.00 MiB）
+  boot.img   10.0%  0.01 GiB
+  boot.img   20.0%  0.02 GiB
+  boot.img   30.0%  0.03 GiB
+  boot.img   40.0%  0.04 GiB
+  boot.img   50.0%  0.05 GiB
+  boot.img   60.0%  0.06 GiB
+  boot.img   70.0%  0.07 GiB
+  boot.img   80.0%  0.08 GiB
+  boot.img   90.0%  0.08 GiB
+  boot.img  100.0%  0.09 GiB
+  + PD2454_A_15.0.10.24.W10.V000L1_vivo_qcom_LA.VENDOR.15.4.0.r1-01000-pakala.0-1-sm8750_split/super_7.img（278.13 MiB，LP分片 -> super/system_ext_a.img）
+  system_ext_a.img   10.0%  0.03 GiB
+  system_ext_a.img   20.0%  0.05 GiB
+  system_ext_a.img   30.0%  0.08 GiB
+  system_ext_a.img   40.0%  0.11 GiB
+  system_ext_a.img   50.0%  0.14 GiB
+  system_ext_a.img   60.0%  0.16 GiB
+  system_ext_a.img   70.0%  0.19 GiB
+  system_ext_a.img   80.0%  0.22 GiB
+  system_ext_a.img   90.0%  0.24 GiB
+  system_ext_a.img  100.0%  0.27 GiB
+  + PD2454_A_15.0.10.24.W10.V000L1_vivo_qcom_LA.VENDOR.15.4.0.r1-01000-pakala.0-1-sm8750_split/super_3.img（0.33 MiB，LP分片 -> super/oem_a.img）
+[ok] 已由平铺分区还原 6 个逻辑分区 + 1 个物理分区（4.95 GiB） + vendor_boot.img（96.00 MiB） -> out/devices/tmp/（X200 Ultra）PD2454_MA_15.0.10.24.W10.V000L1
+  [ok] 已登记解包台账: out/devices/manifest.json
+[ok] 解包完成: 1 个任务 -> out/devices/roms

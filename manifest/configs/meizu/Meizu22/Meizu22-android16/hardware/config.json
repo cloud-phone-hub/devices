@@ -215,6 +215,12 @@
         "variant": "default",
         "version": "1.0"
       }
+    },
+    {
+      "android.hardware.graphics.allocator": {
+        "variant": "default",
+        "version": "2.0"
+      }
     }
   ]
 }

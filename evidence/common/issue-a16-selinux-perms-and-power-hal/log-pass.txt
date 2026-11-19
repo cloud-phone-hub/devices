@@ -1,0 +1,110 @@
+=== [通过日志 1] 09_build_vendor SELinux 202504+ 合并与权限裁剪实录 ===
+    收口 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/init/hw/init.virt.rc 默认屏幕密度: 160 -> 560 dpi（防止缺省按 sw>=600dp 识别为 tablet）
+    清洗 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/init/hw/init.virt.rc（剔除 EFI 与非 vendor. 服务名）
+    改名并清洗 init.virtio.rc -> init.chora.rc（init 按 ro.hardware=chora 找板级入口）
+    写 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/ueventd.chora.rc（import ueventd.virt.rc：ueventd 按 ro.hardware=chora 找板级配置）
+    替换官方 plat_pub_versioned.cil 并补齐跨代兼容 typeattribute 21 项
+    同步官方公共/系统可见 vendor 属性类型 24 项
+    同步官方自定义 vendor 服务类型 175 项（service_contexts 变更=true）
+==> [步骤 9.6] 注入 SELinux 策略补丁
+    输入[模块层 android.hardware.audio]: devices/hardware/android.hardware.audio/sepolicy
+    输入[模块层 android.hardware.bluetooth]: devices/hardware/android.hardware.bluetooth/sepolicy
+    输入[模块层 android.hardware.camera]: devices/hardware/android.hardware.camera/sepolicy
+    输入[模块层 android.hardware.gnss]: devices/hardware/android.hardware.gnss/sepolicy
+    输入[模块层 android.hardware.gpu]: devices/hardware/android.hardware.gpu/sepolicy
+    输入[模块层 android.hardware.keymint]: devices/hardware/android.hardware.keymint/sepolicy
+    输入[模块层 android.hardware.media]: devices/hardware/android.hardware.media/sepolicy
+    输入[模块层 android.hardware.radio]: devices/hardware/android.hardware.radio/sepolicy
+    输入[模块层 android.hardware.thermal]: devices/hardware/android.hardware.thermal/sepolicy
+    输入[模块层 android.hardware.wifi]: devices/hardware/android.hardware.wifi/sepolicy
+    输入[模块层 android.service.daemon]: devices/hardware/android.service.daemon/sepolicy
+    输入[模块层 android.hardware.media.v412]: devices/hardware/android.hardware.media.v412/sepolicy
+    输入[模块层 android.hardware.power]: devices/hardware/android.hardware.power/sepolicy
+    输入[机型层]: devices/manifest/configs/honor/chora/chora-android16/vendor/sepolicy
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_sepolicy.cil <- devices/hardware/android.hardware.audio/sepolicy/vendor_sepolicy.cil（3439 字节，marker ;; vendor_sepolicy.cil@android.hardware.audio）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_service_contexts <- devices/hardware/android.hardware.audio/sepolicy/vendor_service_contexts（1635 字节，marker # vendor_service_contexts@android.hardware.audio）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_sepolicy.cil <- devices/hardware/android.hardware.bluetooth/sepolicy/vendor_sepolicy.cil（1820 字节，marker ;; vendor_sepolicy.cil@android.hardware.bluetooth）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_sepolicy.cil <- devices/hardware/android.hardware.camera/sepolicy/vendor_sepolicy.cil（776 字节，marker ;; vendor_sepolicy.cil@android.hardware.camera）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_sepolicy.cil <- devices/hardware/android.hardware.gnss/sepolicy/vendor_sepolicy.cil（1326 字节，marker ;; vendor_sepolicy.cil@android.hardware.gnss）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_file_contexts <- devices/hardware/android.hardware.gpu/sepolicy/vendor_file_contexts（768 字节，marker # vendor_file_contexts@android.hardware.gpu）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_sepolicy.cil <- devices/hardware/android.hardware.keymint/sepolicy/vendor_sepolicy.cil（2300 字节，marker ;; vendor_sepolicy.cil@android.hardware.keymint）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_property_contexts <- devices/hardware/android.hardware.keymint/sepolicy/vendor_property_contexts（647 字节，marker # vendor_property_contexts@android.hardware.keymint）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_sepolicy.cil <- devices/hardware/android.hardware.media/sepolicy/vendor_sepolicy.cil（2317 字节，marker ;; vendor_sepolicy.cil@android.hardware.media）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_service_contexts <- devices/hardware/android.hardware.media/sepolicy/vendor_service_contexts（778 字节，marker # vendor_service_contexts@android.hardware.media）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_sepolicy.cil <- devices/hardware/android.hardware.radio/sepolicy/vendor_sepolicy.cil（2431 字节，marker ;; vendor_sepolicy.cil@android.hardware.radio）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_sepolicy.cil <- devices/hardware/android.hardware.thermal/sepolicy/vendor_sepolicy.cil（1093 字节，marker ;; vendor_sepolicy.cil@android.hardware.thermal）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_sepolicy.cil <- devices/hardware/android.hardware.wifi/sepolicy/vendor_sepolicy.cil（3698 字节，marker ;; vendor_sepolicy.cil@android.hardware.wifi）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_file_contexts <- devices/hardware/android.hardware.wifi/sepolicy/vendor_file_contexts（586 字节，marker # vendor_file_contexts@android.hardware.wifi）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_sepolicy.cil <- devices/hardware/android.service.daemon/sepolicy/vendor_sepolicy.cil（8594 字节，marker ;; vendor_sepolicy.cil@android.service.daemon）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_file_contexts <- devices/hardware/android.service.daemon/sepolicy/vendor_file_contexts（1568 字节，marker # vendor_file_contexts@android.service.daemon）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_sepolicy.cil <- devices/hardware/android.hardware.media.v412/sepolicy/vendor_sepolicy.cil（1162 字节，marker ;; vendor_sepolicy.cil@android.hardware.media.v412）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_file_contexts <- devices/hardware/android.hardware.media.v412/sepolicy/vendor_file_contexts（1244 字节，marker # vendor_file_contexts@android.hardware.media.v412）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_file_contexts <- devices/hardware/android.hardware.power/sepolicy/vendor_file_contexts（989 字节，marker # vendor_file_contexts@android.hardware.power）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_sepolicy.cil <- devices/manifest/configs/honor/chora/chora-android16/vendor/sepolicy/vendor_sepolicy.cil（4758 字节，marker ;; vendor_sepolicy.cil）
+    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_file_contexts <- devices/manifest/configs/honor/chora/chora-android16/vendor/sepolicy/vendor_file_contexts（209 字节，marker # vendor_file_contexts）
+    消解跨分区 genfscon 冲突 1 条（补齐平台类型别名授权 6 条）
+    裁剪平台未声明 SELinux 权限 2 项（移除规则 4 条）
+[add] vendor/lib64/libapexsupport.so <- 官方 system:/system/lib64/libapexsupport.so（161456 B，原样回填供 vendor 命名空间解析）
+[delete] vendor/lib64/libminigbm_gralloc_upstream.so（自编 allocator 已静态内聚，移除底包残留库）
+[delete] vendor/lib64/libminigbm_gralloc4_utils_upstream.so（自编 allocator 已静态内聚，移除底包残留库）
+[delete] vendor/lib/libminigbm_gralloc_upstream.so（自编 allocator 已静态内聚，移除底包残留库）
+
+=== [通过日志 2] vendor-log 装配 power@default 写入结果 ===
+12:    编译产物:   out/devices/vendor/android16（android.hardware.audio@default 4 项、android.hardware.bluetooth@default 3 项、android.hardware.camera@default 3 项、android.hardware.gnss@default 3 项、android.hardware.gpu@default 4 项、android.hardware.health@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.radio@default 4 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.vibrator@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 15 项、android.hardware.media.v412@default 46 项、android.hardware.graphics.allocator@default 3 项、android.hardware.nfc@default 3 项、android.hardware.power@default 3 项）
+21:    SELinux 补丁: 模块层 android.hardware.audio devices/hardware/android.hardware.audio/sepolicy（2 个文件）；模块层 android.hardware.bluetooth devices/hardware/android.hardware.bluetooth/sepolicy（1 个文件）；模块层 android.hardware.camera devices/hardware/android.hardware.camera/sepolicy（1 个文件）；模块层 android.hardware.gnss devices/hardware/android.hardware.gnss/sepolicy（1 个文件）；模块层 android.hardware.gpu devices/hardware/android.hardware.gpu/sepolicy（1 个文件）；模块层 android.hardware.keymint devices/hardware/android.hardware.keymint/sepolicy（2 个文件）；模块层 android.hardware.media devices/hardware/android.hardware.media/sepolicy（2 个文件）；模块层 android.hardware.radio devices/hardware/android.hardware.radio/sepolicy（1 个文件）；模块层 android.hardware.thermal devices/hardware/android.hardware.thermal/sepolicy（1 个文件）；模块层 android.hardware.wifi devices/hardware/android.hardware.wifi/sepolicy（2 个文件）；模块层 android.service.daemon devices/hardware/android.service.daemon/sepolicy（2 个文件）；模块层 android.hardware.media.v412 devices/hardware/android.hardware.media.v412/sepolicy（2 个文件）；模块层 android.hardware.power devices/hardware/android.hardware.power/sepolicy（1 个文件）；机型层 devices/manifest/configs/honor/chora/chora-android16/vendor/sepolicy（2 个文件）
+159:    HAL 模块:  android.hardware.power（变体 default，变体产物根 out/devices/vendor/android16，3 项齐全（编译产物 1 + vendor 静态树 2，源码指纹一致）-> 复用）
+160:        期望产物 out/devices/vendor/android16/bin/hw/android.hardware.power-service
+161:        期望静态树 out/devices/vendor/android16/etc/init/android.hardware.power-service.rc
+162:        期望静态树 out/devices/vendor/android16/etc/vintf/manifest/android.hardware.power.xml
+185:    输入: db://honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804（hardware 19 项：android.hardware.audio@default、android.hardware.bluetooth@default、android.hardware.camera@default、android.hardware.gnss@default、android.hardware.gpu@default、android.hardware.health@default、android.hardware.keymint@default、android.hardware.light@default、android.hardware.media@default、android.hardware.radio@default、android.hardware.sensors@default、android.hardware.thermal@default、android.hardware.vibrator@default、android.hardware.wifi@default、android.service.daemon@default、android.hardware.media.v412@default、android.hardware.graphics.allocator@default、android.hardware.nfc@default、android.hardware.power@default）
+186:    输出: out/devices/vendor/android16（android.hardware.audio@default 4 项、android.hardware.bluetooth@default 3 项、android.hardware.camera@default 3 项、android.hardware.gnss@default 3 项、android.hardware.gpu@default 4 项、android.hardware.health@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.radio@default 4 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.vibrator@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 15 项、android.hardware.media.v412@default 46 项、android.hardware.graphics.allocator@default 3 项、android.hardware.nfc@default 3 项、android.hardware.power@default 3 项）
+206:[skip] android.hardware.power 已编译（1 个编译产物 + 2 个 vendor 静态树文件齐全，源码指纹一致）
+208:    输入: 机型静态树 devices/manifest/configs/honor/chora/chora-android16/vendor；编译产物 out/devices/vendor/android16（android.hardware.audio@default 4 项、android.hardware.bluetooth@default 3 项、android.hardware.camera@default 3 项、android.hardware.gnss@default 3 项、android.hardware.gpu@default 4 项、android.hardware.health@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.radio@default 4 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.vibrator@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 15 项、android.hardware.media.v412@default 46 项、android.hardware.graphics.allocator@default 3 项、android.hardware.nfc@default 3 项、android.hardware.power@default 3 项）；平台覆盖层 out/devices/vendor/android16/qcom
+227:    写 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/bin/hw/android.hardware.power-service（0755）
+252:    写 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/init/android.hardware.power-service.rc（0644）
+286:    写 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/vintf/manifest/android.hardware.power.xml（0644）
+470:    输入[模块层 android.hardware.power]: devices/hardware/android.hardware.power/sepolicy
+490:    追加 out/devices/devices/honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804/vendor/etc/selinux/vendor_file_contexts <- devices/hardware/android.hardware.power/sepolicy/vendor_file_contexts（989 字节，marker # vendor_file_contexts@android.hardware.power）
+560:    编译产物 android.hardware.power@default: 写入 3，已存在同内容 0
+
+=== [通过日志 3] Go 单测验证 (02_prepare + 09_build_vendor) ===
+=== RUN   TestAlignSepolicyVersionSameVersion202504MergesOfficialPub
+--- PASS: TestAlignSepolicyVersionSameVersion202504MergesOfficialPub (0.01s)
+=== RUN   TestPruneUnsupportedPlatformPermsCIL
+--- PASS: TestPruneUnsupportedPlatformPermsCIL (0.00s)
+PASS
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	1.020s
+=== RUN   TestAlignHardwareHALListAutoCompletesGraphics
+=== RUN   TestAlignHardwareHALListAutoCompletesGraphics/A14_补齐_allocator_与_composer@2.4_与_gpu
+=== RUN   TestAlignHardwareHALListAutoCompletesGraphics/A15_补齐_allocator_与_composer3@3.0_与_gpu
+=== RUN   TestAlignHardwareHALListAutoCompletesGraphics/A16_hasReadme_机型补齐_allocator_与_power_且不强加_gpu_或_power.stats
+=== RUN   TestAlignHardwareHALListAutoCompletesGraphics/A17_机型补齐_allocator_与_power@1.0_且不强加_power.stats
+--- PASS: TestAlignHardwareHALListAutoCompletesGraphics (0.00s)
+    --- PASS: TestAlignHardwareHALListAutoCompletesGraphics/A14_补齐_allocator_与_composer@2.4_与_gpu (0.00s)
+    --- PASS: TestAlignHardwareHALListAutoCompletesGraphics/A15_补齐_allocator_与_composer3@3.0_与_gpu (0.00s)
+    --- PASS: TestAlignHardwareHALListAutoCompletesGraphics/A16_hasReadme_机型补齐_allocator_与_power_且不强加_gpu_或_power.stats (0.00s)
+    --- PASS: TestAlignHardwareHALListAutoCompletesGraphics/A17_机型补齐_allocator_与_power@1.0_且不强加_power.stats (0.00s)
+=== RUN   TestNormalizeVintfSchemaAndPruneHalRcDelete
+--- PASS: TestNormalizeVintfSchemaAndPruneHalRcDelete (0.00s)
+=== RUN   TestHonorSensorsPayloadDataIncludesType36
+--- PASS: TestHonorSensorsPayloadDataIncludesType36 (0.00s)
+PASS
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	0.313s
+
+=== [通过日志 4] honor/chora 第 3 次独占冷启动验收与稳态 VNC 桌面实测 ===
+{
+  "spec": "chora_16-BQ2A.250913.001-BP2A.250605.031.A3-20260804",
+  "index": "1",
+  "bootCompleted": true,
+  "bootanim": "stopped",
+  "topActivity": "com.hihonor.android.launcher/.unihome.UniHomeLauncher",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "adreno",
+  "serviceCount": "406",
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+VNC 桌面完整渲染复抓:
+width=1280, height=2788, meanBrightness=183.78, peak=255, pngBytes=6288346 (MagicOS 10 桌面与主题壁纸、图标及导航栏全部清晰渲染，稳态超 270s 零 RescueParty)

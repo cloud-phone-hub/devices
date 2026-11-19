@@ -23,6 +23,11 @@
 
 using aidl::android::hardware::soundtrigger3::SoundTriggerHw;
 
+extern "C" {
+void AIBinder_markVintfStability(AIBinder* binder);
+void AIBinder_Class_disableInterfaceTokenHeader(AIBinder_Class* clazz);
+}
+
 namespace {
 
 void* OnPlaceholderCreate(void* /*args*/) {
@@ -88,12 +93,14 @@ void RegisterPlaceholdersFromFile(const char* path) {
                 class_cache.erase(it);
                 continue;
             }
+            AIBinder_Class_disableInterfaceTokenHeader(it->second);
         }
         AIBinder* binder = AIBinder_new(it->second, nullptr);
         if (binder == nullptr) {
             ALOGW("allocate placeholder binder failed: %s", name.c_str());
             continue;
         }
+        AIBinder_markVintfStability(binder);
         binder_exception_t status = AServiceManager_addService(binder, name.c_str());
         if (status != EX_NONE) {
             ALOGW("register placeholder service failed: %s (%d)",

@@ -1,20 +1,21 @@
 {
   "id": 35,
-  "official": "Motorola",
+  "official": "摩托罗拉",
   "brand": "motorola",
   "model": "Motorola Razr (aito)",
   "device": "aito",
-  "platform": "qcom",
-  "resolution": "1080x2400",
-  "inch": "72x160",
+  "platform": "mtk",
+  "resolution": "1080x2640",
+  "inch": "66x162",
   "density": 420,
   "smp": 8,
   "memory": [
-    8192
+    8192,
+    12288
   ],
   "storage": [
-    128000,
-    256000
+    256000,
+    512000
   ],
   "extra": {
     "board": "mt6878",
@@ -26,6 +27,10 @@
       "host-hvc-wifi": "hvc9",
       "host-hvc-wifi-data": "hvc10"
     },
+    "skuCombinations": [
+      "8GB+256GB",
+      "12GB+512GB"
+    ],
     "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
   },
   "updatedAt": "2026-11-09T03:23:21Z"

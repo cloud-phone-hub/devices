@@ -1,3 +1,10 @@
 {
-  "fstab": "sun"
+  "fstab": "sun",
+  "cmdline": [
+    "androidboot.product.hardware.sku=PD2454",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes",
+    "androidboot.vbmeta.size=1152"
+  ]
 }

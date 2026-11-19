@@ -1,0 +1,2 @@
+# chora（Honor 400 Lite / BSN-NX1 / MagicOS 10 / Android 16）机型层 file_contexts。
+/vendor/bin/hw/vendor\.honor\.hardware\.hwfactoryinterface-service   u:object_r:hal_hwfactoryinterface_default_exec:s0

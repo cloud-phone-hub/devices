@@ -1,0 +1,4 @@
+# 官方 vendor 是 A14/34.0，跨代收口会删掉引用 hal_graphics_mapper_service 的行；
+# 系统 plat_sepolicy.cil（A16）声明了该类型，保留 minigbm mapper 映射供重命名为 mapper/mediatek。
+mapper/minigbm_upstream	u:object_r:hal_graphics_mapper_service:s0
+mapper/minigbm	u:object_r:hal_graphics_mapper_service:s0

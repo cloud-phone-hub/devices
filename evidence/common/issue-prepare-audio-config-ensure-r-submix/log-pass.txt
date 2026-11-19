@@ -1,0 +1,42 @@
+=== UNIT TEST: TestAudioEngineConfigEnsuresRSubmix (2026-11-18) ===
+=== RUN   TestAudioEngineConfigEnsuresRSubmix
+--- PASS: TestAudioEngineConfigEnsuresRSubmix (0.00s)
+PASS
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	1.071s
+
+=== MANIFEST CONFIG HEADER ===
+3:<configuration version="1.0" modules="default,bluetooth,usb,r_submix">
+
+=== MEIZU22 COLD BOOT + VNC PASS (task-683) ===
+==> 创建并冷启动实例: match=meizu/Meizu22/16-AQ3A.250411.001-20260127
+    spec=Meizu22_16-AQ3A.250411.001-20260127 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/Meizu22_16-AQ3A.250411.001-20260127/1
+{
+  "spec": "Meizu22_16-AQ3A.250411.001-20260127",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/Meizu22_16-AQ3A.250411.001-20260127/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{52dc034 u0 com.meizu.flyme.launcher/com.android.launcher3.uioverrides.QuickstepLauncher}\n  mFocusedApp=ActivityRecord{238200016 u0 com.meizu.flyme.launcher/com.android.launcher3.uioverrides.QuickstepLauncher t7}",
+  "roHardwareEgl": "mesa",
+  "roHardwareVulkan": "virtio",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 45.4,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/meizu_Meizu22.png",
+    "pngBytes": 438313
+  },
+  "passed": true
+}
+==> 销毁测试实例 Meizu22_16-AQ3A.250411.001-20260127/1

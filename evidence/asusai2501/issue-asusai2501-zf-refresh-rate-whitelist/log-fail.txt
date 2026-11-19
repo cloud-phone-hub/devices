@@ -1,0 +1,127 @@
+=== props ===
+ZWWAI2501
+asus/ZWWAI2501/ASUSAI2501:15/AQ3A.240829.003/35.1810.1810.243-0:user/release-keys
+60,90,120,144,165,185
+120
+=== drmhwc / SF / RefreshRateSelector ===
+11-18 15:32:09.872   532   532 I drmhwc  : hwc3-drm (cdh source build) starting up
+11-18 15:32:09.872   532   532 I drmhwc  : cdh-composer3 config: rates=6 default_rate=120 wide_color=1 dpi=(388.20001, 388.29999) edid=ASU/ASUSAI2501
+11-18 15:32:09.872   532   532 I drmhwc  : HWC3 service name android.hardware.graphics.composer3.IComposer/default
+11-18 15:32:10.664   554   554 D RefreshRateSelector: [Display] ltpo: zf(1), factory(0)
+11-18 15:32:10.670   554   554 D DisplayModeController: setDesiredMode 4613503761327890176 {mode={fps=185.00 Hz, modePtr={id=5, vsyncRate=185.00 Hz, peakRefreshRate=185.00 Hz}}, emitEvent=true, force=false}
+11-18 15:32:11.204   597   615 E SurfaceComposerClient: Active display mode not found.
+11-18 15:32:12.170   554   590 E RefreshRateSelector: [Display] ltpo: is desending
+11-18 15:32:12.170   554   591 E RefreshRateSelector: [Display] ltpo: is desending
+11-18 15:32:12.744   692   715 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:32:12.744   692   715 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:32:14.959   779   801 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:32:14.959   779   801 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:32:20.073   927   949 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:32:20.073   927   949 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:32:25.321  1078  1100 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:32:25.321  1078  1100 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:32:30.351  1231  1254 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:32:30.351  1231  1254 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:32:35.507  1468  1505 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:32:35.507  1468  1505 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:32:40.634  1608  1638 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:32:40.634  1608  1638 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:32:45.681  1749  1769 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:32:45.681  1749  1769 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:32:50.757  1879  1899 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:32:50.757  1879  1899 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:32:55.817  2006  2028 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:32:55.817  2006  2028 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:33:00.984  2136  2156 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:33:00.984  2136  2156 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:33:06.066  2263  2287 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:33:06.067  2263  2287 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:33:10.967  2387  2411 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:33:10.967  2387  2411 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:33:16.001  2521  2541 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:33:16.001  2521  2541 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:33:21.126  2649  2671 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:33:21.126  2649  2671 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:33:26.114  2775  2795 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:33:26.114  2775  2795 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:33:31.274  2905  2925 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:33:31.274  2905  2925 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:33:36.318  3032  3056 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:33:36.318  3032  3056 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:33:41.420  3161  3181 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:33:41.420  3161  3181 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:33:46.428  3284  3313 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:33:46.428  3284  3313 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:33:51.552  3420  3442 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:33:51.552  3420  3442 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:33:56.460  3548  3569 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:33:56.460  3548  3569 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:34:01.545  3676  3696 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:34:01.545  3676  3696 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:34:06.692  3805  3827 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:34:06.692  3805  3827 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:34:11.653  3933  3953 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:34:11.653  3933  3953 E LocalDisplayAdapter: Can't find display mode with id -1
+11-18 15:34:16.816  4067  4089 E LocalDisplayAdapter: Can't find display mode with id 5
+11-18 15:34:16.816  4067  4089 E LocalDisplayAdapter: Can't find display mode with id -1
+=== crash ===
+--------- beginning of crash
+11-18 15:32:12.744   692   715 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: android.display
+11-18 15:32:12.744   692   715 E AndroidRuntime: java.lang.NullPointerException: Attempt to read from field 'int android.view.SurfaceControl$DisplayMode.width' on a null object reference in method 'boolean com.android.server.display.LocalDisplayAdapter$DisplayModeRecord.hasMatchingMode(android.view.SurfaceControl$DisplayMode)'
+11-18 15:32:12.744   692   715 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter$DisplayModeRecord.hasMatchingMode(LocalDisplayAdapter.java:1594)
+11-18 15:32:12.744   692   715 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter$LocalDisplayDevice.updateDisplayModesLocked(LocalDisplayAdapter.java:390)
+11-18 15:32:12.744   692   715 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter$LocalDisplayDevice.updateDisplayPropertiesLocked(LocalDisplayAdapter.java:314)
+11-18 15:32:12.744   692   715 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter$LocalDisplayDevice.<init>(LocalDisplayAdapter.java:286)
+11-18 15:32:12.744   692   715 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter.tryConnectDisplayLocked(LocalDisplayAdapter.java:186)
+11-18 15:32:12.744   692   715 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter.registerLocked(LocalDisplayAdapter.java:136)
+11-18 15:32:12.744   692   715 E AndroidRuntime: 	at com.android.server.display.DisplayManagerService.registerDisplayAdapterLocked(DisplayManagerService.java:2012)
+11-18 15:32:12.744   692   715 E AndroidRuntime: 	at com.android.server.display.DisplayManagerService.registerDefaultDisplayAdapters(DisplayManagerService.java:1961)
+11-18 15:32:12.744   692   715 E AndroidRuntime: 	at com.android.server.display.DisplayManagerService.-$$Nest$mregisterDefaultDisplayAdapters(DisplayManagerService.java:0)
+11-18 15:32:12.744   692   715 E AndroidRuntime: 	at com.android.server.display.DisplayManagerService$DisplayManagerHandler.handleMessage(DisplayManagerService.java:3650)
+11-18 15:32:12.744   692   715 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:107)
+11-18 15:32:12.744   692   715 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:273)
+11-18 15:32:12.744   692   715 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:388)
+11-18 15:32:12.744   692   715 E AndroidRuntime: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+11-18 15:32:12.744   692   715 E AndroidRuntime: 	at com.android.server.ServiceThread.run(ServiceThread.java:46)
+11-18 15:32:12.745   692   715 E AndroidRuntime: Error reporting crash
+11-18 15:32:12.745   692   715 E AndroidRuntime: java.lang.NullPointerException: Attempt to invoke interface method 'void android.app.IActivityManager.handleApplicationCrash(android.os.IBinder, android.app.ApplicationErrorReport$ParcelableCrashInfo)' on a null object reference
+11-18 15:32:12.745   692   715 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$KillApplicationHandler.uncaughtException(RuntimeInit.java:170)
+11-18 15:32:12.745   692   715 E AndroidRuntime: 	at java.lang.ThreadGroup.uncaughtException(ThreadGroup.java:1071)
+11-18 15:32:12.745   692   715 E AndroidRuntime: 	at java.lang.ThreadGroup.uncaughtException(ThreadGroup.java:1066)
+11-18 15:32:12.745   692   715 E AndroidRuntime: 	at java.lang.Thread.dispatchUncaughtException(Thread.java:2306)
+11-18 15:32:14.959   779   801 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: android.display
+11-18 15:32:14.959   779   801 E AndroidRuntime: java.lang.NullPointerException: Attempt to read from field 'int android.view.SurfaceControl$DisplayMode.width' on a null object reference in method 'boolean com.android.server.display.LocalDisplayAdapter$DisplayModeRecord.hasMatchingMode(android.view.SurfaceControl$DisplayMode)'
+11-18 15:32:14.959   779   801 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter$DisplayModeRecord.hasMatchingMode(LocalDisplayAdapter.java:1594)
+11-18 15:32:14.959   779   801 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter$LocalDisplayDevice.updateDisplayModesLocked(LocalDisplayAdapter.java:390)
+11-18 15:32:14.959   779   801 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter$LocalDisplayDevice.updateDisplayPropertiesLocked(LocalDisplayAdapter.java:314)
+11-18 15:32:14.959   779   801 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter$LocalDisplayDevice.<init>(LocalDisplayAdapter.java:286)
+11-18 15:32:14.959   779   801 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter.tryConnectDisplayLocked(LocalDisplayAdapter.java:186)
+11-18 15:32:14.959   779   801 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter.registerLocked(LocalDisplayAdapter.java:136)
+11-18 15:32:14.959   779   801 E AndroidRuntime: 	at com.android.server.display.DisplayManagerService.registerDisplayAdapterLocked(DisplayManagerService.java:2012)
+11-18 15:32:14.959   779   801 E AndroidRuntime: 	at com.android.server.display.DisplayManagerService.registerDefaultDisplayAdapters(DisplayManagerService.java:1961)
+11-18 15:32:14.959   779   801 E AndroidRuntime: 	at com.android.server.display.DisplayManagerService.-$$Nest$mregisterDefaultDisplayAdapters(DisplayManagerService.java:0)
+11-18 15:32:14.959   779   801 E AndroidRuntime: 	at com.android.server.display.DisplayManagerService$DisplayManagerHandler.handleMessage(DisplayManagerService.java:3650)
+11-18 15:32:14.959   779   801 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:107)
+11-18 15:32:14.959   779   801 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:273)
+11-18 15:32:14.959   779   801 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:388)
+11-18 15:32:14.959   779   801 E AndroidRuntime: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+11-18 15:32:14.959   779   801 E AndroidRuntime: 	at com.android.server.ServiceThread.run(ServiceThread.java:46)
+11-18 15:32:14.970   779   801 E AndroidRuntime: Error reporting crash
+11-18 15:32:14.970   779   801 E AndroidRuntime: java.lang.NullPointerException: Attempt to invoke interface method 'void android.app.IActivityManager.handleApplicationCrash(android.os.IBinder, android.app.ApplicationErrorReport$ParcelableCrashInfo)' on a null object reference
+11-18 15:32:14.970   779   801 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$KillApplicationHandler.uncaughtException(RuntimeInit.java:170)
+11-18 15:32:14.970   779   801 E AndroidRuntime: 	at java.lang.ThreadGroup.uncaughtException(ThreadGroup.java:1071)
+11-18 15:32:14.970   779   801 E AndroidRuntime: 	at java.lang.ThreadGroup.uncaughtException(ThreadGroup.java:1066)
+11-18 15:32:14.970   779   801 E AndroidRuntime: 	at java.lang.Thread.dispatchUncaughtException(Thread.java:2306)
+11-18 15:32:20.073   927   949 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: android.display
+11-18 15:32:20.073   927   949 E AndroidRuntime: java.lang.NullPointerException: Attempt to read from field 'int android.view.SurfaceControl$DisplayMode.width' on a null object reference in method 'boolean com.android.server.display.LocalDisplayAdapter$DisplayModeRecord.hasMatchingMode(android.view.SurfaceControl$DisplayMode)'
+11-18 15:32:20.073   927   949 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter$DisplayModeRecord.hasMatchingMode(LocalDisplayAdapter.java:1594)
+11-18 15:32:20.073   927   949 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter$LocalDisplayDevice.updateDisplayModesLocked(LocalDisplayAdapter.java:390)
+11-18 15:32:20.073   927   949 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter$LocalDisplayDevice.updateDisplayPropertiesLocked(LocalDisplayAdapter.java:314)
+11-18 15:32:20.073   927   949 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter$LocalDisplayDevice.<init>(LocalDisplayAdapter.java:286)
+11-18 15:32:20.073   927   949 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter.tryConnectDisplayLocked(LocalDisplayAdapter.java:186)
+11-18 15:32:20.073   927   949 E AndroidRuntime: 	at com.android.server.display.LocalDisplayAdapter.registerLocked(LocalDisplayAdapter.java:136)
+11-18 15:32:20.073   927   949 E AndroidRuntime: 	at com.android.server.display.DisplayManagerService.registerDisplayAdapterLocked(DisplayManagerService.java:2012)
+11-18 15:32:20.073   927   949 E AndroidRuntime: 	at com.android.server.display.DisplayManagerService.registerDefaultDisplayAdapters(DisplayManagerService.java:1961)
+11-18 15:32:20.073   927   949 E AndroidRuntime: 	at com.android.server.display.DisplayManagerService.-$$Nest$mregisterDefaultDisplayAdapters(DisplayManagerService.java:0)
+11-18 15:32:20.073   927   949 E AndroidRuntime: 	at com.android.server.display.DisplayManagerService$DisplayManagerHandler.handleMessage(DisplayManagerService.java:3650)
+11-18 15:32:20.073   927   949 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:107)

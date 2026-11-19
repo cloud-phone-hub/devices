@@ -1,0 +1,10 @@
+# asteroids：Nothing Phone (3a)（`nothing/Asteroids` / 骁龙 SM7635 `volcano` / GRF vendor=14）
+
+2 条机型条目：#268 记录 Android 16（`14-UKQ1.250612.001-20260810`，`lineage-23.2`）清空过期 `vendor-cil-rewrite`；#270 记录 Android 15（`14-UKQ1.241011.001-20251013`，`lineage-22.2`）纯配置补全 GRF 34.0 `mapper/qti` service context、`vendor_display_prop`/`vendor_display_notch_prop` 策略与 `/vendor/etc/display_refresh_rate_config.json` 后冷启动进入 Nothing OS 3.2 桌面。
+
+## 条目
+
+| # | 问题标识 | 说明 | 状态 |
+| :--- | :--- | :--- | :--- |
+| 268 | [issue-asteroids-a16-stale-vendor-cil-rewrite](issue-asteroids-a16-stale-vendor-cil-rewrite/solution.md) | `09_build_vendor` `pruneUnsupportedPlatformPermsCIL` 已按 `BP2A` 官方平台 CIL 自动移除 `netlink_route_socket:nlmsg` 与 `system:firmware_load` 4 条规则，`Asteroids-android16/patch/config.json` 仍保留早期手动 `vendor-cil-rewrite` 致 `11_build_patch` 规则 `#1` 命中 `0` 次失败；清空 `vendor-cil-rewrite` 为 `[]` 后重打包通过 | **已闭环**（2026-11-19，实例 1）：`verify_boot.py` `passed=true`（`bootCompleted=true`、`bootanim=stopped`、`bootReason=reboot,factory_reset`、`service list=323`），`wm size=1080x2392`（`mActiveModeId=1`），`IQtiRadioStable/slot1: found`，`dropbox` 零崩溃，VNC 完整渲染 Nothing OS 4.1 主桌面（`meanBrightness=110.69`） |
+| 270 | [issue-asteroids-a15-grf-sepolicy-and-refresh-config](issue-asteroids-a15-grf-sepolicy-and-refresh-config/solution.md) | GRF `vendor=14 (34.0) / system=15` 连续三层纯配置缺口：① `mapper/qti` 缺 `hal_graphics_mapper_service` service context 致 `hwc3` 报 `gralloc-mapper is missing`；② `ro.vendor.display.*` 落入 `vendor_default_prop` 被静默拒读致 `SimpleMappingStrategy` NPE 与 `vendor_display_notch_prop` AVC 拒绝；③ 缺 `/vendor/etc/display_refresh_rate_config.json` 致 `NtRefreshRateController.qos` NPE。**改动**：仅在 `Asteroids-android15/vendor/sepolicy/` 补三份策略碎片并在 `vendor/config.json` `"files"` 提取 `display_refresh_rate_config.json`、`nt_boost_adjuster.xml`、`richtapresources` | **已闭环**（2026-11-19，实例 1）：`verify_boot.py` `passed=true`（`bootCompleted=true`、`bootanim=stopped`、`wm size=1080x2392@388`、`mActiveModeId=2`、`IQtiRadioStable/slot1: found`、`service list=309`），VNC 完整渲染 Nothing OS 3.2 主桌面（`meanBrightness=112.99`） |

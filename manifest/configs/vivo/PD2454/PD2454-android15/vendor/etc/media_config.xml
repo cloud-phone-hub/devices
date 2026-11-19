@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- vivo X200 Ultra (vivo/PD2454) Codec2 Store 实例与组件登记（rank=1 确保软解优先，且保证每个 store 非空） -->
+<media-c2-config>
+    <instance binary="android.hardware.media.c2-mediatek" store="default1"/>
+    <instance binary="vendor.dolby.media.c2-default-service-dax" store="default9"/>
+    <component store="default1" name="c2.qti.avc.decoder" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.qti.avc.decoder.secure" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.qti.hevc.decoder" kind="decoder" domain="video" media-type="video/hevc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.qti.hevc.decoder.secure" kind="decoder" domain="video" media-type="video/hevc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.qti.vp9.decoder" kind="decoder" domain="video" media-type="video/x-vnd.on2.vp9" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.qti.av1.decoder" kind="decoder" domain="video" media-type="video/av01" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.qti.avc.encoder" kind="encoder" domain="video" media-type="video/avc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.qti.hevc.encoder" kind="encoder" domain="video" media-type="video/hevc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.qti.heic.encoder" kind="encoder" domain="video" media-type="image/vnd.android.heic" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default9" name="c2.dolby.eac3.decoder" kind="decoder" domain="audio" media-type="audio/eac3" rank="1" aliases="" profiles="" levels=""/>
+</media-c2-config>

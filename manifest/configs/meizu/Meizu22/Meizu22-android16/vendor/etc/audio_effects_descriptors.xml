@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- MEIZU 22 (meizu/Meizu22) AI 对标 gold 对齐生成的 5 项音效描述符 -->
+<audio-effects-descriptors>
+  <effect name="bassboost" implementor="AOSP" type="bassboost" uuid="8631f300-72e2-11df-b57e-0002a5d5c51b" connect="Insert"/>
+  <effect name="equalizer" implementor="AOSP" type="equalizer" uuid="8631f301-72e2-11df-b57e-0002a5d5c51b" connect="Insert"/>
+  <effect name="virtualizer" implementor="AOSP" type="virtualizer" uuid="8631f302-72e2-11df-b57e-0002a5d5c51b" connect="Insert"/>
+  <effect name="reverb" implementor="AOSP" type="reverb" uuid="172cdf00-a3bc-11df-a72f-0002a5d5c51b" connect="Insert"/>
+  <effect name="meizu_hifi" implementor="MEIZU" type="meizu.soundfx.hifi" uuid="e0d1c9a2-3f4b-4c6d-9a71-5b2c8f0d4e16" connect="Insert"/>
+</audio-effects-descriptors>

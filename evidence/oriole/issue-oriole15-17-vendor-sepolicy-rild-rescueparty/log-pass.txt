@@ -1,0 +1,138 @@
+=== 1. oriole-android{15,16,17}/vendor/sepolicy 目录对齐 ===
+/Volumes/work/cloud-phone-hub/devices/manifest/configs/google/oriole/oriole-android15/vendor/sepolicy/:
+total 32
+drwxr-xr-x@ 2 cuimingqiang  staff   170 Nov 18 20:29 .
+drwxr-xr-x@ 4 cuimingqiang  staff   170 Nov 18 20:29 ..
+-rw-r--r--@ 1 cuimingqiang  staff   932 Nov 18 20:29 vendor_file_contexts
+-rw-r--r--@ 1 cuimingqiang  staff  1034 Nov 18 20:29 vendor_property_contexts
+-rw-r--r--@ 1 cuimingqiang  staff  8154 Nov 18 20:29 vendor_sepolicy.cil
+
+/Volumes/work/cloud-phone-hub/devices/manifest/configs/google/oriole/oriole-android16/vendor/sepolicy/:
+total 32
+drwxr-xr-x@ 2 cuimingqiang  staff   170 Nov 18 20:29 .
+drwxr-xr-x@ 3 cuimingqiang  staff   136 Nov 18 20:29 ..
+-rw-r--r--@ 1 cuimingqiang  staff   932 Nov 18 20:29 vendor_file_contexts
+-rw-r--r--@ 1 cuimingqiang  staff  1034 Nov 18 20:29 vendor_property_contexts
+-rw-r--r--@ 1 cuimingqiang  staff  8154 Nov 18 20:29 vendor_sepolicy.cil
+
+/Volumes/work/cloud-phone-hub/devices/manifest/configs/google/oriole/oriole-android17/vendor/sepolicy/:
+total 32
+drwxr-xr-x@ 2 cuimingqiang  staff   170 Nov 18 20:29 .
+drwxr-xr-x@ 3 cuimingqiang  staff   136 Nov 18 20:29 ..
+-rw-r--r--@ 1 cuimingqiang  staff   932 Nov 18 20:29 vendor_file_contexts
+-rw-r--r--@ 1 cuimingqiang  staff  1034 Nov 18 20:29 vendor_property_contexts
+-rw-r--r--@ 1 cuimingqiang  staff  8154 Nov 18 20:29 vendor_sepolicy.cil
+
+=== 2. oriole 15-BP1A 复测通过 ===
+Command exited with code 0.
+
+Command output:
+==> 创建并冷启动实例: match=google/oriole/15-BP1A.250505.005-20250326
+    spec=oriole_15-BP1A.250505.005-20250326 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/oriole_15-BP1A.250505.005-20250326/1
+{
+  "spec": "oriole_15-BP1A.250505.005-20250326",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/oriole_15-BP1A.250505.005-20250326/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{c33afbe u0 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}\n  mFocusedApp=ActivityRecord{259340671 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t7}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 91.4,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/oriole_15_BP1A.png",
+    "pngBytes": 2144077
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+Created At: 2026-11-18T20:32:48+08:00
+Completed At: 2026-11-18T20:33:00+08:00
+Command exited with code 0.
+
+Command output:
+$ uptime; getprop sys.boot_completed; getprop init.svc.bootanim; getprop ro.boot.bootreason; getprop persist.vendor.radio.call_waiting_for_sync_0; getprop -Z persist.vendor.radio.call_waiting_for_sync_0; getprop -Z vendor.radio.allowed_types_loaded0
+12:32:51 up 1 min,  0 users,  load average: 9.98, 3.94, 1.43
+1
+stopped
+reboot,factory_reset
+
+u:object_r:vendor_rild_prop:s0
+u:object_r:vendor_rild_prop:s0
+$ logcat -d -b all | grep -c RescueParty || true
+0
+$ screencap -p /data/local/tmp/pass_sc.png && ls -l /data/local/tmp/pass_sc.png
+
+$ cat /vendor/lib64/egl/gpu_id.cfg | grep gl_extra_exts
+ro.vendor.cdh.gpu.gl_extra_exts2=GL_EXT_color_buffer_half_float,GL_OES_EGL_image_external_essl3
+ro.vendor.cdh.gpu.gl_extra_exts=GL_ARM_mali_program_binary,GL_ARM_mali_shader_binary,GL_ARM_rgba8,GL_EXT_debug_marker,GL_EXT_texture_border_clamp,GL_EXT_texture_filter_anisotropic,GL_KHR_debug,GL_KHR_texture_compression_astc_ldr
+$ ps -AZ | grep -E 'surfaceflinger|composer|allocator|imsservice'
+u:r:hal_graphics_allocator_default:s0 system  524     1   10932252   8904 binder_thread_read  0 S android.hardware.graphics.allocator-service.minigbm
+u:r:hal_graphics_composer_default:s0 system   548     1   10985376  10544 binder_thread_read  0 S android.hardware.composer.hwc3-service.drm
+u:r:surfaceflinger:s0          system         564     1   11541924 193320 do_epoll_wait       0 S surfaceflinger
+u:r:priv_app:s0:c512,c768      u0_a229       3421   494   16338096 111456 do_epoll_wait       0 S com.shannon.imsservice
+qemu.log count(0x8d56)=0 count(Illegal command buffer)=0 count(RescueParty)=0 count(hal_drm_widevine_exec)=0
+
+Destroying instance...
+
+
+=== 3. oriole 16-CP1A 补齐 oemrilservice_app / vendor_ims_app / vendor_rcs_app 域授权后 91.69s 稳态通过 ===
+Command exited with code 0.
+
+Command output:
+==> 创建并冷启动实例: match=google/oriole/16-CP1A.260405.005-20260310
+    spec=oriole_16-CP1A.260405.005-20260310 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/oriole_16-CP1A.260405.005-20260310/1
+{
+  "spec": "oriole_16-CP1A.260405.005-20260310",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/oriole_16-CP1A.260405.005-20260310/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{2a56d97 u0 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}\n  mFocusedApp=ActivityRecord{182432628 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t6}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 86.75,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/oriole_16_CP1A.png",
+    "pngBytes": 1783992
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+proc_uptime=91.69
+allowed_types_loaded0=1 (u:object_r:vendor_rild_prop:s0)
+call_waiting_0=0 (u:object_r:vendor_rild_prop:s0)
+Service wifi: found
+Service phone: found
+qemu.log RescueParty=0 powerctl=0 0x8d56=0

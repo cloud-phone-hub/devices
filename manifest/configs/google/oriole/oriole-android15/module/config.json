@@ -6,33 +6,33 @@
     "virtio_media"
   ],
   "input_identity": {
-    "touch_major": true,
-    "goodix_fp": false,
+    "aligns": [],
     "devices": [
       {
-        "name": "goodix_fingerprint",
         "keys": [
           "KEY_POWER",
           "KEY_WAKEUP"
         ],
         "msc": [
           "MSC_SCAN"
-        ]
+        ],
+        "name": "goodix_fingerprint"
       },
       {
-        "name": "gpio_keys",
         "bus": 25,
-        "vendor": 1,
-        "product": 1,
-        "version": 1,
         "keys": [
           "KEY_VOLUMEUP",
           "KEY_VOLUMEDOWN",
           "KEY_POWER"
-        ]
+        ],
+        "name": "gpio_keys",
+        "product": 1,
+        "vendor": 1,
+        "version": 1
       }
     ],
-    "aligns": []
+    "goodix_fp": false,
+    "touch_major": true
   },
   "in-tree": [
     "virt_wifi.ko"
@@ -49,9 +49,19 @@
       "type": "dir"
     },
     {
+      "from": "/vendor/lib/android.hardware.graphics.common-V6-ndk.so",
+      "to": "/vendor/lib/android.hardware.graphics.common-V6-ndk.so",
+      "type": "file"
+    },
+    {
       "from": "/vendor/lib",
       "to": "/mnt/vendorpatch/vendor/lib",
       "type": "dir"
+    },
+    {
+      "from": "/vendor/lib64/android.hardware.graphics.common-V6-ndk.so",
+      "to": "/vendor/lib64/android.hardware.graphics.common-V6-ndk.so",
+      "type": "file"
     },
     {
       "from": "/vendor/lib64",
@@ -90,15 +100,203 @@
     }
   ],
   "input": {
-    "keyboard": {},
+    "keyboard": {
+      "bus": 25,
+      "name": "gpio-keys",
+      "product": 1,
+      "vendor": 1,
+      "version": 1
+    },
     "tablet": false,
     "touch": {
       "abs-to-mt": true,
-      "bus": 28,
-      "name": "sec_touchscreen",
-      "product": 0,
-      "vendor": 0,
-      "version": 0
+      "abs-x-max": 17280,
+      "abs-xy": true,
+      "abs-y-max": 38400,
+      "bus": 2,
+      "mt-pressure": true,
+      "mt-slots": 10,
+      "name": "synaptics_tcm2",
+      "product": 1,
+      "touch-keys": [
+        116,
+        143,
+        354
+      ],
+      "vendor": 1739,
+      "version": 256
     }
+  },
+  "cpufreq": {
+    "available-governors": [
+      "schedutil",
+      "performance",
+      "powersave",
+      "userspace",
+      "ondemand",
+      "conservative"
+    ],
+    "bogo-mips": "38.40",
+    "driver": "google-cpufreq",
+    "governor": "schedutil",
+    "package-per-cluster": false,
+    "policies": [
+      {
+        "available-frequencies": [
+          1803000,
+          1745000,
+          1663000,
+          1598000,
+          1491000,
+          1426000,
+          1352000,
+          1277000,
+          1197000,
+          1106000,
+          1024000,
+          930000,
+          800000,
+          670000,
+          533000,
+          400000,
+          300000
+        ],
+        "capacity": 250,
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "cur-freq": 1200000,
+        "implementer": "0x41",
+        "max-freq": 1803000,
+        "midr": "0x00000000412fd052",
+        "min-freq": 300000,
+        "part": "0xd05",
+        "policy": 0,
+        "revidr": "0x0000000000000000",
+        "revision": 2,
+        "variant": 2
+      },
+      {
+        "available-frequencies": [
+          2250000,
+          2200000,
+          2100000,
+          2048000,
+          1999000,
+          1900000,
+          1836000,
+          1803000,
+          1745000,
+          1663000,
+          1598000,
+          1500000,
+          1426000,
+          1352000,
+          1277000,
+          1197000,
+          1106000,
+          1024000,
+          930000,
+          800000
+        ],
+        "capacity": 620,
+        "cpus": [
+          4,
+          5
+        ],
+        "cur-freq": 1800000,
+        "implementer": "0x41",
+        "max-freq": 2250000,
+        "midr": "0x00000000414fd0b0",
+        "min-freq": 800000,
+        "part": "0xd0b",
+        "policy": 4,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 4
+      },
+      {
+        "available-frequencies": [
+          2802000,
+          2700000,
+          2600000,
+          2500000,
+          2401000,
+          2300000,
+          2200000,
+          2100000,
+          2048000,
+          1999000,
+          1900000,
+          1836000,
+          1745000,
+          1663000,
+          1598000,
+          1500000,
+          1426000,
+          1352000,
+          1277000,
+          1197000,
+          1106000,
+          1024000,
+          930000,
+          800000
+        ],
+        "capacity": 1024,
+        "cpus": [
+          6,
+          7
+        ],
+        "cur-freq": 1800000,
+        "implementer": "0x41",
+        "max-freq": 2802000,
+        "midr": "0x00000000413fd440",
+        "min-freq": 800000,
+        "part": "0xd44",
+        "policy": 6,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 3
+      }
+    ],
+    "scaling-readable": true,
+    "transition-latency": 1000
+  },
+  "thermal": {
+    "zones": [
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "BIG"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "MID"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "LITTLE"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "G3D"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "ISP"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "TPU"
+      }
+    ]
   }
 }

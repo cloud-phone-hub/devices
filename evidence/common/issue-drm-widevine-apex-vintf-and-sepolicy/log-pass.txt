@@ -1,0 +1,48 @@
+=== MEIZU22 VENDOR BUILD LOG (hal_drm_widevine + vintf-drop) ===
+63:        期望产物 out/devices/vendor/android16/bin/hw/android.hardware.drm-service.widevine
+65:        期望静态树 out/devices/vendor/android16/etc/init/android.hardware.drm-service.widevine.rc
+67:        期望静态树 out/devices/vendor/android16/etc/vintf/manifest/android.hardware.drm-service.widevine.xml
+325:    写 out/devices/devices/meizu/Meizu22/16-AQ3A.250411.001-20260127/vendor/bin/hw/android.hardware.drm-service.widevine（0755）
+375:    写 out/devices/devices/meizu/Meizu22/16-AQ3A.250411.001-20260127/vendor/etc/init/android.hardware.drm-service.widevine.rc（0644）
+433:    写 out/devices/devices/meizu/Meizu22/16-AQ3A.250411.001-20260127/vendor/etc/vintf/manifest/android.hardware.drm-service.widevine.xml（0644）
+569:    [prop] 追加 ro.vendor.drm.widevine.oem_crypto_api_version=18
+570:    [prop] 追加 ro.vendor.drm.widevine.security_level=L3
+571:    [prop] 追加 ro.vendor.drm.widevine.system_id=26719
+572:    [prop] 追加 ro.vendor.drm.widevine.version=18.0.0
+676:    android.hardware.drm-service.widevine -> hal_drm_widevine_exec
+700:==> [步骤 9.6c] 按清单裁掉 VINTF 片段（1 个）：android.hardware.drm-service.widevine.xml
+701:[vintf] 裁掉 out/devices/devices/meizu/Meizu22/16-AQ3A.250411.001-20260127/vendor/etc/vintf/manifest/android.hardware.drm-service.widevine.xml（官方同名声明保留，避免 fqname 冲突）
+
+=== MEIZU22 COLD BOOT + VNC PASS (task-683) ===
+==> 创建并冷启动实例: match=meizu/Meizu22/16-AQ3A.250411.001-20260127
+    spec=Meizu22_16-AQ3A.250411.001-20260127 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/Meizu22_16-AQ3A.250411.001-20260127/1
+{
+  "spec": "Meizu22_16-AQ3A.250411.001-20260127",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/Meizu22_16-AQ3A.250411.001-20260127/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{52dc034 u0 com.meizu.flyme.launcher/com.android.launcher3.uioverrides.QuickstepLauncher}\n  mFocusedApp=ActivityRecord{238200016 u0 com.meizu.flyme.launcher/com.android.launcher3.uioverrides.QuickstepLauncher t7}",
+  "roHardwareEgl": "mesa",
+  "roHardwareVulkan": "virtio",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 45.4,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/2bd9648b-29a4-4585-b0c5-c078d85442e1/screenshots/meizu_Meizu22.png",
+    "pngBytes": 438313
+  },
+  "passed": true
+}
+==> 销毁测试实例 Meizu22_16-AQ3A.250411.001-20260127/1

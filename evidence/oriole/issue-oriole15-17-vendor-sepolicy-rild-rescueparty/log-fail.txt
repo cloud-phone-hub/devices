@@ -1,0 +1,57 @@
+=== 1. qemu.log RescueParty 重启与 imsservice AVC 拒绝 ===
+=== Shutdown / Powerctl / Fatal in qemu.log ===
+8921:[   54.496888][  T129] init: Received sys.powerctl='reboot,RescueParty' from pid: 675 (system_server)
+8935:[   54.709342][    T1] init: Got shutdown_command 'reboot,RescueParty' Calling HandlePowerctlMessage()
+8944:    T1] init: Reboot start, reason: reboot,RescueParty, reboot_target: RescueParty
+8946: init: Shutdown timeout: 6000 ms
+10419:[   62.643077][    T1] reboot: Restarting system with command 'RescueParty'
+14380:[   11.589685][  T428] AidlLazyServiceRegistrar: Shutdown prevented by forcePersist override flag.
+15088:[   18.616321][  T427] AidlLazyServiceRegistrar: Shutdown prevented by forcePersist override flag.
+[   18.616321][  T427] AidlLazyServiceRegistrar: Shutdown prevented by forcePersist override flag.
+[   18.966771][  T210] type=1400 audit(1795003959.124:458): avc:  denied  { write } for  comm="pool-10-thread-" name="property_service" dev="tmpfs" ino=427 scontext=u:r:priv_app:s0:c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=0 app=com.shannon.imsservice
+
+=== 2. logcat com.shannon.imsservice 崩溃循环 ===
+=== CMD: logcat -d -b all -v brief | grep -iE "RescueParty|FATAL EXCEPTION|AndroidRuntime|Watchdog|PersistentData|Reboot|Restarting|Binder|crash" | tail -n 100 ===
+E/AndroidRuntime( 3914): 	at com.shannon.imsservice.ut.ImsUt.lambda$refreshCallWaitingAsync$29(ImsUt.java:1152)
+E/AndroidRuntime( 3914): 	at com.shannon.imsservice.ut.ImsUt.$r8$lambda$3VcZLSsHZhtZ78WUh08CKY7ZdT4(ImsUt.java:0)
+E/AndroidRuntime( 3914): 	at com.shannon.imsservice.ut.ImsUt$$ExternalSyntheticLambda14.run(R8$$SyntheticClass:0)
+E/AndroidRuntime( 3914): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+E/AndroidRuntime( 3914): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+E/AndroidRuntime( 3914): 	at java.lang.Thread.run(Thread.java:1012)
+I/am_crash(  678): [3914,0,com.shannon.imsservice,549994061,java.lang.RuntimeException,failed to set system property "persist.vendor.radio.call_waiting_for_sync_0" to "0": Permission denied,SystemProperties.java,-2,0]
+W/ActivityManager(  678): Process com.shannon.imsservice has crashed too many times, killing! Reason: crashed quickly
+I/am_process_crashed_too_much(  678): [0,com.shannon.imsservice,10229]
+W/ActivityManager(  678): Scheduling restart of crashed service com.shannon.imsservice/.ShannonImsService in 0ms for persistent
+D/ImsEnablementTracker( 1252): setServiceController with Binder:null, component:ComponentInfo{com.shannon.imsservice/com.shannon.imsservice.ShannonImsService}
+D/ImsEnablementTracker( 1252): setServiceController with Binder:null, component:ComponentInfo{com.shannon.imsservice/com.shannon.imsservice.ShannonImsService}
+D/ImsServiceController( 1252): ImsService(ComponentInfo{com.shannon.imsservice/com.shannon.imsservice.ShannonImsService}): onServiceConnectedInternal with binder: android.os.BinderProxy@fac8bc2
+D/ImsEnablementTracker( 1252): setServiceController with Binder:android.telephony.ims.aidl.IImsServiceController$Stub$Proxy@918cdd3, component:ComponentInfo{com.shannon.imsservice/com.shannon.imsservice.ShannonImsService}
+I/SHANNON_IMS( 4019): 0131 [MEDI] clear all Media by crash [com.shannon.imsservice.call.media.ImsMediaManager@e670ab2] (ImsMediaManager%closeAllMediaByCrash:179)
+E/AndroidRuntime( 4019): FATAL EXCEPTION: pool-11-thread-1
+E/AndroidRuntime( 4019): Process: com.shannon.imsservice, PID: 4019
+E/AndroidRuntime( 4019): java.lang.RuntimeException: failed to set system property "persist.vendor.radio.call_waiting_for_sync_0" to "0": Permission denied
+E/AndroidRuntime( 4019): 	at android.os.SystemProperties.native_set(Native Method)
+E/AndroidRuntime( 4019): 	at android.os.SystemProperties.set(SystemProperties.java:237)
+E/AndroidRuntime( 4019): 	at com.shannon.imsservice.ut.ImsUt.setCallWaitingSyncProperty(ImsUt.java:1416)
+E/AndroidRuntime( 4019): 	at com.shannon.imsservice.ut.ImsUt.lambda$refreshCallWaiting$30(ImsUt.java:1210)
+E/AndroidRuntime( 4019): 	at com.shannon.imsservice.ut.ImsUt.$r8$lambda$YVscemMny90xWhOPFcD6VY0-CDk(ImsUt.java:0)
+E/AndroidRuntime( 4019): 	at com.shannon.imsservice.ut.ImsUt$$ExternalSyntheticLambda6.execute(R8$$SyntheticClass:0)
+E/AndroidRuntime( 4019): 	at com.shannon.imsservice.ut.ImsUt.runStoredUtRequest(ImsUt.java:1008)
+E/AndroidRuntime( 4019): 	at com.shannon.imsservice.ut.ImsUt.runNewUtRequest(ImsUt.java:947)
+E/AndroidRuntime( 4019): 	at com.shannon.imsservice.ut.ImsUt.executeIfAvailable(ImsUt.java:941)
+E/AndroidRuntime( 4019): 	at com.shannon.imsservice.ut.ImsUt.executeIfAvailable(ImsUt.java:934)
+E/AndroidRuntime( 4019): 	at com.shannon.imsservice.ut.ImsUt.refreshCallWaiting(ImsUt.java:1197)
+E/AndroidRuntime( 4019): 	at com.shannon.imsservice.ut.ImsUt.lambda$refreshCallWaitingAsync$29(ImsUt.java:1152)
+E/AndroidRuntime( 4019): 	at com.shannon.imsservice.ut.ImsUt.$r8$lambda$3VcZLSsHZhtZ78WUh08CKY7ZdT4(ImsUt.java:0)
+E/AndroidRuntime( 4019): 	at com.shannon.imsservice.ut.ImsUt$$ExternalSyntheticLambda14.run(R8$$SyntheticClass:0)
+E/AndroidRuntime( 4019): 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+E/AndroidRuntime( 4019): 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+E/AndroidRuntime( 4019): 	at java.lang.Thread.run(Thread.java:1012)
+I/am_crash(  678): [4019,0,com.shannon.imsservice,549994061,java.lang.RuntimeException,failed to set system property "persist.vendor.radio.call_waiting_for_sync_0" to "0": Permission denied,SystemProperties.java,-2,0]
+W/ActivityManager(  678): Process com.shannon.imsservice has crashed too many times, killing! Reason: crashed quickly
+I/am_process_crashed_too_much(  678): [0,com.shannon.imsservice,10229]
+D/ImsEnablementTracker( 1252): setServiceController with Binder:null, component:ComponentInfo{com.shannon.imsservice/com.shannon.imsservice.ShannonImsService}
+
+=== 3. qemu.log hal_drm_widevine_exec 未映射错误 ===
+[   12.070005][    T1] SELinux:  Context u:object_r:hal_drm_widevine_exec:s0 is not valid (left unmapped).
+[   12.077223][    T1] init: Could not start service 'vendor.drm-widevine-hal' as part of class 'hal': File /apex/com.google.android.widevine/bin/hw/android.hardware.drm-service.widevine(labeled "u:object_r:unlabeled:s0") has incorrect label or no domain transition from u:r:init:s0 to another SELinux domain defined. Have you configured your service correctly? https://source.android.com/security/selinux/device-policy#label_new_services_and_address_denials. Note: this error shows up even in permissive mode in order to make auditing denials possible.

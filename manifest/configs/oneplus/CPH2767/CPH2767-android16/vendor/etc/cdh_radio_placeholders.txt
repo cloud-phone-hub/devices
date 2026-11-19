@@ -1,0 +1,5 @@
+vendor.qti.hardware.radio.atfwd.IAtFwd/AtFwdAidl
+vendor.qti.hardware.radio.internal.deviceinfo.IDeviceInfo/deviceinfo
+vendor.qti.hardware.radio.qtiradioconfig.IQtiRadioConfig/default
+vendor.qti.ims.datachannelservice.IDataChannelService/default
+vendor.qti.ims.factoryaidlservice.IImsFactory/default

@@ -1,5 +1,5 @@
 {
-  "fstab": "oriole",
+  "fstab": "gs101",
   "cmdline": [
     "androidboot.hardware.sku=G9S9B",
     "androidboot.product.hardware.sku=G9S9B",

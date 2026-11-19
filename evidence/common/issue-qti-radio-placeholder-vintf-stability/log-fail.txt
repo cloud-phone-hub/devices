@@ -1,0 +1,159 @@
+=== [失败日志 1] 第 1 轮未声明 qtiradio-saidl.xml，com.qti.phone 抛 NullPointerException ===
+# elapsed=59.2s code=0
+=== DROPBOX LIST ===
+total 16
+-rw------- 1 system system 1933 2026-11-18 21:44 system_app_crash@1795038261012.txt
+-rw------- 1 system system 1933 2026-11-18 21:44 system_app_crash@1795038260786.txt
+-rw------- 1 system system   20 2026-11-18 21:44 storage_trim@1795038257161.txt
+-rw------- 1 system system   24 2026-11-18 21:44 storage_trim@1795038257156.txt
+=== CRASH FILES HEAD ===
+--- /data/system/dropbox/system_app_crash@1795038260786.txt ---
+SystemUptimeMs: 43014
+Process: com.qti.phone
+PID: 2414
+UID: 10401
+Frozen: false
+Flags: 0x3088be4d
+Package: com.qualcomm.qti.telephonyservice v36 (16)
+Package: com.qualcomm.qcrilmsgtunnel v36 (16)
+Package: com.qti.phone v36 (16)
+Foreground: No
+Process-Runtime: 875
+Timestamp: 2026-11-18 21:44:20.785+0000
+Build: REDMAGIC/NX809J-UN/NX809J:16/BQ2A.250705.001-BP2A.250605.031.A3/20260527.205523:user/release-keys
+Crash-Handler: com.android.internal.os.RuntimeInit$KillApplicationHandler
+Loading-Progress: 1.0
+Dropped-Count: 0
+
+java.lang.RuntimeException: Unable to create service com.qti.phone.ExtTelephonyService: java.lang.NullPointerException: Attempt to get length of null array
+	at android.app.ActivityThread.handleCreateService(ActivityThread.java:5652)
+	at android.app.ActivityThread.-$$Nest$mhandleCreateService(Unknown Source:0)
+	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2790)
+	at android.os.Handler.dispatchMessage(Handler.java:110)
+	at android.os.Looper.loopOnce(Looper.java:282)
+	at android.os.Looper.loop(Looper.java:397)
+	at android.app.ActivityThread.main(ActivityThread.java:10131)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:593)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:940)
+Caused by: java.lang.NullPointerException: Attempt to get length of null array
+	at com.qti.phone.QtiRadioFactory.initQtiRadioAidl(QtiRadioFactory.java:87)
+	at com.qti.phone.QtiRadioProxy.init(QtiRadioProxy.java:1107)
+	at com.qti.phone.QtiRadioProxy.<init>(QtiRadioProxy.java:1019)
+	at com.qti.phone.ExtTelephonyServiceImpl.<init>(ExtTelephonyServiceImpl.java:164)
+	at com.qti.phone.ExtTelephonyServiceImpl.<init>(ExtTelephonyServiceImpl.java:145)
+	at com.qti.phone.ExtTelephonyService.onCreate(ExtTelephonyService.java:48)
+	at android.app.ActivityThread.handleCreateService(ActivityThread.java:5631)
+	... 9 more
+--- /data/system/dropbox/system_app_crash@1795038261012.txt ---
+SystemUptimeMs: 43239
+Process: com.qti.phone
+PID: 2792
+UID: 10401
+Frozen: false
+Flags: 0x3088be4d
+Package: com.qualcomm.qti.telephonyservice v36 (16)
+Package: com.qualcomm.qcrilmsgtunnel v36 (16)
+Package: com.qti.phone v36 (16)
+Foreground: No
+Process-Runtime: 106
+Timestamp: 2026-11-18 21:44:21.010+0000
+Build: REDMAGIC/NX809J-UN/NX809J:16/BQ2A.250705.001-BP2A.250605.031.A3/20260527.205523:user/release-keys
+Crash-Handler: com.android.internal.os.RuntimeInit$KillApplicationHandler
+Loading-Progress: 1.0
+Dropped-Count: 0
+
+java.lang.RuntimeException: Unable to create service com.qti.phone.ExtTelephonyService: java.lang.NullPointerException: Attempt to get length of null array
+	at android.app.ActivityThread.handleCreateService(ActivityThread.java:5652)
+	at android.app.ActivityThread.-$$Nest$mhandleCreateService(Unknown Source:0)
+	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2790)
+	at android.os.Handler.dispatchMessage(Handler.java:110)
+	at android.os.Looper.loopOnce(Looper.java:282)
+	at android.os.Looper.loop(Looper.java:397)
+	at android.app.ActivityThread.main(ActivityThread.java:10131)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:593)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:940)
+Caused by: java.lang.NullPointerException: Attempt to get length of null array
+	at com.qti.phone.QtiRadioFactory.initQtiRadioAidl(QtiRadioFactory.java:87)
+	at com.qti.phone.QtiRadioProxy.init(QtiRadioProxy.java:1107)
+	at com.qti.phone.QtiRadioProxy.<init>(QtiRadioProxy.java:1019)
+	at com.qti.phone.ExtTelephonyServiceImpl.<init>(ExtTelephonyServiceImpl.java:164)
+	at com.qti.phone.ExtTelephonyServiceImpl.<init>(ExtTelephonyServiceImpl.java:145)
+	at com.qti.phone.ExtTelephonyService.onCreate(ExtTelephonyService.java:48)
+	at android.app.ActivityThread.handleCreateService(ActivityThread.java:5631)
+	... 9 more
+=== LOGCAT CRASH ===
+=== LOGCAT EVENTS CRASH/POWERCTL ===
+
+
+=== [失败日志 2]第 1 轮 qemu.log RescueParty 连续重启 ===
+6548:[   54.117781][    T1] reboot: Restarting system with command 'RescueParty'
+11348:[   32.556696][    T1] reboot: Restarting system with command 'RescueParty'
+
+=== [失败日志 3] 第 2 轮已声明 VINTF 但未禁用 InterfaceTokenHeader 且描述符仍含 Stable 后缀，com.qti.phone 抛 IllegalArgumentException ===
+total 32
+-rw------- 1 system system 2150 2026-11-19 06:12 system_app_crash@1795039960008.txt
+-rw------- 1 system system 2150 2026-11-19 06:12 system_app_crash@1795039959843.txt
+-rw------- 1 system system 2150 2026-11-19 06:12 system_app_crash@1795039959570.txt
+-rw------- 1 system system 2150 2026-11-19 06:12 system_app_crash@1795039959314.txt
+-rw------- 1 system system 2149 2026-11-19 06:12 system_app_crash@1795039959169.txt
+-rw------- 1 system system 2151 2026-11-19 06:12 system_app_crash@1795039959019.txt
+-rw------- 1 system system   20 2026-11-19 06:12 storage_trim@1795039955340.txt
+-rw------- 1 system system   24 2026-11-19 06:12 storage_trim@1795039955335.txt
+=== CRASHES ===
+--- /data/system/dropbox/system_app_crash@1795039960008.txt ---
+SystemUptimeMs: 43092
+Process: com.qti.phone
+PID: 3441
+UID: 10401
+Frozen: false
+Flags: 0x3088be4d
+Package: com.qualcomm.qti.telephonyservice v36 (16)
+Package: com.qualcomm.qcrilmsgtunnel v36 (16)
+Package: com.qti.phone v36 (16)
+Foreground: No
+Process-Runtime: 135
+Timestamp: 2026-11-19 06:12:40.007+0800
+Build: REDMAGIC/NX809J-UN/NX809J:16/BQ2A.250705.001-BP2A.250605.031.A3/20260527.205523:user/release-keys
+Crash-Handler: com.android.internal.os.RuntimeInit$KillApplicationHandler
+Loading-Progress: 1.0
+Dropped-Count: 0
+
+java.lang.RuntimeException: Unable to create service com.qti.phone.ExtTelephonyService: java.lang.IllegalArgumentException
+	at android.app.ActivityThread.handleCreateService(ActivityThread.java:5652)
+	at android.app.ActivityThread.-$$Nest$mhandleCreateService(Unknown Source:0)
+	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2790)
+	at android.os.Handler.dispatchMessage(Handler.java:110)
+	at android.os.Looper.loopOnce(Looper.java:282)
+	at android.os.Looper.loop(Looper.java:397)
+	at android.app.ActivityThread.main(ActivityThread.java:10131)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:593)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:940)
+Caused by: java.lang.IllegalArgumentException
+	at android.os.BinderProxy.transactNative(Native Method)
+	at android.os.BinderProxy.transact(BinderProxy.java:607)
+	at vendor.qti.hardware.radio.qtiradio.IQtiRadio$Stub$Proxy.getInterfaceVersion(IQtiRadio.java:1126)
+	at com.qti.phone.QtiRadioAidl.initQtiRadio(QtiRadioAidl.java:157)
+	at com.qti.phone.QtiRadioFactory.initQtiRadioAidl(QtiRadioFactory.java:88)
+	at com.qti.phone.QtiRadioProxy.init(QtiRadioProxy.java:1107)
+	at com.qti.phone.QtiRadioProxy.<init>(QtiRadioProxy.java:1019)
+	at com.qti.phone.ExtTelephonyServiceImpl.<init>(ExtTelephonyServiceImpl.java:164)
+	at com.qti.phone.ExtTelephonyServiceImpl.<init>(ExtTelephonyServiceImpl.java:145)
+	at com.qti.phone.ExtTelephonyService.onCreate(ExtTelephonyService.java:48)
+	at android.app.ActivityThread.handleCreateService(ActivityThread.java:5631)
+	... 9 more
+--- /data/system/dropbox/system_app_crash@1795039959843.txt ---
+SystemUptimeMs: 42928
+Process: com.qti.phone
+PID: 3393
+UID: 10401
+Frozen: false
+Flags: 0x3088be4d
+Package: com.qualcomm.qti.telephonyservice v36 (16)
+Package: com.qualcomm.qcrilmsgtunnel v36 (16)
+Package: com.qti.phone v36 (16)
+Foreground: No
+Process-Runtime: 135
+Timestamp: 2026-11-18 22:12:39.842+0000

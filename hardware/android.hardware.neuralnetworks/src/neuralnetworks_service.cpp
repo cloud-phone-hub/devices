@@ -49,6 +49,11 @@ using ndk::ScopedAStatus;
 static constexpr const char* kNeuralNetworksServiceName =
     "android.hardware.neuralnetworks.IDevice/default";
 
+extern "C" {
+void AIBinder_markVintfStability(AIBinder* binder);
+void AIBinder_Class_disableInterfaceTokenHeader(AIBinder_Class* clazz);
+}
+
 namespace {
 
 constexpr const char* kNoDevice = "no neural network accelerator backend";
@@ -193,6 +198,7 @@ void RegisterPlaceholdersFromFile(const char* path) {
         class_cache.erase(it);
         continue;
       }
+      AIBinder_Class_disableInterfaceTokenHeader(it->second);
     }
     AIBinder* binder = AIBinder_new(it->second, nullptr);
     if (binder == nullptr) {
@@ -201,6 +207,7 @@ void RegisterPlaceholdersFromFile(const char* path) {
                           name.c_str());
       continue;
     }
+    AIBinder_markVintfStability(binder);
     const binder_exception_t status =
         AServiceManager_addService(binder, name.c_str());
     if (status != EX_NONE) {

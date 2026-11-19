@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Motorola Razr 2024 (motorola/aito) AI 对标 gold 真机电池配置 -->
+<battery>
+  <identity technology="Li-Po" cycle_count="42" level="100" health="GOOD"
+            capacity_level="FULL" charging_state="INVALID" present="1"/>
+  <charger ac="1" usb="0" wireless="1" dock="0"
+           max_current_ua="0" max_voltage_uv="0"/>
+  <capacity full_uah="4200" counter_min="4108" counter_max="4126"/>
+  <cycle full_mv="4384" charge_mv="4450" temperature_full_decic="310"
+         temperature_charge_decic="380" current_full_ua="-52000"
+         current_charge_ua="-350000" seconds="600"/>
+  <health_data state_of_health="99" part_status="UNSUPPORTED"
+               manufacturing_date_seconds="0" first_usage_seconds="0"/>
+</battery>

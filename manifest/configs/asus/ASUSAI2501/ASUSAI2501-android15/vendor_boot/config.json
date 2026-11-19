@@ -1,3 +1,9 @@
 {
-  "fstab": "sun"
+  "fstab": "sun",
+  "cmdline": [
+    "androidboot.product.hardware.sku=ZWWAI2501",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ]
 }
