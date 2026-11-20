@@ -2,6 +2,7 @@
 
 - **生成时间**: `2026-11-18T19:16:23+08:00`
 - **ROM Build ID**: `16-BP2A.250605.015-20260529`
+- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=16, vendor_dlkm=16, odm_dlkm=16`
 - **DSH 聊天会话 ID**: `session-ab23d997-14df-4851-a372-6649b5a122a2`（标题：`[02_prepare] 真机规格采集 · oppo/CPH2797 (16-BP2A.250605.015-20260529)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 

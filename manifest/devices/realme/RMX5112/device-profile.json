@@ -1,7 +1,7 @@
 {
   "protocol": "cph-device-profile/v1",
   "generatedAt": "2026-11-19T11:29:52+08:00",
-  "buildId": "13-TP1A.220905.001-20251025",
+  "buildId": "15-TP1A.220905.001-20251025",
   "vendor": "realme",
   "device": "RMX5112",
   "chatSession": {
@@ -19,7 +19,7 @@
     "socManufacturer": "Mediatek",
     "socModel": "MT6835",
     "androidVersion": "13",
-    "osVersion": "13-TP1A.220905.001-20251025",
+    "osVersion": "15-TP1A.220905.001-20251025",
     "securityPatch": "2025-10-01",
     "buildDate": "20251025",
     "densityDpi": 480,
@@ -1075,6 +1075,14 @@
         "vendor/etc/wifi/wpa_supplicant.conf",
         "vendor/etc/wifi/wpa_supplicant_overlay.conf"
       ]
+    },
+    "partitionAndroidVersions": {
+      "system": "15",
+      "system_ext": "15",
+      "product": "15",
+      "vendor": "13",
+      "vendor_dlkm": "13",
+      "odm_dlkm": "13"
     }
   },
   "manifestAligned": {

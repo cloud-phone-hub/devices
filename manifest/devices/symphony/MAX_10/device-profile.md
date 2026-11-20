@@ -1,8 +1,9 @@
 # 真机硬件规格与云机对齐留档 · Symphony MAX 10 (symphony/MAX_10)
 
 - **生成时间**: `2026-11-20T17:54:57+08:00`
-- **ROM Build ID**: `13-TP1A.220624.014-20250212`
-- **DSH 聊天会话 ID**: `session-a7323a14-c5ef-4440-9e76-0eb8bf1791e3`（标题：`[02_prepare] 真机规格采集 · MAX 10 (symphony/MAX_10 · 13-TP1A.220624.014-20250212)`）
+- **ROM Build ID**: `14-TP1A.220624.014-20250212`
+- **分区 Android 版本**: `system=14, system_ext=14, product=14, vendor=13, odm=13, vendor_dlkm=13`
+- **DSH 聊天会话 ID**: `session-a7323a14-c5ef-4440-9e76-0eb8bf1791e3`（标题：`[02_prepare] 真机规格采集 · MAX 10 (symphony/MAX_10 · 14-TP1A.220624.014-20250212)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `false`）
 
 ---

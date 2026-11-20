@@ -1,8 +1,9 @@
 # 真机硬件规格与云机对齐留档 · Symphony G27 (symphony/G27)
 
 - **生成时间**: `2026-11-20T17:51:32+08:00`
-- **ROM Build ID**: `13-TP1A.220624.014-20240929`
-- **DSH 聊天会话 ID**: `session-59a029c7-56f3-4607-9704-8f6c612cf0b8`（标题：`[02_prepare] 真机规格采集 · symphony/G27 (13-TP1A.220624.014-20240929)`）
+- **ROM Build ID**: `14-TP1A.220624.014-20240929`
+- **分区 Android 版本**: `system=14, system_ext=14, product=14, vendor=13, odm=13, vendor_dlkm=13`
+- **DSH 聊天会话 ID**: `session-59a029c7-56f3-4607-9704-8f6c612cf0b8`（标题：`[02_prepare] 真机规格采集 · symphony/G27 (14-TP1A.220624.014-20240929)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `false`）
 
 ---

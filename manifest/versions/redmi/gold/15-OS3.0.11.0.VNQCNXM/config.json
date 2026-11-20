@@ -10,6 +10,15 @@
   "factoryDir": "OS3.0.11.0.VNQCNXM",
   "overrides": {},
   "extra": {
+    "partitionAndroidVersions": {
+      "system": "15",
+      "system_ext": "15",
+      "product": "15",
+      "vendor": "15",
+      "odm": "15",
+      "vendor_dlkm": "15",
+      "odm_dlkm": "15"
+    }
   },
   "updatedAt": "2026-11-05T04:33:33Z"
 }

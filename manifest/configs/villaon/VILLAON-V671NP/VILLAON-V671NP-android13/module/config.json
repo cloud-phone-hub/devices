@@ -1,0 +1,374 @@
+{
+  "cpufreq": {
+    "available-governors": [
+      "sprd_dvfs",
+      "schedutil",
+      "ondemand",
+      "conservative",
+      "powersave",
+      "performance",
+      "userspace"
+    ],
+    "bogo-mips": "38.40",
+    "driver": "sprd-cpufreq",
+    "governor": "sprd_dvfs",
+    "package-per-cluster": false,
+    "policies": [
+      {
+        "available-frequencies": [
+          1586000,
+          1500000,
+          1400000,
+          1300000,
+          1228800,
+          1150000,
+          1100000,
+          1000000,
+          960000,
+          900000,
+          768000,
+          600000
+        ],
+        "capacity": 420,
+        "cpus": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "cur-freq": 1000000,
+        "implementer": "0x41",
+        "max-freq": 1586000,
+        "midr": "0x00000000412fd050",
+        "min-freq": 600000,
+        "part": "0xd05",
+        "policy": 0,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 2
+      },
+      {
+        "available-frequencies": [
+          2301000,
+          2200000,
+          2132000,
+          2000000,
+          1900000,
+          1800000,
+          1700000,
+          1600000,
+          1500000,
+          1400000,
+          1300000,
+          1200000,
+          1100000,
+          1000000,
+          900000,
+          800000
+        ],
+        "capacity": 1024,
+        "cpus": [
+          6,
+          7
+        ],
+        "cur-freq": 1200000,
+        "implementer": "0x41",
+        "max-freq": 2301000,
+        "midr": "0x00000000414fd0b0",
+        "min-freq": 800000,
+        "part": "0xd0b",
+        "policy": 6,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 4
+      }
+    ],
+    "scaling-readable": false,
+    "transition-latency": 1000
+  },
+  "external": [
+    "cdh_redirect",
+    "device_info",
+    "input_identity",
+    "kernelsu",
+    "virtio_media"
+  ],
+  "input": {
+    "keyboard": {
+      "bus": 25,
+      "name": "gpio-keys",
+      "product": 1,
+      "vendor": 1,
+      "version": 256
+    },
+    "tablet": false,
+    "touch": {
+      "abs-to-mt": true,
+      "abs-x-max": 17280,
+      "abs-xy": true,
+      "abs-y-max": 38400,
+      "bus": 24,
+      "mt-pressure": true,
+      "mt-slots": 10,
+      "name": "focaltech_ats",
+      "product": 1,
+      "touch-keys": [
+        116,
+        143,
+        354
+      ],
+      "vendor": 10182,
+      "version": 256
+    }
+  },
+  "input_identity": {
+    "aligns": [
+      {
+        "keys": [
+          "KEY_VOLUMEDOWN"
+        ],
+        "name": "gpio-keys"
+      }
+    ],
+    "devices": [
+      {
+        "bus": 6,
+        "name": "uinput-goodix",
+        "product": 1,
+        "vendor": 10182,
+        "version": 0
+      },
+      {
+        "bus": 25,
+        "keys": [
+          "KEY_POWER",
+          "KEY_VOLUMEUP"
+        ],
+        "name": "sprd-pmic-keys",
+        "product": 1,
+        "vendor": 1,
+        "version": 256
+      }
+    ],
+    "goodix_fp": true,
+    "touch_major": true
+  },
+  "redirect": [
+    {
+      "from": "/vendor/etc",
+      "to": "/mnt/vendorpatch/vendor/etc",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/bin",
+      "to": "/mnt/vendorpatch/vendor/bin",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/lib",
+      "to": "/mnt/vendorpatch/vendor/lib",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/lib64",
+      "to": "/mnt/vendorpatch/vendor/lib64",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/build.prop",
+      "to": "/mnt/vendorpatch/vendor/build.prop",
+      "type": "file"
+    },
+    {
+      "from": "/vendor/ueventd.rc",
+      "to": "/mnt/vendorpatch/vendor/ueventd.rc",
+      "type": "file"
+    },
+    {
+      "from": "/vendor_dlkm/lib",
+      "to": "/mnt/vendorpatch/vendor_dlkm/lib",
+      "type": "dir"
+    },
+    {
+      "from": "/odm",
+      "to": "/odm",
+      "type": "file"
+    },
+    {
+      "from": "/odm",
+      "to": "/mnt/vendorpatch/odm",
+      "type": "dir"
+    },
+    {
+      "from": "/system/lib/modules",
+      "to": "/mnt/vendorpatch/vendor_dlkm/lib/modules",
+      "type": "dir"
+    },
+    {
+      "from": "/system/bin/update_verifier",
+      "to": "/mnt/vendorpatch/system/bin/update_verifier",
+      "type": "file"
+    },
+    {
+      "from": "/system/bin/drmserver",
+      "to": "/mnt/vendorpatch/system/bin/drmserver",
+      "type": "file"
+    },
+    {
+      "from": "/system/bin/mediaserver",
+      "to": "/mnt/vendorpatch/system/bin/mediaserver",
+      "type": "file"
+    },
+    {
+      "from": "/system_ext/bin/remotedisplay",
+      "to": "/mnt/vendorpatch/system_ext/bin/remotedisplay",
+      "type": "file"
+    },
+    {
+      "from": "/system_ext/bin/unisocaudioutils",
+      "to": "/mnt/vendorpatch/system_ext/bin/unisocaudioutils",
+      "type": "file"
+    }
+  ],
+  "thermal": {
+    "zones": [
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "soc-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "thm0phy-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "big7-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "thm1phy-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "mid6-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "thm2phy-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "core0-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "core1-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "core2-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "core3-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "core4-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "core5-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "cluster-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "thm3phy-thmzone"
+      },
+      {
+        "base-temp-mc": 30200,
+        "jitter-mc": 220,
+        "type": "gpu-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "mm-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "lte-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "nr15-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "nr12-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "front-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "back-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "skin-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "osctsen-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "outtsen-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "board-thmzone"
+      },
+      {
+        "base-temp-mc": 29500,
+        "jitter-mc": 180,
+        "type": "pa-thmzone"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "chg-thmzone"
+      }
+    ]
+  }
+}

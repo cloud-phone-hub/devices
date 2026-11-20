@@ -10,7 +10,15 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 （X200 Ultra）PD2454_MA_15.0.10.24.W10.V000L1.zip (vendor/build.prop) 自动生成。"
+    "comment": "由 cdh unpack prepare 从 （X200 Ultra）PD2454_MA_15.0.10.24.W10.V000L1.zip (vendor/build.prop) 自动生成。",
+    "partitionAndroidVersions": {
+      "system": "15",
+      "system_ext": "15",
+      "product": "15",
+      "vendor": "15",
+      "odm": "15",
+      "vendor_dlkm": "15"
+    }
   },
   "updatedAt": "2026-11-06 02:47:41"
 }

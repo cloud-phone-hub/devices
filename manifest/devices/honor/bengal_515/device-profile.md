@@ -1,8 +1,9 @@
 # 真机硬件规格与云机对齐留档 · Honor Pad X7b (honor/bengal_515)
 
 - **生成时间**: `2026-11-19T13:44:22+08:00`
-- **ROM Build ID**: `13-TKQ1.240227.001-20260922`
-- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · Honor Pad X7b (honor/bengal_515 · 13-TKQ1.240227.001-20260922)`）
+- **ROM Build ID**: `16-TKQ1.240227.001-20260922`
+- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=13, vendor_dlkm=13`
+- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · Honor Pad X7b (honor/bengal_515 · 16-TKQ1.240227.001-20260922)`）
 
 ---
 

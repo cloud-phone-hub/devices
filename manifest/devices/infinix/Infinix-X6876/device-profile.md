@@ -1,8 +1,9 @@
 # 真机硬件规格与云机对齐留档 · Infinix X6876 (infinix/Infinix-X6876)
 
 - **生成时间**: `2026-11-19T09:31:20+08:00`
-- **ROM Build ID**: `14-UP1A.231005.007-20260423`
-- **DSH 聊天会话 ID**: `session-561f0482-8141-49fb-9271-4c791f7bdff9`（标题：`[02_prepare] 真机规格采集 · Infinix X6876 (infinix/Infinix-X6876 · 14-UP1A.231005.007-20260423)`）
+- **ROM Build ID**: `16-UP1A.231005.007-20260423`
+- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=14, odm=14, vendor_dlkm=14, odm_dlkm=14`
+- **DSH 聊天会话 ID**: `session-561f0482-8141-49fb-9271-4c791f7bdff9`（标题：`[02_prepare] 真机规格采集 · Infinix X6876 (infinix/Infinix-X6876 · 16-UP1A.231005.007-20260423)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `false`）
 
 ---

@@ -1,0 +1,25 @@
+{
+  "id": 41,
+  "buildId": "16-UP1A.231005.007-20260423",
+  "deviceId": 33,
+  "configId": 39,
+  "osVersion": "16-UP1A.231005.007-20260423",
+  "buildDate": "20260423",
+  "securityPatch": "2026-04-01",
+  "factoryTgz": "IN_X6876_A16_OPPJ_201350016_full.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 IN_X6876_A16_OPPJ_201350016_full.zip (vendor/build.prop) 自动生成。",
+    "partitionAndroidVersions": {
+      "system": "16",
+      "system_ext": "16",
+      "product": "16",
+      "vendor": "14",
+      "odm": "14",
+      "vendor_dlkm": "14",
+      "odm_dlkm": "14"
+    }
+  },
+  "updatedAt": "2026-11-19T00:40:26Z"
+}

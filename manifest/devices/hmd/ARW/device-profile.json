@@ -1,7 +1,7 @@
 {
   "protocol": "cph-device-profile/v1",
   "generatedAt": "2026-11-19T13:50:50+08:00",
-  "buildId": "13-QP1A.190711.020-20250620",
+  "buildId": "14-QP1A.190711.020-20250620",
   "vendor": "hmd",
   "device": "ARW",
   "chatSession": {
@@ -18,7 +18,7 @@
     "socManufacturer": "Spreadtrum",
     "socModel": "T770",
     "androidVersion": "13",
-    "osVersion": "13-QP1A.190711.020-20250620",
+    "osVersion": "14-QP1A.190711.020-20250620",
     "securityPatch": "2024-06-05",
     "buildDate": "20250620",
     "densityDpi": 400,
@@ -812,6 +812,14 @@
         "vendor/etc/wifi/wpa_supplicant.conf",
         "vendor/etc/wifi/wpa_supplicant_overlay.conf"
       ]
+    },
+    "partitionAndroidVersions": {
+      "system": "14",
+      "system_ext": "14",
+      "product": "14",
+      "vendor": "13",
+      "odm": "13",
+      "vendor_dlkm": "13"
     }
   },
   "manifestAligned": {

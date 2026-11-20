@@ -2,6 +2,7 @@
 
 - **生成时间**: `2026-11-18T23:26:40+08:00`
 - **ROM Build ID**: `15-AQ3A.240829.003-20250122`
+- **分区 Android 版本**: `system=15, system_ext=15, product=15, vendor=15, odm=15, vendor_dlkm=15`
 - **DSH 聊天会话 ID**: `session-ec6007d4-5a65-444b-98b0-478a13c8535d`（标题：`[02_prepare] 真机规格采集 · ASUS ROG Phone 9 Pro (asus/ASUSAI2501 · 15-AQ3A.240829.003-20250122)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 

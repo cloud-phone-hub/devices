@@ -2,6 +2,7 @@
 
 - **生成时间**: `2026-11-20T00:56:16+08:00`
 - **ROM Build ID**: `16-BP2A.250605.031.A3-20260324`
+- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=16, odm=16, vendor_dlkm=16, odm_dlkm=16`
 - **DSH 聊天会话 ID**: `session-f50d2648-8682-44ce-ae4c-823fee4ecb6c`（标题：`[02_prepare] 真机规格采集 · TECNO CM5 (tecno/TECNO-CM5 · 16-BP2A.250605.031.A3-20260324)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 

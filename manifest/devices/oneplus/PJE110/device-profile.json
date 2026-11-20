@@ -1,7 +1,7 @@
 {
   "protocol": "cph-device-profile/v1",
   "generatedAt": "2026-11-19T11:07:05+08:00",
-  "buildId": "13-TP1A.220905.001-20250926",
+  "buildId": "15-TP1A.220905.001-20250926",
   "vendor": "oneplus",
   "device": "PJE110",
   "chatSession": {
@@ -18,7 +18,7 @@
     "board": "kalama",
     "socManufacturer": "QTI",
     "androidVersion": "13",
-    "osVersion": "13-TP1A.220905.001-20250926",
+    "osVersion": "15-TP1A.220905.001-20250926",
     "securityPatch": "2025-10-01",
     "buildDate": "20250926",
     "hardwareEgl": "adreno",
@@ -881,6 +881,13 @@
         "vendor/etc/wifi/wpa_supplicant.conf",
         "vendor/etc/wifi/wpa_supplicant_overlay.conf"
       ]
+    },
+    "partitionAndroidVersions": {
+      "system": "15",
+      "system_ext": "15",
+      "product": "15",
+      "vendor": "13",
+      "vendor_dlkm": "13"
     }
   },
   "manifestAligned": {

@@ -1,7 +1,7 @@
 {
   "protocol": "cph-device-profile/v1",
   "generatedAt": "2026-11-19T13:44:22+08:00",
-  "buildId": "13-TKQ1.240227.001-20260922",
+  "buildId": "16-TKQ1.240227.001-20260922",
   "vendor": "honor",
   "device": "bengal_515",
   "chatSession": {
@@ -17,7 +17,7 @@
     "board": "bengal",
     "socManufacturer": "QTI",
     "androidVersion": "13",
-    "osVersion": "13-TKQ1.240227.001-20260922",
+    "osVersion": "16-TKQ1.240227.001-20260922",
     "securityPatch": "2026-09-01",
     "buildDate": "20260922",
     "hardwareEgl": "adreno",
@@ -1015,6 +1015,13 @@
         "vendor/etc/wifi/wpa_supplicant.conf",
         "vendor/etc/wifi/wpa_supplicant_overlay.conf"
       ]
+    },
+    "partitionAndroidVersions": {
+      "system": "16",
+      "system_ext": "16",
+      "product": "16",
+      "vendor": "13",
+      "vendor_dlkm": "13"
     }
   },
   "manifestAligned": {

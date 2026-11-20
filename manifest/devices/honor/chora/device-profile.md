@@ -2,6 +2,7 @@
 
 - **生成时间**: `2026-11-19T03:18:31+08:00`
 - **ROM Build ID**: `16-BQ2A.250913.001-BP2A.250605.031.A3-20260804`
+- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=16, vendor_dlkm=16`
 - **DSH 聊天会话 ID**: `session-b83bd195-025b-48b6-9cec-e7eafc7204e1`（标题：`[02_prepare] 真机规格采集 · Honor 400 Lite (honor/chora · 16-BQ2A.250913.001-BP2A.250605.031.A3-20260804)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 

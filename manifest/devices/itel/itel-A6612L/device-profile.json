@@ -1,7 +1,7 @@
 {
   "protocol": "cph-device-profile/v1",
   "generatedAt": "2026-11-19T11:32:57+08:00",
-  "buildId": "13-BP2A.250605.031.A3-20260823",
+  "buildId": "16-BP2A.250605.031.A3-20260823",
   "vendor": "itel",
   "device": "itel-A6612L",
   "chatSession": {
@@ -17,7 +17,7 @@
     "board": "sp9863a",
     "socManufacturer": "Spreadtrum",
     "androidVersion": "13",
-    "osVersion": "13-BP2A.250605.031.A3-20260823",
+    "osVersion": "16-BP2A.250605.031.A3-20260823",
     "securityPatch": "2026-04-05",
     "buildDate": "20260823",
     "densityDpi": 320,
@@ -640,6 +640,14 @@
         "vendor/etc/wifi/wpa_supplicant.conf",
         "vendor/etc/wifi/wpa_supplicant_overlay.conf"
       ]
+    },
+    "partitionAndroidVersions": {
+      "system": "16",
+      "system_ext": "16",
+      "product": "16",
+      "vendor": "13",
+      "odm": "13",
+      "vendor_dlkm": "13"
     }
   },
   "manifestAligned": {

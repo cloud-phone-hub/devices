@@ -11,7 +11,15 @@
   "overrides": {},
   "extra": {
     "boardNote": "板级名取官方 vendor 的 fstab 后缀：官方 vendor/etc 下只有 fstab.mt6993 / fstab.emmc / fstab.enableswap / fstab.raid，机型主 fstab 是 fstab.mt6993（05 用它拼 androidboot.hardware=mt6993 与 first_stage_ramdisk/system/etc/fstab.mt6993，vold 按 ro.hardware 找默认 fstab）。官方 vendor/build.prop 的 ro.board.platform 先写 common、随后覆盖成 mt6993，与本值一致。写成 fstab 后缀以外的名字会让 vold 找不到 fstab.<board>、/data 挂不上。",
-    "comment": "OPPO Find X9（CPH2797 / ColorOS 16.0.8.301_EX01 / Android 16 / MediaTek mt6993）属性基线。取值来自官方 payload 包解出的 super/system_a.img、vendor_a.img、odm_a.img、vendor_dlkm_a.img 实测，不需要设备侧脚本参与。云机 vendor 基座仍是 lineage-23.2 的 vendor_a.img；官方 vendor / vendor_dlkm / odm 只作 07 的 replaces 取件来源，运行态由 patch.img（vdc -> /mnt/vendorpatch）加内核 getname_flags 路径重定向遮蔽。换 ROM = 新增一份同名 JSON，代码零改动。"
+    "comment": "OPPO Find X9（CPH2797 / ColorOS 16.0.8.301_EX01 / Android 16 / MediaTek mt6993）属性基线。取值来自官方 payload 包解出的 super/system_a.img、vendor_a.img、odm_a.img、vendor_dlkm_a.img 实测，不需要设备侧脚本参与。云机 vendor 基座仍是 lineage-23.2 的 vendor_a.img；官方 vendor / vendor_dlkm / odm 只作 07 的 replaces 取件来源，运行态由 patch.img（vdc -> /mnt/vendorpatch）加内核 getname_flags 路径重定向遮蔽。换 ROM = 新增一份同名 JSON，代码零改动。",
+    "partitionAndroidVersions": {
+      "system": "16",
+      "system_ext": "16",
+      "product": "16",
+      "vendor": "16",
+      "vendor_dlkm": "16",
+      "odm_dlkm": "16"
+    }
   },
   "updatedAt": "2026-11-06T02:13:12Z"
 }

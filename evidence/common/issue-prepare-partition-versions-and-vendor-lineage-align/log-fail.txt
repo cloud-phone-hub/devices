@@ -1,0 +1,163 @@
+=== [1] 旧形态错配现状（重跑前）===
+- version: villaon/VILLAON-V671NP/13-TP1A.220624.014-20260713 -> VILLAON-V671NP-android16 (lineage-23.2)
+- 实际官方镜像 build.prop: system=16, system_ext=16, product=16, vendor=13, odm=13, vendor_dlkm=13
+- vendor 仍为 Android 13 (SDK 33)，而 buildId 显示 13-*、配置模版绑定 A16/lineage-23.2（跨代 25 项均存在 buildId 与 system/configTemplate 错配）
+
+=== [2] 第一轮切回 VILLAON-V671NP-android13 (lineage-20.0) 冷启动失败：SurfaceFlinger 缺 HIDL mapper@4.0 软链接 + 32 位 unisocaudioutils ===
+01-01 05:30:14.602   565   565 F DEBUG   : Abort message: 'failed to create composer client'
+01-01 05:30:19.348   790   790 F DEBUG   : Abort message: 'failed to create composer client'
+01-01 05:30:24.306   995   995 F DEBUG   : Abort message: 'failed to create composer client'
+01-01 05:30:29.264   523   523 E ComposerResources: failed to get mapper 2.0 service
+01-01 05:30:29.264  1169  1169 F HwcComposer: failed to create composer client
+01-01 05:30:29.289  1177  1177 F DEBUG   : Abort message: 'failed to create composer client'
+01-01 05:30:34.268   523   523 E ComposerResources: failed to get mapper 2.0 service
+01-01 05:30:34.268  1356  1356 F HwcComposer: failed to create composer client
+01-01 05:30:34.295  1364  1364 F DEBUG   : Abort message: 'failed to create composer client'
+01-01 05:30:39.266   523   523 E ComposerResources: failed to get mapper 2.0 service
+[    3.104655][    T1] init: Parsing file /system_ext/etc/init/unisocaudioutils.rc...
+[   15.601442][    T1] init: starting service 'unisocaudioutils'...
+[   15.632359][  T623] init: cannot execv('/system_ext/bin/unisocaudioutils'). See the 'Debugging init' section of init's README.md for tips: Exec format error
+  20.638356][    T1] init: starting service 'unisocaudioutils'...
+[   25.669953][ T1031] init: cannot execv('/system_ext/bin/unisocaudioutils'). See the 'Debugging init' section of init's README.md for tips: Exec format error
+[   35.671780][ T1402] init: cannot execv('/system_ext/bin/unisocaudioutils'). See the 'Debugging init' section of init's README.md for tips: Exec format error
+[   35.687169][    T1] init: process with updatable components 'unisocaudioutils' exited 4 times before boot completed
+[   40.730105][ T1652] init: cannot execv('/system_ext/bin/unisocaudioutils'). See the 'Debugging init' section of init's README.md for tips: Exec format error
+[   40.731500][    T1] init: process with updatable components 'unisocaudioutils' exited 4 times before boot completed
+[   45.735739][ T1815] init: cannot execv('/system_ext/bin/unisocaudioutils'). See the 'Debugging init' section of init's README.md for tips: Exec format error
+[   45.753466][    T1] init: process with updatable components 'unisocaudioutils' exited 4 times before boot completed
+[   50.772311][    T1] init: process with updatable components 'unisocaudioutils' exited 4 times before boot completed
+[   55.741535][ T2129] init: cannot execv('/system_ext/bin/unisocaudioutils'). See the 'Debugging init' section of init's README.md for tips: Exec format error
+[   55.765721][    T1] init: process with updatable components 'unisocaudioutils' exited 4 times before boot completed
+[   60.769856][    T1] init: process with updatable components 'unisocaudioutils' exited 4 times before boot completed
+  65.750119][ T2450] init: cannot execv('/system_ext/bin/unisocaudioutils'). See the 'Debugging init' section of init's README.md for tips: Exec format error
+
+=== [3] 第二轮（修复 mapper@4.0-impl.so 与 unisocaudioutils 重定向后）t=33s~40s 失败：展锐 Radio/IMS 占位返回 STATUS_UNKNOWN_TRANSACTION 触发 RescueParty 重启 ===
+qemu-reboot.log Starting kernel count = 2
+11-20 19:34:46.160  1552  1552 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:46.166  1552  1552 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:34:46.210  1552  1552 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:46.211  1552  1552 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:46.211  1552  1552 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:46.212   715   734 I am_crash: [1552,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:34:46.758  1729  1729 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:46.762  1729  1729 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:34:46.795  1729  1729 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:46.795  1729  1729 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:46.795  1729  1729 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:46.796   715   811 I am_crash: [1729,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:34:47.275  1110  1110 E AndroidRuntime: java.lang.IllegalStateException: { when=0 what=72 obj=com.android.unisoc.telephony.AsyncResult@721c332 target=com.android.unisoc.telephony.server.RadioInteractorHandler } This message is already in use.
+11-20 19:34:47.275  1110  1110 E AndroidRuntime: 	at com.android.unisoc.telephony.server.RadioInteractorCore.canMakeRequest(RadioInteractorCore.java:3863)
+11-20 19:34:47.279   715   734 I am_crash: [1110,0,com.android.phone,952647245,java.lang.IllegalStateException,{ when=0 what=72 obj=com.android.unisoc.telephony.AsyncResult@721c332 target=com.android.unisoc.telephony.server.RadioInteractorHandler } This message is already in use.,MessageQueue.java,1303,0]
+11-20 19:34:48.541  2111  2111 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:48.615  2111  2111 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:34:48.709  2111  2111 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:48.710  2111  2111 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:48.710  2111  2111 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:48.710   715  1622 I am_crash: [2111,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:34:49.775  2768  2768 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:49.859  2768  2768 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:34:49.903  2768  2768 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:49.904  2768  2768 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:49.904  2768  2768 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:49.904   715   811 I am_crash: [2768,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:34:50.193  3019  3019 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:50.266  3019  3019 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:34:50.338  3019  3019 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:50.338  3019  3019 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:50.338  3019  3019 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:50.340   715  1960 I am_crash: [3019,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:34:51.375  3352  3352 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:51.376  3352  3352 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:34:51.384  3352  3352 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:51.384  3352  3352 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:51.384  3352  3352 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:51.384   715  1622 I am_crash: [3352,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:34:51.749  1973  1973 E AndroidRuntime: java.lang.IllegalStateException: { when=0 what=72 obj=com.android.unisoc.telephony.AsyncResult@ba88c9d target=com.android.unisoc.telephony.server.RadioInteractorHandler } This message is already in use.
+11-20 19:34:51.749  1973  1973 E AndroidRuntime: 	at com.android.unisoc.telephony.server.RadioInteractorCore.canMakeRequest(RadioInteractorCore.java:3863)
+11-20 19:34:51.749   715  1372 I am_crash: [1973,0,com.android.phone,952647245,java.lang.IllegalStateException,{ when=0 what=72 obj=com.android.unisoc.telephony.AsyncResult@ba88c9d target=com.android.unisoc.telephony.server.RadioInteractorHandler } This message is already in use.,MessageQueue.java,1303,0]
+11-20 19:34:54.072  3809  3809 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:54.176  3809  3809 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:34:54.230  3809  3809 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:54.230  3809  3809 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:54.230  3809  3809 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:54.231   715  1963 I am_crash: [3809,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:34:54.631  4098  4098 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:54.883  4098  4098 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:34:54.960  4098  4098 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:54.960  4098  4098 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:54.960  4098  4098 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:54.960   715  1372 I am_crash: [4098,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:34:55.343  4281  4281 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:55.479  4281  4281 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:34:55.522  4281  4281 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:55.525  4281  4281 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:55.525  4281  4281 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:55.525   715   812 I am_crash: [4281,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:34:57.542  3507  3507 E AndroidRuntime: java.lang.IllegalStateException: { when=0 what=72 obj=com.android.unisoc.telephony.AsyncResult@d928458 target=com.android.unisoc.telephony.server.RadioInteractorHandler } This message is already in use.
+11-20 19:34:57.542  3507  3507 E AndroidRuntime: 	at com.android.unisoc.telephony.server.RadioInteractorCore.canMakeRequest(RadioInteractorCore.java:3863)
+11-20 19:34:57.542   715   734 I am_crash: [3507,0,com.android.phone,952647245,java.lang.IllegalStateException,{ when=0 what=72 obj=com.android.unisoc.telephony.AsyncResult@d928458 target=com.android.unisoc.telephony.server.RadioInteractorHandler } This message is already in use.,MessageQueue.java,1303,0]
+11-20 19:34:58.198  5043  5043 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:58.274  5043  5043 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:34:58.358  5043  5043 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:58.358  5043  5043 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:58.358  5043  5043 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:58.358   715  1197 I am_crash: [5043,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:34:59.135  5452  5452 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:59.136  5452  5452 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:34:59.141  5452  5452 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:59.141  5452  5452 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:59.141  5452  5452 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:59.142   715  1186 I am_crash: [5452,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:34:59.351  5512  5512 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:59.370  5512  5512 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:34:59.380  5512  5512 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:59.380  5512  5512 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:59.380  5512  5512 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:59.380   715  2754 I am_crash: [5512,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:34:59.568  5572  5572 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:59.595  5572  5572 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:34:59.626  5572  5572 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:34:59.627  5572  5572 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:59.627  5572  5572 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:34:59.627   715  1840 I am_crash: [5572,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:34:59.949  4968  4968 E AndroidRuntime: java.lang.IllegalStateException: { when=0 what=72 obj=com.android.unisoc.telephony.AsyncResult@cb3fdf4 target=com.android.unisoc.telephony.server.RadioInteractorHandler } This message is already in use.
+11-20 19:34:59.949  4968  4968 E AndroidRuntime: 	at com.android.unisoc.telephony.server.RadioInteractorCore.canMakeRequest(RadioInteractorCore.java:3863)
+11-20 19:34:59.950   715  1373 I am_crash: [4968,0,com.android.phone,952647245,java.lang.IllegalStateException,{ when=0 what=72 obj=com.android.unisoc.telephony.AsyncResult@cb3fdf4 target=com.android.unisoc.telephony.server.RadioInteractorHandler } This message is already in use.,MessageQueue.java,1303,0]
+11-20 19:35:00.684  5886  5886 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:35:00.734  5886  5886 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:35:00.752  5886  5886 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:35:00.752  5886  5886 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:35:00.752  5886  5886 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:35:00.752   715  3432 I am_crash: [5886,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:35:00.961  5950  5950 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:35:00.997  5950  5950 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:35:01.019  5950  5950 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:35:01.019  5950  5950 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:35:01.019  5950  5950 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:35:01.019   715  1956 I am_crash: [5950,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:35:01.171  5754  5754 E AndroidRuntime: java.lang.IllegalStateException: { when=0 what=72 obj=com.android.unisoc.telephony.AsyncResult@cb3fdf4 target=com.android.unisoc.telephony.server.RadioInteractorHandler } This message is already in use.
+11-20 19:35:01.171  5754  5754 E AndroidRuntime: 	at com.android.unisoc.telephony.server.RadioInteractorCore.canMakeRequest(RadioInteractorCore.java:3863)
+11-20 19:35:01.172   715  1956 I am_crash: [5754,0,com.android.phone,952647245,java.lang.IllegalStateException,{ when=0 what=72 obj=com.android.unisoc.telephony.AsyncResult@cb3fdf4 target=com.android.unisoc.telephony.server.RadioInteractorHandler } This message is already in use.,MessageQueue.java,1303,0]
+11-20 19:35:01.175   715   715 W RescueParty: Attempting rescue level WARM_REBOOT
+11-20 19:35:01.177   715   715 D CrashRecoveryUtils: Finished rescue level WARM_REBOOT for package com.android.ons
+11-20 19:35:01.179   715   715 W RescueParty: Attempting rescue level WARM_REBOOT
+11-20 19:35:01.179   715   715 D CrashRecoveryUtils: Finished rescue level WARM_REBOOT for package com.android.unisoc.telephony.server
+11-20 19:35:01.180   715   715 W RescueParty: Attempting rescue level WARM_REBOOT
+11-20 19:35:01.180   715   715 D CrashRecoveryUtils: Finished rescue level WARM_REBOOT for package com.android.phone
+11-20 19:35:01.589  6055  6055 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:35:01.591  6055  6055 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:35:01.609  6055  6055 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:35:01.609  6055  6055 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:35:01.609  6055  6055 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:35:01.609   715  1197 I am_crash: [6055,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:35:01.772  6111  6111 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:35:01.773  6111  6111 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:35:01.799  6111  6111 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:35:01.801  6111  6111 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:35:01.801  6111  6111 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:35:01.801   715  1960 I am_crash: [6111,0,com.spreadtrum.ims,814235205,java.util.MissingFormatArgumentException,Format specifier '%s',Formatter.java,2703,0]
+11-20 19:35:01.997  6145  6145 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:35:01.998  6145  6145 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB1]
+11-20 19:35:02.005  6145  6145 E ImsRIL  : RadioProxy getService/setResponseFunctions: android.os.RemoteException: Method setImsResponseFunctions is unimplemented. [SUB0]
+11-20 19:35:02.005  6145  6145 E AndroidRuntime: java.lang.RuntimeException: Unable to create service com.spreadtrum.ims.UnisocImsService: java.util.MissingFormatArgumentException: Format specifier '%s'
+11-20 19:35:02.005  6145  6145 E AndroidRuntime: Caused by: java.util.MissingFormatArgumentException: Format specifier '%s'

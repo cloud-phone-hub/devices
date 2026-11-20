@@ -10,7 +10,15 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 NX809S_GB_REDMAGICOS11.0.05MR1_update.zip (vendor/build.prop) 自动生成。"
+    "comment": "由 cdh unpack prepare 从 NX809S_GB_REDMAGICOS11.0.05MR1_update.zip (vendor/build.prop) 自动生成。",
+    "partitionAndroidVersions": {
+      "system": "16",
+      "system_ext": "16",
+      "product": "16",
+      "vendor": "16",
+      "odm": "16",
+      "vendor_dlkm": "16"
+    }
   },
   "updatedAt": "2026-11-09T03:18:05Z"
 }

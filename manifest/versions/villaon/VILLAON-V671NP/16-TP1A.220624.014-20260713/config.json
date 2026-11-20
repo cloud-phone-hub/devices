@@ -1,0 +1,26 @@
+{
+  "id": 51,
+  "buildId": "16-TP1A.220624.014-20260713",
+  "deviceId": 43,
+  "configId": 64,
+  "osVersion": "16-TP1A.220624.014-20260713",
+  "buildDate": "20260713",
+  "securityPatch": "2025-09-05",
+  "factoryTgz": "Villaon-V671NP.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh-pipeline prepare 从 Villaon-V671NP.zip (vendor/build.prop) 自动生成。",
+    "osVersion": "16-TP1A.220624.014-20260713",
+    "partitionAndroidVersions": {
+      "odm": "13",
+      "product": "16",
+      "system": "16",
+      "system_ext": "16",
+      "vendor": "13",
+      "vendor_dlkm": "13"
+    },
+    "securityPatch": "2025-09-05"
+  },
+  "updatedAt": "2026-11-20T13:24:09Z"
+}

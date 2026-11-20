@@ -1,7 +1,7 @@
 {
   "protocol": "cph-device-profile/v1",
   "generatedAt": "2026-11-19T13:06:05+08:00",
-  "buildId": "13-TKQ1.220928.001-20240229",
+  "buildId": "14-TKQ1.220928.001-20240229",
   "vendor": "asus",
   "device": "ASUS_AI2205",
   "chatSession": {
@@ -17,7 +17,7 @@
     "board": "kalama",
     "socManufacturer": "QTI",
     "androidVersion": "13",
-    "osVersion": "13-TKQ1.220928.001-20240229",
+    "osVersion": "14-TKQ1.220928.001-20240229",
     "securityPatch": "2024-03-05",
     "buildDate": "20240229",
     "hardwareEgl": "adreno",
@@ -946,6 +946,14 @@
         "vendor/etc/wifi/wpa_supplicant.conf",
         "vendor/etc/wifi/wpa_supplicant_overlay.conf"
       ]
+    },
+    "partitionAndroidVersions": {
+      "system": "14",
+      "system_ext": "14",
+      "product": "14",
+      "vendor": "13",
+      "odm": "13",
+      "vendor_dlkm": "13"
     }
   },
   "manifestAligned": {

@@ -1,7 +1,7 @@
 {
   "protocol": "cph-device-profile/v1",
   "generatedAt": "2026-11-19T13:02:23+08:00",
-  "buildId": "13-TP1A.220624.014-20260324",
+  "buildId": "14-TP1A.220624.014-20260324",
   "vendor": "nubia",
   "device": "P616F05",
   "chatSession": {
@@ -18,7 +18,7 @@
     "socManufacturer": "Spreadtrum",
     "socModel": "UMS9230T",
     "androidVersion": "13",
-    "osVersion": "13-TP1A.220624.014-20260324",
+    "osVersion": "14-TP1A.220624.014-20260324",
     "securityPatch": "2026-03-05",
     "buildDate": "20260324",
     "densityDpi": 320,
@@ -739,6 +739,14 @@
         "vendor/etc/wifi/wpa_supplicant.conf",
         "vendor/etc/wifi/wpa_supplicant_overlay.conf"
       ]
+    },
+    "partitionAndroidVersions": {
+      "system": "14",
+      "system_ext": "14",
+      "product": "14",
+      "vendor": "13",
+      "odm": "13",
+      "vendor_dlkm": "13"
     }
   },
   "manifestAligned": {

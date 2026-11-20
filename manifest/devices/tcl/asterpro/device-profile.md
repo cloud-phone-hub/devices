@@ -1,8 +1,9 @@
 # 真机硬件规格与云机对齐留档 · TCL T614SP (tcl/asterpro)
 
 - **生成时间**: `2026-11-19T22:56:33+08:00`
-- **ROM Build ID**: `13-TP1A.220624.014-20251217`
-- **DSH 聊天会话 ID**: `session-b74c51c4-b7a3-4714-aa7b-2d0fca99f1d5`（标题：`[02_prepare] 真机规格采集 · tcl/asterpro (13-TP1A.220624.014-20251217)`）
+- **ROM Build ID**: `15-TP1A.220624.014-20251217`
+- **分区 Android 版本**: `system=15, system_ext=15, product=15, vendor=13, odm=13, vendor_dlkm=13, odm_dlkm=13`
+- **DSH 聊天会话 ID**: `session-b74c51c4-b7a3-4714-aa7b-2d0fca99f1d5`（标题：`[02_prepare] 真机规格采集 · tcl/asterpro (15-TP1A.220624.014-20251217)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
 ---
@@ -591,7 +592,7 @@
     "待真机回读微调项：EDID productId/week/year、Widevine systemId、IMEI TAC/MEID 前缀、Wi-Fi MAC OUI、电池 fullMv/chargeMv（MTK 单电芯 4.40V/4.46V 为同平台估值）。"
   ],
   "sources": [
-    "固件实测：build.prop / boot DTB / VINTF manifest / vendor/etc / odm/etc（本机 asterpro，13-TP1A.220624.014-20251217）",
+    "固件实测：build.prop / boot DTB / VINTF manifest / vendor/etc / odm/etc（本机 asterpro，15-TP1A.220624.014-20251217）",
     "https://www.deviceinfohw.ru/devices/item.php?item=99400",
     "https://www.mediatek.com/products/smartphones/mediatek-dimensity-6100plus"
   ]

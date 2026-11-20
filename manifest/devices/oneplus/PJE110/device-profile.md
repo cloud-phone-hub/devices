@@ -1,8 +1,9 @@
 # 真机硬件规格与云机对齐留档 · PJE110 (oneplus/PJE110)
 
 - **生成时间**: `2026-11-19T11:07:05+08:00`
-- **ROM Build ID**: `13-TP1A.220905.001-20250926`
-- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · oneplus/PJE110 (13-TP1A.220905.001-20250926)`）
+- **ROM Build ID**: `15-TP1A.220905.001-20250926`
+- **分区 Android 版本**: `system=15, system_ext=15, product=15, vendor=13, vendor_dlkm=13`
+- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · oneplus/PJE110 (15-TP1A.220905.001-20250926)`）
 
 ---
 

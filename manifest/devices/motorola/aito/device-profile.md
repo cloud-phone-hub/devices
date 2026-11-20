@@ -1,8 +1,9 @@
 # 真机硬件规格与云机对齐留档 · Motorola Razr 2024 (motorola/aito)
 
 - **生成时间**: `2026-11-19T08:05:29+08:00`
-- **ROM Build ID**: `14-W1UCS36H.96-35-8-9-20260801`
-- **DSH 聊天会话 ID**: `session-8c7eb564-47e3-4812-8b19-f6e42049b4f6`（标题：`[02_prepare] 真机规格采集 · Motorola Razr (aito) (motorola/aito · 14-W1UCS36H.96-35-8-9-20260801)`）
+- **ROM Build ID**: `16-W1UCS36H.96-35-8-9-20260801`
+- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=14, odm=14, vendor_dlkm=14`
+- **DSH 聊天会话 ID**: `session-8c7eb564-47e3-4812-8b19-f6e42049b4f6`（标题：`[02_prepare] 真机规格采集 · Motorola Razr (aito) (motorola/aito · 16-W1UCS36H.96-35-8-9-20260801)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
 ---

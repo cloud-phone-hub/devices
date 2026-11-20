@@ -1,7 +1,7 @@
 {
   "protocol": "cph-device-profile/v1",
   "generatedAt": "2026-11-19T12:56:13+08:00",
-  "buildId": "13-UP1A.231005.007-20260511",
+  "buildId": "14-UP1A.231005.007-20260511",
   "vendor": "blu",
   "device": "G1130",
   "chatSession": {
@@ -18,7 +18,7 @@
     "socManufacturer": "Spreadtrum",
     "socModel": "UMS9230T",
     "androidVersion": "13",
-    "osVersion": "13-UP1A.231005.007-20260511",
+    "osVersion": "14-UP1A.231005.007-20260511",
     "securityPatch": "2026-04-05",
     "buildDate": "20260511",
     "densityDpi": 320,
@@ -719,6 +719,14 @@
         "vendor/etc/wifi/wpa_supplicant.conf",
         "vendor/etc/wifi/wpa_supplicant_overlay.conf"
       ]
+    },
+    "partitionAndroidVersions": {
+      "system": "14",
+      "system_ext": "14",
+      "product": "14",
+      "vendor": "13",
+      "odm": "13",
+      "vendor_dlkm": "13"
     }
   },
   "manifestAligned": {

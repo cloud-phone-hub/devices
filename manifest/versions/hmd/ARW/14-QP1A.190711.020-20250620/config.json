@@ -1,0 +1,24 @@
+{
+  "id": 22,
+  "buildId": "14-QP1A.190711.020-20250620",
+  "deviceId": 17,
+  "configId": 51,
+  "osVersion": "14-QP1A.190711.020-20250620",
+  "buildDate": "20250620",
+  "securityPatch": "2024-06-05",
+  "factoryTgz": "Hmd-Crest-Max.rar",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 Hmd-Crest-Max.rar (vendor/build.prop) 自动生成。",
+    "partitionAndroidVersions": {
+      "system": "14",
+      "system_ext": "14",
+      "product": "14",
+      "vendor": "13",
+      "odm": "13",
+      "vendor_dlkm": "13"
+    }
+  },
+  "updatedAt": "2026-11-19T05:50:47Z"
+}

@@ -1,8 +1,9 @@
 # 真机硬件规格与云机对齐留档 · Xiaomi 17 Pro Max (xiaomi/popsicle)
 
 - **生成时间**: `2026-11-18T12:31:10+08:00`
-- **ROM Build ID**: `16-OS4.0.5.0.XPBCN`
-- **DSH 聊天会话 ID**: `session-ee571953-a60e-47c7-a8c9-f6a658bd26e1`（标题：`[02_prepare] 真机规格采集 · Xiaomi 17 Pro Max (xiaomi/popsicle · 16-OS4.0.5.0.XPBCN)`）
+- **ROM Build ID**: `17-OS4.0.5.0.XPBCN`
+- **分区 Android 版本**: `system=17, system_ext=17, product=17, vendor=16, odm=16, vendor_dlkm=16`
+- **DSH 聊天会话 ID**: `session-ee571953-a60e-47c7-a8c9-f6a658bd26e1`（标题：`[02_prepare] 真机规格采集 · Xiaomi 17 Pro Max (xiaomi/popsicle · 17-OS4.0.5.0.XPBCN)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `false`）
 
 ---
@@ -527,7 +528,7 @@
     "ro.vendor.build.fingerprint": "Xiaomi/popsicle/popsicle:16/BQ2A.260225.001-BP2A.250705.008/OS4.0.5.0.XPBCN:user/release-keys",
     "ro.vendor.build.security_patch": "2026-10-01",
     "ro.vendor.build.date": "20261020",
-    "ro.vendor.build.os_version": "16-OS4.0.5.0.XPBCN",
+    "ro.vendor.build.os_version": "17-OS4.0.5.0.XPBCN",
     "ro.vendor.soc.manufacturer": "QTI",
     "ro.vendor.soc.model": "SM8850",
     "ro.vendor.soc.platform": "canoe",

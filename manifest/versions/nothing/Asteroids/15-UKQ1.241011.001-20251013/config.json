@@ -1,0 +1,24 @@
+{
+  "id": 23,
+  "buildId": "15-UKQ1.241011.001-20251013",
+  "deviceId": 18,
+  "configId": 37,
+  "osVersion": "15-UKQ1.241011.001-20251013",
+  "buildDate": "20251013",
+  "securityPatch": "2025-03-05",
+  "factoryTgz": "Asteroids_V3.2-251013-1406.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 Asteroids_V3.2-251013-1406.zip (vendor/build.prop) 自动生成。",
+    "partitionAndroidVersions": {
+      "system": "15",
+      "system_ext": "15",
+      "product": "15",
+      "vendor": "14",
+      "odm": "14",
+      "vendor_dlkm": "14"
+    }
+  },
+  "updatedAt": "2026-11-18T23:15:31Z"
+}

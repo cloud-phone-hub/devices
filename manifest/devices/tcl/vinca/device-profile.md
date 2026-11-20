@@ -1,8 +1,9 @@
 # 真机硬件规格与云机对齐留档 · TCL 60 SE (tcl/vinca)
 
 - **生成时间**: `2026-11-19T22:35:11+08:00`
-- **ROM Build ID**: `15-AP3A.240905.015.A2-20260512`
-- **DSH 聊天会话 ID**: `session-7777044e-6d53-47c2-bf7c-67d242b0ed95`（标题：`[02_prepare] 真机规格采集 · tcl/vinca (15-AP3A.240905.015.A2-20260512)`）
+- **ROM Build ID**: `16-AP3A.240905.015.A2-20260512`
+- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=15, odm=15, vendor_dlkm=15, odm_dlkm=15`
+- **DSH 聊天会话 ID**: `session-7777044e-6d53-47c2-bf7c-67d242b0ed95`（标题：`[02_prepare] 真机规格采集 · tcl/vinca (16-AP3A.240905.015.A2-20260512)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
 ---
@@ -573,7 +574,7 @@
     "Wi-Fi MAC OUI、IMEI TAC、Widevine systemId 均换为 TCL 口径，未复用小米的 3c:38:24 / 86717107 / 33098。"
   ],
   "sources": [
-    "目标机官方固件实测：build.prop / boot DTB / VINTF manifest / vendor/etc / odm/etc（15-AP3A.240905.015.A2-20260512）",
+    "目标机官方固件实测：build.prop / boot DTB / VINTF manifest / vendor/etc / odm/etc（16-AP3A.240905.015.A2-20260512）",
     "对标字段结构：devices/manifest/configs/redmi/gold/gold-android15/",
     "TCL 60 SE 公开规格：6.67\" 720×1600 90Hz、Helio G81、5010mAh、50MP+2MP/8MP、侧边指纹",
     "ARM Mali-G52 (Bifrost) GLES/Vulkan 驱动标识、deviceId 0x72120000、driverId 9",

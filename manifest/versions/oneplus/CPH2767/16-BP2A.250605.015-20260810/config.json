@@ -10,7 +10,14 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "15R-16 (OnePlus 15R / SM8750 / CPH2767) CPH2769 16.0.10.500 基线件清单。官方 OTA 为 AB payload 全量包；vendor 实际以 lineage-23.2 底包（virtio 内核匹配）为基座做原地补丁。换 ROM = 新增一份同名 JSON，代码零改动。；cdh device sync 迁移自旧工作区基线，vendor 属性段保留原实测值。"
+    "comment": "15R-16 (OnePlus 15R / SM8750 / CPH2767) CPH2769 16.0.10.500 基线件清单。官方 OTA 为 AB payload 全量包；vendor 实际以 lineage-23.2 底包（virtio 内核匹配）为基座做原地补丁。换 ROM = 新增一份同名 JSON，代码零改动。；cdh device sync 迁移自旧工作区基线，vendor 属性段保留原实测值。",
+    "partitionAndroidVersions": {
+      "system": "16",
+      "system_ext": "16",
+      "product": "16",
+      "vendor": "16",
+      "vendor_dlkm": "16"
+    }
   },
   "updatedAt": "2026-11-05T04:33:32Z"
 }

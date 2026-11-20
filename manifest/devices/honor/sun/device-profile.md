@@ -1,8 +1,9 @@
 # 真机硬件规格与云机对齐留档 · HONOR Magic7 RSR 保时捷设计 (honor/sun)
 
 - **生成时间**: `2026-11-18T21:58:40+08:00`
-- **ROM Build ID**: `15-AQ3A.250214.001-20260904`
-- **DSH 聊天会话 ID**: `session-03495597-5523-43e7-b77a-80c4c4361c45`（标题：`[02_prepare] 真机规格采集 · Honor Magic7 RSR (honor/sun · 15-AQ3A.250214.001-20260904)`）
+- **ROM Build ID**: `16-AQ3A.250214.001-20260904`
+- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=15, vendor_dlkm=15`
+- **DSH 聊天会话 ID**: `session-03495597-5523-43e7-b77a-80c4c4361c45`（标题：`[02_prepare] 真机规格采集 · Honor Magic7 RSR (honor/sun · 16-AQ3A.250214.001-20260904)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
 ---
@@ -663,7 +664,7 @@
     "待真机回采项：glVersionFull/vulkan.driver_version 的具体 blob 号、EDID（/sys/class/drm/card0-*/edid）、imeiTac 与 MAC OUI 全集、Widevine systemId；Codec2 两个二进制实测都报 default3，暂以 default3/default3_dts 区分 store，需 dumpsys media.codec 复核。"
   ],
   "sources": [
-    "目标机固件实测：build.prop / boot DTB / VINTF / vendor/etc / odm/etc（buildId 15-AQ3A.250214.001-20260904，securityPatch 2026-09-01）",
+    "目标机固件实测：build.prop / boot DTB / VINTF / vendor/etc / odm/etc（buildId 16-AQ3A.250214.001-20260904，securityPatch 2026-09-01）",
     "gold 标杆 schema 与颗粒度：devices/manifest/configs/redmi/gold/gold-android15/（vendor/config.json、module/config.json、hardware/config.json、vendor/etc/*）",
     "honor/sun 现有骨架：devices/manifest/configs/honor/sun/sun-android15/（照抄 gold 的 mt6833/mtk/swtp 残留已逐项替换）",
     "公开规格：荣耀 Magic7 RSR 保时捷设计（6.8 英寸 1.5K LTPO 1280x2800 / 骁龙 8 至尊版 / 5850mAh / 100W 有线 + 80W 无线 / 16+512 与 24+1TB / 200MP 潜望）"

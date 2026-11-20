@@ -1,0 +1,24 @@
+{
+  "id": 18,
+  "buildId": "16-TP1A.220624.014-20260422",
+  "deviceId": 13,
+  "configId": 49,
+  "osVersion": "16-TP1A.220624.014-20260422",
+  "buildDate": "20260422",
+  "securityPatch": "2026-04-01",
+  "factoryTgz": "Huawei-Honor-X80i-5G-LNA-AN10.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 Huawei-Honor-X80i-5G-LNA-AN10.zip (vendor/build.prop) 自动生成。",
+    "partitionAndroidVersions": {
+      "system": "16",
+      "system_ext": "16",
+      "product": "16",
+      "vendor": "13",
+      "odm": "13",
+      "vendor_dlkm": "13"
+    }
+  },
+  "updatedAt": "2026-11-19T05:12:05Z"
+}

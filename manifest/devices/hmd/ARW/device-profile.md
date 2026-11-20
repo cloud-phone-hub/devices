@@ -1,8 +1,9 @@
 # 真机硬件规格与云机对齐留档 · HMD Crest Max (hmd/ARW)
 
 - **生成时间**: `2026-11-19T13:50:50+08:00`
-- **ROM Build ID**: `13-QP1A.190711.020-20250620`
-- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · HMD Crest Max (hmd/ARW · 13-QP1A.190711.020-20250620)`）
+- **ROM Build ID**: `14-QP1A.190711.020-20250620`
+- **分区 Android 版本**: `system=14, system_ext=14, product=14, vendor=13, odm=13, vendor_dlkm=13`
+- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · HMD Crest Max (hmd/ARW · 14-QP1A.190711.020-20250620)`）
 
 ---
 

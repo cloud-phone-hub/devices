@@ -1,0 +1,126 @@
+=== [1] 02_prepare 全分区 build.prop 解析、buildId 与 vendor 对齐日志 (VILLAON-V671NP) ===
+  [prepare] 整树解包 odm 镜像（erofs） -> out/devices/tmp/Villaon-V671NP/super/unpack_odm...
+  [prepare] 整树解包 vendor 镜像（erofs） -> out/devices/tmp/Villaon-V671NP/super/unpack_vendor...
+==> [prepare] 分区 Android 版本: system=16, system_ext=16, product=16, vendor=13, odm=13, vendor_dlkm=13
+==> [prepare] 身份推导: villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713
+  [prepare] 官方内核: Linux localhost 5.15.189-android13-8-00012-g742fd6fce289-ab14327796 #1 SMP PREEMPT Fri Oct 24 02:22:42 UTC 2025 aarch64 Toybox（内核线 5.15）
+==> [prepare] 机型真机档案已就位 (devices/manifest/devices/villaon/VILLAON-V671NP)，全流程跳过 AI 采集（如需刷新请加 --refresh-profile 或运行 apply-profile）
+==> [prepare] manifest 中已存在版本 16-TP1A.220624.014-20260713（关联模版 VILLAON-V671NP-android13），保留既有配置
+==> [prepare] 分区 Android 版本: system=16, system_ext=16, product=16, vendor=13, odm=13, vendor_dlkm=13
+==> [prepare] Vendor 底包代际校准: vendor 实测 Android 13 (system=16) -> 切换模版 VILLAON-V671NP-android13 (lineage-20.0)
+==> [prepare] lineage 已解包（lineage-20.0），跳过: out/devices/roms/lineage/lineage-20.0
+==> [prepare] 按清单落盘 3 项 keeps: out/devices/tmp/Villaon-V671NP -> out/devices/roms/villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713
+  [ok] boot.img
+  [ok] super.img
+  [ok] vendor_boot.img
+  [ok] super/odm_a.img
+  [ok] super/product_a.img
+  [ok] super/system_a.img
+  [ok] super/system_dlkm_a.img
+  [ok] super/system_ext_a.img
+  [ok] super/vendor_a.img
+  [ok] super/vendor_dlkm_a.img
+  [ok] super/unpack_vendor/（整树）
+  [ok] super/unpack_odm/（整树）
+==> [prepare] 已清理 tmp 解包树: out/devices/tmp/Villaon-V671NP
+==> 准备构建: 16-TP1A.220624.014-20260713（villaon/VILLAON-V671NP · 16-TP1A.220624.014-20260713）
+==> lineage 版本: lineage-20.0
+==> 分区 Android 版本: system=16, system_ext=16, product=16, vendor=13, odm=13, vendor_dlkm=13
+==> 厂商解包根: /Volumes/work/cloud-phone-hub/out/devices/roms/villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713
+==> lineage 解包根: /Volumes/work/cloud-phone-hub/out/devices/roms/lineage/lineage-20.0
+==> [prepare] 厂商 init 服务: vendor 85（rc 69） / odm 0（rc 0） / vendor_dlkm 无 init 目录；合计 85，override 0，同名多定义 2 名（多出 6 处）
+==> 服务清单: out/devices/prepare/villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713/vendor-services.txt（明细 vendor-services.json，原始 rc init-rc）
+==> 准备完成: /Volumes/work/cloud-phone-hub/out/devices/prepare/villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713/prepare.json
+
+=== [2] 增量重建 build_hardware (android.hardware.radio) ~ pack_vda 核心日志 ===
+==> 设备: VILLAON V671NP（villaon/VILLAON-V671NP）
+==> 清单: db://villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713
+--> android.hardware.radio（aidl）
+    android.hardware.radio (v1, hash 31b668688e93)
+    android.hardware.radio.config (v1, hash dd9c3f8e2193)
+    android.hardware.radio.data (v1, hash 6d7a86008ea4)
+    android.hardware.radio.messaging (v1, hash 5237ec5f5006)
+    android.hardware.radio.modem (v1, hash 9dee2319b599)
+    android.hardware.radio.network (v1, hash 57e8e923513d)
+    android.hardware.radio.sim (v1, hash 01cea196fdf8)
+    android.hardware.radio.voice (v1, hash e9ffc70247a8)
+    写 bin/hw/android.hardware.radio-service
+[ok] android.hardware.radio 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/out/devices/vendor/android13/bin/hw
+[ok] android.hardware.radio 合并 vendor 静态树：新增 0，已存在同内容 3
+==> HAL 构建完成: 新编 1，复用 18，总计 19 个模块
+==> 模块产物: out/devices/kernel/5.15/modules（11 个 .ko）
+    模块产物:   out/devices/kernel/5.15/modules（11 个 .ko，整树哈希 40893ce76b17a93a4856d77b5c5fb2c60fb6e41136dbd1b2242a77673b05a993）
+    镜像产物:   out/devices/devices/villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713/img/vendor_dlkm.img
+    产物:       out/devices/devices/villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713/img/super.img（已存在 5.47 GiB）
+    编译产物:   out/devices/vendor/android13（android.hardware.audio@default 2 项、android.hardware.bluetooth@default 2 项、android.hardware.camera@default 3 项、android.hardware.graphics.allocator@default 3 项、android.hardware.gnss@default 3 项、android.hardware.gpu@default 4 项、android.hardware.health@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.radio@default 4 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.vibrator@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 15 项、android.hardware.media.v412@default 54 项、android.hardware.power@default 3 项、android.hardware.graphics.composer@default 5 项）
+    SELinux 补丁: 模块层 android.hardware.audio devices/hardware-hidl/android.hardware.audio/sepolicy（2 个文件）；模块层 android.hardware.bluetooth devices/hardware-hidl/android.hardware.bluetooth/sepolicy（1 个文件）；模块层 android.hardware.camera devices/hardware/android.hardware.camera/sepolicy（1 个文件）；模块层 android.hardware.gnss devices/hardware/android.hardware.gnss/sepolicy（1 个文件）；模块层 android.hardware.gpu devices/hardware/android.hardware.gpu/sepolicy（1 个文件）；模块层 android.hardware.keymint devices/hardware/android.hardware.keymint/sepolicy（2 个文件）；模块层 android.hardware.media devices/hardware-hidl/android.hardware.media/sepolicy（2 个文件）；模块层 android.hardware.radio devices/hardware/android.hardware.radio/sepolicy（1 个文件）；模块层 android.hardware.thermal devices/hardware-hidl/android.hardware.thermal/sepolicy（1 个文件）；模块层 android.hardware.wifi devices/hardware-hidl/android.hardware.wifi/sepolicy（2 个文件）；模块层 android.service.daemon devices/hardware/android.service.daemon/sepolicy（2 个文件）；模块层 android.hardware.media.v412 devices/hardware-hidl/android.hardware.media.v412/sepolicy（2 个文件）；模块层 android.hardware.power devices/hardware/android.hardware.power/sepolicy（1 个文件）
+    镜像产物:   out/devices/devices/villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713/img/vendor.img
+    HAL 模块:  android.hardware.radio（变体 default，变体产物根 out/devices/vendor/android13，产物齐全但 --refresh 要求重编）
+        期望产物 out/devices/vendor/android13/bin/hw/android.hardware.radio-service
+        期望静态树 out/devices/vendor/android13/etc/init/android.hardware.radio-service.rc
+        期望静态树 out/devices/vendor/android13/etc/vintf/manifest/android.hardware.radio-service.xml
+        期望产物 out/devices/vendor/android13/lib64/android.hardware.graphics.mapper@4.0.so
+    输入: db://villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713（hardware 19 项：android.hardware.audio@default、android.hardware.bluetooth@default、android.hardware.camera@default、android.hardware.graphics.allocator@default、android.hardware.gnss@default、android.hardware.gpu@default、android.hardware.health@default、android.hardware.keymint@default、android.hardware.light@default、android.hardware.media@default、android.hardware.radio@default、android.hardware.sensors@default、android.hardware.thermal@default、android.hardware.vibrator@default、android.hardware.wifi@default、android.service.daemon@default、android.hardware.media.v412@default、android.hardware.power@default、android.hardware.graphics.composer@default）
+    输出: out/devices/vendor/android13（android.hardware.audio@default 2 项、android.hardware.bluetooth@default 2 项、android.hardware.camera@default 3 项、android.hardware.graphics.allocator@default 3 项、android.hardware.gnss@default 3 项、android.hardware.gpu@default 4 项、android.hardware.health@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.radio@default 4 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.vibrator@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 15 项、android.hardware.media.v412@default 54 项、android.hardware.power@default 3 项、android.hardware.graphics.composer@default 5 项）
+==> 编译 HAL 模块 android.hardware.radio（变体 default，--refresh 强制重编）
+  + halcore.Build android.hardware.radio --android 13 --out-dir out/devices/vendor/android13
+    android.hardware.radio (v1, hash 31b668688e93)
+    android.hardware.radio.config (v1, hash dd9c3f8e2193)
+    android.hardware.radio.data (v1, hash 6d7a86008ea4)
+    android.hardware.radio.messaging (v1, hash 5237ec5f5006)
+    android.hardware.radio.modem (v1, hash 9dee2319b599)
+    android.hardware.radio.network (v1, hash 57e8e923513d)
+    android.hardware.radio.sim (v1, hash 01cea196fdf8)
+    android.hardware.radio.voice (v1, hash e9ffc70247a8)
+    写 bin/hw/android.hardware.radio-service
+[ok] android.hardware.radio 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/out/devices/vendor/android13/bin/hw
+[ok] android.hardware.radio 合并 vendor 静态树：新增 0，已存在同内容 3
+    输入: 机型静态树 devices/manifest/configs/villaon/VILLAON-V671NP/VILLAON-V671NP-android13/vendor；编译产物 out/devices/vendor/android13（android.hardware.audio@default 2 项、android.hardware.bluetooth@default 2 项、android.hardware.camera@default 3 项、android.hardware.graphics.allocator@default 3 项、android.hardware.gnss@default 3 项、android.hardware.gpu@default 4 项、android.hardware.health@default 3 项、android.hardware.keymint@default 3 项、android.hardware.light@default 3 项、android.hardware.media@default 6 项、android.hardware.radio@default 4 项、android.hardware.sensors@default 3 项、android.hardware.thermal@default 3 项、android.hardware.vibrator@default 3 项、android.hardware.wifi@default 3 项、android.service.daemon@default 15 项、android.hardware.media.v412@default 54 项、android.hardware.power@default 3 项、android.hardware.graphics.composer@default 5 项）；平台覆盖层 out/devices/vendor/android13/unisoc
+    写 out/devices/devices/villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713/vendor/bin/hw/android.hardware.radio-service（0755）
+    写 out/devices/devices/villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713/vendor/etc/init/android.hardware.radio-service.rc（0644）
+    写 out/devices/devices/villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713/vendor/etc/vintf/manifest/android.hardware.radio-service.xml（0644）
+    写 out/devices/devices/villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713/vendor/lib64/android.hardware.graphics.mapper@4.0.so（0644）
+    输入[模块层 android.hardware.radio]: devices/hardware/android.hardware.radio/sepolicy
+    追加 out/devices/devices/villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713/vendor/etc/selinux/vendor_sepolicy.cil <- devices/hardware/android.hardware.radio/sepolicy/vendor_sepolicy.cil（2417 字节，marker ;; vendor_sepolicy.cil@android.hardware.radio）
+[delete] vendor/lib64/hw/android.hardware.graphics.mapper@4.0-impl.minigbm.so（自编 allocator 已静态内聚，移除底包残留库）
+[delete] vendor/lib/hw/android.hardware.graphics.mapper@4.0-impl.minigbm.so（自编 allocator 已静态内聚，移除底包残留库）
+[add] vendor/lib64/hw/android.hardware.graphics.mapper@4.0-impl.so -> mapper.arm.so（同目录相对软链接复用 cros_gralloc_driver 单例）
+    android.hardware.radio-service -> hal_radio_default_exec
+    编译产物 android.hardware.radio@default: 写入 4，已存在同内容 0
+    镜像产物:    out/devices/devices/villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713/img/patch.img（384 MiB，ext4）
+    产物: out/devices/dist/villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713（vda.img 6.47 GiB，2 个分区已刷新）
+[ok] 已完成
+
+=== [3] 冷启动 60s+ 运行态实测验证 (16-TP1A.220624.014-20260713, adb 127.0.0.1:5911) ===
+qemu.log Starting kernel count = 1
+qemu.log Exec format error count = 0
+getenforce = Enforcing
+uptime = 22:33:26 up 1 min,  0 users,  load average: 4.25, 1.54, 0.55
+sys.boot_completed = 1
+init.svc.bootanim = stopped
+init.svc.surfaceflinger = running
+ro.system.build.version.release = 16
+ro.vendor.build.version.release = 13
+ro.build.fingerprint = VILLAON/V671NP-IN/VILLAON-V671NP:16/BP2A.250605.031.A3/20260713:user/release-keys
+ro.vendor.build.fingerprint = 
+dumpsys -l service count = 322 (unisoc placeholder services: 19)
+window focus:
+mCurrentFocus=Window{7efcc05 u0 com.android.launcher3/com.android.launcher3.Launcher3QuickStepGo}, [type=1, isChildWindow=false]-[Surface(name=*Title#113)/@0x4c87abf]
+  mFocusedApp=ActivityRecord{142645359 u0 com.android.launcher3/.Launcher3QuickStepGo t4 d0}
+  mCurrentFocus=Window{7efcc05 u0 com.android.launcher3/com.android.launcher3.Launcher3QuickStepGo}, [type=1, isChildWindow=false]-[Surface(name=*Title#113)/@0x4c87abf]
+  mFocusedApp=ActivityRecord{142645359 u0 com.android.launcher3/.Launcher3QuickStepGo t4 d0}
+logcat count (This message is already in use) = 0
+logcat count (MissingFormatArgumentException) = 0
+logcat count (RescueParty) = 0
+logcat am_crash (com.android.phone) = 0
+logcat am_crash (com.spreadtrum.ims) = 0
+--- sample radio/ims logs (0 lines) ---
+
+=== [4] 关键系统进程与全系统分区属性 ===
+ps -A: android.hardware.radio-service(pid=517), com.android.phone(pid=1115), com.spreadtrum.ims(pid=1553), com.sprd.omacp(pid=4782)
+ro.system.build.version.release = 16 (sdk=36)
+ro.vendor.build.version.release = 13 (sdk=33)
+logcat -b events -d | grep am_crash: com.android.phone=0, com.spreadtrum.ims=0
+
+=== [5] logcat -b radio 关键状态摘录 ===
+11-20 22:32:37.825  1115  1115 D ImsSmsDispatcher [0]: ImsManager: connection ready.

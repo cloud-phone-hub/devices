@@ -2,6 +2,7 @@
 
 - **生成时间**: `2026-11-18T18:59:40+08:00`
 - **ROM Build ID**: `16-BP2A.250605.015-20260810`
+- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=16, vendor_dlkm=16`
 - **DSH 聊天会话 ID**: `session-9113289d-9850-4661-9342-1f6560e697fa`（标题：`[02_prepare] 真机规格采集 · oneplus/CPH2767 (16-BP2A.250605.015-20260810)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 

@@ -1,7 +1,7 @@
 {
   "protocol": "cph-device-profile/v1",
   "generatedAt": "2026-11-19T10:45:02+08:00",
-  "buildId": "14-GQ5011AF1_EEA_V17-20260429",
+  "buildId": "15-GQ5011AF1_EEA_V17-20260429",
   "vendor": "ulefone",
   "device": "GQ5011AF1",
   "chatSession": {
@@ -16,7 +16,7 @@
     "modelCode": "Armor 28 Ultra",
     "board": "mt6989",
     "androidVersion": "14",
-    "osVersion": "14-GQ5011AF1_EEA_V17-20260429",
+    "osVersion": "15-GQ5011AF1_EEA_V17-20260429",
     "securityPatch": "2026-03-05",
     "buildDate": "20260429",
     "densityDpi": 480,
@@ -1394,6 +1394,15 @@
         "vendor/etc/wifi/wpa_supplicant.conf",
         "vendor/etc/wifi/wpa_supplicant_overlay.conf"
       ]
+    },
+    "partitionAndroidVersions": {
+      "system": "15",
+      "system_ext": "15",
+      "product": "15",
+      "vendor": "14",
+      "odm": "14",
+      "vendor_dlkm": "14",
+      "odm_dlkm": "14"
     }
   },
   "manifestAligned": {

@@ -1,0 +1,24 @@
+{
+  "id": 21,
+  "buildId": "16-BP2A.250605.031.A3-20260823",
+  "deviceId": 16,
+  "configId": 45,
+  "osVersion": "16-BP2A.250605.031.A3-20260823",
+  "buildDate": "20260823",
+  "securityPatch": "2026-04-05",
+  "factoryTgz": "itel-A6612L.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 itel-A6612L.zip (vendor/build.prop) 自动生成。",
+    "partitionAndroidVersions": {
+      "system": "16",
+      "system_ext": "16",
+      "product": "16",
+      "vendor": "13",
+      "odm": "13",
+      "vendor_dlkm": "13"
+    }
+  },
+  "updatedAt": "2026-11-19T03:32:55Z"
+}

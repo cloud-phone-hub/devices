@@ -2,6 +2,7 @@
 
 - **生成时间**: `2026-11-19T00:21:10+08:00`
 - **ROM Build ID**: `15-AP3A.240905.015.A2-20250416`
+- **分区 Android 版本**: `system=15, system_ext=15, product=15, vendor=15, odm=15, vendor_dlkm=15`
 - **DSH 聊天会话 ID**: `session-8693d51a-4b48-4d26-927f-80a80e9bb0a4`（标题：`[02_prepare] 真机规格采集 · vivo X200 Ultra (vivo/PD2454 · 15-AP3A.240905.015.A2-20250416)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 

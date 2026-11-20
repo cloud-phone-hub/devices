@@ -1,8 +1,9 @@
 # 真机硬件规格与云机对齐留档 · OPPO PME110 (oppo/PME110)
 
 - **生成时间**: `2026-11-20T02:32:25+08:00`
-- **ROM Build ID**: `16-BP2A.250605.015-20260923`
-- **DSH 聊天会话 ID**: `session-65f669f7-762e-4a85-9df5-90b5d591a480`（标题：`[02_prepare] 真机规格采集 · oppo/PME110 (16-BP2A.250605.015-20260923)`）
+- **ROM Build ID**: `17-BP2A.250605.015-20260923`
+- **分区 Android 版本**: `system=17, system_ext=17, product=17, vendor=16, vendor_dlkm=16, odm_dlkm=16`
+- **DSH 聊天会话 ID**: `session-65f669f7-762e-4a85-9df5-90b5d591a480`（标题：`[02_prepare] 真机规格采集 · oppo/PME110 (17-BP2A.250605.015-20260923)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
 ---

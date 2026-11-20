@@ -1,8 +1,9 @@
 # 真机硬件规格与云机对齐留档 · Honor X80i 5G (honor/HNLNA-M)
 
 - **生成时间**: `2026-11-19T13:12:08+08:00`
-- **ROM Build ID**: `13-TP1A.220624.014-20260422`
-- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · Honor X80i 5G (honor/HNLNA-M · 13-TP1A.220624.014-20260422)`）
+- **ROM Build ID**: `16-TP1A.220624.014-20260422`
+- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=13, odm=13, vendor_dlkm=13`
+- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · Honor X80i 5G (honor/HNLNA-M · 16-TP1A.220624.014-20260422)`）
 
 ---
 

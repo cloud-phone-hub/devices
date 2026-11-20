@@ -1,8 +1,9 @@
 # 真机硬件规格与云机对齐留档 · Nothing Phone (3a) (nothing/Asteroids)
 
 - **生成时间**: `2026-11-19T06:49:24+08:00`
-- **ROM Build ID**: `14-UKQ1.250612.001-20260810`
-- **DSH 聊天会话 ID**: `session-b5a08e90-de11-47a5-bd44-584db0483917`（标题：`[02_prepare] 真机规格采集 · Nothing Phone (3a) (nothing/Asteroids · 14-UKQ1.250612.001-20260810)`）
+- **ROM Build ID**: `16-UKQ1.250612.001-20260810`
+- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=14, odm=14, vendor_dlkm=14`
+- **DSH 聊天会话 ID**: `session-b5a08e90-de11-47a5-bd44-584db0483917`（标题：`[02_prepare] 真机规格采集 · Nothing Phone (3a) (nothing/Asteroids · 16-UKQ1.250612.001-20260810)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
 ---

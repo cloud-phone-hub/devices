@@ -1,0 +1,24 @@
+{
+  "id": 38,
+  "buildId": "14-UP1A.231005.007-20260511",
+  "deviceId": 30,
+  "configId": 46,
+  "osVersion": "14-UP1A.231005.007-20260511",
+  "buildDate": "20260511",
+  "securityPatch": "2026-04-05",
+  "factoryTgz": "BLU-G65L-G1130.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 BLU-G65L-G1130.zip (vendor/build.prop) 自动生成。",
+    "partitionAndroidVersions": {
+      "system": "14",
+      "system_ext": "14",
+      "product": "14",
+      "vendor": "13",
+      "odm": "13",
+      "vendor_dlkm": "13"
+    }
+  },
+  "updatedAt": "2026-11-19T04:56:11Z"
+}

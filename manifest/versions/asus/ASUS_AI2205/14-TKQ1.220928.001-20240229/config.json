@@ -1,0 +1,24 @@
+{
+  "id": 10,
+  "buildId": "14-TKQ1.220928.001-20240229",
+  "deviceId": 6,
+  "configId": 48,
+  "osVersion": "14-TKQ1.220928.001-20240229",
+  "buildDate": "20240229",
+  "securityPatch": "2024-03-05",
+  "factoryTgz": "R2-Asus-ROG-Phone-7-AI2205.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 R2-Asus-ROG-Phone-7-AI2205.zip (vendor/build.prop) 自动生成。",
+    "partitionAndroidVersions": {
+      "system": "14",
+      "system_ext": "14",
+      "product": "14",
+      "vendor": "13",
+      "odm": "13",
+      "vendor_dlkm": "13"
+    }
+  },
+  "updatedAt": "2026-11-19T05:06:01Z"
+}

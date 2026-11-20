@@ -12,8 +12,10 @@
 #include "radio_service.h"
 #include "radio_voice.h"
 
+#include <android/binder_auto_utils.h>
 #include <android/binder_ibinder.h>
 #include <android/binder_manager.h>
+#include <android/binder_parcel.h>
 #include <android/binder_process.h>
 #include <android/binder_status.h>
 #include <android/log.h>
@@ -58,6 +60,43 @@ binder_status_t OnPlaceholderTransact(AIBinder * /*binder*/,
                                       transaction_code_t /*code*/,
                                       const AParcel * /*in*/,
                                       AParcel * /*out*/) {
+  return STATUS_UNKNOWN_TRANSACTION;
+}
+
+// 展锐 Radio/IMS AIDL 客户端会将 UNKNOWN_TRANSACTION 视为接口未实现而置空代理并同步
+// 重复 sendToTarget 导致崩溃（最终触发 RescueParty 重启）；这里按其 Stub$Proxy
+// 的最小协议契约应答 EX_NONE 与版本/空串。
+binder_status_t OnUnisocRadioPlaceholderTransact(AIBinder * /*binder*/,
+                                                 transaction_code_t code,
+                                                 const AParcel * /*in*/,
+                                                 AParcel *out) {
+  if (out == nullptr) {
+    return STATUS_OK;
+  }
+  ndk::ScopedAStatus ok = ndk::ScopedAStatus::ok();
+  if (code == 0xffffff) {
+    // getInterfaceVersion -> 2（对应 EXT_RADIO_HAL_VERSION_2_1 / IMS_RADIO_HAL_VERSION_2_1）
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    return AParcel_writeInt32(out, 2);
+  }
+  if (code == 0xfffffe) {
+    // getInterfaceHash -> "notfrozen"
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    return AParcel_writeString(out, "notfrozen", 9);
+  }
+  if (code >= FIRST_CALL_TRANSACTION) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    return AParcel_writeString(out, "", 0);
+  }
   return STATUS_UNKNOWN_TRANSACTION;
 }
 
@@ -117,9 +156,13 @@ void RegisterPlaceholdersFromFile(const char *path) {
     if (it == class_cache.end()) {
       // map 节点保证 key 地址稳定，先插入再传入 interfaceDescriptor
       it = class_cache.emplace(descriptor, nullptr).first;
+      const AIBinder_Class_onTransact transact_fn =
+          (descriptor.rfind("vendor.unisoc.hardware.radio.", 0) == 0)
+              ? OnUnisocRadioPlaceholderTransact
+              : OnPlaceholderTransact;
       it->second = AIBinder_Class_define(
           it->first.c_str(), OnPlaceholderCreate, OnPlaceholderDestroy,
-          OnPlaceholderTransact);
+          transact_fn);
       if (it->second == nullptr) {
         __android_log_print(ANDROID_LOG_WARN, kLogTag,
                             "define placeholder binder class failed: %s",

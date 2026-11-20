@@ -1,0 +1,24 @@
+{
+  "id": 37,
+  "buildId": "16-GQ5011AF1_EEA_V13-20260825",
+  "deviceId": 29,
+  "configId": 41,
+  "osVersion": "16-GQ5011AF1_EEA_V13-20260825",
+  "buildDate": "20260825",
+  "securityPatch": "2026-06-05",
+  "factoryTgz": "Ulefone-Armor-28-Ultra-Thermal-Version-16.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "partitionAndroidVersions": {
+      "system": "16",
+      "system_ext": "16",
+      "product": "16",
+      "vendor": "14",
+      "odm": "14",
+      "vendor_dlkm": "14",
+      "odm_dlkm": "14"
+    }
+  },
+  "updatedAt": "2026-11-19T03:00:55Z"
+}

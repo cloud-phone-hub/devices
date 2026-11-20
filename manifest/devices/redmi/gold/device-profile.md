@@ -2,6 +2,7 @@
 
 - **生成时间**: `2026-11-17T17:13:08+08:00`
 - **ROM Build ID**: `15-OS3.0.11.0.VNQCNXM`
+- **分区 Android 版本**: `system=15, system_ext=15, product=15, vendor=15, odm=15, vendor_dlkm=15, odm_dlkm=15`
 - **DSH 聊天会话 ID**: `session-21b38ad5-5ab3-409f-89ab-0062bac13c8a`（标题：`[02_prepare] 真机规格采集 · Redmi Note 13 5G (redmi/gold · 15-OS3.0.11.0.VNQCNXM)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 

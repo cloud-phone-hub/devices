@@ -2,6 +2,7 @@
 
 - **生成时间**: `2026-11-18T19:08:18+08:00`
 - **ROM Build ID**: `16-AQ3A.250411.001-20260127`
+- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=15, odm=15, vendor_dlkm=15`
 - **DSH 聊天会话 ID**: `session-cddeab54-28c1-43d4-8d80-ba96ae3a35cb`（标题：`[02_prepare] 真机规格采集 · MEIZU 22 (meizu/Meizu22 · 16-AQ3A.250411.001-20260127)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 

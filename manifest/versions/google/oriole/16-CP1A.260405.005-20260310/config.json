@@ -10,7 +10,15 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh unpack prepare 从 oriole-cp1a.260405.005-factory-8081a8ba.zip (vendor/build.prop) 自动生成。"
+    "comment": "由 cdh unpack prepare 从 oriole-cp1a.260405.005-factory-8081a8ba.zip (vendor/build.prop) 自动生成。",
+    "partitionAndroidVersions": {
+      "system": "16",
+      "system_ext": "16",
+      "product": "16",
+      "vendor": "16",
+      "odm": "16",
+      "vendor_dlkm": "16"
+    }
   },
   "updatedAt": "2026-11-05T07:30:07Z"
 }

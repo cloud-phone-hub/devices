@@ -1,8 +1,9 @@
 # 真机硬件规格与云机对齐留档 · Ulefone Armor 28 Ultra (ulefone/GQ5011AF1)
 
 - **生成时间**: `2026-11-19T10:45:02+08:00`
-- **ROM Build ID**: `14-GQ5011AF1_EEA_V17-20260429`
-- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · Ulefone Armor 28 Ultra (ulefone/GQ5011AF1 · 14-GQ5011AF1_EEA_V17-20260429)`）
+- **ROM Build ID**: `15-GQ5011AF1_EEA_V17-20260429`
+- **分区 Android 版本**: `system=15, system_ext=15, product=15, vendor=14, odm=14, vendor_dlkm=14, odm_dlkm=14`
+- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · Ulefone Armor 28 Ultra (ulefone/GQ5011AF1 · 15-GQ5011AF1_EEA_V17-20260429)`）
 
 ---
 

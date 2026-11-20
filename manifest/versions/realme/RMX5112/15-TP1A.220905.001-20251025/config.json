@@ -1,0 +1,24 @@
+{
+  "id": 30,
+  "buildId": "15-TP1A.220905.001-20251025",
+  "deviceId": 24,
+  "configId": 44,
+  "osVersion": "15-TP1A.220905.001-20251025",
+  "buildDate": "20251025",
+  "securityPatch": "2025-10-01",
+  "factoryTgz": "851_sign_RMX5112_11_A_OTA_0520_all_0Q8VwS_10010111.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 851_sign_RMX5112_11_A_OTA_0520_all_0Q8VwS_10010111.zip (vendor/build.prop) 自动生成。",
+    "partitionAndroidVersions": {
+      "system": "15",
+      "system_ext": "15",
+      "product": "15",
+      "vendor": "13",
+      "vendor_dlkm": "13",
+      "odm_dlkm": "13"
+    }
+  },
+  "updatedAt": "2026-11-19T03:29:49Z"
+}

@@ -1,0 +1,24 @@
+{
+  "id": 24,
+  "buildId": "16-UKQ1.250612.001-20260810",
+  "deviceId": 18,
+  "configId": 29,
+  "osVersion": "16-UKQ1.250612.001-20260810",
+  "buildDate": "20260810",
+  "securityPatch": "2026-04-05",
+  "factoryTgz": "Asteroids_B4.1-260810-1153.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh unpack prepare 从 Asteroids_B4.1-260810-1153.zip (vendor/build.prop) 自动生成。",
+    "partitionAndroidVersions": {
+      "system": "16",
+      "system_ext": "16",
+      "product": "16",
+      "vendor": "14",
+      "odm": "14",
+      "vendor_dlkm": "14"
+    }
+  },
+  "updatedAt": "2026-11-06 02:47:41"
+}

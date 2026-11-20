@@ -1,7 +1,7 @@
 {
   "protocol": "cph-device-profile/v1",
   "generatedAt": "2026-11-19T13:12:08+08:00",
-  "buildId": "13-TP1A.220624.014-20260422",
+  "buildId": "16-TP1A.220624.014-20260422",
   "vendor": "honor",
   "device": "HNLNA-M",
   "chatSession": {
@@ -16,7 +16,7 @@
     "modelCode": "k6835v2_64",
     "board": "mt6835",
     "androidVersion": "13",
-    "osVersion": "13-TP1A.220624.014-20260422",
+    "osVersion": "16-TP1A.220624.014-20260422",
     "securityPatch": "2026-04-01",
     "buildDate": "20260422",
     "densityDpi": 480,
@@ -980,6 +980,14 @@
         "vendor/etc/wifi/wpa_supplicant.conf",
         "vendor/etc/wifi/wpa_supplicant_overlay.conf"
       ]
+    },
+    "partitionAndroidVersions": {
+      "system": "16",
+      "system_ext": "16",
+      "product": "16",
+      "vendor": "13",
+      "odm": "13",
+      "vendor_dlkm": "13"
     }
   },
   "manifestAligned": {

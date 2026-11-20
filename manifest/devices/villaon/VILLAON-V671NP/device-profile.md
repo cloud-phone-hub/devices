@@ -1,8 +1,9 @@
 # 真机硬件规格与云机对齐留档 · VILLAON V671NP (villaon/VILLAON-V671NP)
 
 - **生成时间**: `2026-11-20T01:38:47+08:00`
-- **ROM Build ID**: `13-TP1A.220624.014-20260713`
-- **DSH 聊天会话 ID**: `session-23050fe1-983d-4054-a37b-fe3e5b5a14b2`（标题：`[02_prepare] 真机规格采集 · VILLAON V671NP (villaon/VILLAON-V671NP · 13-TP1A.220624.014-20260713)`）
+- **ROM Build ID**: `16-TP1A.220624.014-20260713`
+- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=13, odm=13, vendor_dlkm=13`
+- **DSH 聊天会话 ID**: `session-23050fe1-983d-4054-a37b-fe3e5b5a14b2`（标题：`[02_prepare] 真机规格采集 · VILLAON V671NP (villaon/VILLAON-V671NP · 16-TP1A.220624.014-20260713)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
 ---
