@@ -2,7 +2,7 @@
   "id": 29,
   "buildId": "13-TP1A.220905.001-20250912",
   "deviceId": 23,
-  "configId": 23,
+  "configId": 43,
   "osVersion": "13-TP1A.220905.001-20250912",
   "buildDate": "20250912",
   "securityPatch": "2025-09-01",
@@ -12,5 +12,5 @@
   "extra": {
     "comment": "由 cdh unpack prepare 从 1862_sign_RMX3823_11_F_OTA_2160_all_Mfq9LH_10010111.zip (vendor/build.prop) 自动生成。"
   },
-  "updatedAt": "2026-11-06 02:47:41"
+  "updatedAt": "2026-11-19T03:21:09Z"
 }

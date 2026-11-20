@@ -1,0 +1,8 @@
+;; Infinix-X6876 (MT6878 / GRF 34.0 + Android 16):
+;; 1) 允许 hal_neuralnetworks_default 注册 IComposerExt/default 并允许 surfaceflinger 查找
+;; 2) 允许 system_server 读取传音 vendor_display_property
+(typeattributeset hal_mtk_composer_ext_client (surfaceflinger_{{vers}}))
+(typeattributeset hal_mtk_composer_ext_server (hal_neuralnetworks_default))
+(allow surfaceflinger_{{vers}} mtk_hal_composer_ext_service (service_manager (find)))
+(allow hal_neuralnetworks_default mtk_hal_composer_ext_service (service_manager (add find)))
+(allow system_server_{{vers}} vendor_display_property (file (read getattr map open)))

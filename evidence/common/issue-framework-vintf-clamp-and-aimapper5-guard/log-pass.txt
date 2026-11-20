@@ -1,0 +1,79 @@
+# source: out/devices/tmp/verify_pass4/ASUS_AI2205_13-TKQ1.220928.001-20240229.log
+=== VERIFY REPORT ===
+{
+  "spec": "ASUS_AI2205_13-TKQ1.220928.001-20240229",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/ASUS_AI2205_13-TKQ1.220928.001-20240229/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{b6ad490 u0 Android System}\n  mFocusedApp=ActivityRecord{4913d26 u0 com.asus.launcher/com.android.launcher3.uioverrides.QuickstepLauncher t7}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "299",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 8.1,
+    "peak": 245,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/ASUS_AI2205_13-TKQ1.220928.001-20240229.png",
+    "pngBytes": 66063
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===
+
+# source: out/devices/tmp/verify_pass5/GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825.log
+=== VERIFY REPORT ===
+{
+  "spec": "GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{ceed3c u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher}\n  mFocusedApp=ActivityRecord{49540926 u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher t6}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "329",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 124.85,
+    "peak": 255,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825.png",
+    "pngBytes": 4768067
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===
+--- key runtime lines ---
+L232: [   52.445166][  T254] servicemanager: Caller(pid=7225,uid=10149,sid=u:r:untrusted_app:s0:c149,c256,c512,c768) Found android.hardware.graphics.allocator.IAllocator/default in device VINTF manifest.
+L240: [   52.455733][  T254] servicemanager: Caller(pid=7225,uid=10149,sid=u:r:untrusted_app:s0:c149,c256,c512,c768) Found android.hardware.graphics.allocator.IAllocator/default in device VINTF manifest.
+L246:    52.879939][  T254] servicemanager: Caller(pid=7225,uid=10149,sid=u:r:untrusted_app:s0:c149,c256,c512,c768) Found mapper/mediatek in device VINTF manifest.
+L259: [   53.019767][  T254] servicemanager: Caller(pid=4726,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.ims.IMtkRadioExIms/slot1 in the VINTF manifest. No alternative instances declared in VINTF.
+L262: [   53.042510][  T254] servicemanager: Caller(pid=4726,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.ims.IMtkRadioExIms/slot2 in the VINTF manifest. No alternative instances declared in VINTF.

@@ -1,0 +1,8 @@
+{
+  "build-prop-sets": {
+    "persist.radio.multisim.config": "none",
+    "ro.radio.noril": "yes",
+    "ro.sf.lcd_density": "280",
+    "ro.surface_flinger.supports_background_blur": "0"
+  }
+}

@@ -1,0 +1,11 @@
+vendor.nxp.nxpnfc_aidl.INxpNfc/default
+vendor.sprd.hardware.cplog_svc.ILogTransportInductor/default
+vendor.sprd.hardware.cplog_svc.ISysLogControl/default
+vendor.sprd.hardware.enhance.IEnhance/default
+vendor.sprd.hardware.hdcp.IHDCP/default
+vendor.sprd.hardware.network.INetworkControl/default
+vendor.sprd.hardware.tool.IToolControl/default
+vendor.sprd.hardware.trusty.ITrustyClientProvider/default
+vendor.sprd.hardware.unipnp.IUnionPnP/default
+vendor.unisoc.hardware.ai_engine.IAIEngineControl/default
+vendor.zte.ldd.cmd.IZteLddCmd/default

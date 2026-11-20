@@ -11,6 +11,9 @@
 static const char CDH_FMA_POLYFILL[] =
     "#ifndef fma\n"
     "#define fma(a, b, c) ((a) * (b) + (c))\n"
+    "#endif\n"
+    "#ifndef ldexp\n"
+    "#define ldexp(x, e) ((x) * exp2(float(e)))\n"
     "#endif\n";
 
 static const char *cdh_find_glsl_310_or_320_es(const char *s, size_t len) {

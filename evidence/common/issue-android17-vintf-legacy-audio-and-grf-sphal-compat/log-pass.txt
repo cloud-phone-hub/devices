@@ -1,0 +1,48 @@
+# 1. PME110 apply-profile 与 09_build_vendor 收口摘要
+==> [apply-profile] 一键反补完成: oppo/PME110
+  - module/config.json: 收口 redirect 规则（含 dir /vendor/apex -> /mnt/vendorpatch/vendor/apex，共 27/32 条）
+  - hardware/config.json: 补齐占位承载 HAL android.hardware.neuralnetworks@1.0
+  - vendor/etc: 生成/对齐 etc/cdh_nn_placeholders.txt（含 IEngineer/default、IOplusProject/default 共 100 条）
+==> [09_build_vendor]
+  - [delete] vendor/bin/hw/android.hardware.audio.effect.service-aidl.legacy 等 3 项冲突基底件已裁剪
+  - 补齐占位 HAL 厂商服务 SELinux 授权 69 条
+  - [vintf] vendor/etc/vintf/manifest/cdh_vendor_placeholders.xml: 合成 87 个 HAL 包共 133 项占位 AIDL 声明
+  - [ok] patch.img -> out/devices/dist/oppo/PME110/16-BP2A.250605.015-20260923/patch.img（448.0 MiB，sha256 b146b19c6d87）
+
+# 2. cdh_redirect 跨代 GRF SP-HAL 预热日志
+[    2.085135][   T11] cdh_redirect: 跨代 GRF vendor（原厂缺 /vendor/lib64/android.hardware.graphics.common-V7-ndk.so），SP-HAL 标准库走载体
+[    2.101201][   T11] cdh_redirect: maps 缓存预热完成：ready=70/79
+
+# 3. PME110 280s 冷启动亮屏验收结果（verify-pme110-pass.log）
+{
+  "spec": "PME110_16-BP2A.250605.015-20260923",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/PME110_16-BP2A.250605.015-20260923/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{3fcd7ae u0 com.android.settings/com.android.settings.Settings}\n  mFocusedApp=ActivityRecord{65934518 u0 com.android.settings/.Settings t4}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "550",
+  "vnc": {
+    "width": 1280,
+    "height": 2772,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 55.27,
+    "peak": 255,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/PME110_16-BP2A.250605.015-20260923.png",
+    "pngBytes": 665246
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}

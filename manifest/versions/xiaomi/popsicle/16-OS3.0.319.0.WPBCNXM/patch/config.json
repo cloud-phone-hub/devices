@@ -1,0 +1,4 @@
+{
+  "note": "16-OS3.0.319.0.WPBCNXM（BP2A）官方 plat_sepolicy.cil 未声明 netlink_route_socket:nlmsg 与 system:firmware_load，已由 09_build_vendor（pruneUnsupportedPlatformPermsCIL，#264）自动裁剪全部 4 条规则，本版本覆盖为空列表避免 11_build_patch 重复命中校验失败。",
+  "vendor-cil-rewrite": []
+}

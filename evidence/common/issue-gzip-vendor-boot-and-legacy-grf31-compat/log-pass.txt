@@ -1,0 +1,53 @@
+=== 修复后验证通过日志：alps/mt6765 (TCL-T610.zip, 12-SP1A.210812.016-20250306) ===
+
+--- 1. Go 单元测试 ---
+$ cd /Volumes/work/cloud-phone-hub/agent && TMPDIR=/Volumes/work/cloud-phone-hub/out/devices/tmp GOCACHE=/Volumes/work/cloud-phone-hub/out/agent/gocache /opt/homebrew/bin/go test -count=1 ./modules/pipeline/internal/fsimg ./modules/pipeline/stages/05_build_boot ./modules/pipeline/stages/06_build_vendor_boot
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/fsimg	0.446s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/05_build_boot	0.601s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/06_build_vendor_boot	3.039s
+
+$ cd /Volumes/work/cloud-phone-hub/agent && TMPDIR=/Volumes/work/cloud-phone-hub/out/devices/tmp GOCACHE=/Volumes/work/cloud-phone-hub/out/agent/gocache /opt/homebrew/bin/go test -count=1 ./modules/pipeline/stages/02_prepare ./modules/pipeline/stages/09_build_vendor
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	1.377s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	1.503s
+
+--- 2. 构建日志节选 (task-1431 / task-1487) ---
+[add] vendor/lib64/android.hardware.graphics.composer@2.1.so <- 厂商 vendor/lib64/android.hardware.graphics.composer@2.1.so（composer@2.4 运行期 HIDL 接口库自动补齐）
+[add] vendor/lib64/android.hardware.graphics.composer@2.2.so <- 官方 system:/system/lib64/android.hardware.graphics.composer@2.2.so（composer@2.4 运行期 HIDL 接口库自动补齐）
+[add] vendor/lib64/android.hardware.graphics.composer@2.3.so <- 官方 system:/system/lib64/android.hardware.graphics.composer@2.3.so（composer@2.4 运行期 HIDL 接口库自动补齐）
+[add] vendor/lib64/android.hardware.graphics.composer@2.4.so <- 官方 system:/system/lib64/android.hardware.graphics.composer@2.4.so（composer@2.4 运行期 HIDL 接口库自动补齐）
+写 out/devices/devices/alps/mt6765/12-SP1A.210812.016-20250306/vendor/etc/vibrator_config.xml（0644）
+补齐低代际跨代 SELinux 兼容映射与缺失服务类型 14 条
+
+--- 3. verify_boot.py 冷启动验收结果 (task-1491, 耗时 ~87s) ---
+{
+  "spec": "mt6765_12-SP1A.210812.016-20250306",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/mt6765_12-SP1A.210812.016-20250306/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{93d154f u0 Android System}\n  mFocusedApp=ActivityRecord{2e2c51f u0 com.google.android.setupwizard/.user.WelcomeActivity t5}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "powervr",
+  "serviceCount": "330",
+  "vnc": {
+    "width": 720,
+    "height": 1600,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 124.06,
+    "peak": 243,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/mt6765_12-SP1A.210812.016-20250306.png",
+    "pngBytes": 45642
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}

@@ -1,0 +1,22 @@
+# 1. 跨代 GRF SP-HAL 标准库错配导致 dlopen 失败与 zygote64 pc=0x0 崩溃（修复 cdh_maps_sphal_vndk_compat 前）
+11-20 03:52:58.989  1460  1460 E cdh-gpu : egl: dlopen 基座库失败: dlopen failed: cannot locate symbol "_ZNSt3__113__hash_memoryEPKvm" referenced by "/vendor/lib64/libunwindstack.so"...
+11-20 03:52:58.991  1460  1460 E cdh-gpu : gles1: dlopen 基座库失败: dlopen failed: cannot locate symbol "_ZNSt3__113__hash_memoryEPKvm" referenced by "/vendor/lib64/egl/libGLES_mali.so"...
+11-20 03:52:58.995  1460  1460 E cdh-gpu : gles2: dlopen 基座库失败: dlopen failed: cannot locate symbol "_ZNSt3__113__hash_memoryEPKvm" referenced by "/vendor/lib64/egl/libGLES_mali.so"...
+
+# 2. 未屏蔽 /vendor/apex 时 apexd 挂载孤儿 vendor.*.apex 暴露 unlabeled 服务阻塞 system_server
+[    6.231608][  T162] apexd-bootstrap: Scanning /vendor/apex for pre-installed ApexFiles
+[    6.258641][  T162] apexd-bootstrap: Found pre-installed APEX /vendor/apex/vendor.oplus.chre.continuity.apex
+[    6.258643][  T162] apexd-bootstrap: Found pre-installed APEX /vendor/apex/vendor.oplus.hardware.engineer.aidl.apex
+[    6.258645][  T162] apexd-bootstrap: Found pre-installed APEX /vendor/apex/vendor.oplus.hardware.stability.aidl.apex
+[    6.258647][  T162] apexd-bootstrap: Found pre-installed APEX /vendor/apex/vendor.oplus.hmbird.apex
+[   19.707594][    T1] init: Could not start service 'oplus.oplus_project-1' as part of class 'hal': File /apex/vendor.oplus.hardware.stability.aidl/bin/hw/vendor.oplus.hardware.stability.oplus_project-V1-service(labeled "u:object_r:unlabeled:s0") has incorrect label or no domain transition from u:r:init:s0 to another SELinux domain defined.
+[   19.833109][    T1] init: Command 'start oplus.engineer-1-0' action=boot (/apex/vendor.oplus.hardware.engineer.aidl/etc/oplus-engineer-apex.rc:14) took 17ms and failed: Could not start service: File /apex/vendor.oplus.hardware.engineer.aidl/bin/hw/vendor-oplus-hardware-engineer-V1-service(labeled "u:object_r:unlabeled:s0") has incorrect label or no domain transition from u:r:init:s0 to another SELinux domain defined.
+[  282.795254][  T305] servicemanager: Caller(pid=712,uid=1000,sid=u:r:system_server:s0) Since 'vendor.oplus.hardware.engineer.IEngineer/default' could not be found trying to start it as a lazy AIDL service.
+[  282.800450][    T1] init: Control message: Could not ctl.interface_start for 'aidl/vendor.oplus.hardware.engineer.IEngineer/default' from pid: 305 (/system/bin/servicemanager): File /apex/vendor.oplus.hardware.engineer.aidl/bin/hw/vendor-oplus-hardware-engineer-V1-service(labeled "u:object_r:unlabeled:s0") has incorrect label
+
+# 3. 屏蔽 /vendor/apex 并启用 neuralnetworks 后因缺 cdh_vendor_placeholders.xml 被 servicemanager 拒绝注册
+[   20.083555][    T1] init: starting service 'vendor.neuralnetworks-default'...
+[   20.107761][  T260] servicemanager: Caller(pid=578,uid=1000,sid=u:r:hal_neuralnetworks_default:s0) Could not find vendor.dolby.dvs.IDvs/default in the VINTF manifest. No alternative instances declared in VINTF.
+[   20.451952][  T260] servicemanager: Caller(pid=578,uid=1000,sid=u:r:hal_neuralnetworks_default:s0) Could not find vendor.oplus.hardware.engineer.IEngineer/default in the VINTF manifest. No alternative instances declared in VINTF.
+[  317.876045][  T259] servicemanager: Caller(pid=662,uid=1000,sid=u:r:system_server:s0) Since 'vendor.oplus.hardware.engineer.IEngineer/default' could not be found trying to start it as a lazy AIDL service.
+{"spec": "PME110_16-BP2A.250605.015-20260923", "bootCompleted": false, "failReason": "timeout after 280s (bootanim='')", "serviceCount": "367", "passed": false}

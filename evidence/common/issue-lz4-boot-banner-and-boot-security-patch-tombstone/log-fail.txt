@@ -1,0 +1,24 @@
+=== 1. CM5 LZ4 boot.img 版本串字面量截断告警 ===
+[warn] 从 boot.img 提取内核版本失败（可忽略）: uname-version 缺少 #version 段: "Linux version 6.12.38-android16-5-gb575a0b6e647-ab14355190-4k (kleaf@build-host) (A<"
+devices/manifest/versions/tecno/TECNO-CM5/16-BP2A.250605.031.A3-20260324/kernel/config.json:
+{
+  "uname": "",
+  "version": ""
+}
+
+=== 2. UpsertVersion 产生 null 墓碑导致 ro.vendor.boot_security_patch 丢失 ===
+devices/manifest/versions/tecno/TECNO-CM5/16-BP2A.250605.031.A3-20260324/vendor/config.json:
+{
+  "build-prop-sets": {
+    "ro.vendor.boot_security_patch": null
+  }
+}
+
+=== 3. 运行态 vendor.keymint-default SIGABRT -> vold 死等 keystore2 ===
+[    6.044423][    T1] init: starting service 'vendor.keymint-default'...
+[    6.108316][    T1] init: Service 'vendor.keymint-default' (pid 332) received signal 6
+...
+[    6.477507][    T1] init: starting service 'keystore2'...
+[    6.667997][  T291] servicemanager: Caller(pid=309,uid=0,sid=u:r:vold:s0) Since 'android.system.keystore2.IKeystoreService/default' could not be found trying to start it as a lazy AIDL service.
+"failReason": "timeout after 280s (bootanim='')",
+"passed": false

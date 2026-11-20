@@ -1,3 +1,9 @@
 {
-  "fstab": "mt6878"
+  "fstab": "mt6878",
+  "cmdline": [
+    "androidboot.product.hardware.sku=X6876-OP",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ]
 }

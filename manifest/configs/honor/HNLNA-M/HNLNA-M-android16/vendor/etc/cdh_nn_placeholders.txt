@@ -1,0 +1,12 @@
+vendor.honor.hardware.hncall.IHnCall/slot1
+vendor.honor.hardware.hncall.IHnCall/slot2
+vendor.honor.hardware.hnradio.IRadio/slot1
+vendor.honor.hardware.hnradio.IRadio/slot2
+vendor.honor.hardware.radio_radar.IRadioRadar/slot1
+vendor.honor.hardware.radio_radar.IRadioRadar/slot2
+vendor.honor.hardware.securecamera.ISecureCamera/default
+vendor.honor.hardware.tp.ITouchscreen/default
+vendor.honor.hardware.wifi.supplicant.ISupplicantHonor/default
+vendor.mediatek.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default
+vendor.mediatek.hardware.engineermode.IEmds/default
+vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist/default

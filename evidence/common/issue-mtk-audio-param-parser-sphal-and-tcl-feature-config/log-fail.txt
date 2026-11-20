@@ -1,0 +1,131 @@
+==== 现象 1：tcl/ericanppro 首次冷启动 fail1（audio_vendor_parameter_parser 缺少 libc++ 与 vendor_file/sphal 访问权限） ====
+=== VERIFY REPORT ===
+{
+  "spec": "ericanppro_15-AP3A.240905.015.A2-20250702",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/ericanppro_15-AP3A.240905.015.A2-20250702/1/qemu.log",
+  "bootCompleted": false,
+  "failReason": "timeout after 210s (bootanim='')",
+  "bootanim": "",
+  "topActivity": "mCurrentFocus=null\n  mFocusedApp=null",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "241",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 23.79,
+    "peak": 170,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/ericanppro_15-AP3A.240905.015.A2-20250702.png",
+    "pngBytes": 190762
+  },
+  "postBootCompleted": "",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot",
+  "passed": false
+}
+
+11-19 13:23:02.128   683   683 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": library "libc++.so" not found: needed by main executable
+11-19 13:23:03.544   734   734 I libimsma_adapt: mtk-brm-commit-id:8783a29bae0ae84a456239f3212f27bdafa94c91
+11-19 13:23:03.548   734   734 I libimsma_adapt: mtk-brm-change-id:Iee598bb542f5de895a4b71649fbc79b2d93bc3de
+11-19 13:23:03.548   734   734 I libimsma_adapt: mtk-brm-merge-id:none
+11-19 13:23:03.626   753   753 I emdlogger: mtk-brm-commit-id:ed77b4169a658d6792b6b2171e763c29030f8b5d
+11-19 13:23:03.630   753   753 I emdlogger: mtk-brm-change-id:If98466acde12144859f893a2a057c19be3ed05ed
+11-19 13:23:03.630   753   753 I emdlogger: mtk-brm-merge-id:none
+11-19 13:23:07.140   939   939 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": library "libc++.so" not found: needed by main executable
+11-19 13:23:12.223  1300  1300 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": library "libc++.so" not found: needed by main executable
+11-19 13:23:17.269  1472  1472 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": library "libc++.so" not found: needed by main executable
+11-19 13:23:22.254  2123  2123 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": library "libc++.so" not found: needed by main executable
+11-19 13:23:27.235  2548  2548 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": library "libc++.so" not found: needed by main executable
+11-19 13:23:32.264  2576  2576 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": library "libc++.so" not found: needed by main executable
+11-19 13:23:37.288  2601  2601 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": library "libc++.so" not found: needed by main executable
+11-19 13:23:42.308  2626  2626 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": library "libc++.so" not found: needed by main executable
+
+[  209.000753][    T1] cdh_redirect: forward /mnt/vendorpatch/vendor/bin/hw/cdh_audio_parameter_parser
+[  209.002538][    T1] cdh_redirect: forward /mnt/vendorpatch/vendor/bin/hw/cdh_audio_parameter_parser
+[  209.003610][    T1] init: starting service 'audio_parameter_parser_service'...
+[  209.062258][    T1] init: ... started service 'audio_parameter_parser_service' has pid 3417
+[  209.063468][ T3417] cdh_redirect: forward /mnt/vendorpatch/vendor/bin/hw/cdh_audio_parameter_parser
+[  209.065682][ T3417] cdh_redirect: forward /mnt/vendorpatch/vendor/bin/hw/cdh_audio_parameter_parser
+[  209.094943][  T222] type=1400 audit(1795094778.548:3168): avc:  denied  { read } for  comm="cdh_audio_param" name="bin" dev="vdc" ino=18 scontext=u:r:audio_vendor_parameter_parser:s0 tcontext=u:object_r:vendor_file:s0 tclass=dir permissive=0
+
+==== 现象 2：tcl/ericanppro 修复 #1 后次次冷启动 fail2（缺 default_feature_config.json 触发 AppBootManagerService NPE + RescueParty） ====
+=== VERIFY REPORT ===
+{
+  "spec": "ericanppro_15-AP3A.240905.015.A2-20250702",
+  "index": "2",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/ericanppro_15-AP3A.240905.015.A2-20250702/2/qemu.log",
+  "bootCompleted": false,
+  "failReason": "RescueParty fatal reboot triggered",
+  "bootanim": "",
+  "topActivity": "",
+  "roHardwareEgl": "",
+  "roHardwareVulkan": "",
+  "serviceCount": "25",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 23.57,
+    "peak": 170,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/ericanppro_15-AP3A.240905.015.A2-20250702.png",
+    "pngBytes": 193667
+  },
+  "postBootCompleted": "",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,rescueparty",
+  "passed": false
+}
+
+01-01 00:00:23.563 E/SystemServiceRegistry(  835): 	at com.android.server.am.ActivityManagerService.addErrorToDropBox(ActivityManagerService.java:10239)
+01-01 00:00:23.563 E/SystemServiceRegistry(  835): 	at com.android.server.am.ActivityManagerService.handleApplicationWtfInner(ActivityManagerService.java:10039)
+01-01 00:00:23.563 E/SystemServiceRegistry(  835): 	at com.android.server.am.ActivityManagerService$16.run(ActivityManagerService.java:10002)
+11-19 13:51:32.457 D/AidlBufferPool(  788): bufferpool2 0xb4000076e2378768 : 0(0 size) total buffers - 0(0 size) used buffers - 17/19 (recycle/alloc) - 2/18 (fetch/transfer)
+11-19 13:51:32.457 D/SystemServerTiming(  835): sendUserStartBroadcast
+11-19 13:51:32.457 D/AidlBufferPool(  788): bufferpool2 0xb4000076e23799e8 : 0(0 size) total buffers - 0(0 size) used buffers - 11/15 (recycle/alloc) - 4/14 (fetch/transfer)
+11-19 13:51:32.457 D/AidlBufferPool(  788): bufferpool2 0xb4000076e237df48 : 0(0 size) total buffers - 0(0 size) used buffers - 7/10 (recycle/alloc) - 3/9 (fetch/transfer)
+11-19 13:51:32.517 E/BOOTPROF(  835): 	at com.android.server.ServiceThread.run(ServiceThread.java:46)
+11-19 13:51:32.517 E/BOOTPROF(  835): Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+11-19 13:51:32.517 E/BOOTPROF(  835): 	at libcore.io.Linux.open(Native Method)
+11-19 13:51:32.517 E/BOOTPROF(  835): 	at libcore.io.ForwardingOs.open(ForwardingOs.java:563)
+11-19 13:51:32.517 E/BOOTPROF(  835): 	at libcore.io.BlockGuardOs.open(BlockGuardOs.java:274)
+11-19 13:51:32.517 E/BOOTPROF(  835): 	at libcore.io.IoBridge.open(IoBridge.java:560)
+11-19 13:51:32.517 E/BOOTPROF(  835): 	... 18 more
+11-19 13:51:32.517 W/ActivityManager(  835): Slow operation: 135ms so far, now at startProcess: building log message
+11-19 13:51:32.517 I/ActivityManager(  835): Start proc 2849:com.tct.reducesar/u0a180 for added application com.tct.reducesar
+11-19 13:51:32.517 W/ActivityManager(  835): Slow operation: 135ms so far, now at startProcess: starting to update pids map
+11-19 13:51:32.517 W/ActivityManager(  835): Slow operation: 135ms so far, now at startProcess: done updating pids map
+11-19 13:51:32.517 W/ActivityManager(  835): Slow operation: 130ms so far, now at startProcess: asking zygote to start proc
+11-19 13:51:32.517 W/ActivityManager(  835): com.android.se inode == 0 (b/152760674)
+11-19 13:51:32.517 W/ActivityManager(  835): com.google.android.gms inode == 0 (b/152760674)
+11-19 13:51:32.518 D/nativeloader( 2770): Configuring clns-shared-8 for other apk /apex/com.android.cellbroadcast/priv-app/GoogleCellBroadcastServiceModule@351111000/GoogleCellBroadcastServiceModule.apk. target_sdk_version=35, uses_libraries=, library_path=/apex/com.android.cellbroadcast/priv-app/GoogleCellBroadcastServiceModule@351111000/lib/arm64:/apex/com.android.cellbroadcast/priv-app/GoogleCellBroadcastServiceModule@351111000/GoogleCellBroadcastServiceModule.apk!/lib/arm64-v8a:/system/lib64:/system_ext/lib64, permitted_path=/data:/mnt/expand:/data/user_de/0/com.google.android.cellbroadcastservice:/apex/com.android.cellbroadcast/priv-app/GoogleCellBroadcastServiceModule@351111000:/system/lib64:/system_ext/lib64
+11-19 13:51:32.521 D/nativeloader( 2770): InitApexLibraries:
+11-19 13:51:32.521 D/nativeloader( 2770):   com_android_adservices: libhpke_jni.so:libtflite_support_classifiers_native.so
+11-19 13:51:32.521 D/nativeloader( 2770):   com_android_appsearch: libicing.so
+11-19 13:51:32.521 D/nativeloader( 2770):   com_android_art: libartservice.so
+11-19 13:51:32.521 D/nativeloader( 2770):   com_android_btservices: libbluetooth_jni.so
+11-19 13:51:32.521 D/nativeloader( 2770):   com_android_conscrypt: libjavacrypto.so
+11-19 13:51:32.521 D/nativeloader( 2770):   com_android_mediaprovider: libpdfclient.so
+11-19 13:51:32.521 D/nativeloader( 2770):   com_android_ondevicepersonalization: libfcp_cpp_dep_jni.so:libfcp_hpke_jni.so
+11-19 13:51:32.521 D/nativeloader( 2770):   com_android_os_statsd: libstats_jni.so
+11-19 13:51:32.521 D/nativeloader( 2770):   com_android_tethering: libandroid_net_connectivity_com_android_net_module_util_jni.so:libcrypto.so:libframework-connectivity-jni.so:libframework-connectivity-tiramisu-jni.so:libmainlinecronet.126.0.6423.0.so:libservice-connectivity.so:libservice-thread-jni.so:libssl.so
+11-19 13:52:17.385 W/RescueParty( 4944): Attempting rescue level ALL_DEVICE_CONFIG_RESET
+11-19 13:52:26.404 W/RescueParty( 5582): Attempting rescue level WARM_REBOOT
+11-19 13:52:33.614 I/ShutdownThread( 6192): Rebooting, reason: RescueParty
+11-19 13:52:33.851 I/MobileLogD(  764): userShutDown for: 1RescueParty
+11-19 13:52:33.854 D/EMDLOGGER1(  759): sys.shutdown.requested = 1RescueParty

@@ -1,0 +1,47 @@
+=== 修复后验证通过日志：tcl/asterpro (13-TP1A.220624.014-20251217) ===
+
+--- 1. Go 单元测试 ---
+$ cd /Volumes/work/cloud-phone-hub/agent && TMPDIR=/Volumes/work/cloud-phone-hub/out/devices/tmp GOCACHE=/Volumes/work/cloud-phone-hub/out/agent/gocache /opt/homebrew/bin/go test -count=1 ./modules/pipeline/stages/09_build_vendor
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	1.276s
+
+--- 2. 09_build_vendor 构建日志节选 (img/vendor-log.txt) ---
+402:==> [步骤 9.6] 对齐平台 SELinux 策略版本: 202404 -> 33.0（匹配厂商固件 mapping/33.0.cil）
+403-    替换官方 plat_pub_versioned.cil 并补齐跨代兼容 typeattribute 179 项
+404-    同步官方公共/系统可见 vendor 属性类型 19 项
+405-    同步官方自定义 vendor 服务类型 62 项（service_contexts 变更=true）
+...
+442:    补齐官方 mapping 映射引用未声明类型 1 项
+
+--- 3. verify_boot.py 冷启动验收结果 (out/devices/tmp/verify_batch_c/asterpro_13-TP1A.220624.014-20251217.log) ---
+{
+  "spec": "asterpro_13-TP1A.220624.014-20251217",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/asterpro_13-TP1A.220624.014-20251217/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{c8743bc u0 NotificationShade}\n  mFocusedApp=ActivityRecord{9069577 u0 com.tcl.android.launcher/.uioverrides.TclQuickstepLauncher t7}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "336",
+  "vnc": {
+    "width": 720,
+    "height": 1612,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 91.14,
+    "peak": 215,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/asterpro_13-TP1A.220624.014-20251217.png",
+    "pngBytes": 315495
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}

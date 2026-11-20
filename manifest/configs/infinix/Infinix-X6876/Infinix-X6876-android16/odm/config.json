@@ -1,5 +1,13 @@
 {
-  "build-prop-sets": {},
+  "build-prop-sets": {
+    "ro.odm.product.cpu.abilist": "arm64-v8a",
+    "ro.odm.product.cpu.abilist32": "",
+    "ro.odm.product.cpu.abilist64": "arm64-v8a",
+    "ro.odm.tr_keyfilevfy.support": "0",
+    "ro.vendor.tran.anti.crack.p7.support": "0",
+    "ro.vendor.tran.rpmb.factory.enable.support": "0",
+    "ro.vendor.tran.rpmb.support": "0"
+  },
   "build-prop-unsets": [],
   "buildProp": "/etc/build.prop",
   "img": "odm_a.img"

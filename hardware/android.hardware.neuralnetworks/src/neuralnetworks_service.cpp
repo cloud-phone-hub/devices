@@ -133,6 +133,10 @@ class DeviceService : public BnDevice {
 };
 
 constexpr const char* kLogTag = "cdh-nn";
+constexpr const char* kComposerExtDescriptor =
+    "vendor.mediatek.hardware.composer_ext.IComposerExt";
+constexpr const char* kComposerExtInterfaceHash =
+    "022c728d211f6b275911cb0602f6641afdd275d6";
 
 void* OnPlaceholderCreate(void* /*args*/) {
   return reinterpret_cast<void*>(1);
@@ -147,6 +151,91 @@ binder_status_t OnPlaceholderTransact(AIBinder* /*binder*/,
   return STATUS_UNKNOWN_TRANSACTION;
 }
 
+// MTK Android 16 SurfaceFlinger / libcomposer_ext 无空指针保护或循环重试连接 IComposerExt/default：
+// 实现最小协议兼容响应（asyncPerform / syncPerform / registerClient / interfaceVersion / interfaceHash）。
+// 其中 syncPerform op=1 (checkOpCodeMax) 返回 err=0 与 8 字节 int64_t(1) 作为最大支持 opCode，
+// 其余 op>1 返回 err=-38 (-ENOSYS)，使客户端优雅降级、不再访问空 retData。
+binder_status_t OnComposerExtTransact(AIBinder* /*binder*/,
+                                      transaction_code_t code,
+                                      const AParcel* in,
+                                      AParcel* out) {
+  if (code == FIRST_CALL_TRANSACTION + 0) {
+    // asyncPerform (oneway)
+    return STATUS_OK;
+  }
+  if (out == nullptr) {
+    return STATUS_BAD_VALUE;
+  }
+  ndk::ScopedAStatus ok = ndk::ScopedAStatus::ok();
+  if (code == FIRST_CALL_TRANSACTION + 1) {
+    int64_t hnd = 0;
+    int64_t op = 0;
+    if (in != nullptr) {
+      AParcel_readInt64(in, &hnd);
+      AParcel_readInt64(in, &op);
+    }
+    __android_log_print(ANDROID_LOG_INFO, kLogTag,
+                        "IComposerExt syncPerform hnd=%lld op=%lld",
+                        static_cast<long long>(hnd),
+                        static_cast<long long>(op));
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeInt32(out, 1);  // non-null parcelable
+    const int32_t start_pos = AParcel_getDataPosition(out);
+    AParcel_writeInt32(out, 0);  // size placeholder
+    if (op == 1) {
+      // checkOpCodeMax -> err=0, retData=int64_t(1) (8 bytes LE)
+      AParcel_writeInt32(out, 0);
+      const int8_t max_op_le[8] = {1, 0, 0, 0, 0, 0, 0, 0};
+      AParcel_writeByteArray(out, max_op_le, 8);
+    } else {
+      // unsupported extension op -> err=-ENOSYS (-38), empty retData
+      AParcel_writeInt32(out, -38);
+      AParcel_writeInt32(out, 0);
+    }
+    AParcel_writeInt32(out, 0);  // retFds length = 0
+    AParcel_writeInt32(out, 0);  // retHandles length = 0
+    const int32_t end_pos = AParcel_getDataPosition(out);
+    AParcel_setDataPosition(out, start_pos);
+    AParcel_writeInt32(out, end_pos - start_pos);
+    AParcel_setDataPosition(out, end_pos);
+    return STATUS_OK;
+  }
+  if (code == FIRST_CALL_TRANSACTION + 2) {
+    // registerClient -> parcelable_registerClient { ret=0, hnd=1 }
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeInt32(out, 1);   // non-null parcelable
+    AParcel_writeInt32(out, 16);  // parcelable total size (bytes)
+    AParcel_writeInt32(out, 0);   // ret = 0 (OK)
+    AParcel_writeInt64(out, 1);   // valid non-zero client handle
+    return STATUS_OK;
+  }
+  if (code == 0xffffff) {
+    // getInterfaceVersion -> 1
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeInt32(out, 1);
+    return STATUS_OK;
+  }
+  if (code == 0xfffffe) {
+    // getInterfaceHash
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeString(out, kComposerExtInterfaceHash, 40);
+    return STATUS_OK;
+  }
+  return STATUS_UNKNOWN_TRANSACTION;
+}
+
 std::string TrimWhitespace(const std::string& input) {
   const std::string::size_type first = input.find_first_not_of(" \t\r\n");
   if (first == std::string::npos) {
@@ -157,10 +246,10 @@ std::string TrimWhitespace(const std::string& input) {
 }
 
 // 按行读取配置文件（C stdio，避免依赖高版本 libc++ iostream），为未实现接口注册空桩。
-void RegisterPlaceholdersFromFile(const char* path) {
+int RegisterPlaceholdersFromFile(const char* path) {
   FILE* input = fopen(path, "re");
   if (input == nullptr) {
-    return;
+    return 0;
   }
   static std::map<std::string, AIBinder_Class*> class_cache;
   static std::vector<AIBinder*> placeholder_refs;
@@ -188,9 +277,12 @@ void RegisterPlaceholdersFromFile(const char* path) {
     auto it = class_cache.find(descriptor);
     if (it == class_cache.end()) {
       it = class_cache.emplace(descriptor, nullptr).first;
+      const AIBinder_Class_onTransact transact_fn =
+          (descriptor == kComposerExtDescriptor) ? OnComposerExtTransact
+                                                 : OnPlaceholderTransact;
       it->second = AIBinder_Class_define(
           it->first.c_str(), OnPlaceholderCreate, OnPlaceholderDestroy,
-          OnPlaceholderTransact);
+          transact_fn);
       if (it->second == nullptr) {
         __android_log_print(ANDROID_LOG_WARN, kLogTag,
                             "define placeholder binder class failed: %s",
@@ -198,7 +290,9 @@ void RegisterPlaceholdersFromFile(const char* path) {
         class_cache.erase(it);
         continue;
       }
-      AIBinder_Class_disableInterfaceTokenHeader(it->second);
+      if (descriptor != kComposerExtDescriptor) {
+        AIBinder_Class_disableInterfaceTokenHeader(it->second);
+      }
     }
     AIBinder* binder = AIBinder_new(it->second, nullptr);
     if (binder == nullptr) {
@@ -225,6 +319,7 @@ void RegisterPlaceholdersFromFile(const char* path) {
   __android_log_print(ANDROID_LOG_INFO, kLogTag,
                       "registered %d nn placeholder services from %s",
                       registered, path);
+  return registered;
 }
 
 }  // namespace
@@ -240,11 +335,18 @@ int main(int argc, char** argv) {
   ABinderProcess_setThreadPoolMaxThreadCount(4);
   ABinderProcess_startThreadPool();
   auto svc = ndk::SharedRefBase::make<DeviceService>();
-  if (AServiceManager_addService(svc->asBinder().get(),
-                                 serviceName.c_str()) != EX_NONE) {
+  const binder_exception_t main_status =
+      AServiceManager_addService(svc->asBinder().get(), serviceName.c_str());
+  if (main_status != EX_NONE) {
+    __android_log_print(ANDROID_LOG_WARN, kLogTag,
+                        "primary NN service %s not registered (%d); continuing for placeholders",
+                        serviceName.c_str(), main_status);
+  }
+  const int placeholders =
+      RegisterPlaceholdersFromFile("/vendor/etc/cdh_nn_placeholders.txt");
+  if (main_status != EX_NONE && placeholders <= 0) {
     return 2;
   }
-  RegisterPlaceholdersFromFile("/vendor/etc/cdh_nn_placeholders.txt");
   ABinderProcess_joinThreadPool();
   return 0;
 }

@@ -1,0 +1,9 @@
+{
+  "fstab": "mt6768",
+  "cmdline": [
+    "androidboot.product.hardware.sku=vinca_cn",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ]
+}

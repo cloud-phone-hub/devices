@@ -92,6 +92,8 @@ int cdh_gpu_maps_builtin_count(void);
 const char *cdh_gpu_maps_builtin_virt(int idx);
 /* 查询 /vendor 标准库在底层只读分区是否存在 4KB 对齐原件（未就绪时异步入队）。 */
 bool cdh_maps_has_real_file(const char *path);
+/* 判断原厂 /vendor 与载体 /mnt/vendorpatch/vendor 的图形 NDK 代际是否一致。 */
+bool cdh_maps_sphal_vndk_compat(void);
 
 int cdh_namei_hook_init(void);
 void cdh_namei_hook_exit(void);

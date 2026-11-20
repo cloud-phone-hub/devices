@@ -1,0 +1,22 @@
+=== 1. Go Pipeline Unit Tests ===
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	1.296s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	1.466s
+
+=== 2. Infinix-X6876 Cold Boot Verification with OnComposerExtTransact & GRF mapper ===
+{
+  "spec": "Infinix-X6876_14-UP1A.231005.007-20260423",
+  "bootCompleted": true,
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{5d0c3ff u0 NotificationShade}\n  mFocusedApp=ActivityRecord{164035136 u0 com.transsion.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher t6}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "vnc": {
+    "width": 1088,
+    "height": 2436,
+    "meanBrightness": 56.88,
+    "peak": 235
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "passed": true
+}

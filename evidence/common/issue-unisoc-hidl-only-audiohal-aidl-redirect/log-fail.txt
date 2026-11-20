@@ -1,0 +1,119 @@
+# source: out/devices/tmp/verify_pass2/G1130_13-UP1A.231005.007-20260511.log
+=== VERIFY REPORT ===
+{
+  "spec": "G1130_13-UP1A.231005.007-20260511",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/G1130_13-UP1A.231005.007-20260511/1/qemu.log",
+  "bootCompleted": false,
+  "failReason": "timeout after 210s (bootanim='')",
+  "bootanim": "",
+  "topActivity": "mCurrentFocus=null\n  mFocusedApp=null",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "202",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 0.0,
+    "peak": 0,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/G1130_13-UP1A.231005.007-20260511.png",
+    "pngBytes": 7685
+  },
+  "postBootCompleted": "",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot",
+  "passed": false
+}
+
+--- matched lines ---
+L45: 11-19 03:39:21.713  2949  2949 F DEBUG   :       #00 pc 0000000000064d60  /system/lib64/libaudioflinger.so (android::AudioFlinger::AudioFlinger()+2704) (BuildId: 2047db8682cb843b4eba7713ad297380)
+L46: 11-19 03:39:21.713  2949  2949 F DEBUG   :       #01 pc 000000000001029c  /system/bin/audioserver (main.cfi+236) (BuildId: 2b0343354e389724a8fab20cf0138f8a)
+L48: 11-19 03:39:26.698  3000  3000 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 3000 (audioserver), pid 3000 (audioserver)
+L55: 11-19 03:39:26.721  3007  3007 F DEBUG   : Cmdline: /system/bin/audioserver
+L56: 11-19 03:39:26.721  3007  3007 F DEBUG   : pid: 3000, tid: 3000, name: audioserver  >>> /system/bin/audioserver <<<
+L60: 11-19 03:39:26.721  3007  3007 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000
+L73: 11-19 03:39:26.721  3007  3007 F DEBUG   :       #00 pc 0000000000064d60  /system/lib64/libaudioflinger.so (android::AudioFlinger::AudioFlinger()+2704) (BuildId: 2047db8682cb843b4eba7713ad297380)
+L74: 11-19 03:39:26.721  3007  3007 F DEBUG   :       #01 pc 000000000001029c  /system/bin/audioserver (main.cfi+236) (BuildId: 2b0343354e389724a8fab20cf0138f8a)
+L76: 11-19 03:39:31.726  3040  3040 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 3040 (audioserver), pid 3040 (audioserver)
+L83: 11-19 03:39:31.750  3047  3047 F DEBUG   : Cmdline: /system/bin/audioserver
+L84: 11-19 03:39:31.750  3047  3047 F DEBUG   : pid: 3040, tid: 3040, name: audioserver  >>> /system/bin/audioserver <<<
+L88: 11-19 03:39:31.750  3047  3047 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000
+L101: 11-19 03:39:31.750  3047  3047 F DEBUG   :       #00 pc 0000000000064d60  /system/lib64/libaudioflinger.so (android::AudioFlinger::AudioFlinger()+2704) (BuildId: 2047db8682cb843b4eba7713ad297380)
+L102: 11-19 03:39:31.750  3047  3047 F DEBUG   :       #01 pc 000000000001029c  /system/bin/audioserver (main.cfi+236) (BuildId: 2b0343354e389724a8fab20cf0138f8a)
+L104: 11-19 03:39:36.713  3115  3115 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 3115 (audioserver), pid 3115 (audioserver)
+L111: 11-19 03:39:36.734  3124  3124 F DEBUG   : Cmdline: /system/bin/audioserver
+L112: 11-19 03:39:36.734  3124  3124 F DEBUG   : pid: 3115, tid: 3115, name: audioserver  >>> /system/bin/audioserver <<<
+L116: 11-19 03:39:36.734  3124  3124 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000
+L129: 11-19 03:39:36.734  3124  3124 F DEBUG   :       #00 pc 0000000000064d60  /system/lib64/libaudioflinger.so (android::AudioFlinger::AudioFlinger()+2704) (BuildId: 2047db8682cb843b4eba7713ad297380)
+L130: 11-19 03:39:36.734  3124  3124 F DEBUG   :       #01 pc 000000000001029c  /system/bin/audioserver (main.cfi+236) (BuildId: 2b0343354e389724a8fab20cf0138f8a)
+L132: 11-19 03:39:41.729  3165  3165 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 3165 (audioserver), pid 3165 (audioserver)
+L139: 11-19 03:39:41.752  3172  3172 F DEBUG   : Cmdline: /system/bin/audioserver
+L140: 11-19 03:39:41.752  3172  3172 F DEBUG   : pid: 3165, tid: 3165, name: audioserver  >>> /system/bin/audioserver <<<
+L144: 11-19 03:39:41.752  3172  3172 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000
+L157: 11-19 03:39:41.752  3172  3172 F DEBUG   :       #00 pc 0000000000064d60  /system/lib64/libaudioflinger.so (android::AudioFlinger::AudioFlinger()+2704) (BuildId: 2047db8682cb843b4eba7713ad297380)
+L158: 11-19 03:39:41.752  3172  3172 F DEBUG   :       #01 pc 000000000001029c  /system/bin/audioserver (main.cfi+236) (BuildId: 2b0343354e389724a8fab20cf0138f8a)
+
+# source: out/devices/tmp/verify-ARW-r1.log
+=== VERIFY REPORT ===
+{
+  "spec": "ARW_13-QP1A.190711.020-20250620",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/ARW_13-QP1A.190711.020-20250620/1/qemu.log",
+  "bootCompleted": false,
+  "failReason": "timeout after 210s (bootanim='')",
+  "bootanim": "",
+  "topActivity": "mCurrentFocus=null\n  mFocusedApp=null",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "203",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 23.84,
+    "peak": 170,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/ARW_13-QP1A.190711.020-20250620.png",
+    "pngBytes": 186279
+  },
+  "postBootCompleted": "",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot",
+  "passed": false
+}
+
+--- matched lines ---
+L45: 11-19 06:04:34.496  3369  3369 F DEBUG   :       #00 pc 0000000000064f70  /system/lib64/libaudioflinger.so (android::AudioFlinger::AudioFlinger()+2720) (BuildId: ffadb563100edfb1d99088b98f30fe03)
+L46: 11-19 06:04:34.496  3369  3369 F DEBUG   :       #01 pc 000000000001029c  /system/bin/audioserver (main.cfi+236) (BuildId: 8a7740d87cc1b0ff3a87eb4f5b5d8703)
+L48: 11-19 06:04:39.459  3418  3418 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 3418 (audioserver), pid 3418 (audioserver)
+L55: 11-19 06:04:39.489  3425  3425 F DEBUG   : Cmdline: /system/bin/audioserver
+L56: 11-19 06:04:39.489  3425  3425 F DEBUG   : pid: 3418, tid: 3418, name: audioserver  >>> /system/bin/audioserver <<<
+L60: 11-19 06:04:39.489  3425  3425 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000
+L73: 11-19 06:04:39.489  3425  3425 F DEBUG   :       #00 pc 0000000000064f70  /system/lib64/libaudioflinger.so (android::AudioFlinger::AudioFlinger()+2720) (BuildId: ffadb563100edfb1d99088b98f30fe03)
+L74: 11-19 06:04:39.489  3425  3425 F DEBUG   :       #01 pc 000000000001029c  /system/bin/audioserver (main.cfi+236) (BuildId: 8a7740d87cc1b0ff3a87eb4f5b5d8703)
+L76: 11-19 06:04:44.492  3472  3472 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 3472 (audioserver), pid 3472 (audioserver)
+L83: 11-19 06:04:44.518  3480  3480 F DEBUG   : Cmdline: /system/bin/audioserver
+L84: 11-19 06:04:44.518  3480  3480 F DEBUG   : pid: 3472, tid: 3472, name: audioserver  >>> /system/bin/audioserver <<<
+L88: 11-19 06:04:44.518  3480  3480 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000
+L101: 11-19 06:04:44.518  3480  3480 F DEBUG   :       #00 pc 0000000000064f70  /system/lib64/libaudioflinger.so (android::AudioFlinger::AudioFlinger()+2720) (BuildId: ffadb563100edfb1d99088b98f30fe03)
+L102: 11-19 06:04:44.518  3480  3480 F DEBUG   :       #01 pc 000000000001029c  /system/bin/audioserver (main.cfi+236) (BuildId: 8a7740d87cc1b0ff3a87eb4f5b5d8703)
+L104: 11-19 06:04:49.498  3548  3548 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 3548 (audioserver), pid 3548 (audioserver)
+L111: 11-19 06:04:49.526  3555  3555 F DEBUG   : Cmdline: /system/bin/audioserver
+L112: 11-19 06:04:49.526  3555  3555 F DEBUG   : pid: 3548, tid: 3548, name: audioserver  >>> /system/bin/audioserver <<<
+L116: 11-19 06:04:49.526  3555  3555 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000
+L129: 11-19 06:04:49.526  3555  3555 F DEBUG   :       #00 pc 0000000000064f70  /system/lib64/libaudioflinger.so (android::AudioFlinger::AudioFlinger()+2720) (BuildId: ffadb563100edfb1d99088b98f30fe03)
+L130: 11-19 06:04:49.526  3555  3555 F DEBUG   :       #01 pc 000000000001029c  /system/bin/audioserver (main.cfi+236) (BuildId: 8a7740d87cc1b0ff3a87eb4f5b5d8703)

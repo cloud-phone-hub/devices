@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TCL T614SP (tcl/asterpro) Codec2 Store 实例与组件登记（rank=1 确保软解优先，且保证每个 store 非空） -->
+<media-c2-config>
+    <instance binary="android.hardware.media.c2-mediatek" store="default1"/>
+    <instance binary="vendor.dolby.media.c2-default-service-dax" store="default9"/>
+    <component store="default1" name="c2.mtk.avc.decoder" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.avc.decoder.secure" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.hevc.decoder" kind="decoder" domain="video" media-type="video/hevc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.hevc.decoder.secure" kind="decoder" domain="video" media-type="video/hevc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.vp9.decoder" kind="decoder" domain="video" media-type="video/x-vnd.on2.vp9" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.vp9.decoder.secure" kind="decoder" domain="video" media-type="video/x-vnd.on2.vp9" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.mpeg4.decoder" kind="decoder" domain="video" media-type="video/mp4v-es" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.h263.decoder" kind="decoder" domain="video" media-type="video/3gpp" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.heif.decoder" kind="decoder" domain="video" media-type="image/vnd.android.heic" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.avc.encoder" kind="encoder" domain="video" media-type="video/avc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.avc.encoder.secure" kind="encoder" domain="video" media-type="video/avc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.hevc.encoder" kind="encoder" domain="video" media-type="video/hevc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.heif.encoder" kind="encoder" domain="video" media-type="image/vnd.android.heic" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.mp3.decoder" kind="decoder" domain="audio" media-type="audio/mpeg" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.ape.decoder" kind="decoder" domain="audio" media-type="audio/ape" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.alac.decoder" kind="decoder" domain="audio" media-type="audio/alac" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.adpcm-ms.decoder" kind="decoder" domain="audio" media-type="audio/x-adpcm-ms" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.adpcm-dvi-ima.decoder" kind="decoder" domain="audio" media-type="audio/x-adpcm-dvi-ima" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default9" name="c2.dolby.eac3.decoder" kind="decoder" domain="audio" media-type="audio/eac3" rank="1" aliases="" profiles="" levels=""/>
+</media-c2-config>

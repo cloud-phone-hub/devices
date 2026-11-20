@@ -1,0 +1,285 @@
+=== VERIFY REPORT ===
+{
+  "spec": "RMX5112_13-TP1A.220905.001-20251025",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/RMX5112_13-TP1A.220905.001-20251025/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{dc2ef98 u0 OplusChargeAnimationView}\n  mFocusedApp=ActivityRecord{e0ea7e5 u0 com.android.launcher/.Launcher t5}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "395",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 194.04,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/RMX5112_13-TP1A.220905.001-20251025.png",
+    "pngBytes": 3306836
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===
+[  109.164271][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=media_communication scontext=u:r:pioneer:s0 tcontext=u:object_r:media_communication_service:s0 tclass=service_manager permissive=1
+[  109.169780][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=media_metrics scontext=u:r:pioneer:s0 tcontext=u:object_r:media_metrics_service:s0 tclass=service_manager permissive=1
+[  109.177404][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=media_projection scontext=u:r:pioneer:s0 tcontext=u:object_r:media_projection_service:s0 tclass=service_manager permissive=1
+[  109.182651][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=media_resource_monitor scontext=u:r:pioneer:s0 tcontext=u:object_r:media_session_service:s0 tclass=service_manager permissive=1
+[  109.189583][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=media_router scontext=u:r:pioneer:s0 tcontext=u:object_r:media_router_service:s0 tclass=service_manager permissive=1
+[  109.196676][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=meminfo scontext=u:r:pioneer:s0 tcontext=u:object_r:meminfo_service:s0 tclass=service_manager permissive=1
+[  109.200417][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=memtrack.proxy scontext=u:r:pioneer:s0 tcontext=u:object_r:memtrackproxy_service:s0 tclass=service_manager permissive=1
+[  109.208103][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=midi scontext=u:r:pioneer:s0 tcontext=u:object_r:midi_service:s0 tclass=service_manager permissive=1
+[  109.212070][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=multimediaDaemon scontext=u:r:pioneer:s0 tcontext=u:object_r:multimediaDaemon_service:s0 tclass=service_manager permissive=1
+[  109.217151][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=nearby scontext=u:r:pioneer:s0 tcontext=u:object_r:nearby_service:s0 tclass=service_manager permissive=1
+[  109.221959][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=netd scontext=u:r:pioneer:s0 tcontext=u:object_r:netd_service:s0 tclass=service_manager permissive=1
+[  109.228437][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=netd_listener scontext=u:r:pioneer:s0 tcontext=u:object_r:netd_listener_service:s0 tclass=service_manager permissive=1
+[  109.232605][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=netpolicy scontext=u:r:pioneer:s0 tcontext=u:object_r:netpolicy_service:s0 tclass=service_manager permissive=1
+[  109.236120][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=netstats scontext=u:r:pioneer:s0 tcontext=u:object_r:netstats_service:s0 tclass=service_manager permissive=1
+[  109.243999][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=network_management scontext=u:r:pioneer:s0 tcontext=u:object_r:network_management_service:s0 tclass=service_manager permissive=1
+[  109.249383][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=network_score scontext=u:r:pioneer:s0 tcontext=u:object_r:network_score_service:s0 tclass=service_manager permissive=1
+[  109.252058][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=network_stack scontext=u:r:pioneer:s0 tcontext=u:object_r:network_stack_service:s0 tclass=service_manager permissive=1
+[  109.257372][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=network_time_update_service scontext=u:r:pioneer:s0 tcontext=u:object_r:network_time_update_service:s0 tclass=service_manager permissive=1
+[  109.264974][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=network_watchlist scontext=u:r:pioneer:s0 tcontext=u:object_r:network_watchlist_service:s0 tclass=service_manager permissive=1
+[  109.268813][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=networking_control scontext=u:r:pioneer:s0 tcontext=u:object_r:networking_control_service:s0 tclass=service_manager permissive=1
+[  109.275429][  T213] SELinux: avc:  denied  { find } for pid=6517 uid=0 name=wifi scontext=u:r:pioneer:s0 tcontext=u:object_r:wifi_service:s0 tclass=service_manager permissive=1
+[  109.279543][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=neuronsystem scontext=u:r:pioneer:s0 tcontext=u:object_r:neuronsystem_service:s0 tclass=service_manager permissive=1
+[  109.284176][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=notification scontext=u:r:pioneer:s0 tcontext=u:object_r:notification_service:s0 tclass=service_manager permissive=1
+[  109.289259][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=ocvt_system_service scontext=u:r:pioneer:s0 tcontext=u:object_r:opluscvt_service:s0 tclass=service_manager permissive=1
+[  109.296158][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oiface scontext=u:r:pioneer:s0 tcontext=u:object_r:oiface_service:s0 tclass=service_manager permissive=1
+[  109.299405][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=olc scontext=u:r:pioneer:s0 tcontext=u:object_r:olc_service:s0 tclass=service_manager permissive=1
+[  109.303223][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=on_device_intelligence scontext=u:r:pioneer:s0 tcontext=u:object_r:on_device_intelligence_service:s0 tclass=service_manager permissive=1
+[  109.311013][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=ondevicepersonalization_system_service scontext=u:r:pioneer:s0 tcontext=u:object_r:ondevicepersonalization_system_service:s0 tclass=service_manager permissive=1
+[  109.315250][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=operator scontext=u:r:pioneer:s0 tcontext=u:object_r:operator_service:s0 tclass=service_manager permissive=1
+[  109.318329][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplus_accesscontrol scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_accesscontrol_service:s0 tclass=service_manager permissive=1
+[  109.325263][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplus_app_cache_service scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_app_cache_service:s0 tclass=service_manager permissive=1
+[  109.329231][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplus_app_data_service scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_app_data_service:s0 tclass=service_manager permissive=1
+[  109.333803][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplus_battery_stats_service scontext=u:r:pioneer:s0 tcontext=u:object_r:spmservice:s0 tclass=service_manager permissive=1
+[  109.341793][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplus_freeze scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_freeze_service:s0 tclass=service_manager permissive=1
+[  109.349674][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplus_media_control scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_media_control_service:s0 tclass=service_manager permissive=1
+[  109.356788][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplus_perf_service scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_perf_service:s0 tclass=service_manager permissive=1
+[  109.361960][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplus_systemanropt_service scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_systemanropt_service:s0 tclass=service_manager permissive=1
+[  109.367590][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplus_tile scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_tile_service:s0 tclass=service_manager permissive=1
+[  109.371614][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplus_vrr_service scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_vrr_service:s0 tclass=service_manager permissive=1
+[  109.375557][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=opluscustomize scontext=u:r:pioneer:s0 tcontext=u:object_r:opluscustomize_service:s0 tclass=service_manager permissive=1
+[  109.379708][  T227] type=1400 audit(1735660909.626:1906): avc:  denied  { call } for  comm="service" scontext=u:r:pioneer:s0 tcontext=u:r:bpfloader:s0 tclass=binder permissive=1
+[  109.379956][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplusdevicepolicy scontext=u:r:pioneer:s0 tcontext=u:object_r:oplusdevicepolicy_service:s0 tclass=service_manager permissive=1
+[  109.387447][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplusdynamicvsync scontext=u:r:pioneer:s0 tcontext=u:object_r:oplusdynamicvsync_service:s0 tclass=service_manager permissive=1
+[  109.393270][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplushypermode scontext=u:r:pioneer:s0 tcontext=u:object_r:oplushypermode_service:s0 tclass=service_manager permissive=1
+[  109.399742][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplusnetd scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_netd_service:s0 tclass=service_manager permissive=1
+[  109.406202][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplusnetworkmanagement scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_network_management_service:s0 tclass=service_manager permissive=1
+[  109.414157][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplusoiface scontext=u:r:pioneer:s0 tcontext=u:object_r:oplusoiface_service:s0 tclass=service_manager permissive=1
+[  109.421354][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=opluspreodex scontext=u:r:pioneer:s0 tcontext=u:object_r:otadexopt_service:s0 tclass=service_manager permissive=1
+[  109.427214][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplusscreenmode scontext=u:r:pioneer:s0 tcontext=u:object_r:oplusscreenmode_service:s0 tclass=service_manager permissive=1
+[  109.431464][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=oplusstoragemanagerservice scontext=u:r:pioneer:s0 tcontext=u:object_r:oplusstoragemanagerservice_service:s0 tclass=service_manager permissive=1
+[  109.436447][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=opluswifikitservice scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_wifi_kit_service:s0 tclass=service_manager permissive=1
+[  109.442895][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=osensemanager scontext=u:r:pioneer:s0 tcontext=u:object_r:osense_service:s0 tclass=service_manager permissive=1
+[  109.447983][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=ostats_pullerd scontext=u:r:pioneer:s0 tcontext=u:object_r:ostats_pullerd_service:s0 tclass=service_manager permissive=1
+[  109.451391][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=ostats_tpd scontext=u:r:pioneer:s0 tcontext=u:object_r:ostats_tpd_service:s0 tclass=service_manager permissive=1
+[  109.455686][  T227] type=1400 audit(1735660909.702:1907): avc:  denied  { call } for  comm="service" scontext=u:r:pioneer:s0 tcontext=u:r:traced_probes:s0 tclass=binder permissive=1
+[  109.456329][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=overlay scontext=u:r:pioneer:s0 tcontext=u:object_r:overlay_service:s0 tclass=service_manager permissive=1
+[  109.464684][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=pac_proxy scontext=u:r:pioneer:s0 tcontext=u:object_r:pac_proxy_service:s0 tclass=service_manager permissive=1
+[  109.468628][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=package_native scontext=u:r:pioneer:s0 tcontext=u:object_r:package_native_service:s0 tclass=service_manager permissive=1
+[  109.475769][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=people scontext=u:r:pioneer:s0 tcontext=u:object_r:people_service:s0 tclass=service_manager permissive=1
+[  109.482359][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=performance_hint scontext=u:r:pioneer:s0 tcontext=u:object_r:hint_service:s0 tclass=service_manager permissive=1
+[  109.488142][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=permission scontext=u:r:pioneer:s0 tcontext=u:object_r:permission_service:s0 tclass=service_manager permissive=1
+[  109.492370][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=permission_checker scontext=u:r:pioneer:s0 tcontext=u:object_r:permission_checker_service:s0 tclass=service_manager permissive=1
+[  109.497474][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=permissionmgr scontext=u:r:pioneer:s0 tcontext=u:object_r:permissionmgr_service:s0 tclass=service_manager permissive=1
+[  109.500727][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=pinner scontext=u:r:pioneer:s0 tcontext=u:object_r:pinner_service:s0 tclass=service_manager permissive=1
+[  109.504945][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=platform_compat scontext=u:r:pioneer:s0 tcontext=u:object_r:platform_compat_service:s0 tclass=service_manager permissive=1
+[  109.512555][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=power scontext=u:r:pioneer:s0 tcontext=u:object_r:power_service:s0 tclass=service_manager permissive=1
+[  109.518515][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=power_hal_mgr_service scontext=u:r:pioneer:s0 tcontext=u:object_r:mtk_power_hal_mgr_service:s0 tclass=service_manager permissive=1
+[  109.524283][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=power_monitor scontext=u:r:pioneer:s0 tcontext=u:object_r:power_monitor:s0 tclass=service_manager permissive=1
+[  109.528824][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=powerstats scontext=u:r:pioneer:s0 tcontext=u:object_r:powerstats_service:s0 tclass=service_manager permissive=1
+[  109.533333][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=print scontext=u:r:pioneer:s0 tcontext=u:object_r:print_service:s0 tclass=service_manager permissive=1
+[  109.536332][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=processinfo scontext=u:r:pioneer:s0 tcontext=u:object_r:processinfo_service:s0 tclass=service_manager permissive=1
+[  109.543025][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=procstats scontext=u:r:pioneer:s0 tcontext=u:object_r:procstats_service:s0 tclass=service_manager permissive=1
+[  109.547259][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=profiling_service scontext=u:r:pioneer:s0 tcontext=u:object_r:profiling_service:s0 tclass=service_manager permissive=1
+[  109.550529][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=reboot_readiness scontext=u:r:pioneer:s0 tcontext=u:object_r:reboot_readiness_service:s0 tclass=service_manager permissive=1
+[  109.556557][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=recovery scontext=u:r:pioneer:s0 tcontext=u:object_r:recovery_service:s0 tclass=service_manager permissive=1
+[  109.561025][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=remote_provisioning scontext=u:r:pioneer:s0 tcontext=u:object_r:remote_provisioning_service:s0 tclass=service_manager permissive=1
+[  109.564226][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=resources scontext=u:r:pioneer:s0 tcontext=u:object_r:resources_manager_service:s0 tclass=service_manager permissive=1
+[  109.569720][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=restrictions scontext=u:r:pioneer:s0 tcontext=u:object_r:restrictions_service:s0 tclass=service_manager permissive=1
+[  109.576730][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=role scontext=u:r:pioneer:s0 tcontext=u:object_r:role_service:s0 tclass=service_manager permissive=1
+[  109.583203][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=rollback scontext=u:r:pioneer:s0 tcontext=u:object_r:rollback_service:s0 tclass=service_manager permissive=1
+[  109.587877][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=runtime scontext=u:r:pioneer:s0 tcontext=u:object_r:runtime_service:s0 tclass=service_manager permissive=1
+[  109.592040][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=safety_center scontext=u:r:pioneer:s0 tcontext=u:object_r:safety_center_service:s0 tclass=service_manager permissive=1
+[  109.596781][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=scheduling_policy scontext=u:r:pioneer:s0 tcontext=u:object_r:scheduling_policy_service:s0 tclass=service_manager permissive=1
+[  109.600384][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=sdk_sandbox scontext=u:r:pioneer:s0 tcontext=u:object_r:sdk_sandbox_service:s0 tclass=service_manager permissive=1
+[  109.605136][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=search scontext=u:r:pioneer:s0 tcontext=u:object_r:search_service:s0 tclass=service_manager permissive=1
+[  109.612385][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=sec_key_att_app_id_provider scontext=u:r:pioneer:s0 tcontext=u:object_r:sec_key_att_app_id_provider_service:s0 tclass=service_manager permissive=1
+[  109.619127][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=secrecy scontext=u:r:pioneer:s0 tcontext=u:object_r:secrecy_service:s0 tclass=service_manager permissive=1
+[  109.630181][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=secure_element scontext=u:r:pioneer:s0 tcontext=u:object_r:secure_element_service:s0 tclass=service_manager permissive=1
+[  109.635321][  T227] type=1400 audit(1735660909.882:1908): avc:  denied  { call } for  comm="service" scontext=u:r:pioneer:s0 tcontext=u:r:secure_element:s0:c44,c260,c512,c768 tclass=binder permissive=1
+[  109.635595][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=security_permission scontext=u:r:pioneer:s0 tcontext=u:object_r:security_permission_service:s0 tclass=service_manager permissive=1
+[  109.643856][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=security_state scontext=u:r:pioneer:s0 tcontext=u:object_r:security_state_service:s0 tclass=service_manager permissive=1
+[  109.647761][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=sensitive_content_protection_service scontext=u:r:pioneer:s0 tcontext=u:object_r:sensitive_content_protection_service:s0 tclass=service_manager permissive=1
+[  109.652815][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=sensor_privacy scontext=u:r:pioneer:s0 tcontext=u:object_r:sensor_privacy_service:s0 tclass=service_manager permissive=1
+[  109.657819][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=sensorservice scontext=u:r:pioneer:s0 tcontext=u:object_r:sensorservice_service:s0 tclass=service_manager permissive=1
+[  109.663935][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=serial scontext=u:r:pioneer:s0 tcontext=u:object_r:serial_service:s0 tclass=service_manager permissive=1
+[  109.667343][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=servicediscovery scontext=u:r:pioneer:s0 tcontext=u:object_r:servicediscovery_service:s0 tclass=service_manager permissive=1
+[  109.671617][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=settings scontext=u:r:pioneer:s0 tcontext=u:object_r:settings_service:s0 tclass=service_manager permissive=1
+[  109.676477][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=shortcut scontext=u:r:pioneer:s0 tcontext=u:object_r:shortcut_service:s0 tclass=service_manager permissive=1
+[  109.680511][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=slice scontext=u:r:pioneer:s0 tcontext=u:object_r:slice_service:s0 tclass=service_manager permissive=1
+[  109.684411][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=soundtrigger scontext=u:r:pioneer:s0 tcontext=u:object_r:voiceinteraction_service:s0 tclass=service_manager permissive=1
+[  109.691260][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=soundtrigger_middleware scontext=u:r:pioneer:s0 tcontext=u:object_r:soundtrigger_middleware_service:s0 tclass=service_manager permissive=1
+[  109.695592][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=speech_recognition scontext=u:r:pioneer:s0 tcontext=u:object_r:speech_recognition_service:s0 tclass=service_manager permissive=1
+[  109.699664][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=stamp_service scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_stamp_service:s0 tclass=service_manager permissive=1
+[  109.702791][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=stats scontext=u:r:pioneer:s0 tcontext=u:object_r:stats_service:s0 tclass=service_manager permissive=1
+[  109.711943][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=statsbootstrap scontext=u:r:pioneer:s0 tcontext=u:object_r:statsbootstrap_service:s0 tclass=service_manager permissive=1
+[  109.712269][  T227] type=1400 audit(1735660909.958:1909): avc:  denied  { call } for  comm="service" scontext=u:r:pioneer:s0 tcontext=u:r:statsd:s0 tclass=binder permissive=1
+[  109.718918][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=statscompanion scontext=u:r:pioneer:s0 tcontext=u:object_r:statscompanion_service:s0 tclass=service_manager permissive=1
+[  109.734673][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=statsmanager scontext=u:r:pioneer:s0 tcontext=u:object_r:statsmanager_service:s0 tclass=service_manager permissive=1
+[  109.750395][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=statusbar scontext=u:r:pioneer:s0 tcontext=u:object_r:statusbar_service:s0 tclass=service_manager permissive=1
+[  109.759019][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=storage_healthinfo scontext=u:r:pioneer:s0 tcontext=u:object_r:storage_healthinfo_service:s0 tclass=service_manager permissive=1
+[  109.771816][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=storagecompressdedup scontext=u:r:pioneer:s0 tcontext=u:object_r:storagecompressdedup_service:s0 tclass=service_manager permissive=1
+[  109.778188][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=storaged scontext=u:r:pioneer:s0 tcontext=u:object_r:storaged_service:s0 tclass=service_manager permissive=1
+[  109.785695][  T227] type=1400 audit(1735660910.030:1910): avc:  denied  { call } for  comm="service" scontext=u:r:pioneer:s0 tcontext=u:r:storaged:s0 tclass=binder permissive=1
+[  109.786426][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=storagestats scontext=u:r:pioneer:s0 tcontext=u:object_r:storagestats_service:s0 tclass=service_manager permissive=1
+[  109.793214][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=suspend_control scontext=u:r:pioneer:s0 tcontext=u:object_r:system_suspend_control_service:s0 tclass=service_manager permissive=1
+[  109.798630][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=suspend_control_internal scontext=u:r:pioneer:s0 tcontext=u:object_r:system_suspend_control_internal_service:s0 tclass=service_manager permissive=1
+[  109.806514][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=system_config scontext=u:r:pioneer:s0 tcontext=u:object_r:system_config_service:s0 tclass=service_manager permissive=1
+[  109.812363][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=system_server_dumper scontext=u:r:pioneer:s0 tcontext=u:object_r:system_server_dumper_service:s0 tclass=service_manager permissive=1
+[  109.818676][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=system_update scontext=u:r:pioneer:s0 tcontext=u:object_r:system_update_service:s0 tclass=service_manager permissive=1
+[  109.827052][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=telecom scontext=u:r:pioneer:s0 tcontext=u:object_r:telecom_service:s0 tclass=service_manager permissive=1
+[  109.831285][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=telephony.registry scontext=u:r:pioneer:s0 tcontext=u:object_r:registry_service:s0 tclass=service_manager permissive=1
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=2.0 flush=0.0 update=0.0 end=0.0 总=2.1 ms
+[  109.838521][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=testharness scontext=u:r:pioneer:s0 tcontext=u:object_r:testharness_service:s0 tclass=service_manager permissive=1
+[  109.846096][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=tethering scontext=u:r:pioneer:s0 tcontext=u:object_r:tethering_service:s0 tclass=service_manager permissive=1
+[  109.850079][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=textclassification scontext=u:r:pioneer:s0 tcontext=u:object_r:textclassification_service:s0 tclass=service_manager permissive=1
+[  109.858590][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+[  109.863467][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=texttospeech scontext=u:r:pioneer:s0 tcontext=u:object_r:texttospeech_service:s0 tclass=service_manager permissive=1
+[  109.866931][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=theia scontext=u:r:pioneer:s0 tcontext=u:object_r:theia_service:s0 tclass=service_manager permissive=1
+[  109.872944][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=thermalservice scontext=u:r:pioneer:s0 tcontext=u:object_r:thermal_service:s0 tclass=service_manager permissive=1
+[  109.876957][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=time_detector scontext=u:r:pioneer:s0 tcontext=u:object_r:timedetector_service:s0 tclass=service_manager permissive=1
+[  109.884518][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=time_zone_detector scontext=u:r:pioneer:s0 tcontext=u:object_r:timezonedetector_service:s0 tclass=service_manager permissive=1
+[  109.889999][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=tracing.proxy scontext=u:r:pioneer:s0 tcontext=u:object_r:tracingproxy_service:s0 tclass=service_manager permissive=1
+[  109.896643][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=transparency scontext=u:r:pioneer:s0 tcontext=u:object_r:transparency_service:s0 tclass=service_manager permissive=1
+[  109.900712][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=trust scontext=u:r:pioneer:s0 tcontext=u:object_r:trust_service:s0 tclass=service_manager permissive=1
+[  109.905645][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=tsa_bpf_service scontext=u:r:pioneer:s0 tcontext=u:object_r:tsabpf_service:s0 tclass=service_manager permissive=1
+[  109.911661][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=uimode scontext=u:r:pioneer:s0 tcontext=u:object_r:uimode_service:s0 tclass=service_manager permissive=1
+[  109.915561][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=updatelock scontext=u:r:pioneer:s0 tcontext=u:object_r:updatelock_service:s0 tclass=service_manager permissive=1
+[  109.919213][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=uri_grants scontext=u:r:pioneer:s0 tcontext=u:object_r:uri_grants_service:s0 tclass=service_manager permissive=1
+[  109.929197][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=usage scontext=u:r:pioneer:s0 tcontext=u:object_r:usage_service:s0 tclass=service_manager permissive=1
+[  109.938528][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=usagestats scontext=u:r:pioneer:s0 tcontext=u:object_r:usagestats_service:s0 tclass=service_manager permissive=1
+[  109.942953][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=usb scontext=u:r:pioneer:s0 tcontext=u:object_r:usb_service:s0 tclass=service_manager permissive=1
+[  109.946716][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=user scontext=u:r:pioneer:s0 tcontext=u:object_r:user_service:s0 tclass=service_manager permissive=1
+[  109.953067][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=vcn_management scontext=u:r:pioneer:s0 tcontext=u:object_r:vcn_management_service:s0 tclass=service_manager permissive=1
+[  109.960639][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=vendor.mediatek.framework.mtksf_ext.IMtkSF_ext/default scontext=u:r:pioneer:s0 tcontext=u:object_r:mtk_hal_sf_service:s0 tclass=service_manager permissive=1
+[  109.965552][ T6479] audit: audit_lost=786 audit_rate_limit=5 audit_backlog_limit=64
+[  109.967441][ T6479] audit: rate limit exceeded
+[  109.969074][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=vendor.mediatek.hardware.mtkradioex.data.IMtkRadioExData/slot1 scontext=u:r:pioneer:s0 tcontext=u:object_r:hal_radio_service:s0 tclass=service_manager permissive=1
+[  109.983771][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=vendor.oplus.hardware.commondcs.ICommonDcsAidlHalService/default scontext=u:r:pioneer:s0 tcontext=u:object_r:commondcs_aidl_service:s0 tclass=service_manager permissive=1
+[  109.991137][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=vibrator_manager scontext=u:r:pioneer:s0 tcontext=u:object_r:vibrator_manager_service:s0 tclass=service_manager permissive=1
+[  109.994313][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=virtualdevice scontext=u:r:pioneer:s0 tcontext=u:object_r:virtual_device_service:s0 tclass=service_manager permissive=1
+[  110.000234][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=virtualdevice_native scontext=u:r:pioneer:s0 tcontext=u:object_r:virtual_device_native_service:s0 tclass=service_manager permissive=1
+[  110.005737][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=vodata scontext=u:r:pioneer:s0 tcontext=u:object_r:mtk_vodata_service:s0 tclass=service_manager permissive=1
+[  110.010918][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=vold scontext=u:r:pioneer:s0 tcontext=u:object_r:vold_service:s0 tclass=service_manager permissive=1
+[  110.015229][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=vpn_management scontext=u:r:pioneer:s0 tcontext=u:object_r:vpn_management_service:s0 tclass=service_manager permissive=1
+[  110.019018][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=wallpaper scontext=u:r:pioneer:s0 tcontext=u:object_r:wallpaper_service:s0 tclass=service_manager permissive=1
+[  110.024304][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=wearable_sensing scontext=u:r:pioneer:s0 tcontext=u:object_r:wearable_sensing_service:s0 tclass=service_manager permissive=1
+[  110.028507][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=webviewupdate scontext=u:r:pioneer:s0 tcontext=u:object_r:webviewupdate_service:s0 tclass=service_manager permissive=1
+[  110.033067][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=wifinl80211 scontext=u:r:pioneer:s0 tcontext=u:object_r:wifinl80211_service:s0 tclass=service_manager permissive=1
+[  110.043248][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=wifip2p scontext=u:r:pioneer:s0 tcontext=u:object_r:wifip2p_service:s0 tclass=service_manager permissive=1
+[  110.048882][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=wifiscanner scontext=u:r:pioneer:s0 tcontext=u:object_r:wifiscanner_service:s0 tclass=service_manager permissive=1
+[  110.054409][  T213] SELinux: avc:  denied  { find } for pid=6479 uid=2000 name=window scontext=u:r:pioneer:s0 tcontext=u:object_r:window_service:s0 tclass=service_manager permissive=1
+[  110.062218][    T1] init: starting service 'netdiag'...
+[  110.064350][    T1] init: Could not create socket 'netdiag': Failed to bind socket 'netdiag': Permission denied
+[  110.067144][    T1] init: ... started service 'netdiag' has pid 6526
+[  110.067704][ T6526] cdh_rewrite_forward: 901 callbacks suppressed
+[  110.067706][ T6526] cdh_redirect: forward /mnt/vendorpatch/odm/lib64/vndk-sp
+[  110.075639][ T6526] cdh_redirect: forward /mnt/vendorpatch/odm/lib64/vndk-sp
+[  110.078637][ T6526] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64/vndk-sp
+[  110.087029][ T6526] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64
+[  110.089434][ T6526] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64
+[  110.092984][ T6526] cdh_redirect: forward /mnt/vendorpatch/odm/lib64
+[  110.095001][ T6526] cdh_redirect: forward /mnt/vendorpatch/odm/lib64
+[  110.096953][ T6526] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64
+[  110.098287][ T6526] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64
+[  110.100234][ T6531] cdh_redirect: forward /mnt/vendorpatch/odm/lib64/vndk-sp
+[  110.107104][    T1] init: Service 'netdiag' (pid 6526) exited with status 1
+[  110.108610][    T1] init: Sending signal 9 to service 'netdiag' (pid 6526) process group...
+[  110.110290][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_2000/pid_6526
+[  110.115029][    T1] init: process with updatable components 'netdiag' exited 4 times in 4 minutes
+[  110.117270][    T1] init: processing action (sys.init.updatable_crashing=1) from (/system/etc/init/flags_health_check.rc:10)
+[  110.120413][    T1] init: starting service 'exec 46 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+[  110.129928][    T1] init: ... started service 'exec 46 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 6537
+[  110.130020][ T6537] KernelSU: hook_manager: unmark 6537 exec /system/bin/flags_health_check
+[  110.133842][    T1] init: SVC_EXEC service 'exec 46 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 6537 (uid 1000 gid 1000+0 context default) started; waiting...
+[  110.143174][    T1] init: Service 'exec 46 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 6537) exited with status 0 waiting took 0.013000 seconds
+[  110.149816][    T1] init: Sending signal 9 to service 'exec 46 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 6537) process group...
+[  110.155177][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_1000/pid_6537
+[  110.324892][    T1] init: Untracked pid 6496 exited with status 0
+[  110.329783][    T1] init: Untracked pid 6496 did not have an associated service entry and will not be reaped
+[  110.334103][    T1] init: Untracked pid 6507 exited with status 0
+[  110.340774][    T1] init: Untracked pid 6507 did not have an associated service entry and will not be reaped
+[  110.362594][    T1] init: starting service 'olc_copy_logs'...
+[  110.363515][  T222] logd: logdr: UID=0 GID=1000 PID=876 n tail=0 logMask=4 pid=0 start=0ns deadline=0ns
+[  110.373714][ T6560] KernelSU: hook_manager: unmark 6560 exec /system/system_ext/bin/oplus_log_olc.sh
+[  110.374722][    T1] init: ... started service 'olc_copy_logs' has pid 6560
+[  110.374729][    T1] init: Control message: Processed ctl.start for 'olc_copy_logs' from pid: 4654 (com.oplus.olc)
+[  110.380772][  T222] logd: logdr: UID=0 GID=1000 PID=876 n tail=0 logMask=1 pid=0 start=0ns deadline=0ns
+[  110.381735][  T213] SELinux: avc:  denied  { find } for pid=876 uid=0 name=vendor.oplus.hardware.olc2.IOplusLogCore/default scontext=u:r:debuglog:s0 tcontext=u:object_r:hal_olc_aidl_service:s0 tclass=service_manager permissive=0
+[  110.382186][  T213] SELinux: avc:  denied  { find } for pid=876 uid=0 name=vendor.oplus.hardware.transmessage.ITransmessge/default scontext=u:r:debuglog:s0 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0
+[  110.403765][  T222] logd: logdr: UID=0 GID=1000 PID=876 n tail=0 logMask=2 pid=0 start=0ns deadline=0ns
+[  110.408947][  T222] logd: logdr: UID=0 GID=1000 PID=876 n tail=0 logMask=8 pid=0 start=0ns deadline=0ns
+[  110.416209][  T222] logd: logdr: UID=0 GID=1000 PID=876 n tail=0 logMask=10 pid=0 start=0ns deadline=0ns
+[  110.511032][    T1] init: Service 'olc_copy_logs' (pid 6560) exited with status 0 oneshot service took 0.138000 seconds in background
+[  110.514199][    T1] init: Sending signal 9 to service 'olc_copy_logs' (pid 6560) process group...
+[  110.516067][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_0/pid_6560
+[  111.284261][  T227] type=1400 audit(1735660911.530:1931): avc:  denied  { getattr } for  comm="sh" path="/system/bin/cmd" dev="dm-3" ino=25443195 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[  111.288827][ T6595] audit: audit_lost=805 audit_rate_limit=5 audit_backlog_limit=64
+[  111.291105][  T227] type=1400 audit(1735660911.530:1932): avc:  denied  { execute } for  comm="sh" name="cmd" dev="dm-3" ino=25443195 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[  111.291111][  T227] type=1400 audit(1735660911.530:1933): avc:  denied  { read open } for  comm="sh" path="/system/bin/cmd" dev="dm-3" ino=25443195 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[  111.291114][  T227] type=1400 audit(1735660911.530:1934): avc:  denied  { execute_no_trans } for  comm="sh" path="/system/bin/cmd" dev="dm-3" ino=25443195 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[  111.291117][  T227] type=1400 audit(1735660911.530:1935): avc:  denied  { map } for  comm="cmd" path="/system/bin/cmd" dev="dm-3" ino=25443195 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[  111.330286][ T6595] audit: rate limit exceeded
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.8 read=2.6 flush=0.0 update=0.0 end=0.0 总=3.4 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.3 read=13.2 flush=0.0 update=0.0 end=0.0 总=13.5 ms
+[  112.376039][    T1] init: Control message: Processed ctl.stop for 'olc_copy_logs' from pid: 4654 (com.oplus.olc)
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.5 flush=0.0 update=0.0 end=0.0 总=1.6 ms
+[  115.071478][    T1] init: processing action (kick-init-watchdog) from (/system_ext/etc/init/self_init_theia.rc:50)
+[  115.077451][    T1] init: starting service 'netdiag'...
+[  115.080731][    T1] init: Could not create socket 'netdiag': Failed to bind socket 'netdiag': Permission denied
+[  115.080879][  T227] type=1400 audit(1735660915.326:1944): avc:  denied  { create } for  comm="init" name="netdiag" scontext=u:r:init:s0 tcontext=u:object_r:socket_device:s0 tclass=sock_file permissive=0
+[  115.083676][    T1] init: ... started service 'netdiag' has pid 6628
+[  115.084660][ T6628] cdh_rewrite_forward: 976 callbacks suppressed
+[  115.084661][ T6628] cdh_redirect: forward /mnt/vendorpatch/odm/lib64/vndk-sp
+[  115.084673][ T6628] cdh_redirect: forward /mnt/vendorpatch/odm/lib64/vndk-sp
+[  115.084677][ T6628] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64/vndk-sp
+[  115.084693][ T6628] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64
+[  115.090924][ T6628] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64
+[  115.091856][ T6628] cdh_redirect: forward /mnt/vendorpatch/odm/lib64
+[  115.092963][ T6628] cdh_redirect: forward /mnt/vendorpatch/odm/lib64
+[  115.094064][ T6628] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64
+[  115.095217][ T6628] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64
+[  115.096524][ T6628] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64
+[  115.102132][    T1] init: Service 'netdiag' (pid 6628) exited with status 1
+[  115.103673][    T1] init: Sending signal 9 to service 'netdiag' (pid 6628) process group...
+[  115.105105][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_2000/pid_6628
+[  115.106289][    T1] init: process with updatable components 'netdiag' exited 4 times in 4 minutes
+[  115.107858][    T1] init: processing action (sys.init.updatable_crashing=1) from (/system/etc/init/flags_health_check.rc:10)
+[  115.109331][    T1] init: starting service 'exec 47 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+[  115.111319][    T1] init: ... started service 'exec 47 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 6629
+[  115.111378][ T6629] KernelSU: hook_manager: unmark 6629 exec /system/bin/flags_health_check
+[  115.113821][    T1] init: SVC_EXEC service 'exec 47 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 6629 (uid 1000 gid 1000+0 context default) started; waiting...
+[  115.118341][    T1] init: Service 'exec 47 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 6629) exited with status 0 waiting took 0.007000 seconds
+[  115.120797][    T1] init: Sending signal 9 to service 'exec 47 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 6629) process group...
+[  115.122932][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_1000/pid_6629
+[  115.351957][ T6630] audit: audit_lost=813 audit_rate_limit=5 audit_backlog_limit=64
+[  115.352148][  T227] type=1400 audit(1735660915.598:1945): avc:  denied  { getattr } for  comm="sh" path="/system/bin/cmd" dev="dm-3" ino=25443195 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[  115.356936][ T6630] audit: rate limit exceeded
+[  115.360091][  T227] type=1400 audit(1735660915.598:1946): avc:  denied  { execute } for  comm="sh" name="cmd" dev="dm-3" ino=25443195 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[  115.362325][  T227] type=1400 audit(1735660915.598:1947): avc:  denied  { read open } for  comm="sh" path="/system/bin/cmd" dev="dm-3" ino=25443195 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[  115.364392][  T227] type=1400 audit(1735660915.598:1948): avc:  denied  { execute_no_trans } for  comm="sh" path="/system/bin/cmd" dev="dm-3" ino=25443195 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1

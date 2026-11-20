@@ -1,0 +1,5 @@
+{
+  "build-prop-sets": {
+    "ro.surface_flinger.supports_background_blur": "0"
+  }
+}

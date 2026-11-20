@@ -31,6 +31,22 @@ pub(super) fn scrub_early_virtual_props(p: &DeviceProfile) {
         delete_prop_if_exists("ro.boot.theme");
     }
 
+    // 若系统侧配置（如荣耀 /system/magic/base/prop/local.prop）内置了 ro.frp.pst，
+    // 而云机内不存在对应的物理 frp 块设备节点，则在 SystemServer 启动前清除该属性并关闭
+    // ro.oem_unlock_supported，防止 PersistentDataBlockService 等待缺失块设备触发 init timeout。
+    let frp_pst = resetprop::get("ro.frp.pst").unwrap_or_default();
+    let frp_trimmed = frp_pst.trim();
+    if !frp_trimmed.is_empty() && !std::path::Path::new(frp_trimmed).exists() {
+        delete_prop_if_exists("ro.frp.pst");
+        if resetprop::get("ro.oem_unlock_supported")
+            .unwrap_or_default()
+            .trim()
+            == "1"
+        {
+            set_prop("ro.oem_unlock_supported", "0");
+        }
+    }
+
     scrub_virtual_mount_props(p);
 
     let boot_devs = resetprop::get("ro.boot.boot_devices").unwrap_or_default();

@@ -2,7 +2,7 @@
   "id": 17,
   "buildId": "13-TKQ1.240227.001-20260922",
   "deviceId": 12,
-  "configId": 12,
+  "configId": 50,
   "osVersion": "13-TKQ1.240227.001-20260922",
   "buildDate": "20260922",
   "securityPatch": "2026-09-01",
@@ -12,5 +12,5 @@
   "extra": {
     "comment": "由 cdh unpack prepare 从 Huawei-Honor-Pad-X7b-ONL-W09.zip (vendor/build.prop) 自动生成。"
   },
-  "updatedAt": "2026-11-06 02:47:41"
+  "updatedAt": "2026-11-19T05:44:20Z"
 }

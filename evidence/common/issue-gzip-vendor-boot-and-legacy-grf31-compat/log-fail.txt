@@ -1,0 +1,37 @@
+=== 样本：alps/mt6765 (TCL-T610.zip, 12-SP1A.210812.016-20250306) 构建与冷启动失败现场 ===
+
+--- 1. 构建期 06_build_vendor_boot 失败 (task-1266) ---
+[err] 阶段 build_vendor_boot 失败: out/devices/roms/alps/mt6765/12-SP1A.210812.016-20250306/vendor_boot.img 的 platform fragment 内没有可读文件
+实测官方 vendor_boot.img header:
+  magic=VNDRBOOT hdr_ver=4 page_size=4096 ven_ramdisk_size=19744164 tbl_num=1
+  frag[0]: size=19744164 off=0 type=1 name=b'' magic16=1f8b0800000000000003ecbd0d7c5c47 (gzip)
+
+--- 2. 首次冷启动失败 (fail1, serviceCount=70, surfaceFlingerState=restarting) ---
+来源日志：out/devices/tmp/verify_batch_c/mt6765_12-SP1A.210812.016-20250306.fail1.log
+  "bootCompleted": false,
+  "failReason": "timeout after 280s (bootanim='')",
+  "serviceCount": "70",
+  "surfaceFlingerState": "restarting",
+
+关键崩溃日志：
+11-19 15:35:50.167 11464 11464 F DEBUG   : Cmdline: /system/bin/surfaceflinger
+11-19 15:35:50.167 11464 11464 F DEBUG   :       #02 pc 000000000001a8cc  /system/lib64/libEGL.so (android::egl_display_t::initialize(int*, int*)+924)
+11-19 15:35:14.876 10062 10062 W surfaceflinger: type=1400 audit(0.0:3090): avc:  denied  { search } for  name="0000:00:03.0" dev="sysfs" ino=5863 scontext=u:r:surfaceflinger:s0 tcontext=u:object_r:sysfs_gpu:s0 tclass=dir permissive=0
+11-19 15:35:53.718 11661 11661 F linker  : CANNOT LINK EXECUTABLE "/vendor/bin/hw/android.hardware.graphics.composer@2.4-service": library "android.hardware.graphics.composer@2.2.so" not found: needed by main executable
+11-19 15:35:54.027 11665 11665 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 11665 (audioserver), pid 11665 (audioserver)
+11-19 15:35:18.926 10248 10248 E linker  : library "libaudiohal@7.1.so" ("/vendor/lib64/libaudiohal.sys.so") needed or dlopened by "/system/lib64/libaudiohal.so" is not accessible for the namespace: [name="(default)" ...]
+[  285.767285][  T206] SELinux: avc:  denied  { add } for pid=11859 uid=1046 name=android.hardware.media.c2.IComponentStore/default9 scontext=u:r:mediacodec:s0 tcontext=u:object_r:hal_codec2_service:s0 tclass=service_manager permissive=0
+
+--- 3. 第二次冷启动失败 (fail2, serviceCount=166, surfaceFlingerState=running) ---
+来源日志：out/devices/tmp/verify_batch_c/mt6765_12-SP1A.210812.016-20250306.fail2.log
+  "bootCompleted": false,
+  "failReason": "timeout after 280s (bootanim='')",
+  "serviceCount": "166",
+  "meanBrightness": 0.03,
+  "surfaceFlingerState": "running",
+
+关键阻塞与拒绝日志：
+[  278.093989] servicemanager: Since 'android.hardware.vibrator.IVibratorManager/default' could not be found, trying to start it as a lazy AIDL service.
+[  278.093989][    T1] init: Control message: Processed ctl.interface_start for 'aidl/android.hardware.vibrator.IVibratorManager/default' from pid: 207 (/system/bin/servicemanager)
+[  278.926252][  T220] type=1400 audit(1795103830.632:2684): avc:  denied  { create } for  comm="init" name="netdiag" scontext=u:r:init:s0 tcontext=u:object_r:socket_device:s0 tclass=sock_file permissive=0
+[  279.666515][  T207] SELinux: avc:  denied  { find } for pid=2197 uid=0 name=android.system.suspend.ISystemSuspend/default scontext=u:r:suspend_blocker:s0 tcontext=u:object_r:hal_system_suspend_service:s0 tclass=service_manager permissive=0

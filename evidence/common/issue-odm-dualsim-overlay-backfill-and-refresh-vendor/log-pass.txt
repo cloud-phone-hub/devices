@@ -1,0 +1,47 @@
+# source: out/devices/tmp/verify_pass5/itel-A6612L_13-BP2A.250605.031.A3-20260823.log
+=== VERIFY REPORT ===
+{
+  "spec": "itel-A6612L_13-BP2A.250605.031.A3-20260823",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/itel-A6612L_13-BP2A.250605.031.A3-20260823/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{2ae1c03 u0 Application Error: com.spreadtrum.ims}, [type=2003, isChildWindow=false]-[Surface(name=*Title#77)/@0xfc50e5]\n  mFocusedApp=ActivityRecord{233983762 u0 com.android.launcher3/.Launcher3QuickStepGo t4 d0}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "325",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 72.05,
+    "peak": 255,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/itel-A6612L_13-BP2A.250605.031.A3-20260823.png",
+    "pngBytes": 1382197
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===
+--- key runtime lines ---
+L47: [   47.937634][ T6030] KernelSU: handle_setresuid from 0 to 10204
+L56: [   48.008822][ T6050] KernelSU: handle_setresuid from 0 to 10208
+L67: [   48.090627][ T6065] KernelSU: handle_setresuid from 0 to 10203
+L78: [   48.152376][ T6078] KernelSU: handle_setresuid from 0 to 10084
+L89: [   48.220862][ T6107] KernelSU: handle_setresuid from 0 to 10199
+L101: [   48.288190][ T6128] KernelSU: handle_setresuid from 0 to 10173
+L179: [   48.758038][ T6192] KernelSU: handle_setresuid from 0 to 10175
+L272: [   49.321090][    T1] init: starting service 'bootanim'...
+L273: [   49.322717][    T1] init: ... started service 'bootanim' has pid 6284
+L274: [   49.322836][ T6284] KernelSU: hook_manager: unmark 6284 exec /system/bin/bootanimation

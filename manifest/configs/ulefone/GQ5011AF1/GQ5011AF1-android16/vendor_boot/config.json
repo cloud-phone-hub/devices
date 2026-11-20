@@ -1,0 +1,9 @@
+{
+  "cmdline": [
+    "androidboot.product.hardware.sku=GQ5011AF1_EEA",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ],
+  "fstab": "mt6989"
+}

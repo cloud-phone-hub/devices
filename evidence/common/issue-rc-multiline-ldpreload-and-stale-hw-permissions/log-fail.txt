@@ -1,0 +1,197 @@
+# source: out/devices/tmp/verify_pass3/G1130_13-UP1A.231005.007-20260511.log
+=== VERIFY REPORT ===
+{
+  "spec": "G1130_13-UP1A.231005.007-20260511",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/G1130_13-UP1A.231005.007-20260511/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "black screen (meanBrightness=0.0)",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{e1195f0 u0 Android System}, [type=2010]-[Surface(name=*Title#58)/@0x89c120, shown=false, alpha=0.0, windowType=2010]\n  mFocusedApp=ActivityRecord{ca47607 u0 com.aura.oobe.sliide/com.ironsource.appmanager.ui.activities.LauncherPostOOBEActivity t7 d0}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "297",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 0.0,
+    "peak": 0,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/G1130_13-UP1A.231005.007-20260511.png",
+    "pngBytes": 7685
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": false
+}
+
+--- matched lines ---
+L43: 11-19 17:23:03.605  3566  3566 F linker  : CANNOT LINK EXECUTABLE "/vendor/bin/hw/wpa_supplicant": cannot locate symbol "APersistableBundle_delete" referenced by "/vendor/bin/hw/wpa_supplicant"...
+L44: 11-19 17:23:04.591  4148  4148 F linker  : CANNOT LINK EXECUTABLE "/vendor/bin/hw/wpa_supplicant": cannot locate symbol "APersistableBundle_delete" referenced by "/vendor/bin/hw/wpa_supplicant"...
+L92: 11-19 17:23:05.710  4563  4563 F linker  : CANNOT LINK EXECUTABLE "/vendor/bin/hw/wpa_supplicant": cannot locate symbol "APersistableBundle_delete" referenced by "/vendor/bin/hw/wpa_supplicant"...
+L93: 11-19 17:23:07.084  4944  4944 F linker  : CANNOT LINK EXECUTABLE "/vendor/bin/hw/wpa_supplicant": cannot locate symbol "APersistableBundle_delete" referenced by "/vendor/bin/hw/wpa_supplicant"...
+L114: 11-19 17:23:08.069  5124  5124 F linker  : CANNOT LINK EXECUTABLE "/vendor/bin/hw/wpa_supplicant": cannot locate symbol "APersistableBundle_delete" referenced by "/vendor/bin/hw/wpa_supplicant"...
+L135: 11-19 17:23:09.098  5190  5190 F linker  : CANNOT LINK EXECUTABLE "/vendor/bin/hw/wpa_supplicant": cannot locate symbol "APersistableBundle_delete" referenced by "/vendor/bin/hw/wpa_supplicant"...
+L136: 11-19 17:23:10.101  5226  5226 F linker  : CANNOT LINK EXECUTABLE "/vendor/bin/hw/wpa_supplicant": cannot locate symbol "APersistableBundle_delete" referenced by "/vendor/bin/hw/wpa_supplicant"...
+L137: 11-19 17:23:11.090  5279  5279 F linker  : CANNOT LINK EXECUTABLE "/vendor/bin/hw/wpa_supplicant": cannot locate symbol "APersistableBundle_delete" referenced by "/vendor/bin/hw/wpa_supplicant"...
+L138: 11-19 17:23:12.095  5334  5334 F linker  : CANNOT LINK EXECUTABLE "/vendor/bin/hw/wpa_supplicant": cannot locate symbol "APersistableBundle_delete" referenced by "/vendor/bin/hw/wpa_supplicant"...
+L140: 11-19 17:23:13.140  5419  5419 F linker  : CANNOT LINK EXECUTABLE "/vendor/bin/hw/wpa_supplicant": cannot locate symbol "APersistableBundle_delete" referenced by "/vendor/bin/hw/wpa_supplicant"...
+L207: 11-19 17:23:14.109  5518  5518 F linker  : CANNOT LINK EXECUTABLE "/vendor/bin/hw/wpa_supplicant": cannot locate symbol "APersistableBundle_delete" referenced by "/vendor/bin/hw/wpa_supplicant"...
+L208: 11-19 17:23:15.115  5556  5556 F linker  : CANNOT LINK EXECUTABLE "/vendor/bin/hw/wpa_supplicant": cannot locate symbol "APersistableBundle_delete" referenced by "/vendor/bin/hw/wpa_supplicant"...
+L209: 11-19 17:23:16.122  5653  5653 F linker  : CANNOT LINK EXECUTABLE "/vendor/bin/hw/wpa_supplicant": cannot locate symbol "APersistableBundle_delete" referenced by "/vendor/bin/hw/wpa_supplicant"...
+L210: 11-19 17:23:17.131  5663  5663 F linker  : CANNOT LINK EXECUTABLE "/vendor/bin/hw/wpa_supplicant": cannot locate symbol "APersistableBundle_delete" referenced by "/vendor/bin/hw/wpa_supplicant"...
+L211: 11-19 17:23:18.143  5679  5679 F linker  : CANNOT LINK EXECUTABLE "/vendor/bin/hw/wpa_supplicant": cannot locate symbol "APersistableBundle_delete" referenced by "/vendor/bin/hw/wpa_supplicant"...
+
+# source: out/devices/tmp/verify_pass4/P616F05_13-TP1A.220624.014-20260324.log
+=== VERIFY REPORT ===
+{
+  "spec": "P616F05_13-TP1A.220624.014-20260324",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/P616F05_13-TP1A.220624.014-20260324/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "black screen (meanBrightness=0.0)",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{4a8fc3f u0 NotificationShade}, [type=2040]-[Surface(name=*Title#79)/@0x5c1fcdc, shown=false, alpha=0.0, windowType=2040]\n  mFocusedApp=ActivityRecord{70ea713 u0 com.zte.mifavor.launcher/com.android.launcher3.uioverrides.QuickstepLauncher t7 d0}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "310",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 0.0,
+    "peak": 0,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/P616F05_13-TP1A.220624.014-20260324.png",
+    "pngBytes": 7685
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": false
+}
+
+--- matched lines ---
+L44: 11-19 17:41:14.896  9097  9097 F DEBUG   :       #04 pc 00000000000bf780  /system/lib64/libnfc-nci.so (NfcConfig::loadConfig()+2400) (BuildId: 9261add32d9885bf7f94e8a2fccc3dfe)
+L45: 11-19 17:41:14.896  9097  9097 F DEBUG   :       #05 pc 00000000000bf80c  /system/lib64/libnfc-nci.so (NfcConfig::NfcConfig()+124) (BuildId: 9261add32d9885bf7f94e8a2fccc3dfe)
+L46: 11-19 17:41:14.896  9097  9097 F DEBUG   :       #06 pc 00000000000bf9d8  /system/lib64/libnfc-nci.so (NfcConfig::hasKey(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)+120) (BuildId: 9261add32d9885bf7f94e8a2fccc3dfe)
+L47: 11-19 17:41:14.896  9097  9097 F DEBUG   :       #07 pc 0000000000068e30  /system/lib64/libnfc_nci_jni.so (PowerSwitch::initialize(PowerSwitch::PowerLevel)+96) (BuildId: f2a719779fad85b8cb9ab8fa39cad084)
+L48: 11-19 17:41:14.896  9097  9097 F DEBUG   :       #08 pc 0000000000048cd8  /system/lib64/libnfc_nci_jni.so (android::register_com_android_nfc_NativeNfcManager(_JNIEnv*)+56) (BuildId: f2a719779fad85b8cb9ab8fa39cad084)
+L49: 11-19 17:41:14.896  9097  9097 F DEBUG   :       #09 pc 000000000005e71c  /system/lib64/libnfc_nci_jni.so (JNI_OnLoad+348) (BuildId: f2a719779fad85b8cb9ab8fa39cad084)
+L116: 11-19 17:41:15.027  9125  9125 F DEBUG   :       #04 pc 00000000000bf780  /system/lib64/libnfc-nci.so (NfcConfig::loadConfig()+2400) (BuildId: 9261add32d9885bf7f94e8a2fccc3dfe)
+L117: 11-19 17:41:15.027  9125  9125 F DEBUG   :       #05 pc 00000000000bf80c  /system/lib64/libnfc-nci.so (NfcConfig::NfcConfig()+124) (BuildId: 9261add32d9885bf7f94e8a2fccc3dfe)
+L118: 11-19 17:41:15.027  9125  9125 F DEBUG   :       #06 pc 00000000000bf9d8  /system/lib64/libnfc-nci.so (NfcConfig::hasKey(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&)+120) (BuildId: 9261add32d9885bf7f94e8a2fccc3dfe)
+L119: 11-19 17:41:15.027  9125  9125 F DEBUG   :       #07 pc 0000000000068e30  /system/lib64/libnfc_nci_jni.so (PowerSwitch::initialize(PowerSwitch::PowerLevel)+96) (BuildId: f2a719779fad85b8cb9ab8fa39cad084)
+L120: 11-19 17:41:15.027  9125  9125 F DEBUG   :       #08 pc 0000000000048cd8  /system/lib64/libnfc_nci_jni.so (android::register_com_android_nfc_NativeNfcManager(_JNIEnv*)+56) (BuildId: f2a719779fad85b8cb9ab8fa39cad084)
+L121: 11-19 17:41:15.027  9125  9125 F DEBUG   :       #09 pc 000000000005e71c  /system/lib64/libnfc_nci_jni.so (JNI_OnLoad+348) (BuildId: f2a719779fad85b8cb9ab8fa39cad084)
+
+# source: out/devices/tmp/verify-GQ5011AF1-A15-pass1.log
+=== VERIFY REPORT ===
+{
+  "spec": "GQ5011AF1_14-GQ5011AF1_EEA_V17-20260429",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/GQ5011AF1_14-GQ5011AF1_EEA_V17-20260429/1/qemu.log",
+  "bootCompleted": false,
+  "failReason": "timeout after 210s (bootanim='running')",
+  "bootanim": "running",
+  "topActivity": "mCurrentFocus=Window{33701df u0 com.android.settings/com.android.settings.SubSettings}\n  mFocusedApp=ActivityRecord{32db51b u0 com.android.settings/.SubSettings t7}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "321",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 242.77,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/GQ5011AF1_14-GQ5011AF1_EEA_V17-20260429.png",
+    "pngBytes": 130515
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": false
+}
+
+--- matched lines ---
+L80: 11-19 14:54:10.801 14591 14591 F DEBUG   :       #04 pc 00000000001f95bc  /system_ext/lib64/libstnfc_nci_jni.so (GKI_getbuf(unsigned short)+204) (BuildId: 4901b747ffe1ffc0318c30d7751fdaea)
+L81: 11-19 14:54:10.801 14591 14591 F DEBUG   :       #05 pc 000000000016e18c  /system_ext/lib64/libstnfc_nci_jni.so (NFA_SendRawVsCommand(unsigned char, unsigned char*, void (*)(unsigned char, unsigned short, unsigned char*))+60) (BuildId: 4901b747ffe1ffc0318c30d7751fdaea)
+L82: 11-19 14:54:10.801 14591 14591 F DEBUG   :       #06 pc 000000000013f6b8  /system_ext/lib64/libstnfc_nci_jni.so (android::nfcManager_getProprietaryCaps(_JNIEnv*, _jobject*)+104) (BuildId: 4901b747ffe1ffc0318c30d7751fdaea)
+L85: 11-19 14:54:10.801 14591 14591 F DEBUG   :       #09 pc 0000000000125882  /system_ext/priv-app/Nfc_st/Nfc_st.apk (com.android.nfc.dhimpl.StNativeNfcManager.initialize+38)
+L135: 11-19 14:54:11.687 14630 14630 F DEBUG   :       #04 pc 00000000001f95bc  /system_ext/lib64/libstnfc_nci_jni.so (GKI_getbuf(unsigned short)+204) (BuildId: 4901b747ffe1ffc0318c30d7751fdaea)
+L136: 11-19 14:54:11.687 14630 14630 F DEBUG   :       #05 pc 000000000016e18c  /system_ext/lib64/libstnfc_nci_jni.so (NFA_SendRawVsCommand(unsigned char, unsigned char*, void (*)(unsigned char, unsigned short, unsigned char*))+60) (BuildId: 4901b747ffe1ffc0318c30d7751fdaea)
+L137: 11-19 14:54:11.687 14630 14630 F DEBUG   :       #06 pc 000000000013f6b8  /system_ext/lib64/libstnfc_nci_jni.so (android::nfcManager_getProprietaryCaps(_JNIEnv*, _jobject*)+104) (BuildId: 4901b747ffe1ffc0318c30d7751fdaea)
+L140: 11-19 14:54:11.687 14630 14630 F DEBUG   :       #09 pc 0000000000125882  /system_ext/priv-app/Nfc_st/Nfc_st.apk (com.android.nfc.dhimpl.StNativeNfcManager.initialize+38)
+
+# source: out/devices/tmp/verify-GQ5011AF1-A16-pass1.log
+=== VERIFY REPORT ===
+{
+  "spec": "GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825/1/qemu.log",
+  "bootCompleted": false,
+  "failReason": "timeout after 210s (bootanim='')",
+  "bootanim": "",
+  "topActivity": "",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 0.0,
+    "peak": 0,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825.png",
+    "pngBytes": 7685
+  },
+  "postBootCompleted": "",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot",
+  "passed": false
+}
+
+--- matched lines ---
+L46: 11-19 06:57:10.073   706  4486 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: BiometricServiceRegistry
+L58: 11-19 06:57:10.073   706  4486 E AndroidRuntime: 	at com.android.server.biometrics.sensors.BiometricServiceRegistry.registerAllInBackground(BiometricServiceRegistry.java:110)
+L59: 11-19 06:57:10.073   706  4486 E AndroidRuntime: 	at com.android.server.biometrics.sensors.BiometricServiceRegistry.lambda$registerAll$0(BiometricServiceRegistry.java:103)
+L60: 11-19 06:57:10.073   706  4486 E AndroidRuntime: 	at com.android.server.biometrics.sensors.BiometricServiceRegistry.$r8$lambda$x0WsIKdzUnRnfbom1Yua11lD2N0(BiometricServiceRegistry.java:0)
+L61: 11-19 06:57:10.073   706  4486 E AndroidRuntime: 	at com.android.server.biometrics.sensors.BiometricServiceRegistry$$ExternalSyntheticLambda0.run(R8$$SyntheticClass:0)
+L68: 11-19 06:57:12.506  4559  4752 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: BiometricServiceRegistry
+L80: 11-19 06:57:12.506  4559  4752 E AndroidRuntime: 	at com.android.server.biometrics.sensors.BiometricServiceRegistry.registerAllInBackground(BiometricServiceRegistry.java:110)
+L81: 11-19 06:57:12.506  4559  4752 E AndroidRuntime: 	at com.android.server.biometrics.sensors.BiometricServiceRegistry.lambda$registerAll$0(BiometricServiceRegistry.java:103)
+L82: 11-19 06:57:12.506  4559  4752 E AndroidRuntime: 	at com.android.server.biometrics.sensors.BiometricServiceRegistry.$r8$lambda$x0WsIKdzUnRnfbom1Yua11lD2N0(BiometricServiceRegistry.java:0)
+L83: 11-19 06:57:12.506  4559  4752 E AndroidRuntime: 	at com.android.server.biometrics.sensors.BiometricServiceRegistry$$ExternalSyntheticLambda0.run(R8$$SyntheticClass:0)
+L90: 11-19 06:57:17.317  4845  5025 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: BiometricServiceRegistry
+L102: 11-19 06:57:17.317  4845  5025 E AndroidRuntime: 	at com.android.server.biometrics.sensors.BiometricServiceRegistry.registerAllInBackground(BiometricServiceRegistry.java:110)
+L103: 11-19 06:57:17.317  4845  5025 E AndroidRuntime: 	at com.android.server.biometrics.sensors.BiometricServiceRegistry.lambda$registerAll$0(BiometricServiceRegistry.java:103)
+L104: 11-19 06:57:17.317  4845  5025 E AndroidRuntime: 	at com.android.server.biometrics.sensors.BiometricServiceRegistry.$r8$lambda$x0WsIKdzUnRnfbom1Yua11lD2N0(BiometricServiceRegistry.java:0)
+L105: 11-19 06:57:17.317  4845  5025 E AndroidRuntime: 	at com.android.server.biometrics.sensors.BiometricServiceRegistry$$ExternalSyntheticLambda0.run(R8$$SyntheticClass:0)

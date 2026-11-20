@@ -1,0 +1,162 @@
+{
+  "build-prop-sets": {
+    "ro.bionic.2nd_arch": "",
+    "ro.bionic.2nd_cpu_variant": "",
+    "ro.hardware.egl": "mesa",
+    "ro.hardware.gatekeeper": "trustonic",
+    "ro.hardware.gralloc": "minigbm",
+    "ro.hardware.hwcomposer": "mtk_common",
+    "ro.hardware.vulkan": "mali",
+    "ro.hw_timeout_multiplier": "10",
+    "ro.hwui.use_vulkan": "false",
+    "ro.soc.manufacturer": "Mediatek",
+    "ro.soc.model": "MT6768",
+    "ro.vendor.boot_security_patch": "2025-07-05",
+    "ro.vendor.build.security_patch": "2025-07-05",
+    "ro.vendor.cdh.display.default_refresh_rate": "60",
+    "ro.vendor.cdh.display.edid_name": "TL067BDXP01",
+    "ro.vendor.cdh.display.edid_pnp": "CSOT",
+    "ro.vendor.cdh.display.edid_product_id": "20001",
+    "ro.vendor.cdh.display.edid_week": "18",
+    "ro.vendor.cdh.display.edid_year": "2025",
+    "ro.vendor.cdh.display.refresh_rates": "60",
+    "ro.vendor.cdh.display.xdpi": "394.6",
+    "ro.vendor.cdh.display.ydpi": "394.2",
+    "ro.vendor.cdh.gpu.gl_extra_exts": "GL_ARM_mali_program_binary,GL_ARM_mali_shader_binary,GL_ARM_rgba8,GL_EXT_debug_marker",
+    "ro.vendor.cdh.gpu.gl_extra_exts2": "GL_ARM_shader_core_properties,GL_ARM_texture_unnormalized_coordinates",
+    "ro.vendor.cdh.gpu.gl_renderer": "Mali-G52 MC2",
+    "ro.vendor.cdh.gpu.gl_sl_version": "OpenGL ES GLSL ES 3.20",
+    "ro.vendor.cdh.gpu.gl_vendor": "ARM",
+    "ro.vendor.cdh.gpu.gl_version": "OpenGL ES 3.2 v1.r38p1-01eac0.4c1b7d9e2a6f8035d7b2a4c6e8f01b3d",
+    "ro.vendor.cdh.gpu.max_combined_texture_image_units": "96",
+    "ro.vendor.cdh.gpu.max_cube_map_texture_size": "8192",
+    "ro.vendor.cdh.gpu.max_renderbuffer_size": "8192",
+    "ro.vendor.cdh.gpu.max_texture_image_units": "16",
+    "ro.vendor.cdh.gpu.max_texture_size": "8192",
+    "ro.vendor.cdh.gpu.max_vertex_attribs": "16",
+    "ro.vendor.cdh.oem.mac_oui": "3c:cd:5d",
+    "ro.vendor.cdh.vulkan.api_version": "0x00401000",
+    "ro.vendor.cdh.vulkan.conformance": "1.1.0.0",
+    "ro.vendor.cdh.vulkan.device_id": "0x74020000",
+    "ro.vendor.cdh.vulkan.device_type": "1",
+    "ro.vendor.cdh.vulkan.device_uuid": "3f2a9c14d7e84b06a1c95e2d7b4f8063",
+    "ro.vendor.cdh.vulkan.driver_id": "9",
+    "ro.vendor.cdh.vulkan.driver_info": "v1.r38p1-01eac0.4c1b7d9e2a6f8035d7b2a4c6e8f01b3d",
+    "ro.vendor.cdh.vulkan.driver_name": "Mali-G52 MC2",
+    "ro.vendor.cdh.vulkan.driver_uuid": "8c41e07b2d9a4f13b6e5c0a72d91f4b8",
+    "ro.vendor.cdh.vulkan.driver_version": "0x0b0b0000",
+    "ro.vendor.cdh.vulkan.name": "Mali-G52 MC2",
+    "ro.vendor.cdh.vulkan.pipeline_uuid": "5a9d27c4e1b83f60d2c47a9e0b16f385",
+    "ro.vendor.cdh.vulkan.vendor_id": "0x13b5",
+    "ro.vendor.cdh.wifi.disable_he": "1",
+    "ro.vendor.drm.widevine.oem_crypto_api_version": "17",
+    "ro.vendor.drm.widevine.security_level": "L3",
+    "ro.vendor.drm.widevine.system_id": "27175",
+    "ro.vendor.drm.widevine.version": "17.0.0",
+    "ro.vendor.product.cpu.abilist": "arm64-v8a",
+    "ro.vendor.product.cpu.abilist32": "",
+    "ro.vendor.product.cpu.abilist64": "arm64-v8a",
+    "ro.vendor.radio.imei.svn": "60",
+    "ro.vendor.radio.imei.tac": "86851703",
+    "ro.vendor.radio.meid.prefix": "99002351",
+    "ro.vendor.soc.manufacturer": "Mediatek",
+    "ro.vendor.soc.model": "MT6768",
+    "ro.vendor.soc.model.external_name": "MT6768V/CAZA",
+    "ro.vendor.soc.model.part_name": "MT6768V/CAZA",
+    "ro.vendor.soc.model_ready": "1",
+    "ro.zygote": "zygote64"
+  },
+  "build-prop-unsets": [
+    "ro.crypto.metadata_init_delete_all_keys.enabled",
+    "ro.frp.pst",
+    "ro.gfx.driver.0",
+    "ro.gfx.driver.1",
+    "ro.vndk.lite"
+  ],
+  "files": [
+    {
+      "from": "official",
+      "source": "lib64/egl/libGLES_mali.so"
+    },
+    {
+      "from": "official",
+      "source": "lib64/egl/libMEOW_data.so"
+    },
+    {
+      "from": "official",
+      "source": "lib64/egl/libMEOW_gift.so"
+    },
+    {
+      "from": "official",
+      "source": "lib64/egl/libMEOW_qt.so"
+    },
+    {
+      "from": "official",
+      "source": "lib64/egl/libMEOW_trace.so"
+    },
+    {
+      "from": "official",
+      "source": "lib64/libOpenCL.so"
+    },
+    {
+      "from": "official",
+      "source": "lib64/libpng.so"
+    },
+    {
+      "from": "official",
+      "source": "lib64/liblzma.so"
+    },
+    {
+      "from": "official",
+      "source": "lib64/libunwindstack.so"
+    },
+    {
+      "from": "official",
+      "source": "lib64/mt6768/libdpframework.so"
+    },
+    {
+      "from": "official",
+      "mode": "replace",
+      "source": "etc/permissions"
+    },
+    {
+      "from": "official",
+      "mode": "replace",
+      "source": "etc/security"
+    },
+    {
+      "from": "official",
+      "mode": "replace",
+      "source": "etc/audio_param"
+    },
+    {
+      "from": "official",
+      "source": "etc/audio_param/AudioParamOptions_vext.xml",
+      "target": "etc/audio_param/AudioParamOptions_mgvi.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/audio_param/AudioParamOptions_vext.xml",
+      "target": "etc/audio_param/AudioParamOptions.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_performance.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/public.libraries.txt"
+    }
+  ],
+  "lib64-backfills": [],
+  "selinux-labels": {
+    "lib64/egl/libEGL_mesa.so": "u:object_r:same_process_hal_file:s0",
+    "lib64/egl/libGLESv1_CM_mesa.so": "u:object_r:same_process_hal_file:s0",
+    "lib64/egl/libGLESv2_mesa.so": "u:object_r:same_process_hal_file:s0"
+  },
+  "vintf-version": "8.0"
+}

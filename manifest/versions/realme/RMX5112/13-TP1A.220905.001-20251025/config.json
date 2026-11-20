@@ -2,7 +2,7 @@
   "id": 30,
   "buildId": "13-TP1A.220905.001-20251025",
   "deviceId": 24,
-  "configId": 24,
+  "configId": 44,
   "osVersion": "13-TP1A.220905.001-20251025",
   "buildDate": "20251025",
   "securityPatch": "2025-10-01",
@@ -12,5 +12,5 @@
   "extra": {
     "comment": "由 cdh unpack prepare 从 851_sign_RMX5112_11_A_OTA_0520_all_0Q8VwS_10010111.zip (vendor/build.prop) 自动生成。"
   },
-  "updatedAt": "2026-11-06 02:47:41"
+  "updatedAt": "2026-11-19T03:29:49Z"
 }

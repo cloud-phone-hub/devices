@@ -67,7 +67,9 @@ bool ParseOplusChargerVintfVersion(const char *path, int32_t *outVersion) {
 bool DetectOplusChargerVintf(int32_t *outVersion) {
   static const char *const kCandidatePaths[] = {
       "/odm/etc/vintf/manifest/manifest_oplus_charger_aidl.xml",
+      "/odm/etc/vintf/manifest/vintf_manifest_oplus_charger_aidl.xml",
       "/vendor/etc/vintf/manifest/manifest_oplus_charger_aidl.xml",
+      "/vendor/etc/vintf/manifest/vintf_manifest_oplus_charger_aidl.xml",
   };
   for (const char *path : kCandidatePaths) {
     if (ParseOplusChargerVintfVersion(path, outVersion)) {

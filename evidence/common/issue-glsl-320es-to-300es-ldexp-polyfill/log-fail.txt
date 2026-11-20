@@ -1,0 +1,89 @@
+# source: out/devices/tmp/verify_pass3/G1130_13-UP1A.231005.007-20260511.log
+=== VERIFY REPORT ===
+{
+  "spec": "G1130_13-UP1A.231005.007-20260511",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/G1130_13-UP1A.231005.007-20260511/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "black screen (meanBrightness=0.0)",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{e1195f0 u0 Android System}, [type=2010]-[Surface(name=*Title#58)/@0x89c120, shown=false, alpha=0.0, windowType=2010]\n  mFocusedApp=ActivityRecord{ca47607 u0 com.aura.oobe.sliide/com.ironsource.appmanager.ui.activities.LauncherPostOOBEActivity t7 d0}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "297",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 0.0,
+    "peak": 0,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/G1130_13-UP1A.231005.007-20260511.png",
+    "pngBytes": 7685
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": false
+}
+
+--- matched lines ---
+L245: 11-19 17:23:06.256  1291  1396 D skia    :   15	highp float wangs_formula_max_fdiff_p2_ff2f2f2f2f22(highp vec2 p0, highp vec2 p1, highp vec2 p2, highp vec2 p3, highp mat2 matrix) {
+L250: 11-19 17:23:06.256  1291  1396 D skia    :   20	highp float wangs_formula_conic_p2_fff2f2f2f(highp float _precision_, highp vec2 p0, highp vec2 p1, highp vec2 p2, highp float w) {
+L283: 11-19 17:23:06.256  1291  1396 D skia    :   53	                highp float _0_n2 = wangs_formula_conic_p2_fff2f2f2f(PRECISION, AFFINE_MATRIX * p0, AFFINE_MATRIX * p1, AFFINE_MATRIX * p2, w);
+L288: 11-19 17:23:06.256  1291  1396 D skia    :   58	                highp float _1_m = wangs_formula_max_fdiff_p2_ff2f2f2f2f22(p0, p1, p2, p3, AFFINE_MATRIX);
+L292: 11-19 17:23:06.256  1291  1396 D skia    :   62	                idxInResolveLevel = floor(ldexp(idxInResolveLevel, int(maxResolveLevel - resolveLevel)));
+L295: 11-19 17:23:06.256  1291  1396 D skia    :   65	            highp float fixedVertexID = floor(0.5 + ldexp(idxInResolveLevel, int(MAX_FIXED_RESOLVE_LEVEL - resolveLevel)));
+L319: 11-19 17:23:06.256  1291  1396 D skia    : 0:65(28): error: no function with name 'ldexp'
+L325: 11-19 17:23:06.256  1291  1396 D skia    : 0:68(42): error: no function with name 'ldexp'
+L353: 11-19 17:23:06.287  1291  1396 D skia    :   15	highp float wangs_formula_max_fdiff_p2_ff2f2f2f2f22(highp vec2 p0, highp vec2 p1, highp vec2 p2, highp vec2 p3, highp mat2 matrix) {
+L358: 11-19 17:23:06.287  1291  1396 D skia    :   20	highp float wangs_formula_conic_p2_fff2f2f2f(highp float _precision_, highp vec2 p0, highp vec2 p1, highp vec2 p2, highp float w) {
+
+# source: out/devices/tmp/verify_pass3/ASUS_AI2205_13-TKQ1.220928.001-20240229.log
+=== VERIFY REPORT ===
+{
+  "spec": "ASUS_AI2205_13-TKQ1.220928.001-20240229",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/ASUS_AI2205_13-TKQ1.220928.001-20240229/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "black screen (meanBrightness=0.0)",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{4892166 u0 Android System}\n  mFocusedApp=ActivityRecord{d23a1c0 u0 com.asus.launcher/com.android.launcher3.uioverrides.QuickstepLauncher t7}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "297",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 0.0,
+    "peak": 0,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/ASUS_AI2205_13-TKQ1.220928.001-20240229.png",
+    "pngBytes": 7685
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": false
+}
+
+--- matched lines ---
+L250: 11-19 17:21:13.550   527   552 D skia    :   15	highp float wangs_formula_max_fdiff_p2_ff2f2f2f2f22(highp vec2 p0, highp vec2 p1, highp vec2 p2, highp vec2 p3, highp mat2 matrix) {
+L255: 11-19 17:21:13.550   527   552 D skia    :   20	highp float wangs_formula_conic_p2_fff2f2f2f(highp float _precision_, highp vec2 p0, highp vec2 p1, highp vec2 p2, highp float w) {
+L288: 11-19 17:21:13.550   527   552 D skia    :   53	                highp float _0_n2 = wangs_formula_conic_p2_fff2f2f2f(PRECISION, AFFINE_MATRIX * p0, AFFINE_MATRIX * p1, AFFINE_MATRIX * p2, w);
+L293: 11-19 17:21:13.550   527   552 D skia    :   58	                highp float _1_m = wangs_formula_max_fdiff_p2_ff2f2f2f2f22(p0, p1, p2, p3, AFFINE_MATRIX);
+L297: 11-19 17:21:13.550   527   552 D skia    :   62	                idxInResolveLevel = floor(ldexp(idxInResolveLevel, int(maxResolveLevel - resolveLevel)));
+L300: 11-19 17:21:13.550   527   552 D skia    :   65	            highp float fixedVertexID = floor(0.5 + ldexp(idxInResolveLevel, int(MAX_FIXED_RESOLVE_LEVEL - resolveLevel)));

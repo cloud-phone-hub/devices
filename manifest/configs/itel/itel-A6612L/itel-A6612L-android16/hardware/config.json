@@ -1,0 +1,118 @@
+{
+  "hardware": [
+    {
+      "android.hardware.audio": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.bluetooth": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.camera": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.gnss": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.gpu": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.health": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.ir": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.keymint": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.light": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.media": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.radio": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.sensors": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.thermal": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.vibrator": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.wifi": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.service.daemon": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.media.v412": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.graphics.allocator": {
+        "variant": "default",
+        "version": "2.0"
+      }
+    },
+    {
+      "android.hardware.power": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    }
+  ]
+}

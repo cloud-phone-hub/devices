@@ -1,0 +1,3 @@
+vendor.qti.hardware.radio.internal.deviceinfo.IDeviceInfo/deviceinfo
+vendor.qti.hardware.radio.qtiradioconfig.IQtiRadioConfig/default
+vendor.qti.ims.datachannelservice.IDataChannelService/default

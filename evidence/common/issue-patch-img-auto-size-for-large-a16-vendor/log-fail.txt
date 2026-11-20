@@ -1,0 +1,39 @@
+    基线清单: db://tcl/vinca/15-AP3A.240905.015.A2-20260512（无 patch.vendor-cil-rewrite）
+    输入: 缓存配方 patch-1bc03976fce5（输入哈希）
+==> 阶段日志: out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/img/patch-log.txt（边写边变，不计入 SHA256SUMS）
+==> [步骤 11.0] 解析计划
+    载体:        /dev/block/vdc -> /mnt/vendorpatch（first_stage_mount；名以 /mnt/vendor 为前缀命中 vold 白名单，避开强拆）
+    子树 vendor: out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/img/vendor.img（403021824 B，已存在，sha256 4f5e06ace558） -> /vendor
+    子树 dlkm:   out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/img/vendor_dlkm.img（15831040 B，已存在，sha256 5ad73139f109） -> /vendor_dlkm
+    子树 odm:    out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/img/odm.img（8388608 B，已存在，sha256 0d85db5ed894） -> /odm
+    形态修正:    /vendor/odm 软链接换真实空目录；/vendor/lib/modules 由 vendor_dlkm 复制实体
+    屏蔽落点:    odm/etc/selinux/odm_sepolicy.cil、odm/etc/selinux/precompiled_sepolicy（必须不存在，否则反噬引导）
+    工具:        debugfs=/opt/homebrew/opt/e2fsprogs/sbin/debugfs，e2fsck=/opt/homebrew/opt/e2fsprogs/sbin/e2fsck，mkfs.ext4=/opt/homebrew/opt/e2fsprogs/sbin/mkfs.ext4
+    镜像产物:    out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/img/patch.img（384 MiB，ext4）
+    缓存配方:    patch-1bc03976fce5
+==> [步骤 11.1] 解包三棵源树
+    输入: out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/img/vendor.img（403021824 B）+ out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/img/vendor_dlkm.img（15831040 B）+ out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/img/odm.img（8388608 B）
+    输出: out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/patch/stage/{raw_vendor、raw_vendor_dlkm、raw_odm}（debugfs rdump）
+    vendor: out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/patch/stage/raw_vendor（976 条目：文件 736 / 链接 199 / 目录 41）
+    vendor_dlkm: out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/patch/stage/raw_vendor_dlkm（28 条目：文件 24 / 链接 0 / 目录 4）
+    odm: out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/patch/stage/raw_odm（3 条目：文件 1 / 链接 0 / 目录 2）
+[ok] 源树已解包
+==> [步骤 11.2] 组装 patch 容器根
+    输入: out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/patch/stage/raw_vendor -> /vendor，out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/patch/stage/raw_vendor_dlkm -> /vendor_dlkm，out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/patch/stage/raw_odm -> /odm
+    输出: out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/patch/stage/root（= 运行态 /mnt/vendorpatch）
+    /vendor/lib/modules 符号链接（-> /vendor_dlkm/lib/modules）替换为真实目录（从 /vendor_dlkm/lib/modules 复制 20 条目）
+    屏蔽落点校验通过（2 项均不存在）
+[ok] 组装完成：1030 条目（文件 781 / 链接 198 / 目录 51）
+==> [步骤 11.3] 逐路径从源镜像取元数据
+    输入: 1031 条目（源 1029 + 固定 2），源镜像 3 张
+    输出: 每个条目的 mode（含类型位）/ uid / gid / security.selinux
+    out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/img/odm.img: 读回 4 条目
+    out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/img/vendor.img: 读回 976 条目，[warn] 1 个缺 security.selinux（按 u:object_r:vendor_file:s0 兜底）
+    out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/img/vendor_dlkm.img: 读回 49 条目
+[ok] 元数据就绪：1031 条目，标签 37 种
+==> [步骤 11.4] mkfs.ext4 -d 导入内容与权限位
+    输入: out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/patch/stage/root（1031 条目，384 MiB）
+    输出: out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/patch/patch.work.img（98304 块 × 4096 B；uid/gid 留给步骤 11.5 回填）
+==> 构建报告: out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/build-report.json
+[err] 阶段 build_patch 失败: mkfs.ext4 失败: mke2fs 生成 /Volumes/work/cloud-phone-hub/out/devices/devices/tcl/vinca/15-AP3A.240905.015.A2-20260512/patch/patch.work.img 失败 (exit status 1): __populate_fs: 无法为 ext2 文件系统分配块 写入文件 "libkeymaster_portable.so" 时
+mkfs.ext4: 无法为 ext2 文件系统分配块 填充文件系统时

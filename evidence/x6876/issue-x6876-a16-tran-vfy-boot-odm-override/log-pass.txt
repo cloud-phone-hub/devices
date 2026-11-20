@@ -1,0 +1,285 @@
+=== VERIFY REPORT ===
+{
+  "spec": "Infinix-X6876_14-UP1A.231005.007-20260423",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/Infinix-X6876_14-UP1A.231005.007-20260423/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{5d0c3ff u0 NotificationShade}\n  mFocusedApp=ActivityRecord{164035136 u0 com.transsion.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher t6}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2436,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 56.88,
+    "peak": 235,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/Infinix-X6876_14-UP1A.231005.007-20260423.png",
+    "pngBytes": 1569761
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===
+[  106.851929][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/system/uid_1000/pid_7585
+[  106.865606][ T2997] binder: 870:2997 transaction async to 3329:0 failed 169684/29201/-1, code 1598311760 size 48-8 line 3745
+[  106.869238][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=android.os.UpdateEngineStableService scontext=u:r:pioneer:s0 tcontext=u:object_r:update_engine_stable_service:s0 tclass=service_manager permissive=1
+[  106.870416][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=android.security.apc scontext=u:r:pioneer:s0 tcontext=u:object_r:apc_service:s0 tclass=service_manager permissive=1
+[  106.872600][   T32] binder: release 7589:7594 transaction 169500 out, still active
+[  106.872674][ T2997] binder: 2997:870 reply target not found
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.5 flush=0.0 update=0.0 end=0.0 总=1.6 ms
+[  106.872675][ T2997] binder: 870:2997 transaction reply to 0:0 failed 170189/29189/0, code 0 size 4-0 line 3288
+[  106.872677][ T2997] binder: send failed reply for transaction 169500, target dead
+[  106.880511][    T1] init: processing action (sys.init.updatable_crashing=1) from (/system/etc/init/flags_health_check.rc:10)
+[  106.896853][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=app_hibernation scontext=u:r:pioneer:s0 tcontext=u:objecqemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.7 ms
+t_r:app_hibernation_service:s0 tclass=service_manager permissive=1
+[  106.907833][    T1] init: starting service 'exec 55 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+[  106.937781][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=app_search scontext=u:r:pioneer:s0 tcontext=u:object_r:app_search_service:s0 tclass=service_manager permissive=1
+[  107.3qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.4 flush=0.0 update=0.0 end=0.0 总=1.6 ms
+83238][  T148] init: ReapLogP Persist PropSet [persist.sys.gps.lpp] = [2] at 107374, Done
+[  107.387688][  T274] servicemanager: Caller(pid=364,uid=1017,sid=u:r:keystore:s0) Could not find android.hardware.security.keymint.IRemotelyProvisionedComponent/default in the VINTF manifest. No alternative instances declared in VINTF.
+[  107.461396][  T148] init: ReapLogP Persist PropSet [persist.sys.gps.lpp] = [2] at 107452, Done
+[  107.478408][    T1] init: ... started service 'exec 55 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 7601
+[  107.478811][  T274] servicemanager: Caller(pid=3099,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.ims.IMtkRadioExIms/slot1 in the VINTF manifest. No alternative instances declared in VINTF.
+[  107.478859][  T274] servicemanager: Caller(pid=870,uid=1000,sid=u:r:system_server:s0) Since 'android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+[  107.478937][  T274] SELinux: avc:  denied  { find } for pid=5052 uid=10173 name=vendor.transsion.hardware.camera.tzservice.ITZService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:tran_tzservice_binder_service:s0 tclass=service_manager permissive=0
+[  107.480314][  T274] servicemanager: Caller(pid=3099,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.ims.IMtkRadioExIms/slot2 in the VINTF manifest. No alternative instances declared in VINTF.
+[  107.480350][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=appwidget scontext=u:r:pioneer:s0 tcontext=u:object_r:appwidget_service:s0 tclass=service_manager permissive=1
+[  107.487114][  T274] SELinux: avc:  denied  { find } for pid=7625 uid=0 name=settings scontext=u:r:pioneer:s0 tcontext=u:object_r:settings_service:s0 tclass=service_manager permissive=1
+[  107.487352][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=artd scontext=u:r:pioneer:s0 tcontext=u:object_r:artd_service:s0 tclass=service_manager permissive=1
+[  107.487876][  T274] SELinux: avc:  denied  { find } for pid=3099 uid=1001 name=vendor.mediatek.hardware.nvram.INvram/default scontext=u:r:radio:s0 tcontext=u:object_r:mtk_hal_nvramagent_service:s0 tclass=service_manager permissive=0
+[  107.491287][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=battery scontext=u:r:pioneer:s0 tcontext=u:object_r:battery_service:s0 tclass=service_manager permissive=1
+[  107.491367][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=batterystats scontext=u:r:pioneer:s0 tcontext=u:object_r:batterystats_service:s0 tclass=service_manager permissive=1
+[  107.493950][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=blob_store scontext=u:r:pioneer:s0 tcontext=u:object_r:blob_store_service:s0 tclass=service_manager permissive=1
+[  107.495788][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=bugreport scontext=u:r:pioneer:s0 tcontext=u:object_r:bugreport_service:s0 tclass=service_manager permissive=1
+[  107.498518][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=color_display scontext=u:r:pioneer:s0 tcontext=u:object_r:color_display_service:s0 tclass=service_manager permissive=1
+[  107.506155][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=connectivity scontext=u:r:pioneer:s0 tcontext=u:object_r:connectivity_service:s0 tclass=service_manager permissive=1
+[  107.513243][ T7601] KernelSU: hook_manager: unmark 7601 exec /system/bin/flags_health_check
+[  107.513316][  T147] init: NtQ Control message: Could not find 'aidl/android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual' for ctl.interface_start from pid: 274 (/system/bin/servicemanager)
+[  107.513921][ T7632] servicemanager: Caller(pid=870,uid=1000,sid=u:r:system_server:s0) Tried to start aidl service android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+[  107.515507][    T1] init: SVC_EXEC service 'exec 55 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 7601 (uid 1000 gid 1000+0 context default) started; waiting...
+[  107.515520][    T1] init: Command 'exec - system system -- /system/bin/flags_health_check UPDATABLE_CRASHING' action=sys.init.updatable_crashing=1 (/system/etc/init/flags_health_check.rc:11) took 607ms and succeeded
+[  107.515596][    T1] init: Untracked pid 5677 received signal 1
+[  107.515598][    T1] init: Untracked pid 5677 did not have an associated service entry and will not be reaped
+[  107.515622][    T1] init: Untracked pid 5678 received signal 1
+[  107.515623][    T1] init: Untracked pid 5678 did not have an associated service entry and will not be reaped
+[  107.526119][ T7618] KernelSU: handle_setresuid from 0 to 10086
+[  107.526345][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=content_capture scontext=u:r:pioneer:s0 tcontext=u:object_r:content_capture_service:s0 tclass=service_manager permissive=1
+[  107.526408][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=country_detector scontext=u:r:pioneer:s0 tcontext=u:object_r:country_detector_service:s0 tclass=service_manager permissive=1
+[  107.526501][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=crossprofileapps scontext=u:r:pioneer:s0 tcontext=u:object_r:crossprofileapps_service:s0 tclass=service_manager permissive=1
+[  107.530690][  T681] binder: release 7633:7638 transaction 183140 out, still active
+[  107.532197][ T3337] binder: 3337:870 translate fd failed
+[  107.532198][ T3337] binder: 870:3337 transaction async to 3329:0 failed 183296/29201/-1, code 1598311760 size 48-8 line 3745
+[  107.532262][ T3337] binder: 3337:870 reply target not found
+[  107.540276][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=deviceidle scontext=u:r:pioneer:s0 tcontext=u:object_r:deviceidle_service:s0 tclass=service_manager permissive=1
+[  107.553964][    T1] init: Service 'exec 55 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 7601) exited with status 0 waiting took 0.591000 seconds
+[  107.553971][    T1] init: Sending signal 9 to service 'exec 55 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 7601) process group...
+[  107.554045][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/system/uid_1000/pid_7601
+[  107.680827][ T7661] KernelSU: handle_setresuid from 0 to 10232
+[  107.687485][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=devicestoragemonitor scontext=u:r:pioneer:s0 tcontext=u:object_r:devicestoragemonitor_service:s0 tclass=service_manager permissive=1
+[  107.690484][  T534] audit: audit_lost=1013 audit_rate_limit=5 audit_backlog_limit=64
+[  107.721637][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=domain_verification scontext=u:r:pioneer:s0 tcontext=u:object_r:domain_verification_service:s0 tclass=service_manager permissive=1
+[  107.729704][  T534] audit: rate limit exceeded
+[  107.738596][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=drm.drmManager scontext=u:r:pioneer:s0 tcontext=u:object_r:drmserver_service:s0 tclass=service_manager permissive=1
+[  107.745925][  T287] type=1400 audit(1795055571.992:4641): avc:  denied  { search } for  comm="binder:364_4" name="tranfs" dev="dm-3" ino=256 scontext=u:r:keystore:s0 tcontext=u:object_r:unlabeled:s0 tclass=dir permissive=0 trawcon="u:object_r:tranfs_file:s0"
+[  107.753498][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=dynamic_system scontext=u:r:pioneer:s0 tcontext=u:object_r:dynamic_system_service:s0 tclass=service_manager permissive=1
+[  107.760873][  T287] type=1400 audit(1795055572.000:4642): avc:  denied  { call } for  comm="service" scontext=u:r:pioneer:s0 tcontext=u:r:drmserver:s0 tclass=binder permissive=1
+[  107.781500][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=ecm_enhanced_confirmation scontext=u:r:pioneer:s0 tcontext=u:object_r:ecm_enhanced_confirmation_service:s0 tclass=service_manager permissive=1
+[  107.832574][ T7716] KernelSU: handle_setresuid from 0 to 1000
+[  107.842075][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=ethernet scontext=u:r:pioneer:s0 tcontext=u:object_r:ethernet_service:s0 tclass=service_manager permissive=1
+[  108.053787][  T287] type=1400 audit(1795055572.304:4643): avc:  denied  { search } for  comm="ThermalThrottle" name="thermal" dev="sysfs" ino=1766 scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0 app=com.transsion.camera
+[  108.063582][  T274] SELinux: avc:  denied  { find } for pid=5052 uid=10173 name=vendor.transsion.hardware.camera.tzservice.ITZService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:tran_tzservice_binder_service:s0 tclass=service_manager permissive=0
+[  108.066123][  T287] type=1400 audit(1795055572.304:4644): avc:  denied  { search } for  comm="ThermalThrottle" name="thermal" dev="sysfs" ino=1766 scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0 app=com.transsion.camera
+[  108.077625][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=feature_flags scontext=u:r:pioneer:s0 tcontext=u:object_r:feature_flags_service:s0 tclass=service_manager permissive=1
+[  108.090342][  T287] type=1400 audit(1795055572.304:4645): avc:  denied  { search } for  comm="ThermalThrottle" name="thermal" dev="sysfs" ino=1766 scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0 app=com.transsion.camera
+[  108.099951][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=font scontext=u:r:pioneer:s0 tcontext=u:object_r:font_service:s0 tclass=service_manager permissive=1
+[  108.412342][  T274] SELinux: avc:  denied  { find } for pid=3099 uid=1001 name=vendor.mediatek.hardware.nvram.INvram/default scontext=u:r:radio:s0 tcontext=u:object_r:mtk_hal_nvramagent_service:s0 tclass=service_manager permissive=0
+[  108.445579][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=game scontext=u:r:pioneer:s0 tcontext=u:object_r:game_service:s0 tclass=service_manager permissive=1
+[  108.458623][  T274] servicemanager: Caller(pid=3099,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.modem.IMtkRadioExModem/slot2 in the VINTF manifest. No alternative instances declared in VINTF.
+[  108.477403][  T274] servicemanager: Caller(pid=364,uid=1017,sid=u:r:keystore:s0) Could not find android.hardware.security.keymint.IRemotelyProvisionedComponent/default in the VINTF manifest. No alternative instances declared in VINTF.
+[  108.500468][  T274] servicemanager: Caller(pid=3099,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.modem.IMtkRadioExModem/slot1 in the VINTF manifest. No alternative instances declared in VINTF.
+[  108.516240][  T274] servicemanager: Caller(pid=870,uid=1000,sid=u:r:system_server:s0) Since 'android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+qemu-system-aarch64: cgl-headless flush #4000: rect=0,0 1080x2436 surface=1080x2436 backing=1080x2436 y0top=0
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=3.1 flush=0.0 update=0.0 end=0.0 总=3.3 ms
+[  108.599549][  T147] init: NtQ Control message: Could not find 'aidl/android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual' for ctl.interface_start from pid: 274 (/system/bin/servicemanager)
+[  108.599678][  T274] SELinux: avc:  denied  { find } for pid=5052 uid=10173 name=vendor.transsion.hardware.camera.tzservice.ITZService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:tran_tzservice_binder_service:s0 tclass=service_manager permissive=0
+[  108.605895][ T7826] servicemanager: Caller(pid=870,uid=1000,sid=u:r:system_server:s0) Tried to start aidl service android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+[  108.616554][  T274] servicemanager: Caller(pid=3099,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.modem.IMtkRadioExModem/slot1 in the VINTF manifest. No alternative instances declared in VINTF.
+[  108.658727][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=graphicsstats scontext=u:r:pioneer:s0 tcontext=u:object_r:graphicsstats_service:s0 tclass=service_manager permissive=1
+[  108.675481][ T5635] KernelSU: handle_setresuid from 0 to 1000
+[  108.684798][  T274] servicemanager: Caller(pid=3099,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.modem.IMtkRadioExModem/slot1 in the VINTF manifest. No alternative instances declared in VINTF.
+[  108.698705][ T7562] audit: audit_lost=1324 audit_rate_limit=5 audit_backlog_limit=64
+[  108.705279][ T7562] audit: rate limit exceeded
+[  108.709732][  T274] servicemanager: Caller(pid=3099,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.modem.IMtkRadioExModem/slot1 in the VINTF manifest. No alternative instances declared in VINTF.
+[  108.726301][  T274] servicemanager: Caller(pid=3099,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.modem.IMtkRadioExModem/slot1 in the VINTF manifest. No alternative instances declared in VINTF.
+[  108.737482][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=idmap scontext=u:r:pioneer:s0 tcontext=u:object_r:idmap_service:s0 tclass=service_manager permissive=1
+[  108.764492][  T287] type=1400 audit(1795055573.012:4945): avc:  denied  { call } for  comm="service" scontext=u:r:pioneer:s0 tcontext=u:r:idmap:s0 tclass=binder permissive=1
+[  108.779481][  T287] type=1400 audit(1795055573.016:4946): avc:  denied  { search } for  comm="binder:5635_2" name="tranfs" dev="dm-3" ino=256 scontext=u:r:system_app:s0 tcontext=u:object_r:unlabeled:s0 tclass=dir permissive=0 trawcon="u:object_r:tranfs_file:s0"
+[  108.811119][  T287] type=1400 audit(1795055573.024:4947): avc:  denied  { call } for  comm="service" scontext=u:r:pioneer:s0 tcontext=u:r:radio:s0 tclass=binder permissive=1
+[  108.828278][  T274] servicemanager: Caller(pid=364,uid=1017,sid=u:r:keystore:s0) Could not find android.hardware.security.keymint.IRemotelyProvisionedComponent/default in the VINTF manifest. No alternative instances declared in VINTF.
+[  108.833662][  T287] type=1400 audit(1795055573.024:4948): avc:  denied  { call } for  comm="service" scontext=u:r:pioneer:s0 tcontext=u:r:incidentd:s0 tclass=binder permissive=1
+[  108.844334][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=jobscheduler scontext=u:r:pioneer:s0 tcontext=u:object_r:jobscheduler_service:s0 tclass=service_manager permissive=1
+[  108.846473][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=knightphone scontext=u:r:pioneer:s0 tcontext=u:object_r:tran_knightphone_service:s0 tclass=service_manager permissive=1
+[  108.855506][  T287] type=1400 audit(1795055573.056:4949): avc:  denied  { call } for  comm="service" scontext=u:r:pioneer:s0 tcontext=u:r:installd:s0 tclass=binder permissive=1
+[  108.874165][  T274] SELinux: avc:  denied  { find } for pid=7562 uid=0 name=logcat scontext=u:r:pioneer:s0 tcontext=u:object_r:logcat_service:s0 tclass=service_manager permissive=1
+[  109.115381][  T274] SELinux: avc:  denied  { find } for pid=5052 uid=10173 name=vendor.transsion.hardware.camera.tzservice.ITZService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:tran_tzservice_binder_service:s0 tclass=service_manager permissive=0
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+[  109.282083][  T274] servicemanager: Caller(pid=3099,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.modem.IMtkRadioExModem/slot1 in the VINTF manifest. No alternative instances declared in VINTF.
+[  109.301684][  T274] servicemanager: Caller(pid=3099,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.modem.IMtkRadioExModem/slot1 in the VINTF manifest. No alternative instances declared in VINTF.
+[  109.326144][  T274] servicemanager: qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.4 flush=0.0 update=0.0 end=0.0 总=1.5 ms
+Caller(pid=3099,uid=1001,sid=u:r:radio:s0) Cqemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=2.2 flush=0.0 update=0.0 end=0.0 总=2.3 ms
+ould not find vendor.mediatek.hardware.mtkradioex.modem.IMtkRadioExModem/slot1 in the VINTF manifest. No alternative instances declared in VINTF.
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.4 flush=0.0 update=0.0 end=0.0 总=1.5 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.4 flush=0.0 update=0.0 end=0.0 总=1.5 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.4 flush=0.0 update=0.0 end=0.0 总=1.5 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.5 flush=0.0 update=0.0 end=0.0 总=1.6 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=3.0 flush=0.0 update=0.0 end=0.0 总=3.1 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+[  109.612721][  T274] servicemanager: Caller(pid=870,uid=1000,sid=u:r:system_server:s0) Since 'android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual' could not be found trying toqemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.0 read=1.5 flush=0.0 update=0.0 end=0.0 总=1.6 ms
+ start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+[  109.642207][  T274] SELinux: avc:  denied  { find } for pid=5052 uid=10173 name=vendor.transsion.hardware.camera.tzservice.ITZService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:tran_tzservice_binder_service:s0 tclass=service_manager permissive=0
+[  109.642373][  T147] init: NtQ Control message: Could not find 'aidl/android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual' for ctl.interface_start from pid: 274 (/system/bin/servicemanager)
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+[  109.668589][ T7876] servicemanager: Caller(pid=870,uid=1000,sid=u:r:system_server:s0) Tried to start aidl service android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+[  109.715459][ T6807] audit: audit_lost=1504 audit_rate_limit=5 audit_backlog_limit=64
+[  109.720580][ T6807] audit: rate limit exceeded
+[  110.156696][  T274] SELinux: avc:  denied  { find } for pid=5052 uid=10173 name=vendor.transsion.hardware.camera.tzservice.ITZService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:tran_tzservice_binder_service:s0 tclass=service_manager permissive=0
+[  110.292078][  T287] type=1400 audit(1795055574.540:5128): avc:  denied  { read } for  comm="SystemStateMana" name="thermal" dev="sysfs" ino=1766 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+[  110.642936][  T274] servicemanager: Caller(pid=870,uid=1000,sid=u:r:system_server:s0) Since 'android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+[  110.663356][  T147] init: NtQ Control message: Could not find 'aidl/android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual' for ctl.interface_start from pid: 274 (/system/bin/servicemanager)
+[  110.674755][ T7881] servicemanager: Caller(pid=870,uid=1000,sid=u:r:system_server:s0) Tried to start aidl service android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+[  110.678874][  T274] SELinux: avc:  denied  { find } for pid=5052 uid=10173 name=vendor.transsion.hardware.camera.tzservice.ITZService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:tran_tzservice_binder_service:s0 tclass=service_manager permissive=0
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.4 flush=0.0 update=0.0 end=0.0 总=1.5 ms
+[  111.213363][  T274] SELinux: avc:  denied  { find } for pid=5052 uid=10173 name=vendor.transsion.hardware.camera.tzservice.ITZService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:tran_tzservice_binder_service:s0 tclass=service_manager permissive=0
+[  111.291063][ T5338] cdh-wifi: sw_scan inject=4 skipped=0 model=4
+[  111.483937][  T274] servicemanager: Caller(pid=3099,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.ims.IMtkRadioExIms/slot1 in the VINTF manifest. No alternative instances declared in VINTF.
+[  111.506678][  T274] servicemanager: Caller(pid=3099,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.ims.IMtkRadioExIms/slot2 in the VINTF manifest. No alternative instances declared in VINTF.
+[  111.510970][  T574] [room-daemon] 
+[  111.511545][  T287] type=1400 audit(1795055575.760:5129): avc:  denied  { write } for  comm="hvc-event" name="kmsg" dev="tmpfs" ino=5 scontext=u:r:pioneer:s0 tcontext=u:object_r:kmsg_device:s0 tclass=chr_file permissive=1
+[  111.511576][  T287] type=1400 audit(1795055575.760:5130): avc:  denied  { open } for  comm="hvc-event" path="/dev/kmsg" dev="tmpfs" ino=5 scontext=u:r:pioneer:s0 tcontext=u:object_r:kmsg_device:s0 tclass=chr_file permissive=1
+[  111.534921][  T574] cmd: kill after 5000ms: service list | wc -l
+[  111.534923][  T574] 
+[  111.646803][    T1] init: starting service 'magt'...
+[  111.663849][  T274] servicemanager: Caller(pid=870,uid=1000,sid=u:r:system_server:s0) Since 'android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+[  111.682635][ T7907] KernelSU: hook_manager: unmark 7907 exec /system_ext/bin/magt
+[  111.682679][  T147] init: NtQ Control message: Could not find 'aidl/android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual' for ctl.interface_start from pid: 274 (/system/bin/servicemanager)
+[  111.686544][ T7907] cdh_rewrite_forward: 786 callbacks suppressed
+[  111.686546][ T7907] cdh_redirect: forward /mnt/vendorpatch/odm/lib64/vndk-sp
+[  111.688813][ T7908] servicemanager: Caller(pid=870,uid=1000,sid=u:r:system_server:s0) Tried to start aidl service android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+[  111.692470][    T1] init: ... started service 'magt' has pid 7907
+[  111.692577][ T7907] cdh_redirect: forward /mnt/vendorpatch/odm/lib64/vndk-sp
+[  111.692586][ T7907] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64/vndk-sp
+[  111.692688][ T7907] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64
+[  111.714119][ T7909] cdh_redirect: forward /mnt/vendorpatch/odm/lib64/vndk-sp
+[  111.715829][ T7907] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64
+[  111.716775][ T7909] cdh_redirect: forward /mnt/vendorpatch/odm/lib64/vndk-sp
+[  111.720425][ T7907] cdh_redirect: forward /mnt/vendorpatch/odm/lib64
+[  111.720439][ T7907] cdh_redirect: forward /mnt/vendorpatch/odm/lib64
+[  111.720441][ T7907] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64
+[  111.736503][  T274] SELinux: avc:  denied  { find } for pid=5052 uid=10173 name=vendor.transsion.hardware.camera.tzservice.ITZService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:tran_tzservice_binder_service:s0 tclass=service_manager permissive=0
+[  111.739663][  T287] type=1400 audit(1795055575.988:5131): avc:  denied  { read } for  comm="magt" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=569 scontext=u:r:magt:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+[  111.746788][    T1] init: starting service 'netdiag'...
+[  111.756421][  T287] type=1400 audit(1795055575.988:5132): avc:  denied  { read } for  comm="magt" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=569 scontext=u:r:magt:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+[  111.756484][  T287] type=1400 audit(1795055575.992:5133): avc:  denied  { use } for  comm="binder:870_20" path="pipe:[94105]" dev="pipefs" ino=94105 scontext=u:r:bluetooth:s0 tcontext=u:r:pioneer:s0 tclass=fd permissive=0
+[  111.841868][  T574] [room-daemon] 
+[  111.845923][    T1] init: Could not create socket 'netdiag': Failed to bind socket 'netdiag': Permission denied
+[  111.846565][  T287] type=1400 audit(1795055576.096:5134): avc:  denied  { create } for  comm="init" name="netdiag" scontext=u:r:init:s0 tcontext=u:object_r:socket_device:s0 tclass=sock_file permissive=0
+[  111.847425][  T574] hvc-event: js 处理完成 ok=true "{\"ok\":false,\"code\":-1,\"out\":\"\",\"err\":\"\",\"timed_out\":true}"
+[  111.851080][    T1] init: ... started service 'netdiag' has pid 7919
+[  111.854303][  T287] type=1400 audit(1795055576.100:5135): avc:  denied  { read } for  comm="netdiag" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=569 scontext=u:r:netdiag:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+[  111.867935][  T574] 
+[  111.881902][    T1] init: Service 'magt' (pid 7907) exited with status 253
+[  111.930901][  T287] type=1400 audit(1795055576.176:5136): avc:  denied  { name_connect } for  comm="mgmt-adb-conn" dest=5555 scontext=u:r:pioneer:s0 tcontext=u:object_r:port:s0 tclass=tcp_socket permissive=1
+[  111.936135][    T1] init: Sending signal 9 to service 'magt' (pid 7907) process group...
+[  111.957079][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/system/uid_1000/pid_7907
+[  111.964321][ T7924] audit: audit_lost=1505 audit_rate_limit=5 audit_backlog_limit=64
+[  111.965686][  T287] type=1400 audit(1795055576.212:5137): avc:  denied  { write search } for  comm="sh" name="tmp" dev="dm-62" ino=102 scontext=u:r:pioneer:s0 tcontext=u:object_r:shell_data_file:s0 tclass=dir permissive=1
+[  111.966381][    T1] init: process with updatable components 'magt' exited 4 times in 4 minutes
+[  111.971727][ T7924] audit: rate limit exceeded
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.6 read=2.3 flush=0.0 update=0.0 end=0.0 总=2.9 ms
+[  111.984450][    T1] init: Service 'netdiag' (pid 7919) exited with status 1
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.8 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.2 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.7 ms
+[  112.059335][    T1] init: Sending signal 9 to service 'netdiag'qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.2 read=1.5 flush=0.0 update=0.0 end=0.0 总=1.7 ms
+ (pid 7919) process group...
+[  112.068102][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/system/uid_2000/pid_7919
+[  112.078885][    T1] init: process with updatable components 'netdiag' exited 4 times in 4 minutes
+[  112.093592][    Tqemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.4 flush=0.0 update=0.0 end=0.0 总=1.6 ms
+1] init: processing action (sys.init.updatable_qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=2.3 flush=0.0 update=0.0 end=0.0 总=2.4 ms
+crashing=1) from (/system/etc/init/flags_health_check.rc:10)
+[  112.112418][    T1] init: starting service 'exec 56 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=3.2 flush=0.0 update=0.0 end=0.0 总=3.3 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.4 flush=0.0 update=0.0 end=0.0 总=1.5 ms
+[  112.142075][    T1] init: ... started service 'exec 56 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 7939
+[  112.142512][ T7939] KernelSU: hook_manager: unmark 7939 exec /system/bin/flags_health_check
+[  112.145044][    T1] init: SVC_EXEC service 'exec 56 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 7qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.2 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+939 (uid 1000 gid 1000+0 context default) started; waiting...
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+[  112.178954][    T1] init: Service 'exec 56 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 7939) exited with status 0 waiting took 0.053000 seconds
+[  112.192322][    T1] init: Sending signal 9 to service 'exec 56 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 7939) process group...
+[  112.201580][    T1] libprocessgroup: Removqemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+ed cgroup /sys/fs/cgroup/system/uid_1000/pid_7939
+[  112.219883][    T1] init: processing action (sys.init.updataqemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.2 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+ble_crashing=1) from (/system/etc/init/flags_health_check.rc:10)
+[  112.232192][    T1] init: starting service 'exec 57 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.2 read=1.5 flush=0.0 update=0.0 end=0.0 总=1.6 ms
+[  112.245914][  T274] SELinux: avc:  denied  { find } for pid=5052 uid=10173 name=vendor.transsion.hardware.camera.tzservice.ITZService/default scontext=u:rqemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=2.8 flush=0.0 update=0.0 end=0.0 总=2.9 ms
+:platform_app:s0:c512,c768 tcontext=u:object_r:tran_tzservice_binder_service:s0 tclass=service_manager permissive=0
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=3.2 flush=0.0 update=0.0 end=0.0 总=3.3 ms
+[  112.281689][    T1] init: ... started service 'exec 57 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 7940
+[  112.281718][ T7940] KernelSU: hook_manager: unmark 7940 exec /system/bin/flags_health_check
+[  112.285494][ T4056] binder_debug: 8 callbacks suppressed
+[  112.285496][ T4056] binder: release 7942:7944 transaction 216013 out, still active
+[  112.287126][ T3272] binder: 3272:870 translate fd failed
+[  112.287129][ T3272] binder: 870:3272 transaction async to 3329:0 failed 216014/29201/-1, code 1598311760 size 48-8 line 3745
+[  112.287396][    T1] init: SVC_EXEC service 'exec 57 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 7940 (uid 1000 gid 1000+0 context default) started; waiting...
+[  112.287414][    T1] init: Command 'exec - system system -- /system/bin/flags_health_check UPDATABLE_CRASHING' action=sys.init.updatable_crashing=1 (/system/etc/init/flags_health_check.rc:11) took 55ms and succeeded
+[  112.287635][ T3272] binder: 3272:870 reply target not found
+[  112.287645][ T3272] binder: 870:3272 transaction reply to 0:0 failed 216015/29189/0, code 0 size 4-0 line 3288
+[  112.287648][ T3272] binder: send failed reply for transaction 216013, target dead
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.3 read=2.1 flush=0.0 update=0.0 end=0.0 总=2.4 ms
+[  112.390084][    T1] init: Service 'exec 57 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 7940) exited with status 0 waiting took 0.146000 seconds
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+[  112.400472][    T1] init: Sending signal 9 to service 'exec 57 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 7940) process group...
+[  112.410941][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/system/uid_1000/pid_7940
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=2.7 flush=0.0 update=0.0 end=0.0 总=2.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.4 flush=0.0 update=0.0 end=0.0 总=1.5 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.2 read=1.5 flush=0.0 update=0.0 end=0.0 总=1.7 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.4 flush=0.0 update=0.0 end=0.0 总=1.5 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.7 ms
+[  112.683141][  T274] servicemanager: Caller(pid=870,uid=1000,sid=u:r:system_server:s0) Since 'android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+[  112.709732][  T147] init: NtQ Control message: Could not find 'aidl/android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual' for ctl.interface_start from pid: 274 (/system/bin/servicemanager)
+[  112.724290][ T7949] servicemanager: Caller(pid=870,uid=1000,sid=u:r:system_server:s0) Tried to start aidl service android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+[  112.777184][  T274] SELinux: avc:  denied  { find } for pid=5052 uid=10173 name=vendor.transsion.hardware.camera.tzservice.ITZService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:tran_tzservice_binder_service:s0 tclass=service_manager permissive=0
+[  112.798192][  T287] type=1400 audit(1795055577.048:5150): avc:  denied  { getattr } for  comm="sh" path="/system/bin/dumpsys" dev="dm-3" ino=10621802 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[  112.805355][   T92] binder: release 7950:7952 transaction 216196 out, still active
+[  112.807478][ T1050] binder: 1050:870 translate fd failed
+[  112.807481][ T1050] binder: 870:1050 transaction async to 3329:0 failed 216197/29201/-1, code 1598311760 size 48-8 line 3745
+[  112.810227][  T287] type=1400 audit(1795055577.048:5151): avc:  denied  { execute } for  comm="sh" name="dumpsys" dev="dm-3" ino=10621802 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[  112.810236][  T287] type=1400 audit(1795055577.048:5152): avc:  denied  { read open } for  comm="sh" path="/system/bin/dumpsys" dev="dm-3" ino=10621802 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[  112.810242][  T287] type=1400 audit(1795055577.048:5153): avc:  denied  { execute_no_trans } for  comm="sh" path="/system/bin/dumpsys" dev="dm-3" ino=10621802 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[  112.810248][  T287] type=1400 audit(1795055577.048:5154): avc:  denied  { map } for  comm="dumpsys" path="/system/bin/dumpsys" dev="dm-3" ino=10621802 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[  112.909200][ T1050] binder: 1050:870 reply target not found
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.7 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.1 read=1.4 flush=0.0 update=0.0 end=0.0 总=1.5 ms
+[  113.291319][  T274] SELinux: avc:  denied  { find } for pid=5052 uid=10173 name=vendor.transsion.hardware.camera.tzservice.ITZService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:tran_tzservice_binder_service:s0 tclass=service_manager permissive=0
+[  113.334260][ T7962] audit: audit_lost=1519 audit_rate_limit=5 audit_backlog_limit=64
+[  113.339598][ T7962] audit: rate limit exceeded

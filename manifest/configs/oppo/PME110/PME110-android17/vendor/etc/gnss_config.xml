@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gnss-config control-file="/data/vendor/gps/fix"
+             system-info-name="MTK_MNLD_default,MNL_VER_default"
+             default-longitude="120.008549"
+             default-latitude="30.289452"
+             default-altitude-meters="15.5"
+             default-speed-meters-per-second="3.2"
+             default-horizontal-accuracy-meters="1"
+             default-satellites="12"
+             gnss-capabilities="991"
+             power-capabilities="1"
+             measurement-corrections-capabilities="0"
+             year-of-hw="2020"/>

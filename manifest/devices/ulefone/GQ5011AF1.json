@@ -4,9 +4,9 @@
   "brand": "ulefone",
   "model": "Ulefone Armor 28 Ultra",
   "device": "GQ5011AF1",
-  "platform": "qcom",
+  "platform": "mtk",
   "resolution": "1080x2400",
-  "inch": "72x160",
+  "inch": "70x155",
   "density": 480,
   "smp": 8,
   "memory": [

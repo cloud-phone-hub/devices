@@ -1,0 +1,350 @@
+=== VERIFY REPORT ===
+{
+  "spec": "RMX5112_13-TP1A.220905.001-20251025",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/RMX5112_13-TP1A.220905.001-20251025/1/qemu.log",
+  "bootCompleted": false,
+  "failReason": "timeout after 210s (bootanim='')",
+  "bootanim": "",
+  "topActivity": "mCurrentFocus=null\n  mFocusedApp=null",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "248",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 3.15,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/RMX5112_13-TP1A.220905.001-20251025.png",
+    "pngBytes": 57210
+  },
+  "postBootCompleted": "",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot",
+  "passed": false
+}
+
+=== AUTO DIAG (TOMBSTONE & CRASH) ===
+===CDH_DIAG===
+total 0
+head: /data/tombstones/tombstone_00: No such file or directory
+===DROPBOX===
+total 24
+-rw------- 1 system system 23 2026-11-19 15:01 storage_trim@1795071680413.txt
+-rw------- 1 system system 15 2026-11-19 15:01 storage_trim@1795071680414.txt
+-rw------- 1 system system 22 2026-11-19 15:01 storage_trim@1795071680415.txt
+-rw------- 1 system system 22 2026-11-19 15:01 storage_trim@1795071680416.txt
+-rw------- 1 system system 23 2026-11-19 15:01 storage_trim@1795071680417.txt
+-rw------- 1 system system 23 2026-11-19 15:01 storage_trim@1795071680418.txt
+
+=== ADB / SERIAL CRASH HIGHLIGHTS ===
+--------- beginning of crash
+11-19 15:00:56.233   643   643 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:00:58.047   790   790 I emdlogger: mtk-brm-commit-id:04ab5bd912477cf2320dee54df9ac8b535476f2d
+11-19 15:00:58.047   790   790 I emdlogger: mtk-brm-change-id:Ib405363e450403587f3a66bbe5b353966c086aba
+11-19 15:00:58.047   790   790 I emdlogger: mtk-brm-merge-id:none
+11-19 15:00:58.214   775   775 I libimsma_adapt: mtk-brm-commit-id:8783a29bae0ae84a456239f3212f27bdafa94c91
+11-19 15:00:58.214   775   775 I libimsma_adapt: mtk-brm-change-id:Iee598bb542f5de895a4b71649fbc79b2d93bc3de
+11-19 15:00:58.214   775   775 I libimsma_adapt: mtk-brm-merge-id:none
+11-19 15:01:01.487  1084  1084 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:01:06.480  1201  1201 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:01:11.489  1608  1608 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:01:16.501  2061  2061 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:01:21.489  2628  2628 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:01:26.495  2671  2671 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:01:31.502  2704  2704 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:01:36.501  2747  2747 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:01:41.504  2776  2776 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:01:46.508  2819  2819 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:01:51.512  2860  2860 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:01:56.515  2891  2891 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:02:01.519  2935  2935 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:02:06.523  2966  2966 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:02:11.527  3007  3007 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:02:16.535  3050  3050 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:02:21.537  3079  3079 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:02:26.539  3122  3122 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:02:31.543  3155  3155 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:02:36.548  3198  3198 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:02:41.551  3237  3237 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:02:46.554  3270  3270 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:02:51.557  3311  3311 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:02:56.563  3342  3342 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:03:01.567  3387  3387 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:03:06.581  3428  3428 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:03:11.582  3459  3459 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:03:16.596  3502  3502 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:03:21.592  3531  3531 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:03:26.595  3574  3574 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:03:31.600  3611  3611 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:03:36.604  3650  3650 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:03:41.608  3691  3691 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:03:46.611  3721  3721 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:03:51.614  3763  3763 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:03:56.618  3792  3792 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+11-19 15:03:59.065   527   527 F libc    : failed to wait for crash_dump helper: No child processes
+11-19 15:03:59.154   228   228 F libc    : crash_dump helper failed to exec, or was killed
+11-19 15:03:59.258   302   302 F libc    : crash_dump helper failed to exec, or was killed
+11-19 15:04:01.624  4026  4026 F linker  : CANNOT LINK EXECUTABLE "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/bin/hw/cdh_audio_parameter_parser"...
+
+--- system/main errors ---
+
+=== QEMU.LOG TAIL ===
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+[  206.573737][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=on_device_intelligence scontext=u:r:pioneer:s0 tcontext=u:object_r:on_device_intelligence_service:s0 tclass=service_manager permissive=1
+[  206.576656][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=oplus_accesscontrol scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_accesscontrol_service:s0 tclass=service_manager permissive=1
+[  206.579594][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=oplus_battery_stats_service scontext=u:r:pioneer:s0 tcontext=u:object_r:spmservice:s0 tclass=service_manager permissive=1
+[  206.582380][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=oplus_tile scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_tile_service:s0 tclass=service_manager permissive=1
+[  206.585171][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=oplus_vrr_service scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_vrr_service:s0 tclass=service_manager permissive=1
+[  206.587839][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=opluscustomize scontext=u:r:pioneer:s0 tcontext=u:object_r:opluscustomize_service:s0 tclass=service_manager permissive=1
+[  206.590660][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=oplusdevicepolicy scontext=u:r:pioneer:s0 tcontext=u:object_r:oplusdevicepolicy_service:s0 tclass=service_manager permissive=1
+[  206.593715][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=oplusnetd scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_netd_service:s0 tclass=service_manager permissive=1
+[  206.596429][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=opluspreodex scontext=u:r:pioneer:s0 tcontext=u:object_r:otadexopt_service:s0 tclass=service_manager permissive=1
+[  206.601743][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=oplusstoragemanagerservice scontext=u:r:pioneer:s0 tcontext=u:object_r:oplusstoragemanagerservice_service:s0 tclass=service_manager permissive=1
+[  206.605794][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=overlay scontext=u:r:pioneer:s0 tcontext=u:object_r:overlay_service:s0 tclass=service_manager permissive=1
+[  206.609506][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=pac_proxy scontext=u:r:pioneer:s0 tcontext=u:object_r:pac_proxy_service:s0 tclass=service_manager permissive=1
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.7 ms
+[  206.614771][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=package_native scontext=u:r:pioneer:s0 tcontext=u:object_r:package_native_service:s0 tclass=service_manager permissive=1
+[  206.617664][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=performance_hint scontext=u:r:pioneer:s0 tcontext=u:object_r:hint_service:s0 tclass=service_manager permissive=1
+[  206.620616][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=permission scontext=u:r:pioneer:s0 tcontext=u:object_r:permission_service:s0 tclass=service_manager permissive=1
+[  206.623413][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=permission_checker scontext=u:r:pioneer:s0 tcontext=u:object_r:permission_checker_service:s0 tclass=service_manager permissive=1
+[  206.626079][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=permissionmgr scontext=u:r:pioneer:s0 tcontext=u:object_r:permissionmgr_service:s0 tclass=service_manager permissive=1
+[  206.628812][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=pinner scontext=u:r:pioneer:s0 tcontext=u:object_r:pinner_service:s0 tclass=service_manager permissive=1
+[  206.631553][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=platform_compat scontext=u:r:pioneer:s0 tcontext=u:object_r:platform_compat_service:s0 tclass=service_manager permissive=1
+[  206.634720][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=power scontext=u:r:pioneer:s0 tcontext=u:object_r:power_service:s0 tclass=service_manager permissive=1
+[  206.637344][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=powerstats scontext=u:r:pioneer:s0 tcontext=u:object_r:powerstats_service:s0 tclass=service_manager permissive=1
+[  206.640381][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=processinfo scontext=u:r:pioneer:s0 tcontext=u:object_r:processinfo_service:s0 tclass=service_manager permissive=1
+[  206.643757][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=procstats scontext=u:r:pioneer:s0 tcontext=u:object_r:procstats_service:s0 tclass=service_manager permissive=1
+[  206.647024][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=recovery scontext=u:r:pioneer:s0 tcontext=u:object_r:recovery_service:s0 tclass=service_manager permissive=1
+[  206.651735][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=remote_provisioning scontext=u:r:pioneer:s0 tcontext=u:object_r:remote_provisioning_service:s0 tclass=service_manager permissive=1
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+[  206.657208][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=resources scontext=u:r:pioneer:s0 tcontext=u:object_r:resources_manager_service:s0 tclass=service_manager permissive=1
+[  206.660542][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=role scontext=u:r:pioneer:s0 tcontext=u:object_r:role_service:s0 tclass=service_manager permissive=1
+[  206.663550][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=rollback scontext=u:r:pioneer:s0 tcontext=u:object_r:rollback_service:s0 tclass=service_manager permissive=1
+[  206.666507][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=scheduling_policy scontext=u:r:pioneer:s0 tcontext=u:object_r:scheduling_policy_service:s0 tclass=service_manager permissive=1
+[  206.669831][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=search scontext=u:r:pioneer:s0 tcontext=u:object_r:search_service:s0 tclass=service_manager permissive=1
+[  206.672571][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=sec_key_att_app_id_provider scontext=u:r:pioneer:s0 tcontext=u:object_r:sec_key_att_app_id_provider_service:s0 tclass=service_manager permissive=1
+[  206.675253][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=security_state scontext=u:r:pioneer:s0 tcontext=u:object_r:security_state_service:s0 tclass=service_manager permissive=1
+[  206.678094][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=sensor_privacy scontext=u:r:pioneer:s0 tcontext=u:object_r:sensor_privacy_service:s0 tclass=service_manager permissive=1
+[  206.680586][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=sensorservice scontext=u:r:pioneer:s0 tcontext=u:object_r:sensorservice_service:s0 tclass=service_manager permissive=1
+[  206.685688][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=servicediscovery scontext=u:r:pioneer:s0 tcontext=u:object_r:servicediscovery_service:s0 tclass=service_manager permissive=1
+[  206.690211][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=speech_recognition scontext=u:r:pioneer:s0 tcontext=u:object_r:speech_recognition_service:s0 tclass=service_manager permissive=1
+[  206.693895][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=stats scontext=u:r:pioneer:s0 tcontext=u:object_r:stats_service:s0 tclass=service_manager permissive=1
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+[  206.699232][  T227] type=1400 audit(1795071840.636:1841): avc:  denied  { call } for  comm="service" scontext=u:r:pioneer:s0 tcontext=u:r:statsd:s0 tclass=binder permissive=1
+[  206.699251][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=statusbar scontext=u:r:pioneer:s0 tcontext=u:object_r:statusbar_service:s0 tclass=service_manager permissive=1
+[  206.703932][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=storagecompressdedup scontext=u:r:pioneer:s0 tcontext=u:object_r:storagecompressdedup_service:s0 tclass=service_manager permissive=1
+[  206.707257][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=storaged scontext=u:r:pioneer:s0 tcontext=u:object_r:storaged_service:s0 tclass=service_manager permissive=1
+[  206.709996][  T227] type=1400 audit(1795071840.644:1842): avc:  denied  { call } for  comm="service" scontext=u:r:pioneer:s0 tcontext=u:r:storaged:s0 tclass=binder permissive=1
+[  206.710432][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=storagestats scontext=u:r:pioneer:s0 tcontext=u:object_r:storagestats_service:s0 tclass=service_manager permissive=1
+[  206.715482][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=suspend_control scontext=u:r:pioneer:s0 tcontext=u:object_r:system_suspend_control_service:s0 tclass=service_manager permissive=1
+[  206.718607][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=suspend_control_internal scontext=u:r:pioneer:s0 tcontext=u:object_r:system_suspend_control_internal_service:s0 tclass=service_manager permissive=1
+[  206.723101][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=system_config scontext=u:r:pioneer:s0 tcontext=u:object_r:system_config_service:s0 tclass=service_manager permissive=1
+[  206.728806][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=system_server_dumper scontext=u:r:pioneer:s0 tcontext=u:object_r:system_server_dumper_service:s0 tclass=service_manager permissive=1
+[  206.731465][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=system_update scontext=u:r:pioneer:s0 tcontext=u:object_r:system_update_service:s0 tclass=service_manager permissive=1
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+[  206.737780][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=testharness scontext=u:r:pioneer:s0 tcontext=u:object_r:testharness_service:s0 tclass=service_manager permissive=1
+[  206.740982][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=textclassification scontext=u:r:pioneer:s0 tcontext=u:object_r:textclassification_service:s0 tclass=service_manager permissive=1
+[  206.743631][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+[  206.746410][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=texttospeech scontext=u:r:pioneer:s0 tcontext=u:object_r:texttospeech_service:s0 tclass=service_manager permissive=1
+[  206.749208][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=theia scontext=u:r:pioneer:s0 tcontext=u:object_r:theia_service:s0 tclass=service_manager permissive=1
+[  206.752659][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=thermalservice scontext=u:r:pioneer:s0 tcontext=u:object_r:thermal_service:s0 tclass=service_manager permissive=1
+[  206.755415][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=time_detector scontext=u:r:pioneer:s0 tcontext=u:object_r:timedetector_service:s0 tclass=service_manager permissive=1
+[  206.758031][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=time_zone_detector scontext=u:r:pioneer:s0 tcontext=u:object_r:timezonedetector_service:s0 tclass=service_manager permissive=1
+[  206.760899][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=transparency scontext=u:r:pioneer:s0 tcontext=u:object_r:transparency_service:s0 tclass=service_manager permissive=1
+[  206.763563][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=uimode scontext=u:r:pioneer:s0 tcontext=u:object_r:uimode_service:s0 tclass=service_manager permissive=1
+[  206.766561][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=updatelock scontext=u:r:pioneer:s0 tcontext=u:object_r:updatelock_service:s0 tclass=service_manager permissive=1
+[  206.770186][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=uri_grants scontext=u:r:pioneer:s0 tcontext=u:object_r:uri_grants_service:s0 tclass=service_manager permissive=1
+[  206.773375][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=usage scontext=u:r:pioneer:s0 tcontext=u:object_r:usage_service:s0 tclass=service_manager permissive=1
+[ qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+ 206.776631][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=usagestats scontext=u:r:pioneer:s0 tcontext=u:object_r:usagestats_service:s0 tclass=service_manager permissive=1
+[  206.781943][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=user scontext=u:r:pioneer:s0 tcontext=u:object_r:user_service:s0 tclass=service_manager permissive=1
+[  206.784841][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=vcn_management scontext=u:r:pioneer:s0 tcontext=u:object_r:vcn_management_service:s0 tclass=service_manager permissive=1
+[  206.787989][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=vendor.mediatek.framework.mtksf_ext.IMtkSF_ext/default scontext=u:r:pioneer:s0 tcontext=u:object_r:mtk_hal_sf_service:s0 tclass=service_manager permissive=1
+[  206.790979][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=vendor.mediatek.hardware.mtkradioex.data.IMtkRadioExData/slot1 scontext=u:r:pioneer:s0 tcontext=u:object_r:hal_radio_service:s0 tclass=service_manager permissive=1
+[  206.795503][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=vendor.oplus.hardware.commondcs.ICommonDcsAidlHalService/default scontext=u:r:pioneer:s0 tcontext=u:object_r:commondcs_aidl_service:s0 tclass=service_manager permissive=1
+[  206.798681][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=vibrator_manager scontext=u:r:pioneer:s0 tcontext=u:object_r:vibrator_manager_service:s0 tclass=service_manager permissive=1
+[  206.801722][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=vold scontext=u:r:pioneer:s0 tcontext=u:object_r:vold_service:s0 tclass=service_manager permissive=1
+[  206.804437][  T227] type=1400 audit(1795071840.740:1843): avc:  denied  { call } for  comm="service" scontext=u:r:pioneer:s0 tcontext=u:r:vold:s0 tclass=binder permissive=1
+[  206.804589][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=vpn_management scontext=u:r:pioneer:s0 tcontext=u:object_r:vpn_management_service:s0 tclass=service_manager permissive=1
+[  206.811276][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=wallpaper scontext=u:r:pioneer:s0 tcontext=u:object_r:wallpaper_service:s0 tclass=service_manager permissive=1
+[  206.814407][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=wearable_sensing scontext=u:r:pioneer:s0 tcontext=u:object_r:wearable_sensing_service:s0 tclass=service_manager permissive=1
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+[  206.820678][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=webviewupdate scontext=u:r:pioneer:s0 tcontext=u:object_r:webviewupdate_service:s0 tclass=service_manager permissive=1
+[  206.823689][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=wifi scontext=u:r:pioneer:s0 tcontext=u:object_r:wifi_service:s0 tclass=service_manager permissive=1
+[  206.826260][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=wifinl80211 scontext=u:r:pioneer:s0 tcontext=u:object_r:wifinl80211_service:s0 tclass=service_manager permissive=1
+[  206.829156][  T227] type=1400 audit(1795071840.764:1844): avc:  denied  { call } for  comm="service" scontext=u:r:pioneer:s0 tcontext=u:r:wificond:s0 tclass=binder permissive=1
+[  206.829245][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=wifip2p scontext=u:r:pioneer:s0 tcontext=u:object_r:wifip2p_service:s0 tclass=service_manager permissive=1
+[  206.834399][  T213] SELinux: avc:  denied  { find } for pid=3998 uid=2000 name=wifiscanner scontext=u:r:pioneer:s0 tcontext=u:object_r:wifiscanner_service:s0 tclass=service_manager permissive=1
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.4 flush=0.0 update=0.0 end=0.0 总=1.6 ms
+[  206.860863][  T227] type=1400 audit(1795071840.796:1845): avc:  denied  { name_connect } for  comm="mgmt-adb-conn" dest=5555 scontext=u:r:pioneer:s0 tcontext=u:object_r:port:s0 tclass=tcp_socket permissive=1
+[  206.886809][  T227] type=1400 audit(1795071840.820:1846): avc:  denied  { read } for  comm="getprop" name="u:object_r:boot_status_prop:s0" dev="tmpfs" ino=130 scontext=u:r:pioneer:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=1
+[  206.892812][  T227] type=1400 audit(1795071840.820:1847): avc:  denied  { open } for  comm="getprop" path="/dev/__properties__/u:object_r:boot_status_prop:s0" dev="tmpfs" ino=130 scontext=u:r:pioneer:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=1
+[  206.895691][  T227] type=1400 audit(1795071840.820:1848): avc:  denied  { getattr } for  comm="getprop" path="/dev/__properties__/u:object_r:boot_status_prop:s0" dev="tmpfs" ino=130 scontext=u:r:pioneer:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=1
+[  206.qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.8 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+899209][  T227] type=1400 audit(1795071840.820:1849): avc:  denied  { map } for  comm="getprop" path="/dev/__properties__/u:object_r:boot_status_prop:s0" dev="tmpfs" ino=130 scontext=u:r:pioneer:s0 tcontext=u:object_r:boot_status_prop:s0 tclass=file permissive=1
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+[  206.974413][  T227] type=1400 audit(1795071840.908:1850): avc:  denied  { read } for  comm="getprop" name="u:object_r:system_boot_reason_prop:s0" dev="tmpfs" ino=399 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_boot_reason_prop:s0 tclass=file permissive=1
+[  206.980658][  T227] type=1400 audit(17950718qemu-system-aarch64: cgl-headless flush #8400: rect=0,0 1080x2400 surface=1080x2400 backing=1080x2400 y0top=0
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.9 flush=0.0 update=0.0 end=0.0 总=2.1 ms
+40.908:1851): avc:  denied  { open } for  comm="getprop" path="/dev/__properties__/u:object_r:system_boot_reason_prop:s0" dev="tmpfs" ino=399 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_boot_reason_prop:s0 tclass=file permissive=1
+[  206.987196][  T227] type=1400 audit(1795071840.908:1852): avc:  denied  { getattr } for  comm="getprop" path="/dev/__properties__/u:object_r:system_boot_reason_prop:s0" dev="tmpfs" ino=399 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_boot_reason_prop:s0 tclass=file permissive=1
+[  206.990422][  T227] type=1400 audit(1795071840.908:1853): avc:  denied  { map } for  comm="getprop" path="/dev/__properties__/u:object_r:system_boot_reason_prop:s0" dev="tmpfs" ino=399 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_boot_reason_prop:s0 tclass=file permissive=1
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.7 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.7 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+[  207.341833][  T213] servicemanager: Caller(pid=636,uid=1041,sid=u:r:audioserver:s0) Since 'android.media.audio.IHalAdapterVendorExtension/default' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+[  207.345564][    T1] init: Control message: Could not find 'aidl/android.media.audio.IHalAdapterVendorExtension/default' for ctl.interface_start from pid: 213 (/system/bin/servicemanager)
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.8 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+[  207.351574][ T4021] servicemanager: Caller(pid=636,uid=1041,sid=u:r:audioserver:s0) Tried to start aidl service android.media.audio.IHalAdapterVendorExtension/default as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+[  207.479501][    T1] cdh_rewrite_forward: 1168 callbacks suppressed
+[  207.479504][    T1] cdh_redirect: forward /mnt/vendorpatch/vendor/bin/hw/android.hardware.biometrics.fingerprint-virtualhal-service
+[  207.482279][    T1] init: starting service 'vendor.fingerprint-virtualhal'...
+[  207.484227][ T4022] KernelSU: hook_manager: unmark 4022 exec /vendor/bin/hw/android.hardware.biometrics.fingerprint-virtualh
+[  207.484633][    T1] init: ... started service 'vendor.fingerprint-virtualhal' has pid 4022
+[  207.485907][ T4022] cdh_redirect: forward /mnt/vendorpatch/vendor/bin/hw/android.hardware.biometrics.fingerprint-virtualhal-service
+[  207.489167][ T4022] cdh_redirect: forward /mnt/vendorpatch/vendor/bin/hw/android.hardware.biometrics.fingerprint-virtualhal-service
+[  207.490695][ T4022] cdh_redirect: forward /mnt/vendorpatch/odm/bin
+[  207.491668][ T4022] cdh_redirect: forward /mnt/vendorpatch/vendor/bin
+[  207.493025][ T4022] cdh_redirect: forward /mnt/vendorpatch/odm/lib64/vndk-sp
+[  207.494391][ T4022] cdh_redirect: forward /mnt/vendorpatch/odm/lib64/vndk-sp
+[  207.496001][ T4022] cdh_redirect: forward /mnt/vendorpatch/odm/lib64/vndk
+[  207.496975][ T4022] cdh_redirect: forward /mnt/vendorpatch/odm/lib64/vndk
+[  207.498458][ T4022] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64/vndk-sp
+[  207.504893][  T213] SELinux: avc:  denied  { add } for pid=4022 uid=1000 name=android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual scontext=u:r:hal_fingerprint_default:s0 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0
+[  207.509570][    T1] init: Service 'vendor.fingerprint-virtualhal' (pid 4022) exited with status 2
+[  207.511051][    T1] init: Sending signal 9 to service 'vendor.fingerprint-virtualhal' (pid 4022) process group...
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+[  207.513369][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_1000/pid_4022
+[  207.517090][    T1] init: process with updatable components 'vendor.fingerprint-virtualhal' exited 4 times before boot completed
+[  207.519154][    T1] init: processing action (sys.init.updatable_crashing=1) from (/system/etc/init/flags_health_check.rc:10)
+[  207.520578][    T1] init: starting service 'exec 154 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+[  207.522301][    T1] init: ... started service 'exec 154 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 4023
+[  207.522348][ T4023] KernelSU: hook_manager: unmark 4023 exec /system/bin/flags_health_check
+[  207.524847][    T1] init: SVC_EXEC service 'exec 154 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 4023 (uid 1000 gid 1000+0 context default) started; waiting...
+[  207.527458][    T1] init: starting service 'vendor.face-virtualhal'...
+[  207.529180][ T4024] KernelSU: hook_manager: unmark 4024 exec /vendor/bin/hw/android.hardware.biometrics.face-virtualhal-serv
+[  207.529595][    T1] init: ... started service 'vendor.face-virtualhal' has pid 4024
+[  207.531774][    T1] init: Service 'exec 154 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 4023) exited with status 0 waiting took 0.009000 seconds
+[  207.534333][    T1] init: Sending signal 9 to service 'exec 154 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 4023) process group...
+[  207.536859][  T213] SELinux: avc:  denied  { add } for pid=4024 uid=1000 name=android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual scontext=u:r:hal_face_default:s0 tcontext=u:object_r:default_android_service:s0 tclass=service_manager permissive=0
+[  207.537341][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_1000/pid_4023
+[  207.540438][    T1] init: Service 'vendor.face-virtualhal' (pid 4024) exited with status 2
+[  207.541898][    T1] init: Sending signal 9 to service 'vendor.face-virtualhal' (pid 4024) process group...
+[  207.545941][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_1000/pid_4024
+[  207.547673][    T1] init: process with updatable components 'vendor.face-virtualhal' exited 4 times before boot completed
+[  207.549921][    T1] init: processing action (sys.init.updatable_crashing=1) from (/system/etc/init/flags_health_check.rc:10)
+[  207.551478][    T1] init: starting service 'exec 155 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+[  207.553438][    T1] init: ... started serqemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.7 ms
+vice 'exec 155 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 4025
+[  207.553588][ T4025] KernelSU: hook_manager: unmark 4025 exec /system/bin/flags_health_check
+[  207.559092][    T1] init: SVC_EXEC service 'exec 155 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 4025 (uid 1000 gid 1000+0 context default) started; waiting...
+[  207.563240][    T1] init: Service 'exec 155 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 4025) exited with status 0 waiting took 0.009000 seconds
+[  207.565603][    T1] init: Sending signal 9 to service 'exec 155 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 4025) process group...
+[  207.567956][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_1000/pid_4025
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+[  207.679739][    T1] init: starting service 'audio_parameter_parser_service'...
+[  207.682450][ T4026] KernelSU: hook_manager: unmark 4026 exec /system_ext/bin/hw/android.hardware.audio.parameter_parser.serv
+[  207.682847][    T1] init: ... started service 'audio_parameter_parser_service' has pid 4026
+[  207.685689][  T227] type=1400 audit(1795071841.620:1854): avc:  denied  { read } for  comm="cdh_audio_param" name="libc++.so" dev="vdc" ino=922 scontext=u:r:audio_vendor_parameter_parser:s0 tcontext=u:object_r:same_process_hal_file:s0 tclass=file permissive=0
+[  207.686364][    T1] init: Service 'audio_parameter_parser_service' (pid 4026) exited with status 1
+[  207.688740][  T227] type=1400 audit(1795071841.620:1855): avc:  denied  { read } for  comm="cdh_audio_param" name="libc++.so" dev="vdc" ino=922 scontext=u:r:audio_vendor_parameter_parser:s0 tcontext=u:object_r:same_process_hal_file:s0 tclass=file permissive=0
+[  207.689754][    T1] init: Sending signal 9 to service 'audio_parameter_parser_service' (pid 4026) process group...
+[  207.691829][  T227] type=1400 audit(1795071841.620:1856): avc:  denied  { read } for  comm="cdh_audio_param" name="libc++.so" dev="vdc" ino=922 scontext=u:r:audio_vendor_parameter_parser:s0 tcontext=u:object_r:same_process_hal_file:s0 tclass=file permissive=0
+[  207.692945][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_1041/pid_4026
+[  207.696071][    T1] init: process with updatable components 'audio_parameter_parser_service' exited 4 times before boot completed
+[  207.697911][    T1] init: processing action (sys.init.updatable_crashing=1) from (/system/etc/init/flags_health_check.rc:10)
+[  207.699810][    T1] init: starting service 'exec 156 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+[  207.702362][    T1] init: ... started service 'exec 156 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 4027
+[  207.702391][ T4027] KernelSU: hook_manager: unmark 4027 exec /system/bin/flags_health_check
+[  207.704258][    T1] init: SVC_EXEC service 'exec 156 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 4027 (uid 1000 gid 1000+0 context default) started; waiting...
+[  207.710080][    T1] init: Service 'exec 156 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 4027) exited with status 0 waiting took 0.007000 seconds
+[  207.712365][    T1] init: Sending signal 9 to service 'exec 156 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 4027) process group...
+[  207.714286][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/uid_1000/pid_4027
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.7 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.8 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=2.0 flush=0.0 update=0.0 end=0.0 总=2.1 ms
+[  208.195601][  T500] [room-daemon] 
+[  208.195603][  T500] hvc-event: 收到 js
+[  208.195711][  T227] type=1400 audit(1795071842.132:1857): avc:  denied  { write } for  comm="hvc-event" name="kmsg" dev="tmpfs" ino=5 scontext=u:r:pioneer:s0 tcontext=u:object_r:kmsg_device:s0 tclass=chr_file permissive=1
+[  208.196684][  T500] 
+[  208.197785][  T227] type=1400 audit(1795071842.132:1858): avc:  denied  { open } for  comm="hvc-event" path="/dev/kmsg" dev="tmpfs" ino=5 scontext=u:r:pioneer:s0 tcontext=u:object_r:kmsg_device:s0 tclass=chr_file permissive=1
+[  208.207682][  T227] type=1400 audit(1795071842.144:1859): avc:  denied  { read } for  comm="head" name="u:object_r:system_prop:s0" dev="tmpfs" ino=518 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_prop:s0 tclass=file permissive=1
+[  208.210721][  T227] type=1400 audit(1795071842.144:1860): avc:  denied  { open } for  comm="head" path="/dev/__properties__/u:object_r:system_prop:s0" dev="tmpfs" ino=518 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_propqemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+:s0 tclass=file permissive=1
+[  208.216171][  T227] type=1400 audit(1795071842.144:1861): avc:  denied  { getattr } for  comm="head" path="/dev/__properties__/u:object_r:system_prop:s0" dev="tmpfs" ino=518 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_prop:s0 tclass=file permissive=1
+[  208.218271][  T500] [room-daemon] 
+[  208.218486][  T500] hvc-event: js 处理完成 ok=true "{\"ok\":true,\"code\":0,\"out\":\"===CDH_DIAG===\\ntotal 0\\nhead: /data/tombstones/tombstone_00: No such file or directory\\n===DROPBOX===\\ntotal 24\\n-rw------- 1 system system 23 2026-11-19 15:01 storage_trim@1795071680413.txt\\n-rw------- 1 system system 15 2026-11-19 15:01 storage_trim@1795071680414.txt\\n-rw------- 1 system system 22 2026-11-19 15:01 storage_trim@1795071680415.txt\\n-rw------- 1 system system 22 2026-11-19 15:01 storage_trim@1795071680416.txt\\n-rw------- 1 system system 23 2026-11-19 15:01 storage_trim@1795071680417.txt\\n-rw------- 1 system system 23 2026-11-19 15:01 storage_trim@1795071680418.txt\\n\",\"err\":\"\",\"timed_out\":false}"
+[  208.218547][  T227] type=1400 audit(1795071842.144:1862): avc:  denied  { map } for  comm="head" path="/dev/__properties__/u:object_r:system_prop:s0" dev="tmpfs" ino=518 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_prop:s0 tclass=file permissive=1
+[  208.219532][  T500] 
+[  208.229023][  T227] type=1400 audit(1795071842.144:1863): avc:  denied  { getattr } for  comm="ls" path="/data/tombstones" dev="dm-50" ino=21 scontext=u:r:pioneer:s0 tcontext=u:object_r:tombstone_data_file:s0 tclass=dir permissive=1
+[  208.231951][  T227] type=1400 audit(1795071842.144:1864): avc:  denied  { read } for  comm="ls" name="tombstones" dev="dm-50" ino=21 scontext=u:r:pioneer:s0 tcontext=u:object_r:tombstone_data_file:s0 tclass=dir permissive=1
+[  208.234285][  T227] type=1400 audit(1795071842.144:1865): avc:  denied  { open } for  comm="ls" path="/data/tombstones" dev="dm-50" ino=21 scontext=u:r:pioneer:s0 tcontext=u:object_r:tombstone_data_file:s0 tclass=dir permissive=1
+[  208.236750][  T227] type=1400 audit(1795071842.144:1866): avc:  denied  { search } for  comm="ls" name="tombstones" dev="dm-50" ino=21 scontext=u:r:pioneer:s0 tcontext=u:object_r:tombstone_data_file:s0 tclass=dir permissive=1
+[  208.240143][  T227] type=1400 audit(1795071842.148:1867): avc:  denied  { getattr } for  comm="ls" path="/data/system/dropbox" dev="dm-50" ino=141 scontext=u:r:pioneer:s0 tcontext=u:object_r:dropbox_data_file:s0 tclass=dir permissive=1
+[  208.253945][  T227] type=1400 audit(1795071842.148:1868): avc:  denied  { dac_read_search } for  comm="ls" capability=2  scontext=u:r:pioneer:s0 tcontext=u:r:pioneer:s0 tclass=capability permissive=1
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.3 read=2.6 flush=0.0 update=0.0 end=0.0 总=2.9 ms
+[  208.266438][  T227] type=1400 audit(1795071842.148:1869): avc:  denied  { read } for  comm="ls" name="dropbox" dev="dm-50" ino=141 scontext=u:r:pioneer:s0 tcontext=u:object_r:dropbox_data_file:s0 tclass=dir permissive=1
+[  208.272446][  T227] type=1400 audit(1795071842.148:1870): avc:  denied  { open } for  comm="ls" path="/data/system/dropbox" dev="dm-50" ino=141 scontext=u:r:pioneer:s0 tcontext=u:object_r:dropbox_data_file:s0 tclass=dir permissive=1
+[  208.274702][  T227] type=1400 audit(1795071842.148:1871): avc:  denied  { search } for  comm="ls" name="dropbox" dev="dm-50" ino=141 scontext=u:r:pioneer:s0 tcontext=u:object_r:dropbox_data_file:s0 tclass=dir permissive=1
+[  208.277200][  T227] type=1400 audit(1795071842.148:1872): avc:  denied  { getattr } for  comm="ls" path="/data/system" dev="dm-50" ino=139 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_data_file:s0 tclass=dir permissive=1
+[  208.282009][  T227] type=1400 audit(1795071842.148:1873): avc:  denied  { getattr } for  comm="ls" path="/data/system/dropbox/storage_trim@1795071680413.txt" dev="dm-50" ino=4050 scontext=u:r:pioneer:s0 tcontext=u:object_r:dropbox_data_file:s0 tclass=file permissive=1
+[  208.295314][  T227] type=1400 audit(1795071842.232:1874): avc:  denied  { name_connect } for  cqemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+omm="mgmt-adb-conn" dest=5555 scontext=u:r:pioneer:s0 tcontext=u:object_r:port:s0 tclass=tcp_socket permissive=1
+[  208.313076][  T227] type=1400 audit(1795071842.248:1875): avc:  denied  { write search } for  comm="sh" name="tmp" dev="dm-50" ino=110 scontext=u:r:pioneer:s0 tcontext=u:object_r:shell_data_file:s0 tclass=dir permissive=1
+[  208.315382][  T224] logd: logdr: UID=2000 GID=2000 PID=4040 n tail=120 logMask=10 pid=0 start=0ns deadline=0ns
+[  208.316189][  T227] type=1400 audit(1795071842.248:1876): avc:  denied  { getattr } for  comm="sh" path="/data/local/tmp" dev="dm-50" ino=110 scontext=u:r:pioneer:s0 tcontext=u:object_r:shell_data_file:s0 tclass=dir permissive=1
+[  208.321222][  T227] type=1400 audit(1795071842.248:1877): avc:  denied  { getattr } for  comm="sh" path="/system/bin/logcat" dev="dm-3" ino=25439116 scontext=u:r:pioneer:s0 tcontext=u:object_r:logcat_exec:s0 tclass=file permissive=1
+[  208.323995][  T227] type=1400 audit(1795071842.248:1878): avc:  denied  { execute } for  comm="sh" name="logcat" dev="dm-3" ino=25439116 scontext=u:r:pioneer:s0 tcontext=u:object_r:logcat_exec:s0 tclass=file permissive=1
+[  208.329032][  T227] type=1400 audit(1795071842.248:1879): avc:  denied  { read open } for  comm="sh" path="/system/bin/logcat" dev="dm-3" ino=25439116 scontext=u:r:pioneer:s0 tcontext=u:object_r:logcat_exec:s0 tclass=file permissive=1
+[  208.331441][  T227] type=1400 audit(1795071842.248:1880): avc:  denied  { execute_no_trans } for  comm="sh" path="/system/bin/logcat" dev="dm-3" ino=25439116 scontext=u:r:pioneer:s0 tcontext=u:object_r:logcat_exec:s0 tclass=file permissive=1
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.4 flush=0.0 update=0.0 end=0.0 总=1.5 ms
+[  208.339524][  T227] type=1400 audit(1795071842.248:1881): avc:  denied  { map } for  comm="logcat" path="/system/bin/logcat" dev="dm-3" ino=25439116 scontext=u:r:pioneer:s0 tcontext=u:object_r:logcat_exec:s0 tclass=file permissive=1
+[  208.340043][  T224] logd: logdr: UID=2000 GID=2000 PID=4045 n tail=0 logMask=9 pid=0 start=0ns deadline=0ns
+[  208.342069][  T227] type=1400 audit(1795071842.252:1882): avc:  denied  { read } for  comm="logcat" name="u:object_r:default_prop:s0" dev="tmpfs" ino=194 scontext=u:r:pioneer:s0 tcontext=u:object_r:default_prop:s0 tclass=file permissive=1
+[  208.345116][  T227] type=1400 audit(1795071842.252:1883): avc:  denied  { open } for  comm="logcat" path="/dev/__properties__/u:object_r:default_prop:s0" dev="tmpfs" ino=194 scontext=u:r:pioneer:s0 tcontext=u:object_r:default_prop:s0 tclass=file permissive=1
+[  208.346127][  T213] servicemanager: Caller(pid=636,uid=1041,sid=u:r:audioserver:s0) Since 'android.media.audio.IHalAdapterVendorExtension/default' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+[  208.351346][  T227] type=1400 audit(1795071842.252:1884): avc:  denied  { getattr } for  comm="logcat" path="/dev/__properties__/u:object_r:default_prop:s0" dev="tmpfs" ino=194 scontext=u:r:pioneer:s0 tcontext=u:object_r:default_prop:s0 tclass=file permissive=1
+[  208.354640][    T1] init: Control message: Could not find 'aidl/android.media.audio.IHalAdapterVendorExtension/default' for ctl.interface_start from pid: 213 (/system/bin/servicemanager)
+[  208.356693][  T227] type=1400 audit(1795071842.252:1885): avc:  denied  { map } for  comm="logcat" path="/dev/__properties__/u:object_r:default_prop:s0" dev="tmpfs" ino=194 scontext=u:r:pioneer:s0 tcontext=u:object_r:default_prop:s0 tclass=file permissive=1
+[  208.358564][ T4049] servicemanager: Caller(pid=636,uid=1041,sid=u:r:audioserver:s0) Tried to start aidl service android.media.audio.IHalAdapterVendorExtension/default as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+[  208.361891][  T227] type=1400 audit(1795071842.252:1886): avc:  denied  { write } for  comm="logcat" name="logdr" dev="tmpfs" ino=925 scontext=u:r:pioneer:s0 tcontext=u:object_r:logdr_socket:s0 tclass=sock_file permissive=1
+[  208.372085][  T227] type=1400 audit(1795071842.252:1887): avc:  denied  { connectto } for  comm="logcat" path="/dev/socket/logdr" scontext=u:r:pioneer:s0 tcontext=u:r:logd:s0 tclass=unix_stream_socket permissive=1
+[  208.374371][  T227] type=1400 audit(1795071842.272:1888): avc:  denied  { read } for  comm="sh" name="/" dev="dm-3" ino=62 scontext=u:r:pioneer:s0 tcontext=u:object_r:rootfs:s0 tclass=dir permissive=1
+[  20qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+8.377862][  T227] type=1400 audit(1795071842.272:1889): avc:  denied  { open } for  comm="sh" path="/" dev="dm-3" ino=62 scontext=u:r:pioneer:s0 tcontext=u:object_r:rootfs:s0 tclass=dir permissive=1
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.8 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms

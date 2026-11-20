@@ -1,0 +1,15 @@
+vendor.unisoc.hardware.radio.data.IExtRadioData/slot1
+vendor.unisoc.hardware.radio.data.IExtRadioData/slot2
+vendor.unisoc.hardware.radio.ims.IImsRadio/slot1
+vendor.unisoc.hardware.radio.ims.IImsRadio/slot2
+vendor.unisoc.hardware.radio.lite.ILiteRadio/liteservice2
+vendor.unisoc.hardware.radio.messaging.IExtRadioMessaging/slot1
+vendor.unisoc.hardware.radio.messaging.IExtRadioMessaging/slot2
+vendor.unisoc.hardware.radio.modem.IExtRadioModem/slot1
+vendor.unisoc.hardware.radio.modem.IExtRadioModem/slot2
+vendor.unisoc.hardware.radio.network.IExtRadioNetwork/slot1
+vendor.unisoc.hardware.radio.network.IExtRadioNetwork/slot2
+vendor.unisoc.hardware.radio.sim.IExtRadioSim/slot1
+vendor.unisoc.hardware.radio.sim.IExtRadioSim/slot2
+vendor.unisoc.hardware.radio.voice.IExtRadioVoice/slot1
+vendor.unisoc.hardware.radio.voice.IExtRadioVoice/slot2

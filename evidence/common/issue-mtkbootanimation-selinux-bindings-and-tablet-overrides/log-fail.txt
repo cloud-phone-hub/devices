@@ -1,0 +1,139 @@
+# source: out/devices/tmp/verify_pass4/GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825.log
+=== VERIFY REPORT ===
+{
+  "spec": "GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825/1/qemu.log",
+  "bootCompleted": false,
+  "failReason": "timeout after 180s (bootanim='')",
+  "bootanim": "",
+  "topActivity": "mCurrentFocus=Window{73c89ff u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher}\n  mFocusedApp=ActivityRecord{47347214 u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher t6}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 0.0,
+    "peak": 0,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825.png",
+    "pngBytes": 7685
+  },
+  "postBootCompleted": "",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot",
+  "passed": false
+}
+
+--- matched lines ---
+L259: [  172.814325][  T250] servicemanager: Caller(pid=708,uid=1000,sid=u:r:system_server:s0) Since 'android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+L260: [  172.823776][  T138] init: NtQ Control message: Could not find 'aidl/android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual' for ctl.interface_start from pid: 250 (/system/bin/servicemanager)
+L261: [  172.826213][ T6659] servicemanager: Caller(pid=708,uid=1000,sid=u:r:system_server:s0) Tried to start aidl service android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+L281: [  173.824805][  T250] servicemanager: Caller(pid=708,uid=1000,sid=u:r:system_server:s0) Since 'android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+L282: [  173.834289][  T138] init: NtQ Control message: Could not find 'aidl/android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual' for ctl.interface_start from pid: 250 (/system/bin/servicemanager)
+L283: [  173.836729][ T6666] servicemanager: Caller(pid=708,uid=1000,sid=u:r:system_server:s0) Tried to start aidl service android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+L293: [  174.835853][  T250] servicemanager: Caller(pid=708,uid=1000,sid=u:r:system_server:s0) Since 'android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+L294: [  174.843648][  T138] init: NtQ Control message: Could not find 'aidl/android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual' for ctl.interface_start from pid: 250 (/system/bin/servicemanager)
+L295: [  174.845793][ T6681] servicemanager: Caller(pid=708,uid=1000,sid=u:r:system_server:s0) Tried to start aidl service android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+L299: [  175.846168][  T250] servicemanager: Caller(pid=708,uid=1000,sid=u:r:system_server:s0) Since 'android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+L300: [  175.856353][  T138] init: NtQ Control message: Could not find 'aidl/android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual' for ctl.interface_start from pid: 250 (/system/bin/servicemanager)
+L301: [  175.858680][ T6694] servicemanager: Caller(pid=708,uid=1000,sid=u:r:system_server:s0) Tried to start aidl service android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+L305: [  176.857913][  T250] servicemanager: Caller(pid=708,uid=1000,sid=u:r:system_server:s0) Since 'android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+L306: [  176.866081][  T138] init: NtQ Control message: Could not find 'aidl/android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual' for ctl.interface_start from pid: 250 (/system/bin/servicemanager)
+L307: [  176.868173][ T6709] servicemanager: Caller(pid=708,uid=1000,sid=u:r:system_server:s0) Tried to start aidl service android.hardware.biometrics.fingerprint.virtualhal.IVirtualHal/virtual as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+
+# source: out/devices/tmp/verify-bengal515-0922-pass1.log
+=== VERIFY REPORT ===
+{
+  "spec": "bengal_515_13-TKQ1.240227.001-20260922",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/bengal_515_13-TKQ1.240227.001-20260922/1/qemu.log",
+  "bootCompleted": false,
+  "failReason": "timeout after 210s (bootanim='')",
+  "bootanim": "",
+  "topActivity": "mCurrentFocus=null\n  mFocusedApp=null",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "307",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 27.89,
+    "peak": 201,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/bengal_515_13-TKQ1.240227.001-20260922.png",
+    "pngBytes": 25156
+  },
+  "postBootCompleted": "",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot",
+  "passed": false
+}
+
+--- matched lines ---
+L36: timeout waiting js ack
+L50: 11-19 07:05:13.213   811   811 E AndroidRuntime: Caused by: java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+L64: 11-19 07:05:25.450  2659  2659 E AndroidRuntime: Caused by: java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+L78: 11-19 07:05:37.728  3090  3090 E AndroidRuntime: Caused by: java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+L92: 11-19 07:05:50.010  3517  3517 E AndroidRuntime: Caused by: java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+L106: 11-19 07:06:02.273  3983  3983 E AndroidRuntime: Caused by: java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+L120: 11-19 07:06:14.709  4396  4396 E AndroidRuntime: Caused by: java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+L134: 11-19 07:06:26.883  4808  4808 E AndroidRuntime: Caused by: java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+L148: 11-19 07:06:38.915  5226  5226 E AndroidRuntime: Caused by: java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+L162: 11-19 07:06:51.071  5638  5638 E AndroidRuntime: Caused by: java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+L176: 11-19 07:07:03.245  6056  6056 E AndroidRuntime: Caused by: java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+L190: 11-19 07:07:15.321  6455  6455 E AndroidRuntime: Caused by: java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+L204: 11-19 07:07:27.526  6866  6866 E AndroidRuntime: Caused by: java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+L218: 11-19 07:07:39.674  7281  7281 E AndroidRuntime: Caused by: java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+L296: [  199.743525][  T645] 11-19 07:07:39.674  7281  7281 E AndroidRuntime: Caused by: java.lang.IllegalStateException: Service PersistentDataBlockService init timeout
+
+# source: task-297.log (bengal_515 20260922 black screen first-frame failure)
+==> 创建并冷启动实例: match=bengal_515/13-TKQ1.240227.001-20260922
+    spec=bengal_515_13-TKQ1.240227.001-20260922 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/bengal_515_13-TKQ1.240227.001-20260922/1
+{
+  "spec": "bengal_515_13-TKQ1.240227.001-20260922",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/bengal_515_13-TKQ1.240227.001-20260922/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "black screen (meanBrightness=0.0)",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=null\n  mFocusedApp=ActivityRecord{183656720 u0 com.hihonor.android.launcher/.unihome.UniHomeLauncher t11}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 0.0,
+    "peak": 0,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/bengal_515_13-TKQ1.240227.001-20260922.png",
+    "pngBytes": 7685
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot",
+  "passed": false
+}

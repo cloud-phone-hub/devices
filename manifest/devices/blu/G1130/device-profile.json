@@ -1,0 +1,858 @@
+{
+  "protocol": "cph-device-profile/v1",
+  "generatedAt": "2026-11-19T12:56:13+08:00",
+  "buildId": "13-UP1A.231005.007-20260511",
+  "vendor": "blu",
+  "device": "G1130",
+  "chatSession": {
+    "sessionId": "measured-only",
+    "title": "[02_prepare] 真机规格采集 · BLU G65L (blu/G1130 · 13-UP1A.231005.007-20260511)",
+    "reusedLiveWeb": false
+  },
+  "firmwareMeasured": {
+    "brand": "BLU",
+    "manufacturer": "BLU",
+    "device": "G1130",
+    "modelCode": "G65L",
+    "board": "ums9230",
+    "socManufacturer": "Spreadtrum",
+    "socModel": "UMS9230T",
+    "androidVersion": "13",
+    "osVersion": "13-UP1A.231005.007-20260511",
+    "securityPatch": "2026-04-05",
+    "buildDate": "20260511",
+    "densityDpi": 320,
+    "hardwareHwcomposer": "unisoc",
+    "frpPst": "/dev/block/by-name/persist",
+    "radioMultisim": "dsds",
+    "cpuAbiList": "arm64-v8a,armeabi-v7a,armeabi",
+    "fingerprint": "BLU/G65L/G1130:14/UP1A.231005.007/202605111612:user/release-keys",
+    "kernelUname": "Linux localhost 5.15.197-android13-8-00005-g2d8ad9139b89-ab15063902 #1 SMP PREEMPT Fri Mar 20 11:14:06 UTC 2026 aarch64 Toybox",
+    "kernelLine": "5.15",
+    "vintfVersion": "7.0",
+    "vintfPlaceholders": {
+      "radio": [
+        "vendor.unisoc.hardware.radio.data.IExtRadioData/slot1",
+        "vendor.unisoc.hardware.radio.data.IExtRadioData/slot2",
+        "vendor.unisoc.hardware.radio.ims.IImsRadio/slot1",
+        "vendor.unisoc.hardware.radio.ims.IImsRadio/slot2",
+        "vendor.unisoc.hardware.radio.lite.ILiteRadio/liteservice2",
+        "vendor.unisoc.hardware.radio.messaging.IExtRadioMessaging/slot1",
+        "vendor.unisoc.hardware.radio.messaging.IExtRadioMessaging/slot2",
+        "vendor.unisoc.hardware.radio.modem.IExtRadioModem/slot1",
+        "vendor.unisoc.hardware.radio.modem.IExtRadioModem/slot2",
+        "vendor.unisoc.hardware.radio.network.IExtRadioNetwork/slot1",
+        "vendor.unisoc.hardware.radio.network.IExtRadioNetwork/slot2",
+        "vendor.unisoc.hardware.radio.sim.IExtRadioSim/slot1",
+        "vendor.unisoc.hardware.radio.sim.IExtRadioSim/slot2",
+        "vendor.unisoc.hardware.radio.voice.IExtRadioVoice/slot1",
+        "vendor.unisoc.hardware.radio.voice.IExtRadioVoice/slot2"
+      ],
+      "audio": [
+        "android.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default"
+      ],
+      "gnss": [
+        "vendor.sprd.hardware.gnss.IUnisocGnss/default"
+      ],
+      "neuralNetworks": [
+        "vendor.sprd.hardware.cplog_svc.ILogTransportInductor/default",
+        "vendor.sprd.hardware.cplog_svc.ISysLogControl/default",
+        "vendor.sprd.hardware.enhance.IEnhance/default",
+        "vendor.sprd.hardware.fingerprintmmi.IFingerprintmmi/default",
+        "vendor.sprd.hardware.hdcp.IHDCP/default",
+        "vendor.sprd.hardware.ifaa.IIfaa/default",
+        "vendor.sprd.hardware.network.INetworkControl/default",
+        "vendor.sprd.hardware.soter.ISoter/default",
+        "vendor.sprd.hardware.tool.IToolControl/default",
+        "vendor.sprd.hardware.trusty.ITrustyClientProvider/default",
+        "vendor.sprd.hardware.tui.ITui/default",
+        "vendor.sprd.hardware.unipnp.IUnionPnP/default",
+        "vendor.unisoc.hardware.ai_engine.IAIEngineControl/default"
+      ]
+    },
+    "vendorOfficialFiles": [
+      {
+        "from": "official",
+        "source": "lib64/egl/libGLES_mali.so"
+      },
+      {
+        "from": "official",
+        "source": "lib64/libOpenCL.so"
+      },
+      {
+        "from": "official",
+        "mode": "replace",
+        "source": "etc/permissions"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_c2_v1.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_google_telephony.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_performance.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_performance_c2.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/public.libraries.txt"
+      }
+    ],
+    "measuredMapsRedirects": [
+      {
+        "type": "file",
+        "from": "/system/bin/drmserver",
+        "to": "/mnt/vendorpatch/system/bin/drmserver"
+      },
+      {
+        "type": "file",
+        "from": "/system/bin/mediaserver",
+        "to": "/mnt/vendorpatch/system/bin/mediaserver"
+      },
+      {
+        "type": "file",
+        "from": "/system_ext/bin/remotedisplay",
+        "to": "/mnt/vendorpatch/system_ext/bin/remotedisplay"
+      }
+    ],
+    "measuredCpuClusters": [
+      {
+        "policy": 0,
+        "cpus": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "compatible": "arm,cortex-a55",
+        "capacityDmipsMhz": 544,
+        "normalizedCapacity": 544
+      },
+      {
+        "policy": 6,
+        "cpus": [
+          6,
+          7
+        ],
+        "compatible": "arm,cortex-a75",
+        "capacityDmipsMhz": 1024,
+        "normalizedCapacity": 1024
+      }
+    ],
+    "vendorEtcFreqHintsKhz": [
+      2028000,
+      1820000
+    ],
+    "measuredThermalZones": [
+      {
+        "type": "soc-thmzone",
+        "base-temp-mc": 31500,
+        "jitter-mc": 280
+      },
+      {
+        "type": "cputop0-tzone0",
+        "base-temp-mc": 31500,
+        "jitter-mc": 280
+      },
+      {
+        "type": "ank0-tzone1",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "ank1-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "ank2-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "prometheus7-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "cputop1-thmzone",
+        "base-temp-mc": 31500,
+        "jitter-mc": 280
+      },
+      {
+        "type": "gpu-thmzone",
+        "base-temp-mc": 30200,
+        "jitter-mc": 220
+      },
+      {
+        "type": "ank3-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "ank4-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "ank5-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "prometheus6-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "skin-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "osctsen-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "outtsen-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "board-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "pa-thmzone",
+        "base-temp-mc": 29500,
+        "jitter-mc": 180
+      },
+      {
+        "type": "chg-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      }
+    ],
+    "measuredInputHints": {
+      "touchName": "focaltech_ats",
+      "keyboardName": "gpio-keys"
+    },
+    "bootCmdline": [
+      "androidboot.product.hardware.sku=G65L",
+      "androidboot.secureboot=1",
+      "androidboot.slot=a",
+      "androidboot.veritymode.managed=yes"
+    ],
+    "vendorEtcConfigs": {
+      "permissions": {
+        "features": [
+          "android.hardware.audio.output",
+          "android.hardware.biometrics.face",
+          "android.hardware.bluetooth",
+          "android.hardware.bluetooth_le",
+          "android.hardware.broadcastradio",
+          "android.hardware.camera",
+          "android.hardware.camera.any",
+          "android.hardware.camera.autofocus",
+          "android.hardware.camera.capability.manual_sensor",
+          "android.hardware.camera.flash",
+          "android.hardware.camera.front",
+          "android.hardware.faketouch",
+          "android.hardware.fingerprint",
+          "android.hardware.hardware_keystore",
+          "android.hardware.identity_credential",
+          "android.hardware.keystore.app_attest_key",
+          "android.hardware.location",
+          "android.hardware.location.gps",
+          "android.hardware.location.network",
+          "android.hardware.microphone",
+          "android.hardware.opengles.aep",
+          "android.hardware.reboot_escrow",
+          "android.hardware.screen.landscape",
+          "android.hardware.screen.portrait",
+          "android.hardware.se.omapi.uicc",
+          "android.hardware.security.model.compatible",
+          "android.hardware.sensor.accelerometer",
+          "android.hardware.sensor.light",
+          "android.hardware.sensor.proximity",
+          "android.hardware.sensor.stepcounter",
+          "android.hardware.sensor.stepdetector",
+          "android.hardware.telephony",
+          "android.hardware.telephony.calling",
+          "android.hardware.telephony.cdma",
+          "android.hardware.telephony.data",
+          "android.hardware.telephony.gsm",
+          "android.hardware.telephony.ims",
+          "android.hardware.telephony.messaging",
+          "android.hardware.telephony.radio.access",
+          "android.hardware.telephony.subscription",
+          "android.hardware.touchscreen",
+          "android.hardware.touchscreen.multitouch",
+          "android.hardware.touchscreen.multitouch.distinct",
+          "android.hardware.usb.accessory",
+          "android.hardware.usb.host",
+          "android.hardware.vulkan.compute",
+          "android.hardware.vulkan.level",
+          "android.hardware.vulkan.version",
+          "android.hardware.wifi",
+          "android.hardware.wifi.direct",
+          "android.hardware.wifi.passpoint",
+          "android.software.activities_on_secondary_displays",
+          "android.software.app_widgets",
+          "android.software.autofill",
+          "android.software.backup",
+          "android.software.cant_save_state",
+          "android.software.companion_device_setup",
+          "android.software.connectionservice",
+          "android.software.controls",
+          "android.software.cts",
+          "android.software.device_admin",
+          "android.software.device_id_attestation",
+          "android.software.home_screen",
+          "android.software.input_methods",
+          "android.software.ipsec_tunnels",
+          "android.software.managed_users",
+          "android.software.midi",
+          "android.software.opengles.deqp.level",
+          "android.software.picture_in_picture",
+          "android.software.print",
+          "android.software.secure_lock_screen",
+          "android.software.telecom",
+          "android.software.verified_boot",
+          "android.software.voice_recognizers",
+          "android.software.vulkan.deqp.level"
+        ],
+        "unavailableFeatures": [
+          "vendor.sprd.hardware.ifaa",
+          "vendor.sprd.hardware.soter",
+          "vendor.sprd.hardware.tui"
+        ],
+        "sensorFeatures": [
+          "accelerometer",
+          "light",
+          "proximity",
+          "stepcounter",
+          "stepdetector"
+        ],
+        "hasConsumerIr": false,
+        "hasNfc": false,
+        "hasFingerprint": true,
+        "hasWifiDirect": true,
+        "hasWifiPasspoint": true,
+        "hasBluetoothLe": true,
+        "hasAudioLowLatency": false,
+        "vulkanLevel": 1,
+        "vulkanVersion": "1.3",
+        "openglesDeqpLevel": "132514561",
+        "vulkanDeqpLevel": "132514561"
+      },
+      "sensors": {
+        "subHals": [
+          "android.hardware.sensors@2.X-sprd_subhal.so"
+        ],
+        "configFiles": [
+          "vendor/etc/sensors/hals.conf"
+        ]
+      },
+      "audio": {
+        "sourceEffectFile": "vendor/etc/audio_effects.xml",
+        "hasEarpiece": false,
+        "hasWiredHeadset": false,
+        "hasDualMic": false,
+        "hasVolumeTables": true,
+        "effectLibraries": [
+          "libbundlewrapper2.so",
+          "libdownmix.so",
+          "libdynproc.so",
+          "libldnhncr.so",
+          "libreverbwrapper.so",
+          "libunisocvoiceprocessing.so",
+          "libvisualizer.so"
+        ],
+        "effectDescriptors": [
+          {
+            "name": "Acoustic Echo Canceler",
+            "implementor": "The Android Open Source Project",
+            "type": "7b491460-8d4d-11e0-bd61-0002a5d5c51b",
+            "uuid": "a4a00091-9087-426b-9d60-af3a70f6a20a",
+            "connect": "Pre Processing"
+          },
+          {
+            "name": "Auxiliary Environmental Reverb",
+            "implementor": "NXP Software Ltd.",
+            "type": "c2e5d5f0-94bd-4763-9cac-4e234d06839e",
+            "uuid": "4a387fc0-8ab3-11df-8bad-0002a5d5c51b",
+            "connect": "Auxiliary"
+          },
+          {
+            "name": "Auxiliary Preset Reverb",
+            "implementor": "NXP Software Ltd.",
+            "type": "47382d60-ddd8-11db-bf3a-0002a5d5c51b",
+            "uuid": "f29a1400-a3bb-11df-8ddc-0002a5d5c51b",
+            "connect": "Auxiliary"
+          },
+          {
+            "name": "Dynamic Bass Boost",
+            "implementor": "NXP Software Ltd.",
+            "type": "0634f220-ddd4-11db-a0fc-0002a5d5c51b",
+            "uuid": "8631f300-72e2-11df-b57e-0002a5d5c51b",
+            "connect": "Insert"
+          },
+          {
+            "name": "DynamicsProcessing",
+            "implementor": "The Android Open Source Project",
+            "type": "7261676f-6d75-7369-6364-28e2fd3ac39e",
+            "uuid": "e0e6539b-1781-7261-676f-6d7573696340",
+            "connect": "Insert"
+          },
+          {
+            "name": "EqualizerBundle",
+            "implementor": "NXP Software Ltd.",
+            "type": "0bed4300-ddd6-11db-8f34-0002a5d5c51b",
+            "uuid": "ce772f20-847d-11df-bb17-0002a5d5c51b",
+            "connect": "Insert"
+          },
+          {
+            "name": "Insert Environmental Reverb",
+            "implementor": "NXP Software Ltd.",
+            "type": "c2e5d5f0-94bd-4763-9cac-4e234d06839e",
+            "uuid": "c7a511a0-a3bb-11df-860e-0002a5d5c51b",
+            "connect": "Insert"
+          },
+          {
+            "name": "Insert Preset Reverb",
+            "implementor": "NXP Software Ltd.",
+            "type": "47382d60-ddd8-11db-bf3a-0002a5d5c51b",
+            "uuid": "172cdf00-a3bc-11df-a72f-0002a5d5c51b",
+            "connect": "Insert"
+          },
+          {
+            "name": "Loudness Enhancer",
+            "implementor": "The Android Open Source Project",
+            "type": "fe3199be-aed0-413f-87bb-11260eb63cf1",
+            "uuid": "fa415329-2034-4bea-b5dc-5b381c8d1e2c",
+            "connect": "Insert"
+          },
+          {
+            "name": "Multichannel Downmix To Stereo",
+            "implementor": "The Android Open Source Project",
+            "type": "381e49cc-a858-4aa2-87f6-e8388e7601b2",
+            "uuid": "93f04452-e4fe-41cc-91f9-e475b6d1d69f",
+            "connect": "Insert"
+          },
+          {
+            "name": "Virtualizer",
+            "implementor": "NXP Software Ltd.",
+            "type": "37cc2c00-dddd-11db-8577-0002a5d5c51b",
+            "uuid": "1d4033c0-8557-11df-9f2d-0002a5d5c51b",
+            "connect": "Insert"
+          },
+          {
+            "name": "Visualizer",
+            "implementor": "The Android Open Source Project",
+            "type": "e46b26a0-dddd-11db-8afd-0002a5d5c51b",
+            "uuid": "d069d9e0-8329-11df-9168-0002a5d5c51b",
+            "connect": "Insert"
+          },
+          {
+            "name": "Volume",
+            "implementor": "NXP Software Ltd.",
+            "type": "09e8ede0-ddde-11db-b4f6-0002a5d5c51b",
+            "uuid": "119341a0-8469-11df-81f9-0002a5d5c51b",
+            "connect": "Insert"
+          }
+        ]
+      },
+      "media": {
+        "codec2Instances": [
+          {
+            "binary": "android.hardware.media.c2@1.1-unisoc-service",
+            "store": "default"
+          }
+        ],
+        "hardwareCodecs": [
+          {
+            "store": "default",
+            "name": "c2.unisoc.jpeg.decoder",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/jpeg"
+          },
+          {
+            "store": "default",
+            "name": "c2.unisoc.imaadpcm.decoder",
+            "kind": "decoder",
+            "domain": "audio",
+            "mediaType": "audio/ima-adpcm"
+          },
+          {
+            "store": "default",
+            "name": "c2.unisoc.mp3.decoder",
+            "kind": "decoder",
+            "domain": "audio",
+            "mediaType": "audio/mpeg"
+          },
+          {
+            "store": "default",
+            "name": "c2.unisoc.mpl1.decoder",
+            "kind": "decoder",
+            "domain": "audio",
+            "mediaType": "audio/mpeg-L1"
+          },
+          {
+            "store": "default",
+            "name": "c2.unisoc.mpl2.decoder",
+            "kind": "decoder",
+            "domain": "audio",
+            "mediaType": "audio/mpeg-L2"
+          },
+          {
+            "store": "default",
+            "name": "c2.unisoc.hevc.decoder",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/hevc",
+            "aliases": "OMX.sprd.hevc.decoder",
+            "maxSize": "1920x3840",
+            "profiles": "24576,24578,24577",
+            "levels": "24835"
+          },
+          {
+            "store": "default",
+            "name": "c2.unisoc.mpeg4.decoder",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/mp4v-es",
+            "aliases": "OMX.sprd.mpeg4.decoder",
+            "maxSize": "1920x2032",
+            "profiles": "12297,12308",
+            "levels": "16393"
+          },
+          {
+            "store": "default",
+            "name": "c2.unisoc.h263.decoder",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/3gpp",
+            "aliases": "OMX.sprd.h263.decoder",
+            "maxSize": "1408x1152",
+            "profiles": "12288",
+            "levels": "12291,12292,12293,12294,12295"
+          },
+          {
+            "store": "default",
+            "name": "c2.unisoc.avc.decoder",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/avc",
+            "aliases": "OMX.sprd.h264.decoder",
+            "maxSize": "1920x3840",
+            "profiles": "20480,20481,20482,20484,20487",
+            "levels": "20495"
+          },
+          {
+            "store": "default",
+            "name": "c2.unisoc.av1.decoder",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/av01",
+            "aliases": "OMX.sprd.av1.decoder",
+            "maxSize": "1280x720"
+          },
+          {
+            "store": "default",
+            "name": "c2.unisoc.vp8.decoder",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/x-vnd.on2.vp8",
+            "aliases": "OMX.sprd.vpx.decoder",
+            "maxSize": "1920x1088",
+            "profiles": "40960",
+            "levels": "1"
+          },
+          {
+            "store": "default",
+            "name": "c2.unisoc.vp9.decoder",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/x-vnd.on2.vp9",
+            "aliases": "OMX.sprd.vp9.decoder",
+            "maxSize": "1920x3840",
+            "profiles": "28672,28673,28674",
+            "levels": "28680"
+          },
+          {
+            "store": "default",
+            "name": "c2.unisoc.jpeg.encoder",
+            "kind": "encoder",
+            "domain": "video",
+            "mediaType": "video/jpeg"
+          },
+          {
+            "store": "default",
+            "name": "c2.unisoc.mp3.encoder",
+            "kind": "encoder",
+            "domain": "audio",
+            "mediaType": "audio/mpeg"
+          },
+          {
+            "store": "default",
+            "name": "c2.unisoc.avc.encoder",
+            "kind": "encoder",
+            "domain": "video",
+            "mediaType": "video/avc",
+            "aliases": "OMX.sprd.h264.encoder",
+            "maxSize": "1920x3840",
+            "profiles": "20480,20482,20484",
+            "levels": "20494"
+          },
+          {
+            "store": "default",
+            "name": "c2.unisoc.hevc.encoder",
+            "kind": "encoder",
+            "domain": "video",
+            "mediaType": "video/hevc",
+            "aliases": "OMX.sprd.h265.encoder",
+            "maxSize": "1920x3840",
+            "profiles": "24576",
+            "levels": "24834"
+          }
+        ],
+        "codecXmlFiles": [
+          "vendor/etc/media_codecs.xml",
+          "vendor/etc/media_codecs_c2.xml",
+          "vendor/etc/media_codecs_c2_v1.xml",
+          "vendor/etc/media_codecs_google_telephony.xml",
+          "vendor/etc/media_codecs_performance.xml",
+          "vendor/etc/media_codecs_performance_c2.xml"
+        ]
+      },
+      "connectivity": {
+        "wifiConfigFiles": [
+          "vendor/etc/wifi/p2p_supplicant_overlay.conf",
+          "vendor/etc/wifi/wpa_supplicant.conf",
+          "vendor/etc/wifi/wpa_supplicant_overlay.conf"
+        ]
+      },
+      "power": {
+        "powerConfigFiles": [
+          "vendor/etc/task_profiles.json"
+        ]
+      },
+      "inspectedFiles": [
+        "odm/etc/permissions/android.hardware.camera.flash-autofocus.xml",
+        "odm/etc/permissions/android.hardware.camera.front.xml",
+        "odm/etc/permissions/android.hardware.camera.manual_sensor.xml",
+        "odm/etc/permissions/android.hardware.sensor.accelerometer.xml",
+        "odm/etc/permissions/android.hardware.sensor.light.xml",
+        "odm/etc/permissions/android.hardware.sensor.proximity.xml",
+        "odm/etc/permissions/android.hardware.sensor.stepcounter.xml",
+        "odm/etc/permissions/android.hardware.sensor.stepdetector.xml",
+        "odm/etc/permissions/vendor.sprd.hardware.ifaa.xml",
+        "odm/etc/permissions/vendor.sprd.hardware.soter.xml",
+        "odm/etc/permissions/vendor.sprd.hardware.tui.xml",
+        "vendor/etc/audio_effects.xml",
+        "vendor/etc/audio_policy_configuration.xml",
+        "vendor/etc/audio_policy_volumes.xml",
+        "vendor/etc/default_volume_tables.xml",
+        "vendor/etc/init/android.hardware.media.c2@1.1-unisoc-service.rc",
+        "vendor/etc/media_codecs.xml",
+        "vendor/etc/media_codecs_c2.xml",
+        "vendor/etc/permissions/android.hardware.biometrics.face.xml",
+        "vendor/etc/permissions/android.hardware.bluetooth_le.xml",
+        "vendor/etc/permissions/android.hardware.broadcastradio.xml",
+        "vendor/etc/permissions/android.hardware.fingerprint.xml",
+        "vendor/etc/permissions/android.hardware.hardware_keystore.xml",
+        "vendor/etc/permissions/android.hardware.identity_credential.xml",
+        "vendor/etc/permissions/android.hardware.keystore.app_attest_key.xml",
+        "vendor/etc/permissions/android.hardware.location.gps.xml",
+        "vendor/etc/permissions/android.hardware.opengles.aep.xml",
+        "vendor/etc/permissions/android.hardware.reboot_escrow.xml",
+        "vendor/etc/permissions/android.hardware.se.omapi.uicc.xml",
+        "vendor/etc/permissions/android.hardware.telephony.cdma.xml",
+        "vendor/etc/permissions/android.hardware.telephony.gsm.xml",
+        "vendor/etc/permissions/android.hardware.telephony.ims.xml",
+        "vendor/etc/permissions/android.hardware.touchscreen.multitouch.distinct.xml",
+        "vendor/etc/permissions/android.hardware.touchscreen.xml",
+        "vendor/etc/permissions/android.hardware.usb.accessory.xml",
+        "vendor/etc/permissions/android.hardware.usb.host.xml",
+        "vendor/etc/permissions/android.hardware.vulkan.compute-0.xml",
+        "vendor/etc/permissions/android.hardware.vulkan.level-0.xml",
+        "vendor/etc/permissions/android.hardware.vulkan.level-1.xml",
+        "vendor/etc/permissions/android.hardware.vulkan.version-1_3.xml",
+        "vendor/etc/permissions/android.hardware.wifi.direct.xml",
+        "vendor/etc/permissions/android.hardware.wifi.passpoint.xml",
+        "vendor/etc/permissions/android.hardware.wifi.xml",
+        "vendor/etc/permissions/android.software.controls.xml",
+        "vendor/etc/permissions/android.software.cts.xml",
+        "vendor/etc/permissions/android.software.device_id_attestation.xml",
+        "vendor/etc/permissions/android.software.ipsec_tunnels.xml",
+        "vendor/etc/permissions/android.software.managed_users.xml",
+        "vendor/etc/permissions/android.software.midi.xml",
+        "vendor/etc/permissions/android.software.opengles.deqp.level-2022-03-01.xml",
+        "vendor/etc/permissions/android.software.secure_lock_screen.xml",
+        "vendor/etc/permissions/android.software.verified_boot.xml",
+        "vendor/etc/permissions/android.software.vulkan.deqp.level-2022-03-01.xml",
+        "vendor/etc/permissions/handheld_core_hardware.xml",
+        "vendor/etc/permissions/unisoc.camerax.extensions.xml",
+        "vendor/etc/permissions/vendor.sprd.hardware.ifaa.xml",
+        "vendor/etc/permissions/vendor.sprd.hardware.soter.xml",
+        "vendor/etc/permissions/vendor.sprd.hardware.tui.xml",
+        "vendor/etc/sensors/hals.conf",
+        "vendor/etc/task_profiles.json",
+        "vendor/etc/wifi/p2p_supplicant_overlay.conf",
+        "vendor/etc/wifi/wpa_supplicant.conf",
+        "vendor/etc/wifi/wpa_supplicant_overlay.conf"
+      ]
+    }
+  },
+  "manifestAligned": {
+    "official": "BLU",
+    "brand": "blu",
+    "model": "BLU G65L",
+    "device": "G1130",
+    "platform": "unisoc",
+    "board": "ums9230",
+    "resolution": "1080x2400",
+    "inch": "70x155",
+    "density": 320,
+    "smp": 8,
+    "memory": [
+      8192
+    ],
+    "storage": [
+      128000,
+      256000
+    ]
+  },
+  "cpufreqModuleConfig": {
+    "transition-latency": 1000,
+    "scaling-readable": false,
+    "package-per-cluster": false,
+    "policies": [
+      {
+        "policy": 0,
+        "cpus": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "min-freq": 0,
+        "max-freq": 0,
+        "cur-freq": 0,
+        "available-frequencies": [],
+        "implementer": "0x41",
+        "variant": 0,
+        "revision": 0,
+        "capacity": 544,
+        "revidr": "0x0000000000000000"
+      },
+      {
+        "policy": 6,
+        "cpus": [
+          6,
+          7
+        ],
+        "min-freq": 0,
+        "max-freq": 0,
+        "cur-freq": 0,
+        "available-frequencies": [],
+        "implementer": "0x41",
+        "variant": 0,
+        "revision": 0,
+        "capacity": 1024,
+        "revidr": "0x0000000000000000"
+      }
+    ]
+  },
+  "aiSpec": {
+    "soc": {},
+    "display": {
+      "widthMm": 70,
+      "heightMm": 155
+    },
+    "cpu": {
+      "transitionLatency": 1000,
+      "clusters": [
+        {
+          "policy": 0,
+          "cpus": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "coreName": "arm,cortex-a55",
+          "implementer": "0x41",
+          "variant": 0,
+          "revision": 0,
+          "capacity": 544,
+          "revidr": "0x0000000000000000"
+        },
+        {
+          "policy": 6,
+          "cpus": [
+            6,
+            7
+          ],
+          "coreName": "arm,cortex-a75",
+          "implementer": "0x41",
+          "variant": 0,
+          "revision": 0,
+          "capacity": 1024,
+          "revidr": "0x0000000000000000"
+        }
+      ]
+    },
+    "gpu": {},
+    "memory": {
+      "variantsMb": [
+        8192
+      ]
+    },
+    "storage": {
+      "variantsManifestMb": [
+        128000,
+        256000
+      ]
+    },
+    "peripherals": {},
+    "camera": {},
+    "batteryAndConnectivity": {},
+    "inputAlignment": {
+      "touch": {},
+      "keyboard": {},
+      "inputIdentity": {}
+    },
+    "hardwareHals": {},
+    "vendorEtcConfigs": {
+      "battery": {},
+      "vibrator": {},
+      "gnss": {},
+      "thermal": {},
+      "media": {},
+      "audioEngine": {}
+    }
+  },
+  "rawReply": "CDH_PREPARE_MEASURED_ONLY=1"
+}

@@ -1,0 +1,10 @@
+=== 1. 02_prepare DSH HTTP 400 data_inspection_failed ===
+[warn] AI 硬件画像采集失败（跳过自动反补）: DSH chat 请求失败 (HTTP 400): {"error":{"code":"data_inspection_failed","param":null,"message":"Input data may contain inappropriate content.","type":"data_inspection_failed"}}
+
+=== 2. MTK Android 16 SurfaceFlinger / libcomposer_ext failure before OnComposerExtTransact ===
+E libcomposer_ext: Can't get Composer Ext, tried(22) times
+E SurfaceFlinger: ComposerExt HIDL not present
+E libcomposer_ext: checkOpCodeMax failed because of result output size 0 is not 8
+F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 611 (surfaceflinger), pid 611 (surfaceflinger)
+backtrace:
+  #00 pc 00000000002c07fc  /system/bin/surfaceflinger (android::SurfaceFlinger::initializeDisplays()+2460)

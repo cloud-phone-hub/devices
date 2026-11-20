@@ -15,5 +15,6 @@ service vendor.keep_awake /system/bin/sh -c "while true; do cmd window dismiss-k
     seclabel u:r:pioneer:s0
 
 on property:sys.boot_completed=1
+    stop bootanim
     start vendor.auto_provision
     start vendor.keep_awake

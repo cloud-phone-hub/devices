@@ -1,0 +1,1 @@
+vendor.tct.hardware.radio.simlock.ITctSimlockHal/default

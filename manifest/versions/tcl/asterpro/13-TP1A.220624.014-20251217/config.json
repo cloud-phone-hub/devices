@@ -1,0 +1,18 @@
+{
+  "id": 46,
+  "buildId": "13-TP1A.220624.014-20251217",
+  "deviceId": 38,
+  "configId": 54,
+  "osVersion": "13-TP1A.220624.014-20251217",
+  "buildDate": "20251217",
+  "securityPatch": "2025-11-05",
+  "factoryTgz": "TCL-T521.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh-pipeline prepare 从 TCL-T521.zip (vendor/build.prop) 自动生成。",
+    "osVersion": "13-TP1A.220624.014-20251217",
+    "securityPatch": "2025-11-05"
+  },
+  "updatedAt": "2026-11-19T14:56:33Z"
+}

@@ -1,0 +1,13 @@
+vendor.sprd.hardware.cplog_svc.ILogTransportInductor/default
+vendor.sprd.hardware.cplog_svc.ISysLogControl/default
+vendor.sprd.hardware.enhance.IEnhance/default
+vendor.sprd.hardware.fingerprintmmi.IFingerprintmmi/default
+vendor.sprd.hardware.hdcp.IHDCP/default
+vendor.sprd.hardware.ifaa.IIfaa/default
+vendor.sprd.hardware.network.INetworkControl/default
+vendor.sprd.hardware.soter.ISoter/default
+vendor.sprd.hardware.tool.IToolControl/default
+vendor.sprd.hardware.trusty.ITrustyClientProvider/default
+vendor.sprd.hardware.tui.ITui/default
+vendor.sprd.hardware.unipnp.IUnionPnP/default
+vendor.unisoc.hardware.ai_engine.IAIEngineControl/default

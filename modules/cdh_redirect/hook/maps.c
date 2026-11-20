@@ -68,6 +68,7 @@ static DEFINE_SPINLOCK(cdh_maps_lock);
 static bool cdh_maps_registered;
 static bool cdh_maps_vendor_ready;
 static bool cdh_maps_prewarm_logged;
+static bool cdh_sphal_vndk_compat;
 static atomic_t cdh_maps_exiting = ATOMIC_INIT(0);
 static int cdh_maps_prewarm_tries;
 
@@ -85,6 +86,9 @@ static const char * const cdh_maps_prewarm_libs[] = {
 	"/vendor/lib64/android.hardware.common-V2-ndk.so",
 	"/vendor/lib64/android.hardware.graphics.allocator-V2-ndk.so",
 	"/vendor/lib64/android.hardware.graphics.common-V5-ndk.so",
+	"/vendor/lib64/android.hardware.graphics.common-V6-ndk.so",
+	"/vendor/lib64/android.hardware.graphics.common-V7-ndk.so",
+	"/vendor/lib64/libaconfig_storage_read_api_cc.so",
 	"/vendor/lib64/android.hardware.graphics.common@1.0.so",
 	"/vendor/lib64/android.hardware.graphics.common@1.1.so",
 	"/vendor/lib64/android.hardware.graphics.common@1.2.so",
@@ -131,6 +135,8 @@ static const char * const cdh_maps_prewarm_libs[] = {
 	"/vendor/lib/android.hardware.common-V2-ndk.so",
 	"/vendor/lib/android.hardware.graphics.allocator-V2-ndk.so",
 	"/vendor/lib/android.hardware.graphics.common-V5-ndk.so",
+	"/vendor/lib/android.hardware.graphics.common-V6-ndk.so",
+	"/vendor/lib/android.hardware.graphics.common-V7-ndk.so",
 	"/vendor/lib/android.hardware.graphics.common@1.0.so",
 	"/vendor/lib/android.hardware.graphics.common@1.1.so",
 	"/vendor/lib/android.hardware.graphics.common@1.2.so",
@@ -210,6 +216,11 @@ bool cdh_maps_has_real_file(const char *path)
 	unsigned long dummy_ino;
 
 	return cdh_maps_lookup_or_queue(path, &dummy_dev, &dummy_ino);
+}
+
+bool cdh_maps_sphal_vndk_compat(void)
+{
+	return READ_ONCE(cdh_sphal_vndk_compat);
 }
 
 static void cdh_maps_work_fn(struct work_struct *work)
@@ -297,6 +308,42 @@ static void cdh_maps_work_fn(struct work_struct *work)
 	}
 }
 
+static bool cdh_probe_sphal_vndk_compat(void)
+{
+	static const char *const vers[] = { "V4", "V5", "V6", "V7", "V8", "V9" };
+	char carrier_path[CDH_MAPS_PATH_MAX];
+	char official_path[CDH_MAPS_PATH_MAX];
+	struct path p, cp, op;
+	bool found_any = false;
+	size_t i;
+
+	if (kern_path(CDH_CARRIER_MOUNT_POINT "/vendor/lib64", LOOKUP_FOLLOW, &p) != 0)
+		return false;
+	path_put(&p);
+
+	for (i = 0; i < ARRAY_SIZE(vers); i++) {
+		snprintf(carrier_path, sizeof(carrier_path),
+			 CDH_CARRIER_MOUNT_POINT "/vendor/lib64/android.hardware.graphics.common-%s-ndk.so",
+			 vers[i]);
+		if (kern_path(carrier_path, LOOKUP_FOLLOW, &cp) != 0)
+			continue;
+		path_put(&cp);
+		found_any = true;
+
+		snprintf(official_path, sizeof(official_path),
+			 "/vendor/lib64/android.hardware.graphics.common-%s-ndk.so",
+			 vers[i]);
+		if (kern_path(official_path, LOOKUP_FOLLOW, &op) == 0) {
+			path_put(&op);
+		} else {
+			pr_info("跨代 GRF vendor（原厂缺 %s），SP-HAL 标准库走载体\n",
+				official_path);
+			return false;
+		}
+	}
+	return found_any;
+}
+
 static void cdh_maps_prewarm_fn(struct work_struct *work)
 {
 	struct path p;
@@ -304,6 +351,7 @@ static void cdh_maps_prewarm_fn(struct work_struct *work)
 	int i;
 	int builtin_cnt;
 	bool need_work = false;
+	const char *carrier_probe = NULL;
 
 	if (atomic_read(&cdh_maps_exiting))
 		return;
@@ -316,6 +364,31 @@ static void cdh_maps_prewarm_fn(struct work_struct *work)
 		return;
 	}
 	path_put(&p);
+
+	for (i = 0; i < cdh_rule_count; i++) {
+		if (!cdh_rules[i].maps_only && cdh_rules[i].to &&
+		    strncmp(cdh_rules[i].to, CDH_CARRIER_MOUNT_POINT "/",
+			    CDH_CARRIER_MOUNT_LEN + 1) == 0) {
+			if (cdh_rules[i].dir) {
+				carrier_probe = cdh_rules[i].to;
+				break;
+			}
+			if (!carrier_probe)
+				carrier_probe = cdh_rules[i].to;
+		}
+	}
+	if (carrier_probe) {
+		if (kern_path(carrier_probe, LOOKUP_FOLLOW, &p) != 0) {
+			if (++cdh_maps_prewarm_tries < CDH_MAPS_PREWARM_TRIES &&
+			    !atomic_read(&cdh_maps_exiting))
+				schedule_delayed_work(&cdh_maps_prewarm_work,
+						      msecs_to_jiffies(CDH_MAPS_PREWARM_MS));
+			return;
+		}
+		path_put(&p);
+	}
+
+	WRITE_ONCE(cdh_sphal_vndk_compat, cdh_probe_sphal_vndk_compat());
 
 	builtin_cnt = cdh_gpu_maps_builtin_count();
 

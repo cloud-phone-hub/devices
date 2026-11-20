@@ -1,0 +1,85 @@
+# source: out/devices/tmp/verify-itel-A6612L-diag.log
+=== VERIFY REPORT ===
+{
+  "spec": "itel-A6612L_13-BP2A.250605.031.A3-20260823",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/itel-A6612L_13-BP2A.250605.031.A3-20260823/1/qemu.log",
+  "bootCompleted": false,
+  "failReason": "timeout after 100s (bootanim='')",
+  "bootanim": "",
+  "topActivity": "mCurrentFocus=Window{7b39854 u0 com.android.settings/com.android.settings.FallbackHome}, [type=1, isChildWindow=false]-[Surface(name=*Title#59)/@0xbe8479e]\n  mFocusedApp=ActivityRecord{195658897 u0 com.android.settings/.FallbackHome t2 d0}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "312",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 110.71,
+    "peak": 255,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/itel-A6612L_13-BP2A.250605.031.A3-20260823.png",
+    "pngBytes": 23017
+  },
+  "postBootCompleted": "",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,rescueparty",
+  "passed": false
+}
+
+--- matched lines ---
+L86: 11-19 06:37:00.412  4631  4631 E AndroidRuntime: java.lang.ArrayIndexOutOfBoundsException: length=1; index=1
+L87: 11-19 06:37:00.412  4631  4631 E AndroidRuntime: 	at com.android.internal.telephony.uicc.UiccController.onGetIccCardStatusDone(UiccController.java:1137)
+L88: 11-19 06:37:00.412  4631  4631 E AndroidRuntime: 	at com.android.internal.telephony.uicc.UiccController.handleMessage(UiccController.java:657)
+L136: 11-19 06:37:01.204  4795  4795 E AndroidRuntime: java.lang.ArrayIndexOutOfBoundsException: length=1; index=1
+L137: 11-19 06:37:01.204  4795  4795 E AndroidRuntime: 	at com.android.internal.telephony.uicc.UiccController.onGetIccCardStatusDone(UiccController.java:1137)
+L138: 11-19 06:37:01.204  4795  4795 E AndroidRuntime: 	at com.android.internal.telephony.uicc.UiccController.handleMessage(UiccController.java:657)
+L234: [   32.511221][  T129] init: Received sys.powerctl='reboot,RescueParty' from pid: 707 (system_server)
+L236: [   32.515389][    T1] init: Got shutdown_command 'reboot,RescueParty' Calling HandlePowerctlMessage()
+L250: [   32.533819][    T1] init: Reboot start, reason: reboot,RescueParty, reboot_target: RescueParty
+
+# source: out/devices/tmp/verify-itel-A6612L-pass1.log
+=== VERIFY REPORT ===
+{
+  "spec": "itel-A6612L_13-BP2A.250605.031.A3-20260823",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/itel-A6612L_13-BP2A.250605.031.A3-20260823/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "black screen (meanBrightness=0.0)",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{430b57c u0 NotificationShade}, [type=2040, isChildWindow=false]-[Surface(name=*Title#90)/@0x270aa87]\n  mFocusedApp=ActivityRecord{174136839 u0 com.android.launcher3/.Launcher3QuickStepGo t4 d0}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 0.0,
+    "peak": 0,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/itel-A6612L_13-BP2A.250605.031.A3-20260823.png",
+    "pngBytes": 7685
+  },
+  "postBootCompleted": "",
+  "surfaceFlingerState": "",
+  "bootReason": "",
+  "passed": false
+}
+
+--- matched lines ---
+L95: eboot,RescueParty' from pid: 655 (system_server)
+L96: [   43.418213][    T1] init: Got shutdown_command 'reboot,RescueParty' Calling HandlePowerctlMessage(qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+L101: [   43.418286][    T1] init: Reboot start, reason: reboot,RescueParty, reboot_target: RescueParty

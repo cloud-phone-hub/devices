@@ -1,0 +1,12 @@
+vendor.asus.hardware.auralight2.IAuralight2/default
+vendor.qti.data.txpwrservice.ITxPwrService/default
+vendor.qti.hardware.bttpi.IBtTpi/default
+vendor.qti.hardware.data.connectionfactory.IFactory/slot0
+vendor.qti.hardware.data.connectionfactory.IFactory/slot1
+vendor.qti.hardware.display.config.IDisplayConfig/default
+vendor.qti.hardware.qxr.IQXRAudioService/default
+vendor.qti.hardware.qxr.IQXRCamService/default
+vendor.qti.hardware.qxr.IQXRCoreService/default
+vendor.qti.hardware.qxr.IQXRModService/default
+vendor.qti.hardware.qxr.IQXRSplitService/default
+vendor.qti.hardware.servicetrackeraidl.IServicetracker/default

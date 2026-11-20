@@ -1,0 +1,46 @@
+=== 1. Go 单测验证 (device & kmod) ===
+$ cd /Volumes/work/cloud-phone-hub/agent && TMPDIR=/Volumes/work/cloud-phone-hub/out/devices/tmp GOCACHE=/Volumes/work/cloud-phone-hub/out/agent/gocache /opt/homebrew/bin/go test -count=1 -v ./modules/pipeline/internal/device -run TestUpsertVersionDoesNotTombstoneBootSecurityPatch
+=== RUN   TestUpsertVersionDoesNotTombstoneBootSecurityPatch
+--- PASS: TestUpsertVersionDoesNotTombstoneBootSecurityPatch (0.01s)
+PASS
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/device	1.071s
+
+$ TMPDIR=/Volumes/work/cloud-phone-hub/out/devices/tmp GOCACHE=/Volumes/work/cloud-phone-hub/out/agent/gocache /opt/homebrew/bin/go test -count=1 -v ./modules/pipeline/internal/kmod -run TestBannerFromBootDataLZ4LiteralPrefix
+=== RUN   TestBannerFromBootDataLZ4LiteralPrefix
+--- PASS: TestBannerFromBootDataLZ4LiteralPrefix (0.01s)
+PASS
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/kmod	0.387s
+
+=== 2. CM5 实测 kernel/config.json 与 vendor/build.prop ===
+$ cat devices/manifest/versions/tecno/TECNO-CM5/16-BP2A.250605.031.A3-20260324/kernel/config.json
+{
+  "uname": "Linux localhost 6.12.38-android16-5-gb575a0b6e647-ab14355190-4k #1 SMP PREEMPT Wed Oct 29 06:56:12 UTC 2025 aarch64 Toybox",
+  "version": "6.12"
+}
+$ grep -n "boot_security_patch" out/devices/devices/tecno/TECNO-CM5/16-BP2A.250605.031.A3-20260324/patch/stage/root/vendor/build.prop
+834:ro.vendor.boot_security_patch=2026-02-01
+
+=== 3. TECNO-CM5 干净盘冷启动 VERIFY REPORT ===
+{
+  "spec": "TECNO-CM5_16-BP2A.250605.031.A3-20260324",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{564a71a u0 NotificationShade}\n  mFocusedApp=ActivityRecord{2732879 u0 com.transsion.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher t6}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "346",
+  "vnc": {
+    "width": 1088,
+    "height": 2436,
+    "meanBrightness": 82.34,
+    "peak": 255
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}

@@ -1,0 +1,9 @@
+{
+  "fstab": "sp9863a",
+  "cmdline": [
+    "androidboot.product.hardware.sku=A6612L-OP64",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ]
+}

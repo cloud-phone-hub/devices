@@ -1,0 +1,9 @@
+{
+  "fstab": "ums9230",
+  "cmdline": [
+    "androidboot.product.hardware.sku=P616F05_1",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ]
+}

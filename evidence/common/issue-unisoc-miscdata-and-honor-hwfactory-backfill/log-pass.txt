@@ -1,0 +1,110 @@
+# source: out/devices/tmp/verify_pass5/ARW_13-QP1A.190711.020-20250620.log
+=== VERIFY REPORT ===
+{
+  "spec": "ARW_13-QP1A.190711.020-20250620",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/ARW_13-QP1A.190711.020-20250620/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{966f1c1 u0 Android System}, [type=2010]-[Surface(name=*Title#58)/@0xb71edae, shown=false, alpha=0.0, windowType=2010]\n  mFocusedApp=ActivityRecord{837d2f0 u0 com.hmdglobal.app.setupwizardext/.WelcomeSetupWizard t5 d0}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "299",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 87.62,
+    "peak": 243,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/ARW_13-QP1A.190711.020-20250620.png",
+    "pngBytes": 1113380
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===
+
+# source: out/devices/tmp/verify_pass5/HNLNA-M_13-TP1A.220624.014-20260422.log
+=== VERIFY REPORT ===
+{
+  "spec": "HNLNA-M_13-TP1A.220624.014-20260422",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/HNLNA-M_13-TP1A.220624.014-20260422/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{aaa47ad u0 com.hihonor.hnstartupguide/com.hihonor.hnstartupguide.EmbeddingActivity}\n  mFocusedApp=ActivityRecord{11216448 u0 com.hihonor.hnstartupguide/.EmbeddingActivity t8}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 198.34,
+    "peak": 255,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/HNLNA-M_13-TP1A.220624.014-20260422.png",
+    "pngBytes": 127197
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===
+
+# source: out/devices/tmp/verify_pass5/bengal_515_13-TKQ1.240227.001-20260708.log
+=== VERIFY REPORT ===
+{
+  "spec": "bengal_515_13-TKQ1.240227.001-20260708",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/bengal_515_13-TKQ1.240227.001-20260708/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{c6cdd6 u0 com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher}\n  mFocusedApp=ActivityRecord{225509391 u0 com.hihonor.android.launcher/.unihome.UniHomeLauncher t11}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "380",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 81.87,
+    "peak": 255,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/bengal_515_13-TKQ1.240227.001-20260708.png",
+    "pngBytes": 1537509
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===

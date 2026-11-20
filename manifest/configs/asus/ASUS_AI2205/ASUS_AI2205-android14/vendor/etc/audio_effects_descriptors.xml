@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ASUS ROG Phone 7 (asus/ASUS_AI2205) 从官方固件 vendor/etc/audio_effects.xml 实测提取的 14 项音效描述符 -->
+<audio-effects-descriptors>
+  <effect name="Acoustic Echo Canceler" implementor="The Android Open Source Project" type="7b491460-8d4d-11e0-bd61-0002a5d5c51b" uuid="0f8d0d2a-59e5-45fe-b6e4-248c8a799109" connect="Pre Processing"/>
+  <effect name="DynamicsProcessing" implementor="The Android Open Source Project" type="7261676f-6d75-7369-6364-28e2fd3ac39e" uuid="e0e6539b-1781-7261-676f-6d7573696340" connect="Insert"/>
+  <effect name="Loudness Enhancer" implementor="The Android Open Source Project" type="fe3199be-aed0-413f-87bb-11260eb63cf1" uuid="fa415329-2034-4bea-b5dc-5b381c8d1e2c" connect="Insert"/>
+  <effect name="Multichannel Downmix To Stereo" implementor="The Android Open Source Project" type="381e49cc-a858-4aa2-87f6-e8388e7601b2" uuid="93f04452-e4fe-41cc-91f9-e475b6d1d69f" connect="Insert"/>
+  <effect name="Noise Suppression" implementor="The Android Open Source Project" type="58b4b260-8e06-11e0-aa8e-0002a5d5c51b" uuid="1d97bb0b-9e2f-4403-9ae3-58c2554306f8" connect="Pre Processing"/>
+  <effect name="Volume" implementor="NXP Software Ltd." type="09e8ede0-ddde-11db-b4f6-0002a5d5c51b" uuid="119341a0-8469-11df-81f9-0002a5d5c51b" connect="Insert"/>
+  <effect name="alarm_helper" implementor="OEM Audio Effect" type="fa81dbde-588b-11ed-9b6a-0242ac120002" uuid="09f303e2-0590-11e5-8fdb-0025b32654a0" connect="Insert"/>
+  <effect name="audiosphere" implementor="OEM Audio Effect" type="fa81dbde-588b-11ed-9b6a-0242ac120002" uuid="184e62ab-2d19-4364-9d1b-c0a40733866c" connect="Insert"/>
+  <effect name="hw_acc" implementor="OEM Audio Effect" type="fa81dbde-588b-11ed-9b6a-0242ac120002" uuid="7d1580bd-297f-4683-9239-e475b6d1d69f" connect="Insert"/>
+  <effect name="music_helper" implementor="OEM Audio Effect" type="fa81dbde-588b-11ed-9b6a-0242ac120002" uuid="08b8b058-0590-11e5-ac71-0025b32654a0" connect="Insert"/>
+  <effect name="notification_helper" implementor="OEM Audio Effect" type="fa81dbde-588b-11ed-9b6a-0242ac120002" uuid="0b776dde-0590-11e5-81ba-0025b32654a0" connect="Insert"/>
+  <effect name="quasar" implementor="OEM Audio Effect" type="fa81dbde-588b-11ed-9b6a-0242ac120002" uuid="71d0e2ee-e44d-483d-a809-09e75ee55ecd" connect="Insert"/>
+  <effect name="ring_helper" implementor="OEM Audio Effect" type="fa81dbde-588b-11ed-9b6a-0242ac120002" uuid="0956df94-0590-11e5-bdbe-0025b32654a0" connect="Insert"/>
+  <effect name="voice_helper" implementor="OEM Audio Effect" type="fa81dbde-588b-11ed-9b6a-0242ac120002" uuid="0ace5c08-0590-11e5-ae9e-0025b32654a0" connect="Insert"/>
+</audio-effects-descriptors>

@@ -1,0 +1,55 @@
+[   98.626022][  T543] 
+[   98.990035][  T290] type=1400 audit(1795052902.424:3147): avc:  denied  { use } for  comm="binder:756_11" path="pipe:[69652]" dev="pipefs" ino=69652 scontext=u:r:bluetooth:s0 tcontext=u:r:pioneer:s0 tclass=fd permissive=0
+[   99.006638][  T275] servicemanager: Caller(pid=756,uid=1000,sid=u:r:system_server:s0) Since 'android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+[   99.009726][  T147] init: NtQ Control message: Could not find 'aidl/android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual' for ctl.interface_start from pid: 275 (/system/bin/servicemanager)
+[   99.011626][ T5294] servicemanager: Caller(pid=756,uid=1000,sid=u:r:system_server:s0) Tried to start aidl service android.hardware.biometrics.face.virtualhal.IVirtualHal/virtual as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+[   99.025316][  T275] servicemanager: Notifying apexservice they don't (previously: do) have clients when we now have no record of a client
+[   99.027654][  T409] AidlLazyServiceRegistrar: Process has 0 (of 1 available) client(s) in use after notification apexservice has clients: 0
+[   99.029511][  T409] AidlLazyServiceRegistrar: Trying to shut down the service. No clients in use for any service in process.
+[   99.030810][  T275] servicemanager: Caller(pid=409,uid=0,sid=u:r:apexd:s0) Unregistering apexservice
+[   99.032023][  T275] BpBinder: onLastStrongRef automatically unlinking death recipients: 
+[   99.033325][  T409] AidlLazyServiceRegistrar: Unregistered all clients and exiting
+[   99.035971][    T1] init: Service 'apexd' (pid 409) exited with status 0 oneshot service took 92.738998 seconds in background
+[   99.037024][    T1] init: Sending signal 9 to service 'apexd' (pid 409) process group...
+[   99.037968][    T1] libprocessgroup: Removed cgroup /sys/fs/cgroup/system/uid_0/pid_409
+[   99.320050][  T290] type=1400 audit(1795052902.756:3148): avc:  denied  { read } for  comm="SystemStateMana" name="thermal" dev="sysfs" ino=1766 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.2 read=3.4 flush=0.0 update=0.0 end=0.0 总=3.7 ms
+[   99.501103][  T290] type=1400 audit(1795052902.936:3149): avc:  denied  { execute } for  comm="sh" name="settings" dev="dm-3" ino=10622480 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[   99.507763][  T290] type=1400 audit(1795052902.936:3150): avc:  denied  { getattr } for  comm="sh" path="/system/bin/settings" dev="dm-3" ino=10622480 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[   99.511140][  T290] type=1400 audit(1795052902.936:3151): avc:  denied  { read open } for  comm="sh" path="/system/bin/settings" dev="dm-3" ino=10622480 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[   99.513652][  T290] type=1400 audit(1795052902.936:3152): avc:  denied  { execute_no_trans } for  comm="sh" path="/system/bin/settings" dev="dm-3" ino=10622480 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[   99.516885][  T290] type=1400 audit(1795052902.940:3153): avc:  denied  { map } for  comm="cmd" path="/system/bin/cmd" dev="dm-3" ino=10621156 scontext=u:r:pioneer:s0 tcontext=u:object_r:system_file:s0 tclass=file permissive=1
+[   99.517464][ T2149] binder_debug: 50 callbacks suppressed
+[   99.517465][ T2149] binder: release 5299:5303 transaction 86867 out, still active
+[   99.518424][  T290] type=1400 audit(1795052902.948:3154): avc:  denied  { transfer } for  comm="cmd" scontext=u:r:pioneer:s0 tcontext=u:r:system_server:s0 tclass=binder permissive=1
+[   99.518542][ T3122] binder: 3122:756 translate fd failed
+[   99.518544][ T3122] binder: 756:3122 transaction async to 3202:0 failed 86868/29201/-1, code 1598311760 size 48-8 line 3745
+[   99.518711][ T3122] binder: 3122:756 reply target not found
+[   99.519296][  T290] type=1400 audit(1795052902.952:3155): avc:  denied  { use } for  comm="binder:756_11" path="pipe:[69687]" dev="pipefs" ino=69687 scontext=u:r:bluetooth:s0 tcontext=u:r:pioneer:s0 tclass=fd permissive=0
+[   99.520881][ T3122] binder: 756:3122 transaction reply to 0:0 failed 86869/29189/0, code 0 size 4-0 line 3288
+[   99.531293][ T3122] binder: send failed reply for transaction 86867, target dead
+[   99.583400][  T275] SELinux: avc:  denied  { find } for pid=756 uid=1000 name=vendor.mediatek.hardware.gpuserv.IGpuService/default scontext=u:r:system_server:s0 tcontext=u:object_r:mtk_hal_gpuserv_service:s0 tclass=service_manager permissive=0
+[   99.591819][    T1] init: processing action (ro.boot.mode=normal && ro.vendor.tran.rpmb.support=1 && sys.boot_completed=1) from (/system/etc/init/hw/init.rc:1232)
+[   99.595479][  T148] init: ReapLogP Persist PropSet [persist.sys.tran_led_support] = [0] at 99590, Done
+[   99.595706][  T147] init: CMPs, name = persist.tr_lighting.feature.support, s = u:r:system_server:s0, t = u:object_r:default_prop:s0
+[   99.595710][  T147] init: Unable to set property 'persist.tr_lighting.feature.support' from uid:1000 gid:1000 pid:756: SELinux permission check failed
+[   99.597623][    T1] init: ExecStart failed: Cannot find '/vendor/bin/verify_rpmb': No such file or directory: [VFY_BOOT] Rebooting into recovery, reason: Trigger_Rpmb
+[   99.598154][  T290] type=1107 audit(1795052903.028:3156): uid=0 auid=4294967295 ses=4294967295 subj=u:r:init:s0 msg='avc:  denied  { set } for property=persist.tr_lighting.feature.support pid=756 uid=1000 gid=1000 scontext=u:r:system_server:s0 tcontext=u:object_r:default_prop:s0 tclass=property_service permissive=0'
+[   99.603425][    T1] init: Rebooting into recovery
+[   99.609682][  T292] vold: Encryption policy of /data/system_ce/0.new set to a4106009ae115c9cbb10d74c8066d426 v2 modes 1/4 flags 0x2
+[   99.617140][    T1] init: Got shutdown_command 'reboot,recovery' Calling HandlePowerctlMessage()
+[   99.623808][  T292] vold: Encryption policy of /data/vendor_ce/0.new set to a4106009ae115c9cbb10d74c8066d426 v2 modes 1/4 flags 0x2
+[   99.624770][  T275] servicemanager: Caller(pid=2944,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.data.IMtkRadioExData/slot1 in the VINTF manifest. No alternative instances declared in VINTF.
+[   99.626008][  T275] servicemanager: Caller(pid=2944,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.data.IMtkRadioExData/slot1 in the VINTF manifest. No alternative instances declared in VINTF.
+[   99.626863][  T292] vold: Encryption policy of /data/media/0.new set to a4106009ae115c9cbb10d74c8066d426 v2 modes 1/4 flags 0x2
+[   99.627258][    T1] init: Clear action queue and start shutdown trigger
+[   99.627274][    T1] init: Entering shutdown mode
+[   99.627353][    T1] init: processing action (shutdown_done) from (<Builtin Action>:0)
+[   99.627430][    T1] init: Failed to open /tranfs/stack.txt: Read-only file system
+[   99.627432][    T1] init: Reboot start, reason: reboot,recovery, reboot_target: recovery
+[   99.627442][    T1] init: [HANG_DETECT] ERROR: open hang detect device failed.
+[   99.627443][    T1] init: Real shutdown timeout: lookup 'hang_detect' in kernel log
+[   99.627445][    T1] init: Shutdown timeout: 6000 ms
+[   99.627446][    T1] init: Create reboot monitor thread.
+[   99.627601][ T5339] init: shutdown_timeout_timespec.tv_sec: 405
+[   99.630333][  T275] servicemanager: Caller(pid=2944,uid=1001,sid=u:r:radio:s0) Could not find vendor.mediatek.hardware.mtkradioex.data.IMtkRadioExData/slot2 in the VINTF manifest. No alternative instances declared in VINTF.

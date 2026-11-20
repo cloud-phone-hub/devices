@@ -1,0 +1,6 @@
+;; motorola/aito (MT6878 / GRF 34.0 + Android 16):
+;; 允许 hal_neuralnetworks_default 注册 IComposerExt/default 并允许 surfaceflinger 查找
+(typeattributeset hal_mtk_composer_ext_client (surfaceflinger_{{vers}}))
+(typeattributeset hal_mtk_composer_ext_server (hal_neuralnetworks_default))
+(allow surfaceflinger_{{vers}} mtk_hal_composer_ext_service (service_manager (find)))
+(allow hal_neuralnetworks_default mtk_hal_composer_ext_service (service_manager (add find)))

@@ -1,0 +1,9 @@
+{
+  "fstab": "kalama",
+  "cmdline": [
+    "androidboot.product.hardware.sku=WW_AI2205",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ]
+}

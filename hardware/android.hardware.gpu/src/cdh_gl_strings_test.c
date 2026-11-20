@@ -70,7 +70,9 @@ static void test_no_newline_header_chunk(void) {
     assert(res.patched == 1);
     assert(res.lens[0] == (int)(15 + 1 + (sizeof(CDH_FMA_POLYFILL) - 1)));
     assert(strcmp(res.ptrs[0],
-                  "#version 300 es\n#ifndef fma\n#define fma(a, b, c) ((a) * (b) + (c))\n#endif\n") == 0);
+                  "#version 300 es\n"
+                  "#ifndef fma\n#define fma(a, b, c) ((a) * (b) + (c))\n#endif\n"
+                  "#ifndef ldexp\n#define ldexp(x, e) ((x) * exp2(float(e)))\n#endif\n") == 0);
     assert(res.ptrs[1] == chunk1);
     assert(res.lens[1] == -1);
     cdh_free_patched_sources(&res);

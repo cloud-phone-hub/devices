@@ -2,7 +2,7 @@
   "id": 37,
   "buildId": "14-GQ5011AF1_EEA_V13-20260825",
   "deviceId": 29,
-  "configId": 30,
+  "configId": 41,
   "osVersion": "14-GQ5011AF1_EEA_V13-20260825",
   "buildDate": "20260825",
   "securityPatch": "2026-06-05",
@@ -10,5 +10,5 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {},
-  "updatedAt": "2026-11-09T03:16:20Z"
+  "updatedAt": "2026-11-19T03:00:55Z"
 }

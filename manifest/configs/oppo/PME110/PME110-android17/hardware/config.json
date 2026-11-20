@@ -19,6 +19,12 @@
       }
     },
     {
+      "android.hardware.graphics.allocator": {
+        "variant": "default",
+        "version": "2.0"
+      }
+    },
+    {
       "android.hardware.gnss": {
         "variant": "default",
         "version": "1.0"
@@ -62,7 +68,7 @@
     },
     {
       "android.hardware.radio": {
-        "variant": "default",
+        "variant": "mtk",
         "version": "1.0"
       }
     },
@@ -98,6 +104,36 @@
     },
     {
       "android.hardware.media.v412": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.power": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.soundtrigger3": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.biometrics": {
+        "variant": "fakefingerprint",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.nfc": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.neuralnetworks": {
         "variant": "default",
         "version": "1.0"
       }

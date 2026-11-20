@@ -1,0 +1,609 @@
+{
+  "external": [
+    "cdh_redirect",
+    "device_info",
+    "input_identity",
+    "kernelsu",
+    "virtio_media"
+  ],
+  "input_identity": {
+    "aligns": [
+      {
+        "keys": [
+          "KEY_VOLUMEDOWN"
+        ],
+        "name": "mtk-kpd"
+      }
+    ],
+    "devices": [
+      {
+        "abs": [
+          {
+            "axis": "ABS_Z",
+            "flat": 0,
+            "fuzz": 0,
+            "max": 255,
+            "min": 0
+          }
+        ],
+        "bus": 6,
+        "keys": [
+          "KEY_UP",
+          "KEY_LEFT",
+          "KEY_RIGHT",
+          "KEY_DOWN"
+        ],
+        "name": "uinput-fpc",
+        "product": 2184,
+        "vendor": 1638,
+        "version": 0
+      },
+      {
+        "keys": [
+          "KEY_POWER",
+          "KEY_WAKEUP"
+        ],
+        "msc": [
+          "MSC_SCAN"
+        ],
+        "name": "fpc_irq@fingerprint"
+      },
+      {
+        "bus": 25,
+        "keys": [
+          "KEY_PLAYPAUSE",
+          "BTN_1",
+          "BTN_2",
+          "KEY_VOICECOMMAND"
+        ],
+        "name": "mt6989-mt6359 Headset Jack",
+        "phys": "ALSA",
+        "switches": [
+          "SW_HEADPHONE_INSERT",
+          "SW_MICROPHONE_INSERT",
+          "SW_LINEOUT_INSERT",
+          "SW_JACK_PHYSICAL_INSERT"
+        ]
+      },
+      {
+        "bus": 25,
+        "keys": [
+          "KEY_VOLUMEUP",
+          "KEY_POWER"
+        ],
+        "name": "mtk-pmic-keys",
+        "product": 1,
+        "vendor": 1,
+        "version": 1
+      }
+    ],
+    "goodix_fp": true,
+    "touch_major": true
+  },
+  "redirect": [
+    {
+      "from": "/vendor/etc",
+      "to": "/mnt/vendorpatch/vendor/etc",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/bin",
+      "to": "/mnt/vendorpatch/vendor/bin",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/lib",
+      "to": "/mnt/vendorpatch/vendor/lib",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/lib64",
+      "to": "/mnt/vendorpatch/vendor/lib64",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/build.prop",
+      "to": "/mnt/vendorpatch/vendor/build.prop",
+      "type": "file"
+    },
+    {
+      "from": "/vendor/ueventd.rc",
+      "to": "/mnt/vendorpatch/vendor/ueventd.rc",
+      "type": "file"
+    },
+    {
+      "from": "/vendor_dlkm/lib",
+      "to": "/mnt/vendorpatch/vendor_dlkm/lib",
+      "type": "dir"
+    },
+    {
+      "from": "/odm",
+      "to": "/odm",
+      "type": "file"
+    },
+    {
+      "from": "/odm",
+      "to": "/mnt/vendorpatch/odm",
+      "type": "dir"
+    },
+    {
+      "from": "/system/lib/modules",
+      "to": "/mnt/vendorpatch/vendor_dlkm/lib/modules",
+      "type": "dir"
+    },
+    {
+      "from": "/system/bin/update_verifier",
+      "to": "/mnt/vendorpatch/system/bin/update_verifier",
+      "type": "file"
+    },
+    {
+      "from": "/system/build.prop",
+      "to": "/mnt/vendorpatch/vendor/etc/cdh_system_build.prop",
+      "type": "file"
+    },
+    {
+      "from": "/vendor/lib64/mt6989/libdpframework.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/egl/libEGL_mesa.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/lib64/mt6989/libpq_sec.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/hw/mapper.mediatek.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/lib64/egl/libGLES_meow.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/egl/libEGL_meow.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/lib64/egl/libMEOW_qt.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/egl/libGLESv1_CM_meow.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/lib64/libgpu_aux.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/egl/libGLESv2_meow.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/lib64/libgralloc_extra.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/hw/gralloc.default.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/lib64/libaal_sec.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/android.hardware.graphics.allocator@2.0.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/lib64/libFrameRecord.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/android.hardware.graphics.allocator@3.0.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/lib64/egl/libMEOW_data.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/android.hardware.graphics.common-V6-ndk.so",
+      "type": "maps"
+    },
+    {
+      "from": "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service",
+      "to": "/mnt/vendorpatch/vendor/bin/hw/cdh_audio_parameter_parser",
+      "type": "file"
+    }
+  ],
+  "cpufreq": {
+    "available-governors": [
+      "schedutil"
+    ],
+    "driver": "cpufreq-dt",
+    "governor": "schedutil",
+    "package-per-cluster": false,
+    "policies": [
+      {
+        "available-frequencies": [
+          1300000,
+          1274000,
+          1248000,
+          1222000,
+          1196000,
+          1170000,
+          1144000,
+          1118000,
+          1092000,
+          1066000,
+          1040000,
+          1014000,
+          988000,
+          962000,
+          936000,
+          910000,
+          884000,
+          858000,
+          832000,
+          806000,
+          780000,
+          754000,
+          728000,
+          702000,
+          676000,
+          650000,
+          624000,
+          598000,
+          572000,
+          546000,
+          520000,
+          494000,
+          468000,
+          442000,
+          416000,
+          390000,
+          364000,
+          338000,
+          312000,
+          286000,
+          260000
+        ],
+        "capacity": 766,
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "cur-freq": 286000,
+        "implementer": "0x41",
+        "max-freq": 1300000,
+        "min-freq": 260000,
+        "policy": 0,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 0
+      }
+    ],
+    "scaling-readable": false,
+    "transition-latency": 1000
+  },
+  "input": {
+    "keyboard": {
+      "bus": 25,
+      "name": "mtk-kpd",
+      "product": 0,
+      "vendor": 0,
+      "version": 0
+    },
+    "tablet": false,
+    "touch": {
+      "abs-to-mt": true,
+      "abs-x-max": 17280,
+      "abs-xy": true,
+      "abs-y-max": 38400,
+      "bus": 2,
+      "mt-pressure": false,
+      "mt-slots": 10,
+      "name": "goodix_ts",
+      "product": 1,
+      "touch-keys": [
+        116,
+        143,
+        354
+      ],
+      "vendor": 10182,
+      "version": 256
+    }
+  },
+  "thermal": {
+    "zones": [
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "soc_max"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu-little-core0"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu-little-core1"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu-little-core2"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu-little-core3"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu-medium-core4-0"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu-medium-core4-1"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu-medium-core5-0"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu-medium-core5-1"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu-medium-core6-0"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu-medium-core6-1"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu-big-core7-0"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu-big-core7-1"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu-dsu0"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu-dsu1"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu-dsu2"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu-dsu3"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "apu-a0"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "apu-a1"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "apu-a2"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "apu-a3"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "apu-b0"
+      },
+      {
+        "base-temp-mc": 30200,
+        "jitter-mc": 220,
+        "type": "gpu0"
+      },
+      {
+        "base-temp-mc": 30200,
+        "jitter-mc": 220,
+        "type": "gpu1"
+      },
+      {
+        "base-temp-mc": 30200,
+        "jitter-mc": 220,
+        "type": "gpu2"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "soc-top0"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "soc-top1"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "soc-top2"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "soc-top3"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "soc-bot0"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "soc-bot1"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "soc-bot2"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "soc-bot3"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "ap_ntc"
+      },
+      {
+        "base-temp-mc": 29500,
+        "jitter-mc": 180,
+        "type": "ltepa_ntc"
+      },
+      {
+        "base-temp-mc": 29500,
+        "jitter-mc": 180,
+        "type": "nrpa_ntc"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "tsx-ntc"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "quiet_ntc"
+      },
+      {
+        "base-temp-mc": 29500,
+        "jitter-mc": 180,
+        "type": "quiet-mdpa-ntc"
+      },
+      {
+        "base-temp-mc": 29000,
+        "jitter-mc": 150,
+        "type": "quiet-pmic-ntc-ntc"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "wifi-ntc"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "wifi-adie-0"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "wifi-ddie-0"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "wifi-ddie-1"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "wifi-ddie-2"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "wifi-ddie-3"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "ambient-ntc"
+      },
+      {
+        "base-temp-mc": 29000,
+        "jitter-mc": 150,
+        "type": "pmic6363-vio18"
+      },
+      {
+        "base-temp-mc": 29000,
+        "jitter-mc": 150,
+        "type": "pmic6363-vs1-vs3"
+      },
+      {
+        "base-temp-mc": 29000,
+        "jitter-mc": 150,
+        "type": "pmic6363-bk3-bk7"
+      },
+      {
+        "base-temp-mc": 29000,
+        "jitter-mc": 150,
+        "type": "pmic6363-vs2"
+      },
+      {
+        "base-temp-mc": 29000,
+        "jitter-mc": 150,
+        "type": "pmic6373-bk0"
+      },
+      {
+        "base-temp-mc": 29000,
+        "jitter-mc": 150,
+        "type": "pmic6373-ldo"
+      },
+      {
+        "base-temp-mc": 29000,
+        "jitter-mc": 150,
+        "type": "pmic6373-bk3-bk7"
+      },
+      {
+        "base-temp-mc": 29000,
+        "jitter-mc": 150,
+        "type": "pmic6373-bk4-bk8"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "vtskin-max"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "vtskin1"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "vtskin2"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "vtskin3"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "vtskin4"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "vtskin5"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "vtskin6"
+      }
+    ]
+  }
+}

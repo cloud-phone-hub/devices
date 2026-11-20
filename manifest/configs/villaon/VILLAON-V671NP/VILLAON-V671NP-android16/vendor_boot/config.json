@@ -1,0 +1,9 @@
+{
+  "fstab": "ums9621",
+  "cmdline": [
+    "androidboot.product.hardware.sku=V671NP-IN",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ]
+}

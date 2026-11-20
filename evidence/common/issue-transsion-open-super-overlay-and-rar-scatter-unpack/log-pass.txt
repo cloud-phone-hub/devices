@@ -1,0 +1,56 @@
+=== 1. Go 单测验证 (fsimg & 01_unpack) ===
+$ cd /Volumes/work/cloud-phone-hub/agent && TMPDIR=/Volumes/work/cloud-phone-hub/out/devices/tmp GOCACHE=/Volumes/work/cloud-phone-hub/out/agent/gocache /opt/homebrew/bin/go test -count=1 -v ./modules/pipeline/internal/fsimg -run TestApplySparseOverlay
+=== RUN   TestApplySparseOverlay
+--- PASS: TestApplySparseOverlay (0.01s)
+PASS
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/fsimg	1.026s
+
+$ TMPDIR=/Volumes/work/cloud-phone-hub/out/devices/tmp GOCACHE=/Volumes/work/cloud-phone-hub/out/agent/gocache /opt/homebrew/bin/go test -count=1 -v ./modules/pipeline/stages/01_unpack -run 'TestImageTarget|TestExtractZipTranssionOpenSuperOverlay'
+=== RUN   TestImageTarget
+--- PASS: TestImageTarget (0.00s)
+=== RUN   TestImageTargetFullMode
+--- PASS: TestImageTargetFullMode (0.00s)
+=== RUN   TestExtractZipTranssionOpenSuperOverlay
+--- PASS: TestExtractZipTranssionOpenSuperOverlay (0.01s)
+PASS
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/01_unpack	0.325s
+
+=== 2. 传音 Infinix Zero 40 5G (X6861) 解包日志摘录 ===
+$ TMPDIR=/Volumes/work/cloud-phone-hub/out/devices/tmp /Volumes/work/cloud-phone-hub/out/agent/dist/cdh-pipeline unpack-official -force -rom /Volumes/work/cloud-phone-hub/roms/devices/tecno/Infinix-Zero-40-5G-X6861-15.zip
+  + boot.img（64.00 MiB）
+  + super.img（8.95 GiB）
+  + vendor_boot.img（64.00 MiB）
+    (sparse) 已转 raw: super.img
+  + Open/super.img（1.89 GiB，sparse 增量叠写 -> super.img）
+    (sparse) 已叠写 overlay 到: super.img
+==> super: 13 个逻辑分区
+  逻辑分区 system_a (0.79 GiB, 1 段) -> super/system_a.img
+  逻辑分区 vendor_a (2.24 GiB, 1 段) -> super/vendor_a.img
+  逻辑分区 tr_product_a (0.22 GiB, 1 段) -> super/tr_product_a.img
+  逻辑分区 tr_preload_a (1.68 GiB, 1 段) -> super/tr_preload_a.img
+[ok] 已解出 super.img（11.57 GiB）+ 13 个逻辑分区 + boot.img（0.06 GiB） + vendor_boot.img（64.00 MiB） -> out/devices/tmp/Infinix-Zero-40-5G-X6861-15
+
+=== 3. Infinix-X6861 干净盘冷启动 VERIFY REPORT ===
+{
+  "spec": "Infinix-X6861_12-SP1A.210812.016-20251012",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{fba2950 u0 com.transsion.XOSLauncher/com.android.launcher3.uioverrides.QuickstepLauncher}\n  mFocusedApp=ActivityRecord{d3035ae u0 com.transsion.XOSLauncher/com.android.launcher3.uioverrides.QuickstepLauncher t7}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "322",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "meanBrightness": 127.71,
+    "peak": 235
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}

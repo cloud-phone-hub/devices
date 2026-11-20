@@ -119,6 +119,8 @@ static enum cdh_sphal_tier cdh_classify_sphal_lib(const char *buf)
 		"libapexsupport.so",
 		"libgralloctypes.so",
 		"android.hardware.graphics.common-V6-ndk.so",
+		"android.hardware.graphics.common-V7-ndk.so",
+		"libaconfig_storage_read_api_cc.so",
 	};
 	static const char *const tier_b_fallback[] = {
 		"libdrm.so",
@@ -447,8 +449,10 @@ bool cdh_rewrite_forward(char *buf, size_t cap)
 			return false;
 		}
 		tier = cdh_classify_sphal_lib(buf);
-		/* 若官方 /vendor 自带同名 4KB 原件（Android 15+），标准库直通原件以保持文件页跨度一致；Android 13/14 缺失时回退载体。 */
-		if (tier == CDH_SPHAL_VNDK_FALLBACK && cdh_maps_has_real_file(buf))
+		/* 若官方 /vendor 自带同名 4KB 原件且与载体代际兼容，标准库直通原件以保持文件页跨度一致；跨代 GRF 或缺失时回退载体。 */
+		if (tier == CDH_SPHAL_VNDK_FALLBACK &&
+		    cdh_maps_sphal_vndk_compat() &&
+		    cdh_maps_has_real_file(buf))
 			tier = CDH_SPHAL_NONE;
 		if (tier == CDH_SPHAL_NONE || !cdh_sphal_caller_allowed(tier)) {
 			if (tier != CDH_SPHAL_NONE)
@@ -478,10 +482,11 @@ bool cdh_rewrite_forward(char *buf, size_t cap)
 	} else if (cdh_is_app_process()) {
 		/*
 		 * zygote64 / zygote 以 uid=0 运行并在 preloadOpenGL() 中预加载 SP-HAL 依赖，
-		 * 普通应用 fork 后会继承其 VMA。若官方 /vendor 存在同名 4KB 原件，
-		 * 让 app_process 进程族同样回退直通原厂文件，保证子进程映射跨度一致。
+		 * 普通应用 fork 后会继承其 VMA。若官方 /vendor 存在同名 4KB 原件且与载体代际兼容，
+		 * 让 app_process 进程族同样回退直通原厂文件，保证子进程映射跨度一致；跨代 GRF 时走载体以免符号缺失。
 		 */
 		if (cdh_classify_sphal_lib(buf) == CDH_SPHAL_VNDK_FALLBACK &&
+		    cdh_maps_sphal_vndk_compat() &&
 		    cdh_maps_has_real_file(buf))
 			return false;
 	}

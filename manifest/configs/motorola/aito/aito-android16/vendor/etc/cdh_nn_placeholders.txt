@@ -7,6 +7,7 @@ vendor.mediatek.hardware.audio.IMtkAudio/default
 vendor.mediatek.hardware.camera.bgservice.IBGService/default
 vendor.mediatek.hardware.camera.isphal.IISPModule/internal/1
 vendor.mediatek.hardware.clientapi.IClientApi/clientapi_aidl_service
+vendor.mediatek.hardware.composer_ext.IComposerExt/default
 vendor.mediatek.hardware.dmc.IDmcService/default
 vendor.mediatek.hardware.lbs.ILbs/AgpsDebugInterface
 vendor.mediatek.hardware.lbs.ILbs/AgpsInterface

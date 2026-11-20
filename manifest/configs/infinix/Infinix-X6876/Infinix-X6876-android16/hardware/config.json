@@ -62,7 +62,7 @@
     },
     {
       "android.hardware.radio": {
-        "variant": "default",
+        "variant": "mtk",
         "version": "1.0"
       }
     },
@@ -110,6 +110,18 @@
     },
     {
       "android.hardware.power": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.nfc": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.neuralnetworks": {
         "variant": "default",
         "version": "1.0"
       }

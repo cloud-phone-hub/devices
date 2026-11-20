@@ -137,6 +137,11 @@
       "type": "file"
     },
     {
+      "from": "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service",
+      "to": "/mnt/vendorpatch/vendor/bin/hw/cdh_audio_parameter_parser",
+      "type": "file"
+    },
+    {
       "from": "/vendor/lib64/mt6878/libdpframework.so",
       "to": "/mnt/vendorpatch/vendor/lib64/egl/libEGL_mesa.so",
       "type": "maps"

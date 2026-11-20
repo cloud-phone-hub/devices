@@ -1,0 +1,78 @@
+==== 构建日志（09_build_vendor vendor-log.txt 片段） ====
+    补齐块设备格式化域 (e2fs/fsck) sysfs/proc_version 授权 8 条
+    补齐 MTK mtkbootanimation SELinux 绑定 13 条
+    补齐 MTK audio_vendor_parameter_parser SELinux 绑定 11 条
+[add] vendor/lib64/libapexsupport.so <- 官方 system:/system/lib64/libapexsupport.so（236904 B，原样回填供 vendor 命名空间解析）
+[config] vendor_file_contexts: 绑定 cdh_audio_parameter_parser -> audio_vendor_parameter_parser_exec
+[add] vendor/etc/libnfc*.conf <- 官方 vendor（回填 2 个 NFC 配置文件）
+[add] vendor/etc/default_feature_config.json <- 官方 vendor（TCL ConfigProvider 动态特性配置回填）
+[delete] vendor/lib64/libminigbm_gralloc.so（自编 allocator 已静态内聚，移除底包残留库）
+[delete] vendor/lib64/libminigbm_gralloc4_utils.so（自编 allocator 已静态内聚，移除底包残留库）
+[delete] vendor/lib/libminigbm_gralloc.so（自编 allocator 已静态内聚，移除底包残留库）
+[delete] vendor/lib/hw/mapper.minigbm.so（自编 allocator 已静态内聚，移除底包残留库）
+[delete] vendor/lib/hw/gralloc.minigbm.so（自编 allocator 已静态内聚，移除底包残留库）
+[rename] vendor/lib64/hw/mapper.minigbm.so -> lib64/hw/mapper.mediatek.so（源码自编无 SONAME 库对齐厂商名称）
+[rename] vendor/lib64/hw/gralloc.minigbm.so -> lib64/hw/gralloc.default.so（源码自编无 SONAME 库对齐厂商名称）
+[config] vendor/etc/vintf/manifest/mapper.mediatek.xml（mapper.minigbm.xml -> @5.0/mediatek）
+[config] vendor/build.prop: 移除云机默认 ro.hardware.gralloc（对齐原厂无此属性）
+[config] vendor/etc/selinux/vendor_service_contexts: mapper/minigbm* -> mapper/mediatek
+[config] vendor/etc/selinux/vendor_file_contexts: 补齐 mapper.mediatek.so / gralloc.default.so same_process_hal_file 标签
+[config] vendor/lib64/egl/gpu_id.cfg: 抽离 25 项 GPU/Vulkan 身份配置（从 vendor/build.prop 剥离）
+[config] vendor/build.prop: 同步 GPU/Vulkan 驱动属性并剥离内部身份参数
+[config] vendor/etc/boringssl_self_test*.rc: 剥离 32 位 boringssl_self_test32 自检触发（纯 64 位内核兼容）
+
+==== 冷启动复测通过报告（verify_boot.py + 截图 meanBrightness=53.71 / 前轮 keep 复测 meanBrightness=107.24） ====
+=== VERIFY REPORT ===
+{
+  "spec": "ericanppro_15-AP3A.240905.015.A2-20250702",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/ericanppro_15-AP3A.240905.015.A2-20250702/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=null\n  mFocusedApp=ActivityRecord{84d267f u0 com.android.settings/.FallbackHome t6}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "340",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 53.71,
+    "peak": 255,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/ericanppro_15-AP3A.240905.015.A2-20250702.png",
+    "pngBytes": 2031060
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===
+[   97.519806][  T211] SELinux: avc:  denied  { find } for pid=4223 uid=2000 name=blob_store scontext=u:r:pioneer:s0 tcontext=u:object_r:blob_store_service:s0 tclass=service_manager permissive=1
+
+[   98.102982][  T211] SELinux: avc:  denied  { findqemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=2.1 flush=0.0 update=0.0 end=0.0 总=2.3 ms
+ } for pid=4223 qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.5 flush=0.0 update=0.0 end=0.0 总=1.6 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.8 ms
+[   98.168710][qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=2.4 flush=0.0 update=0.0 end=0.0 总=2.5 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.9 flush=0.0 update=0.0 end=0.0 总=2.1 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=2.2 flush=0.0 update=0.0 end=0.0 总=2.4 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.9 flush=0.0 update=0.0 end=0.0 总=2.1 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=1.7 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+[   98.25359qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.9 flush=0.0 update=0.0 end=0.0 总=2.0 ms
+[   98.271052][  T211] SELinux: avc:  denied  { find } for pid=4223 uid=2000 name=usagestats scontexqemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.7 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.0 read=2.2 flush=0.0 update=0.0 end=0.0 总=2.3 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=2.6 flush=0.0 update=0.0 end=0.0 总=2.7 ms
+[   98.322569][  T211] SELinux: avc:  denied  { find } for pid=4223 uid=2000 name=qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.6 ms
+[   98.335981][  T211] SELinux: avc:  denied  { find } for pid=4223 uid=2000 name=wifiqemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.8 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=2.0 flush=0.0 update=0.0 end=0.0 总=2.0 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.0 read=1.8 flush=0.0 update=0.0 end=0.0 总=1.9 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=1.6 flush=0.0 update=0.0 end=0.0 总=1.7 ms

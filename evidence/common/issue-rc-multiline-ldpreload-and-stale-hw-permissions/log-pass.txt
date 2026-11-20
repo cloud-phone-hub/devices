@@ -1,0 +1,110 @@
+# source: out/devices/tmp/verify_pass5/G1130_13-UP1A.231005.007-20260511.log
+=== VERIFY REPORT ===
+{
+  "spec": "G1130_13-UP1A.231005.007-20260511",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/G1130_13-UP1A.231005.007-20260511/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{8cfa0f u0 Android System}, [type=2010]-[Surface(name=*Title#58)/@0xfa684ff, shown=false, alpha=0.0, windowType=2010]\n  mFocusedApp=ActivityRecord{d3887d1 u0 com.aura.oobe.sliide/com.ironsource.appmanager.ui.activities.LauncherPostOOBEActivity t7 d0}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "297",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 59.2,
+    "peak": 243,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/G1130_13-UP1A.231005.007-20260511.png",
+    "pngBytes": 509662
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===
+
+# source: out/devices/tmp/verify_pass5/P616F05_13-TP1A.220624.014-20260324.log
+=== VERIFY REPORT ===
+{
+  "spec": "P616F05_13-TP1A.220624.014-20260324",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/P616F05_13-TP1A.220624.014-20260324/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{8be2baf u0 NotificationShade}, [type=2040]-[Surface(name=*Title#79)/@0x27332f4, shown=false, alpha=0.0, windowType=2040]\n  mFocusedApp=ActivityRecord{80ffb7c u0 com.zte.mifavor.launcher/com.android.launcher3.uioverrides.QuickstepLauncher t7 d0}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "321",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 138.78,
+    "peak": 255,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/P616F05_13-TP1A.220624.014-20260324.png",
+    "pngBytes": 4199542
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===
+
+# source: out/devices/tmp/verify_pass5/GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825.log
+=== VERIFY REPORT ===
+{
+  "spec": "GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{ceed3c u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher}\n  mFocusedApp=ActivityRecord{49540926 u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher t6}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "329",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 124.85,
+    "peak": 255,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825.png",
+    "pngBytes": 4768067
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===

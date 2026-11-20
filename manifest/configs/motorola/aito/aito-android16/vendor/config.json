@@ -144,6 +144,16 @@
       "from": "official",
       "mode": "replace",
       "source": "etc/audio_param"
+    },
+    {
+      "from": "official",
+      "source": "etc/audio_param/AudioParamOptions_vext.xml",
+      "target": "etc/audio_param/AudioParamOptions_mgvi.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/audio_param/AudioParamOptions_vext.xml",
+      "target": "etc/audio_param/AudioParamOptions.xml"
     }
   ],
   "lib64-backfills": [],

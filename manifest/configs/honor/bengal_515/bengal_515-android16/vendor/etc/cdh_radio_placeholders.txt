@@ -1,0 +1,8 @@
+vendor.qti.hardware.radio.am.IQcRilAudio/slot1
+vendor.qti.hardware.radio.am.IQcRilAudio/slot2
+vendor.qti.hardware.radio.ims.IImsRadio/imsradio0
+vendor.qti.hardware.radio.ims.IImsRadio/imsradio1
+vendor.qti.hardware.radio.internal.deviceinfo.IDeviceInfo/deviceinfo
+vendor.qti.hardware.radio.qcrilhook.IQtiOemHook/oemhook0
+vendor.qti.hardware.radio.qcrilhook.IQtiOemHook/oemhook1
+vendor.qti.hardware.radio.qtiradioconfig.IQtiRadioConfig/default

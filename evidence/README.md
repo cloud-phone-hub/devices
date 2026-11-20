@@ -29,7 +29,8 @@
 | `nx809j/` | REDMAGIC 11 Pro（`redmagic/NX809J` / 骁龙 SM8850 `canoe` / Android 16，lineage-23.2 + kernel 6.12.81） | 1 | #267 | [nx809j/README.md](nx809j/README.md) |
 | `asteroids/` | Nothing Phone (3a)（`nothing/Asteroids` / 骁龙 SM7635 `volcano` / GRF vendor=14，system=15/16，kernel 6.1） | 2 | #268、#270 | [asteroids/README.md](asteroids/README.md) |
 | `aito/` | Motorola Razr 2024（`motorola/aito` / MediaTek `mt6878` / GRF vendor=14，system=16，kernel 6.1） | 1 | #271 | [aito/README.md](aito/README.md) |
-| `common/` | 引擎级 / 跨机型（构建流水线、选核、vendor 装配口径、内核与模块机制、运行侧验收工具、选核口径、QEMU 触控与 VNC 推流、设备侧目录迁移、ROM 根迁移、repo manifest 收口、devices 仓库声明、agent 产物根迁移、节点 ROM 根配置修复、消灭 engine 目录与统一 out/devices 产物根） | 107 | #102、#107、#108、#116、#117、#119~#122、#124、#134、#137、#138、#139、#141~#145、#147、#148、#152、#154、#156、#157、#163、#167、#168、#170、#172~#184、#186~#193、#196、#199、#202~#221、#223~#226、#228~#245、#250、#251、#252、#253、#254、#255、#257、#258、#261、#263、#264、#265、#266、#269 | [common/README.md](common/README.md) |
+| `x6876/` | Infinix X6876（`infinix/Infinix-X6876` / MediaTek `mt6878` / GRF vendor=14，system=16，kernel 6.1） | 1 | #273 | [x6876/README.md](x6876/README.md) |
+| `common/` | 引擎级 / 跨机型（构建流水线、选核、vendor 装配口径、内核与模块机制、运行侧验收工具、选核口径、QEMU 触控与 VNC 推流、设备侧目录迁移、ROM 根迁移、repo manifest 收口、devices 仓库声明、agent 产物根迁移、节点 ROM 根配置修复、消灭 engine 目录与统一 out/devices 产物根） | 124 | #102、#107、#108、#116、#117、#119~#122、#124、#134、#137、#138、#139、#141~#145、#147、#148、#152、#154、#156、#157、#163、#167、#168、#170、#172~#184、#186~#193、#196、#199、#202~#221、#223~#226、#228~#245、#250、#251、#252、#253、#254、#255、#257、#258、#261、#263、#264、#265、#266、#269、#272、#274~#288 | [common/README.md](common/README.md) |
 
 **分组判据**：条目 `solution.md` 首部的「设备/机型」行指向哪台机就进哪个目录；同一条改动
 同时落在 3 台以上机型、或结论对所有机型成立的，进 `common/`。`gold` 与 `note13-5G-15` 是

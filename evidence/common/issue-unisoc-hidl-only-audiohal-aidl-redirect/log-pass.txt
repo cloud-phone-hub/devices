@@ -1,0 +1,126 @@
+# source: out/devices/tmp/verify_pass4/ARW_13-QP1A.190711.020-20250620.log
+=== VERIFY REPORT ===
+{
+  "spec": "ARW_13-QP1A.190711.020-20250620",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/ARW_13-QP1A.190711.020-20250620/1/qemu.log",
+  "bootCompleted": false,
+  "failReason": "Rebooted into recovery (Trigger_Rpmb / dm-verity / rescue)",
+  "bootanim": "",
+  "topActivity": "",
+  "roHardwareEgl": "",
+  "roHardwareVulkan": "",
+  "serviceCount": "26",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 0.0,
+    "peak": 0,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/ARW_13-QP1A.190711.020-20250620.png",
+    "pngBytes": 7685
+  },
+  "postBootCompleted": "",
+  "surfaceFlingerState": "",
+  "bootReason": "",
+  "passed": false
+}
+
+=== AUTO DIAG (TOMBSTONE & CRASH) ===
+--- key runtime lines ---
+L121: 11-19 09:39:56.724   489   489 I AudioFlinger: Using default 3000 mSec as standby time.
+L122: 11-19 09:39:56.731   489   489 D AudioFlinger::MelReporter: activateHalSoundDoseComputation: Forcing use of internal MEL computation.
+L123: 11-19 09:39:56.731   489   489 W AudioFlinger: loadHwModule() sound dose reporting is not available
+L124: 11-19 09:39:56.732   489   489 I AudioFlinger: loadHwModule() Loaded primary audio interface, handle 10
+L125: 11-19 09:39:56.732   489   489 I AudioFlinger: openOutput() this 0xb40000776b2d1840, module 10 Device AUDIO_DEVICE_OUT_SPEAKER, @:, SamplingRate 48000, Format 0x000001, Channels 0x3, flags 0x2
+L136: 11-19 09:39:56.780   489   489 I AudioFlinger: HAL output buffer size 256 frames, normal sink buffer size 768 frames
+L140: 11-19 09:39:56.783   489   489 D AudioFlinger: improve PRIAMRY, bt, r_submix normal mixer and hal thread priority as FastMixer
+L141: 11-19 09:39:56.783   489   489 D AudioFlinger: updateHalSupportedLatencyModes_l: thread(13) status 0 supported latency modes: { }
+L142: 11-19 09:39:56.783   489   633 I AudioFlinger: AudioFlinger's thread 0xb40000788654d910 tid=633 ready to run
+L143: 11-19 09:39:56.783   489   633 W AudioFlinger: no wake lock to update, system not ready yet
+L144: 11-19 09:39:56.783   489   633 D AudioFlinger: ro.audio.silent is ignored since no output device is set
+L145: 11-19 09:39:56.785   489   633 W AudioFlinger: no wake lock to update, system not ready yet
+L146: 11-19 09:39:56.785   489   633 D AudioFlinger: ro.audio.silent is ignored since no output device is set
+L147: 11-19 09:39:56.788   489   489 W AudioFlinger: moveEffects() bad srcOutput 0
+L148: 11-19 09:39:56.811   489   489 I AudioFlinger: openOutput() this 0xb40000776b2d1840, module 10 Device AUDIO_DEVICE_OUT_TELEPHONY_TX, @:, SamplingRate 48000, Format 0x000001, Channels 0x3, flags 0
+
+# source: out/devices/tmp/verify_pass5/G1130_13-UP1A.231005.007-20260511.log
+=== VERIFY REPORT ===
+{
+  "spec": "G1130_13-UP1A.231005.007-20260511",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/G1130_13-UP1A.231005.007-20260511/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{8cfa0f u0 Android System}, [type=2010]-[Surface(name=*Title#58)/@0xfa684ff, shown=false, alpha=0.0, windowType=2010]\n  mFocusedApp=ActivityRecord{d3887d1 u0 com.aura.oobe.sliide/com.ironsource.appmanager.ui.activities.LauncherPostOOBEActivity t7 d0}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "297",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 59.2,
+    "peak": 243,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/G1130_13-UP1A.231005.007-20260511.png",
+    "pngBytes": 509662
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===
+
+# source: out/devices/tmp/verify_pass5/P616F05_13-TP1A.220624.014-20260324.log
+=== VERIFY REPORT ===
+{
+  "spec": "P616F05_13-TP1A.220624.014-20260324",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/P616F05_13-TP1A.220624.014-20260324/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{8be2baf u0 NotificationShade}, [type=2040]-[Surface(name=*Title#79)/@0x27332f4, shown=false, alpha=0.0, windowType=2040]\n  mFocusedApp=ActivityRecord{80ffb7c u0 com.zte.mifavor.launcher/com.android.launcher3.uioverrides.QuickstepLauncher t7 d0}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "321",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 138.78,
+    "peak": 255,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/P616F05_13-TP1A.220624.014-20260324.png",
+    "pngBytes": 4199542
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===

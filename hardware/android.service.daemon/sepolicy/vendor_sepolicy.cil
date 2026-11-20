@@ -109,3 +109,13 @@
 ;; 报 Permission denied 并使 zygote/system_server 无限重启。
 (allow domain ashmem_libcutils_device_{{vers}} (chr_file (open)))
 
+;; ---- pioneer 系统/电话属性桥接授权（cdh_system_props.rc / setprop）----
+;; init 的用户态 property_service 按 enforcing 检查调用方对目标属性上下文的 set 权限，
+;; 不受内核态 (typepermissive pioneer) 影响；显式授权 system_prop / exported_system_prop / radio_prop。
+(allow pioneer property_socket_{{vers}} (sock_file (write)))
+(allow pioneer init_{{vers}} (unix_stream_socket (connectto)))
+(allow pioneer system_prop_{{vers}} (property_service (set)))
+(allow pioneer exported_system_prop_{{vers}} (property_service (set)))
+(allow pioneer radio_prop_{{vers}} (property_service (set)))
+
+

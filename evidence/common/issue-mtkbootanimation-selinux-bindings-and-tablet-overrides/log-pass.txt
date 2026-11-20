@@ -1,0 +1,153 @@
+# source: out/devices/tmp/verify_pass5/GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825.log
+=== VERIFY REPORT ===
+{
+  "spec": "GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{ceed3c u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher}\n  mFocusedApp=ActivityRecord{49540926 u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher t6}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "329",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 124.85,
+    "peak": 255,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/GQ5011AF1_14-GQ5011AF1_EEA_V13-20260825.png",
+    "pngBytes": 4768067
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===
+--- key runtime lines ---
+L246:    52.879939][  T254] servicemanager: Caller(pid=7225,uid=10149,sid=u:r:untrusted_app:s0:c149,c256,c512,c768) Found mapper/mediatek in device VINTF manifest.
+
+# source: out/devices/tmp/verify_pass5/bengal_515_13-TKQ1.240227.001-20260922.log
+=== VERIFY REPORT ===
+{
+  "spec": "bengal_515_13-TKQ1.240227.001-20260922",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/bengal_515_13-TKQ1.240227.001-20260922/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{ee30569 u0 com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher}\n  mFocusedApp=ActivityRecord{134429277 u0 com.hihonor.android.launcher/.unihome.UniHomeLauncher t9}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "377",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 24.02,
+    "peak": 255,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/bengal_515_13-TKQ1.240227.001-20260922.png",
+    "pngBytes": 1909001
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===
+
+# source: task-463.log L676-678 (09_build_vendor SELinux reconciliation)
+    裁剪平台未声明 SELinux 权限 2 项（移除规则 4 条）
+    补齐块设备格式化域 (e2fs/fsck) sysfs/proc_version 授权 8 条
+    补齐 MTK mtkbootanimation SELinux 绑定 13 条
+[add] vendor/lib64/libapexsupport.so <- 官方 system:/system/lib64/libapexsupport.so（186048 B，原样回填供 vendor 命名空间解析）
+
+# source: task-477.log (after tablet override r1)
+==> 创建并冷启动实例: match=bengal_515/13-TKQ1.240227.001-20260922
+    spec=bengal_515_13-TKQ1.240227.001-20260922 index=2 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/bengal_515_13-TKQ1.240227.001-20260922/2
+{
+  "spec": "bengal_515_13-TKQ1.240227.001-20260922",
+  "index": "2",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/bengal_515_13-TKQ1.240227.001-20260922/2/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=null\n  mFocusedApp=ActivityRecord{18915941 u0 com.aura.oobe.honor/com.ironsource.appmanager.ui.activities.LauncherPostOOBEActivity t10}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 21.27,
+    "peak": 251,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/bengal_515_13-TKQ1.240227.001-20260922.png",
+    "pngBytes": 1261158
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot",
+  "passed": true
+}
+
+# source: task-535.log (final pass with serviceCount=377)
+==> 创建并冷启动实例: match=bengal_515/13-TKQ1.240227.001-20260922
+    spec=bengal_515_13-TKQ1.240227.001-20260922 index=1 adb=5911 vnc=5912 dir=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/bengal_515_13-TKQ1.240227.001-20260922/1
+{
+  "spec": "bengal_515_13-TKQ1.240227.001-20260922",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/bengal_515_13-TKQ1.240227.001-20260922/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{ee30569 u0 com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher}\n  mFocusedApp=ActivityRecord{134429277 u0 com.hihonor.android.launcher/.unihome.UniHomeLauncher t9}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "377",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 24.02,
+    "peak": 255,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/bengal_515_13-TKQ1.240227.001-20260922.png",
+    "pngBytes": 1909001
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot",
+  "passed": true
+}

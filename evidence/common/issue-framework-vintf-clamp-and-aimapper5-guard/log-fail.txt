@@ -1,0 +1,118 @@
+# source: out/devices/tmp/verify-ASUS_AI2205-pass1.log
+=== VERIFY REPORT ===
+{
+  "spec": "ASUS_AI2205_13-TKQ1.220928.001-20240229",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/ASUS_AI2205_13-TKQ1.220928.001-20240229/1/qemu.log",
+  "bootCompleted": false,
+  "failReason": "Rebooted into recovery (Trigger_Rpmb / dm-verity / rescue)",
+  "bootanim": "",
+  "topActivity": "",
+  "roHardwareEgl": "",
+  "roHardwareVulkan": "",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 13.63,
+    "peak": 170,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/ASUS_AI2205_13-TKQ1.220928.001-20240229.png",
+    "pngBytes": 118403
+  },
+  "postBootCompleted": "",
+  "surfaceFlingerState": "",
+  "bootReason": "",
+  "passed": false
+}
+
+--- matched lines ---
+L162: 01-01 00:00:05.100   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L163: 01-01 00:00:07.188   287   292 E keystore2: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L164: 01-01 00:00:07.266   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L165: 01-01 00:00:12.069   307   308 E keystore2: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L166: 01-01 00:00:17.080   430   431 E keystore2: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L167: 11-19 06:44:49.701   487   488 E keystore2: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L168: 11-19 06:44:49.702   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L169: 11-19 06:44:49.703   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L170: 11-19 06:44:49.703   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L171: 11-19 06:44:49.703   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L172: 11-19 06:44:52.499   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L173: 11-19 06:44:53.096   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L174: 11-19 06:44:53.560   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L175: 11-19 06:44:53.643   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L176: 11-19 06:44:53.723   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L177: 11-19 06:44:53.776   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L178: 11-19 06:44:54.136   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L179: 11-19 06:44:54.483   655   656 E keystore2: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L180: 11-19 06:44:56.879   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L181: 11-19 06:44:57.061   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L182: 11-19 06:44:57.061   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L183: 11-19 06:44:57.062   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L184: 11-19 06:44:57.062   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L185: 11-19 06:44:57.064   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L186: 11-19 06:44:57.065   211   211 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+
+# source: out/devices/tmp/verify_pass2/ASUS_AI2205_13-TKQ1.220928.001-20240229.log
+=== VERIFY REPORT ===
+{
+  "spec": "ASUS_AI2205_13-TKQ1.220928.001-20240229",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/ASUS_AI2205_13-TKQ1.220928.001-20240229/1/qemu.log",
+  "bootCompleted": false,
+  "failReason": "Rebooted into recovery (Trigger_Rpmb / dm-verity / rescue)",
+  "bootanim": "",
+  "topActivity": "",
+  "roHardwareEgl": "",
+  "roHardwareVulkan": "",
+  "serviceCount": "",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 20.1,
+    "peak": 170,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/ASUS_AI2205_13-TKQ1.220928.001-20240229.png",
+    "pngBytes": 171384
+  },
+  "postBootCompleted": "",
+  "surfaceFlingerState": "",
+  "bootReason": "",
+  "passed": false
+}
+
+--- matched lines ---
+L116: 01-01 00:00:03.802   214   214 E hwservicemanager: getDeviceHalManifest: status from fetching VINTF information: -22
+L117: 01-01 00:00:03.802   214   214 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L118: 01-01 00:00:05.199   286   288 E keystore2: getDeviceHalManifest: status from fetching VINTF information: -22
+L119: 01-01 00:00:05.199   286   288 E keystore2: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L120: 01-01 00:00:05.244   214   214 E hwservicemanager: getDeviceHalManifest: status from fetching VINTF information: -22
+L121: 01-01 00:00:05.244   214   214 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L122: 01-01 00:00:10.165   306   307 E keystore2: getDeviceHalManifest: status from fetching VINTF information: -22
+L123: 01-01 00:00:10.167   306   307 E keystore2: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L124: 01-01 00:00:10.168   214   214 E hwservicemanager: getDeviceHalManifest: status from fetching VINTF information: -22
+L125: 01-01 00:00:10.168   214   214 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L126: 01-01 00:00:10.168   214   214 E hwservicemanager: getDeviceHalManifest: status from fetching VINTF information: -22
+L127: 01-01 00:00:10.168   214   214 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L128: 01-01 00:00:10.168   214   214 E hwservicemanager: getDeviceHalManifest: status from fetching VINTF information: -22
+L129: 01-01 00:00:10.168   214   214 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L130: 01-01 00:00:10.168   214   214 E hwservicemanager: getDeviceHalManifest: status from fetching VINTF information: -22
+L131: 01-01 00:00:10.168   214   214 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L132: 01-01 00:00:15.159   426   427 E keystore2: getDeviceHalManifest: status from fetching VINTF information: -22
+L133: 01-01 00:00:15.159   426   427 E keystore2: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)
+L134: 01-01 00:00:15.163   214   214 E hwservicemanager: getDeviceHalManifest: status from fetching VINTF information: -22
+L135: 01-01 00:00:15.163   214   214 E hwservicemanager: getDeviceHalManifest: -22 VINTF parse error: Illformed file: /vendor/etc/vintf/manifest.xml: Unrecognized manifest.version 8.0 (libvintf@7.0)

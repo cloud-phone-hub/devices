@@ -1,0 +1,8 @@
+vendor.mediatek.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default
+vendor.mediatek.hardware.engineermode.IEmds/default
+vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist/default
+vendor.tcl.camera.algoservice.ITctCameraAlgoService/default
+vendor.tcl.display.nxtvision.INxtvisionEx/default
+vendor.tcl.ipel.IIpelEngine/default
+vendor.tct.hardware.node.INode/default
+vendor.tct.hardware.sysinfo.ISysInfo/default

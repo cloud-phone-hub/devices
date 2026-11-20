@@ -1,0 +1,96 @@
+# source: out/devices/tmp/verify_pass4/ARW_13-QP1A.190711.020-20250620.log
+=== VERIFY REPORT ===
+{
+  "spec": "ARW_13-QP1A.190711.020-20250620",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/ARW_13-QP1A.190711.020-20250620/1/qemu.log",
+  "bootCompleted": false,
+  "failReason": "Rebooted into recovery (Trigger_Rpmb / dm-verity / rescue)",
+  "bootanim": "",
+  "topActivity": "",
+  "roHardwareEgl": "",
+  "roHardwareVulkan": "",
+  "serviceCount": "26",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 0.0,
+    "peak": 0,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/ARW_13-QP1A.190711.020-20250620.png",
+    "pngBytes": 7685
+  },
+  "postBootCompleted": "",
+  "surfaceFlingerState": "",
+  "bootReason": "",
+  "passed": false
+}
+
+--- matched lines ---
+L49: 11-19 09:39:59.246   569   569 E AndroidRuntime: Caused by: java.util.NoSuchElementException
+L52: 11-19 09:39:59.246   569   569 E AndroidRuntime: 	at vendor.sprd.hardware.miscdata.V1_0.IMiscdata.getService(IMiscdata.java:74)
+L53: 11-19 09:39:59.246   569   569 E AndroidRuntime: 	at vendor.sprd.hardware.miscdata.V1_0.IMiscdata.getService(IMiscdata.java:84)
+
+# source: out/devices/tmp/verify-bengal515-0922-r1.log
+=== VERIFY REPORT ===
+{
+  "spec": "bengal_515_13-TKQ1.240227.001-20260922",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/bengal_515_13-TKQ1.240227.001-20260922/1/qemu.log",
+  "bootCompleted": false,
+  "failReason": "timeout after 210s (bootanim='')",
+  "bootanim": "",
+  "topActivity": "",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "adreno",
+  "serviceCount": "92",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 0.0,
+    "peak": 0,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/bengal_515_13-TKQ1.240227.001-20260922.png",
+    "pngBytes": 7685
+  },
+  "postBootCompleted": "",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot",
+  "passed": false
+}
+
+--- matched lines ---
+L49: 11-19 05:57:56.496   829   921 E AndroidRuntime: 	at vendor.honor.hardware.hwfactoryinterface.V1_1.IHwFactoryInterface.getService(IHwFactoryInterface.java:74)
+L50: 11-19 05:57:56.496   829   921 E AndroidRuntime: 	at com.android.server.pm.FilteredPreloadAppManager$LoadFilteredPreloadRunnable.run(FilteredPreloadAppManager.java:118)
+L58: 11-19 05:57:56.501   829   921 E AndroidRuntime: 	at vendor.honor.hardware.hwfactoryinterface.V1_1.IHwFactoryInterface.getService(IHwFactoryInterface.java:74)
+L59: 11-19 05:57:56.501   829   921 E AndroidRuntime: 	at com.android.server.pm.FilteredPreloadAppManager$LoadFilteredPreloadRunnable.run(FilteredPreloadAppManager.java:118)
+L73: 11-19 05:57:59.173   973  1063 E AndroidRuntime: 	at vendor.honor.hardware.hwfactoryinterface.V1_1.IHwFactoryInterface.getService(IHwFactoryInterface.java:74)
+L74: 11-19 05:57:59.173   973  1063 E AndroidRuntime: 	at com.android.server.pm.FilteredPreloadAppManager$LoadFilteredPreloadRunnable.run(FilteredPreloadAppManager.java:118)
+L82: 11-19 05:57:59.178   973  1063 E AndroidRuntime: 	at vendor.honor.hardware.hwfactoryinterface.V1_1.IHwFactoryInterface.getService(IHwFactoryInterface.java:74)
+L83: 11-19 05:57:59.178   973  1063 E AndroidRuntime: 	at com.android.server.pm.FilteredPreloadAppManager$LoadFilteredPreloadRunnable.run(FilteredPreloadAppManager.java:118)
+L97: 11-19 05:58:04.165  1163  1255 E AndroidRuntime: 	at vendor.honor.hardware.hwfactoryinterface.V1_1.IHwFactoryInterface.getService(IHwFactoryInterface.java:74)
+L98: 11-19 05:58:04.165  1163  1255 E AndroidRuntime: 	at com.android.server.pm.FilteredPreloadAppManager$LoadFilteredPreloadRunnable.run(FilteredPreloadAppManager.java:118)
+L106: 11-19 05:58:04.171  1163  1255 E AndroidRuntime: 	at vendor.honor.hardware.hwfactoryinterface.V1_1.IHwFactoryInterface.getService(IHwFactoryInterface.java:74)
+L107: 11-19 05:58:04.171  1163  1255 E AndroidRuntime: 	at com.android.server.pm.FilteredPreloadAppManager$LoadFilteredPreloadRunnable.run(FilteredPreloadAppManager.java:118)
+L121: 11-19 05:58:14.404  1488  1576 E AndroidRuntime: 	at vendor.honor.hardware.hwfactoryinterface.V1_1.IHwFactoryInterface.getService(IHwFactoryInterface.java:74)
+L122: 11-19 05:58:14.404  1488  1576 E AndroidRuntime: 	at com.android.server.pm.FilteredPreloadAppManager$LoadFilteredPreloadRunnable.run(FilteredPreloadAppManager.java:118)
+L130: 11-19 05:58:24.387  1793  1881 E AndroidRuntime: 	at vendor.honor.hardware.hwfactoryinterface.V1_1.IHwFactoryInterface.getService(IHwFactoryInterface.java:74)
+L131: 11-19 05:58:24.387  1793  1881 E AndroidRuntime: 	at com.android.server.pm.FilteredPreloadAppManager$LoadFilteredPreloadRunnable.run(FilteredPreloadAppManager.java:118)
+L139: 11-19 05:58:24.392  1793  1881 E AndroidRuntime: 	at vendor.honor.hardware.hwfactoryinterface.V1_1.IHwFactoryInterface.getService(IHwFactoryInterface.java:74)
+L140: 11-19 05:58:24.392  1793  1881 E AndroidRuntime: 	at com.android.server.pm.FilteredPreloadAppManager$LoadFilteredPreloadRunnable.run(FilteredPreloadAppManager.java:118)
+L154: 11-19 05:58:34.412  2054  2141 E AndroidRuntime: 	at vendor.honor.hardware.hwfactoryinterface.V1_1.IHwFactoryInterface.getService(IHwFactoryInterface.java:74)
+L155: 11-19 05:58:34.412  2054  2141 E AndroidRuntime: 	at com.android.server.pm.FilteredPreloadAppManager$LoadFilteredPreloadRunnable.run(FilteredPreloadAppManager.java:118)

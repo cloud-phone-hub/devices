@@ -1,0 +1,73 @@
+# source: out/devices/tmp/verify_pass5/G1130_13-UP1A.231005.007-20260511.log
+=== VERIFY REPORT ===
+{
+  "spec": "G1130_13-UP1A.231005.007-20260511",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/G1130_13-UP1A.231005.007-20260511/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{8cfa0f u0 Android System}, [type=2010]-[Surface(name=*Title#58)/@0xfa684ff, shown=false, alpha=0.0, windowType=2010]\n  mFocusedApp=ActivityRecord{d3887d1 u0 com.aura.oobe.sliide/com.ironsource.appmanager.ui.activities.LauncherPostOOBEActivity t7 d0}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "297",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 59.2,
+    "peak": 243,
+    "pngPath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/screenshots/G1130_13-UP1A.231005.007-20260511.png",
+    "pngBytes": 509662
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===
+
+# source: out/devices/tmp/verify_pass4/ASUS_AI2205_13-TKQ1.220928.001-20240229.log
+=== VERIFY REPORT ===
+{
+  "spec": "ASUS_AI2205_13-TKQ1.220928.001-20240229",
+  "index": "1",
+  "adbPort": 5911,
+  "vncPort": 5912,
+  "qemuLog": "/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/ASUS_AI2205_13-TKQ1.220928.001-20240229/1/qemu.log",
+  "bootCompleted": true,
+  "failReason": "",
+  "bootanim": "stopped",
+  "topActivity": "mCurrentFocus=Window{b6ad490 u0 Android System}\n  mFocusedApp=ActivityRecord{4913d26 u0 com.asus.launcher/com.android.launcher3.uioverrides.QuickstepLauncher t7}",
+  "roHardwareEgl": "meow",
+  "roHardwareVulkan": "mali",
+  "serviceCount": "299",
+  "vnc": {
+    "width": 1088,
+    "height": 2400,
+    "bpp": 32,
+    "shifts": [
+      16,
+      8,
+      0
+    ],
+    "meanBrightness": 8.1,
+    "peak": 245,
+    "pngPath": "/Users/cuimingqiang/.gemini/antigravity/brain/c903031d-dc65-46de-a997-8d4f4280a649/screenshots/ASUS_AI2205_13-TKQ1.220928.001-20240229.png",
+    "pngBytes": 66063
+  },
+  "postBootCompleted": "1",
+  "surfaceFlingerState": "running",
+  "bootReason": "reboot,factory_reset",
+  "passed": true
+}
+
+=== QEMU.LOG TAIL ===

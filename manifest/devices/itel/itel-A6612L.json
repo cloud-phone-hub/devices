@@ -6,7 +6,7 @@
   "device": "itel-A6612L",
   "platform": "qcom",
   "resolution": "1080x2400",
-  "inch": "72x160",
+  "inch": "70x155",
   "density": 320,
   "smp": 8,
   "memory": [

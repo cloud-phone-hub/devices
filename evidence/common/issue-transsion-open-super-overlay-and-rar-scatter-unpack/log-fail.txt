@@ -1,0 +1,22 @@
+# 1. `01_unpack` 原有命中逻辑：zip 字典序先抽 `Open/super.img`
+
+`Infinix-Zero-40-5G-X6861-15.zip` 与 `Tecno-Camon-40-4G-CM5-16.zip` 压缩包成员检查（实测）：
+- 传音 `X6861`：
+  - `Open/super.img`: `2,028,266,252` B (`1.89 GiB`), sparse `blk_sz=4096 total_blks=3033796 total_chunks=60`
+    - `system_a` / `system_ext_a` / `product_a` / `vendor_a` / `vendor_dlkm_a` / `odm_dlkm_a`: `has_raw_data=False`（全部为 sparse `DONT_CARE` 空占位）
+    - `tr_product_a` (`223.07 MiB`) / `tr_preload_a` (`1717.04 MiB`) 等传音扩展分区：`has_raw_data=True`
+  - 根目录 `super.img`: `9,613,867,496` B (`8.95 GiB`), sparse `blk_sz=4096 total_blks=3033796 total_chunks=203`
+    - `system_a` / `system_ext_a` / `product_a` / `vendor_a` / `vendor_dlkm_a`: `has_raw_data=True`（与 `Open/super.img` extent 偏移完全一致）
+    - `tr_product_a` / `tr_preload_a` 等在基座仅占 0.33 MiB
+- 传音 `CM5`：
+  - `Open/super.img`: `7,397,299,968` B (`6.89 GiB`, `total_blks=3255765`, `total_chunks=144`)，`odm_a` / `system*` / `vendor*` / `product_a` 全 `DONT_CARE`，`tr_product_a` 扩为 `3848.05 MiB`、`tr_region_a` 扩为 `3228.70 MiB`
+  - 根目录 `super.img`: `5,926,711,068` B (`5.52 GiB`, `total_blks=3255765`, `total_chunks=290`)，含完整 `odm_a` / `system*` / `vendor*` / `product_a`
+
+# 2. 原 `01_unpack`（按 zip 成员遍历顺序首次命中即 `found["super.img"] = true`）结果
+- 先抽出 `Open/super.img` 并跳过根目录 `super.img`；
+- 拆出的 `super/vendor_a.img` 全零，后续阶段报错：
+  无法识别 厂商 vendor 的文件系统（既非 ext4 也非 erofs）
+
+# 3. 原 `bsdtar -xOf <.rar>` 限制与散包 `_a.img` 问题
+- `extractRar` 原先无差别执行 `bsdtar -xOf <rar>` 并假设输出一定是单个 `.pac` 流；对于散装 `.rar`（如 `Walton-Nexg-N10-Ultra.rar`）或含 `UPDATE.APP` 的 `.rar`（如 `R2-Huawei-Nova-11-SE.rar`），或根目录为 `boot_a.img` / `vendor_boot_a.img` 的 MTK 线刷包会失效或漏抽核心启动镜像。
+- `M-HORSE-M17-PRO-MAX-FACTORY-SIGNED_Needrom.rar` 文件头前 16 字节实测为 `526172211a0701006521823a210400`（RAR5 头部加密 `HEAD_CRYPT`），原 `bsdtar -tf/-xOf` 静默被吞为读 `.pac` 失败。

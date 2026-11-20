@@ -1,0 +1,2 @@
+vendor.mediatek.hardware.gnss.IMtkGnss/default
+vendor.mediatek.hardware.gnss.batching.IMtkGnssBatching/default

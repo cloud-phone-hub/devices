@@ -978,13 +978,27 @@ ndk::ScopedAStatus ModuleImpl::generateHwAvSyncId(int32_t* out) {
     return ndk::ScopedAStatus::ok();
 }
 
-ndk::ScopedAStatus ModuleImpl::getVendorParameters(const std::vector<std::string>&,
-                                                  std::vector<VendorParameter>*) {
-    return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+ndk::ScopedAStatus ModuleImpl::getVendorParameters(const std::vector<std::string>& ids,
+                                                  std::vector<VendorParameter>* _aidl_return) {
+    if (_aidl_return != nullptr) {
+        _aidl_return->clear();
+        // 按 AOSP IModule::getVendorParameters 规范，未识别的厂商参数不得回填无值占位项
+        // （否则荣耀等厂商 IHalAdapterVendorExtension 会拼出非空无值串如 "key="，触发
+        // AudioFlinger::loadHwModule_ll 中 std::stof 抛出 invalid_argument 崩溃）；
+        // 仅对由 cdh_audio_parameter_parser 消费的 MTK APP_GET_FO# 查询回传 id。
+        for (const auto& id : ids) {
+            if (id.rfind("APP_GET_FO#", 0) == 0) {
+                VendorParameter vp;
+                vp.id = id;
+                _aidl_return->push_back(std::move(vp));
+            }
+        }
+    }
+    return ndk::ScopedAStatus::ok();
 }
 
 ndk::ScopedAStatus ModuleImpl::setVendorParameters(const std::vector<VendorParameter>&, bool) {
-    return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+    return ndk::ScopedAStatus::ok();
 }
 
 ndk::ScopedAStatus ModuleImpl::addDeviceEffect(

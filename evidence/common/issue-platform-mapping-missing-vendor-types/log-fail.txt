@@ -1,0 +1,29 @@
+=== 样本：tcl/asterpro (13-TP1A.220624.014-20251217, TCL T614SP) 首次冷启动失败 ===
+来源日志：out/devices/tmp/verify_batch_c/asterpro_13-TP1A.220624.014-20251217.fail1.log
+
+--- verify_boot 结论 ---
+  "spec": "asterpro_13-TP1A.220624.014-20251217",
+  "bootCompleted": false,
+  "failReason": "InitFatalReboot: [    1.563176][    T1] init: InitFatalReboot: signal 6"
+
+--- init / secilc 内核串口现场 ---
+[    1.389293][    T1] init: No precompiled sepolicy at /vendor/etc/selinux/precompiled_sepolicy: No such file or directory
+[    1.390502][    T1] init: Compiling SELinux policy
+[    1.534333][  T142] secilc (142) used greatest stack depth: 10544 bytes left
+[    1.542807][    T1] init: /system/bin/secilc: Failed to resolve typeattributeset statement at /system_ext/etc/selinux/mapping/33.0.cil:182
+[    1.547488][    T1] init: /system/bin/secilc: Failed to resolve AST
+[    1.551369][    T1] init: /system/bin/secilc: Failed to compile cildb: -2
+[    1.554370][    T1] init: /system/bin/secilc exited with status 254
+[    1.557307][    T1] init: Unable to open SELinux policy
+[    1.563176][    T1] init: InitFatalReboot: signal 6
+
+--- 冲突 CIL 语句来源核对 ---
+system_ext_a.img:/etc/selinux/mapping/33.0.cil:
+55:  (typeattribute oqc_mark_33_0)
+56:  (typeattribute oqc_mark_34_0)
+131: (expandtypeattribute (oqc_mark_33_0) true)
+182: (typeattributeset oqc_mark_33_0 (oqc_mark))
+
+官方 super/unpack_vendor/etc/selinux/vendor_sepolicy.cil:
+4026:(type oqc_mark)
+4027:(roletype object_r oqc_mark)

@@ -1,0 +1,18 @@
+{
+  "id": 53,
+  "buildId": "16-BP2A.250605.015-20260923",
+  "deviceId": 22,
+  "configId": 61,
+  "osVersion": "16-BP2A.250605.015-20260923",
+  "buildDate": "20260923",
+  "securityPatch": "2026-09-01",
+  "factoryTgz": "OPPO_FIND_X9s_PRO_PME110_17.0.0.102_CN01.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh-pipeline prepare 从 OPPO_FIND_X9s_PRO_PME110_17.0.0.102_CN01.zip (vendor/build.prop) 自动生成。",
+    "osVersion": "16-BP2A.250605.015-20260923",
+    "securityPatch": "2026-09-01"
+  },
+  "updatedAt": "2026-11-19T18:32:26Z"
+}

@@ -41,10 +41,18 @@ bool FileContainsDisplayColorFeature(const char* path) {
 }
 
 bool HasOplusDisplayColorVintfDeclaration() {
-  return FileContainsDisplayColorFeature(
-             "/odm/etc/vintf/manifest/vintf_manifest_displaycolorfeature_aidl.xml") ||
-         FileContainsDisplayColorFeature(
-             "/vendor/etc/vintf/manifest/vintf_manifest_displaycolorfeature_aidl.xml");
+  static const char* const kCandidatePaths[] = {
+      "/odm/etc/vintf/manifest/vintf_manifest_displaycolorfeature_aidl.xml",
+      "/odm/etc/vintf/manifest/manifest_displaycolorfeature_aidl.xml",
+      "/vendor/etc/vintf/manifest/vintf_manifest_displaycolorfeature_aidl.xml",
+      "/vendor/etc/vintf/manifest/manifest_displaycolorfeature_aidl.xml",
+  };
+  for (const char* path : kCandidatePaths) {
+    if (FileContainsDisplayColorFeature(path)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 binder_status_t OplusDisplayColor_onTransact(AIBinder* /*binder*/,
