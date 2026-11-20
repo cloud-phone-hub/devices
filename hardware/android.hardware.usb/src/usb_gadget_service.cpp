@@ -4,6 +4,8 @@
 // 从机时编排 MTP/ADB 等复合功能。云端虚拟机没有真实 gadget 控制器：请求按 no-op 成功受理
 // （不回拨功能就绪回调，运行期功能编排属设备集成层职责）。设备无关，不内置机型常量。
 
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
+
 #include <android/binder_ibinder.h>
 #include <android/binder_status.h>
 
@@ -66,3 +68,5 @@ int main() {
   ABinderProcess_joinThreadPool();
   return 0;
 }
+
+#endif

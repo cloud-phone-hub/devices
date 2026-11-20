@@ -15,7 +15,9 @@
 #include <aidl/android/hardware/radio/network/CellInfo.h>
 #include <aidl/android/hardware/radio/network/CellInfoLte.h>
 #include <aidl/android/hardware/radio/network/CellInfoRatSpecificInfo.h>
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
 #include <aidl/android/hardware/radio/network/EmergencyRegResult.h>
+#endif
 #include <aidl/android/hardware/radio/network/IRadioNetworkIndication.h>
 #include <aidl/android/hardware/radio/network/IRadioNetworkResponse.h>
 #include <aidl/android/hardware/radio/network/LteSignalStrength.h>
@@ -548,6 +550,7 @@ public:
         static_cast<network::UsageSetting>(usage_setting_.load()));
   }
 
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   ::ndk::ScopedAStatus setEmergencyMode(int32_t serial,
                                         network::EmergencyMode) override {
     const auto response = callbacks_.ResponseCallback();
@@ -635,6 +638,7 @@ public:
                           &network::IRadioNetworkResponse::
                               isSecurityAlgorithmsUpdatedEnabledResponse);
   }
+#endif
 
 private:
   using SimpleResponse = ::ndk::ScopedAStatus (
@@ -694,10 +698,12 @@ private:
   std::atomic_bool manual_selection_{false};
   std::atomic_bool nr_dual_connectivity_{true};
   std::atomic_bool location_updates_{true};
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   std::atomic_bool null_cipher_integrity_{false};
   std::atomic_bool n1_mode_{true};
   std::atomic_bool cellular_identifier_transparency_{true};
   std::atomic_bool security_algorithms_updated_{true};
+#endif
   std::mutex selection_mutex_;
   std::vector<network::RadioAccessSpecifier> system_selection_channels_;
   StateObserver observer_;

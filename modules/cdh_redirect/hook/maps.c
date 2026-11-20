@@ -84,7 +84,10 @@ static DECLARE_DELAYED_WORK(cdh_maps_prewarm_work, cdh_maps_prewarm_fn);
  */
 static const char * const cdh_maps_prewarm_libs[] = {
 	"/vendor/lib64/android.hardware.common-V2-ndk.so",
+	"/vendor/lib64/android.hardware.graphics.allocator-V1-ndk.so",
 	"/vendor/lib64/android.hardware.graphics.allocator-V2-ndk.so",
+	"/vendor/lib64/android.hardware.graphics.common-V3-ndk.so",
+	"/vendor/lib64/android.hardware.graphics.common-V4-ndk.so",
 	"/vendor/lib64/android.hardware.graphics.common-V5-ndk.so",
 	"/vendor/lib64/android.hardware.graphics.common-V6-ndk.so",
 	"/vendor/lib64/android.hardware.graphics.common-V7-ndk.so",
@@ -133,7 +136,10 @@ static const char * const cdh_maps_prewarm_libs[] = {
 	"/dev/__properties__/u:object_r:vendor_mtk_soc_prop:s0",
 	"/dev/__properties__/u:object_r:vendor_mtk_camera_prop:s0",
 	"/vendor/lib/android.hardware.common-V2-ndk.so",
+	"/vendor/lib/android.hardware.graphics.allocator-V1-ndk.so",
 	"/vendor/lib/android.hardware.graphics.allocator-V2-ndk.so",
+	"/vendor/lib/android.hardware.graphics.common-V3-ndk.so",
+	"/vendor/lib/android.hardware.graphics.common-V4-ndk.so",
 	"/vendor/lib/android.hardware.graphics.common-V5-ndk.so",
 	"/vendor/lib/android.hardware.graphics.common-V6-ndk.so",
 	"/vendor/lib/android.hardware.graphics.common-V7-ndk.so",

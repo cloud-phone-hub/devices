@@ -8,6 +8,8 @@
 // fingerprint_service.cpp 提供（独立进程，见 vendor/etc/init 的两个 rc）。
 // 设备无关，不内置机型常量。
 
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
+
 #include <android/binder_ibinder.h>
 #include <android/binder_status.h>
 
@@ -161,3 +163,5 @@ int main() {
   ABinderProcess_joinThreadPool();
   return 0;
 }
+
+#endif

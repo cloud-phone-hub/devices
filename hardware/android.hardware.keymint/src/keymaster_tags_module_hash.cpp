@@ -15,4 +15,7 @@
 
 namespace keymaster {
 TypedTag<KM_BYTES, KM_TAG_MODULE_HASH> TAG_MODULE_HASH;
+#if defined(CDH_ANDROID_VERSION) && CDH_ANDROID_VERSION <= 13
+TypedTag<KM_BYTES, KM_TAG_ATTESTATION_ID_SECOND_IMEI> TAG_ATTESTATION_ID_SECOND_IMEI;
+#endif
 }  // namespace keymaster

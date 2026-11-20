@@ -125,7 +125,10 @@ static enum cdh_sphal_tier cdh_classify_sphal_lib(const char *buf)
 	static const char *const tier_b_fallback[] = {
 		"libdrm.so",
 		"android.hardware.common-V2-ndk.so",
+		"android.hardware.graphics.allocator-V1-ndk.so",
 		"android.hardware.graphics.allocator-V2-ndk.so",
+		"android.hardware.graphics.common-V3-ndk.so",
+		"android.hardware.graphics.common-V4-ndk.so",
 		"android.hardware.graphics.common-V5-ndk.so",
 		"android.hardware.graphics.common@1.0.so",
 		"android.hardware.graphics.common@1.1.so",
@@ -174,7 +177,10 @@ static enum cdh_sphal_tier cdh_classify_sphal_lib(const char *buf)
 	    !strcmp(sub, "android.hardware.graphics.allocator@4.0.so"))
 		return CDH_SPHAL_TIER_A;
 
-	if (!strncmp(sub, "hw/mapper.", 10) ||
+	if (!strcmp(sub, "hw") ||
+	    !strcmp(sub, "hw/") ||
+	    !strncmp(sub, "hw/mapper.", 10) ||
+	    !strncmp(sub, "hw/android.hardware.graphics.mapper@", 36) ||
 	    !strncmp(sub, "hw/gralloc.", 11) ||
 	    !strncmp(sub, "hw/vulkan.", 10) ||
 	    !strncmp(sub, "egl/libEGL_", 11) ||
@@ -219,6 +225,10 @@ static bool cdh_path_is_gfx_framework(const char *p)
 		"libhardware.so",
 		"libvndksupport.so",
 		"libhidlbase.so",
+		"android.hardware.graphics.mapper@2.0.so",
+		"android.hardware.graphics.mapper@2.1.so",
+		"android.hardware.graphics.mapper@3.0.so",
+		"android.hardware.graphics.mapper@4.0.so",
 	};
 	const char *base;
 	size_t i;

@@ -1,0 +1,18 @@
+;; cdh：thermal HAL 的 SELinux 授权（由 07_build_vendor 并入装配树的
+;; etc/selinux/vendor_sepolicy.cil）。
+;;
+;; 平台 type 在 vendor CIL 中必须引用版本化影子名（plat_sepolicy_vers.txt=202404），
+;; 故用 {{vers}} 占位，由构建阶段替换。
+
+;; thermal_model 读 /proc/stat 算 CPU 负载。实测 avc：
+;; denied { read } name="stat" tcontext=u:object_r:proc_stat:s0
+(allow hal_thermal_default proc_stat_{{vers}} (file (read getattr map open)))
+
+;; /sys/class/thermal 与 /sys/devices/virtual/thermal 下的 thermal_zone* 节点打标为
+;; sysfs_thermal，仅向 hal_thermal_default 授权读取（与原厂 Enforcing SELinux 一致，不向 appdomain 开放）。
+(genfscon sysfs "/class/thermal" (u object_r sysfs_thermal ((s0) (s0))))
+(genfscon sysfs "/devices/virtual/thermal" (u object_r sysfs_thermal ((s0) (s0))))
+(allow hal_thermal_default sysfs_thermal_{{vers}} (dir (read getattr open search)))
+(allow hal_thermal_default sysfs_thermal_{{vers}} (file (read getattr open)))
+(allow hal_thermal_default sysfs_thermal_{{vers}} (lnk_file (read getattr)))
+

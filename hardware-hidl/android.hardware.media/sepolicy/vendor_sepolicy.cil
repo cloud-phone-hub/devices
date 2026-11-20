@@ -1,0 +1,34 @@
+;; cdh：c2 store 的 SELinux 授权（由 07_build_vendor 并入装配树的
+;; etc/selinux/vendor_sepolicy.cil）。
+;;
+;; 覆盖本模块 vendor/etc/init/ 下的两个 c2 store 服务：
+;;   android.hardware.media.c2-mediatek（MTK 实例，二进制取自厂商 vendor.img）
+;;   vendor.dolby.media.c2-default-service-dax
+;; 两者 rc 的 seclabel 都是 u:r:mediacodec:s0（基座没有 hal_codec2_default 域）。
+;;
+;; 平台 type 在 vendor CIL 中必须引用版本化影子名（plat_sepolicy_vers.txt=202404），
+;; 故用 {{vers}} 占位，由构建阶段替换；mediacodec / vendor_file 是本文件所在的
+;; vendor 策略自有类型，直接引用。
+
+;; ---- 1) 厂商 c2 二进制的 exec 类型 ----
+;; 厂商 vendor.img 里 android.hardware.media.c2-mediatek 的文件标签是
+;; mtk_hal_c2_exec，基座未定义该 type（实测 avc：tcontext=u:object_r:unlabeled:s0、
+;; trawcon="u:object_r:mtk_hal_c2_exec:s0"）→ init exec 被拒、服务以 127 退出；
+;; init 判「4 分钟内崩 4 次」后置 sys.init.updatable_crashing=1，flags_health_check
+;; 回滚并杀 zygote，system_server 反复重启（实测 6 分钟 6 次），表现为点击后 1.3 秒
+;; 黑屏、8.5 秒才出内容。
+(type mtk_hal_c2_exec)
+(allow init_{{vers}} mtk_hal_c2_exec (file (read getattr map execute open entrypoint)))
+(allow mediacodec mtk_hal_c2_exec (file (read getattr map execute open entrypoint)))
+
+;; ---- 2) mediacodec 域的 hwservicemanager / servicemanager 通道 ----
+;; HIDL Codec2 store (IComponentStore@1.0..1.2) 走 hwservicemanager 注册 hal_codec2_hwservice；
+;; 同时保留 servicemanager + default_android_service 供厂商辅助通道使用（注意 Android 13 无 hal_codec2_service）。
+(allow mediacodec hwservicemanager_{{vers}} (binder (call transfer)))
+(allow mediacodec hal_codec2_hwservice_{{vers}} (hwservice_manager (add find)))
+(allow mediacodec servicemanager_{{vers}} (binder (call transfer)))
+(allow mediacodec default_android_service_{{vers}} (service_manager (add find)))
+(allow mediacodec mediacodec (binder (call transfer)))
+
+;; 服务运行时 dlopen /vendor/lib64 下的 codec2 插件（标签 vendor_file）。
+(allow mediacodec vendor_file (file (read getattr map open execute)))

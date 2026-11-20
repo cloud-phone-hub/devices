@@ -7,7 +7,9 @@
 #include <aidl/android/hardware/radio/config/BnRadioConfig.h>
 #include <aidl/android/hardware/radio/config/IRadioConfigIndication.h>
 #include <aidl/android/hardware/radio/config/IRadioConfigResponse.h>
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
 #include <aidl/android/hardware/radio/config/MultipleEnabledProfilesMode.h>
+#endif
 #include <aidl/android/hardware/radio/config/PhoneCapability.h>
 #include <aidl/android/hardware/radio/config/SimPortInfo.h>
 #include <aidl/android/hardware/radio/config/SimSlotStatus.h>
@@ -45,7 +47,9 @@ ToSimSlotStatus(const std::optional<Snapshot> &snapshot) {
           .logicalSlotId = 0,
           .portActive = true,
       }},
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
       .supportedMepMode = config::MultipleEnabledProfilesMode::NONE,
+#endif
   });
   for (std::int32_t slot = 1; slot < kLogicalModemCount; ++slot) {
     slots.push_back(config::SimSlotStatus{
@@ -57,7 +61,9 @@ ToSimSlotStatus(const std::optional<Snapshot> &snapshot) {
             .logicalSlotId = slot,
             .portActive = true,
         }},
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
         .supportedMepMode = config::MultipleEnabledProfilesMode::NONE,
+#endif
     });
   }
   return slots;
@@ -108,7 +114,9 @@ public:
         .maxActiveInternetData = 1,
         .isInternetLingeringSupported = false,
         .logicalModemIds = std::move(logical_modem_ids),
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
         .maxActiveVoice = 1,
+#endif
     };
     return response->getPhoneCapabilityResponse(
         ResponseInfo(serial, aidl_radio::RadioError::NONE), capability);
@@ -161,7 +169,9 @@ public:
           ToSimSlotStatus(snapshot));
       if (!status.isOk())
         return status;
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
       return indication->onSimultaneousCallingSupportChanged({0});
+#endif
     }
     return ::ndk::ScopedAStatus::ok();
   }
@@ -182,6 +192,7 @@ public:
         &config::IRadioConfigResponse::setSimSlotsMappingResponse);
   }
 
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   ::ndk::ScopedAStatus getSimultaneousCallingSupport(int32_t serial) override {
     const auto response = callbacks_.ResponseCallback();
     if (response == nullptr)
@@ -189,6 +200,7 @@ public:
     return response->getSimultaneousCallingSupportResponse(
         ResponseInfo(serial, aidl_radio::RadioError::NONE), {0});
   }
+#endif
 
 private:
   ResponseFunctions<config::IRadioConfigResponse,

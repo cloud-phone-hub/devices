@@ -140,16 +140,20 @@ std::shared_ptr<ISession> MakeNoopSession() {
         const PointerContext& /*in_context*/) override {
       return ScopedAStatus::ok();
     }
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
     ScopedAStatus onPointerCancelWithContext(
         const PointerContext& /*in_context*/) override {
       return ScopedAStatus::ok();
     }
+#endif
     ScopedAStatus onContextChanged(const OperationContext& /*in_context*/) override {
       return ScopedAStatus::ok();
     }
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
     ScopedAStatus setIgnoreDisplayTouches(bool /*shouldIgnore*/) override {
       return ScopedAStatus::ok();
     }
+#endif
   };
   return ndk::SharedRefBase::make<NoopSession>();
 }

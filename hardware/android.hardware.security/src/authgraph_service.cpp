@@ -5,6 +5,8 @@
 // 与 secureclock/sharedsecret 同理——若集成层改由真实 keymint/authgraph 进程提供，应避开
 // 同名实例争抢。设备无关，不内置机型常量。
 
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
+
 #include <android/binder_ibinder.h>
 #include <android/binder_status.h>
 
@@ -94,3 +96,5 @@ int main() {
   ABinderProcess_joinThreadPool();
   return 0;
 }
+
+#endif

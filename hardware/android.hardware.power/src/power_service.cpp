@@ -22,7 +22,13 @@ binder_status_t AServiceManager_addService(AIBinder* binder,
 #include <aidl/android/hardware/power/Boost.h>
 #include <aidl/android/hardware/power/BnPower.h>
 #include <aidl/android/hardware/power/BnPowerHintSession.h>
+#if !defined(CDH_POWER_AIDL_VERSION) || CDH_POWER_AIDL_VERSION >= 5
 #include <aidl/android/hardware/power/ChannelConfig.h>
+#include <aidl/android/hardware/power/SessionConfig.h>
+#include <aidl/android/hardware/power/SessionHint.h>
+#include <aidl/android/hardware/power/SessionMode.h>
+#include <aidl/android/hardware/power/SessionTag.h>
+#endif
 #if CDH_POWER_AIDL_VERSION >= 6
 #include <aidl/android/hardware/power/CompositionData.h>
 #include <aidl/android/hardware/power/CompositionUpdate.h>
@@ -34,10 +40,6 @@ binder_status_t AServiceManager_addService(AIBinder* binder,
 #endif
 #include <aidl/android/hardware/power/IPowerHintSession.h>
 #include <aidl/android/hardware/power/Mode.h>
-#include <aidl/android/hardware/power/SessionConfig.h>
-#include <aidl/android/hardware/power/SessionHint.h>
-#include <aidl/android/hardware/power/SessionMode.h>
-#include <aidl/android/hardware/power/SessionTag.h>
 #include <aidl/android/hardware/power/WorkDuration.h>
 
 #include <cstdint>
@@ -47,7 +49,13 @@ binder_status_t AServiceManager_addService(AIBinder* binder,
 using aidl::android::hardware::power::Boost;
 using aidl::android::hardware::power::BnPower;
 using aidl::android::hardware::power::BnPowerHintSession;
+#if !defined(CDH_POWER_AIDL_VERSION) || CDH_POWER_AIDL_VERSION >= 5
 using aidl::android::hardware::power::ChannelConfig;
+using aidl::android::hardware::power::SessionConfig;
+using aidl::android::hardware::power::SessionHint;
+using aidl::android::hardware::power::SessionMode;
+using aidl::android::hardware::power::SessionTag;
+#endif
 #if CDH_POWER_AIDL_VERSION >= 6
 using aidl::android::hardware::power::CompositionData;
 using aidl::android::hardware::power::CompositionUpdate;
@@ -59,10 +67,6 @@ using aidl::android::hardware::power::SupportInfo;
 #endif
 using aidl::android::hardware::power::IPowerHintSession;
 using aidl::android::hardware::power::Mode;
-using aidl::android::hardware::power::SessionConfig;
-using aidl::android::hardware::power::SessionHint;
-using aidl::android::hardware::power::SessionMode;
-using aidl::android::hardware::power::SessionTag;
 using aidl::android::hardware::power::WorkDuration;
 using ndk::ScopedAStatus;
 
@@ -74,7 +78,7 @@ namespace {
 // 提示会话：所有上报/控制均为 no-op；getSessionConfig 返回一份带 id 的默认配置。
 class PowerHintSession : public BnPowerHintSession {
  public:
-  explicit PowerHintSession(int64_t id) : mId(id) {}
+  explicit PowerHintSession(int64_t id) : mId(id) { (void)mId; }
 
   ScopedAStatus updateTargetWorkDuration(int64_t /*in_targetDurationNanos*/) override {
     return ScopedAStatus::ok();
@@ -86,6 +90,7 @@ class PowerHintSession : public BnPowerHintSession {
   ScopedAStatus pause() override { return ScopedAStatus::ok(); }
   ScopedAStatus resume() override { return ScopedAStatus::ok(); }
   ScopedAStatus close() override { return ScopedAStatus::ok(); }
+#if !defined(CDH_POWER_AIDL_VERSION) || CDH_POWER_AIDL_VERSION >= 5
   ScopedAStatus sendHint(SessionHint /*in_hint*/) override {
     return ScopedAStatus::ok();
   }
@@ -101,6 +106,7 @@ class PowerHintSession : public BnPowerHintSession {
     _aidl_return->id = mId;
     return ScopedAStatus::ok();
   }
+#endif
 
  private:
   int64_t mId;
@@ -144,6 +150,7 @@ class PowerService : public BnPower {
     return ScopedAStatus::ok();
   }
 
+#if !defined(CDH_POWER_AIDL_VERSION) || CDH_POWER_AIDL_VERSION >= 5
   ScopedAStatus createHintSessionWithConfig(
       int32_t /*in_tgid*/, int32_t /*in_uid*/,
       const std::vector<int32_t>& /*in_threadIds*/,
@@ -167,6 +174,7 @@ class PowerService : public BnPower {
                                     int32_t /*in_uid*/) override {
     return ScopedAStatus::ok();
   }
+#endif
 
   // ---- AIDL v6 新增：帧率余量 / 合成数据上报 ----
   // 虚拟机里 CPU/GPU 没有可供调度的频率空间，余量统一报 0（0% 余量）；

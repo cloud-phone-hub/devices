@@ -1,5 +1,6 @@
 #include <android/binder_ibinder.h>
 #include <android/binder_manager.h>
+#include <android/binder_parcel.h>
 #include <android/binder_process.h>
 #include <android/binder_status.h>
 #include <android/log.h>
@@ -577,10 +578,12 @@ public:
   updateNetworkState(const IAGnssRil::NetworkAttributes &) override {
     return ScopedAStatus::ok();
   }
+#if !defined(CDH_GNSS_AIDL_VERSION) || CDH_GNSS_AIDL_VERSION >= 3
   ScopedAStatus injectNiSuplMessageData(const std::vector<uint8_t> &,
                                         int32_t) override {
     return ScopedAStatus::ok();
   }
+#endif
 };
 
 class NoopGnssDebug : public BnGnssDebug {
@@ -1032,10 +1035,30 @@ static void *OnPlaceholderCreate(void * /*args*/) {
 static void OnPlaceholderDestroy(void * /*user_data*/) {}
 
 static binder_status_t OnPlaceholderTransact(AIBinder * /*binder*/,
-                                             transaction_code_t /*code*/,
+                                             transaction_code_t code,
                                              const AParcel * /*in*/,
-                                             AParcel * /*out*/) {
-  return STATUS_UNKNOWN_TRANSACTION;
+                                             AParcel *out) {
+  if (out == nullptr) {
+    return STATUS_OK;
+  }
+  constexpr transaction_code_t kGetInterfaceVersion = FIRST_CALL_TRANSACTION + 16777214;
+  constexpr transaction_code_t kGetInterfaceHash = FIRST_CALL_TRANSACTION + 16777213;
+  if (code == kGetInterfaceVersion) {
+    AParcel_writeInt32(out, 0);
+    AParcel_writeInt32(out, 1);
+    return STATUS_OK;
+  }
+  if (code == kGetInterfaceHash) {
+    AParcel_writeInt32(out, 0);
+    AParcel_writeString(out, "notfrozen", 9);
+    return STATUS_OK;
+  }
+  // 写入 EX_NONE (0) 与空 IBinder：使客户端（如 com.qualcomm.location 调用
+  // ILocAidlGnss.getExtensionLocAidl*）读到 null 扩展接口后优雅跳过，避免因
+  // STATUS_UNKNOWN_TRANSACTION 触发 "Method ... is unimplemented" RemoteException 崩溃循环。
+  AParcel_writeInt32(out, 0);
+  AParcel_writeStrongBinder(out, nullptr);
+  return STATUS_OK;
 }
 
 static std::string TrimWhitespace(const std::string &input) {

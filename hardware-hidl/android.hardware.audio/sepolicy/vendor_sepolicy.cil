@@ -1,0 +1,46 @@
+;; cdh：audio AIDL HAL 的 servicemanager 注册授权（由 07_build_vendor 并入装配树
+;; 的 etc/selinux/vendor_sepolicy.cil）。
+;;
+;; 只加 vendor_service_contexts 映射不够：servicemanager 在启动早期一次性加载并
+;; 缓存 contexts 表，那时 /vendor 里后加的映射运行时未必被看到，查不到的实例名一律
+;; 落到 default_android_service。于是 hal_audio_default 注册 IModule/primary 时被
+;; avc 判 add 拒绝，AServiceManager_addService 返回 -EPERM（status=-1）：
+;;   FAILED to register android.hardware.audio.core.IModule/primary (status=-1)
+;; 后果链条：primary 未注册 -> APM 加载 primary 模块失败 -> AudioFlinger 的
+;; mAudioHwDevs 为空 -> listAudioPorts 恒返回 -19(ENODEV)，system_server 侧表现为
+;; AudioService 每 101 ms 刷 listAudioPorts error -19、initStreamVolume 无限重试、
+;; dumpsys media.audio_policy 报 FAILED_TRANSACTION。
+;;
+;; 前两条保注册（contexts 映射生效 / 未生效两种落点），后两条保 audioserver 侧的
+;; getService（同样两种落点；缺 find 会让它拿到 null 的 IModule）。
+;; hal_audio_service / default_android_service / audioserver 都是 plat 类型，
+;; vendor CIL 必须写版本化影子名，故用 {{vers}} 占位，构建阶段替换为
+;; vendor/etc/selinux/plat_sepolicy_vers.txt 的值。
+(allow hal_audio_default hal_audio_service_{{vers}} (service_manager (add find)))
+(allow hal_audio_default default_android_service_{{vers}} (service_manager (add)))
+(allow audioserver_{{vers}} default_android_service_{{vers}} (service_manager (find)))
+(allow audioserver_{{vers}} hal_audio_service_{{vers}} (service_manager (find)))
+
+;; cdh：audio AIDL HAL 的 FMQ 共享内存授权（/dev/ashmem）。
+;;
+;; AidlMessageQueue（命令/应答/数据三条 FMQ 加一个共享 EventFlag）分配共享内存
+;; 必须 open("/dev/ashmem")。hal_audio_default 域在基底策略里没有该授权（lineage
+;; 基座的音频 HAL 在 APEX 内，表里没有自研服务这一行）。被拒后的失败链是：
+;;   ashmem fd = -1 -> mmap(EBADF) -> StreamDescriptor 里的 ParcelFileDescriptor
+;;   = -1 -> openOutputStream 的 reply 反序列化失败，AudioFlinger 收到
+;;   stream=nullptr、status=BAD_INDEX。APM 于 boot 时报：
+;;     Cannot open output stream for devices AUDIO_DEVICE_OUT_SPEAKER on hw module primary
+;;     Default device AUDIO_DEVICE_OUT_SPEAKER, @: is unreachable
+;;     The policy configuration does not declare a primary output
+;; 随后 AudioPolicyManager 被析构，AudioPolicyInterfaceImpl 恒打印
+;; mAudioPolicyManager == NULL；system_server 侧表现为 listAudioPorts 一直返回
+;; -19、initStreamVolume 无限重试、dumpsys audio 的 Devices 恒为空。
+;; 注意这与上段的服务注册授权是两回事：注册只用到 binder，不需要共享内存。
+(allow hal_audio_default ashmem_device_{{vers}} (chr_file (ioctl read write getattr map open)))
+
+;; cdh：audio AIDL HAL 直连 QEMU intel-hda 声卡（/dev/snd/*）的授权。
+;;
+;; VdacStreamOut 用原生 ALSA ioctl/write 打开 /dev/snd/pcmC0D0p，把 AudioFlinger
+;; 的 burst 背压锚定到真实声卡时钟（否则音频时钟偏快，在线播放会快进）。节点
+;; 缺失或打不开时 HAL 回退纯内存 VirtualDac，不阻断播放，但具备节点时仍需本段。
+(allow hal_audio_default audio_device_{{vers}} (chr_file (ioctl read write getattr map open)))

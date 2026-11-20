@@ -12,7 +12,9 @@
 #include <aidl/android/hardware/radio/modem/HardwareConfigModem.h>
 #include <aidl/android/hardware/radio/modem/IRadioModemIndication.h>
 #include <aidl/android/hardware/radio/modem/IRadioModemResponse.h>
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
 #include <aidl/android/hardware/radio/modem/ImeiInfo.h>
+#endif
 #include <aidl/android/hardware/radio/modem/RadioCapability.h>
 #include <aidl/android/hardware/radio/modem/RadioState.h>
 
@@ -148,7 +150,11 @@ char LuhnCheckDigit(const std::string &body) {
 }
 
 struct ModemIdentity {
+  std::string imei;
+  std::string svn;
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   modem::ImeiInfo imei_info;
+#endif
   std::string meid;
 };
 
@@ -214,16 +220,19 @@ DeviceIdentityFromSnapshot(const std::optional<Snapshot> &snapshot,
     meid = meid_prefix + base_snr_str;
   }
 
-  return ModemIdentity{
-      .imei_info =
-          modem::ImeiInfo{
-              .type = slot <= 0 ? modem::ImeiInfo::ImeiType::PRIMARY
-                                : modem::ImeiInfo::ImeiType::SECONDARY,
-              .imei = std::move(imei),
-              .svn = std::move(svn),
-          },
-      .meid = std::move(meid),
+  ModemIdentity out;
+  out.imei = imei;
+  out.svn = svn;
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
+  out.imei_info = modem::ImeiInfo{
+      .type = slot <= 0 ? modem::ImeiInfo::ImeiType::PRIMARY
+                        : modem::ImeiInfo::ImeiType::SECONDARY,
+      .imei = std::move(imei),
+      .svn = std::move(svn),
   };
+#endif
+  out.meid = std::move(meid);
+  return out;
 }
 
 modem::RadioCapability RadioCapability() {
@@ -264,9 +273,11 @@ public:
           const auto type = aidl_radio::RadioIndicationType::UNSOLICITED;
           indication->radioStateChanged(type,
                                         ToRadioState(snapshot.modem.power));
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
           const auto identity = DeviceIdentityFromSnapshot(snapshot, this->slot());
           if (identity.has_value())
             indication->onImeiMappingChanged(type, identity->imei_info);
+#endif
         }) {}
 
   ::ndk::ScopedAStatus enableModem(int32_t serial, bool on) override {
@@ -307,8 +318,8 @@ public:
         ResponseInfo(serial, identity.has_value()
                                  ? aidl_radio::RadioError::NONE
                                  : aidl_radio::RadioError::RADIO_NOT_AVAILABLE),
-        identity.has_value() ? identity->imei_info.imei : "",
-        identity.has_value() ? identity->imei_info.svn : "", "",
+        identity.has_value() ? identity->imei : "",
+        identity.has_value() ? identity->svn : "", "",
         identity.has_value() ? identity->meid : "");
   }
 
@@ -430,12 +441,15 @@ public:
     status = indication->rilConnected(type);
     if (!status.isOk())
       return status;
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
     const auto identity = DeviceIdentityFromSnapshot(snapshot, slot());
     if (identity.has_value())
       return indication->onImeiMappingChanged(type, identity->imei_info);
+#endif
     return ::ndk::ScopedAStatus::ok();
   }
 
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   ::ndk::ScopedAStatus getImei(int32_t serial) override {
     const auto response = callbacks_.ResponseCallback();
     if (response == nullptr)
@@ -450,6 +464,7 @@ public:
                                  : aidl_radio::RadioError::RADIO_NOT_AVAILABLE),
         imei);
   }
+#endif
 
 private:
   using SimpleResponse = ::ndk::ScopedAStatus (modem::IRadioModemResponse::*)(

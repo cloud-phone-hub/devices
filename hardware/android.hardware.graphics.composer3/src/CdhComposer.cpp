@@ -1,5 +1,7 @@
 #define LOG_TAG "drmhwc"
 
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
+
 #include "CdhComposer.h"
 
 #include <algorithm>
@@ -827,3 +829,5 @@ ndk::ScopedAStatus CdhComposer::getCapabilities(std::vector<Capability>* caps) {
 }
 
 }  // namespace aidl::android::hardware::graphics::composer3::cdh
+
+#endif

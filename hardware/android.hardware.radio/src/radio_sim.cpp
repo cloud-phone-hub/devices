@@ -5,7 +5,9 @@
 #include "sim_file.h"
 
 #include <aidl/android/hardware/radio/RadioIndicationType.h>
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
 #include <aidl/android/hardware/radio/config/MultipleEnabledProfilesMode.h>
+#endif
 #include <aidl/android/hardware/radio/config/SlotPortMapping.h>
 #include <aidl/android/hardware/radio/sim/AppStatus.h>
 #include <aidl/android/hardware/radio/sim/BnRadioSim.h>
@@ -90,7 +92,9 @@ sim::CardStatus ToCardStatus(const Snapshot &snapshot, bool card_power_up,
       // 销毁刚创建的 UiccCard/UiccPort → SMSVC getIccId 取不到 iccid → 订阅不建。
       .slotMap = config::SlotPortMapping{.physicalSlotId = physical_slot_id,
                                          .portId = 0},
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
       .supportedMepMode = config::MultipleEnabledProfilesMode::NONE,
+#endif
   };
   if (present) {
     card.applications.push_back(sim::AppStatus{
@@ -456,6 +460,7 @@ public:
         -1);
   }
 
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   ::ndk::ScopedAStatus
   iccCloseLogicalChannelWithSessionInfo(int32_t serial,
                                         const sim::SessionInfo &) override {
@@ -463,6 +468,7 @@ public:
         serial,
         &sim::IRadioSimResponse::iccCloseLogicalChannelWithSessionInfoResponse);
   }
+#endif
 
 private:
   using SimpleResponse = ::ndk::ScopedAStatus (sim::IRadioSimResponse::*)(

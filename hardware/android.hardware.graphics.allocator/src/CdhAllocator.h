@@ -20,6 +20,7 @@ class CdhAllocator : public aidl::android::hardware::graphics::allocator::impl::
  public:
   CdhAllocator() = default;
 
+#if !defined(ANDROID_API_LEVEL) || ANDROID_API_LEVEL >= 34
   ndk::ScopedAStatus getIMapperLibrarySuffix(std::string* outResult) override {
     if (outResult == nullptr) {
       return ndk::ScopedAStatus::fromStatus(STATUS_BAD_VALUE);
@@ -28,6 +29,7 @@ class CdhAllocator : public aidl::android::hardware::graphics::allocator::impl::
     *outResult = kCachedSuffix;
     return ndk::ScopedAStatus::ok();
   }
+#endif
 
  private:
   static std::string ResolveMapperSuffix() {

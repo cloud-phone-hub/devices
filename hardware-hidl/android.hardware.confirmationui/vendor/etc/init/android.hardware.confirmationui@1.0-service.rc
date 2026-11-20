@@ -1,0 +1,6 @@
+service vendor.confirmationui-1-0 /vendor/bin/hw/android.hardware.confirmationui@1.0-service
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_confirmationui_default:s0
+    interface android.hardware.confirmationui@1.0::IConfirmationUI default

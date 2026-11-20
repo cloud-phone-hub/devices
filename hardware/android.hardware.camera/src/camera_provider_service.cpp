@@ -22,7 +22,9 @@ binder_status_t AServiceManager_addService(AIBinder *binder,
 #include <aidl/android/hardware/camera/device/CameraOfflineSessionInfo.h>
 #include <aidl/android/hardware/camera/device/CaptureRequest.h>
 #include <aidl/android/hardware/camera/device/CaptureResult.h>
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
 #include <aidl/android/hardware/camera/device/ConfigureStreamsRet.h>
+#endif
 #include <aidl/android/hardware/camera/device/HalStream.h>
 #include <aidl/android/hardware/camera/device/ICameraDeviceCallback.h>
 #include <aidl/android/hardware/camera/device/ICameraInjectionSession.h>
@@ -77,7 +79,9 @@ using aidl::android::hardware::camera::device::CameraMetadata;
 using aidl::android::hardware::camera::device::CameraOfflineSessionInfo;
 using aidl::android::hardware::camera::device::CaptureRequest;
 using aidl::android::hardware::camera::device::CaptureResult;
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
 using aidl::android::hardware::camera::device::ConfigureStreamsRet;
+#endif
 using aidl::android::hardware::camera::device::HalStream;
 using aidl::android::hardware::camera::device::ICameraDevice;
 using aidl::android::hardware::camera::device::ICameraDeviceCallback;
@@ -1668,11 +1672,13 @@ public:
     return ScopedAStatus::ok();
   }
 
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   ScopedAStatus configureStreamsV2(const StreamConfiguration &requested,
                                    ConfigureStreamsRet *out) override {
     out->halStreams = makeHalStreams(requested);
     return ScopedAStatus::ok();
   }
+#endif
 
 private:
   static std::vector<HalStream>
@@ -1689,7 +1695,9 @@ private:
       hal.overrideDataSpace = stream.dataSpace;
       hal.physicalCameraId = stream.physicalCameraId;
       hal.supportOffline = false;
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
       hal.enableHalBufferManager = false;
+#endif
       halStreams.push_back(hal);
     }
     return halStreams;
@@ -1778,6 +1786,7 @@ public:
     return ScopedAStatus::ok();
   }
 
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   ScopedAStatus constructDefaultRequestSettings(RequestTemplate type,
                                                 CameraMetadata *out) override {
     bool ok = false;
@@ -1798,6 +1807,7 @@ public:
     *out = buildStaticMetadata(target_, &ok);
     return ok ? ScopedAStatus::ok() : cameraError(Status::INTERNAL_ERROR);
   }
+#endif
 
 private:
   const Note13CameraTarget &target_;

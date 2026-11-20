@@ -1,0 +1,10 @@
+# cdh：Codec2 store AIDL HAL 的扩展服务名映射（由 07_build_vendor 并入装配树的
+# etc/selinux/vendor_service_contexts）。
+#
+# 平台侧 plat_service_contexts 只登记了 IComponentStore 的 default / default1 / default2 / software，
+# 未登记 Dolby C2 store 使用的 /default9 实例（真机在 vendor_service_contexts 登记）。
+# 若无此映射，IComponentStore/default9 会落到 default_android_service，导致 Enforcing 下
+# mediaserver / mediaextractor / system_server / untrusted_app 等 hal_codec2_client
+# 因无权 find default_android_service 而被 servicemanager 拒绝，MediaCodecList 丢失
+# c2.dolby.ac4.decoder 与 c2.dolby.eac3.decoder。
+android.hardware.media.c2.IComponentStore/default9      u:object_r:hal_codec2_service:s0

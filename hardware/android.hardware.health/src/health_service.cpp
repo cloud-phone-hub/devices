@@ -46,11 +46,13 @@ binder_status_t AServiceManager_addService(AIBinder *binder,
 }
 
 #include <aidl/android/hardware/health/BatteryCapacityLevel.h>
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
 #include <aidl/android/hardware/health/BatteryChargingPolicy.h>
 #include <aidl/android/hardware/health/BatteryChargingState.h>
-#include <aidl/android/hardware/health/BatteryHealth.h>
 #include <aidl/android/hardware/health/BatteryHealthData.h>
 #include <aidl/android/hardware/health/BatteryPartStatus.h>
+#endif
+#include <aidl/android/hardware/health/BatteryHealth.h>
 #include <aidl/android/hardware/health/BatteryStatus.h>
 #include <aidl/android/hardware/health/BnHealth.h>
 #include <aidl/android/hardware/health/DiskStats.h>
@@ -86,11 +88,13 @@ binder_status_t AServiceManager_addService(AIBinder *binder,
 #include <vector>
 
 using aidl::android::hardware::health::BatteryCapacityLevel;
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
 using aidl::android::hardware::health::BatteryChargingPolicy;
 using aidl::android::hardware::health::BatteryChargingState;
-using aidl::android::hardware::health::BatteryHealth;
 using aidl::android::hardware::health::BatteryHealthData;
 using aidl::android::hardware::health::BatteryPartStatus;
+#endif
+using aidl::android::hardware::health::BatteryHealth;
 using aidl::android::hardware::health::BatteryStatus;
 using aidl::android::hardware::health::BnHealth;
 using aidl::android::hardware::health::DiskStats;
@@ -150,12 +154,16 @@ struct BatteryProfile {
 #endif
   std::string technology = "Li-poly";
   BatteryCapacityLevel capacityLevel = BatteryCapacityLevel::FULL;
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   BatteryChargingState chargingState = BatteryChargingState::INVALID;
+#endif
   int64_t manufacturingDateSeconds = 0;
   int64_t firstUsageSeconds = 0;
   int64_t stateOfHealth = 99;
   std::string serialNumber;
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   BatteryPartStatus partStatus = BatteryPartStatus::UNSUPPORTED;
+#endif
 
   // —— 动态模拟区间 ——
   int32_t voltageFullMv = 4389;
@@ -245,7 +253,9 @@ const std::pair<const char *, BatteryHealth> kHealthTable[] = {
     {"OVER_VOLTAGE", BatteryHealth::OVER_VOLTAGE},
     {"UNSPECIFIED_FAILURE", BatteryHealth::UNSPECIFIED_FAILURE},
     {"COLD", BatteryHealth::COLD},
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
     {"FAIR", BatteryHealth::FAIR},
+#endif
 };
 
 const std::pair<const char *, BatteryCapacityLevel> kCapacityLevelTable[] = {
@@ -258,6 +268,7 @@ const std::pair<const char *, BatteryCapacityLevel> kCapacityLevelTable[] = {
     {"FULL", BatteryCapacityLevel::FULL},
 };
 
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
 const std::pair<const char *, BatteryChargingState> kChargingStateTable[] = {
     {"INVALID", BatteryChargingState::INVALID},
     {"NORMAL", BatteryChargingState::NORMAL},
@@ -272,6 +283,7 @@ const std::pair<const char *, BatteryPartStatus> kPartStatusTable[] = {
     {"ORIGINAL", BatteryPartStatus::ORIGINAL},
     {"REPLACED", BatteryPartStatus::REPLACED},
 };
+#endif
 
 // ---- libxml2 读取便利层（本模块自用，不进公共头）----
 // 读整个文件成 DOM；失败返回 nullptr（调用方回退内置默认）。
@@ -381,7 +393,9 @@ void loadProfile(BatteryProfile *profile) {
   take(readIntAttr(identity, "level", 0, 100, &profile->level));
   take(readEnumAttr(identity, "health", kHealthTable, &profile->health));
   take(readEnumAttr(identity, "capacity_level", kCapacityLevelTable, &profile->capacityLevel));
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   take(readEnumAttr(identity, "charging_state", kChargingStateTable, &profile->chargingState));
+#endif
   take(readBoolAttr(identity, "present", &profile->present));
 
   // <charger>：充电器在线状态与充电上限
@@ -425,7 +439,9 @@ void loadProfile(BatteryProfile *profile) {
   take(readInt64Attr(healthData, "first_usage_seconds", 0, INT64_MAX,
                      &profile->firstUsageSeconds));
   take(readStrAttr(healthData, "serial_number", &profile->serialNumber));
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   take(readEnumAttr(healthData, "part_status", kPartStatusTable, &profile->partStatus));
+#endif
 
   xmlFreeDoc(doc);
 
@@ -535,8 +551,13 @@ BatterySample sampleBattery(const BatteryProfile &profile) {
   return sample;
 }
 
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
 void fillBattery(const BatteryProfile &profile, const BatterySample &sample,
                  BatteryChargingPolicy policy, HealthInfo *out) {
+#else
+void fillBattery(const BatteryProfile &profile, const BatterySample &sample,
+                 HealthInfo *out) {
+#endif
   out->chargerAcOnline = profile.acOnline;
   out->chargerUsbOnline = profile.usbOnline;
   out->chargerWirelessOnline = profile.wirelessOnline;
@@ -558,8 +579,10 @@ void fillBattery(const BatteryProfile &profile, const BatterySample &sample,
   out->batteryCapacityLevel = profile.capacityLevel;
   out->batteryChargeTimeToFullNowSeconds = 0;
   out->batteryFullChargeDesignCapacityUah = profile.fullChargeUah;
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   out->chargingState = profile.chargingState;
   out->chargingPolicy = policy;
+#endif
   out->diskStats.clear();
   out->storageInfos.clear();
 }
@@ -648,6 +671,7 @@ public:
     return ScopedAStatus::ok();
   }
 
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   ScopedAStatus setChargingPolicy(BatteryChargingPolicy in_value) override {
     std::lock_guard<std::mutex> lock(mutex_);
     policy_ = in_value;
@@ -670,6 +694,7 @@ public:
     out->batteryPartStatus = gProfile.partStatus;
     return ScopedAStatus::ok();
   }
+#endif
 
 #if CDH_ANDROID_VERSION >= 16
   ScopedAStatus getHingeInfo(std::vector<HingeInfo> *out) override {
@@ -680,17 +705,23 @@ public:
 
 private:
   void fill(HealthInfo *out) {
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
     BatteryChargingPolicy policy;
     {
       std::lock_guard<std::mutex> lock(mutex_);
       policy = policy_;
     }
     fillBattery(gProfile, sampleBattery(gProfile), policy, out);
+#else
+    fillBattery(gProfile, sampleBattery(gProfile), out);
+#endif
   }
 
   std::mutex mutex_;
   std::vector<std::shared_ptr<IHealthInfoCallback>> callbacks_;
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   BatteryChargingPolicy policy_ = BatteryChargingPolicy::INVALID;
+#endif
 };
 
 }  // namespace

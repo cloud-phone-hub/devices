@@ -1,0 +1,23 @@
+# cdh：audio AIDL HAL 的服务名映射（由 07_build_vendor 并入装配树的
+# etc/selinux/vendor_service_contexts）。
+#
+# 平台侧 plat_service_contexts 只登记了 IModule 的 8 个实例
+# （default/a2dp/bluetooth/hearing_aid/msd/r_submix/stub/usb），没有 primary；
+# 而 AudioPolicyManager 按 audio_policy_configuration.xml 的 <module name="primary">
+# 打开 primary 模块。这个名字查不到映射，servicemanager 就按默认类型判权，
+# hal_audio_default 对默认类型没有 service_manager add，于是
+# AServiceManager_addService 返回 -EPERM，日志为：
+#   FAILED to register android.hardware.audio.core.IModule/primary (status=-1)
+#
+# 后果链条：primary 未注册 -> APM 加载 primary 模块失败 -> AudioFlinger 的
+# mAudioHwDevs 为空 -> listAudioPorts 恒返回 -19(ENODEV)。system_server 侧表现为
+# AudioService 每 101 ms 刷一条 AudioSystem::listAudioPorts error -19，同时
+# initStreamVolume 无限重试、dumpsys media.audio_policy 报 FAILED_TRANSACTION。
+#
+# 这里显式映射完整服务名（libselinux service_contexts 为精确匹配，不支持前缀匹配），
+# 使 IModule/primary、IConfig/default、IFactory/default 均落入 hal_audio_service。
+# 类型与授权都在基底策略里（default 实例已能注册成功即为证），本文件只回答
+# 「哪个服务名打哪个标签」。
+android.hardware.audio.core.IModule/primary        u:object_r:hal_audio_service:s0
+android.hardware.audio.core.IConfig/default        u:object_r:hal_audio_service:s0
+android.hardware.audio.effect.IFactory/default     u:object_r:hal_audio_service:s0

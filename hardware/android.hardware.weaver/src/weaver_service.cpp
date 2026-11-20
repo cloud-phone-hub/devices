@@ -15,17 +15,23 @@ binder_status_t AServiceManager_addService(AIBinder* binder,
 }
 
 #include <aidl/android/hardware/weaver/BnWeaver.h>
+#include <aidl/android/hardware/weaver/IWeaver.h>
 #include <aidl/android/hardware/weaver/WeaverConfig.h>
 #include <aidl/android/hardware/weaver/WeaverReadResponse.h>
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
 #include <aidl/android/hardware/weaver/WeaverReadStatus.h>
+#endif
 
 #include <cstdint>
 #include <vector>
 
 using aidl::android::hardware::weaver::BnWeaver;
+using aidl::android::hardware::weaver::IWeaver;
 using aidl::android::hardware::weaver::WeaverConfig;
 using aidl::android::hardware::weaver::WeaverReadResponse;
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
 using aidl::android::hardware::weaver::WeaverReadStatus;
+#endif
 using ndk::ScopedAStatus;
 
 static constexpr const char* kWeaverServiceName =
@@ -47,8 +53,12 @@ class WeaverService : public BnWeaver {
                      WeaverReadResponse* _aidl_return) override {
     _aidl_return->timeout = 0;
     _aidl_return->value.clear();
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
     _aidl_return->status = WeaverReadStatus::FAILED;
     return ScopedAStatus::ok();
+#else
+    return ScopedAStatus::fromServiceSpecificError(IWeaver::STATUS_FAILED);
+#endif
   }
 
   ScopedAStatus write(int32_t /*in_slotId*/,

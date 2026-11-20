@@ -10,6 +10,56 @@
 #include <android/binder_process.h>
 #include <log/log.h>
 
+#if defined(CDH_ANDROID_VERSION) && CDH_ANDROID_VERSION <= 13
+
+#include <memory>
+#include <vector>
+#include <aidl/android/hardware/graphics/composer3/BnComposer.h>
+#if CDH_COMPOSER_OPLUS
+#include "oplus/CdhOplusDisplayColor.h"
+#endif
+
+namespace {
+class StubComposerV1 : public aidl::android::hardware::graphics::composer3::BnComposer {
+ public:
+  ndk::ScopedAStatus createClient(
+      std::shared_ptr<aidl::android::hardware::graphics::composer3::IComposerClient>* out_client) override {
+    if (out_client != nullptr) {
+      out_client->reset();
+    }
+    return ndk::ScopedAStatus::fromServiceSpecificError(IComposer::EX_NO_RESOURCES);
+  }
+  ndk::ScopedAStatus getCapabilities(
+      std::vector<aidl::android::hardware::graphics::composer3::Capability>* caps) override {
+    if (caps != nullptr) {
+      caps->clear();
+    }
+    return ndk::ScopedAStatus::ok();
+  }
+};
+}  // namespace
+
+int main(int /*argc*/, char* /*argv*/[]) {
+  ABinderProcess_setThreadPoolMaxThreadCount(4);
+  ABinderProcess_startThreadPool();
+  auto composer = ndk::SharedRefBase::make<StubComposerV1>();
+  const std::string instance = std::string(StubComposerV1::descriptor) + "/default";
+  const auto status = AServiceManager_addService(composer->asBinder().get(), instance.c_str());
+  if (status != STATUS_OK) {
+    ALOGE("Failed to register HWC3 v1 service %s: %d", instance.c_str(), static_cast<int>(status));
+    return -EINVAL;
+  }
+#if CDH_COMPOSER_OPLUS
+  auto oplus_color_service =
+      aidl::android::hardware::graphics::composer3::cdh::RegisterOplusDisplayColorFeatureIfDeclared();
+  (void)oplus_color_service;
+#endif
+  ABinderProcess_joinThreadPool();
+  return EXIT_FAILURE;
+}
+
+#else
+
 #include "CdhComposer.h"
 #include "CdhDisplayConfig.h"
 #if CDH_COMPOSER_OPLUS
@@ -70,3 +120,5 @@ int main(int /*argc*/, char* /*argv*/[]) {
   ABinderProcess_joinThreadPool();
   return EXIT_FAILURE;
 }
+
+#endif

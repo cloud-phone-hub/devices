@@ -1,0 +1,12 @@
+service vendor.secure_element-1-2 /vendor/bin/hw/android.hardware.secure_element@1.2-service
+    class hal
+    user system
+    group system
+    seclabel u:r:hal_secure_element_default:s0
+    interface android.hardware.secure_element@1.0::ISecureElement eSE1
+    interface android.hardware.secure_element@1.1::ISecureElement eSE1
+    interface android.hardware.secure_element@1.2::ISecureElement eSE1
+    disabled
+
+on post-fs-data
+    start vendor.secure_element-1-2
