@@ -1,0 +1,9 @@
+{
+  "fstab": "sp9863a",
+  "cmdline": [
+    "androidboot.product.hardware.sku=G27_3GB",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": 54,
+  "buildId": "13-TP1A.220624.014-20240929",
+  "deviceId": 44,
+  "configId": 62,
+  "osVersion": "13-TP1A.220624.014-20240929",
+  "buildDate": "20240929",
+  "securityPatch": "2024-08-05",
+  "factoryTgz": "SYMPHONY_G27_HW2_V9_2024-09-05_FACTORY_SIGNED.rar",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 cdh-pipeline prepare 从 SYMPHONY_G27_HW2_V9_2024-09-05_FACTORY_SIGNED.rar (vendor/build.prop) 自动生成。",
+    "osVersion": "13-TP1A.220624.014-20240929",
+    "securityPatch": "2024-08-05"
+  },
+  "updatedAt": "2026-11-20T09:51:32Z"
+}

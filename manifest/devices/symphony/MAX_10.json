@@ -1,0 +1,40 @@
+{
+  "id": 45,
+  "official": "Symphony",
+  "brand": "symphony",
+  "model": "Symphony MAX 10",
+  "device": "MAX_10",
+  "platform": "unisoc",
+  "resolution": "720x1600",
+  "inch": "69x153",
+  "density": 320,
+  "smp": 8,
+  "memory": [
+    3072,
+    4096,
+    6144
+  ],
+  "storage": [
+    64000,
+    128000
+  ],
+  "extra": {
+    "board": "sp9863a",
+    "hostHvc": {
+      "host-hvc-adbkey": "hvc2",
+      "host-hvc-daemon": "hvc7",
+      "host-hvc-keymint": "hvc3",
+      "host-hvc-radio": "hvc4",
+      "host-hvc-wifi": "hvc9",
+      "host-hvc-wifi-data": "hvc10"
+    },
+    "skuCombinations": [
+      "3GB+64GB",
+      "4GB+64GB",
+      "4GB+128GB",
+      "6GB+128GB"
+    ],
+    "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
+  },
+  "updatedAt": "2026-11-20T09:54:57Z"
+}

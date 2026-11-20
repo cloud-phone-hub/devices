@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Symphony MAX 10 (symphony/MAX_10) AI 对标 gold 真机电池配置 -->
+<battery>
+  <identity technology="Li-poly" cycle_count="32" level="100" health="GOOD"
+            capacity_level="FULL" charging_state="INVALID" present="1"/>
+  <charger ac="1" usb="0" wireless="0" dock="0"
+           max_current_ua="0" max_voltage_uv="0"/>
+  <capacity full_uah="5000" counter_min="4952" counter_max="4986"/>
+  <cycle full_mv="4384" charge_mv="4400" temperature_full_decic="310"
+         temperature_charge_decic="380" current_full_ua="-55000"
+         current_charge_ua="-1800000" seconds="600"/>
+  <health_data state_of_health="99" part_status="UNSUPPORTED"
+               manufacturing_date_seconds="0" first_usage_seconds="0"/>
+</battery>

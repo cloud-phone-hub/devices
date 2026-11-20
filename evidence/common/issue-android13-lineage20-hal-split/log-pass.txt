@@ -1,0 +1,83 @@
+========================================
+=== asus/ASUS_AI2205 (13-TKQ1.220928.001-20240229) (log-pass-asus-ai2205.txt) ===
+========================================
+ 09:13:24 up 1 min,  0 users,  load average: 2.12, 0.77, 0.28
+Enforcing
+1
+stopped
+bluetooth      514     1   12373404   5172 0                   0 S android.hardware.bluetooth@1.1-service.btlinux
+system         667   486   22904604 762976 0                   0 S system_server
+u0_a57        1286   486   18182908 391564 0                   0 S com.android.systemui
+u0_a63        1859   486   17484748 319252 0                   0 S com.asus.launcher
+u0_a182       2998   486   16577648 126360 0                   0 S com.qualcomm.location
+
+========================================
+=== blu/G1130 (13-UP1A.231005.007-20260511) (log-pass-g1130.txt) ===
+========================================
+ 17:37:56 up 1 min,  0 users,  load average: 3.15, 0.96, 0.33
+Enforcing
+1
+stopped
+bluetooth      429     1   10857052   5024 0                   0 S android.hardware.bluetooth@1.1-service.btlinux
+system         458     1   10921164  11900 0                   0 S android.hardware.graphics.composer@2.4-service
+system         624   419   22873408 517352 0                   0 S system_server
+u0_a168       1222   419   18428724 282188 0                   0 S com.android.systemui
+u0_a162       1753   419   17411104 302972 0                   0 S com.android.launcher3
+
+========================================
+=== hmd/ARW (13-QP1A.190711.020-20250620) (log-pass-arw.txt) ===
+========================================
+ 09:42:03 up 1 min,  0 users,  load average: 5.25, 1.64, 0.57
+Enforcing
+1
+stopped
+bluetooth      440     1   10803812   4964 0                   0 S android.hardware.bluetooth@1.1-service.btlinux
+system         456     1   10953940  12192 0                   0 S android.hardware.graphics.composer@2.4-service
+system         543   416   23245540 442688 0                   0 S system_server
+u0_a153       1221   416   18038016 209936 0                   0 S com.google.android.setupwizard
+system        1222   416   17293816 227404 0                   0 S com.hmdglobal.app.setupwizardext
+u0_a157       1255   416   18734144 285540 0                   0 S com.android.systemui
+bluetooth     1568   416   17949044 131716 0                   0 S com.android.bluetooth
+
+========================================
+=== nubia/P616F05 (13-TP1A.220624.014-20260324) (log-pass-p616f05.txt) ===
+========================================
+ 17:45:54 up 1 min,  0 users,  load average: 3.47, 1.44, 0.53
+Enforcing
+1
+stopped
+bluetooth      426     1   10818164   5292 0                   0 S android.hardware.bluetooth@1.1-service.btlinux
+system         448     1   10969412  12212 0                   0 S android.hardware.graphics.composer@2.4-service
+system         629   418   23564736 474156 0                   0 S system_server
+u0_a336       3097   418   18590756 440796 0                   0 S com.android.systemui
+bluetooth     3363   418   17582928 140052 0                   0 S com.android.bluetooth
+u0_a329       3681   418   17848576 339732 0                   0 S com.zte.mifavor.launcher
+system        3736   418   16920100 113024 0                   0 S com.zte.mifavor.launcher.adapter
+
+========================================
+=== symphony/G27 (13-TP1A.220624.014-20240929) (log-pass-g27.txt) ===
+========================================
+ 19:10:21 up 4 min,  0 users,  load average: 1.56, 1.60, 0.74
+Enforcing
+1
+stopped
+bluetooth      428     1    2216348   4684 0                   0 S android.hardware.bluetooth@1.1-service.btlinux
+system         444     1    2294084   8392 0                   0 S android.hardware.graphics.composer@2.4-service
+system         517   411   12061860 252920 0                   0 S system_server
+u0_a166        930   411    8598008 222276 0                   0 S com.android.systemui
+u0_a160      11548   411    7925708 249968 0                   0 S com.android.launcher3
+
+========================================
+=== symphony/MAX_10 (13-TP1A.220624.014-20250212) (log-pass-max10.txt) ===
+========================================
+ 15:01:23 up 1 min,  0 users,  load average: 2.93, 1.11, 0.41
+Enforcing
+1
+stopped
+bluetooth      427     1    2249120   4392 0                   0 S android.hardware.bluetooth@1.1-service.btlinux
+system         442     1    2355532   8012 0                   0 S android.hardware.graphics.composer@2.4-service
+system         531   414   10528616 263936 0                   0 S system_server
+u0_a182        875   414    6674364 225428 0                   0 S com.android.systemui
+bluetooth     1227   414    5880196 113512 0                   0 S com.android.bluetooth
+system        1432   414    6081828 224052 0                   0 S com.android.launcher3
+

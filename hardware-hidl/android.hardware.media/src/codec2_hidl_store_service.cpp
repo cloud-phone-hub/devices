@@ -18,11 +18,16 @@ using ::android::hardware::Return;
 using ::android::hardware::Void;
 using ::android::hardware::media::bufferpool::V2_0::IClientManager;
 using ::android::hardware::media::c2::V1_0::Buffer;
+using ::android::hardware::media::c2::V1_0::FieldSupportedValuesQuery;
+using ::android::hardware::media::c2::V1_0::FieldSupportedValuesQueryResult;
 using ::android::hardware::media::c2::V1_0::IComponentInterface;
 using ::android::hardware::media::c2::V1_0::IComponentListener;
 using ::android::hardware::media::c2::V1_0::IConfigurable;
 using ::android::hardware::media::c2::V1_0::IInputSurface;
+using ::android::hardware::media::c2::V1_0::ParamDescriptor;
 using ::android::hardware::media::c2::V1_0::ParamIndex;
+using ::android::hardware::media::c2::V1_0::Params;
+using ::android::hardware::media::c2::V1_0::SettingResult;
 using ::android::hardware::media::c2::V1_0::Status;
 using ::android::hardware::media::c2::V1_0::StructDescriptor;
 using V1_0_Comp = ::android::hardware::media::c2::V1_0::IComponent;
@@ -30,8 +35,58 @@ using V1_1_Comp = ::android::hardware::media::c2::V1_1::IComponent;
 using V1_2_Comp = ::android::hardware::media::c2::V1_2::IComponent;
 using ::android::hardware::media::c2::V1_2::IComponentStore;
 
+class EmptyConfigurable : public IConfigurable {
+ public:
+  explicit EmptyConfigurable(std::string name) : name_(std::move(name)) {}
+
+  Return<uint32_t> getId() override { return 0; }
+
+  Return<void> getName(getName_cb _hidl_cb) override {
+    _hidl_cb(name_);
+    return Void();
+  }
+
+  Return<void> query(const hidl_vec<ParamIndex> &indices, bool /*mayBlock*/,
+                     query_cb _hidl_cb) override {
+    Params empty;
+    _hidl_cb(indices.size() == 0 ? Status::OK : Status::BAD_INDEX, empty);
+    return Void();
+  }
+
+  Return<void> config(const Params & /*inParams*/, bool /*mayBlock*/,
+                      config_cb _hidl_cb) override {
+    hidl_vec<SettingResult> failures;
+    Params outParams;
+    _hidl_cb(Status::OK, failures, outParams);
+    return Void();
+  }
+
+  Return<void> querySupportedParams(uint32_t /*start*/, uint32_t /*count*/,
+                                    querySupportedParams_cb _hidl_cb) override {
+    hidl_vec<ParamDescriptor> params;
+    _hidl_cb(Status::OK, params);
+    return Void();
+  }
+
+  Return<void> querySupportedValues(const hidl_vec<FieldSupportedValuesQuery> &inFields,
+                                    bool /*mayBlock*/,
+                                    querySupportedValues_cb _hidl_cb) override {
+    hidl_vec<FieldSupportedValuesQueryResult> out(inFields.size());
+    for (size_t i = 0; i < inFields.size(); ++i) {
+      out[i].status = Status::BAD_INDEX;
+    }
+    _hidl_cb(inFields.size() == 0 ? Status::OK : Status::BAD_INDEX, out);
+    return Void();
+  }
+
+ private:
+  std::string name_;
+};
+
 class EmptyComponentStore : public IComponentStore {
  public:
+  explicit EmptyComponentStore(std::string name)
+      : configurable_(new EmptyConfigurable(std::move(name))) {}
   Return<void> createComponent(const hidl_string &, const sp<IComponentListener> &,
                                const sp<IClientManager> &, createComponent_cb _hidl_cb) override {
     _hidl_cb(Status::NOT_FOUND, nullptr);
@@ -82,8 +137,11 @@ class EmptyComponentStore : public IComponentStore {
   }
 
   Return<sp<IConfigurable>> getConfigurable() override {
-    return nullptr;
+    return configurable_;
   }
+
+ private:
+  sp<IConfigurable> configurable_;
 };
 
 }  // namespace
@@ -96,7 +154,7 @@ int main(int argc, char **argv) {
     }
   }
   ::android::hardware::configureRpcThreadpool(4, true);
-  sp<IComponentStore> store = new EmptyComponentStore();
+  sp<IComponentStore> store = new EmptyComponentStore(instance);
   if (store->registerAsService(instance) != ::android::OK) {
     ALOGE("Failed to register IComponentStore@1.2/%s", instance.c_str());
     return 1;

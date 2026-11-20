@@ -1,0 +1,34 @@
+{
+  "id": 44,
+  "official": "Symphony",
+  "brand": "symphony",
+  "model": "Symphony G27",
+  "device": "G27",
+  "platform": "unisoc",
+  "resolution": "720x1612",
+  "inch": "68x152",
+  "density": 280,
+  "smp": 8,
+  "memory": [
+    3072
+  ],
+  "storage": [
+    32000
+  ],
+  "extra": {
+    "board": "sp9863a",
+    "hostHvc": {
+      "host-hvc-adbkey": "hvc2",
+      "host-hvc-daemon": "hvc7",
+      "host-hvc-keymint": "hvc3",
+      "host-hvc-radio": "hvc4",
+      "host-hvc-wifi": "hvc9",
+      "host-hvc-wifi-data": "hvc10"
+    },
+    "skuCombinations": [
+      "3GB+32GB"
+    ],
+    "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
+  },
+  "updatedAt": "2026-11-20T09:51:32Z"
+}

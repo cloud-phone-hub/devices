@@ -198,6 +198,32 @@ std::vector<uint8_t> handleVirtualHciCommand(const HciPacket &cmd) {
       return buildVirtualCommandComplete(opcode, {0x00, 0x00, 0x04, 0x40, 0x08, 0x00, 0x08, 0x00});
     case 0x1009:  // Read BD_ADDR
       return buildVirtualCommandComplete(opcode, {0x00, 0x56, 0x34, 0x12, 0x78, 0x9a, 0x22});
+    case 0x0c14: {  // Read Local Name (Status + 248B UTF-8 Name)
+      std::vector<uint8_t> p(249, 0x00);
+      const char kName[] = "Android Bluetooth";
+      std::memcpy(p.data() + 1, kName, sizeof(kName) - 1);
+      return buildVirtualCommandComplete(opcode, p);
+    }
+    case 0x0c23:  // Read Class of Device
+      return buildVirtualCommandComplete(opcode, {0x00, 0x0c, 0x02, 0x5a});
+    case 0x0c25:  // Read Voice Setting
+      return buildVirtualCommandComplete(opcode, {0x00, 0x60, 0x00});
+    case 0x0c38:  // Read Number of Supported IAC
+      return buildVirtualCommandComplete(opcode, {0x00, 0x02});
+    case 0x0c39:  // Read Current IAC LAP
+      return buildVirtualCommandComplete(opcode, {0x00, 0x01, 0x33, 0x8b, 0x9e});
+    case 0x0c44:  // Read Inquiry Mode
+      return buildVirtualCommandComplete(opcode, {0x00, 0x02});
+    case 0x0c46:  // Read Page Scan Type
+      return buildVirtualCommandComplete(opcode, {0x00, 0x00});
+    case 0x0c51: {  // Read Extended Inquiry Response (Status + FEC + 240B EIR)
+      std::vector<uint8_t> p(242, 0x00);
+      return buildVirtualCommandComplete(opcode, p);
+    }
+    case 0x0c55:  // Read Simple Pairing Mode
+      return buildVirtualCommandComplete(opcode, {0x00, 0x01});
+    case 0x0c58:  // Read Inquiry Response Transmit Power Level
+      return buildVirtualCommandComplete(opcode, {0x00, 0x00});
     case 0x0c6d:  // Read LE Host Support
       return buildVirtualCommandComplete(opcode, {0x00, 0x01, 0x00});
     case 0x100b:  // Read Local Supported Codecs
@@ -230,9 +256,8 @@ std::vector<uint8_t> handleVirtualHciCommand(const HciPacket &cmd) {
       return buildVirtualCommandComplete(opcode, {0x00, 0x00, 0x00, 0x00, 0x00});
     case 0x2060:  // LE Read Buffer Size [v2]
       return buildVirtualCommandComplete(opcode, {0x00, 0xfb, 0x00, 0x0f, 0xfb, 0x00, 0x08});
-    case 0xfd53:  // Android Vendor: LE Get Vendor Capabilities
-      return buildVirtualCommandComplete(
-          opcode, {0x00, 0x04, 0x01, 0x00, 0x04, 0x80, 0x01, 0x10, 0x01, 0x62, 0x00, 0x10, 0x00, 0x00, 0x00});
+    case 0xfd53:  // Android Vendor: LE Get Vendor Capabilities -> Unknown HCI Command (0x01)
+      return buildVirtualCommandComplete(opcode, {0x01});
     default: {
       // Inquiry / Create Connection 等异步命令回 Command Status，其余回 Command Complete OK
       if (opcode == 0x0401 || opcode == 0x0405 || opcode == 0x0419) {

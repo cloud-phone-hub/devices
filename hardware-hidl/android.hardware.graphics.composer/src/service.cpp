@@ -40,7 +40,12 @@ namespace {
 // loadComposer 打开 hwc2 模块并用 HwcHal 包起来，最后交给 Composer::create。
 android::sp<IComposer> loadComposer() {
     const hw_module_t* module = nullptr;
-    int err = hw_get_module(HWC_HARDWARE_MODULE_ID, &module);
+    // 云机统一使用 drm_hwcomposer (hwcomposer.drm.so)，而各机型 vendor/build.prop 为对齐真机指纹
+    // 常保留 ro.hardware.hwcomposer=unisoc/mtk 等原厂值；故优先显式加载 "drm" 实现。
+    int err = hw_get_module_by_class(HWC_HARDWARE_MODULE_ID, "drm", &module);
+    if (err != 0) {
+        err = hw_get_module(HWC_HARDWARE_MODULE_ID, &module);
+    }
     if (err != 0) {
         ALOGE("hw_get_module(%s) 失败: %d", HWC_HARDWARE_MODULE_ID, err);
         return nullptr;

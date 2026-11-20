@@ -1,0 +1,189 @@
+========================================
+=== log-fail-refind-timeout0.txt ===
+========================================
+# CDH: rEFInd 引导策略固化（零等待 + 合并 cmdline + vbmeta）
+#
+# Copyright (C) 2024 The LineageOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+scanfor manual
+timeout 0
+
+menuentry "LineageOS 20.0 (Kernel version 5.15)" {
+    icon /EFI/BOOT/icons/os_lineage.png
+    ostype Linux
+    loader kernel
+    initrd combined-ramdisk.img
+    options "log_buf_len=4M loop.max_part=7 printk.devkmsg=on rw androidboot.boot_devices=any androidboot.first_stage_console=0 androidboot.verifiedbootstate=green console=tty0 androidboot.console=hvc0 androidboot.hardware=kalama console=ttyAMA0 androidboot.veritymode=enforcing androidboot.mode=normal androidboot.vbmeta.avb_version=1.2 androidboot.vbmeta.hash_alg=sha256 androidboot.slot_suffix=_a androidboot.vbmeta.digest=fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f androidboot.vbmeta.device_state=locked androidboot.product.hardware.sku=WW_AI2205 androidboot.secureboot=1 androidboot.slot=a androidboot.veritymode.managed=yes"
+    submenuentry "Enable VirtWifi" {
+        add_options "androidboot.wifi_impl=virt_wifi"
+    }
+    submenuentry "SELinux Permissive" {
+        add_options "androidboot.selinux=permissive"
+    }
+    submenuentry "On phone" {
+        add_options "androidboot.selinux=permissive virtio_gpu.force_resolution=576x1024 androidboot.low_perf=1"
+    }
+    submenuentry "On phone (nobootanim=1)" {
+        add_options "androidboot.selinux=permissive virtio_gpu.force_resolution=576x1024 androidboot.low_perf=1 androidboot.nobootanim=1"
+    }
+    submenuentry "graphics=swiftshader" {
+        add_options "androidboot.graphics=swiftshader"
+    }
+    submenuentry "low_perf=1 + nobootanim=1" {
+        add_options "androidboot.low_perf=1 androidboot.nobootanim=1"
+    }
+    submenuentry "graphics=swiftshader + <the above one>" {
+        add_options "androidboot.graphics=swiftshader androidboot.low_perf=1 androidboot.nobootanim=1"
+    }
+    submenuentry "Boot GSI from /dev/block/sda" {
+        add_options "androidboot.fstab_suffix=virtio.gsi.sda"
+    }
+    submenuentry "Boot GSI from /dev/block/vdc" {
+        add_options "androidboot.fstab_suffix=virtio.gsi.vdc"
+    }
+}
+
+
+========================================
+=== log-fail-boot-and-selinux.txt ===
+========================================
+] init: Loaded 2 kernel modules took 519 ms
+[    1.110329][    T1] init: Copied ramdisk prop to /second_stage_resources/system/etc/ramdisk/build.prop
+[    1.115129][    T1] init: [libfs_mgr]ReadFstabFromDt(): failed to read fstab from dt
+[    1.121724][    T1] cdh_redirect: forward /mnt/vendorpatch/odm/etc/fstab.kalama
+[    1.126253][    T1] cdh_redirect: forward /mnt/vendorpatch/vendor/etc/fstab.kalama
+[    1.131292][    T1] init: Using Android DT directory /proc/device-tree/firmware/android/
+[    1.138954][    T1] init: Failed to read vbmeta partitions.
+setup for '/metadata'
+[    1.153988][    T1] init: [libfs_mgr]Invalid ext4 superblock on '/dev/block/by-name/metadata'
+[    1.159041][    T1] init: [libfs_mgr]Created logical partition system_dlkm_a on device /dev/block/dm-0
+  1.160185][    T1] init: [libfs_mgr]Skipping zero-length logical partition: system_dlkm_b
+[    1.171719][    T1] init: [libfs_mgr]Created logical partition vendor_dlkm_a on device /dev/block/dm-1
+[    1.172801][    T1] init: [libfs_mgr]Skipping zero-length logical partition: vendor_dlkm_b
+[    1.183286][    T1] init: [libfs_mgr]Created logical partition product_a on device /dev/block/dm-2
+[    1.184390][    T1] init: [libfs_mgr]Skipping zero-length logical partition: product_b
+[    1.195071][    T1] init: [libfs_mgr]Created logical partition system_a on device /dev/block/dm-3
+[    1.196310][    T1] init: [libfs_mgr]Skipping zero-length logical partition: system_b
+[    1.204220][    T1] init: [libfs_mgr]Created logical partition system_ext_a on device /dev/block/dm-4
+[    1.208928][    T1] init: [libfs_mgr]Skipping zero-length logical partition: system_ext_b
+[    1.210079][    T1] init: [libfs_mgr]Created logical partition odm_a on device /dev/block/dm-5
+[    1.214594][    T1] init: [libfs_mgr]Skipping zero-length logical partition: odm_b
+[    1.223626][    T1] init: [libfs_mgr]Created logical partition vendor_a on device /dev/block/dm-6
+[    1.224707][    T1] init: [libfs_mgr]Skipping zero-length logical partition: vendor_b
+[    1.229359][    T1] init: DSU not detected, proceeding with normal boot
+[    1.233886][    T1] init: AVB is not enabled, skip verity setup for '/system'
+[    1.242076][    T1] init: [libfs_mgr]superblock s_max_mnt_count:65535,/dev/block/dm-3
+[    1.246505][    T1] EXT4-fs (dm-3): mounted filesystem without journal. Opts: barrier=1,discard. Quota mode: none.
+[    1.247656][    T1] init: [libfs_mgr]__mount(source=/dev/block/dm-3,target=/system,type=ext4)=0: Success
+Switching root to '/system'
+[    1.261523][    T1] init: AVB is not enabled, skip verity setup for '/system_ext'
+[    1.266127][    T1] init: [libfs_mgr]superblock s_max_mnt_count:65535,/dev/block/dm-4
+[    1.270997][    T1] EXT4-fs (dm-4): mounted filesystem without journal. Opts: barrier=1,discard. Quota mode: none.
+[    1.272133][    T1] init: [libfs_mgr]__mount(source=/dev/block/dm-4,target=/system_ext,type=ext4)=0: Success
+[    1.276745][    T1] init: AVB is not enabled, skip verity setup for '/product'
+[    1.285377][    T1] init: [libfs_mgr]superblock s_max_mnt_count:65535,/dev/block/dm-2
+[    1.290536][    T1] EXT4-fs (dm-2): mounted filesystem without journal. Opts: barrier=1,discard. Quota mode: none.
+[    1.291677][    T1] init: [libfs_mgr]__mount(source=/dev/block/dm-2,target=/product,type=ext4)=0: Success
+[    1.296368][    T1] init: AVB is not enabled, skip verity setup for '/vendor'
+[    1.303997][    T1] init: [libfs_mgr]superblock s_max_mnt_count:65535,/dev/block/dm-6
+[    1.309406][    T1] EXT4-fs (dm-6): mounted filesystem without journal. Opts: barrier=1,discard. Quota mode: none.
+[    1.310683][    T1] init: [libfs_mgr]__mount(source=/dev/block/dm-6,target=/vendor,type=ext4)=0: Success
+is not enabled, skip verity setup for '/vendor_dlkm'
+[    1.324168][    T1] init: [libfs_mgr]superblock s_max_mnt_count:65535,/dev/block/dm-1
+[    1.329203][    T1] EXT4-fs (dm-1): mounted filesystem without journal. Opts: barrier=1,discard. Quota mode: none.
+[    1.330465][    T1] init: [libfs_mgr]__mount(source=/dev/block/dm-1,target=/vendor_dlkm,type=ext4)=0: Success
+[    1.335379][    T1] init: AVB is not enabled, skip verity setup for '/system_dlkm'
+ibfs_mgr]superblock s_max_mnt_count:65535,/dev/block/dm-0
+[    1.349105][    T1] EXT4-fs (dm-0): mounted filesystem without journal. Opts: barrier=1,discard. Quota mode: none.
+[    1.350320][    T1] init: [libfs_mgr]__mount(source=/dev/block/dm-0,target=/system_dlkm,type=ext4)=0: Success
+[    1.355041][    T1] cdh_redirect: forward /odm
+[    1.359600][    T1] cdh_redirect: forward /odm
+  1.360156][    T1] cdh_redirect: forward /odm
+[    1.370684][    T1] init: AVB is not enabled, skip verity setup for '/odm'
+[    1.375152][    T1] cdh_redirect: forward /odm
+[    1.379455][    T1] cdh_redirect: forward /odm
+[    1.386544][    T1] init: [libfs_mgr]superblock s_max_mnt_count:65535,/dev/block/dm-5
+[    1.395190][    T1] cdh_redirect: forward /odm
+[    1.406207][    T1] EXT4-fs (dm-5): mounted filesystem without journal. Opts: barrier=1,discard. Quota mode: none.
+[    1.407380][    T1] init: [libfs_mgr]__mount(source=/dev/block/dm-5,target=/odm,type=ext4)=0: Success
+[    1.411887][    T1] init: AVB is not enabled, skip verity setup for '/mnt/vendorpatch'
+[    1.420844][    T1] init: [libfs_mgr]superblock s_max_mnt_count:65535,/dev/block/vdc
+[    1.428237][    T1] EXT4-fs (vdc): write access unavailable, skipping orphan cleanup
+   T1] EXT4-fs (vdc): mounted filesystem with ordered data mode. Opts: . Quota mode: none.
+[    1.433919][    T1] init: [libfs_mgr]__mount(source=/dev/block/vdc,target=/mnt/vendorpatch,type=ext4)=0: Success
+[    1.438730][    T1] init: AVB is not enabled, skip verity setup for '/mnt/vendor/persist'
+[    1.446775][    T1] init: [libfs_mgr]superblock s_max_mnt_count:65535,/dev/block/by-name/vendor_persist
+[    1.451396][    T1] init: [libfs_mgr]Filesystem on /dev/block/by-name/vendor_persist was not cleanly shutdown; state flags: 0x1, incompat feature flags: 0x22c6
+[    1.457617][    T1] EXT4-fs (vda9): Ignoring removed nomblk_io_submit option
+[    1.464250][    T1] EXT4-fs (vda9): recovery complete
+    1.465236][    T1] EXT4-fs (vda9): mounted filesystem with ordered data mode. Opts: errors=remount-ro,nomblk_io_submit. Quota mode: none.
+[    1.470486][    T1] init: [libfs_mgr]check_fs(): mount(/dev/block/by-name/vendor_persist,/mnt/vendor/persist,ext4)=0: Success
+[    1.479660][  T131] ext4-rsv-conver (131) used greatest stack depth: 14544 bytes left
+[    1.481057][    T1] init: [libfs_mgr]umount_retry(): unmount(/mnt/vendor/persist) succeeded
+[    1.492260][    T1] init: [libfs_mgr]Running /system/bin/e2fsck on /dev/block/vda9
+not log to file /dev/fscklogs/log
+[    1.497648][  T133] logwrapper: executing /system/bin/e2fsck failed: No such file or directory
+99099][  T133] logwrapper: 
+[    1.513403][    T1] logwrapper: 
+qemu-system-aarch64: terminating on signal 15 from pid 5539 (<unknown process>)
+c
+
+========================================
+=== log-fail-refind-ansi.txt ===
+========================================
+00000000: 1b5b 324a 1b5b 3031 3b30 3148 1b5b 3d33  .[2J.[01;01H.[=3
+00000010: 681b 5b32 4a1b 5b30 313b 3031 4812 0000  h.[2J.[01;01H...
+00000020: 0008 0000 00e0 2202 00a3 1603 00         ......"......
+
+========================================
+=== log-fail-base-typeattr-gpu.txt ===
+========================================
+11-20 08:33:44.587 16881 16920 I MESA    : Using IMapper v4 API
+11-20 08:33:44.587 16881 16920 W EGL-MAIN: Failed to open any DRM device
+11-20 08:33:44.589 16881 16920 W EGL-MAIN: egl: failed to create dri2 screen
+11-20 08:33:44.589 16881 16920 W libEGL  : eglInitialize(0xb400007715533b30) failed (EGL_NOT_INITIALIZED)
+11-20 08:33:44.589 16881 16920 F OpenGLRenderer: Failed to create context, error = EGL_NOT_INITIALIZED
+11-20 08:34:31.980 27686 27686 W RenderThread: type=1400 audit(0.0:7934): avc:  denied  { getattr } for  path="/dev/dri/card0" dev="tmpfs" ino=469 scontext=u:r:system_app:s0 tcontext=u:object_r:graphics_device:s0 tclass=chr_file permissive=0
+11-20 08:34:31.980 27686 27686 W RenderThread: type=1400 audit(0.0:7935): avc:  denied  { search } for  name="0000:00:03.0" dev="sysfs" ino=6219 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_gpu:s0 tclass=dir permissive=0
+11-20 08:34:32.172 27643 27643 W RenderThread: type=1400 audit(0.0:7953): avc:  denied  { getattr } for  path="/dev/dri/card0" dev="tmpfs" ino=469 scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:graphics_device:s0 tclass=chr_file permissive=0 app=com.android.systemui
+11-20 08:34:32.172 27643 27643 W RenderThread: type=1400 audit(0.0:7954): avc:  denied  { search } for  name="0000:00:03.0" dev="sysfs" ino=6219 scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:sysfs_gpu:s0 tclass=dir permissive=0 app=com.android.systemui
+
+========================================
+=== log-fail-sphal-hidl-mapper.txt ===
+========================================
+11-20 08:46:30.111  1282  1849 W libc    : Access denied finding property "vendor.gralloc.enable_logs"
+11-20 08:46:30.112   208   208 E SELinux : avc:  denied  { find } for interface=vendor.qti.hardware.display.mapper::IQtiMapper sid=u:r:platform_app:s0:c512,c768 pid=1282 scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:default_android_hwservice:s0 tclass=hwservice_manager permissive=0
+11-20 08:46:30.112   512   535 E         : Failed to allocate. Failed to decode buffer descriptor: -22.
+11-20 08:46:30.112  1282  1849 E GraphicBufferAllocator: Failed to allocate (1080 x 140) layerCount 1 format 1 usage b22: -2147483648
+11-20 08:46:30.112  1282  1849 E BufferQueueProducer: [VRI[ScreenDecorOverlay]#0(BLAST Consumer)0](id:50200000000,api:1,p:1282,c:1282) allocateBuffers: failed to allocate buffer (0 x 0, format 1, usage 0x200)
+
+========================================
+=== log-fail-bt-hidl-ansi.txt ===
+========================================
+11-20 08:46:34.487   514   514 I CdhBtHidl: Bluetooth HIDL 1.1 initialized (mode=virtual)
+11-20 08:46:34.497  1524  2495 F bt_stack: [FATAL:controller.cc(456)] Check failed: page_number == 0.
+11-20 08:46:34.497  1524  2495 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 2495 (module_wrapper), pid 1524 (droid.bluetooth)
+
+========================================
+=== log-fail-powervr-gralloc-sp9863a.txt ===
+========================================
+=== G27 patch.img vendor/lib64/hw (before fix) ===
+    617  120777 (7)      0      0      17 20-Nov-2026 18:00 android.hardware.graphics.mapper@4.0-impl.so -> mapper.minigbm.so
+    621  100644 (1)      0      0   20072  1-Jan-2009 08:00 gralloc.default.so (lineage-20.0 AOSP stub; self-built 14088B gralloc.minigbm.so deleted before rename)
+    622  100644 (1)      0      0  201952  1-Jan-2009 08:00 hwcomposer.drm.so
+    623  100644 (1)      0      0  290776  1-Jan-2009 08:00 hwcomposer.sp9863a.so
+    625  100644 (1)      0      0  243320  1-Jan-2009 08:00 mapper.minigbm.so
+
+=== G27 logcat & runtime symptoms (before fix, G27_13-TP1A.220624.014-20240929/1) ===
+11-20 18:43:34.658  1998  2853 E IMGSRV  : :205: GrallocOpenPVRServices: Failed to open services connection (PVRSRV_ERROR_INIT_FAILURE)
+11-20 18:43:34.660  1998  2853 E IMGSRV  : :186: buffer_unisoc_init: Failed to open gralloc.
+11-20 18:43:34.662  1998  2853 W EGL-MAIN: failed to get driver name for fd -1
+11-20 18:43:34.662  1998  2853 W EGL-MAIN: MESA-LOADER: failed to retrieve device information
+11-20 18:43:34.664  1998  2853 E OpenGLRenderer: Device claims wide gamut support, cannot find matching config, error = EGL_SUCCESS
+:/ # dumpsys SurfaceFlinger
+Error with service 'SurfaceFlinger' while dumping: FAILED_TRANSACTION
+qemu.log: qemu-system-aarch64: cgl-headless 大帧 720x1600: blit=0.1 ... (no 720x1612 SurfaceFlinger frame; VNC screenshot 3.4K pure black)
+
