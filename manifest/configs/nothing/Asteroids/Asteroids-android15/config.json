@@ -3,7 +3,13 @@
   "deviceId": 18,
   "name": "Asteroids-android15",
   "androidVersion": "15",
+  "systemAndroidVersions": [
+    "15"
+  ],
+  "vendorAndroidVersion": "14",
   "lineageVersion": "lineage-22.2",
-  "extra": {},
+  "extra": {
+    "versionRelation": "system=A15 (云机 buildId 前缀) + vendor=A14；当前模版沿用历史 A15 -> lineage-22.2（重跑 prepare 将按 vendor=A14 切换至 lineage-21.0）"
+  },
   "updatedAt": "2026-11-06T05:37:49Z"
 }

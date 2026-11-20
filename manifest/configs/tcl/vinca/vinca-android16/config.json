@@ -3,7 +3,13 @@
   "deviceId": 37,
   "name": "vinca-android16",
   "androidVersion": "16",
+  "systemAndroidVersions": [
+    "16"
+  ],
+  "vendorAndroidVersion": "15",
   "lineageVersion": "lineage-23.2",
-  "extra": {},
+  "extra": {
+    "versionRelation": "system=A16 (云机 buildId 前缀) + vendor=A15；当前模版沿用历史 A16 -> lineage-23.2（重跑 prepare 将按 vendor=A15 切换至 lineage-22.2）"
+  },
   "updatedAt": "2026-11-19T14:35:11Z"
 }

@@ -3,7 +3,13 @@
   "deviceId": 30,
   "name": "G1130-android13",
   "androidVersion": "13",
+  "systemAndroidVersions": [
+    "14"
+  ],
+  "vendorAndroidVersion": "13",
   "lineageVersion": "lineage-20.0",
-  "extra": {},
+  "extra": {
+    "versionRelation": "system=A14 (云机 buildId 前缀) + vendor=A13 -> lineage-20.0（GRF 跨代：按 vendor 版本选定 Lineage 底包）"
+  },
   "updatedAt": "2026-11-09T03:16:51Z"
 }

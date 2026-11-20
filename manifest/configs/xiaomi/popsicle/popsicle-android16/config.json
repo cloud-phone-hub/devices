@@ -3,7 +3,14 @@
   "deviceId": 5,
   "name": "popsicle-android16",
   "androidVersion": "16",
+  "systemAndroidVersions": [
+    "16",
+    "17"
+  ],
+  "vendorAndroidVersion": "16",
   "lineageVersion": "lineage-23.2",
-  "extra": {},
+  "extra": {
+    "versionRelation": "system=A16/A17 (云机 buildId 前缀) + vendor=A16 -> lineage-23.2（GRF 跨代：按 vendor 版本选定 Lineage 底包）"
+  },
   "updatedAt": "2026-11-07T03:53:23Z"
 }

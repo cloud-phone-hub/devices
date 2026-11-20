@@ -3,7 +3,13 @@
   "deviceId": 1,
   "name": "oriole-android17",
   "androidVersion": "17",
+  "systemAndroidVersions": [
+    "17"
+  ],
+  "vendorAndroidVersion": "17",
   "lineageVersion": "lineage-24.0",
-  "extra": {},
+  "extra": {
+    "versionRelation": "system=A17 + vendor=A17 -> lineage-24.0（同代对齐：system 决定 buildId，vendor 决定 Lineage 底包）"
+  },
   "updatedAt": "2026-11-06T05:37:49Z"
 }

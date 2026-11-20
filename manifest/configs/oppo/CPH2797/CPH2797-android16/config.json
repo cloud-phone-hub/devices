@@ -3,7 +3,13 @@
   "deviceId": 21,
   "name": "CPH2797-android16",
   "androidVersion": "16",
+  "systemAndroidVersions": [
+    "16"
+  ],
+  "vendorAndroidVersion": "16",
   "lineageVersion": "lineage-23.2",
-  "extra": {},
+  "extra": {
+    "versionRelation": "system=A16 + vendor=A16 -> lineage-23.2（同代对齐：system 决定 buildId，vendor 决定 Lineage 底包）"
+  },
   "updatedAt": "2026-11-06T05:37:49Z"
 }

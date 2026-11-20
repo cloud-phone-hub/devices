@@ -3,7 +3,10 @@
   "deviceId": 15,
   "name": "HED-AL00-android15",
   "androidVersion": "15",
+  "vendorAndroidVersion": "15",
   "lineageVersion": "lineage-22.2",
-  "extra": {},
+  "extra": {
+    "versionRelation": "vendor=A15 -> lineage-22.2（按 vendor 版本选定 Lineage 底包）"
+  },
   "updatedAt": "2026-11-06T05:37:49Z"
 }
