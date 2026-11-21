@@ -174,10 +174,16 @@ std::vector<uint8_t> handleVirtualHciCommand(const HciPacket &cmd) {
       p[6] = 0xc0;
       p[15] = 0xe8;
       p[16] = 0x3f;
+      p[21] = 0x10;  // Octet 20 bit 4: Read Encryption Key Size (Android 14+ controller.cc 强校验)
       p[26] = 0xf7;
       p[27] = 0xff;
       p[28] = 0xff;
       return buildVirtualCommandComplete(opcode, p);
+    }
+    case 0x1408: {  // Read Encryption Key Size (Status + Connection_Handle + Key_Size)
+      uint8_t lo = (cmd.size() >= 4) ? cmd[3] : 0x00;
+      uint8_t hi = (cmd.size() >= 5) ? cmd[4] : 0x00;
+      return buildVirtualCommandComplete(opcode, {0x00, lo, hi, 0x10});
     }
     case 0x1003:  // Read Local Supported Features
       return buildVirtualCommandComplete(opcode, {0x00, 0xff, 0xfe, 0x8f, 0xfe, 0xd8, 0x3f, 0x5b, 0x87});
@@ -258,7 +264,14 @@ std::vector<uint8_t> handleVirtualHciCommand(const HciPacket &cmd) {
       return buildVirtualCommandComplete(opcode, {0x00, 0xfb, 0x00, 0x0f, 0xfb, 0x00, 0x08});
     case 0xfd53:  // Android Vendor: LE Get Vendor Capabilities -> Unknown HCI Command (0x01)
       return buildVirtualCommandComplete(opcode, {0x01});
+    case 0xfd5e:  // Android Vendor: Bluetooth Quality Report (BQR) -> Status + 4B Mask
+      return buildVirtualCommandComplete(opcode, {0x00, 0x00, 0x00, 0x00, 0x00});
     default: {
+      // 未实现的 Vendor Specific Command (OGF 0x3f, 0xfc00..0xffff) 回 Unknown HCI Command (0x01)，
+      // 避免蓝牙栈因收到 Success 但参数长度为 1B 触发长度断言崩溃。
+      if ((opcode & 0xfc00) == 0xfc00) {
+        return buildVirtualCommandComplete(opcode, {0x01});
+      }
       // Inquiry / Create Connection 等异步命令回 Command Status，其余回 Command Complete OK
       if (opcode == 0x0401 || opcode == 0x0405 || opcode == 0x0419) {
         return {0x0f, 0x04, 0x00, 0x01, static_cast<uint8_t>(opcode & 0xff),

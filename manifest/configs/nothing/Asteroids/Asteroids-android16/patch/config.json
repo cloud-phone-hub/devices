@@ -1,4 +1,0 @@
-{
-  "note": "09_build_vendor（pruneUnsupportedPlatformPermsCIL）已按 Asteroids 官方 BP2A 平台 CIL 自动裁剪 2 项未声明 SELinux 权限及 4 条规则（netlink_route_socket:nlmsg 与 system:firmware_load），无需 11_build_patch 再次改写 vendor_sepolicy.cil。",
-  "vendor-cil-rewrite": []
-}

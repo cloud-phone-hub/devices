@@ -1,9 +1,0 @@
-{
-  "fstab": "volcano",
-  "cmdline": [
-    "androidboot.product.hardware.sku=Asteroids",
-    "androidboot.secureboot=1",
-    "androidboot.slot=a",
-    "androidboot.veritymode.managed=yes"
-  ]
-}

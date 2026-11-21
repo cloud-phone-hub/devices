@@ -1,9 +1,0 @@
-{
-  "fstab": "qcom",
-  "cmdline": [
-    "androidboot.product.hardware.sku=Meizu_22_CN",
-    "androidboot.secureboot=1",
-    "androidboot.slot=a",
-    "androidboot.veritymode.managed=yes"
-  ]
-}

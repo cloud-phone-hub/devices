@@ -1,3 +1,9 @@
 {
-  "fstab": "mt6991"
+  "fstab": "mt6991",
+  "cmdline": [
+    "androidboot.product.hardware.sku=dsds",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ]
 }

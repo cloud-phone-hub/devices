@@ -1,0 +1,9 @@
+{
+  "cmdline": [
+    "androidboot.product.hardware.sku=pa3qzcx",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ],
+  "fstab": "qcom"
+}

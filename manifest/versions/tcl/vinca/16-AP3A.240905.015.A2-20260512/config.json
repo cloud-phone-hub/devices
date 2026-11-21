@@ -2,7 +2,7 @@
   "id": 45,
   "buildId": "16-AP3A.240905.015.A2-20260512",
   "deviceId": 37,
-  "configId": 53,
+  "configId": 66,
   "osVersion": "16-AP3A.240905.015.A2-20260512",
   "buildDate": "20260512",
   "securityPatch": "2026-05-05",
@@ -12,16 +12,16 @@
   "extra": {
     "comment": "由 cdh-pipeline prepare 从 TCL-T517.zip (vendor/build.prop) 自动生成。",
     "osVersion": "16-AP3A.240905.015.A2-20260512",
-    "securityPatch": "2026-05-05",
     "partitionAndroidVersions": {
+      "odm": "15",
+      "odm_dlkm": "15",
+      "product": "16",
       "system": "16",
       "system_ext": "16",
-      "product": "16",
       "vendor": "15",
-      "odm": "15",
-      "vendor_dlkm": "15",
-      "odm_dlkm": "15"
-    }
+      "vendor_dlkm": "15"
+    },
+    "securityPatch": "2026-05-05"
   },
-  "updatedAt": "2026-11-19T14:35:12Z"
+  "updatedAt": "2026-11-20T16:55:32Z"
 }

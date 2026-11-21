@@ -1,0 +1,371 @@
+{
+  "cpufreq": {
+    "available-governors": [
+      "sugov_ext",
+      "conservative",
+      "powersave",
+      "performance",
+      "schedutil"
+    ],
+    "bogo-mips": "26.00",
+    "driver": "mt-cpufreq",
+    "governor": "sugov_ext",
+    "package-per-cluster": false,
+    "policies": [
+      {
+        "available-frequencies": [
+          2000000,
+          1900000,
+          1800000,
+          1750000,
+          1700000,
+          1600000,
+          1500000,
+          1400000,
+          1300000,
+          1200000,
+          1100000,
+          1000000,
+          900000,
+          725000,
+          650000,
+          600000
+        ],
+        "capacity": 383,
+        "cpus": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "cur-freq": 1000000,
+        "implementer": "0x41",
+        "max-freq": 2000000,
+        "midr": "0x00000000412fd050",
+        "min-freq": 600000,
+        "part": "0xd05",
+        "policy": 0,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 2
+      },
+      {
+        "available-frequencies": [
+          2200000,
+          2100000,
+          2000000,
+          1900000,
+          1800000,
+          1750000,
+          1700000,
+          1600000,
+          1500000,
+          1400000,
+          1300000,
+          1200000,
+          1100000,
+          1000000,
+          900000,
+          725000
+        ],
+        "capacity": 1024,
+        "cpus": [
+          6,
+          7
+        ],
+        "cur-freq": 1100000,
+        "implementer": "0x41",
+        "max-freq": 2200000,
+        "midr": "0x00000000414fd0b0",
+        "min-freq": 725000,
+        "part": "0xd0b",
+        "policy": 6,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 4
+      }
+    ],
+    "scaling-readable": false,
+    "transition-latency": 1000
+  },
+  "external": [
+    "cdh_redirect",
+    "device_info",
+    "input_identity",
+    "kernelsu",
+    "virtio_media"
+  ],
+  "input": {
+    "keyboard": {
+      "bus": 25,
+      "name": "mtk-kpd",
+      "product": 0,
+      "vendor": 0,
+      "version": 0
+    },
+    "tablet": false,
+    "touch": {
+      "abs-to-mt": true,
+      "abs-x-max": 11520,
+      "abs-xy": true,
+      "abs-y-max": 25792,
+      "bus": 24,
+      "mt-pressure": false,
+      "mt-slots": 10,
+      "name": "fts_ts",
+      "product": 2,
+      "touch-keys": [
+        116,
+        143,
+        354
+      ],
+      "vendor": 1,
+      "version": 256
+    }
+  },
+  "input_identity": {
+    "aligns": [
+      {
+        "keys": [
+          "KEY_VOLUMEDOWN"
+        ],
+        "name": "mtk-kpd"
+      }
+    ],
+    "devices": [
+      {
+        "bus": 25,
+        "keys": [
+          "KEY_PLAYPAUSE",
+          "BTN_1",
+          "BTN_2",
+          "KEY_VOICECOMMAND"
+        ],
+        "name": "mt6835-mt6359 Headset Jack",
+        "phys": "ALSA",
+        "switches": [
+          "SW_HEADPHONE_INSERT",
+          "SW_MICROPHONE_INSERT",
+          "SW_LINEOUT_INSERT",
+          "SW_JACK_PHYSICAL_INSERT"
+        ]
+      },
+      {
+        "bus": 25,
+        "keys": [
+          "KEY_VOLUMEUP",
+          "KEY_POWER"
+        ],
+        "name": "mtk-pmic-keys",
+        "product": 1,
+        "vendor": 1,
+        "version": 1
+      }
+    ],
+    "goodix_fp": false,
+    "touch_major": true
+  },
+  "redirect": [
+    {
+      "from": "/vendor/etc",
+      "to": "/mnt/vendorpatch/vendor/etc",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/bin",
+      "to": "/mnt/vendorpatch/vendor/bin",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/lib",
+      "to": "/mnt/vendorpatch/vendor/lib",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/lib64",
+      "to": "/mnt/vendorpatch/vendor/lib64",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/build.prop",
+      "to": "/mnt/vendorpatch/vendor/build.prop",
+      "type": "file"
+    },
+    {
+      "from": "/vendor/ueventd.rc",
+      "to": "/mnt/vendorpatch/vendor/ueventd.rc",
+      "type": "file"
+    },
+    {
+      "from": "/vendor_dlkm/lib",
+      "to": "/mnt/vendorpatch/vendor_dlkm/lib",
+      "type": "dir"
+    },
+    {
+      "from": "/odm",
+      "to": "/odm",
+      "type": "file"
+    },
+    {
+      "from": "/odm",
+      "to": "/mnt/vendorpatch/odm",
+      "type": "dir"
+    },
+    {
+      "from": "/system/lib/modules",
+      "to": "/mnt/vendorpatch/vendor_dlkm/lib/modules",
+      "type": "dir"
+    },
+    {
+      "from": "/system/bin/update_verifier",
+      "to": "/mnt/vendorpatch/system/bin/update_verifier",
+      "type": "file"
+    },
+    {
+      "from": "/vendor/lib64/mt6835/libdpframework.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/egl/libEGL_mesa.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/lib64/egl/libGLES_meow.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/egl/libEGL_meow.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/lib64/egl/libMEOW_qt.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/egl/libGLESv1_CM_meow.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/lib64/libgpu_aux.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/egl/libGLESv2_meow.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/lib64/libgralloc_extra.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/hw/gralloc.default.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/lib64/libFrameRecord.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/android.hardware.graphics.allocator@3.0.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/lib64/egl/libMEOW_data.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/android.hardware.graphics.common-V6-ndk.so",
+      "type": "maps"
+    },
+    {
+      "from": "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service",
+      "to": "/mnt/vendorpatch/vendor/bin/hw/cdh_audio_parameter_parser",
+      "type": "file"
+    }
+  ],
+  "thermal": {
+    "zones": [
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "soc_max"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu_big1"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu_big2"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu_big3"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu_big4"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu_little1"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu_little2"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu_little3"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "cpu_little4"
+      },
+      {
+        "base-temp-mc": 30200,
+        "jitter-mc": 220,
+        "type": "gpu2"
+      },
+      {
+        "base-temp-mc": 30200,
+        "jitter-mc": 220,
+        "type": "gpu1"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "soc1"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "soc2"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "soc3"
+      },
+      {
+        "base-temp-mc": 31500,
+        "jitter-mc": 280,
+        "type": "soc4"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "md1"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "md2"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "md3"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "md4"
+      },
+      {
+        "base-temp-mc": 28800,
+        "jitter-mc": 140,
+        "type": "consys"
+      }
+    ]
+  }
+}

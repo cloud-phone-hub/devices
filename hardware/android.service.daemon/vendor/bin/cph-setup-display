@@ -30,6 +30,12 @@ fi
 settings put system haslaunched_ArAppWelcomeActivity 1 2>/dev/null
 pm disable com.asus.ar.welcome 2>/dev/null || true
 am force-stop com.asus.ar.welcome 2>/dev/null || true
+# Prize/Symphony 机型（如 MAX_10）SettingsApplication.onCreate 在 sales_nvram_flag 为 -1/0 时
+# 会调 SimSalesTracker.readProInfo -> NvramUtils.readUserNvramInfo 返回空串并 substring(351) 崩溃，
+# 导致 Settings 与 FallbackHome 循环崩溃黑底；首启预置为 1 跳过产线 NVRAM 查询。
+if [ "$(settings get global sales_nvram_flag 2>/dev/null)" = "null" ]; then
+    settings put global sales_nvram_flag 1 2>/dev/null
+fi
 settings put secure user_setup_complete 1 2>/dev/null
 settings put global device_provisioned 1 2>/dev/null
 

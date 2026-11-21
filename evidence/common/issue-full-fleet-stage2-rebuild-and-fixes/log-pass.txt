@@ -1,0 +1,1302 @@
+# Stage 2 全仓重建通过验证日志汇总（#292）
+# 1. 全量 Go 单测：37/37 有测试包 100% PASS（0 FAIL）
+#    go test -count=1 ./modules/pipeline/... ./modules/daemon/... ./internal/manifestview/...
+# 2. 全仓静态对账：39/39 设备含 host-hvc-bluetooth/haptic，42/42 配置模版 vendor->Lineage 0 错配，45/45 Android 盘集 4 件套齐全
+# 3. 第二阶段 27/27 Android 版本 Enforcing 冷启动体检日志摘录
+
+========================================================================
+## ARW_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.15.149-android13-8-00010-gc2e0ba41ba85-ab12040008 #1 SMP PREEMPT Tue Jul 2 00:44:45 UTC 2024 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=HMD/Arrow_0AIN/ARW:14/QP1A.190711.020/00WW_1_590:user/release-keys
+ro.build.version.release=14
+ro.vendor.build.version.release=13
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=ums9620
+=== RUNNING VENDOR HAL PROCS ===
+system         195     1 7 18:25:27 ?     00:00:08 servicemanager
+system         199     1 0 18:25:27 ?     00:00:00 hwservicemanager
+audioserver    424     1 0 18:25:37 ?     00:00:00 android.hardware.audio.service
+mediacodec     452     1 0 18:25:37 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     459     1 0 18:25:37 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    462     1 0 18:25:37 ?     00:00:00 audioserver
+system         468     1 2 18:25:37 ?     00:00:02 surfaceflinger
+cameraserver   614     1 0 18:25:38 ?     00:00:00 cameraserver
+mediacodec     672     1 0 18:25:39 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.poweronlog]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+[init.svc.vendor.dlkm_loader]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+[init.svc.vendor.netmgr_fingerprint]: [stopped]
+[init.svc.vendor.netmgr_setup]: [stopped]
+[init.svc.vendor.tablet2multitouch]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{831baac u0 Android System}, [type=2010]-[Surface(name=*Title#58)/@0x20b5eba, shown=false, alpha=0.0, windowType=2010]
+  mFocusedApp=ActivityRecord{a1de342 u0 com.hmdglobal.app.setupwizardext/.WelcomeSetupWizard t5 d0}
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[  121.004290] [  T195] SELinux: avc:  denied  { find } for pid=7346 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+[  121.101814] [    T1] init: starting service 'exec 56 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+[  121.105757] [    T1] init: ... started service 'exec 56 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 7361
+[  121.111664] [    T1] init: SVC_EXEC service 'exec 56 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 7361 (uid 1000 gid 1000+0 context default) started; waiting...
+[  121.116046] [    T1] init: Service 'exec 56 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 7361) exited with status 0 waiting took 0.010000 seconds
+[  121.118526] [    T1] init: Sending signal 9 to service 'exec 56 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 7361) process group...
+[  121.223569] [    T1] init: starting service 'exec 57 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+[  121.225646] [    T1] init: ... started service 'exec 57 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 7431
+[  121.228665] [    T1] init: SVC_EXEC service 'exec 57 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 7431 (uid 1000 gid 1000+0 context default) started; waiting...
+[  121.231831] [    T1] init: Service 'exec 57 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 7431) exited with status 0 waiting took 0.006000 seconds
+[  121.234664] [    T1] init: Sending signal 9 to service 'exec 57 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 7431) process group...
+
+========================================================================
+## ASUSAI2501_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.6.30-android15-8-g865edf73c264-ab12256205-4k #1 SMP PREEMPT Wed Aug 21 01:08:31 UTC 2024 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=asus/ZWWAI2501/ASUSAI2501:15/AQ3A.240829.003/35.1810.1810.243-0:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=15
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=sun
+=== RUNNING VENDOR HAL PROCS ===
+system         198     1 23 01:29:40 ?    00:00:18 servicemanager
+audioserver    534     1 0 01:30:19 ?     00:00:00 android.hardware.audio.service
+audioserver    535     1 0 01:30:19 ?     00:00:00 android.hardware.audio.effect.service
+audioserver    550     1 1 01:30:20 ?     00:00:00 audioserver
+system         556     1 10 01:30:20 ?    00:00:04 surfaceflinger
+cameraserver   608     1 0 01:30:21 ?     00:00:00 cameraserver
+media          619     1 0 01:30:21 ?     00:00:00 mediaserver64
+mediacodec     641     1 0 01:30:21 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.android-hardware-media-c2-hal]: [restarting]
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor-dolby-media-c2-hal]: [restarting]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.cph_wifi_bootstrap]: [stopped]
+[init.svc.vendor.dlkm_loader]: [stopped]
+[init.svc.vendor.grub-editenv-set-android_theme]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+[init.svc.vendor.netmgr_fingerprint]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{99b83af u0 NotificationShade}
+  mFocusedApp=ActivityRecord{9cd7557 u0 com.asus.launcher/com.android.launcher3.uioverrides.QuickstepLauncher t7}
+=== CRASH BUFFER ===
+11-21 01:31:00.865  1741  4180 E AndroidRuntime: Process: .qtidataservices, PID: 1741
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[   89.904436] [  T198] SELinux: avc:  denied  { find } for pid=4813 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+[   91.429139] [    T1] init: Service 'exec 55 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 5149) exited with status 0 waiting took 2.073000 seconds
+[   91.443117] [    T1] init: Sending signal 9 to service 'exec 55 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 5149) process group...
+
+========================================================================
+## ASUS_AI2205_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.15.104-android13-8-00001-g8a444658051f-ab10823334 #1 SMP PREEMPT Mon Sep 18 07:20:47 UTC 2023 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=asus/WW_AI2205/ASUS_AI2205:14/UKQ1.230917.001/34.1010.0820.65-0:user/release-keys
+ro.build.version.release=14
+ro.vendor.build.version.release=13
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=kalama
+=== RUNNING VENDOR HAL PROCS ===
+system         203     1 40 12:54:20 ?    00:00:17 servicemanager
+system         204     1 1 12:54:20 ?     00:00:00 hwservicemanager
+audioserver    511     1 0 12:54:30 ?     00:00:00 android.hardware.audio.service
+audioserver    534     1 1 12:54:30 ?     00:00:00 audioserver
+system         549     1 9 12:54:30 ?     00:00:02 surfaceflinger
+cameraserver   587     1 0 12:54:31 ?     00:00:00 cameraserver
+media          595     1 2 12:54:31 ?     00:00:00 mediaserver
+mediacodec     606     1 1 12:54:31 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+[init.svc.vendor.dlkm_loader]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+[init.svc.vendor.netmgr_fingerprint]: [stopped]
+[init.svc.vendor.netmgr_setup]: [stopped]
+[init.svc.vendor.tablet2multitouch]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  android.hardware.camera.provider.ICameraProvider/internal/0
+  android.hardware.gnss.IGnss/default
+  android.hardware.graphics.allocator.IAllocator/default
+  mCurrentFocus=Window{39ea84d u0 Android System}
+  mFocusedApp=ActivityRecord{1f8e8eb u0 com.asus.launcher/com.android.launcher3.uioverrides.QuickstepLauncher t7}
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[   50.372832] [  T203] SELinux: avc:  denied  { find } for pid=5481 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## CPH2767_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.12.38-android16-5-g844001fb8721-ab14552068-4k #1 SMP PREEMPT Fri Dec  5 02:15:49 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=OnePlus/CPH2769/OP612DL1:16/BP2A.250605.015/B.R4T3.266e8a6-136672-136670:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=16
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=canoe
+=== RUNNING VENDOR HAL PROCS ===
+system         253     1 18 00:00:06 ?    00:00:19 servicemanager
+audioserver    637     1 0 00:00:25 ?     00:00:00 android.hardware.audio.service
+audioserver    638     1 0 00:00:25 ?     00:00:00 android.hardware.audio.effect.service
+mediacodec     643     1 0 00:00:25 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     650     1 0 00:00:25 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    661     1 0 00:00:25 ?     00:00:00 audioserver
+system         668     1 16 00:00:25 ?    00:00:13 surfaceflinger
+cameraserver   742     1 0 00:00:27 ?     00:00:00 cameraserver
+media          751     1 1 00:00:27 ?     00:00:00 mediaserver
+mediacodec     851     1 0 00:00:27 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.enablewifidump]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.oplusHmbirdBpfManager]: [stopped]
+[init.svc.perfetto_labmode_sys_ostats_trigger_trace]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.qccsyshal@1.2-service]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.cas-default]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{5e5858 u0 com.oplus.battery}
+  mFocusedApp=ActivityRecord{222444874 u0 com.coloros.bootreg/.settings.activity.GuidePage t2}
+=== CRASH BUFFER ===
+01-01 00:01:50.457  8540  8640 E AndroidRuntime: Process: .qtidataservices, PID: 8540
+01-01 00:01:51.275  8716  8926 E AndroidRuntime: Process: .qtidataservices, PID: 8716
+01-01 00:01:52.974  9055  9237 E AndroidRuntime: Process: .qtidataservices, PID: 9055
+01-01 00:01:54.797  9317  9409 E AndroidRuntime: Process: .qtidataservices, PID: 9317
+01-01 00:01:56.019  9438  9538 E AndroidRuntime: Process: .qtidataservices, PID: 9438
+01-01 00:01:57.632  9597  9756 E AndroidRuntime: Process: .qtidataservices, PID: 9597
+01-01 00:02:02.825  9772  9931 E AndroidRuntime: Process: .qtidataservices, PID: 9772
+01-01 00:02:05.001  9984 10201 E AndroidRuntime: Process: .qtidataservices, PID: 9984
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[  123.550801] [  T253] SELinux: avc:  denied  { find } for pid=9223 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## CPH2797_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.12.23-android16-5-g82efd98459a2-ab14457512-4k #1 SMP PREEMPT Tue Nov 18 18:08:47 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=OPPO/CPH2797/OP5E8BL1:16/BP2A.250605.015/B.R4T3.1287153_118ce71_119cc78:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=16
+ro.lineage.version=
+ro.hardware.egl=mesa
+ro.hardware.vulkan=mali
+ro.board.platform=mt6993
+=== RUNNING VENDOR HAL PROCS ===
+system         267     1 6 13:00:08 ?     00:00:28 servicemanager
+audioserver    668     1 0 13:00:41 ?     00:00:00 android.hardware.audio.service
+audioserver    669     1 0 13:00:41 ?     00:00:00 android.hardware.audio.effect.service
+mediacodec     681     1 0 13:00:41 ?     00:00:00 android.hardware.media.c2-mediatek
+audioserver    698     1 0 13:00:41 ?     00:00:00 android.hardware.soundtrigger3-service.example
+mediacodec     708     1 0 13:00:41 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    714     1 0 13:00:42 ?     00:00:00 audioserver
+audioserver    724     1 0 13:00:42 ?     00:00:00 android.hardware.audio.parameter_parser.service
+system         725     1 17 13:00:42 ?    00:01:12 surfaceflinger
+cameraserver   821     1 0 13:00:45 ?     00:00:00 cameraserver
+media          896     1 0 13:00:46 ?     00:00:00 mediaserver
+mediacodec     917     1 0 13:00:46 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.enablewifidump]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.oplusHmbirdBpfManager]: [stopped]
+[init.svc.oplus_esepower_hal_service]: [stopped]
+[init.svc.perfetto_labmode_sys_ostats_trigger_trace]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.auto_provision]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{41c50f1 u0 com.android.launcher/com.android.launcher.Launcher}
+  mFocusedApp=ActivityRecord{52642158 u0 com.android.launcher/.Launcher t4}
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[  469.991528] [  T267] SELinux: avc:  denied  { find } for pid=12576 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## G1130_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.15.197-android13-8-00005-g2d8ad9139b89-ab15063902 #1 SMP PREEMPT Fri Mar 20 11:14:06 UTC 2026 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=BLU/G65L/G1130:14/UP1A.231005.007/202605111612:user/release-keys
+ro.build.version.release=14
+ro.vendor.build.version.release=13
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=ums9230
+=== RUNNING VENDOR HAL PROCS ===
+system         195     1 10 18:45:09 ?    00:00:07 servicemanager
+system         202     1 0 18:45:09 ?     00:00:00 hwservicemanager
+audioserver    439     1 0 18:45:21 ?     00:00:00 android.hardware.audio.service
+mediacodec     457     1 0 18:45:21 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     466     1 0 18:45:21 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    481     1 1 18:45:21 ?     00:00:00 audioserver
+system         486     1 9 18:45:21 ?     00:00:06 surfaceflinger
+cameraserver   535     1 0 18:45:22 ?     00:00:00 cameraserver
+mediacodec     573     1 0 18:45:22 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.poweronlog]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.dlkm_loader]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+[init.svc.vendor.netmgr_fingerprint]: [stopped]
+[init.svc.vendor.netmgr_setup]: [stopped]
+[init.svc.vendor.tablet2multitouch]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  android.hardware.camera.provider.ICameraProvider/internal/0
+  mCurrentFocus=Window{6fa9289 u0 Android System}, [type=2010]-[Surface(name=*Title#58)/@0x23043, shown=false, alpha=0.0, windowType=2010]
+  mFocusedApp=ActivityRecord{483279b u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher t8 d0}
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[   86.271381] [  T195] SELinux: avc:  denied  { find } for pid=4559 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+[   86.300927] [  T195] SELinux: avc:  denied  { find } for pid=4559 uid=2000 name=unisoc_display scontext=u:r:pioneer:s0 tcontext=u:object_r:unisoc_display_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## G1170_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k #1 SMP PREEMPT Thu Jul 10 06:35:14 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=BLU/G75/G1170:15/AP3A.240905.015.A2/1770610308:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=15
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6768
+=== RUNNING VENDOR HAL PROCS ===
+system         204     1 13 10:01:08 ?    00:00:05 servicemanager
+audioserver    532     1 0 10:01:22 ?     00:00:00 android.hardware.audio.service
+audioserver    536     1 0 10:01:22 ?     00:00:00 android.hardware.audio.effect.service
+mediacodec     556     1 0 10:01:22 ?     00:00:00 android.hardware.media.c2-mediatek
+audioserver    588     1 1 10:01:22 ?     00:00:00 audioserver
+system         601     1 14 10:01:23 ?    00:00:03 surfaceflinger
+audioserver    602     1 0 10:01:23 ?     00:00:00 android.hardware.audio.parameter_parser.service
+cameraserver   662     1 0 10:01:23 ?     00:00:00 cameraserver
+media          704     1 0 10:01:23 ?     00:00:00 mediaserver
+mediacodec     716     1 1 10:01:23 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor-dolby-media-c2-hal]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+[init.svc.vendor.cph_wifi_bootstrap]: [stopped]
+[init.svc.vendor.dlkm_loader]: [stopped]
+[init.svc.vendor.grub-editenv-set-android_theme]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{9237058 u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher}
+  mFocusedApp=ActivityRecord{93f1434 u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher t7}
+Display 4614472165855940608 (HWC display 0): port=0 pnpId=BOE displayName="BOE"
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[   46.227811] [  T204] SELinux: avc:  denied  { find } for pid=4858 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## G27_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.15.149-android13-8-00008-gbe074b05e5af-ab12096863 #1 SMP PREEMPT Tue Jul 16 15:36:08 UTC 2024 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=Symphony/G27_3GB/G27:14/UP1A.231005.007/3901659:user/release-keys
+ro.build.version.release=14
+ro.vendor.build.version.release=13
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=sp9863a
+=== RUNNING VENDOR HAL PROCS ===
+system         191     1 7 16:59:29 ?     00:00:05 servicemanager
+system         199     1 0 16:59:29 ?     00:00:00 hwservicemanager
+audioserver    423     1 0 16:59:34 ?     00:00:00 android.hardware.audio.service
+mediacodec     431     1 0 16:59:34 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     441     1 0 16:59:34 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    442     1 0 16:59:34 ?     00:00:00 audioserver
+system         446     1 4 16:59:34 ?     00:00:03 surfaceflinger
+cameraserver   511     1 0 16:59:35 ?     00:00:00 cameraserver
+mediacodec     578     1 0 16:59:35 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.poweronlog]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.dlkm_loader]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+[init.svc.vendor.netmgr_fingerprint]: [stopped]
+[init.svc.vendor.netmgr_setup]: [stopped]
+[init.svc.vendor.tablet2multitouch]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  android.hardware.camera.provider.ICameraProvider/internal/0
+  mCurrentFocus=Window{9591c99 u0 Android System}, [type=2010]-[Surface(name=*Title#51)/@0xedb4970, shown=false, alpha=0.0, windowType=2010]
+  mFocusedApp=ActivityRecord{3b6f196 u0 com.android.launcher3/.Launcher3QuickStepGo t4 d0}
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[   85.296187] [  T191] SELinux: avc:  denied  { find } for pid=4543 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## MAX_10_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.15.149-android13-8-00008-gbe074b05e5af-ab12096863 #1 SMP PREEMPT Tue Jul 16 15:36:08 UTC 2024 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=Symphony/MAX10/MAX_10:14/UP1A.231005.007/1739350789:user/release-keys
+ro.build.version.release=14
+ro.vendor.build.version.release=13
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=sp9863a
+=== RUNNING VENDOR HAL PROCS ===
+system         192     1 8 14:59:39 ?     00:00:05 servicemanager
+system         199     1 0 14:59:39 ?     00:00:00 hwservicemanager
+audioserver    420     1 0 14:59:44 ?     00:00:00 android.hardware.audio.service
+mediacodec     434     1 0 14:59:44 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     443     1 0 14:59:44 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    445     1 0 14:59:44 ?     00:00:00 audioserver
+system         449     1 5 14:59:44 ?     00:00:03 surfaceflinger
+cameraserver   530     1 0 14:59:45 ?     00:00:00 cameraserver
+mediacodec     576     1 0 14:59:45 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.poweronlog]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.dlkm_loader]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+[init.svc.vendor.netmgr_fingerprint]: [stopped]
+[init.svc.vendor.netmgr_setup]: [stopped]
+[init.svc.vendor.tablet2multitouch]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  android.hardware.camera.provider.ICameraProvider/internal/0
+  mCurrentFocus=Window{5841d7 u0 Android System}, [type=2010]-[Surface(name=*Title#53)/@0x488713f, shown=false, alpha=0.0, windowType=2010]
+  mFocusedApp=ActivityRecord{fac4ed5 u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher t4 d0}
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[   76.045274] [  T192] SELinux: avc:  denied  { find } for pid=4375 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+[   76.064761] [  T192] SELinux: avc:  denied  { find } for pid=4375 uid=2000 name=unisoc_display scontext=u:r:pioneer:s0 tcontext=u:object_r:unisoc_display_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## NX809J_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.12.23-android16-5-ga82fc641d6d2-ab14804636-4k #1 SMP PREEMPT Wed Jan  7 14:55:52 UTC 2026 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=REDMAGIC/NX809J-UN/NX809J:16/BQ2A.250705.001-BP2A.250605.031.A3/20260527.205523:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=16
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=canoe
+=== RUNNING VENDOR HAL PROCS ===
+system         247     1 2 12:56:32 ?     00:00:01 servicemanager
+audioserver    600     1 0 12:56:43 ?     00:00:00 android.hardware.audio.service
+audioserver    601     1 0 12:56:43 ?     00:00:00 android.hardware.audio.effect.service
+mediacodec     606     1 0 12:56:43 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     615     1 0 12:56:43 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    619     1 0 12:56:43 ?     00:00:00 audioserver
+system         622     1 12 12:56:43 ?    00:00:07 surfaceflinger
+cameraserver   705     1 0 12:56:45 ?     00:00:00 cameraserver
+media          746     1 1 12:56:46 ?     00:00:00 mediaserver
+mediacodec     768     1 1 12:56:46 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.qccsyshal@1.2-service]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+[init.svc.vendor.dlkm_loader_mainline]: [stopped]
+[init.svc.vendor.grub-editenv-set-android_theme]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+[init.svc.vendor.netmgr_fingerprint]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{93e0183 u0 android/com.android.internal.app.ResolverActivity}
+  mFocusedApp=ActivityRecord{131733441 u0 android/com.android.internal.app.ResolverActivity t9}
+01-01 00:00:15.606   622   622 I HWComposer: Switching to generalized multi-display mode
+01-01 00:00:15.607   622   622 E HWComposer: getMaxLayerPictureProfiles: getMaxLayerPictureProfiles failed for display 4632256312697818880: UNSUPPORTED (8)
+01-01 00:00:15.607   622   622 I SurfaceFlinger: Connecting display 4632256312697818880(HAL ID 0)
+01-01 00:00:15.648   622   622 D SurfaceFlinger: Setting power mode 0 on physical display 4632256312697818880
+01-01 00:00:15.648   622   622 D SurfaceFlinger: Setting power mode 2 on physical display 4632256312697818880
+01-01 00:00:15.648   622   622 D SurfaceFlinger: Finished setting power mode 2 on physical display 4632256312697818880
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+
+========================================================================
+## P616F05_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.15.189-android13-8-00013-gaa2747a3794a-ab14413887 #1 SMP PREEMPT Mon Nov 10 02:47:23 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=nubia/P616F05_1/P616F05:14/UP1A.231005.007/20260325.014551:user/release-keys
+ro.build.version.release=14
+ro.vendor.build.version.release=13
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=ums9230
+=== RUNNING VENDOR HAL PROCS ===
+system         194     1 7 01:53:31 ?     00:00:05 servicemanager
+system         198     1 0 01:53:31 ?     00:00:00 hwservicemanager
+audioserver    431     1 0 01:53:40 ?     00:00:00 android.hardware.audio.service
+mediacodec     442     1 0 01:53:40 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     449     1 0 01:53:40 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    455     1 1 01:53:40 ?     00:00:00 audioserver
+system         460     1 11 01:53:40 ?    00:00:07 surfaceflinger
+cameraserver   532     1 0 01:53:41 ?     00:00:00 cameraserver
+mediacodec     577     1 0 01:53:41 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.perfetto_trace_configure]: [stopped]
+[init.svc.poweronlog]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.dlkm_loader]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+[init.svc.vendor.netmgr_fingerprint]: [stopped]
+[init.svc.vendor.netmgr_setup]: [stopped]
+[init.svc.vendor.tablet2multitouch]: [stopped]
+[init.svc.vendorcfgd]: [restarting]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{647f89a u0 com.zte.mifavor.launcher/com.android.launcher3.uioverrides.QuickstepLauncher}, [type=2]-[Surface(name=*Title#99)/@0x5aa04c1, shown=false, alpha=0.0, windowType=2]
+  mFocusedApp=ActivityRecord{538505a u0 com.zte.mifavor.launcher/com.android.launcher3.uioverrides.QuickstepLauncher t7 d0}
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[   78.914964] [  T194] SELinux: avc:  denied  { find } for pid=7437 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+[   78.945405] [  T194] SELinux: avc:  denied  { find } for pid=7437 uid=2000 name=unisoc_display scontext=u:r:pioneer:s0 tcontext=u:object_r:unisoc_display_service:s0 tclass=service_manager permissive=1
+[   79.358919] [    T1] init: starting service 'exec 49 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+[   79.362692] [    T1] init: ... started service 'exec 49 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 7533
+[   79.365022] [    T1] init: SVC_EXEC service 'exec 49 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 7533 (uid 1000 gid 1000+0 context default) started; waiting...
+[   79.370279] [    T1] init: Service 'exec 49 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 7533) exited with status 0 waiting took 0.007000 seconds
+[   79.372599] [    T1] init: Sending signal 9 to service 'exec 49 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 7533) process group...
+
+========================================================================
+## PD2454_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.6.30-android15-8-g24ffe62b0a0e-abogki388618489-4k #1 SMP PREEMPT Wed Jan  8 10:06:55 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=vivo/PD2454/PD2454:15/AP3A.240905.015.A2_V000L1/compiler250417003748:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=15
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=sun
+=== RUNNING VENDOR HAL PROCS ===
+system         199     1 17 11:46:21 ?    00:00:09 servicemanager
+audioserver    532     1 0 11:46:32 ?     00:00:00 android.hardware.audio.service
+audioserver    533     1 0 11:46:32 ?     00:00:00 android.hardware.audio.effect.service
+mediacodec     539     1 0 11:46:32 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     543     1 0 11:46:32 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    546     1 1 11:46:32 ?     00:00:00 audioserver
+system         554     1 5 11:46:32 ?     00:00:02 surfaceflinger
+cameraserver   827     1 0 11:46:43 ?     00:00:00 cameraserver
+media          844     1 1 11:46:43 ?     00:00:00 mediaserver
+mediacodec     846     1 0 11:46:43 ?     00:00:00 media.vivocodec avivocodec
+cameraserver   854     1 0 11:46:43 ?     00:00:00 vivocameraserver
+mediacodec     902     1 0 11:46:43 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.qccsyshal@1.2-service]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+[init.svc.vendor.cph_wifi_bootstrap]: [stopped]
+[init.svc.vendor.dlkm_loader]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{c78c825 u0 com.vivo.setupwizard/com.vivo.setupwizard.ui.SetupWizardActivity type=1 }
+  mFocusedApp=ActivityRecord{7d6c6e1 u0 com.vivo.setupwizard/.ui.SetupWizardActivity t5 d0}
+=== CRASH BUFFER ===
+11-21 11:47:17.013  8340  8367 E AndroidRuntime: Process: .qtidataservices, PID: 8340
+11-21 11:47:17.013  8340  8365 E AndroidRuntime: Process: .qtidataservices, PID: 8340
+11-21 11:47:17.055  8377  8402 E AndroidRuntime: Process: .qtidataservices, PID: 8377
+11-21 11:47:17.055  8377  8404 E AndroidRuntime: Process: .qtidataservices, PID: 8377
+11-21 11:47:17.096  8415  8439 E AndroidRuntime: Process: .qtidataservices, PID: 8415
+11-21 11:47:17.097  8415  8442 E AndroidRuntime: Process: .qtidataservices, PID: 8415
+11-21 11:47:17.181  8451  8494 E AndroidRuntime: Process: .qtidataservices, PID: 8451
+11-21 11:47:17.181  8451  8496 E AndroidRuntime: Process: .qtidataservices, PID: 8451
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[   63.433802] SELinux: avc:  denied  { find } for pid=8714 uid=2000 name=vivo_display_enhance scontext=u:r:pioneer:s0 tcontext=u:object_r:vivo_display_enhance:s0 tclass=service_manager permissive=1
+[   63.438129] SELinux: avc:  denied  { find } for pid=8714 uid=2000 name=vivo_display_state scontext=u:r:pioneer:s0 tcontext=u:object_r:vivo_display_state_service:s0 tclass=service_manager permissive=1
+[   63.446900] SELinux: avc:  denied  { find } for pid=8714 uid=2000 name=vivo_gfx_display_service scontext=u:r:pioneer:s0 tcontext=u:object_r:vivo_gfx_display_service:s0 tclass=service_manager permissive=1
+[   63.451453] SELinux: avc:  denied  { find } for pid=8714 uid=2000 name=vivo_lcm_brightness_service scontext=u:r:pioneer:s0 tcontext=u:object_r:vivo_lcm_brightness_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## RMX6688_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.6.66-android15-8-gd43086512890-abogki423825152-4k #1 SMP PREEMPT Tue Jun 10 12:12:23 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=realme/RMX6688/RE602AL1:15/AP3A.240617.008/V.346718d-14f8677-14f8675:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=15
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6991
+=== RUNNING VENDOR HAL PROCS ===
+system         209     1 13 11:14:50 ?    00:00:12 servicemanager
+system         210     1 0 11:14:50 ?     00:00:00 hwservicemanager
+audioserver    550     1 0 11:15:13 ?     00:00:00 android.hardware.audio.service
+audioserver    551     1 0 11:15:13 ?     00:00:00 android.hardware.audio.effect.service
+mediacodec     579     1 0 11:15:13 ?     00:00:00 android.hardware.media.c2-mediatek
+audioserver    589     1 0 11:15:13 ?     00:00:00 android.hardware.soundtrigger3-service.example
+mediacodec     597     1 0 11:15:13 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    638     1 1 11:15:13 ?     00:00:00 audioserver
+audioserver    647     1 0 11:15:13 ?     00:00:00 android.hardware.audio.parameter_parser.service
+system         650     1 13 11:15:13 ?    00:00:10 surfaceflinger
+cameraserver   829     1 0 11:15:16 ?     00:00:00 cameraserver
+media          899     1 0 11:15:17 ?     00:00:00 mediaserver
+mediacodec     912     1 0 11:15:17 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.enablewifidump]: [stopped]
+[init.svc.nfc_hal_service.tms.aidl]: [stopped]
+[init.svc.oplus_esepower_hal_service]: [stopped]
+[init.svc.perfetto_labmode_sys_ostats_trigger_trace]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.secure_element_hal_service.aidl]: [stopped]
+[init.svc.traced_perf]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{b1c5687 u0 com.android.launcher/com.android.launcher.Launcher}
+  mFocusedApp=ActivityRecord{ded95e1 u0 com.android.launcher/.Launcher t5}
+Display 4627039422300187648 (HWC display 0): port=0 pnpId=MTK displayName="MTKDEV"
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[  109.570788] [  T209] SELinux: avc:  denied  { find } for pid=8486 uid=2000 name=vendor.oplus.hardware.display.MixLut3D.IMixLut3D/default scontext=u:r:pioneer:s0 tcontext=u:object_r:hal_oplus_display_mixlut3d_service:s0 tclass=service_manager permissive=1
+[  109.570841] [  T209] SELinux: avc:  denied  { find } for pid=8486 uid=2000 name=vendor.oplus.hardware.displaycolorfeature.IDisplayColorFeature/default scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_hal_displaycolor_service:s0 tclass=service_manager permissive=1
+[  109.694919] [  T209] SELinux: avc:  denied  { find } for pid=8486 uid=2000 name=vendor.oplus.hardware.displaypanelfeature.IDisplayPanelFeature/default scontext=u:r:pioneer:s0 tcontext=u:object_r:oplus_hal_displaypanel_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## TECNO-CM5_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.12.38-android16-5-gb575a0b6e647-ab14355190-4k #1 SMP PREEMPT Wed Oct 29 06:56:12 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=TECNO/CM5-OP/TECNO-CM5:16/BP2A.250605.031.A3/201200024:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=16
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6789
+=== RUNNING VENDOR HAL PROCS ===
+system         290     1 11 22:44:36 ?    00:00:21 servicemanager
+audioserver    611     1 0 22:44:46 ?     00:00:00 android.hardware.audio.service
+audioserver    612     1 0 22:44:46 ?     00:00:00 android.hardware.audio.effect.service
+mediacodec     621     1 0 22:44:46 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     642     1 0 22:44:46 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    646     1 0 22:44:46 ?     00:00:00 audioserver
+audioserver    650     1 0 22:44:46 ?     00:00:00 android.hardware.audio.parameter_parser.service
+system         660     1 5 22:44:46 ?     00:00:07 surfaceflinger
+cameraserver   694     1 0 22:44:47 ?     00:00:00 cameraserver
+media          724     1 0 22:44:47 ?     00:00:00 mediaserver
+mediacodec     741     1 0 22:44:47 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+[init.svc.vendor.dlkm_loader_mainline]: [stopped]
+[init.svc.vendor.grub-editenv-set-android_theme]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{c567ef u0 NotificationShade}
+  mFocusedApp=ActivityRecord{261264659 u0 com.transsion.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher t6}
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[  194.419414] [  T290] SELinux: avc:  denied  { find } for pid=8698 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## VILLAON-V671NP_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.15.189-android13-8-00012-g742fd6fce289-ab14327796 #1 SMP PREEMPT Fri Oct 24 02:22:42 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=VILLAON/V671NP-IN/VILLAON-V671NP:16/BP2A.250605.031.A3/20260713:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=13
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=ums9621
+=== RUNNING VENDOR HAL PROCS ===
+system         236     1 14 19:40:42 ?    00:00:04 servicemanager
+system         243     1 0 19:40:42 ?     00:00:00 hwservicemanager
+audioserver    495     1 0 19:40:50 ?     00:00:00 android.hardware.audio.service
+mediacodec     502     1 0 19:40:50 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     517     1 0 19:40:50 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    518     1 1 19:40:50 ?     00:00:00 audioserver
+system         523     1 16 19:40:50 ?    00:00:04 surfaceflinger
+audioserver    524     1 0 19:40:50 ?     00:00:00 com.unisoc.hardware.audio.parameter_parser.service
+audioserver    525     1 0 19:40:50 ?     00:00:00 com.unisoc.hardware.audio.tunning.service
+cameraserver   605     1 0 19:40:52 ?     00:00:00 cameraserver
+mediacodec     666     1 1 19:40:52 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.poweronlog]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+[init.svc.vendor.dlkm_loader]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+[init.svc.vendor.netmgr_fingerprint]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{b4e40e5 u0 com.android.launcher3/com.android.launcher3.Launcher3QuickStepGo}, [type=1, isChildWindow=false]-[Surface(name=*Title#110)/@0xba6879f]
+  mFocusedApp=ActivityRecord{1282743 u0 com.android.launcher3/.Launcher3QuickStepGo t4 d0}
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[   40.462335] [  T236] SELinux: avc:  denied  { find } for pid=4487 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+[   40.529655] [  T236] SELinux: avc:  denied  { find } for pid=4487 uid=2000 name=ufwgame_displayeffect_feature scontext=u:r:pioneer:s0 tcontext=u:object_r:ufwgame_displayeffect_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## XPLORE_X1_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k #1 SMP PREEMPT Thu Jul 10 06:35:14 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=Blackview/XPLORE_X1_NEU/XPLORE_X1:15/AP3A.240905.015.A2/1764155304:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=15
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6877
+=== RUNNING VENDOR HAL PROCS ===
+system         205     1 3 10:02:25 ?     00:00:02 servicemanager
+audioserver    521     1 0 10:02:41 ?     00:00:00 android.hardware.audio.service
+audioserver    522     1 0 10:02:41 ?     00:00:00 android.hardware.audio.effect.service
+mediacodec     526     1 0 10:02:41 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     532     1 0 10:02:41 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    588     1 0 10:02:41 ?     00:00:00 audioserver
+system         603     1 3 10:02:41 ?     00:00:02 surfaceflinger
+audioserver    606     1 0 10:02:42 ?     00:00:00 android.hardware.audio.parameter_parser.service
+cameraserver   651     1 0 10:02:43 ?     00:00:00 cameraserver
+media          670     1 0 10:02:43 ?     00:00:00 mediaserver
+mediacodec     691     1 1 10:02:43 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+[init.svc.vendor.dlkm_loader]: [stopped]
+[init.svc.vendor.grub-editenv-set-android_theme]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+[init.svc.vendor.netmgr_fingerprint]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{9b10f5b u0 NotificationShade}
+  mFocusedApp=ActivityRecord{8fd58d7 u0 com.blackview.launcher/com.android.searchlauncher.SearchLauncher t6}
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[  114.270727] [  T205] SELinux: avc:  denied  { find } for pid=6136 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## chora_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.12.58-android16-6-g50d6c2424b3a-ab15726793-4k #1 SMP PREEMPT Thu Jun 25 17:10:04 UTC 2026 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=HONOR/BSN-NX1/HNBSN-Q1:16/HONORBSN-N31/10.0.0.115C185E1R201P1:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=16
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=chora
+=== RUNNING VENDOR HAL PROCS ===
+system         255     1 19 11:37:33 ?    00:00:22 servicemanager
+audioserver    579     1 0 11:38:05 ?     00:00:00 android.hardware.audio.service
+audioserver    580     1 0 11:38:05 ?     00:00:00 android.hardware.audio.effect.service
+mediacodec     584     1 0 11:38:05 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     597     1 0 11:38:06 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    600     1 0 11:38:06 ?     00:00:00 audioserver
+system         607     1 5 11:38:06 ?     00:00:04 surfaceflinger
+cameraserver   655     1 0 11:38:07 ?     00:00:00 HwServiceHost sdm4250 PKU
+cameraserver   659     1 0 11:38:07 ?     00:00:00 cameraserver
+media          668     1 1 11:38:07 ?     00:00:00 mediaserver
+mediacodec     692     1 1 11:38:07 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.hwnffearly]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.qccsyshal@1.2-service]: [stopped]
+[init.svc.rillogcat]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+[init.svc.vendor.dlkm_loader_mainline]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{57a66e1 u0 com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher}
+  mFocusedApp=ActivityRecord{172232066 u0 com.hihonor.android.launcher/.unihome.UniHomeLauncher t11}
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[  137.617015] [  T255] SELinux: avc:  denied  { find } for pid=9057 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## ericanppro_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.6.57-android15-8-g9dfb2bc0c466-ab12845201-4k #1 SMP PREEMPT Mon Dec 23 18:52:15 UTC 2024 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=unknown/unknown/unknown:15/AP3A.240905.015.A2/3LCM:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=15
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6768
+=== RUNNING VENDOR HAL PROCS ===
+system         209     1 3 00:43:27 ?     00:00:02 servicemanager
+audioserver    623     1 0 00:43:35 ?     00:00:00 android.hardware.audio.service
+audioserver    625     1 0 00:43:35 ?     00:00:00 android.hardware.audio.effect.service
+mediacodec     640     1 0 00:43:35 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     649     1 0 00:43:35 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    655     1 0 00:43:35 ?     00:00:00 audioserver
+system         662     1 4 00:43:35 ?     00:00:04 surfaceflinger
+audioserver    665     1 0 00:43:35 ?     00:00:00 android.hardware.audio.parameter_parser.service
+cameraserver   723     1 0 00:43:37 ?     00:00:00 cameraserver
+media          747     1 0 00:43:37 ?     00:00:00 mediaserver
+mediacodec     763     1 0 00:43:37 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+[init.svc.vendor.dlkm_loader]: [stopped]
+[init.svc.vendor.grub-editenv-set-android_theme]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+[init.svc.vendor.netmgr_fingerprint]: [stopped]
+[init.svc.vendor.netmgr_setup]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{74a37f u0 NotificationShade}
+  mFocusedApp=ActivityRecord{b5f0d44 u0 com.tcl.android.launcher/.uioverrides.TclQuickstepLauncher t7}
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[  108.694419] [  T209] SELinux: avc:  denied  { find } for pid=5047 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## gold_10_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k #1 SMP PREEMPT Thu Jul 10 06:35:14 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=Redmi/gold/gold:15/AP3A.240905.015.A2/OS3.0.10.0.VNQCNXM:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=15
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6833
+=== RUNNING VENDOR HAL PROCS ===
+system         208     1 8 11:04:21 ?     00:00:14 servicemanager
+audioserver    558     1 0 11:04:34 ?     00:00:00 android.hardware.audio.service
+audioserver    560     1 0 11:04:34 ?     00:00:00 android.hardware.audio.effect.service
+mediacodec     598     1 0 11:04:34 ?     00:00:00 android.hardware.media.c2-mediatek
+audioserver    610     1 0 11:04:35 ?     00:00:00 android.hardware.soundtrigger3-service.example
+mediacodec     655     1 0 11:04:35 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    657     1 1 11:04:35 ?     00:00:01 audioserver
+audioserver    663     1 0 11:04:35 ?     00:00:00 android.hardware.audio.parameter_parser.service
+system         667     1 4 11:04:35 ?     00:00:06 surfaceflinger
+cameraserver   714     1 0 11:04:37 ?     00:00:00 cameraserver
+media          756     1 1 11:04:37 ?     00:00:01 mediaserver
+mediacodec     789     1 0 11:04:37 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.lightsensornvcfg]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.system_perf_init]: [stopped]
+[init.svc.thermal_manager]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{dfe3817 u0 com.android.updater/com.android.updater.NewVersionDialogActivity}
+  mFocusedApp=ActivityRecord{5e6ec0c u0 com.android.updater/.NewVersionDialogActivity t10}
+Display 4627039422300187648 (HWC display 0): port=0 pnpId=MTK displayName="MTKDEV"
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[  206.791375] [  T208] SELinux: avc:  denied  { find } for pid=9893 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## gold_11_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k #1 SMP PREEMPT Thu May 28 07:48:46 UTC 2026 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=Redmi/gold/gold:15/AP3A.240905.015.A2/OS3.0.11.0.VNQCNXM:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=15
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6833
+=== RUNNING VENDOR HAL PROCS ===
+system         206     1 5 11:17:15 ?     00:00:14 servicemanager
+audioserver    526     1 0 11:17:37 ?     00:00:00 android.hardware.audio.service
+audioserver    527     1 0 11:17:37 ?     00:00:00 android.hardware.audio.effect.service
+mediacodec     564     1 0 11:17:37 ?     00:00:00 android.hardware.media.c2-mediatek
+audioserver    591     1 0 11:17:37 ?     00:00:00 android.hardware.soundtrigger3-service.example
+mediacodec     659     1 0 11:17:38 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    665     1 1 11:17:38 ?     00:00:01 audioserver
+audioserver    670     1 0 11:17:38 ?     00:00:00 android.hardware.audio.parameter_parser.service
+system         671     1 2 11:17:38 ?     00:00:04 surfaceflinger
+cameraserver   709     1 0 11:17:40 ?     00:00:00 cameraserver
+media          739     1 0 11:17:40 ?     00:00:01 mediaserver
+mediacodec     795     1 0 11:17:40 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.lightsensornvcfg]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.system_perf_init]: [stopped]
+[init.svc.thermal_manager]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{ac25c3e u0 com.miui.home/com.miui.home.launcher.Launcher}
+  mFocusedApp=ActivityRecord{3ba1216 u0 com.miui.home/.launcher.Launcher t9}
+Display 4627039422300187648 (HWC display 0): port=0 pnpId=MTK displayName="MTKDEV"
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[  266.285902] [  T206] SELinux: avc:  denied  { find } for pid=9837 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## oriole-14_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.10.198-android13-4-00050-g12f3388846c3-ab11920634 #1 SMP PREEMPT Mon Jun 3 20:51:42 UTC 2024 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=google/oriole/oriole:14/AP2A.240905.003.F1/12235381:user/release-keys
+ro.build.version.release=14
+ro.vendor.build.version.release=14
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=gs101
+=== RUNNING VENDOR HAL PROCS ===
+system         195     1 9 09:03:26 ?     00:00:04 servicemanager
+system         199     1 0 09:03:26 ?     00:00:00 hwservicemanager
+system         200     1 0 09:03:26 ?     00:00:00 vndservicemanager /dev/vndbinder
+audioserver    752     1 0 09:03:41 ?     00:00:00 android.hardware.audio.service
+audioserver    753     1 0 09:03:41 ?     00:00:00 android.hardware.audio.effect.service
+audioserver    781     1 1 09:03:41 ?     00:00:00 audioserver
+system         790     1 22 09:03:41 ?    00:00:07 surfaceflinger
+cameraserver   849     1 0 09:03:42 ?     00:00:00 cameraserver
+mediacodec     900     1 0 09:03:43 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.android-hardware-media-c2-hal]: [restarting]
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.drm]: [restarting]
+[init.svc.media]: [restarting]
+[init.svc.mediadrm]: [restarting]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor-dolby-media-c2-hal]: [restarting]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+[init.svc.vendor.cph_wifi_bootstrap]: [stopped]
+[init.svc.vendor.dlkm_loader]: [stopped]
+[init.svc.vendor.grub-editenv-set-android_theme]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{e00791b u0 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}
+  mFocusedApp=ActivityRecord{6859d16 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t7}
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[   54.631276] [  T195] SELinux: avc:  denied  { find } for pid=6670 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+[   54.660846] [    T1] init: Command 'exec - system system -- /system/bin/flags_health_check UPDATABLE_CRASHING' action=sys.init.updatable_crashing=1 (/system/etc/init/flags_health_check.rc:11) took 101ms and succeeded
+[   54.708878] [    T1] init: Service 'exec 37 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 6877) exited with status 0 waiting took 0.128000 seconds
+[   54.761594] [    T1] init: Sending signal 9 to service 'exec 37 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 6877) process group...
+
+========================================================================
+## oriole-15_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.1.99-android14-11-gd7dac4b14270-ab12946699 #1 SMP PREEMPT Tue Jan 21 13:39:43 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=google/oriole/oriole:15/BP1A.250505.005/13277524:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=15
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=gs101
+=== RUNNING VENDOR HAL PROCS ===
+system         198     1 7 06:56:45 ?     00:00:04 servicemanager
+audioserver    527     1 0 06:56:59 ?     00:00:00 android.hardware.audio.service
+audioserver    528     1 0 06:56:59 ?     00:00:00 android.hardware.audio.effect.service
+audioserver    547     1 0 06:56:59 ?     00:00:00 audioserver
+system         551     1 14 06:56:59 ?    00:00:06 surfaceflinger
+cameraserver   612     1 0 06:57:00 ?     00:00:00 cameraserver
+mediacodec     648     1 0 06:57:01 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+mediacodec    7115     1 5 06:57:46 ?     00:00:00 [android.hardwar]
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.drm]: [restarting]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.media]: [restarting]
+[init.svc.mediadrm]: [restarting]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor-dolby-media-c2-hal]: [restarting]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.dlkm_loader]: [stopped]
+[init.svc.vendor.grub-editenv-set-android_theme]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+[init.svc.vendor.netmgr_fingerprint]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{b2baee0 u0 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}
+  mFocusedApp=ActivityRecord{236610509 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t7}
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[   67.890159] [  T198] SELinux: avc:  denied  { find } for pid=7131 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## oriole_16_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.1.145-android14-11-gfa1d6308d1fe-ab14691759 #1 SMP PREEMPT Fri Jan  9 16:33:46 UTC 2026 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=google/oriole/oriole:16/CP1A.260405.005/15001963:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=16
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=gs101
+=== RUNNING VENDOR HAL PROCS ===
+system         248     1 3 15:22:56 ?     00:00:02 servicemanager
+audioserver    622     1 0 15:23:11 ?     00:00:00 android.hardware.audio.service
+audioserver    623     1 0 15:23:11 ?     00:00:00 android.hardware.audio.effect.service
+audioserver    639     1 0 15:23:12 ?     00:00:00 audioserver
+system         644     1 18 15:23:12 ?    00:00:09 surfaceflinger
+cameraserver   676     1 0 15:23:12 ?     00:00:00 cameraserver
+mediacodec     706     1 0 15:23:13 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.android-hardware-media-c2-hal]: [restarting]
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.drm]: [restarting]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.media]: [restarting]
+[init.svc.mediadrm]: [restarting]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor-dolby-media-c2-hal]: [restarting]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+[init.svc.vendor.dlkm_loader_mainline]: [stopped]
+[init.svc.vendor.grub-editenv-set-android_theme]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{e0cc7fd u0 com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity}
+  mFocusedApp=ActivityRecord{218528250 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t6}
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[   76.857589] [  T248] SELinux: avc:  denied  { find } for pid=7560 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+[   76.930561] [    T1] init: starting service 'exec 84 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+[   76.935801] [    T1] init: ... started service 'exec 84 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 8007
+[   76.935826] [    T1] init: SVC_EXEC service 'exec 84 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 8007 (uid 1000 gid 1000+0 context default) started; waiting...
+[   76.943487] [    T1] init: Service 'exec 84 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 8007) exited with status 0 waiting took 0.011000 seconds
+[   76.958734] [    T1] init: Sending SIGKILL to service 'exec 84 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 8007) process group...
+
+========================================================================
+## oriole_17_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.1.162-android14-11-g9dd05ae3a1de-ab16261587 #1 SMP PREEMPT Thu Sep  3 03:59:00 UTC 2026 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=google/oriole/oriole:17/CP3A.261005.002.A1/16269273:user/release-keys
+ro.build.version.release=17
+ro.vendor.build.version.release=17
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=gs101
+=== RUNNING VENDOR HAL PROCS ===
+system         254     1 6 10:39:08 ?     00:00:04 servicemanager
+audioserver    636     1 0 10:39:20 ?     00:00:00 android.hardware.audio.service
+audioserver    637     1 0 10:39:20 ?     00:00:00 android.hardware.audio.effect.service
+audioserver    662     1 0 10:39:20 ?     00:00:00 audioserver
+system         672     1 15 10:39:20 ?    00:00:09 surfaceflinger
+cameraserver   779     1 0 10:39:22 ?     00:00:00 cameraserver
+mediacodec     828     1 0 10:39:22 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.android-hardware-media-c2-hal]: [restarting]
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.drm]: [restarting]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.media]: [restarting]
+[init.svc.mediadrm]: [restarting]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor-dolby-media-c2-hal]: [restarting]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+[init.svc.vendor.dlkm_loader_mainline]: [stopped]
+[init.svc.vendor.grub-editenv-set-android_theme]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{5f1c8c5 u0 Android System}
+  mFocusedApp=ActivityRecord{88662448 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t7}
+=== CRASH BUFFER ===
+09-05 10:40:16.097  8927  8927 F DEBUG   : Note: To display stack pointer information, use the pbtombstone tool:
+09-05 10:40:16.097  8927  8927 F DEBUG   :         pbtombstone --display-sp tombstone_XX.pb
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[   75.878955] [  T254] SELinux: avc:  denied  { find } for pid=9575 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+[   75.908936] [    T1] init: starting service 'exec 114 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+[   75.922719] [    T1] init: ... started service 'exec 114 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 9685
+[   75.925276] [    T1] init: SVC_EXEC service 'exec 114 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 9685 (uid 1000 gid 1000+0 context default) started; waiting...
+[   75.927444] [    T1] init: Service 'exec 114 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 9685) exited with status 0 waiting took 0.009000 seconds
+[   75.929601] [    T1] init: Sending SIGKILL to service 'exec 114 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 9685) process group...
+[   75.954530] [    T1] init: starting service 'exec 115 (/system/bin/flags_health_check UPDATABLE_CRASHING)'...
+[   76.000228] [    T1] init: ... started service 'exec 115 (/system/bin/flags_health_check UPDATABLE_CRASHING)' has pid 9706
+[   76.014030] [    T1] init: SVC_EXEC service 'exec 115 (/system/bin/flags_health_check UPDATABLE_CRASHING)' pid 9706 (uid 1000 gid 1000+0 context default) started; waiting...
+[   76.024944] [    T1] init: Command 'exec - system system -- /system/bin/flags_health_check UPDATABLE_CRASHING' action=sys.init.updatable_crashing=1 (/system/etc/init/flags_health_check.rc:11) took 70ms and succeeded
+[   76.125457] [    T1] init: Service 'exec 115 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 9706) exited with status 0 waiting took 0.134000 seconds
+[   76.129111] [    T1] init: Sending SIGKILL to service 'exec 115 (/system/bin/flags_health_check UPDATABLE_CRASHING)' (pid 9706) process group...
+
+========================================================================
+## popsicle_16_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.12.23-android16-5-g75e9b1c7ae7c-abogki463945075-4k #1 SMP PREEMPT Thu Nov 27 08:45:40 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=Xiaomi/popsicle/popsicle:16/BP2A.250605.031.A3/OS3.0.319.0.WPBCNXM:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=16
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=canoe
+=== RUNNING VENDOR HAL PROCS ===
+system         242     1 3 10:18:28 ?     00:00:06 servicemanager
+audioserver    614     1 0 10:18:42 ?     00:00:00 android.hardware.audio.service
+audioserver    616     1 0 10:18:42 ?     00:00:00 android.hardware.audio.effect.service
+audioserver    642     1 0 10:18:43 ?     00:00:00 audioserver
+system         656     1 11 10:18:43 ?    00:00:18 surfaceflinger
+cameraserver   730     1 0 10:18:44 ?     00:00:00 cameraserver
+media          739     1 0 10:18:44 ?     00:00:00 mediaserver64
+mediacodec     797     1 0 10:18:44 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.audioshell_system]: [stopped]
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.qccsyshal@1.2-service]: [stopped]
+[init.svc.system_perf_init]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+[init.svc.vendor.dlkm_loader_mainline]: [stopped]
+[init.svc.vendor.grub-editenv-set-android_theme]: [stopped]
+[init.svc.vendor.netmgr_configure]: [stopped]
+[init.svc.vendor.netmgr_fingerprint]: [stopped]
+[init.svc.vendor.netmgr_setup]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{a667d3e u0 com.android.provision/com.android.provision.activities.DefaultActivity}
+  mFocusedApp=ActivityRecord{71431395 u0 com.android.provision/.activities.DefaultActivity t2}
+08-24 10:21:29.093   656   862 E HWComposer: getLuts: getLuts failed for display 4632256312697818880: UNSUPPORTED (8)
+08-24 10:21:29.341   656   862 E HWComposer: getLuts: getLuts failed for display 4632256312697818880: UNSUPPORTED (8)
+08-24 10:21:29.560   656   862 E HWComposer: getLuts: getLuts failed for display 4632256312697818880: UNSUPPORTED (8)
+=== CRASH BUFFER ===
+08-24 10:21:27.042  3760  9297 E AndroidRuntime: Process: .qtidataservices, PID: 3760
+08-24 10:21:28.646  9809  9953 E AndroidRuntime: Process: .qtidataservices, PID: 9809
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[  184.119384] [  T242] SELinux: avc:  denied  { find } for pid=9593 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## popsicle_17_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.12.69-android16-6-g43b5ab7e247d-abogki558343811-4k #1 SMP PREEMPT Tue Sep  8 15:08:49 UTC 2026 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=Xiaomi/popsicle/popsicle:17/CP2A.260605.016/OS4.0.5.0.XPBCNXM:user/release-keys
+ro.build.version.release=17
+ro.vendor.build.version.release=16
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=canoe
+=== RUNNING VENDOR HAL PROCS ===
+system         259     1 5 22:35:16 ?     00:00:08 servicemanager
+audioserver    682     1 0 22:35:30 ?     00:00:00 android.hardware.audio.service
+audioserver    684     1 0 22:35:30 ?     00:00:00 android.hardware.audio.effect.service
+audioserver    699     1 0 22:35:30 ?     00:00:00 audioserver
+system         713     1 24 22:35:30 ?    00:00:33 surfaceflinger
+cameraserver   890     1 0 22:35:33 ?     00:00:00 cameraserver
+media          907     1 1 22:35:33 ?     00:00:01 mediaserver64
+mediacodec     949     1 1 22:35:33 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+media         8343     1 12 22:37:49 ?    00:00:00 mediacodeclist_generator
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.audioshell_system]: [stopped]
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport_mtbf]: [stopped]
+[init.svc.perfobserve_cleanup]: [stopped]
+[init.svc.perfobserve_read_cloud_bits]: [stopped]
+[init.svc.qccsyshal@1.2-service]: [stopped]
+[init.svc.system_perf_init]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor_sys_qti_display]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=null
+  mFocusedApp=ActivityRecord{179947452 u0 com.miui.home/.launcher.Launcher t100}
+=== CRASH BUFFER ===
+10-20 22:37:33.364  4506  4542 E AndroidRuntime: Process: .qtidataservices, PID: 4506
+10-20 22:37:33.367  4506  4541 E AndroidRuntime: Process: .qtidataservices, PID: 4506
+10-20 22:37:33.962  4585  4649 E AndroidRuntime: Process: .qtidataservices, PID: 4585
+10-20 22:37:34.194  4733  4779 E AndroidRuntime: Process: .qtidataservices, PID: 4733
+10-20 22:37:34.469  4798  4826 E AndroidRuntime: Process: .qtidataservices, PID: 4798
+10-20 22:37:34.767  4873  4909 E AndroidRuntime: Process: .qtidataservices, PID: 4873
+10-20 22:37:37.298  4992  5094 E AndroidRuntime: Process: .qtidataservices, PID: 4992
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[  161.233430] [  T259] SELinux: avc:  denied  { find } for pid=8412 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## sun_pass.txt
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.6.118-android15-8-gc901ea41aa32-ab15981388-4k #1 SMP PREEMPT Thu Jul 30 02:48:45 UTC 2026 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=HONOR/PTP-N59/HNPTPX:16/HONORPTP-N59/10.0.0.166C721E8R3P3:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=15
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=sun
+=== RUNNING VENDOR HAL PROCS ===
+system         244     1 21 10:17:16 ?    00:00:29 servicemanager
+audioserver    569     1 0 10:17:34 ?     00:00:00 android.hardware.audio.service
+audioserver    570     1 0 10:17:34 ?     00:00:00 android.hardware.audio.effect.service
+mediacodec     576     1 0 10:17:34 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     584     1 0 10:17:35 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    592     1 0 10:17:35 ?     00:00:00 audioserver
+system         596     1 6 10:17:35 ?     00:00:07 surfaceflinger
+cameraserver   658     1 0 10:17:36 ?     00:00:00 cameraserver
+media          667     1 1 10:17:36 ?     00:00:01 mediaserver
+mediacodec     678     1 0 10:17:36 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.hwnffearly]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.qccsyshal@1.2-service]: [stopped]
+[init.svc.rillogcat]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.cph_storage_align]: [stopped]
+[init.svc.vendor.cph_wifi_bootstrap]: [stopped]
+=== HIDL / AIDL HAL CHECK ===
+  mCurrentFocus=Window{5ce973d u0 com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher}
+  mFocusedApp=ActivityRecord{75672662 u0 com.hihonor.android.launcher/.unihome.UniHomeLauncher t11}
+=== CRASH BUFFER ===
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+[  153.708577] [  T244] SELinux: avc:  denied  { find } for pid=11523 uid=2000 name=textservices scontext=u:r:pioneer:s0 tcontext=u:object_r:textservices_service:s0 tclass=service_manager permissive=1
+

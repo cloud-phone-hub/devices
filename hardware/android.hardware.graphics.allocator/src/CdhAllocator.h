@@ -3,6 +3,7 @@
 #include <cstring>
 #include <dirent.h>
 #include <string>
+#include <unistd.h>
 #include <utility>
 
 #include <android-base/properties.h>
@@ -32,9 +33,23 @@ class CdhAllocator : public aidl::android::hardware::graphics::allocator::impl::
 #endif
 
  private:
+  static bool MapperLibExists(const std::string& suffix) {
+    if (suffix.empty()) {
+      return false;
+    }
+    const char* const kHwDirs[] = {"/vendor/lib64/hw", "/system/vendor/lib64/hw"};
+    for (const char* dir_path : kHwDirs) {
+      std::string full = std::string(dir_path) + "/mapper." + suffix + ".so";
+      if (access(full.c_str(), F_OK) == 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   static std::string ResolveMapperSuffix() {
     std::string prop = ::android::base::GetProperty("ro.hardware.gralloc", "");
-    if (!prop.empty()) {
+    if (!prop.empty() && MapperLibExists(prop)) {
       return prop;
     }
     const char* const kHwDirs[] = {"/vendor/lib64/hw", "/system/vendor/lib64/hw"};

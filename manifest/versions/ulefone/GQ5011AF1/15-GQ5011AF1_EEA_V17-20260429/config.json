@@ -2,7 +2,7 @@
   "id": 36,
   "buildId": "15-GQ5011AF1_EEA_V17-20260429",
   "deviceId": 29,
-  "configId": 40,
+  "configId": 72,
   "osVersion": "15-GQ5011AF1_EEA_V17-20260429",
   "buildDate": "20260429",
   "securityPatch": "2026-03-05",
@@ -12,14 +12,14 @@
   "extra": {
     "comment": "由 cdh unpack prepare 从 Ulefone-Armor-28-Ultra-Thermal-Version-15.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
+      "odm": "14",
+      "odm_dlkm": "14",
+      "product": "15",
       "system": "15",
       "system_ext": "15",
-      "product": "15",
       "vendor": "14",
-      "odm": "14",
-      "vendor_dlkm": "14",
-      "odm_dlkm": "14"
+      "vendor_dlkm": "14"
     }
   },
-  "updatedAt": "2026-11-19T02:44:59Z"
+  "updatedAt": "2026-11-20T20:52:55Z"
 }

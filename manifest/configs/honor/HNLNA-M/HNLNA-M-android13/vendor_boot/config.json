@@ -1,0 +1,9 @@
+{
+  "cmdline": [
+    "androidboot.product.hardware.sku=vext_k6835v2_64",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ],
+  "fstab": "mt6835"
+}

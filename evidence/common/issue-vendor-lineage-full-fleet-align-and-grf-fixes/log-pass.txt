@@ -1,0 +1,593 @@
+=== 全库底座对齐总对账 (2026-11-21) ===
+Configs: 42, Versions: 47, Referenced: 42, Mismatches: 0, Orphans: 0, Dist check (18 versions): missing=0
+Go unit tests (./modules/pipeline/... ./modules/daemon/... ./internal/manifestview/...): ALL PASS (37 packages)
+
+================================================================================
+PASS SAMPLE: Asteroids_15_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.1.112-android14-11-g8961b96ba360-ab12909824 #1 SMP PREEMPT Mon Jan 13 13:28:58 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=Nothing/Asteroids/Asteroids:15/AQ3A.241015.001/2510131406:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=14
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=volcano
+=== WINDOW / FOCUS ===
+  mCurrentFocus=Window{4dba981 u0 com.nothing.introduction/com.nothing.introduction.MainActivity}
+  mFocusedApp=ActivityRecord{31d33bb u0 com.nothing.introduction/.MainActivity t6}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+=== CRASH BUFFER ===
+--------- beginning of crash
+10-13 06:07:01.911  1549  2216 E AndroidRuntime: FATAL EXCEPTION: QualifiedNetworksService
+10-13 06:07:01.911  1549  2216 E AndroidRuntime: Process: .qtidataservices, PID: 1549
+10-13 06:07:01.911  1549  2216 E AndroidRuntime: java.lang.UnsatisfiedLinkError: No implementation found for void vendor.qti.iwlan.JniHelper.getAllQualifiedNetworks(int, int) (tried Java_vendor_qti_iwlan_JniHelper_getAllQualifiedNetworks and Java_vendor_qti_iwlan_JniHelper_getAllQualifiedNetworks__II) - is the library loaded, e.g. System.loadLibrary?
+10-13 06:07:01.911  1549  2216 E AndroidRuntime: 	at vendor.qti.iwlan.JniHelper.getAllQualifiedNetworks(Native Method)
+10-13 06:07:01.911  1549  2216 E AndroidRuntime: 	at vendor.qti.iwlan.IWlanProxy.getAllQualifiedNetworks(IWlanProxy.java:486)
+10-13 06:07:01.911  1549  2216 E AndroidRuntime: 	at vendor.qti.iwlan.QualifiedNetworksServiceImpl$NetworkAvailabilityProviderImpl.<init>(QualifiedNetworksServiceImpl.java:80)
+10-13 06:07:01.911  1549  2216 E AndroidRuntime: 	at vendor.qti.iwlan.QualifiedNetworksServiceImpl.onCreateNetworkAvailabilityProvider(QualifiedNetworksServiceImpl.java:155)
+10-13 06:07:01.911  1549
+
+================================================================================
+PASS SAMPLE: Asteroids_16_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.1.157-android14-11-g82d681c9b06b-ab14634535 #1 SMP PREEMPT Mon Dec 22 19:22:33 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=Nothing/Asteroids/Asteroids:16/BQ2A.250721.001-BP2A.250605.031.A3/2608101153:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=14
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=volcano
+=== WINDOW / FOCUS ===
+  mCurrentFocus=Window{eef6f3a u0 com.nothing.introduction16/com.nothing.introduction.MainActivity}
+  mFocusedApp=ActivityRecord{98779389 u0 com.nothing.introduction16/com.nothing.introduction.MainActivity t6}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+=== CRASH BUFFER ===
+--------- beginning of crash
+08-10 03:53:58.344  1844  2439 E AndroidRuntime: FATAL EXCEPTION: QualifiedNetworksService
+08-10 03:53:58.344  1844  2439 E AndroidRuntime: Process: .qtidataservices, PID: 1844
+08-10 03:53:58.344  1844  2439 E AndroidRuntime: java.lang.UnsatisfiedLinkError: No implementation found for void vendor.qti.iwlan.JniHelper.getAllQualifiedNetworks(int, int) (tried Java_vendor_qti_iwlan_JniHelper_getAllQualifiedNetworks and Java_vendor_qti_iwlan_JniHelper_getAllQualifiedNetworks__II) - is the library loaded, e.g. System.loadLibrary?
+08-10 03:53:58.344  1844  2439 E AndroidRuntime: 	at vendor.qti.iwlan.JniHelper.getAllQualifiedNetworks(Native Method)
+08-10 03:53:58.344  1844  2439 E AndroidRuntime: 	at vendor.qti.iwlan.IWlanProxy.getAllQualifiedNetworks(IWlanProxy.java:486)
+08-10 03:53:58.344  1844  2439 E AndroidRuntime: 	at vendor.qti.iwlan.QualifiedNetworksServiceImpl$NetworkAvailabilityProviderImpl.<init>(QualifiedNetworksServiceImpl.java:80)
+08-10 03:53:58.344  1844  2439 E AndroidRuntime: 	at vendor.qti.iwlan.QualifiedNetworksServiceImpl.onCreateNetworkAvailabilityProvider(QualifiedNetworksServiceImpl.java:157)
+08-10 03:53:58.344  1844
+
+================================================================================
+PASS SAMPLE: GQ5011AF1_15_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.1.115-android14-11-g6b18f0b574ab-ab12901745 #1 SMP PREEMPT Fri Jan 10 22:12:05 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=Ulefone/GQ5011AF1_EEA/GQ5011AF1:15/AP3A.240905.015.A2/1777434795:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=14
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6989
+=== WINDOW / FOCUS ===
+  mCurrentFocus=Window{1054330 u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher}
+  mFocusedApp=ActivityRecord{253b49b u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher t6}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+--------- beginning of main
+04-29 11:53:34.963   606   818 D SurfaceFlinger: calculateTimeoutTime, triggerInterval = 3 sec + 0 nsec
+04-29 11:53:35.210   606  2121 D SurfaceFlinger: [SF client] NEW(0xb4000072664d6120) for (3091:com.android.launcher3)
+04-29 11:53:35.331   606  3028 D SurfaceFlinger: [SF client] NEW(0xb400007266224de0) for (3719:com.google.android.googlequicksearchbox:search)
+04-29 11:53:35.675   606  3028 I SurfaceFlinger: onHandleDestroyed: name=229ce67 com.android.launcher3/com.android.searchlauncher.SearchLauncher#95, layerId=95, parentId=0
+04-29 11:53:35.692   606   606 I SurfaceFlinger: onHandleDestroyed: name=Transition Root: DefaultTaskDisplayArea#112, layerId=112, parentId=0
+04-29 11:53:35.708   606   606 D SurfaceFlinger: Focus addInputWindowCommands timestamp=40907485602, windowName=1054330 com.android.launcher3/com.android.searchlauncher.SearchLauncher
+04-29 11:53:35.708
+=== CRASH BUFFER ===
+--------- beginning of crash
+01-01 08:00:13.158   656   656 I libimsma_adapt: mtk-brm-commit-id:8783a29bae0ae84a456239f3212f27bdafa94c91
+01-01 08:00:13.162   656   656 I libimsma_adapt: mtk-brm-change-id:Iee598bb542f5de895a4b71649fbc79b2d93bc3de
+01-01 08:00:13.162   656   656 I libimsma_adapt: mtk-brm-merge-id:none
+01-01 08:00:13.228   673   673 I emdlogger: mtk-brm-commit-id:d0df48aa8f322c846a0ee2934fb5db5ae2bfa375
+01-01 08:00:13.228   673   673 I emdlogger: mtk-brm-change-id:If94188b9963eb72d8d14a663ce767eefa5d45906
+01-01 08:00:13.228   673   673 I emdlogger: mtk-brm-merge-id:none
+04-29 11:53:31.631  2863  2863 I SmartRatSwitch: mtk-brm-commit-id:b5a60cc69a1756c521ec182159b2accf61e98864
+04-29 11:53:31.631  2863  2863 I SmartRatSwitch: mtk-brm-change-id:I4b61c3110cf0ec624b06cc6b58c35cc1bb10baec
+04-29 11:53:31.631  2863  2863 I SmartRatSwitch: mtk-brm-merge-id:none
+04-29 11:53:31.656  3592  4209 E AndroidRuntime: FATAL EXCEPTION: AsyncTask #1
+04-29 11:53:31.656  3592  4209 E AndroidRuntime: Process: com.gotron.uota, PID: 3592
+04-29 11:53:31.656  3592  4209 E AndroidRuntime: java.lang.RuntimeException: An error occurred while executing doInBackground()
+04-29 11:
+
+================================================================================
+PASS SAMPLE: GQ5011AF1_16_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.1.145-android14-11-g09f1c0074ad7-ab14226177 #1 SMP PREEMPT Tue Oct  7 14:55:18 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=Ulefone/GQ5011AF1_EEA/GQ5011AF1:16/BP2A.250605.031.A3/1787661648:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=14
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6989
+=== WINDOW / FOCUS ===
+  mCurrentFocus=Window{4e98fa4 u0 Application Error: com.android.settings}
+  mFocusedApp=ActivityRecord{201841660 u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher t6}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+--------- beginning of main
+08-25 20:41:07.336   584  2586 D SurfaceFlinger: updateWinowInfo=1, setFocusedWindow timestamp=41449624685, windowName=4e98fa4 Application Error: com.android.settings
+08-25 20:41:07.499   584   825 I SurfaceFlinger: onHandleDestroyed: layerId=110, name=Surface(name=a1efa50 Taskbar)/@0x43b075 - animation-leash of insets_animation#110
+08-25 20:41:07.499   584   825 I SurfaceFlinger: onHandleDestroyed: layerId=90, name=Surface(name=5e5e8b StatusBar)/@0xd01a523 - animation-leash of insets_animation#90
+08-25 20:41:07.529   584   584 I SurfaceFlinger: onHandleDestroyed: layerId=126, name=Surface(name=4e98fa4 Application Error: com.android.settings)/@0xdc02f00 - animation-leash of window_animation#126
+08-25 20:41:07.560   584   584 I SurfaceFlinger: onHandleDestroyed: layerId=89, name=NotificationShade#89
+08-25 20:41:07.798   584   589 I SurfaceFlinger: onHandleDestroyed: layerId=113, name=com.androi
+=== CRASH BUFFER ===
+--------- beginning of crash
+01-01 08:00:12.193   625   625 I libimsma_adapt: mtk-brm-commit-id:86b746c21fd235c214611f3344cf70649e895fd7
+01-01 08:00:12.193   625   625 I libimsma_adapt: mtk-brm-change-id:I44c926fb2a62b0816d0a8d12e3957bca373f1721
+01-01 08:00:12.193   625   625 I libimsma_adapt: mtk-brm-merge-id:none
+01-01 08:00:12.205   636   636 I emdlogger: mtk-brm-commit-id:9d634ad4aaec05afd61a48cc390c2f3e7ba213ba
+01-01 08:00:12.205   636   636 I emdlogger: mtk-brm-change-id:I95f7f5b11ef3b8f02e5bc26abd93bf70033f9e48
+01-01 08:00:12.205   636   636 I emdlogger: mtk-brm-merge-id:none
+08-25 20:41:06.219  4649  4649 I SmartRatSwitch: mtk-brm-commit-id:2cfd070f8a90b8010f03270f37df3109871d9b41
+08-25 20:41:06.219  4649  4649 I SmartRatSwitch: mtk-brm-change-id:I53169c316f7eff46a7081a2c1345b32d8a1cb2f9
+08-25 20:41:06.219  4649  4649 I SmartRatSwitch: mtk-brm-merge-id:none
+08-25 20:41:06.607  4844  4844 E AndroidRuntime: FATAL EXCEPTION: main
+08-25 20:41:06.607  4844  4844 E AndroidRuntime: Process: com.android.settings, PID: 4844
+08-25 20:41:06.607  4844  4844 E AndroidRuntime: java.lang.RuntimeException: Unable to start receiver com.android.settings.fuelgauge.protect
+
+================================================================================
+PASS SAMPLE: HNLNA-M_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.15.180-android13-8-gc4391da87bed #1 SMP PREEMPT Tue Apr 7 03:23:06 UTC 2026 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=HONOR//HNLNA-M:16/BP2A.250605.031.A2/10.0.0.126C00E122preload format error.:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=13
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6835
+=== WINDOW / FOCUS ===
+  mCurrentFocus=Window{e0a4caf u0 com.hihonor.hnstartupguide/com.hihonor.hnstartupguide.EmbeddingActivity}
+  mFocusedApp=ActivityRecord{14714250 u0 com.hihonor.hnstartupguide/.EmbeddingActivity t12}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+--------- beginning of (HKS)2A89EDCF91445DC7C4E8B8BC1774DCF949BB9D15DD9F4A9BB7AEF96E5A89C74381444CA9C3B00D1BA5E4BA34163C6E78381E79C8DC5A94E304022BBE4AB2B32E1DEDD46DA4281438511C6F616920B9D5908FB2C6D97917FDE4DA002B098560AC3BCF82877482A613B8CABA68988F3962509676CB7A94B9941383F327DAF87728E10517D4F07AD5C2600FD01FF43E135A2B494CD35B68A4AEE6AD2FF710851923DCF36C25783302509D0621A35E1D1F8DA726AEBDBECC5B3604BC8F0D54EC25760D278EF0EAA4B8E6C6CBADDDC45D77A124780B2B82C9123D43304F3EA90C979B91689F9D7B49A747820F712ABBFBCAB107C939C6A93804B355E23CAC365FA78F(HKE)
+--------- beginning of main
+04-22 15:45:01.712   705  1956 I SurfaceFlinger: createLayer layername: WindowToken{dda2f64 type=2024 android.os.BinderProxy@45124f7} address = 0xb400007273396f60
+04-22 15:45:01.713   705  1956 I SurfaceFlinger: createLayer layername: baed5cd ScreenDecorDotViewOverlay address = 0xb4000072733b2be0
+04-22 15:45:01.721   705  1956 I SurfaceFlinger:
+=== CRASH BUFFER ===
+--------- beginning of (HKS)62F52ECA2F324E82BF0350D70495FA8B0E5CB95CED7188EE349D526BDFB423D110381F9868513A3E7DF9357C83FAB44660A0B1B8639646FEB5795DBEFCD541ACF2A24C55DA42702B7F67E08308AC701D89EF69A3881BBE1B77F4067623BF67D2B5A87D35A097A0EFE9DED6CFC01B183B1FA98E6A2168C345F343040D7AD4B2197547621C389C65E593A2CB35B28344FA4D8EE091AC5D65BAE359228A1FF8F8CDF21E6499E7D5F228A5C38E0E781CECE9E86E9428C2FEBEADA8CB140DCF5D839B24D4D89DAC47980B2396F8966050EF53ADD7EBA7073788EEB4CEEC0CF2B059258B07A03665F4815796F8A1EF0AB6C372BF55C2F8EAB4AA8572FC24A23444A28B(HKE)
+--------- beginning of crash
+04-22 15:44:59.250  2188  2808 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 2808 (hwuiTask0), pid 2188 (.hnstartupguide)
+04-22 15:44:59.675  2919  2919 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+04-22 15:44:59.675  2919  2919 F DEBUG   : Build fingerprint: 'HONOR//HNLNA-M:16/BP2A.250605.031.A2/10.0.0.126C00E122preload format error.:user/release-keys'
+04-22 15:44:59.675  2919  2919 F DEBUG   : Revision: '0'
+04-22 15:44:59.675  2919  2919 F DEBUG   : ABI: 'arm64'
+04-22 15:44:59.675  2919  2919 F DEBUG   : Timestamp: 2026-04-22 15:44:59.297038257+08
+
+================================================================================
+PASS SAMPLE: Infinix-X6876_16_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.1.145-android14-11-g09f1c0074ad7-ab14226177 #1 SMP PREEMPT Tue Oct  7 14:55:18 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=Infinix/X6876-OPPJ/Infinix-X6876:16/BP2A.250605.031.A3/201350016:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=14
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6878
+=== WINDOW / FOCUS ===
+  mCurrentFocus=Window{166d9f8 u0 com.transsion.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher}
+  mFocusedApp=ActivityRecord{13737713 u0 com.transsion.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher t7}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+--------- beginning of main
+04-23 18:19:11.992   613   825 I SurfaceFlinger: onHandleDestroyed: layerId=144, name=Surface(name=b573dbd InputMethod)/@0x2529a80 - animation-leash of insets_animation#144
+04-23 18:19:15.639   613   613 I SurfaceFlinger: onHandleDestroyed: layerId=151, name=[Gesture Monitor] swipe-up#151
+04-23 18:19:16.990   613   613 I SurfaceFlinger: onHandleDestroyed: layerId=90, name=WindowToken{dfa518 type=2021 android.os.BinderProxy@f98d0fb}#90
+04-23 18:19:16.990   613   613 I SurfaceFlinger: onHandleDestroyed: layerId=91, name=c16cb71 com.transsion.microintelligence#91
+=== CRASH BUFFER ===
+--------- beginning of crash
+01-01 08:00:11.580   670   670 I emdlogger: mtk-brm-commit-id:9d634ad4aaec05afd61a48cc390c2f3e7ba213ba
+01-01 08:00:11.581   670   670 I emdlogger: mtk-brm-change-id:I95f7f5b11ef3b8f02e5bc26abd93bf70033f9e48
+01-01 08:00:11.581   670   670 I emdlogger: mtk-brm-merge-id:none
+01-01 08:00:11.660   653   653 I libimsma_adapt: mtk-brm-commit-id:86b746c21fd235c214611f3344cf70649e895fd7
+01-01 08:00:11.660   653   653 I libimsma_adapt: mtk-brm-change-id:I44c926fb2a62b0816d0a8d12e3957bca373f1721
+01-01 08:00:11.660   653   653 I libimsma_adapt: mtk-brm-merge-id:none
+
+================================================================================
+PASS SAMPLE: Meizu22_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.6.66-android15-8-maybe-dirty-4k #1 SMP PREEMPT Tue Jan 27 19:19:43 UTC 2026 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=meizu/Meizu_22_CN/Meizu22:16/BQ2A.251016.001-BP2A.250605.031.A3/1763452226:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=15
+ro.lineage.version=
+ro.hardware.egl=mesa
+ro.hardware.vulkan=virtio
+ro.board.platform=sun
+=== WINDOW / FOCUS ===
+  mCurrentFocus=Window{ede5563 u0 com.meizu.net.search/com.meizu.net.search.ui.module.activities.TransparentDialogActivity}
+  mFocusedApp=ActivityRecord{230616658 u0 com.meizu.net.search/.ui.module.activities.TransparentDialogActivity t9}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+
+================================================================================
+PASS SAMPLE: PJE110_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.15.167-android13-8-o-01144-gdc8278c1c5f9 #1 SMP PREEMPT Wed Sep 3 15:30:49 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=OnePlus/PJE110/OP5CF9L1:15/TP1A.220905.001/U.1d94395_275952_27eb03:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=13
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=kalama
+=== WINDOW / FOCUS ===
+  mCurrentFocus=Window{820c84f u0 com.oplus.battery}
+  mFocusedApp=ActivityRecord{c07df4c u0 com.android.launcher/.Launcher t2}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+--------- beginning of main
+01-01 00:01:20.973  2914  3301 D libEGL  : this is from skia gles
+01-01 00:01:21.052  2914  3301 D libEGL  : this is from skia gles
+01-01 00:01:21.073  2914  3301 D libEGL  : this is from skia gles
+01-01 00:01:21.123  2914  3301 D libEGL  : this is from skia gles
+01-01 00:01:21.182  2914  3301 D libEGL  : this is from skia gles
+01-01 00:01:22.093   585   717 I SurfaceFlinger: [SF client] NEW(0xb400007544274ae0) for (2811:com.android.systemui)
+01-01 00:01:22.101  2811  3250 D libEGL  : this is from skia gles
+01-01 00:01:22.678   585   716 I SurfaceFlinger: [SF client] NEW(0xb400007544275940) for (2811:com.android.systemui)
+01-01 00:01:22.684  2811  3250 D libEGL  : this is from skia gles
+=== CRASH BUFFER ===
+--------- beginning of crash
+01-01 08:00:28.346   754   754 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 754 (minidumpreader), pid 754 (minidumpreader)
+01-01 08:00:28.364  1029  1029 F DEBUG   : Process name is system/system_ext/bin/minidumpreader, uid is 0, not key_process
+01-01 08:00:28.364  1029  1029 F DEBUG   : keyProcess: 0
+01-01 08:00:28.364  1029  1029 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+01-01 08:00:28.364  1029  1029 F DEBUG   : Build fingerprint: 'OnePlus/PJE110/OP5CF9L1:15/TP1A.220905.001/U.1d94395_275952_27eb03:user/release-keys'
+01-01 08:00:28.364  1029  1029 F DEBUG   : Revision: '0'
+01-01 08:00:28.364  1029  1029 F DEBUG   : ABI: 'arm64'
+01-01 08:00:28.364  1029  1029 F DEBUG   : Timestamp: 1970-01-01 08:00:28.357865055+0800
+01-01 08:00:28.364  1029  1029 F DEBUG   : Process uptime: 0s
+01-01 08:00:28.364  1029  1029 F DEBUG   : Cmdline: system/system_ext/bin/minidumpreader
+01-01 08:00:28.364  1029  1029 F DEBUG   : pid: 754, tid: 754, name: minidumpreader  >>> system/system_ext/bin/minidumpreader <<<
+01-01 08:00:28.364  1029  1029 F DEBUG   : uid: 0
+01-01 08:00:28.364
+
+================================================================================
+PASS SAMPLE: PME110_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.12.69-android16-6-g242e1a07f878-ab15865446-4k #1 SMP PREEMPT Wed Jul 15 11:18:49 UTC 2026 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=OPPO/PME110/OP61C1L1:17/CP2A.260605.016/B.43db5f5-1dce0b6-1dd5089:user/release-keys
+ro.build.version.release=17
+ro.vendor.build.version.release=16
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6993
+=== WINDOW / FOCUS ===
+  mCurrentFocus=Window{6b8f835 u0 com.oplus.battery}
+  mFocusedApp=ActivityRecord{160140652 u0 com.android.launcher/.Launcher t2}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+01-01 00:02:00.783   591   591 E SurfaceFlinger: BqProducerTypeCache get: get_sf_info fail
+01-01 00:02:00.783   591   591 E SurfaceFlinger: BqProducerTypeCache get: get_sf_info fail
+01-01 00:02:00.783   591   591 E SurfaceFlinger: BqProducerTypeCache get: get_sf_info fail
+01-01 00:02:00.783   591   591 E SurfaceFlinger: BqProducerTypeCache get: get_sf_info fail
+01-01 00:02:00.824   591   591 I SurfaceFlinger: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent) to default color mode
+01-01 00:02:00.824   591   591 E SurfaceFlinger: BqProducerTypeCache get: get_sf_info fail
+01-01 00:02:00.824   591   591 E SurfaceFlinger: BqProducerTypeCache get: get_sf_info fail
+01-01 00:02:00.824   591   591 E SurfaceFlinger: BqProducerTypeCache get: get_sf_info fail
+01-01 00:02:00.824   591   591 E SurfaceFlinger: BqProducerTypeCache get: get_sf_info fail
+01-01 00:02:00.824   591   591 E SurfaceFlinger: BqProducerTypeCache get: get_sf_info fail
+01-01 00:02:00.835   591   591 I Surface
+
+================================================================================
+PASS SAMPLE: RMX3823_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.15.167-android13-8-o-01142-g18bd462653c5 #1 SMP PREEMPT Fri Sep 12 08:36:21 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=realme/RMX3823/RE5C33:15/AP3A.240617.008/T.1fc6783-2-f6d31:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=13
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=kalama
+=== WINDOW / FOCUS ===
+  mCurrentFocus=Window{6be59b6 u0 com.oplus.battery}
+  mFocusedApp=ActivityRecord{6d0b268 u0 com.coloros.bootreg/.settings.activity.GuidePage t5}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+=== CRASH BUFFER ===
+--------- beginning of crash
+01-01 08:00:33.418   790   790 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 790 (minidumpreader), pid 790 (minidumpreader)
+01-01 08:00:33.428  1047  1047 F DEBUG   : Process name is system/system_ext/bin/minidumpreader, uid is 0, not key_process
+01-01 08:00:33.428  1047  1047 F DEBUG   : keyProcess: 0
+01-01 08:00:33.428  1047  1047 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+01-01 08:00:33.428  1047  1047 F DEBUG   : Build fingerprint: 'realme/RMX3823/RE5C33:15/AP3A.240617.008/T.1fc6783-2-f6d31:user/release-keys'
+01-01 08:00:33.428  1047  1047 F DEBUG   : Revision: '0'
+01-01 08:00:33.428  1047  1047 F DEBUG   : ABI: 'arm64'
+01-01 08:00:33.428  1047  1047 F DEBUG   : Timestamp: 1970-01-01 08:00:33.426506307+0800
+01-01 08:00:33.428  1047  1047 F DEBUG   : Process uptime: 0s
+01-01 08:00:33.428  1047  1047 F DEBUG   : Cmdline: system/system_ext/bin/minidumpreader
+01-01 08:00:33.428  1047  1047 F DEBUG   : pid: 790, tid: 790, name: minidumpreader  >>> system/system_ext/bin/minidumpreader <<<
+01-01 08:00:33.428  1047  1047 F DEBUG   : uid: 0
+01-01 08:00:33.428  1047  10
+
+================================================================================
+PASS SAMPLE: RMX5112_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.15.167-android13-8-o-g84fe88aa4569 #1 SMP PREEMPT Fri Jul 18 03:44:06 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=realme/RMX5112/RE6404L1:15/AP3A.240617.008/V.46abfbf-261738d-2631aea:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=13
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6835
+=== WINDOW / FOCUS ===
+  mCurrentFocus=Window{33ec290 u0 com.oplus.battery}
+  mFocusedApp=ActivityRecord{150b439 u0 com.android.launcher/.Launcher t2}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+--------- beginning of main
+01-01 00:01:47.113   635   635 I SurfaceFlinger: onHandleDestroyed: name=Input Consumer recents_animation_input_consumer#111, layerId=111, parentId=0
+01-01 00:01:48.167   635   994 D SurfaceFlinger: captureDisplayById from pid 0 display 4632256312697819135
+01-01 00:02:13.088  3126  3579 D libEGL  : this is from skia gles
+01-01 00:02:13.214  3126  3579 D libEGL  : this is from skia gles
+=== CRASH BUFFER ===
+--------- beginning of crash
+01-01 08:00:23.985   754   754 I libimsma_adapt: mtk-brm-commit-id:8783a29bae0ae84a456239f3212f27bdafa94c91
+01-01 08:00:23.985   754   754 I libimsma_adapt: mtk-brm-change-id:Iee598bb542f5de895a4b71649fbc79b2d93bc3de
+01-01 08:00:23.985   754   754 I libimsma_adapt: mtk-brm-merge-id:none
+01-01 08:00:24.204   778   778 I emdlogger: mtk-brm-commit-id:04ab5bd912477cf2320dee54df9ac8b535476f2d
+01-01 08:00:24.204   778   778 I emdlogger: mtk-brm-change-id:Ib405363e450403587f3a66bbe5b353966c086aba
+01-01 08:00:24.204   778   778 I emdlogger: mtk-brm-merge-id:none
+
+================================================================================
+PASS SAMPLE: aito_16_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.1.141-android14-11-gd77c4cd65aed-ab14680598 #1 SMP PREEMPT Wed Jan  7 15:04:33 UTC 2026 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=motorola/aito_g_sys/aito:16/W1UCS36H.96-35-8-9/4907d6-43c152:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=14
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6878
+=== WINDOW / FOCUS ===
+  mCurrentFocus=Window{ed7d94a u0 com.motorola.launcher3/com.android.launcher3.CustomizationPanelLauncher}
+  mFocusedApp=ActivityRecord{189063772 u0 com.motorola.launcher3/com.android.launcher3.CustomizationPanelLauncher t7}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+--------- beginning of main
+07-31 16:03:17.218   611   771 I SurfaceFlinger: onHandleDestroyed: layerId=121, name=Surface(name=9a9aeb5 InputMethod)/@0x617a0bb - animation-leash of insets_animation#121
+07-31 16:03:18.239   611   637 I SurfaceFlinger: onHandleDestroyed: layerId=116, name=Surface(name=54c94ad StatusBar)/@0x12f2373 - animation-leash of insets_animation#116
+07-31 16:03:18.349   611   771 I SurfaceFlinger: onHandleDestroyed: layerId=111, name=Surface(name=Task=1)/@0x3e21b0a_transition-leash#111
+07-31 16:03:24.375   611   611 I SurfaceFlinger: onHandleDestroyed: layerId=124, name=NotificationShade#124
+07-31 16:03:24.447   611   637 I SurfaceFlinger: onHandleDestroyed: layerId=123, name=Surface(name=54c94ad StatusBar)/@0x12f2373 - animation-leash of insets_animation#123
+=== CRASH BUFFER ===
+--------- beginning of crash
+01-01 00:00:13.397   679   679 I emdlogger: mtk-brm-commit-id:0149be3e5ea8d97c20d9e9ccd779d689647bc86e
+01-01 00:00:13.397   679   679 I emdlogger: mtk-brm-change-id:Ibe88044e4abd5f455c323abcbabb36615a307b98
+01-01 00:00:13.397   679   679 I emdlogger: mtk-brm-merge-id:none
+01-01 00:00:13.421   667   667 I libimsma_adapt: mtk-brm-commit-id:86b746c21fd235c214611f3344cf70649e895fd7
+01-01 00:00:13.421   667   667 I libimsma_adapt: mtk-brm-change-id:I44c926fb2a62b0816d0a8d12e3957bca373f1721
+01-01 00:00:13.421   667   667 I libimsma_adapt: mtk-brm-merge-id:none
+07-31 16:02:59.416  6988  6988 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 6988 (main), pid 6988 (main)
+07-31 16:02:59.618  7057  7057 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+07-31 16:02:59.618  7057  7057 F DEBUG   : Build fingerprint: 'motorola/aito_g_sys/aito:16/W1UCS36H.96-35-8-9/4907d6-43c152:user/release-keys'
+07-31 16:02:59.618  7057  7057 F DEBUG   : Revision: '0'
+07-31 16:02:59.618  7057  7057 F DEBUG   : ABI: 'arm64'
+07-31 16:02:59.618  7057  7057 F DEBUG   : Timestamp: 2026-07-31 16:02:59.450499378+0000
+07-31 16:02:5
+
+================================================================================
+PASS SAMPLE: asterpro_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.15.178-android13-8-00009-g18a89f1307e2-ab13471816 #1 SMP PREEMPT Fri May 9 06:36:19 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=unknown/unknown/unknown:15/AP3A.240905.015.A2/5KFP:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=13
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6835
+=== WINDOW / FOCUS ===
+  mCurrentFocus=null
+  mFocusedApp=ActivityRecord{6616278 u0 com.google.android.deskclock/com.android.deskclock.DeskClock t8}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+--------- beginning of main
+12-18 01:38:17.265   678   690 D SurfaceFlinger: [SF client] NEW(0xb400007add35df10) for (5381:com.google.android.inputmethod.latin)
+12-18 01:38:17.300   678   690 D SurfaceFlinger: [SF client] NEW(0xb400007add35e420) for (833:system_server)
+12-18 01:38:17.419   678   678 I SurfaceFlinger: onHandleDestroyed: name=Surface(name=75d4e9f InputMethod)/@0x75235bb - animation-leash of insets_animation#117, layerId=117, parentId=0
+12-18 01:38:17.778   678   711 D SurfaceFlinger: calculateTimeoutTime, triggerInterval = 3 sec + 0 nsec
+12-18 01:38:17.819   678  1150 D SurfaceFlinger: [SF client] NEW(0xb400007add360280) for (2863:com.android.systemui)
+12-18 01:38:22.872   678   690 D SurfaceFlinger: [SF client] NEW(0xb400007add3600d0) for (3282:com.tcl.android.launcher)
+12-18 01:38:23.273   678   690 I SurfaceFlinger: onHandleDestroyed: name=Surface(name=Task=1)/@0x77108b8_transition-leash#125, layerId=125, parentId=0
+12-18 01:38:23.273   678   690 I SurfaceFling
+=== CRASH BUFFER ===
+--------- beginning of crash
+01-01 08:00:10.558   729   729 I libimsma_adapt: mtk-brm-commit-id:8783a29bae0ae84a456239f3212f27bdafa94c91
+01-01 08:00:10.564   729   729 I libimsma_adapt: mtk-brm-change-id:Iee598bb542f5de895a4b71649fbc79b2d93bc3de
+01-01 08:00:10.564   729   729 I libimsma_adapt: mtk-brm-merge-id:none
+01-01 08:00:10.946   759   759 I emdlogger: mtk-brm-commit-id:ed77b4169a658d6792b6b2171e763c29030f8b5d
+01-01 08:00:10.950   759   759 I emdlogger: mtk-brm-change-id:If98466acde12144859f893a2a057c19be3ed05ed
+01-01 08:00:10.950   759   759 I emdlogger: mtk-brm-merge-id:none
+
+================================================================================
+PASS SAMPLE: bengal_515_20260922_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.15.194-android13-8-00038-g853eb7b6b965-ab15936612 #1 SMP PREEMPT Fri Jul 24 14:10:46 UTC 2026 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=HONOR//:16/BP2A.250605.031.A2/10.0.0.129C185E1preload format error.:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=13
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=bengal
+=== WINDOW / FOCUS ===
+  mCurrentFocus=Window{ea56c61 u0 com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher}
+  mFocusedApp=ActivityRecord{170010649 u0 com.hihonor.android.launcher/.unihome.UniHomeLauncher t21}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+--------- beginning of (HKS)8A21A0DE196C8EC227257C508DF1C10BF488B120FD8975C425A0C305BBBB85406F3FBB1AECA586B436A9F9D71B8CA9B868B5C0C6C86C8A0D3294964B72213F5295576B3F9E6B8D03E5C0F788A1DC93F3531CA550890127D26AC9B53CBFFF321965462C58A9B8A5F71E61ABEF8EACA0F18F6BCDCEAEAC9B6FB9F781609458EE4272C017902378C02FDC14C1D6A93C4114117EC0448BBE7514A5FDFF27C2E9BAF70C888D29CC1F4BC91D1C8745A6C07F3B850743BD3EBD38BC6C955D3BF97568A010A80D5A93F2E78035FB1C0B583C394FCA5A0CB5CD6DA532D9348BDCC0E7ECFC0E7520E062272F476A9C87E5102FDC2673561FA83AB7859D38D0ED6A10A3D77C(HKE)
+=== CRASH BUFFER ===
+09-09 17:47:11.075  2877  2877 F DEBUG   :     x0  0000000000000000  x1  0000000000000aa5  x2  0000000000000006  x3  0000007a00a9fbc0
+09-09 17:47:11.075  2877  2877 F DEBUG   :     x4  776f6c662e676f6c  x5  776f6c662e676f6c  x6  776f6c662e676f6c  x7  2e6c727463776f6c
+09-09 17:47:11.075  2877  2877 F DEBUG   :     x8  00000000000000f0  x9  7a66b1f053c3c6e1  x10 000003ff00000020  x11 00000000e5b141cb
+09-09 17:47:11.075  2877  2877 F DEBUG   :     x12 000000000012800c  x13 000000007fffffff  x14 0000000000004bde  x15 0000000048f62e49
+09-09 17:47:11.075  2877  2877 F DEBUG   :     x16 0000007dd75b0340  x17 0000007dd7598bc0  x18 000000797f50c000  x19 00000000000009ea
+09-09 17:47:11.075  2877  2877 F DEBUG   :     x20 0000000000000aa5  x21 00000000ffffffff  x22 0000007ac300f080  x23 0000007dcd204c10
+09-09 17:47:11.075  2877  2877 F DEBUG   :     x24 0000007ac300e000  x25 0000007a00aa0350  x26 0000007dcd203400  x27 0000007a00aa0370
+09-09 17:47:11.075  2877  2877 F DEBUG   :     x28 0000000000000001  x29 0000007a00a9fc40
+09-09 17:47:11.075  2877  2877 F DEBUG   :     lr  0000007dd75370a4  sp  0000007a00a9fbc0  pc  0000007dd75370c8  pst 0000000000000000
+09-09 17:47:11.07
+
+================================================================================
+PASS SAMPLE: itel-A6612L_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.15.197-android13-8-00005-g2d8ad9139b89-ab15063902 #1 SMP PREEMPT Fri Mar 20 11:14:06 UTC 2026 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=itel/A6612L-OP64/itel-A6612L:16/BP2A.250605.031.A3/A6612L_260822V4:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=13
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=sp9863a
+=== WINDOW / FOCUS ===
+  mCurrentFocus=Window{6892bea u0 com.android.launcher3/com.android.launcher3.Launcher3QuickStepGo}, [type=1, isChildWindow=false]-[Surface(name=*Title#115)/@0x428db78]
+  mFocusedApp=ActivityRecord{202121024 u0 com.android.launcher3/.Launcher3QuickStepGo t4 d0}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+=== CRASH BUFFER ===
+--------- beginning of crash
+08-23 08:03:42.070  3803  3865 E AndroidRuntime: FATAL EXCEPTION: Thread-2
+08-23 08:03:42.070  3803  3865 E AndroidRuntime: Process: com.android.chrome, PID: 3803
+08-23 08:03:42.070  3803  3865 E AndroidRuntime: java.lang.RuntimeException: Starting in 64-bit mode requires the 64-bit native library. If the device is 64-bit only, see alternatives here: https://crbug.com/1303857#c7.
+08-23 08:03:42.070  3803  3865 E AndroidRuntime: 	at k2n.onResult(chromium-TrichromeChromeGoogle.aab-stable-749919231:44)
+08-23 08:03:42.070  3803  3865 E AndroidRuntime: 	at i2d.f(chromium-TrichromeChromeGoogle.aab-stable-749919231:175)
+08-23 08:03:42.070  3803  3865 E AndroidRuntime: 	at i2d.b(chromium-TrichromeChromeGoogle.aab-stable-749919231:10)
+08-23 08:03:42.070  3803  3865 E AndroidRuntime: 	at i2d.a(chromium-TrichromeChromeGoogle.aab-stable-749919231:8)
+08-23 08:03:42.070  3803  3865 E AndroidRuntime: 	at gn3.run(chromium-TrichromeChromeGoogle.aab-stable-749919231:3)
+08-23 08:03:42.070  3803  3865 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:1564)
+08-23 08:03:42.070  3803  3865 E AndroidRuntime: Caused by: java.lang.UnsatisfiedLinkError:
+
+================================================================================
+PASS SAMPLE: pa3q_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.6.98-android15-8-p5a696e2-abogkiS9380ZCSDCZH1-4k #1 SMP PREEMPT Wed Aug 12 09:09:58 UTC 2026 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=samsung/pa3qzcx/pa3q:16/BP4A.251205.006/S9380ZCSDCZH1:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=15
+ro.lineage.version=
+ro.hardware.egl=mesa
+ro.hardware.vulkan=adreno
+ro.board.platform=sun
+=== WINDOW / FOCUS ===
+  mCurrentFocus=Window{13b329d u0 com.samsung.android.rubin.app/com.samsung.android.rubin.app.ui.ChinaDialogActivity}
+  mFocusedApp=ActivityRecord{80154844 u0 com.samsung.android.rubin.app/.ui.ChinaDialogActivity t6}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+11-21 01:45:35.518   843   850 I SurfaceFlinger: Current= 120, Period= 120, Distance= 60
+11-21 01:45:35.536   843   850 I SurfaceFlinger: Current= 120, Period= 120, Distance= 60
+11-21 01:45:35.551   843   850 I SurfaceFlinger: Current= 120, Period= 120, Distance= 60
+11-21 01:45:35.568   843   850 I SurfaceFlinger: Current= 120, Period= 120, Distance= 60
+11-21 01:45:35.585   843   850 I SurfaceFlinger: Current= 120, Period= 120, Distance= 60
+11-21 01:45:35.601   843   850 I SurfaceFlinger: Current= 120, Period= 120, Distance= 60
+11-21 01:45:35.618   843   850 I SurfaceFlinger: Current= 120, Period= 120, Distance= 60
+11-21 01:45:35.635   843   850 I SurfaceFlinger: Current= 120, Period= 120, Distance= 60
+11-21 01:45:35.653   843   850 I SurfaceFlinger: Current= 120, Period= 120, Distance= 60
+11-21 01:45:35.668   843   850 I SurfaceFlinger: Current= 120, Period= 120, Distance= 60
+11-21 01:45:
+
+================================================================================
+PASS SAMPLE: vinca_pass.txt
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k #1 SMP PREEMPT Thu Jul 10 06:35:14 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=unknown/unknown/unknown:16/BP2A.250605.031.A3/CTA8:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=15
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6768
+=== WINDOW / FOCUS ===
+  mCurrentFocus=null
+  mFocusedApp=ActivityRecord{119696657 u0 com.tct.phone/.ui.AlertDialogActivity t6 mVisible=true mOccludesParent=false}
+  mHoldScreenWindow=null
+--- SurfaceFlinger / HWC log ---
+--------- beginning of main
+05-12 22:21:58.158   592   881 D SurfaceFlinger: updateWinowInfo=1, setFocusedWindow timestamp=208080892556, windowName=<null>
+05-12 22:21:58.314   592   599 I SurfaceFlinger: onHandleDestroyed: layerId=113, name=Transition Root: Task=6#113
+05-12 22:22:03.566   592   817 D SurfaceFlinger: calculateTimeoutTime, triggerInterval = 3 sec + 0 nsec
+

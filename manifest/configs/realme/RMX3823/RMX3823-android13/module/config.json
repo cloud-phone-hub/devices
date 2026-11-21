@@ -1,0 +1,369 @@
+{
+  "cpufreq": {
+    "available-governors": [
+      "schedutil",
+      "performance",
+      "powersave",
+      "userspace",
+      "ondemand"
+    ],
+    "bogo-mips": "38.40",
+    "driver": "qcom-cpufreq-hw",
+    "governor": "schedutil",
+    "package-per-cluster": false,
+    "policies": [
+      {
+        "available-frequencies": [
+          2016000,
+          1958400,
+          1862400,
+          1766400,
+          1670400,
+          1574400,
+          1478400,
+          1363200,
+          1267200,
+          1171200,
+          1075200,
+          979200,
+          883200,
+          787200,
+          691200,
+          614400,
+          518400,
+          403200,
+          300000
+        ],
+        "capacity": 292,
+        "cpus": [
+          0,
+          1,
+          2
+        ],
+        "cur-freq": 691200,
+        "implementer": "0x41",
+        "max-freq": 2016000,
+        "midr": "0x00000000411fd460",
+        "min-freq": 300000,
+        "part": "0xd46",
+        "policy": 0,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 1
+      },
+      {
+        "available-frequencies": [
+          2802000,
+          2707200,
+          2592000,
+          2476800,
+          2361600,
+          2246400,
+          2131200,
+          2016000,
+          1900800,
+          1785600,
+          1670400,
+          1555200,
+          1401600,
+          1248000,
+          1094400,
+          940800,
+          787200,
+          633600
+        ],
+        "capacity": 640,
+        "cpus": [
+          3,
+          4
+        ],
+        "cur-freq": 1094400,
+        "implementer": "0x41",
+        "max-freq": 2802000,
+        "midr": "0x00000000411fd470",
+        "min-freq": 633600,
+        "part": "0xd47",
+        "policy": 3,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 1
+      },
+      {
+        "available-frequencies": [
+          2802000,
+          2707200,
+          2592000,
+          2476800,
+          2361600,
+          2246400,
+          2131200,
+          2016000,
+          1900800,
+          1785600,
+          1670400,
+          1555200,
+          1401600,
+          1248000,
+          1094400,
+          940800,
+          787200,
+          633600
+        ],
+        "capacity": 768,
+        "cpus": [
+          5,
+          6
+        ],
+        "cur-freq": 1248000,
+        "implementer": "0x41",
+        "max-freq": 2802000,
+        "midr": "0x00000000410fd4d0",
+        "min-freq": 633600,
+        "part": "0xd4d",
+        "policy": 5,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 0
+      },
+      {
+        "available-frequencies": [
+          3200000,
+          3120000,
+          3014400,
+          2908800,
+          2802000,
+          2707200,
+          2592000,
+          2476800,
+          2361600,
+          2246400,
+          2131200,
+          2016000,
+          1900800,
+          1785600,
+          1670400,
+          1555200,
+          1401600,
+          1248000,
+          1094400,
+          940800,
+          787200,
+          633600,
+          480000
+        ],
+        "capacity": 1024,
+        "cpus": [
+          7
+        ],
+        "cur-freq": 1555200,
+        "implementer": "0x41",
+        "max-freq": 3200000,
+        "midr": "0x00000000410fd4e0",
+        "min-freq": 480000,
+        "part": "0xd4e",
+        "policy": 7,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 0
+      }
+    ],
+    "scaling-readable": true,
+    "transition-latency": 1000
+  },
+  "external": [
+    "cdh_redirect",
+    "device_info",
+    "input_identity",
+    "kernelsu",
+    "virtio_media"
+  ],
+  "input": {
+    "keyboard": {
+      "bus": 25,
+      "name": "gpio-keys",
+      "product": 1,
+      "vendor": 1,
+      "version": 256
+    },
+    "tablet": false,
+    "touch": {
+      "abs-to-mt": true,
+      "abs-x-max": 19840,
+      "abs-xy": true,
+      "abs-y-max": 44352,
+      "bus": 24,
+      "mt-pressure": true,
+      "mt-slots": 10,
+      "name": "synaptics_tcm",
+      "product": 1924,
+      "touch-keys": [
+        116,
+        143,
+        354
+      ],
+      "vendor": 1739,
+      "version": 256
+    }
+  },
+  "input_identity": {
+    "aligns": [
+      {
+        "keys": [
+          "KEY_VOLUMEUP",
+          "KEY_VOLUMEDOWN",
+          "KEY_POWER"
+        ],
+        "name": "gpio-keys"
+      }
+    ],
+    "devices": [
+      {
+        "abs": [
+          {
+            "axis": "ABS_Z",
+            "flat": 0,
+            "fuzz": 0,
+            "max": 255,
+            "min": 0
+          }
+        ],
+        "bus": 6,
+        "keys": [
+          "KEY_UP",
+          "KEY_LEFT",
+          "KEY_RIGHT",
+          "KEY_DOWN"
+        ],
+        "name": "uinput-goodix",
+        "product": 0,
+        "vendor": 6,
+        "version": 0
+      },
+      {
+        "keys": [
+          "KEY_POWER",
+          "KEY_WAKEUP"
+        ],
+        "msc": [
+          "MSC_SCAN"
+        ],
+        "name": "goodix_fp_irq@fingerprint"
+      },
+      {
+        "bus": 25,
+        "keys": [
+          "KEY_PLAYPAUSE",
+          "BTN_1",
+          "BTN_2",
+          "KEY_VOICECOMMAND"
+        ],
+        "name": "kalama-snd-card Headset Jack",
+        "phys": "ALSA",
+        "switches": [
+          "SW_HEADPHONE_INSERT",
+          "SW_MICROPHONE_INSERT",
+          "SW_LINEOUT_INSERT",
+          "SW_JACK_PHYSICAL_INSERT"
+        ]
+      },
+      {
+        "bus": 25,
+        "keys": [
+          "KEY_POWER"
+        ],
+        "name": "qpnp_pon",
+        "product": 1,
+        "vendor": 1,
+        "version": 256
+      }
+    ],
+    "goodix_fp": true,
+    "touch_major": true
+  },
+  "redirect": [
+    {
+      "from": "/vendor/etc",
+      "to": "/mnt/vendorpatch/vendor/etc",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/bin",
+      "to": "/mnt/vendorpatch/vendor/bin",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/lib",
+      "to": "/mnt/vendorpatch/vendor/lib",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/lib64",
+      "to": "/mnt/vendorpatch/vendor/lib64",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/build.prop",
+      "to": "/mnt/vendorpatch/vendor/build.prop",
+      "type": "file"
+    },
+    {
+      "from": "/vendor/ueventd.rc",
+      "to": "/mnt/vendorpatch/vendor/ueventd.rc",
+      "type": "file"
+    },
+    {
+      "from": "/vendor_dlkm/lib",
+      "to": "/mnt/vendorpatch/vendor_dlkm/lib",
+      "type": "dir"
+    },
+    {
+      "from": "/odm",
+      "to": "/odm",
+      "type": "file"
+    },
+    {
+      "from": "/odm",
+      "to": "/mnt/vendorpatch/odm",
+      "type": "dir"
+    },
+    {
+      "from": "/system/lib/modules",
+      "to": "/mnt/vendorpatch/vendor_dlkm/lib/modules",
+      "type": "dir"
+    },
+    {
+      "from": "/system/bin/update_verifier",
+      "to": "/mnt/vendorpatch/system/bin/update_verifier",
+      "type": "file"
+    }
+  ],
+  "thermal": {
+    "zones": [
+      {
+        "base-temp-mc": 28000,
+        "jitter-mc": 100,
+        "type": "battery"
+      },
+      {
+        "base-temp-mc": 33607,
+        "jitter-mc": 350,
+        "type": "cpu-0-0-usr"
+      },
+      {
+        "base-temp-mc": 30479,
+        "jitter-mc": 220,
+        "type": "gpuss-0-usr"
+      },
+      {
+        "base-temp-mc": 31000,
+        "jitter-mc": 180,
+        "type": "skin-therm"
+      },
+      {
+        "base-temp-mc": 30000,
+        "jitter-mc": 150,
+        "type": "quiet-therm"
+      }
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": 67,
+  "deviceId": 9,
+  "name": "Meizu22-android15",
+  "androidVersion": "15",
+  "systemAndroidVersions": [
+    "16"
+  ],
+  "vendorAndroidVersion": "15",
+  "lineageVersion": "lineage-22.2",
+  "extra": {
+    "versionRelation": "system=A16 (云机 buildId 前缀) + vendor=A15 -\u003e lineage-22.2（GRF 跨代：按 vendor 版本选定 Lineage 底包）"
+  },
+  "updatedAt": "2026-11-06T05:37:49Z"
+}

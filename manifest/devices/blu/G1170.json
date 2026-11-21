@@ -1,6 +1,6 @@
 {
   "id": 31,
-  "official": "BLU",
+  "official": "BLU Products",
   "brand": "blu",
   "model": "BLU G75",
   "device": "G1170",
@@ -10,10 +10,9 @@
   "density": 320,
   "smp": 8,
   "memory": [
-    8192
+    4096
   ],
   "storage": [
-    128000,
     256000
   ],
   "extra": {
@@ -27,6 +26,9 @@
       "host-hvc-radio": "hvc4",
       "host-hvc-wifi": "hvc9"
     },
+    "skuCombinations": [
+      "4GB+256GB"
+    ],
     "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
   },
   "updatedAt": "2026-11-09T03:17:21Z"

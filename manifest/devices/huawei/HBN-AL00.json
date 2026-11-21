@@ -6,7 +6,7 @@
   "device": "HBN-AL00",
   "platform": "qcom",
   "resolution": "1080x2400",
-  "inch": "72x160",
+  "inch": "70x155",
   "density": 440,
   "smp": 8,
   "memory": [
@@ -20,7 +20,9 @@
     "board": "HBN-AL00",
     "hostHvc": {
       "host-hvc-adbkey": "hvc2",
+      "host-hvc-bluetooth": "hvc5",
       "host-hvc-daemon": "hvc7",
+      "host-hvc-haptic": "hvc6",
       "host-hvc-keymint": "hvc3",
       "host-hvc-radio": "hvc4",
       "host-hvc-wifi": "hvc9",

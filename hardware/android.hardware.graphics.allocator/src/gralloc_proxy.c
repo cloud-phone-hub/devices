@@ -58,16 +58,46 @@ static void *try_open_mapper(const char *path) {
     return dlopen(path, RTLD_NOW | RTLD_LOCAL);
 }
 
-static void init_target(void) {
-    char suffix[PROPERTY_VALUE_MAX] = {0};
-    char self_dir[192] = {0};
+static void *try_open_mapper_by_suffix(const char *self_dir, const char *const *dirs,
+                                       size_t num_dirs, const char *cand) {
     char path[256];
     void *handle = NULL;
+    if (cand == NULL || cand[0] == '\0') {
+        return NULL;
+    }
+    if (self_dir != NULL && self_dir[0] != '\0') {
+        snprintf(path, sizeof(path), "%s/mapper.%s.so", self_dir, cand);
+        handle = try_open_mapper(path);
+    }
+    for (size_t i = 0; i < num_dirs && handle == NULL; ++i) {
+        snprintf(path, sizeof(path), "%s/mapper.%s.so", dirs[i], cand);
+        handle = try_open_mapper(path);
+    }
+    if (handle == NULL) {
+        snprintf(path, sizeof(path), "mapper.%s.so", cand);
+        handle = try_open_mapper(path);
+    }
+    return handle;
+}
+
+static void init_target(void) {
+    char suffix[PROPERTY_VALUE_MAX] = {0};
+    char self_suffix[PROPERTY_VALUE_MAX] = {0};
+    char prop_suffix[PROPERTY_VALUE_MAX] = {0};
+    char self_dir[192] = {0};
+    void *handle = NULL;
+
+#if defined(__LP64__)
+    const char *dirs[] = {"/vendor/lib64/hw", "/system/vendor/lib64/hw"};
+#else
+    const char *dirs[] = {"/vendor/lib/hw", "/system/vendor/lib/hw"};
+#endif
+    const size_t num_dirs = sizeof(dirs) / sizeof(dirs[0]);
 
     // 1. 优先用 dladdr 取当前 gralloc.<suffix>.so 自身所在目录与文件名：
-    //    - 若自身为 gralloc.<vendor>.so（非 default），直接打开同目录 mapper.<vendor>.so；
-    //    - 若自身为 gralloc.default.so（原厂无 gralloc.<vendor>.so 且无 ro.hardware.gralloc 的机型），
-    //      保留 self_dir 供下方确定性候选列表直接按路径打开，无需枚举目录，兼容 isolated_app 沙箱。
+    //    - 若自身为 gralloc.<vendor>.so（非 default），优先尝试同目录/系统目录的 mapper.<vendor>.so；
+    //    - 若 gralloc 后缀与 mapper 后缀不同（如 MTK 机型 gralloc.common.so + mapper.mediatek.so），
+    //      打开失败时继续向下走属性、已知厂商列表与目录扫描兜底，不得卡死在不存在的 mapper.common.so。
     Dl_info dl_info;
     if (dladdr((const void *)&init_target, &dl_info) != 0 && dl_info.dli_fname != NULL) {
         const char *slash = strrchr(dl_info.dli_fname, '/');
@@ -83,47 +113,39 @@ static void init_target(void) {
         if (strncmp(base, "gralloc.", 8) == 0 && base_len > 11 &&
             strcmp(base + base_len - 3, ".so") == 0) {
             size_t suf_len = base_len - 11;
-            if (suf_len < sizeof(suffix) && strncmp(base + 8, "default", suf_len) != 0) {
-                memcpy(suffix, base + 8, suf_len);
-                suffix[suf_len] = '\0';
-                if (self_dir[0] != '\0') {
-                    snprintf(path, sizeof(path), "%s/mapper.%s.so", self_dir, suffix);
-                    handle = try_open_mapper(path);
+            if (suf_len < sizeof(self_suffix) && strncmp(base + 8, "default", suf_len) != 0) {
+                memcpy(self_suffix, base + 8, suf_len);
+                self_suffix[suf_len] = '\0';
+                handle = try_open_mapper_by_suffix(self_dir, dirs, num_dirs, self_suffix);
+                if (handle != NULL) {
+                    snprintf(suffix, sizeof(suffix), "%s", self_suffix);
                 }
             }
         }
     }
 
-#if defined(__LP64__)
-    const char *dirs[] = {"/vendor/lib64/hw", "/system/vendor/lib64/hw"};
-#else
-    const char *dirs[] = {"/vendor/lib/hw", "/system/vendor/lib/hw"};
-#endif
-
-    // 2. 属性优先（若机型保留了官方 ro.hardware.gralloc）
-    if (handle == NULL && suffix[0] == '\0') {
-        property_get("ro.hardware.gralloc", suffix, "");
-        if (suffix[0] != '\0' && self_dir[0] != '\0') {
-            snprintf(path, sizeof(path), "%s/mapper.%s.so", self_dir, suffix);
-            handle = try_open_mapper(path);
+    // 2. 属性探测（若机型保留了官方 ro.hardware.gralloc 且与自身文件名后缀不同）
+    if (handle == NULL) {
+        property_get("ro.hardware.gralloc", prop_suffix, "");
+        if (prop_suffix[0] != '\0' && strcmp(prop_suffix, self_suffix) != 0) {
+            handle = try_open_mapper_by_suffix(self_dir, dirs, num_dirs, prop_suffix);
+            if (handle != NULL) {
+                snprintf(suffix, sizeof(suffix), "%s", prop_suffix);
+            }
         }
     }
 
     // 3. 确定性常见厂商 mapper 后缀直连探测（纯文件 open，兼容无目录读权限的 isolated_app 沙箱）
-    if (handle == NULL && suffix[0] == '\0') {
+    if (handle == NULL) {
         static const char *const kKnownSuffixes[] = {
             "mediatek", "qti", "pixel", "arm", "exynos", "minigbm"
         };
         for (size_t k = 0; k < sizeof(kKnownSuffixes) / sizeof(kKnownSuffixes[0]) && handle == NULL; ++k) {
             const char *cand = kKnownSuffixes[k];
-            if (self_dir[0] != '\0') {
-                snprintf(path, sizeof(path), "%s/mapper.%s.so", self_dir, cand);
-                handle = try_open_mapper(path);
+            if (strcmp(cand, self_suffix) == 0 || strcmp(cand, prop_suffix) == 0) {
+                continue;
             }
-            for (size_t i = 0; i < sizeof(dirs) / sizeof(dirs[0]) && handle == NULL; ++i) {
-                snprintf(path, sizeof(path), "%s/mapper.%s.so", dirs[i], cand);
-                handle = try_open_mapper(path);
-            }
+            handle = try_open_mapper_by_suffix(self_dir, dirs, num_dirs, cand);
             if (handle != NULL) {
                 snprintf(suffix, sizeof(suffix), "%s", cand);
             }
@@ -131,14 +153,14 @@ static void init_target(void) {
     }
 
     // 4. 目录扫描兜底（针对不在常见列表中的自定义厂商后缀）
-    if (handle == NULL && suffix[0] == '\0') {
-        for (size_t i = 0; i < sizeof(dirs) / sizeof(dirs[0]) && suffix[0] == '\0'; ++i) {
+    if (handle == NULL) {
+        for (size_t i = 0; i < num_dirs && handle == NULL; ++i) {
             DIR *d = opendir(dirs[i]);
             if (d == NULL) {
                 continue;
             }
             struct dirent *ent = NULL;
-            while ((ent = readdir(d)) != NULL) {
+            while ((ent = readdir(d)) != NULL && handle == NULL) {
                 const char *name = ent->d_name;
                 size_t nlen = strlen(name);
                 if (strncmp(name, "mapper.", 7) == 0 && nlen > 10 &&
@@ -147,36 +169,25 @@ static void init_target(void) {
                     if (slen > 0 && slen < sizeof(suffix) &&
                         strncmp(name + 7, "default", slen) != 0 &&
                         strncmp(name + 7, "minigbm", 7) != 0) {
-                        memcpy(suffix, name + 7, slen);
-                        suffix[slen] = '\0';
-                        break;
+                        char cand[PROPERTY_VALUE_MAX] = {0};
+                        memcpy(cand, name + 7, slen);
+                        cand[slen] = '\0';
+                        handle = try_open_mapper_by_suffix(self_dir, dirs, num_dirs, cand);
+                        if (handle != NULL) {
+                            snprintf(suffix, sizeof(suffix), "%s", cand);
+                        }
                     }
                 }
             }
             closedir(d);
         }
     }
-    if (suffix[0] == '\0') {
-        snprintf(suffix, sizeof(suffix), "minigbm");
-    }
-
-    for (size_t i = 0; i < sizeof(dirs) / sizeof(dirs[0]) && handle == NULL; ++i) {
-        snprintf(path, sizeof(path), "%s/mapper.%s.so", dirs[i], suffix);
-        handle = try_open_mapper(path);
-    }
-    if (handle == NULL) {
-        snprintf(path, sizeof(path), "mapper.%s.so", suffix);
-        handle = try_open_mapper(path);
-    }
-    if (handle == NULL && strcmp(suffix, "minigbm") != 0) {
-        for (size_t i = 0; i < sizeof(dirs) / sizeof(dirs[0]) && handle == NULL; ++i) {
-            snprintf(path, sizeof(path), "%s/mapper.minigbm.so", dirs[i]);
-            handle = try_open_mapper(path);
-        }
-    }
 
     if (handle == NULL) {
-        ALOGE("failed to dlopen mapper.%s.so: %s", suffix, dlerror());
+        ALOGE("failed to dlopen mapper (self=%s prop=%s): %s",
+              self_suffix[0] ? self_suffix : "<none>",
+              prop_suffix[0] ? prop_suffix : "<none>",
+              dlerror());
         return;
     }
 

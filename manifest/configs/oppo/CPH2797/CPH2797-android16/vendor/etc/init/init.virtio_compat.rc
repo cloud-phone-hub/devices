@@ -179,6 +179,14 @@ on early-init
     mount none /mnt/vendorpatch/vendor/etc/compat/vintf_empty.xml /odm/etc/vintf/manifest/android.hardware.ir-service.xml bind wait
     mount none /mnt/vendorpatch/vendor/etc/compat/permissions_empty.xml /odm/etc/permissions/android.hardware.consumerir.xml bind wait
 
+    # 5b) 官方 /odm 的 NXP StrongBox KeyMint VINTF 声明（无真实 StrongBox 芯片且
+    #     vendor.keymint-strongbox 因缺少 vendor_nxp_strongbox UID 无法启动），
+    #     不遮蔽会导致 keystore2 启动等待 IKeyMintDevice/strongbox 5s 超时 SIGABRT，
+    #     连续 4 次触发 InitFatalReboot 死循环。
+    mount none /mnt/vendorpatch/vendor/etc/compat/vintf_empty.xml /odm/etc/vintf/manifest/android.hardware.security.keymint3-service.strongbox.nxp.xml bind wait
+    mount none /mnt/vendorpatch/vendor/etc/compat/vintf_empty.xml /odm/etc/vintf/manifest/android.hardware.security.sharedsecret3-service.strongbox.nxp.xml bind wait
+    mount none /mnt/vendorpatch/vendor/etc/compat/vintf_empty.xml /odm/etc/vintf/manifest/manifest_oplus_keymint_aidl.xml bind wait
+
     # 6) 停用云机无硬件或缺专有库（libMcClient.so 等）而每 5s 退出触发
     #    sys.init.updatable_crashing=1 的常驻服务：
     stop vendor.nfc_hal_service

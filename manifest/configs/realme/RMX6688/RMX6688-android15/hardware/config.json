@@ -134,7 +134,7 @@
     },
     {
       "android.hardware.radio": {
-        "variant": "default",
+        "variant": "mtk",
         "version": "1.0"
       }
     },
@@ -188,6 +188,18 @@
     },
     {
       "android.service.daemon": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.neuralnetworks": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.ir": {
         "variant": "default",
         "version": "1.0"
       }

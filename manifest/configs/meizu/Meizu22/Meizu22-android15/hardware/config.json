@@ -1,0 +1,232 @@
+{
+  "hardware": [
+    {
+      "android.hardware.audio": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.authsecret": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.biometrics": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.bluetooth": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.boot": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.camera": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.confirmationui": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.drm": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.gnss": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.health": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.identity": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.ir": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.keymint": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.light": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.media": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.media.v412": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.memtrack": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.nfc": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.power": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.power.stats": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.radio": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.secure_element": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.sensors": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.thermal": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.usb": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.vibrator": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.weaver": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.wifi": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.service.daemon": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "vendor.awa.reality": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "vendor.meizu.hardware.aw_light": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "vendor.meizu.hardware.meizu_charging": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "vendor.meizu.sensor_aux": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "vendor.qti.diaghal": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "vendor.qti.hardware.perf2": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "vendor.qti.hardware.servicetrackeraidl": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.graphics.allocator": {
+        "variant": "default",
+        "version": "2.0"
+      }
+    },
+    {
+      "android.hardware.graphics.composer3": {
+        "variant": "default",
+        "version": "3.0"
+      }
+    }
+  ]
+}

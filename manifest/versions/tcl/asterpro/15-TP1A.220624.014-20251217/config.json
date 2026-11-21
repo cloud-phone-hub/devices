@@ -2,7 +2,7 @@
   "id": 46,
   "buildId": "15-TP1A.220624.014-20251217",
   "deviceId": 38,
-  "configId": 54,
+  "configId": 76,
   "osVersion": "15-TP1A.220624.014-20251217",
   "buildDate": "20251217",
   "securityPatch": "2025-11-05",
@@ -12,16 +12,16 @@
   "extra": {
     "comment": "由 cdh-pipeline prepare 从 TCL-T521.zip (vendor/build.prop) 自动生成。",
     "osVersion": "15-TP1A.220624.014-20251217",
-    "securityPatch": "2025-11-05",
     "partitionAndroidVersions": {
+      "odm": "13",
+      "odm_dlkm": "13",
+      "product": "15",
       "system": "15",
       "system_ext": "15",
-      "product": "15",
       "vendor": "13",
-      "odm": "13",
-      "vendor_dlkm": "13",
-      "odm_dlkm": "13"
-    }
+      "vendor_dlkm": "13"
+    },
+    "securityPatch": "2025-11-05"
   },
-  "updatedAt": "2026-11-19T14:56:33Z"
+  "updatedAt": "2026-11-20T22:08:29Z"
 }

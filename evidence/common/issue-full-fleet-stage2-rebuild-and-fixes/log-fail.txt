@@ -1,0 +1,514 @@
+# Stage 2 全仓重建失败与异常取证日志汇总（#292）
+# 来源：独立测试 host-daemon (127.0.0.1:19055) 冷启动体检与官方固件实测解包
+
+========================================================================
+## ASUS_AI2205 (A13 HIDL bluetooth SIGABRT) [ASUS_AI2205_fail.txt]
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.15.104-android13-8-00001-g8a444658051f-ab10823334 #1 SMP PREEMPT Mon Sep 18 07:20:47 UTC 2023 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=asus/WW_AI2205/ASUS_AI2205:14/UKQ1.230917.001/34.1010.0820.65-0:user/release-keys
+ro.build.version.release=14
+ro.vendor.build.version.release=13
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=kalama
+=== RUNNING VENDOR HAL PROCS ===
+system         203     1 27 12:54:20 ?    00:00:14 servicemanager
+system         208     1 0 12:54:20 ?     00:00:00 hwservicemanager
+audioserver    495     1 0 12:54:29 ?     00:00:00 android.hardware.audio.service
+audioserver    532     1 1 12:54:30 ?     00:00:00 audioserver
+system         535     1 9 12:54:30 ?     00:00:03 surfaceflinger
+cameraserver   585     1 0 12:54:30 ?     00:00:00 cameraserver
+media          598     1 1 12:54:30 ?     00:00:00 mediaserver
+mediacodec     613     1 0 12:54:30 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.vendor.auto_provision]: [stopped]
+... [filtered key error/crash/avc lines] ...
+android.hardware.bluetooth@1.0::IBluetoothHci/default                 hwbinder
+android.hardware.bluetooth@1.1::IBluetoothHci/default                 hwbinder
+android.system.wifi.keystore@1.0::IKeystore/default                   hwbinder
+android.hardware.graphics.mapper@4.0::IMapper/default                 passthrough
+android.hardware.graphics.mapper@4.0::I*/* (/vendor/lib64/hw/)        passthrough
+02-29 12:55:06.323  5743  5743 F DEBUG   :       #06 pc 00000000006145c4  /system_ext/lib64/libbluetooth_qti.so (work_queue_read_cb(void*) (.cfi)+132) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:06.323  5743  5743 F DEBUG   :       #07 pc 000000000061267c  /system_ext/lib64/libbluetooth_qti.so (run_reactor(reactor_t*, int)+408) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:06.323  5743  5743 F DEBUG   :       #08 pc 00000000006124b0  /system_ext/lib64/libbluetooth_qti.so (reactor_start(reactor_t*)+96) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:06.323  5743  5743 F DEBUG   :       #09 pc 000000000061435c  /system_ext/lib64/libbluetooth_qti.so (run_thread(void*) (.cfi)+188) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:09.878  5788  5861 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 5861 (module_wrapper), pid 5788 (droid.bluetooth)
+02-29 12:55:09.989  5864  5864 F DEBUG   : Cmdline: com.android.bluetooth
+02-29 12:55:09.989  5864  5864 F DEBUG   : pid: 5788, tid: 5861, name: module_wrapper  >>> com.android.bluetooth <<<
+02-29 12:55:09.989  5864  5864 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+02-29 12:55:09.989  5864  5864 F DEBUG   : Abort message: '[FATAL:controller.cc(855)]  Controller must support Read Encryption Key Size command
+02-29 12:55:09.989  5864  5864 F DEBUG   : #01 0x0000006eee226b17 /system_ext/lib64/libbluetooth_qti.so+0x0000000000379b17
+02-29 12:55:09.989  5864  5864 F DEBUG   : #02 0x0000006eee4aec43 /system_ext/lib64/libbluetooth_qti.so+0x0000000000601c43
+02-29 12:55:09.989  5864  5864 F DEBUG   : #03 0x0000006eee4af1e7 /system_ext/lib64/libbluetooth_qti.so+0x00000000006021e7
+02-29 12:55:09.989  5864  5864 F DEBUG   : #04 0x0000006eee4c15c7 /system_ext/lib64/libbluetooth_qti.so+0x00000000006145c7
+02-29 12:55:09.989  5864  5864 F DEBUG   : #05 0x0000006eee4bf67f /system_ext/lib64/libbluetooth_qti.so+0x000000000061267f
+02-29 12:55:09.989  5864  5864 F DEBUG   : #06 0x0000006eee4bf4b3 /system_ext/lib64/libbluetooth_qti.so+0x00000000006124b3
+02-29 12:55:09.989  5864  5864 F DEBUG   : #07 0x0000006eee4c135f /system_ext/lib64/libbluetooth_qti.so+0x000000000061435f
+02-29 12:55:09.989  5864  5864 F DEBUG   : backtrace:
+02-29 12:55:09.989  5864  5864 F DEBUG   :       #03 pc 0000000000379b14  /system_ext/lib64/libbluetooth_qti.so (start_up() (.cfi)+9796) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:09.989  5864  5864 F DEBUG   :       #04 pc 0000000000601c40  /system_ext/lib64/libbluetooth_qti.so (module_start_up(module_t const*)+276) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:09.989  5864  5864 F DEBUG   :       #05 pc 00000000006021e4  /system_ext/lib64/libbluetooth_qti.so (run_wrapped_start_up(void*) (.cfi)+92) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:09.989  5864  5864 F DEBUG   :       #06 pc 00000000006145c4  /system_ext/lib64/libbluetooth_qti.so (work_queue_read_cb(void*) (.cfi)+132) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:09.989  5864  5864 F DEBUG   :       #07 pc 000000000061267c  /system_ext/lib64/libbluetooth_qti.so (run_reactor(reactor_t*, int)+408) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:09.989  5864  5864 F DEBUG   :       #08 pc 00000000006124b0  /system_ext/lib64/libbluetooth_qti.so (reactor_start(reactor_t*)+96) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:09.989  5864  5864 F DEBUG   :       #09 pc 000000000061435c  /system_ext/lib64/libbluetooth_qti.so (run_thread(void*) (.cfi)+188) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:12.794  5904  5964 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 5964 (module_wrapper), pid 5904 (droid.bluetooth)
+02-29 12:55:12.897  5967  5967 F DEBUG   : Cmdline: com.android.bluetooth
+02-29 12:55:12.897  5967  5967 F DEBUG   : pid: 5904, tid: 5964, name: module_wrapper  >>> com.android.bluetooth <<<
+02-29 12:55:12.897  5967  5967 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+02-29 12:55:12.897  5967  5967 F DEBUG   : Abort message: '[FATAL:controller.cc(855)]  Controller must support Read Encryption Key Size command
+02-29 12:55:12.897  5967  5967 F DEBUG   : #01 0x0000006ef0dfdb17 /system_ext/lib64/libbluetooth_qti.so+0x0000000000379b17
+02-29 12:55:12.897  5967  5967 F DEBUG   : #02 0x0000006ef1085c43 /system_ext/lib64/libbluetooth_qti.so+0x0000000000601c43
+02-29 12:55:12.897  5967  5967 F DEBUG   : #03 0x0000006ef10861e7 /system_ext/lib64/libbluetooth_qti.so+0x00000000006021e7
+02-29 12:55:12.897  5967  5967 F DEBUG   : #04 0x0000006ef10985c7 /system_ext/lib64/libbluetooth_qti.so+0x00000000006145c7
+02-29 12:55:12.897  5967  5967 F DEBUG   : #05 0x0000006ef109667f /system_ext/lib64/libbluetooth_qti.so+0x000000000061267f
+02-29 12:55:12.897  5967  5967 F DEBUG   : #06 0x0000006ef10964b3 /system_ext/lib64/libbluetooth_qti.so+0x00000000006124b3
+02-29 12:55:12.897  5967  5967 F DEBUG   : #07 0x0000006ef109835f /system_ext/lib64/libbluetooth_qti.so+0x000000000061435f
+02-29 12:55:12.897  5967  5967 F DEBUG   : backtrace:
+02-29 12:55:12.897  5967  5967 F DEBUG   :       #03 pc 0000000000379b14  /system_ext/lib64/libbluetooth_qti.so (start_up() (.cfi)+9796) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:12.897  5967  5967 F DEBUG   :       #04 pc 0000000000601c40  /system_ext/lib64/libbluetooth_qti.so (module_start_up(module_t const*)+276) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:12.897  5967  5967 F DEBUG   :       #05 pc 00000000006021e4  /system_ext/lib64/libbluetooth_qti.so (run_wrapped_start_up(void*) (.cfi)+92) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:12.897  5967  5967 F DEBUG   :       #06 pc 00000000006145c4  /system_ext/lib64/libbluetooth_qti.so (work_queue_read_cb(void*) (.cfi)+132) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:12.897  5967  5967 F DEBUG   :       #07 pc 000000000061267c  /system_ext/lib64/libbluetooth_qti.so (run_reactor(reactor_t*, int)+408) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:12.897  5967  5967 F DEBUG   :       #08 pc 00000000006124b0  /system_ext/lib64/libbluetooth_qti.so (reactor_start(reactor_t*)+96) (BuildId: d1f35ed57f34893779c6b498770ef369)
+02-29 12:55:12.897  5967  5967 F DEBUG   :       #09 pc 000000000061435c  /system_ext/lib64/libbluetooth_qti.so (run_thread(void*) (.cfi)+188) (BuildId: d1f35ed57f34893779c6b498770ef369)
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+02-29 12:55:05.209  5654  5679 E AndroidRuntime: FATAL EXCEPTION: Thread-2
+02-29 12:55:06.133  5458  5736 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 5736 (module_wrapper), pid 5458 (droid.bluetooth)
+02-29 12:55:06.323  5743  5743 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+02-29 12:55:09.878  5788  5861 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 5861 (module_wrapper), pid 5788 (droid.bluetooth)
+02-29 12:55:09.989  5864  5864 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+02-29 12:55:12.794  5904  5964 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 5964 (module_wrapper), pid 5904 (droid.bluetooth)
+02-29 12:55:12.897  5967  5967 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+=== DMESG ERRORS ===
+
+========================================================================
+## symphony/MAX_10 (SimSalesTracker readProInfo OOB) [MAX_10_fail.txt]
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 5.15.149-android13-8-00008-gbe074b05e5af-ab12096863 #1 SMP PREEMPT Tue Jul 16 15:36:08 UTC 2024 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=Symphony/MAX10/MAX_10:14/UP1A.231005.007/1739350789:user/release-keys
+ro.build.version.release=14
+ro.vendor.build.version.release=13
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=sp9863a
+=== RUNNING VENDOR HAL PROCS ===
+system         194     1 7 14:59:38 ?     00:00:05 servicemanager
+system         199     1 0 14:59:38 ?     00:00:00 hwservicemanager
+audioserver    433     1 0 14:59:45 ?     00:00:00 android.hardware.audio.service
+mediacodec     440     1 0 14:59:45 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     451     1 0 14:59:45 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    452     1 0 14:59:45 ?     00:00:00 audioserver
+system         456     1 4 14:59:45 ?     00:00:02 surfaceflinger
+cameraserver   546     1 0 14:59:45 ?     00:00:00 cameraserver
+mediacodec     595     1 0 14:59:46 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.poweronlog]: [stopped]
+... [filtered key error/crash/avc lines] ...
+android.hardware.bluetooth@1.0::IBluetoothHci/default                 hwbinder
+android.hardware.bluetooth@1.1::IBluetoothHci/default                 hwbinder
+android.system.wifi.keystore@1.0::IKeystore/default                   hwbinder
+android.hardware.graphics.mapper@4.0::IMapper/default                 passthrough
+android.hardware.graphics.mapper@4.0::I*/* (/vendor/lib64/hw/)        passthrough
+02-12 15:00:11.113  9862  9862 E AndroidRuntime: 	at com.pri.settings.SimSalesTracker.readProInfo(SimSalesTracker.java:68)
+02-12 15:00:11.113  9862  9862 E AndroidRuntime: 	at com.pri.settings.SimSalesTracker.getRegisterFlag(SimSalesTracker.java:44)
+02-12 15:00:11.164  9883  9883 E AndroidRuntime: FATAL EXCEPTION: main
+02-12 15:00:11.164  9883  9883 E AndroidRuntime: 	at com.pri.settings.SimSalesTracker.readProInfo(SimSalesTracker.java:68)
+02-12 15:00:11.164  9883  9883 E AndroidRuntime: 	at com.pri.settings.SimSalesTracker.getRegisterFlag(SimSalesTracker.java:44)
+02-12 15:00:11.203  9903  9903 E AndroidRuntime: FATAL EXCEPTION: main
+02-12 15:00:11.203  9903  9903 E AndroidRuntime: 	at com.pri.settings.SimSalesTracker.readProInfo(SimSalesTracker.java:68)
+02-12 15:00:11.203  9903  9903 E AndroidRuntime: 	at com.pri.settings.SimSalesTracker.getRegisterFlag(SimSalesTracker.java:44)
+02-12 15:00:11.242  9922  9922 E AndroidRuntime: FATAL EXCEPTION: main
+02-12 15:00:11.242  9922  9922 E AndroidRuntime: 	at com.pri.settings.SimSalesTracker.readProInfo(SimSalesTracker.java:68)
+02-12 15:00:11.242  9922  9922 E AndroidRuntime: 	at com.pri.settings.SimSalesTracker.getRegisterFlag(SimSalesTracker.java:44)
+02-12 15:00:31.447 11683 11704 E AndroidRuntime: FATAL EXCEPTION: Thread-2
+02-12 15:00:31.447 11683 11704 E AndroidRuntime: Caused by: java.lang.UnsatisfiedLinkError: Failed at System.loadLibrary()
+02-12 15:00:31.447 11683 11704 E AndroidRuntime: Caused by: java.lang.UnsatisfiedLinkError: dlopen failed: library "libmonochrome.so" not found
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+02-12 15:00:31.447 11683 11704 E AndroidRuntime: FATAL EXCEPTION: Thread-2
+=== DMESG ERRORS ===
+
+========================================================================
+## asus/ASUSAI2501 (com.android.bluetooth LE Audio SIGABRT) [ASUSAI2501_fail.txt]
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.6.30-android15-8-g865edf73c264-ab12256205-4k #1 SMP PREEMPT Wed Aug 21 01:08:31 UTC 2024 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=asus/ZWWAI2501/ASUSAI2501:15/AQ3A.240829.003/35.1810.1810.243-0:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=15
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=sun
+=== RUNNING VENDOR HAL PROCS ===
+system         199     1 44 10:17:31 ?    00:00:17 servicemanager
+audioserver    517     1 0 10:17:40 ?     00:00:00 android.hardware.audio.service
+audioserver    518     1 0 10:17:40 ?     00:00:00 android.hardware.audio.effect.service
+audioserver    532     1 1 10:17:40 ?     00:00:00 audioserver
+system         537     1 12 10:17:40 ?    00:00:03 surfaceflinger
+cameraserver   599     1 0 10:17:41 ?     00:00:00 cameraserver
+media          621     1 0 10:17:41 ?     00:00:00 mediaserver64
+mediacodec     649     1 0 10:17:41 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.android-hardware-media-c2-hal]: [restarting]
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+... [filtered key error/crash/avc lines] ...
+[init.svc.vendor-dolby-media-c2-hal]: [restarting]
+  android.hardware.audio.core.IModule/bluetooth
+  android.hardware.bluetooth.IBluetoothHci/default
+01-22 10:17:56.129  2320  2320 F DEBUG   :       #10 pc 0000000000b2b4ec  /apex/com.android.btservices/lib64/libbluetooth_jni.so (base::RunLoop::Run()+72) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:17:56.129  2320  2320 F DEBUG   :       #11 pc 0000000000b07810  /apex/com.android.btservices/lib64/libbluetooth_jni.so (bluetooth::common::MessageLoopThread::Run(std::__1::promise<void>)+328) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:17:56.129  2320  2320 F DEBUG   :       #12 pc 0000000000b0739c  /apex/com.android.btservices/lib64/libbluetooth_jni.so (bluetooth::common::MessageLoopThread::RunThread(bluetooth::common::MessageLoopThread*, std::__1::promise<void>)+56) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:17:56.129  2320  2320 F DEBUG   :       #13 pc 0000000000b081dc  /apex/com.android.btservices/lib64/libbluetooth_jni.so (void* std::__1::__thread_proxy[abi:nn180000]<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct>>, void (*)(bluetooth::common::MessageLoopThread*, std::__1::promise<void>), bluetooth::common::MessageLoopThread*, std::__1::promise<void>>>(void*)+92) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:05.812  3239  3448 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 3448 (bt_main_thread), pid 3239 (droid.bluetooth)
+01-22 10:18:06.135  3991  3991 F DEBUG   : Cmdline: com.android.bluetooth
+01-22 10:18:06.135  3991  3991 F DEBUG   : pid: 3239, tid: 3448, name: bt_main_thread  >>> com.android.bluetooth <<<
+01-22 10:18:06.135  3991  3991 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-22 10:18:06.135  3991  3991 F DEBUG   : Abort message: 'system/bta/le_audio/client.cc:6911 Initialize: LE Audio Client requires Bluetooth Audio HAL V2.1 at least. Either disable LE Audio Profile, or update your HAL'
+01-22 10:18:06.135  3991  3991 F DEBUG   : backtrace:
+01-22 10:18:06.135  3991  3991 F DEBUG   :       #03 pc 0000000000c0c91c  /apex/com.android.btservices/lib64/libbluetooth_jni.so (bluetooth::log_internal::vlog(bluetooth::log_internal::Level, char const*, bluetooth::log_internal::source_location, fmt::v10::basic_string_view<char>, fmt::v10::basic_format_args<fmt::v10::basic_format_context<fmt::v10::appender, char>>)+1172) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:06.135  3991  3991 F DEBUG   :       #04 pc 000000000061de08  /apex/com.android.btservices/lib64/libbluetooth_jni.so (LeAudioClient::Initialize(bluetooth::le_audio::LeAudioClientCallbacks*, base::RepeatingCallback<void ()>, base::RepeatingCallback<bool ()>, std::__1::vector<bluetooth::le_audio::btle_audio_codec_config, std::__1::allocator<bluetooth::le_audio::btle_audio_codec_config>> const&)+364) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:06.135  3991  3991 F DEBUG   :       #05 pc 00000000007901a8  /apex/com.android.btservices/lib64/libbluetooth_jni.so (base::internal::Invoker<base::internal::BindState<void (*)(bluetooth::le_audio::LeAudioClientCallbacks*, base::RepeatingCallback<void ()>, base::RepeatingCallback<bool ()>, std::__1::vector<bluetooth::le_audio::btle_audio_codec_config, std::__1::allocator<bluetooth::le_audio::btle_audio_codec_config>> const&), (anonymous namespace)::LeAudioClientInterfaceImpl*, base::RepeatingCallback<void ()>, base::RepeatingCallback<bool ()>, std::__1::vector<bluetooth::le_audio::btle_audio_codec_config, std::__1::allocator<bluetooth::le_audio::btle_audio_codec_config>>>, void ()>::Run(base::internal::BindStateBase*)+104) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:06.135  3991  3991 F DEBUG   :       #06 pc 0000000000b1c818  /apex/com.android.btservices/lib64/libbluetooth_jni.so (base::debug::TaskAnnotator::RunTask(char const*, base::PendingTask*)+204) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:06.135  3991  3991 F DEBUG   :       #07 pc 0000000000b1bd44  /apex/com.android.btservices/lib64/libbluetooth_jni.so (base::MessageLoop::RunTask(base::PendingTask*)+352) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:06.135  3991  3991 F DEBUG   :       #08 pc 0000000000b1c09c  /apex/com.android.btservices/lib64/libbluetooth_jni.so (base::MessageLoop::DoWork()+520) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:06.135  3991  3991 F DEBUG   :       #09 pc 0000000000b1e630  /apex/com.android.btservices/lib64/libbluetooth_jni.so (base::MessagePumpDefault::Run(base::MessagePump::Delegate*)+96) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:06.135  3991  3991 F DEBUG   :       #10 pc 0000000000b2b4ec  /apex/com.android.btservices/lib64/libbluetooth_jni.so (base::RunLoop::Run()+72) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:06.135  3991  3991 F DEBUG   :       #11 pc 0000000000b07810  /apex/com.android.btservices/lib64/libbluetooth_jni.so (bluetooth::common::MessageLoopThread::Run(std::__1::promise<void>)+328) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:06.135  3991  3991 F DEBUG   :       #12 pc 0000000000b0739c  /apex/com.android.btservices/lib64/libbluetooth_jni.so (bluetooth::common::MessageLoopThread::RunThread(bluetooth::common::MessageLoopThread*, std::__1::promise<void>)+56) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:06.135  3991  3991 F DEBUG   :       #13 pc 0000000000b081dc  /apex/com.android.btservices/lib64/libbluetooth_jni.so (void* std::__1::__thread_proxy[abi:nn180000]<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct>>, void (*)(bluetooth::common::MessageLoopThread*, std::__1::promise<void>), bluetooth::common::MessageLoopThread*, std::__1::promise<void>>>(void*)+92) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:07.107  1573  3715 E AndroidRuntime: FATAL EXCEPTION: QualifiedNetworksService
+01-22 10:18:07.107  1573  3715 E AndroidRuntime: java.lang.UnsatisfiedLinkError: No implementation found for void vendor.qti.iwlan.JniHelper.getAllQualifiedNetworks(int, int) (tried Java_vendor_qti_iwlan_JniHelper_getAllQualifiedNetworks and Java_vendor_qti_iwlan_JniHelper_getAllQualifiedNetworks__II) - is the library loaded, e.g. System.loadLibrary?
+01-22 10:18:13.179  4486  4567 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 4567 (bt_main_thread), pid 4486 (droid.bluetooth)
+01-22 10:18:13.580  4769  4769 F DEBUG   : Cmdline: com.android.bluetooth
+01-22 10:18:13.580  4769  4769 F DEBUG   : pid: 4486, tid: 4567, name: bt_main_thread  >>> com.android.bluetooth <<<
+01-22 10:18:13.580  4769  4769 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-22 10:18:13.580  4769  4769 F DEBUG   : Abort message: 'system/bta/le_audio/client.cc:6911 Initialize: LE Audio Client requires Bluetooth Audio HAL V2.1 at least. Either disable LE Audio Profile, or update your HAL'
+01-22 10:18:13.580  4769  4769 F DEBUG   : backtrace:
+01-22 10:18:13.581  4769  4769 F DEBUG   :       #03 pc 0000000000c0c91c  /apex/com.android.btservices/lib64/libbluetooth_jni.so (bluetooth::log_internal::vlog(bluetooth::log_internal::Level, char const*, bluetooth::log_internal::source_location, fmt::v10::basic_string_view<char>, fmt::v10::basic_format_args<fmt::v10::basic_format_context<fmt::v10::appender, char>>)+1172) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:13.581  4769  4769 F DEBUG   :       #04 pc 000000000061de08  /apex/com.android.btservices/lib64/libbluetooth_jni.so (LeAudioClient::Initialize(bluetooth::le_audio::LeAudioClientCallbacks*, base::RepeatingCallback<void ()>, base::RepeatingCallback<bool ()>, std::__1::vector<bluetooth::le_audio::btle_audio_codec_config, std::__1::allocator<bluetooth::le_audio::btle_audio_codec_config>> const&)+364) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:13.581  4769  4769 F DEBUG   :       #05 pc 00000000007901a8  /apex/com.android.btservices/lib64/libbluetooth_jni.so (base::internal::Invoker<base::internal::BindState<void (*)(bluetooth::le_audio::LeAudioClientCallbacks*, base::RepeatingCallback<void ()>, base::RepeatingCallback<bool ()>, std::__1::vector<bluetooth::le_audio::btle_audio_codec_config, std::__1::allocator<bluetooth::le_audio::btle_audio_codec_config>> const&), (anonymous namespace)::LeAudioClientInterfaceImpl*, base::RepeatingCallback<void ()>, base::RepeatingCallback<bool ()>, std::__1::vector<bluetooth::le_audio::btle_audio_codec_config, std::__1::allocator<bluetooth::le_audio::btle_audio_codec_config>>>, void ()>::Run(base::internal::BindStateBase*)+104) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:13.581  4769  4769 F DEBUG   :       #06 pc 0000000000b1c818  /apex/com.android.btservices/lib64/libbluetooth_jni.so (base::debug::TaskAnnotator::RunTask(char const*, base::PendingTask*)+204) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:13.581  4769  4769 F DEBUG   :       #07 pc 0000000000b1bd44  /apex/com.android.btservices/lib64/libbluetooth_jni.so (base::MessageLoop::RunTask(base::PendingTask*)+352) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:13.581  4769  4769 F DEBUG   :       #08 pc 0000000000b1c09c  /apex/com.android.btservices/lib64/libbluetooth_jni.so (base::MessageLoop::DoWork()+520) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:13.581  4769  4769 F DEBUG   :       #09 pc 0000000000b1e630  /apex/com.android.btservices/lib64/libbluetooth_jni.so (base::MessagePumpDefault::Run(base::MessagePump::Delegate*)+96) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:13.581  4769  4769 F DEBUG   :       #10 pc 0000000000b2b4ec  /apex/com.android.btservices/lib64/libbluetooth_jni.so (base::RunLoop::Run()+72) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:13.581  4769  4769 F DEBUG   :       #11 pc 0000000000b07810  /apex/com.android.btservices/lib64/libbluetooth_jni.so (bluetooth::common::MessageLoopThread::Run(std::__1::promise<void>)+328) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:13.581  4769  4769 F DEBUG   :       #12 pc 0000000000b0739c  /apex/com.android.btservices/lib64/libbluetooth_jni.so (bluetooth::common::MessageLoopThread::RunThread(bluetooth::common::MessageLoopThread*, std::__1::promise<void>)+56) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+01-22 10:18:13.581  4769  4769 F DEBUG   :       #13 pc 0000000000b081dc  /apex/com.android.btservices/lib64/libbluetooth_jni.so (void* std::__1::__thread_proxy[abi:nn180000]<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct>>, void (*)(bluetooth::common::MessageLoopThread*, std::__1::promise<void>), bluetooth::common::MessageLoopThread*, std::__1::promise<void>>>(void*)+92) (BuildId: 8f624c076bbc052634d41581bcebe5e6)
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+01-22 10:18:13.179  4486  4567 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 4567 (bt_main_thread), pid 4486 (droid.bluetooth)
+01-22 10:18:13.580  4769  4769 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+=== DMESG ERRORS ===
+
+========================================================================
+## blackview/XPLORE_X1 (dex2oat32 Exec format error) [XPLORE_X1_fail.txt]
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k #1 SMP PREEMPT Thu Jul 10 06:35:14 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=Blackview/XPLORE_X1_NEU/XPLORE_X1:15/AP3A.240905.015.A2/1764155304:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=15
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6877
+=== RUNNING VENDOR HAL PROCS ===
+system         203     1 5 19:07:59 ?     00:00:05 servicemanager
+audioserver    570     1 0 19:08:20 ?     00:00:00 android.hardware.audio.service
+audioserver    571     1 0 19:08:20 ?     00:00:00 android.hardware.audio.effect.service
+mediacodec     586     1 0 19:08:21 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     595     1 0 19:08:21 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    602     1 0 19:08:21 ?     00:00:00 audioserver
+system         606     1 4 19:08:21 ?     00:00:03 surfaceflinger
+audioserver    607     1 0 19:08:21 ?     00:00:00 android.hardware.audio.parameter_parser.service
+cameraserver   650     1 0 19:08:22 ?     00:00:00 cameraserver
+media          673     1 1 19:08:22 ?     00:00:00 mediaserver
+mediacodec     680     1 3 19:08:22 ?     00:00:02 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+... [filtered key error/crash/avc lines] ...
+  android.hardware.audio.core.IModule/bluetooth
+  android.hardware.bluetooth.IBluetoothHci/default
+11-26 19:08:41.392  2801  2801 F DEBUG   : backtrace:
+11-26 19:08:41.396  2804  2804 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 2804 (art_exec), pid 2804 (art_exec)
+11-26 19:08:41.406  2807  2807 F DEBUG   : Cmdline: /apex/com.android.art/bin/art_exec --drop-capabilities --keep-fds=10:12:14:15 -- /apex/com.android.art/bin/dex2oat32 --zip-fd=10 --zip-location=/system/priv-app/DocumentsUIGoogle/DocumentsUIGoogle.apk --oat-fd=12 --oat-location=/data/dalvik-cache/arm64/system@priv-app@DocumentsUIGoogle@DocumentsUIGoogle.apk@classes.dex --output-vdex-fd=14 --swap-fd=15 --class-loader-context=PCL[] --classpath-dir=/system/priv-app/DocumentsUIGoogle --instruction-set=arm64 --instruction-set-features=default --instruction-set-variant=cortex-a55 --compiler-filter=verify --compilation-reason=first-boot --compact-dex-level=none --max-image-block-size=524288 --resolve-startup-const-strings=true --generate-mini-debug-info --runtime-arg -Xtarget-sdk-version:35 --runtime-arg -Xhidden-api-policy:enabled --runtime-arg -Xms64m --runtime-arg -Xmx512m --comments=app-name:com.google.android.documentsui,app-version-name:15,app-version-code:351311000,art-version:351310060
+11-26 19:08:41.406  2807  2807 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+11-26 19:08:41.406  2807  2807 F DEBUG   : Abort message: 'Failed to execute (/apex/com.android.art/bin/dex2oat32 --zip-fd=10 --zip-location=/system/priv-app/DocumentsUIGoogle/DocumentsUIGoogle.apk --oat-fd=12 --oat-location=/data/dalvik-cache/arm64/system@priv-app@DocumentsUIGoogle@DocumentsUIGoogle.apk@classes.dex --output-vdex-fd=14 --swap-fd=15 --class-loader-context=PCL[] --classpath-dir=/system/priv-app/DocumentsUIGoogle --instruction-set=arm64 --instruction-set-features=default --instruction-set-variant=cortex-a55 --compiler-filter=verify --compilation-reason=first-boot --compact-dex-level=none --max-image-block-size=524288 --resolve-startup-const-strings=true --generate-mini-debug-info --runtime-arg -Xtarget-sdk-version:35 --runtime-arg -Xhidden-api-policy:enabled --runtime-arg -Xms64m --runtime-arg -Xmx512m --comments=app-name:com.google.android.documentsui,app-version-name:15,app-version-code:351311000,art-version:351310060): Exec format error'
+11-26 19:08:41.406  2807  2807 F DEBUG   : backtrace:
+11-26 19:08:41.438  2810  2810 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 2810 (art_exec), pid 2810 (art_exec)
+11-26 19:08:41.446  2813  2813 F DEBUG   : Cmdline: /apex/com.android.art/bin/art_exec --drop-capabilities --keep-fds=7:8:9:10 -- /apex/com.android.art/bin/dex2oat32 --zip-fd=7 --zip-location=/system/priv-app/DKCopyLog/DKCopyLog.apk --oat-fd=8 --oat-location=/data/dalvik-cache/arm64/system@priv-app@DKCopyLog@DKCopyLog.apk@classes.dex --output-vdex-fd=9 --swap-fd=10 --class-loader-context=PCL[] --classpath-dir=/system/priv-app/DKCopyLog --instruction-set=arm64 --instruction-set-features=default --instruction-set-variant=cortex-a55 --compiler-filter=verify --compilation-reason=first-boot --compact-dex-level=none --max-image-block-size=524288 --resolve-startup-const-strings=true --generate-mini-debug-info --runtime-arg -Xtarget-sdk-version:35 --runtime-arg -Xms64m --runtime-arg -Xmx512m --comments=app-name:com.blackview.cplog,app-version-name:15,app-version-code:35,art-version:351310060
+11-26 19:08:41.446  2813  2813 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+11-26 19:08:41.446  2813  2813 F DEBUG   : Abort message: 'Failed to execute (/apex/com.android.art/bin/dex2oat32 --zip-fd=7 --zip-location=/system/priv-app/DKCopyLog/DKCopyLog.apk --oat-fd=8 --oat-location=/data/dalvik-cache/arm64/system@priv-app@DKCopyLog@DKCopyLog.apk@classes.dex --output-vdex-fd=9 --swap-fd=10 --class-loader-context=PCL[] --classpath-dir=/system/priv-app/DKCopyLog --instruction-set=arm64 --instruction-set-features=default --instruction-set-variant=cortex-a55 --compiler-filter=verify --compilation-reason=first-boot --compact-dex-level=none --max-image-block-size=524288 --resolve-startup-const-strings=true --generate-mini-debug-info --runtime-arg -Xtarget-sdk-version:35 --runtime-arg -Xms64m --runtime-arg -Xmx512m --comments=app-name:com.blackview.cplog,app-version-name:15,app-version-code:35,art-version:351310060): Exec format error'
+11-26 19:08:41.446  2813  2813 F DEBUG   : backtrace:
+11-26 19:08:41.495  2816  2816 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 2816 (art_exec), pid 2816 (art_exec)
+11-26 19:08:41.508  2819  2819 F DEBUG   : Cmdline: /apex/com.android.art/bin/art_exec --drop-capabilities --keep-fds=6:7:8:9:10:11:12 -- /apex/com.android.art/bin/dex2oat32 --zip-fd=6 --zip-location=/system/priv-app/WpsOffice/WpsOffice.apk --oat-fd=7 --oat-location=/data/dalvik-cache/arm64/system@priv-app@WpsOffice@WpsOffice.apk@classes.dex --output-vdex-fd=8 --swap-fd=9 --class-loader-context-fds=10:11:12 --class-loader-context=PCL[]{PCL[/system/framework/org.apache.http.legacy.jar]#PCL[/system_ext/framework/androidx.window.extensions.jar]#PCL[/system_ext/framework/androidx.window.sidecar.jar]} --classpath-dir=/system/priv-app/WpsOffice --instruction-set=arm64 --instruction-set-features=default --instruction-set-variant=cortex-a55 --compiler-filter=verify --compilation-reason=first-boot --compact-dex-level=none --max-image-block-size=524288 --resolve-startup-const-strings=true --generate-mini-debug-info --runtime-arg -Xtarget-sdk-version:35 --runtime-arg -Xhidden-api-policy:enabled --runtime-arg -Xms64m --runtime-arg -Xmx512m --comments=app-name:cn.wps.moffice_eng,app-version-name:18.17.2,app-version-code:1535,art-version:351310060
+11-26 19:08:41.508  2819  2819 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+11-26 19:08:41.508  2819  2819 F DEBUG   : Abort message: 'Failed to execute (/apex/com.android.art/bin/dex2oat32 --zip-fd=6 --zip-location=/system/priv-app/WpsOffice/WpsOffice.apk --oat-fd=7 --oat-location=/data/dalvik-cache/arm64/system@priv-app@WpsOffice@WpsOffice.apk@classes.dex --output-vdex-fd=8 --swap-fd=9 --class-loader-context-fds=10:11:12 --class-loader-context=PCL[]{PCL[/system/framework/org.apache.http.legacy.jar]#PCL[/system_ext/framework/androidx.window.extensions.jar]#PCL[/system_ext/framework/androidx.window.sidecar.jar]} --classpath-dir=/system/priv-app/WpsOffice --instruction-set=arm64 --instruction-set-features=default --instruction-set-variant=cortex-a55 --compiler-filter=verify --compilation-reason=first-boot --compact-dex-level=none --max-image-block-size=524288 --resolve-startup-const-strings=true --generate-mini-debug-info --runtime-arg -Xtarget-sdk-version:35 --runtime-arg -Xhidden-api-policy:enabled --runtime-arg -Xms64m --runtime-arg -Xmx512m --comments=app-name:cn.wps.moffice_eng,app-version-name:18.17.2,app-version-code:1535,art-version:351310060): Exec format error'
+11-26 19:08:41.508  2819  2819 F DEBUG   : backtrace:
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+11-26 19:09:49.321  3087  5821 E HWUI    : Device claims wide gamut support, cannot find matching config, error = EGL_SUCCESS
+=== DMESG ERRORS ===
+
+========================================================================
+## google/oriole A17 (gralloc-mapper missing) [oriole_17_fail.txt]
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.1.162-android14-11-g9dd05ae3a1de-ab16261587 #1 SMP PREEMPT Thu Sep  3 03:59:00 UTC 2026 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=google/oriole/oriole:17/CP3A.261005.002.A1/16269273:user/release-keys
+ro.build.version.release=17
+ro.vendor.build.version.release=17
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=gs101
+=== RUNNING VENDOR HAL PROCS ===
+system         256     1 13 10:39:10 ?    00:00:10 servicemanager
+audioserver    636     1 0 10:39:20 ?     00:00:00 android.hardware.audio.service
+audioserver    637     1 0 10:39:20 ?     00:00:00 android.hardware.audio.effect.service
+audioserver    654     1 0 10:39:20 ?     00:00:00 audioserver
+system         666     1 14 10:39:20 ?    00:00:09 surfaceflinger
+cameraserver   739     1 0 10:39:21 ?     00:00:00 cameraserver
+mediacodec     782     1 0 10:39:22 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.android-hardware-media-c2-hal]: [restarting]
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.drm]: [restarting]
+[init.svc.hwservicemanager]: [stopped]
+... [filtered key error/crash/avc lines] ...
+[init.svc.media]: [restarting]
+[init.svc.mediadrm]: [restarting]
+[init.svc.vendor-dolby-media-c2-hal]: [restarting]
+  android.hardware.bluetooth.IBluetoothHci/default
+09-05 10:40:32.374 20691 20729 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:32.423 20736 20757 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:32.860 20816 20835 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:32.915 20795 20850 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:33.121 20795 20852 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:33.179 20892 20910 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:33.449 20950 20968 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:33.449 20922 20980 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:33.664 20922 20987 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:33.712 21021 21040 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:33.583 20999 20999 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-05 10:40:33.583 20999 20999 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+09-05 10:40:33.583 20999 20999 F DEBUG   : backtrace:
+09-05 10:40:33.706 21007 21007 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-05 10:40:33.706 21007 21007 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+09-05 10:40:33.706 21007 21007 F DEBUG   : backtrace:
+09-05 10:40:33.706 21007 21007 F DEBUG   :       #04 pc 00000000000340c8  /system/lib64/libui.so (android::GraphicBufferMapper::GraphicBufferMapper()+312) (BuildId: 5378b118fa165e4f0ab1a920f8c9e355)
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+09-05 10:40:31.594 20402 20457 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:31.643 20496 20514 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:31.676 20484 20484 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-05 10:40:31.676 20484 20484 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+09-05 10:40:31.682 20496 20514 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 20514 (RenderThread), pid 20496 (s.nexuslauncher)
+09-05 10:40:31.793 20530 20530 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-05 10:40:31.793 20530 20530 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+09-05 10:40:31.865 20557 20573 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:31.884 20533 20586 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:31.906 20557 20573 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 20573 (RenderThread), pid 20557 (s.nexuslauncher)
+09-05 10:40:31.939   599   599 I adbd    : timeout 8 logcat -d -b all -t 4000 2>/dev/null | grep -E 'FATAL EXCEPTION|Fatal signal|SIGABRT|SIGSEGV|ServiceManager: Could not find|Waiting for service|not found in VINTF|HidlServiceManagement.*Waited|cannot find|failed to load|gralloc-mapper|InitFatal|avc: denied' | tail -n 150 || true
+09-05 10:40:31.939   599   599 I adbd    : timeout 5 dmesg 2>/dev/null | grep -iE 'init:.*(service|crash|exited|restarting|cannot find|missing)|selinux|avc: denied|cdh_redirect|panic|oom' | tail -n 80 || true
+09-05 10:40:31.958 20533 20586 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 20586 (hwuiTask0), pid 20533 (ndroid.systemui)
+09-05 10:40:32.003 20608 20608 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-05 10:40:32.003 20608 20608 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+09-05 10:40:32.118 20634 20634 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-05 10:40:32.118 20634 20634 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+09-05 10:40:32.179 20661 20681 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:32.217 20661 20681 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 20681 (RenderThread), pid 20661 (s.nexuslauncher)
+09-05 10:40:32.312 20711 20711 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-05 10:40:32.312 20711 20711 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+09-05 10:40:32.374 20691 20729 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:32.423 20736 20757 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:32.432 20691 20729 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 20729 (hwuiTask1), pid 20691 (ndroid.systemui)
+09-05 10:40:32.468 20736 20757 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 20757 (RenderThread), pid 20736 (s.nexuslauncher)
+09-05 10:40:32.570 20772 20772 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-05 10:40:32.570 20772 20772 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+09-05 10:40:32.656 20779 20779 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-05 10:40:32.656 20779 20779 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+09-05 10:40:32.860 20816 20835 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:32.915 20795 20850 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:32.915 20816 20835 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 20835 (RenderThread), pid 20816 (s.nexuslauncher)
+09-05 10:40:32.964 20795 20850 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 20850 (hwuiTask0), pid 20795 (ndroid.systemui)
+09-05 10:40:33.010 20868 20868 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-05 10:40:33.010 20868 20868 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+09-05 10:40:33.121 20795 20852 F GraphicBufferMapper: gralloc-mapper is missing
+09-05 10:40:33.142 20878 20878 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+09-05 10:40:33.142 20878 20878 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+
+========================================================================
+## oppo/CPH2797 (NXP StrongBox keystore2 SIGABRT + LE Audio) [CPH2797_fail.txt]
+========================================================================
+=== CPH2797 v1 failure: odm strongbox init error ===
+[    4.833649][    T1] init: Parsing file /system/etc/init/keystore2.rc...
+[    6.274577][    T1] init: Parsing file /odm/etc/init/android.hardware.security.keymint3-service.strongbox.nxp.mtk.rc...
+[    6.287357][    T1] init: /odm/etc/init/android.hardware.security.keymint3-service.strongbox.nxp.mtk.rc: 5: Unable to find UID for 'vendor_nxp_strongbox': getpwnam failed: No such file or directory
+[    6.289164][    T1] init: /odm/etc/init/android.hardware.security.keymint3-service.strongbox.nxp.mtk.rc: 3: No user specified for service 'vendor.keymint-strongbox', so it would have been root.
+=== CPH2797 v1 failure: keystore2 SIGABRT loop ===
+[   47.347829][    T1] init: starting service 'keystore2'...
+[   47.370904][    T1] init: ... started service 'keystore2' has pid 527
+[   52.512804][  T266] servicemanager: Caller(pid=527,uid=1017,sid=u:r:keystore:s0) Found android.system.keystore2.IKeystoreService/default in framework VINTF manifest.
+[   57.613857][    T1] init: Service 'keystore2' (pid 527) received signal 6
+  57.625988][    T1] init: Sending signal 9 to service 'keystore2' (pid 527) process group...
+[   57.641707][    T1] init: starting service 'keystore2'...
+[   57.665642][    T1] init: ... started service 'keystore2' has pid 538
+[   62.823572][  T266] servicemanager: Caller(pid=538,uid=1017,sid=u:r:keystore:s0) Found android.system.keystore2.IKeystoreService/default in framework VINTF manifest.
+[   67.919238][    T1] init: Service 'keystore2' (pid 538) received signal 6
+[   67.930261][    T1] init: Sending signal 9 to service 'keystore2' (pid 538) process group...
+[   67.952638][    T1] init: starting service 'keystore2'...
+[   67.978988][    T1] init: ... started service 'keystore2' has pid 549
+[   73.141264][  T266] servicemanager: Caller(pid=549,uid=1017,sid=u:r:keystore:s0) Found android.system.keystore2.IKeystoreService/default in framework VINTF manifest.
+[   78.251678][    T1] init: Service 'keystore2' (pid 549) received signal 6
+[   78.263094][    T1] init: Sending signal 9 to service 'keystore2' (pid 549) process group...
+[   78.278607][    T1] init: Reboot already performed in last 24hrs because of crash.
+[   78.292736][    T1] init: starting service 'keystore2'...
+[   78.314040][    T1] init: ... started service 'keystore2' has pid 561
+
+========================================================================
+## tcl/ericanppro (ext4 vendor_a.img mapper.mediatek mismatch) [ericanppro_fail.txt]
+========================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.6.57-android15-8-g9dfb2bc0c466-ab12845201-4k #1 SMP PREEMPT Mon Dec 23 18:52:15 UTC 2024 aarch64 Toybox
+sys.boot_completed=
+init.svc.bootanim=
+ro.build.fingerprint=unknown/unknown/unknown:15/AP3A.240905.015.A2/3LCM:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=15
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6768
+=== RUNNING VENDOR HAL PROCS ===
+system         208     1 5 00:00:03 ?     00:00:16 servicemanager
+mediacodec     644     1 0 00:00:27 ?     00:00:00 android.hardware.media.c2-mediatek
+mediacodec     654     1 0 00:00:27 ?     00:00:00 vendor.dolby.media.c2-default-service-dax
+audioserver    667     1 0 00:00:27 ?     00:00:00 android.hardware.audio.parameter_parser.service
+mediacodec     759     1 0 00:00:29 ?     00:00:00 media.swcodec oid.media.swcodec/bin/mediaswcodec
+cameraserver 11787     1 4 00:05:05 ?     00:00:00 cameraserver
+media        11792     1 4 00:05:05 ?     00:00:00 mediaserver
+=== STOPPED / RESTARTING INIT SERVICES ===
+[init.svc.audioserver]: [restarting]
+[init.svc.boringssl_self_test64_vendor]: [stopped]
+[init.svc.hwservicemanager]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+... [filtered key error/crash/avc lines] ...
+[init.svc.surfaceflinger]: [restarting]
+[init.svc.vendor.audio-effect-hal-aidl]: [restarting]
+[init.svc.vendor.audio-hal-aidl]: [restarting]
+  android.hardware.bluetooth.IBluetoothHci/default
+01-01 00:05:01.236 11573 11578 F GraphicBufferMapper: gralloc-mapper is missing
+01-01 00:05:06.282 11762 11767 F GraphicBufferMapper: gralloc-mapper is missing
+01-01 00:04:51.223 11188 11188 F DEBUG   : backtrace:
+01-01 00:04:56.223 11381 11386 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 11386 (surfaceflinger), pid 11381 (surfaceflinger)
+01-01 00:04:56.250 11389 11389 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:04:56.250 11389 11389 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+01-01 00:04:56.250 11389 11389 F DEBUG   : backtrace:
+01-01 00:05:01.236 11573 11578 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 11578 (surfaceflinger), pid 11573 (surfaceflinger)
+01-01 00:05:01.264 11581 11581 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:05:01.264 11581 11581 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+01-01 00:05:01.264 11581 11581 F DEBUG   : backtrace:
+01-01 00:05:06.282 11762 11767 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 11767 (surfaceflinger), pid 11762 (surfaceflinger)
+01-01 00:05:06.304 11770 11770 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:05:06.304 11770 11770 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+01-01 00:05:06.304 11770 11770 F DEBUG   : backtrace:
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+01-01 00:04:56.223 11381 11386 F GraphicBufferMapper: gralloc-mapper is missing
+01-01 00:04:56.223 11381 11386 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 11386 (surfaceflinger), pid 11381 (surfaceflinger)
+01-01 00:04:56.250 11389 11389 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:04:56.250 11389 11389 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+01-01 00:05:01.236 11573 11578 F GraphicBufferMapper: gralloc-mapper is missing
+01-01 00:05:01.236 11573 11578 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 11578 (surfaceflinger), pid 11573 (surfaceflinger)
+01-01 00:05:01.264 11581 11581 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:05:01.264 11581 11581 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+01-01 00:05:06.282 11762 11767 F GraphicBufferMapper: gralloc-mapper is missing
+01-01 00:05:06.282 11762 11767 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 11767 (surfaceflinger), pid 11762 (surfaceflinger)
+01-01 00:05:06.304 11770 11770 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:05:06.304 11770 11770 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+=== DMESG ERRORS ===
+[  306.814941] [  T208] SELinux: avc:  denied  { find } for pid=11800 uid=2000 name=android.hardware.bluetooth.IBluetoothHci/default scontext=u:r:pioneer:s0 tcontext=u:object_r:hal_bluetooth_service:s0 tclass=service_manager permissive=1
+[  306.849914] [  T208] SELinux: avc:  denied  { find } for pid=11800 uid=2000 name=android.security.compat scontext=u:r:pioneer:s0 tcontext=u:object_r:keystore_compat_hal_service:s0 tclass=service_manager permissive=1
+[  306.852613] [  T208] SELinux: avc:  denied  { find } for pid=11800 uid=2000 name=android.security.legacykeystore scontext=u:r:pioneer:s0 tcontext=u:object_r:legacykeystore_service:s0 tclass=service_manager permissive=1
+[  306.854004] [  T208] SELinux: avc:  denied  { find } for pid=11800 uid=2000 name=android.security.maintenance scontext=u:r:pioneer:s0 tcontext=u:object_r:keystore_maintenance_service:s0 tclass=service_manager permissive=1
+[  306.855344] [  T208] SELinux: avc:  denied  { find } for pid=11800 uid=2000 name=android.security.metrics scontext=u:r:pioneer:s0 tcontext=u:object_r:keystore_metrics_service:s0 tclass=service_manager permissive=1
+[  306.858135] [  T208] SELinux: avc:  denied  { find } for pid=11800 uid=2000 name=android.system.keystore2.IKeystoreService/default scontext=u:r:pioneer:s0 tcontext=u:object_r:keystore_service:s0 tclass=service_manager permissive=1
+
+========================================================================
+## huawei/HBN-AL00 (HarmonyOS NEXT 5.0 / OpenHarmony 5.0.1.102) [HBN-AL00_harmonyos_evidence.txt]
+========================================================================
+=== huawei/HBN-AL00 (Huawei-Pura-70-PRO.zip) ===
+/Volumes/work/cloud-phone-hub/out/devices/roms/huawei/HBN-AL00/15-205.0.0.102_SP3/boot.img: Certificate, Version=3 Certificate, Version=01
+const.ohos.version.security_patch=2024/10/01
+const.ohos.releasetype=Beta2
+const.ohos.apiversion=13
+const.ohos.fullname=OpenHarmony-5.0.1.102
+const.build.vendor.date.utc=1729155691672
+const.build.vendor.date=2024-10-18 01:01:31
+
+========================================================================
+## huawei/HED-AL00 (HarmonyOS NEXT 5.1 / OpenHarmony 5.1.1.206) [HED-AL00_harmonyos_evidence.txt]
+========================================================================
+=== huawei/HED-AL00 (Huawei-Pura-80-HED-AL00.zip) ===
+/Volumes/work/cloud-phone-hub/out/devices/tmp/Huawei-Pura-80-HED-AL00/boot.img: Certificate, Version=3 Certificate, Version=01
+Path : /
+Size: 565  On-disk size: 565  directory
+NID: 59   Links: 27   Layout: 2   Compression ratio: 100.00%
+Inode size: 32   Xattr size: 16
+Uid: 0   Gid: 0  Access: 0755/rwxr-xr-x
+Timestamp: 2024-06-06 08:00:00.000000000
+
+       NID TYPE  FILENAME
+        59    2  .
+        59    2  ..
+        79    7  bin
+        81    2  chip_prod
+        84    7  chipset
+        86    2  config
+        90    2  cust
+        93    2  data
+        97    2  dev
+       101    2  eng_chipset
+       105    2  eng_system
+       108    7  etc
+       111    7  init
+       113    7  lib
+       116    2  log
+       120    2  metadata
+       124    2  mnt
+  99241088    2  module_update
+  99241091    2  patch_hw
+  99241094    2  preload
+  99241097    2  proc
+  99241100    2  sbin
+--- ohos.para ---
+const.ohos.version.security_patch=2025/07/01
+const.ohos.releasetype=Release
+const.ohos.apiversion=19
+const.ohos.fullname=OpenHarmony-5.1.1.206
+--- vendor build_info.para ---
+const.build.vendor.date.utc=1753496163538
+const.build.vendor.date=2025-07-26 18:16:03
+

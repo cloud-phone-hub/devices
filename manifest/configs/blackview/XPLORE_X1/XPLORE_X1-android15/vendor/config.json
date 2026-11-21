@@ -1,5 +1,6 @@
 {
   "build-prop-sets": {
+    "dalvik.vm.dex2oat64.enabled": "true",
     "persist.radio.multisim.config": "dsds",
     "ro.hardware.egl": "mesa",
     "ro.hardware.hwcomposer": "mtk_common",

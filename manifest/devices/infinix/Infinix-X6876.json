@@ -22,7 +22,9 @@
     "board": "mt6878",
     "hostHvc": {
       "host-hvc-adbkey": "hvc2",
+      "host-hvc-bluetooth": "hvc5",
       "host-hvc-daemon": "hvc7",
+      "host-hvc-haptic": "hvc6",
       "host-hvc-keymint": "hvc3",
       "host-hvc-radio": "hvc4",
       "host-hvc-wifi": "hvc9",

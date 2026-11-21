@@ -1,0 +1,9 @@
+{
+  "cmdline": [
+    "androidboot.product.hardware.sku=bengal_515",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ],
+  "fstab": "bengal"
+}

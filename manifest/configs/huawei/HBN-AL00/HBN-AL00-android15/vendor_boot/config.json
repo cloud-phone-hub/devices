@@ -1,3 +1,9 @@
 {
-  "fstab": "HBN-AL00"
+  "fstab": "HBN-AL00",
+  "cmdline": [
+    "androidboot.product.hardware.sku=HBN-AL00_cn",
+    "androidboot.secureboot=1",
+    "androidboot.slot=a",
+    "androidboot.veritymode.managed=yes"
+  ]
 }

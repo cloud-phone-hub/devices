@@ -22,9 +22,9 @@
 
 #include <cutils/properties.h>
 
-// Android 13/14 的 external/minigbm 尚未引入 drv_get_os_option 与 !is_running_with_software_rendering_ 门控；
-// 仅在 Android 15+ 编译该链接期 --wrap 符号，避免低版本 mapper.minigbm.so 残留未定义 __real_drv_get_os_option。
-#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 15
+// Android 13 的 external/minigbm 尚未引入 drv_get_os_option 与 !is_running_with_software_rendering_ 门控；
+// 仅在 Android 14+ 编译该链接期 --wrap 符号，避免 Android 13 mapper.minigbm.so 残留未定义 __real_drv_get_os_option。
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
 
 #if defined(__LP64__)
 #define CDH_GPU_ID_CFG_PATH "/vendor/lib64/egl/gpu_id.cfg"
@@ -79,4 +79,4 @@ extern "C" const char *__wrap_drv_get_os_option(const char *name) {
   return val;
 }
 
-#endif  // !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 15
+#endif  // !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14

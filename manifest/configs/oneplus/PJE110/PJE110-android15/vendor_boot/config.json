@@ -1,9 +1,0 @@
-{
-  "fstab": "kalama",
-  "cmdline": [
-    "androidboot.product.hardware.sku=ossi",
-    "androidboot.secureboot=1",
-    "androidboot.slot=a",
-    "androidboot.veritymode.managed=yes"
-  ]
-}

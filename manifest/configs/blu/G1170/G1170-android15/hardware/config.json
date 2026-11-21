@@ -113,6 +113,18 @@
         "variant": "default",
         "version": "1.0"
       }
+    },
+    {
+      "android.hardware.power": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.neuralnetworks": {
+        "variant": "default",
+        "version": "1.0"
+      }
     }
   ]
 }

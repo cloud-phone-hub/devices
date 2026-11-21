@@ -1,0 +1,16 @@
+{
+  "id": 69,
+  "deviceId": 18,
+  "name": "Asteroids-android14",
+  "androidVersion": "14",
+  "systemAndroidVersions": [
+    "15",
+    "16"
+  ],
+  "vendorAndroidVersion": "14",
+  "lineageVersion": "lineage-21.0",
+  "extra": {
+    "versionRelation": "system=A15/A16 (云机 buildId 前缀) + vendor=A14 -\u003e lineage-21.0（GRF 跨代：按 vendor 版本选定 Lineage 底包）"
+  },
+  "updatedAt": "2026-11-06T05:37:49Z"
+}

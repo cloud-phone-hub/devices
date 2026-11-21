@@ -2,7 +2,7 @@
   "id": 26,
   "buildId": "15-TP1A.220905.001-20250926",
   "deviceId": 20,
-  "configId": 42,
+  "configId": 73,
   "osVersion": "15-TP1A.220905.001-20250926",
   "buildDate": "20250926",
   "securityPatch": "2025-10-01",
@@ -12,12 +12,12 @@
   "extra": {
     "comment": "由 cdh unpack prepare 从 OP_ACE_3_PJE110_15.0.0.870_CN01.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
+      "product": "15",
       "system": "15",
       "system_ext": "15",
-      "product": "15",
       "vendor": "13",
       "vendor_dlkm": "13"
     }
   },
-  "updatedAt": "2026-11-19T03:07:01Z"
+  "updatedAt": "2026-11-20T21:22:28Z"
 }

@@ -2,7 +2,7 @@
   "id": 13,
   "buildId": "16-AQ3A.250411.001-20260127",
   "deviceId": 9,
-  "configId": 9,
+  "configId": 67,
   "osVersion": "16-AQ3A.250411.001-20260127",
   "buildDate": "20260127",
   "securityPatch": "2025-12-05",
@@ -10,16 +10,16 @@
   "factoryDir": "AQ3A.250411.001-20260127",
   "overrides": {},
   "extra": {
-    "boardNote": "板级名取官方 vendor 的 fstab 后缀（fstab.qcom，05 用它拼 cmdline androidboot.hardware 与 first_stage_ramdisk/system/etc/fstab.<board>，vold 按 ro.hardware 找默认 fstab）。ro.board.platform 是 sun，但它不是 fstab 后缀：写 sun 会让 vold 找不存在的 /vendor/etc/fstab.sun，/data 永远挂不上（证据 #49）。",
+    "boardNote": "板级名取官方 vendor 的 fstab 后缀（fstab.qcom，05 用它拼 cmdline androidboot.hardware 与 first_stage_ramdisk/system/etc/fstab.\u003cboard\u003e，vold 按 ro.hardware 找默认 fstab）。ro.board.platform 是 sun，但它不是 fstab 后缀：写 sun 会让 vold 找不存在的 /vendor/etc/fstab.sun，/data 永远挂不上（证据 #49）。",
     "comment": "MEIZU 22（Flyme 12.6.0.0A / Android 16 / 高通 QSSI qssi_64，ro.board.platform=sun，ro.soc.manufacturer=QTI）属性基线。取值全部由官方镜像实测提取（EROFS 经宿主 dump.erofs 读取，vendor_dlkm 亦为 EROFS），不需要任何设备侧构建脚本参与。",
     "partitionAndroidVersions": {
+      "odm": "15",
+      "product": "16",
       "system": "16",
       "system_ext": "16",
-      "product": "16",
       "vendor": "15",
-      "odm": "15",
       "vendor_dlkm": "15"
     }
   },
-  "updatedAt": "2026-11-06T02:13:12Z"
+  "updatedAt": "2026-11-20T17:13:04Z"
 }

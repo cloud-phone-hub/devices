@@ -1,0 +1,288 @@
+================================================================================
+1. oppo/PME110 (Ven A16 -> lineage-23.2): CdhAllocator 未校验 mapper.<gralloc>.so 存在导致 gralloc-mapper is missing
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.12.69-android16-6-g242e1a07f878-ab15865446-4k #1 SMP PREEMPT Wed Jul 15 11:18:49 UTC 2026 aarch64 Toybox
+sys.boot_completed=
+init.svc.bootanim=
+ro.build.fingerprint=OPPO/PME110/OP61C1L1:17/CP2A.260605.016/B.43db5f5-1dce0b6-1dd5089:user/release-keys
+ro.build.version.release=17
+ro.vendor.build.version.release=16
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6993
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+01-01 08:00:59.454  2452  2452 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 2452 (surfaceflinger), pid 2452 (surfaceflinger)
+01-01 08:00:59.551  2503  2503 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 08:00:59.551  2503  2503 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+01-01 08:01:04.436  2636  2636 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 2636 (surfaceflinger), pid 2636 (surfaceflinger)
+01-01 08:01:04.522  2661  2661 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 08:01:04.522  2661  2661 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+01-01 08:01:09.535  2816  2816 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 2816 (surfaceflinger), pid 2816 (surfaceflinger)
+01-01 08:01:09.650  2848  2848 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 08:01:09.650  2848  2848 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+01-01 08:01:14.547  2983  2983 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 2983 (surfaceflinger), pid 2983 (surfaceflinger)
+01-01 08:01:14.710  3017  3017 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 08:01:14.710  3017  3017 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+01-01 08:01:19.612  3139  3139 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 3139 (surfaceflinger), pid 3139 (surfaceflinger)
+01-01 08:01:19.715  3172  3172 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 08:01:19.715  3172  3172 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+01-01 08:01:24.619  3298  3298 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 3298 (surfaceflinger), pid 3298 (surfaceflinger)
+01-01 08:01:24.767  3326  3326 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 08:01:24.767  3326  3326 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+01-01 08:01:29.618  3435  3435 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 3435 (surfaceflinger), pid 3435 (surfaceflinger)
+01-01 08:01:29.710  3470  3470 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 08:01:29.710  3470  3470 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+01-01 08:01:34.574  3565  3565 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 3565 (surfaceflinger), pid 3565 (surfaceflinger)
+01-01 08:01:34.668  3601  3601 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 08:01:34.668  3601  3601 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+01-01 08:01:39.697  3677  3677 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 3677 (surfaceflinger), pid 3677 (surfaceflinger)
+01-01 08:01:39.821  3707  3707 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 08:01:39.821  3707  3707 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+01-01 08:01:44.732  3787  3787 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 3787 (surfaceflinger), pid 3787 (surfaceflinger)
+01-01 08:01:44.834  3837  3837 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 08:01:44.834  3837  3837 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+01-01 08:01:49.758  3942  3942 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 3942 (surfaceflinger), pid 3942
+
+================================================================================
+2. nothing/Asteroids 16 (Ven A14 -> lineage-21.0): 跨代 libapexsupport.so 缺符号 + init overlay SELinux 拒挂致 INSTALL_PACKAGES 崩溃
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.1.157-android14-11-g82d681c9b06b-ab14634535 #1 SMP PREEMPT Mon Dec 22 19:22:33 UTC 2025 aarch64 Toybox
+sys.boot_completed=
+init.svc.bootanim=running
+ro.build.fingerprint=Nothing/Asteroids/Asteroids:16/BQ2A.250721.001-BP2A.250605.031.A3/2608101153:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=14
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=volcano
+=== CRASH BUFFER ===
+08-10 03:54:16.885  2796  2796 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:611)
+08-10 03:54:16.885  2796  2796 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:922)
+08-10 03:54:21.817  3110  3110 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+08-10 03:54:21.817  3110  3110 E AndroidRuntime: java.lang.IllegalStateException: Signature|privileged permissions not in privileged permission allowlist: {com.aura.oobe.solutions (/system/noth/priv-app/NTAura): android.permission.INSTALL_PACKAGES}
+08-10 03:54:21.817  3110  3110 E AndroidRuntime: 	at com.android.server.permission.access.permission.AppIdPermissionPolicy.onSystemReady(AppIdPermissionPolicy.kt:1773)
+08-10 03:54:21.817  3110  3110 E AndroidRuntime: 	at com.android.server.permission.access.AccessPolicy.onSystemReady(AccessPolicy.kt:275)
+08-10 03:54:21.817  3110  3110 E AndroidRuntime: 	at com.android.server.permission.access.AccessCheckingService.onSystemReady$frameworks__base__services__permission__android_common__services_permission_pre_jarjar(AccessCheckingService.kt:239)
+08-10 03:54:21.817  3110  3110 E AndroidRuntime: 	at com.android.server.permission.access.permission.PermissionService.onSystemReady(PermissionService.kt:2375)
+08-10 03:54:21.817  3110  3110 E AndroidRuntime: 	at com.android.server.pm.permission.PermissionManagerService$PermissionManagerServiceInternalImpl.onSystemReady(PermissionManagerService.java:809)
+08-10 03:54:21.817  3110  3110 E AndroidRuntime: 	at com.android.server.pm.PackageManagerService.systemReady(PackageManagerService.java:4381)
+08-10 03:54:21.817  3110  3110 E AndroidRuntime: 	at com.android.server.SystemServer.startOtherServices(SystemServer.java:3295)
+08-10 03:54:21.817  3110  3110 E AndroidRuntime: 	at com.android.server.SystemServer.run(SystemServer.java:1014)
+08-10 03:54:21.817  3110  3110 E AndroidRuntime: 	at com.android.server.SystemServer.main(SystemServer.java:710)
+08-10 03:54:21.817  3110  3110 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+08-10 03:54:21.817  3110  3110 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:611)
+08-10 03:54:21.817  3110  3110 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:922)
+08-10 03:54:26.690  3417  3417 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+08-10 03:54:26.690  3417  3417 E AndroidRuntime: java.lang.IllegalStateException: Signature|privileged permissions not in privileged permission allowlist: {com.aura.oobe.solutions (/system/noth/priv-app/NTAura): android.permission.INSTALL_PACKAGES}
+08-10 03:54:26.690  3417  3417 E AndroidRuntime: 	at com.android.server.permission.access.permission.AppIdPermissionPolicy.onSystemReady(AppIdPermissionPolicy.kt:1773)
+08-10 03:54:26.690  3417  3417 E AndroidRuntime: 	at com.android.server.permission.access.AccessPolicy.onSystemReady(AccessPolicy.kt:275)
+08-10 03:54:26.690  3417  3417 E AndroidRuntime: 	at com.android.server.permission.access.AccessCheckingService.onSystemReady$frameworks__base__services__permission__android_common__services_permission_pre_jarjar(AccessCheckingService.kt:239)
+08-10 03:54:26.690  3417  3417 E AndroidRuntime: 	at com.android.server.permission.access.permission.PermissionService.onSystemReady(PermissionService.kt:2375)
+08-10 03:54:26.690  3417  3417 E AndroidRuntime: 	at com.android.server.pm.permission.
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+01-01 00:00:04.672   265   265 I cfg80211: failed to load regulatory.db
+08-10 03:53:54.474   711   711 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+08-10 03:53:54.742   686   686 I binder  : 686:671 cannot find target node
+08-10 03:53:56.060   575   575 I binder  : 575:575 cannot find target node
+08-10 03:53:57.003   510   510 I binder  : 510:505 cannot find target node
+08-10 03:53:57.005  1537  1537 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+08-10 03:54:01.123   575   575 I binder  : 575:575 cannot find target node
+08-10 03:54:01.776  1851  1851 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+08-10 03:54:05.936   575   575 I binder  : 575:575 cannot find target node
+08-10 03:54:06.593   510   510 I binder  : 510:505 cannot find target node
+08-10 03:54:06.743  2171  2171 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+08-10 03:54:07.580  2138  2138 I binder  : 2138:2118 cannot find target node
+08-10 03:54:11.129   575   575 I binder  : 575:575 cannot find target node
+08-10 03:54:11.831   510   510 I binder  : 510:505 cannot find target node
+08-10 03:54:11.932  2480  2480 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+08-10 03:54:16.007   575   575 I binder  : 575:575 cannot find target node
+08-10 03:54:16.641   510   510 I binder  : 510:505 cannot find target node
+08-10 03:54:16.885  2796  2796 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+08-10 03:54:21.185   575   575 I binder  : 575:575 cannot find target node
+08-10 03:54:21.796   510   510 I binder  : 510:505 cannot find target node
+08-10 03:54:21.817  3110  3110 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+08-10 03:54:26.049   575   575 I binder  : 575:575 cannot find target node
+08-10 03:54:26.691   510   510 I binder  : 510:505 cannot find target node
+08-10 03:54:26.690  3417  3417 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+08-10 03:54:31.286   575   575 I binder  : 575:575 cannot find target node
+08-10 03:54:31.894   510   510 I binder  : 510:505 cannot find target node
+08-10 03:54:31.901  3720  3720 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+08-10 03:54:36.108   575   575 I binder  : 575:575 cannot find target node
+08-10 03:54:36.736   510   510 I binder  : 510:505 cannot find target node
+08-10 03:54:36.739  4019  4019 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+08-10 03:54:41.153   575   575 I binder  : 575:575 cannot find target node
+08-10 03:54:41.708   535  1470 I ServiceManagerCppClient: Waiting for service 'statscompanion' on '/dev/binder'...
+08-10 03:54:41.770  4313  4313 E DisplayPowerController[0]: failed to set up display white-balance: java.lang.IllegalStateException: cannot find sensor com.google.sensor.color
+08-10 03:54:41.809   535  1470 I ServiceManagerCppClient: Waiting for service 'statscompanion' on '/dev/binder' successful after waiting 100ms
+08-10 03:54:41.853  4313  4313 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+08-10 03:54:46.103   575   575 I binder  : 575:575 cannot find target node
+08-10 03:54:46.535   535  1470 I ServiceManagerCppClient: Waiting for service 'statscompanion' on '/dev/binder'...
+08-10 03:54:46.614  4610  4610 E DisplayPowerController[0]: failed to set up display white-balance: java.lang.IllegalStateException: cannot find sensor com.google.sensor.color
+08-10 03:54:46.636   535  1470 I ServiceManagerCppClient: Wa
+
+================================================================================
+3. motorola/aito (Ven A14 -> lineage-21.0): gralloc_proxy.c 跨后缀 dlopen 失败 + 缺 biometrics HAL + radio@mtk 占位冲突
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.1.141-android14-11-gd77c4cd65aed-ab14680598 #1 SMP PREEMPT Wed Jan  7 15:04:33 UTC 2026 aarch64 Toybox
+sys.boot_completed=
+init.svc.bootanim=stopped
+ro.build.fingerprint=motorola/aito_g_sys/aito:16/W1UCS36H.96-35-8-9/4907d6-43c152:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=14
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6878
+=== CRASH BUFFER ===
+01-01 00:03:45.043 19891 19891 F DEBUG   :       #07 pc 00000000003cc624  /system/bin/surfaceflinger (android::renderengine::skia::SkiaRenderEngine::primeCache(android::renderengine::PrimeCacheConfig)+20) (BuildId: b247754520e11f834990f717c365b5e0)
+01-01 00:03:45.043 19891 19891 F DEBUG   :       #08 pc 00000000003caa7c  /system/bin/surfaceflinger (std::__1::__function::__func<android::renderengine::threaded::RenderEngineThreaded::primeCache(android::renderengine::PrimeCacheConfig)::$_0, std::__1::allocator<android::renderengine::threaded::RenderEngineThreaded::primeCache(android::renderengine::PrimeCacheConfig)::$_0>, void (android::renderengine::RenderEngine&)>::operator()(android::renderengine::RenderEngine&) (.__uniq.64102821644698991011622682901256404626.c19882a01cc5e865831f9a20935d0f4a)+140) (BuildId: b247754520e11f834990f717c365b5e0)
+01-01 00:03:45.043 19891 19891 F DEBUG   :       #09 pc 00000000003c7f34  /system/bin/surfaceflinger (android::renderengine::threaded::RenderEngineThreaded::threadMain(std::__1::function<std::__1::unique_ptr<android::renderengine::RenderEngine, std::__1::default_delete<android::renderengine::RenderEngine>> ()>)+1124) (BuildId: b247754520e11f834990f717c365b5e0)
+01-01 00:03:45.043 19891 19891 F DEBUG   :       #10 pc 00000000003ca098  /system/bin/surfaceflinger (void* std::__1::__thread_proxy[abi:nn200000]<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct>>, void (android::renderengine::threaded::RenderEngineThreaded::*)(std::__1::function<std::__1::unique_ptr<android::renderengine::RenderEngine, std::__1::default_delete<android::renderengine::RenderEngine>> ()>), android::renderengine::threaded::RenderEngineThreaded*, std::__1::function<std::__1::unique_ptr<android::renderengine::RenderEngine, std::__1::default_delete<android::renderengine::RenderEngine>> ()>>>(void*)+168) (BuildId: b247754520e11f834990f717c365b5e0)
+01-01 00:03:45.043 19891 19891 F DEBUG   :       #11 pc 0000000000083c9c  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+236) (BuildId: 4740301183e36162080bd774fc515f34)
+01-01 00:03:45.043 19891 19891 F DEBUG   :       #12 pc 00000000000761a0  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: 4740301183e36162080bd774fc515f34)
+01-01 00:03:45.047 19493 19889 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x18 in tid 19889 (BootAnimation), pid 19493 (bootanimation)
+01-01 00:03:50.034 20055 20061 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 20061 (RenderEngine), pid 20055 (surfaceflinger)
+01-01 00:03:50.084 20102 20102 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+01-01 00:03:50.084 20102 20102 F DEBUG   : Build fingerprint: 'motorola/aito_g_sys/aito:16/W1UCS36H.96-35-8-9/4907d6-43c152:user/release-keys'
+01-01 00:03:50.084 20102 20102 F DEBUG   : Revision: '0'
+01-01 00:03:50.084 20102 20102 F DEBUG   : ABI: 'arm64'
+01-01 00:03:50.084 20102 20102 F DEBUG   : Timestamp: 1970-01-01 00:03:50.045439692+0000
+01-01 00:03:50.084 20102 20102 F DEBUG   : Process uptime: 2s
+01-01 00:03:50.084 20102 20102 F DEBUG   : Cmdline: /system/bin/surfaceflinger
+01-01 00:03:50.084 20102 20102 F DEBUG   : pid: 20055, tid: 20061, name: RenderEngine  >>> /system/bin/surfaceflinger <<<
+01-01 00:03:50.084 20102 20102 F DEBUG   : uid: 1000
+01-01 00:03:50.084 20102 20102 F DEBUG   : tagged_addr_ctrl: 00000000000000
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+01-01 00:00:14.294   625   640 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 640 (RenderEngine), pid 625 (surfaceflinger)
+01-01 00:00:14.357   660   660 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:00:18.993   896   906 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 906 (RenderEngine), pid 896 (surfaceflinger)
+01-01 00:00:19.010   661   935 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x18 in tid 935 (BootAnimation), pid 661 (bootanimation)
+01-01 00:00:19.037   944   944 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:00:24.149  1155  1168 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 1168 (RenderEngine), pid 1155 (surfaceflinger)
+01-01 00:00:24.180  1209  1209 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:00:29.695  4580  4625 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 4625 (RenderEngine), pid 4580 (surfaceflinger)
+01-01 00:00:29.805  5392  5392 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:00:34.408  6746  6754 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 6754 (RenderEngine), pid 6746 (surfaceflinger)
+01-01 00:00:34.435  6799  6799 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:00:39.478  7049  7057 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 7057 (RenderEngine), pid 7049 (surfaceflinger)
+01-01 00:00:39.504  7107  7107 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:00:44.563  7270  7280 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 7280 (RenderEngine), pid 7270 (surfaceflinger)
+01-01 00:00:44.587  7318  7318 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:00:49.466  7475  7483 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 7483 (RenderEngine), pid 7475 (surfaceflinger)
+01-01 00:00:49.495  7521  7521 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:00:54.453  7673  7681 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 7681 (RenderEngine), pid 7673 (surfaceflinger)
+01-01 00:00:54.505  7724  7724 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:00:59.466  7873  7880 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 7880 (RenderEngine), pid 7873 (surfaceflinger)
+01-01 00:00:59.502  7930  7930 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:01:04.464  8096  8106 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 8106 (RenderEngine), pid 8096 (surfaceflinger)
+01-01 00:01:04.500  8154  8154 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:01:09.508  8307  8313 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 8313 (RenderEngine), pid 8307 (surfaceflinger)
+01-01 00:01:09.532  8358  8358 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:01:14.483  8511  8521 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 8521 (RenderEngine), pid 8511 (surfaceflinger)
+01-01 00:01:14.513  8557  8557 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-01 00:01:19.515  8715  8722 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 8722 (RenderEngine),
+
+================================================================================
+4. infinix/Infinix-X6876 (Ven A14 -> lineage-21.0): cdh_radio_placeholders.txt 与 radio@mtk 冲突致 com.android.phone 崩溃
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.1.145-android14-11-g09f1c0074ad7-ab14226177 #1 SMP PREEMPT Tue Oct  7 14:55:18 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=Infinix/X6876-OPPJ/Infinix-X6876:16/BP2A.250605.031.A3/201350016:user/release-keys
+ro.build.version.release=16
+ro.vendor.build.version.release=14
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6878
+=== CRASH BUFFER ===
+04-23 11:19:09.768  7764  7764 E AndroidRuntime: 	at vendor.mediatek.hardware.mtkradioex.data.IMtkRadioExData$Stub$Proxy.getInterfaceVersion(IMtkRadioExData.java:516)
+04-23 11:19:09.768  7764  7764 E AndroidRuntime: 	at com.mediatek.internal.telephony.MtkRadioExDataProxy.setAidl(MtkRadioExDataProxy.java:56)
+04-23 11:19:09.768  7764  7764 E AndroidRuntime: 	at com.mediatek.internal.telephony.MtkRIL.getMtkRadioExServiceProxy(MtkRIL.java:961)
+04-23 11:19:09.768  7764  7764 E AndroidRuntime: 	at com.mediatek.internal.telephony.MtkRIL.<init>(MtkRIL.java:683)
+04-23 11:19:09.768  7764  7764 E AndroidRuntime: 	at com.mediatek.internal.telephony.MtkRIL.<init>(MtkRIL.java:591)
+04-23 11:19:09.768  7764  7764 E AndroidRuntime: 	at com.mediatek.internal.telephony.MtkTelephonyComponentFactory.makeRil(MtkTelephonyComponentFactory.java:202)
+04-23 11:19:09.768  7764  7764 E AndroidRuntime: 	at com.android.internal.telephony.PhoneFactory.makeDefaultPhone(PhoneFactory.java:193)
+04-23 11:19:09.768  7764  7764 E AndroidRuntime: 	at com.android.internal.telephony.PhoneFactory.makeDefaultPhones(PhoneFactory.java:121)
+04-23 11:19:09.768  7764  7764 E AndroidRuntime: 	at com.android.phone.PhoneGlobals.onCreate(PhoneGlobals.java:622)
+04-23 11:19:09.768  7764  7764 E AndroidRuntime: 	at com.android.phone.PhoneApp.onCreate(PhoneApp.java:40)
+04-23 11:19:09.768  7764  7764 E AndroidRuntime: 	at android.app.Instrumentation.callApplicationOnCreate(Instrumentation.java:1385)
+04-23 11:19:09.768  7764  7764 E AndroidRuntime: 	at android.app.ActivityThread.handleBindApplication(ActivityThread.java:8069)
+04-23 11:19:09.768  7764  7764 E AndroidRuntime: 	... 9 more
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: FATAL EXCEPTION: main
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: Process: com.android.phone, PID: 8041
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: java.lang.RuntimeException: Unable to create application com.android.phone.PhoneApp: java.lang.IllegalArgumentException
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: 	at android.app.ActivityThread.handleBindApplication(ActivityThread.java:8075)
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: 	at android.app.ActivityThread.-$$Nest$mhandleBindApplication(Unknown Source:0)
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2674)
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:327)
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:431)
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9329)
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:629)
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1024)
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: Caused by: java.lang.IllegalArgumentException
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: 	at android.os.BinderProxy.transactNative(Native Method)
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: 	at android.os.BinderProxy.transact(BinderProxy.java:699)
+04-23 11:19:11.263  8041  8041 E AndroidRuntime: 	at
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+
+================================================================================
+5. ulefone/GQ5011AF1 15 (Ven A14 -> lineage-21.0): 缺失 host-hvc-bluetooth 通道致 com.android.bluetooth HCI RESET 超时 SIGABRT
+================================================================================
+=== BASIC PROPS ===
+getenforce: Enforcing
+uname: Linux localhost 6.1.115-android14-11-g6b18f0b574ab-ab12901745 #1 SMP PREEMPT Fri Jan 10 22:12:05 UTC 2025 aarch64 Toybox
+sys.boot_completed=1
+init.svc.bootanim=stopped
+ro.build.fingerprint=Ulefone/GQ5011AF1_EEA/GQ5011AF1:15/AP3A.240905.015.A2/1777434795:user/release-keys
+ro.build.version.release=15
+ro.vendor.build.version.release=14
+ro.lineage.version=
+ro.hardware.egl=meow
+ro.hardware.vulkan=mali
+ro.board.platform=mt6989
+=== CRASH BUFFER ===
+04-29 11:53:30.999  5379  5379 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+04-29 11:53:30.999  5379  5379 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+04-29 11:53:30.999  5379  5379 F DEBUG   : Abort message: 'assertion 'false' failed - Done waiting for debug information after HCI timeout (RESET)'
+04-29 11:53:30.999  5379  5379 F DEBUG   :     x0  0000000000000000  x1  0000000000000bc5  x2  0000000000000006  x3  0000007104f42af0
+04-29 11:53:30.999  5379  5379 F DEBUG   :     x4  1f646d6e431f2c1f  x5  1f646d6e431f2c1f  x6  1f646d6e431f2c1f  x7  7f7f7f7f7f7f7f7f
+04-29 11:53:30.999  5379  5379 F DEBUG   :     x8  00000000000000f0  x9  00000074394eb418  x10 0000000000000001  x11 000000743953d070
+04-29 11:53:30.999  5379  5379 F DEBUG   :     x12 0000007104f41970  x13 0000000000000058  x14 0000007104f42d10  x15 000000003c108a9e
+04-29 11:53:30.999  5379  5379 F DEBUG   :     x16 00000074395a6fe8  x17 0000007439590ac0  x18 0000007104664028  x19 0000000000000afe
+04-29 11:53:30.999  5379  5379 F DEBUG   :     x20 0000000000000bc5  x21 00000000ffffffff  x22 00000071a200e180  x23 b4000071e5f44348
+04-29 11:53:30.999  5379  5379 F DEBUG   :     x24 00000000ffffffff  x25 b4000071c5f12030  x26 0000000000000000  x27 0000007104f43a80
+04-29 11:53:30.999  5379  5379 F DEBUG   :     x28 0000000000000001  x29 0000007104f42b70
+04-29 11:53:30.999  5379  5379 F DEBUG   :     lr  0000007439525998  sp  0000007104f42ad0  pc  00000074395259c4  pst 0000000000000000
+04-29 11:53:30.999  5379  5379 F DEBUG   : 11 total frames
+04-29 11:53:30.999  5379  5379 F DEBUG   : backtrace:
+04-29 11:53:30.999  5379  5379 F DEBUG   :       #00 pc 000000000005d9c4  /apex/com.android.runtime/lib64/bionic/libc.so (abort+164) (BuildId: 6b5f6c2b322cc7e413534fa5f2520a62)
+04-29 11:53:30.999  5379  5379 F DEBUG   :       #01 pc 0000000000933c60  /apex/com.android.art/lib64/libart.so (art::Runtime::Abort(char const*)+92) (BuildId: 629e0ffca501d809c29dbbeef2f512d3)
+04-29 11:53:30.999  5379  5379 F DEBUG   :       #02 pc 00000000000160fc  /apex/com.android.art/lib64/libbase.so (android::base::SetAborter(std::__1::function<void (char const*)>&&)::$_0::__invoke(char const*)+80) (BuildId: 1470f61c05962eb04fafe76bd58bf664)
+04-29 11:53:30.999  5379  5379 F DEBUG   :       #03 pc 000000000000be50  /system/lib64/liblog.so (__android_log_assert+288) (BuildId: 6d71ef150ab7dc1b669bb61be8d4e93e)
+04-29 11:53:30.999  5379  5379 F DEBUG   :       #04 pc 000000000040d4d8  /apex/com.android.btservices/lib64/libbluetooth_jni.so (bluetooth::hci::abort_after_time_out(bluetooth::hci::OpCode)+88) (BuildId: 37f58963b7d2ba346ddd545a013512cb)
+04-29 11:53:30.999  5379  5379 F DEBUG   :       #05 pc 0000000000414398  /apex/com.android.btservices/lib64/libbluetooth_jni.so (bluetooth::os::Alarm::on_fire()+120) (BuildId: 37f58963b7d2ba346ddd545a013512cb)
+04-29 11:53:30.999  5379  5379 F DEBUG   :       #06 pc 00000000003ecd84  /apex/com.android.btservices/lib64/libbluetooth_jni.so (bluetooth::os::Reactor::Run()+484) (BuildId: 37f58963b7d2ba346ddd545a013512cb)
+04-29 11:53:30.999  5379  5379 F DEBUG   :       #07 pc 00000000003ec52c  /apex/com.android.btservices/lib64/libbluetooth_jni.so (bluetooth::os::Thread::run(bluetooth::os::Thread::Priority)+204) (BuildId: 37f58963b7d2ba346ddd545a013512cb)
+04-29 11:53:30.999  5379  5379 F DEBUG   :       #08 pc 00000000003ec6d4  /apex/com.android.btservices/lib64/libbl
+=== LOGCAT FATAL / CRASH / MISSING HAL ===
+04-29 11:53:30.724  2814  3013 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 3013 (bt_stack_manage), pid 2814 (droid.bluetooth)
+04-29 11:53:30.999  5379  5379 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+04-29 11:53:38.083  3726  4527 E HWUI    : Device claims wide gamut support, cannot find matching config, error = EGL_SUCCESS
+04-29 11:53:42.771  5533  5602 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 5602 (bt_stack_manage), pid 5533 (droid.bluetooth)
+04-29 11:53:42.877  6800  6800 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+04-29 11:54:00.018  6886  6911 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 6911 (bt_stack_manage), pid 6886 (droid.bluetooth)
+04-29 11:54:00.124  7082  7082 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+
