@@ -1,0 +1,2 @@
+# XPLORE_X1 TrustKernel keybox/RKP 状态属性，供 WindowManagerService (system_server) 读取以消除红字水印。
+vendor.trustkernel. u:object_r:vendor_trustkernel_prop:s0

@@ -132,6 +132,11 @@
       "type": "file"
     },
     {
+      "from": "/system/app/OdmFactory",
+      "to": "/mnt/vendorpatch/system/app/OdmFactory",
+      "type": "dir"
+    },
+    {
       "from": "/vendor/lib64/mt6877/libdpframework.so",
       "to": "/mnt/vendorpatch/vendor/lib64/egl/libEGL_mesa.so",
       "type": "maps"

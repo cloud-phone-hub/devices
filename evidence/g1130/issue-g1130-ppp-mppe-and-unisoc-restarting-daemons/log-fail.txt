@@ -1,0 +1,36 @@
+=== 修前实测基线：blu/G1130 (BLU G65L, 14-UP1A.231005.007-20260511, lineage-20.0 + kernel 5.15) ===
+
+1) 系统内部错误弹窗与内核配置不匹配
+弹窗窗口：
+  Window #2 Window{a0865f1 u0 Android System}, [type=2010]
+  弹窗文案：Android System — There's an internal problem with your device. Contact your manufacturer for details.
+
+修前运行态内核配置与矩阵要求：
+  Linux localhost 5.15.197-android13-8-00005-g2d8ad9139b89-ab15063902 #1 SMP PREEMPT Fri Mar 20 11:14:06 UTC 2026
+  CONFIG_PPP_MPPE=m
+  CONFIG_CRYPTO_LIB_ARC4=m
+  /system/etc/vintf/compatibility_matrix.7.xml (level 7):
+    <config><key>CONFIG_PPP_MPPE</key><value type="tristate">y</value></config>
+
+2) 无限重启后台服务与日志/AVC 刷屏（qemu.log 共 96,147 行，avc: denied 总计 15,614 条）
+init.svc.*restarting:
+  [init.svc.linkturbonative]: [restarting]
+  [init.svc.srmi_proxyd]: [restarting]
+
+qemu.log Top init/servicemanager:
+  [  511] init: Service 'srmi_proxyd' (pid *) exited with status 1
+  [  511] init: Service 'linkturbonative' (pid *) exited with status 1
+  [ 2531] servicemanager: Since 'vendor.unisoc.frameworks.srmi.ISrmiManager/default' could not be found
+
+logcat:
+  E LinkTurboNativeService: Unable to start LinkTurboNativeService: -129
+
+qemu.log Top AVCs:
+  [ 9044] u:r:ylog:s0 -> u:object_r:ylog_file:s0 (dir) { search }
+  [ 2351] u:r:tool_service:s0 -> u:object_r:hwservicemanager_prop:s0 (file) { read }
+  [  778] u:r:ylog:s0 -> u:object_r:ylog_exec:s0 (file) { execute_no_trans }
+  [  773] u:r:slogmodem:s0 -> u:object_r:system_data_file:s0 (dir) { write }
+  [  138] u:r:linkturbonative:s0 -> u:r:servicemanager:s0 (binder) { call }
+
+3) 漏配 neuralnetworks 宿主
+  hardware/config.json 未配置 android.hardware.neuralnetworks@1.0，导致 vendor/etc/cdh_nn_placeholders.txt 中 13 个展锐占位服务均未注册。

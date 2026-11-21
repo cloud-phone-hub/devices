@@ -1,6 +1,17 @@
 {
   "build-prop-sets": {
+    "bluetooth.profile.bap.broadcast.assist.enabled": "false",
+    "bluetooth.profile.bap.broadcast.source.enabled": "false",
+    "bluetooth.profile.bap.unicast.client.enabled": "false",
+    "bluetooth.profile.bass.client.enabled": "false",
+    "bluetooth.profile.ccp.server.enabled": "false",
+    "bluetooth.profile.csip.set_coordinator.enabled": "false",
+    "bluetooth.profile.hap.client.enabled": "false",
+    "bluetooth.profile.mcp.server.enabled": "false",
+    "bluetooth.profile.vcp.controller.enabled": "false",
     "debug.hwui.renderer": "skiagl",
+    "persist.bluetooth.leaudio_offload.disabled": "true",
+    "ro.bluetooth.leaudio_offload.supported": "false",
     "ro.csc.country_code": "China",
     "ro.hardware.egl": "mesa",
     "ro.hardware.gatekeeper": "mdfpp",
@@ -71,7 +82,7 @@
     },
     {
       "from": "official",
-      "note": "官方 vendor /etc/passwd（1439 B、37 条）整文件替换：lineage 基座的 /vendor/etc/passwd 实测 0 字节。根因是 com.samsung.android.scpm（uid 5009）的 SELinux 用户名：/system_ext/etc/selinux/system_ext_seapp_contexts 第 37 行声明 user=vendor_samsungcloud，官方 passwd 才有 vendor_samsungcloud::5009:5009 这一条；缺失时 libselinux 合成 oem_\u003cuid\u003e，zygote 的 selinux_android_setcontext 按 user= 匹配落空即 JNI FatalError（gold_files.py 的 creds_cmds 记录了同一机制，实测实例 25 为 com.samsung.android.scpm 崩溃循环并拖垮 com.sec.android.sdhms）。本机 lineage 基座该文件为 0 字节，等价于“补入全部官方条目”。",
+      "note": "官方 vendor /etc/passwd（1439 B、37 条）整文件替换：lineage 基座的 /vendor/etc/passwd 实测 0 字节。根因是 com.samsung.android.scpm（uid 5009）的 SELinux 用户名：/system_ext/etc/selinux/system_ext_seapp_contexts 第 37 行声明 user=vendor_samsungcloud，官方 passwd 才有 vendor_samsungcloud::5009:5009 这一条；缺失时 libselinux 合成 oem_<uid>，zygote 的 selinux_android_setcontext 按 user= 匹配落空即 JNI FatalError（gold_files.py 的 creds_cmds 记录了同一机制，实测实例 25 为 com.samsung.android.scpm 崩溃循环并拖垮 com.sec.android.sdhms）。本机 lineage 基座该文件为 0 字节，等价于“补入全部官方条目”。",
       "source": "etc/passwd"
     },
     {

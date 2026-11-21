@@ -59,7 +59,9 @@
     "ro.vendor.soc.model": "MT6877",
     "ro.vendor.soc.model.external_name": "MT6877V/TZA",
     "ro.vendor.soc.model.part_name": "MT6877V/TZA",
-    "ro.vendor.soc.model_ready": "1"
+    "ro.vendor.soc.model_ready": "1",
+    "vendor.trustkernel.keybox.deployed": "true",
+    "vendor.trustkernel.rkp.uploaded": "true"
   },
   "build-prop-unsets": [],
   "files": [
@@ -133,5 +135,8 @@
     "lib64/egl/libGLESv1_CM_mesa.so": "u:object_r:same_process_hal_file:s0",
     "lib64/egl/libGLESv2_mesa.so": "u:object_r:same_process_hal_file:s0"
   },
+  "vintf-drop": [
+    "android.hardware.drm-service.widevine.xml"
+  ],
   "vintf-version": "8.0"
 }

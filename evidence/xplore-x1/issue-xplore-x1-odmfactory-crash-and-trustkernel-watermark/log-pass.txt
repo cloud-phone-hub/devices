@@ -1,0 +1,36 @@
+Device: blackview/XPLORE_X1 (15-AP3A.240905.015.A2-20251126)
+Boot time: 87s, SELinux: Enforcing
+
+TrustKernel props:
+[ro.mtk_tee_check_support]: [1]
+[ro.mtk_trustkernel_rkp_support]: [1]
+[ro.mtk_trustkernel_tee_support]: [1]
+[ro.vendor.faceunlock.tee]: [trustkernel]
+[ro.vendor.mtk_trustkernel_tee_support]: [1]
+[ro.vendor.trustkernel.attest_ids]: [1]
+[vendor.trustkernel.keybox.deployed]: [true]
+[vendor.trustkernel.rkp.uploaded]: [true]
+
+OdmFactory pkg: (NONE)
+Restarting services: (none)
+
+Services online:
+27	android.hardware.drm.IDrmFactory/clearkey: [android.hardware.drm.IDrmFactory]
+28	android.hardware.drm.IDrmFactory/widevine: [android.hardware.drm.IDrmFactory]
+39	android.hardware.neuralnetworks.IDevice/default: [android.hardware.neuralnetworks.IDevice]
+313	vendor.blackview.helper.IHelper/default: [vendor.blackview.helper.IHelper]
+325	vendor.mediatek.hardware.composer_ext.IComposerExt/default: [vendor.mediatek.hardware.composer_ext.IComposerExt]
+361	vendor.mediatek.hardware.mtkpower.IMtkPowerService/default: [vendor.mediatek.hardware.mtkpower.IMtkPowerService]
+362	vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist/default: [vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist]
+
+qemu.log lines=9465, widevine_spam=0 (before: 71496), avc_total=2133
+
+am_crash/am_anr: (NONE)
+crash_buf: (NONE)
+
+Built-in app launch checks:
+  com.android.calculator2 => topResumedActivity=ActivityRecord{a45bffd u0 com.android.calculator2/.Calculator t8}
+  com.android.deskclock => topResumedActivity=ActivityRecord{f8c98ae u0 com.android.deskclock/.DeskClock t9}
+  com.blackview.systemmanager => topResumedActivity=ActivityRecord{89ed5de u0 com.blackview.systemmanager/.MainActivity t10}
+  com.blackview.surfline => topResumedActivity=ActivityRecord{a48ccbf u0 com.blackview.surfline/com.horse.browser.MainActivity t11}
+  com.mediatek.camera => topResumedActivity=ActivityRecord{6a00b4e u0 com.mediatek.camera/.CameraLauncher t12}

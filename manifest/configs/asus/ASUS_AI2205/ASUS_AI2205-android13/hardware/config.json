@@ -125,6 +125,12 @@
         "variant": "default",
         "version": "1.0"
       }
+    },
+    {
+      "android.hardware.drm": {
+        "variant": "default",
+        "version": "1.0"
+      }
     }
   ]
 }

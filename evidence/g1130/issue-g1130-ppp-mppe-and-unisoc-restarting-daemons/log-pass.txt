@@ -1,0 +1,65 @@
+Device: blu/G1130 (14-UP1A.231005.007-20260511)
+Boot time: 96s, SELinux: Enforcing
+Kernel PPP/ARC4:
+CONFIG_PPP_MPPE=y
+CONFIG_CRYPTO_LIB_ARC4=y
+
+VintfObject errors: (NONE)
+Restarting services: (none)
+
+Placeholder services online:
+22	android.hardware.neuralnetworks.IDevice/default: [android.hardware.neuralnetworks.IDevice]
+273	vendor.sprd.hardware.cplog_svc.ILogTransportInductor/default: [vendor.sprd.hardware.cplog_svc.ILogTransportInductor]
+274	vendor.sprd.hardware.cplog_svc.ISysLogControl/default: [vendor.sprd.hardware.cplog_svc.ISysLogControl]
+275	vendor.sprd.hardware.enhance.IEnhance/default: [vendor.sprd.hardware.enhance.IEnhance]
+276	vendor.sprd.hardware.fingerprintmmi.IFingerprintmmi/default: [vendor.sprd.hardware.fingerprintmmi.IFingerprintmmi]
+277	vendor.sprd.hardware.gnss.IUnisocGnss/default: [vendor.sprd.hardware.gnss.IUnisocGnss]
+278	vendor.sprd.hardware.hdcp.IHDCP/default: [vendor.sprd.hardware.hdcp.IHDCP]
+279	vendor.sprd.hardware.ifaa.IIfaa/default: [vendor.sprd.hardware.ifaa.IIfaa]
+280	vendor.sprd.hardware.network.INetworkControl/default: [vendor.sprd.hardware.network.INetworkControl]
+281	vendor.sprd.hardware.soter.ISoter/default: [vendor.sprd.hardware.soter.ISoter]
+282	vendor.sprd.hardware.tool.IToolControl/default: [vendor.sprd.hardware.tool.IToolControl]
+283	vendor.sprd.hardware.trusty.ITrustyClientProvider/default: [vendor.sprd.hardware.trusty.ITrustyClientProvider]
+284	vendor.sprd.hardware.tui.ITui/default: [vendor.sprd.hardware.tui.ITui]
+285	vendor.sprd.hardware.unipnp.IUnionPnP/default: [vendor.sprd.hardware.unipnp.IUnionPnP]
+286	vendor.unisoc.hardware.ai_engine.IAIEngineControl/default: [vendor.unisoc.hardware.ai_engine.IAIEngineControl]
+287	vendor.unisoc.hardware.radio.data.IExtRadioData/slot1: [vendor.unisoc.hardware.radio.data.IExtRadioData]
+288	vendor.unisoc.hardware.radio.data.IExtRadioData/slot2: [vendor.unisoc.hardware.radio.data.IExtRadioData]
+289	vendor.unisoc.hardware.radio.ims.IImsRadio/slot1: [vendor.unisoc.hardware.radio.ims.IImsRadio]
+290	vendor.unisoc.hardware.radio.ims.IImsRadio/slot2: [vendor.unisoc.hardware.radio.ims.IImsRadio]
+291	vendor.unisoc.hardware.radio.lite.ILiteRadio/liteservice2: [vendor.unisoc.hardware.radio.lite.ILiteRadio]
+292	vendor.unisoc.hardware.radio.messaging.IExtRadioMessaging/slot1: [vendor.unisoc.hardware.radio.messaging.IExtRadioMessaging]
+293	vendor.unisoc.hardware.radio.messaging.IExtRadioMessaging/slot2: [vendor.unisoc.hardware.radio.messaging.IExtRadioMessaging]
+294	vendor.unisoc.hardware.radio.modem.IExtRadioModem/slot1: [vendor.unisoc.hardware.radio.modem.IExtRadioModem]
+295	vendor.unisoc.hardware.radio.modem.IExtRadioModem/slot2: [vendor.unisoc.hardware.radio.modem.IExtRadioModem]
+296	vendor.unisoc.hardware.radio.network.IExtRadioNetwork/slot1: [vendor.unisoc.hardware.radio.network.IExtRadioNetwork]
+297	vendor.unisoc.hardware.radio.network.IExtRadioNetwork/slot2: [vendor.unisoc.hardware.radio.network.IExtRadioNetwork]
+298	vendor.unisoc.hardware.radio.sim.IExtRadioSim/slot1: [vendor.unisoc.hardware.radio.sim.IExtRadioSim]
+299	vendor.unisoc.hardware.radio.sim.IExtRadioSim/slot2: [vendor.unisoc.hardware.radio.sim.IExtRadioSim]
+300	vendor.unisoc.hardware.radio.voice.IExtRadioVoice/slot1: [vendor.unisoc.hardware.radio.voice.IExtRadioVoice]
+301	vendor.unisoc.hardware.radio.voice.IExtRadioVoice/slot2: [vendor.unisoc.hardware.radio.voice.IExtRadioVoice]
+
+qemu.log lines=11635 (before: 96147), avc_total=2368 (before: 15614), loop_err=4
+non-chrome crashes: (NONE)
+
+Windows:
+Window #0 Window{b92e49a u0 ScreenDecorOverlayBottom}, [type=2024]*noSurface:
+    mOwnerUid=10167 showForAllUsers=true package=com.android.systemui appop=NONE
+  Window #1 Window{9087d8e u0 ScreenDecorOverlay}, [type=2024]*noSurface:
+    mOwnerUid=10167 showForAllUsers=true package=com.android.systemui appop=NONE
+  Window #2 Window{42fe01a u0 NavigationBar0}, [type=2019]-[Surface(name=*Title#74)/@0xfb18a71, shown=false, alpha=0.0, windowType=2019]:
+    mOwnerUid=10167 showForAllUsers=true package=com.android.systemui appop=NONE
+  Window #3 Window{208c94 u0 NotificationShade}, [type=2040]*noSurface:
+    mOwnerUid=10167 showForAllUsers=true package=com.android.systemui appop=NONE
+  Window #4 Window{60360e2 u0 StatusBar}, [type=2000]-[Surface(name=*Title#78)/@0xa1c9f8f, shown=false, alpha=0.0, windowType=2000]:
+    mOwnerUid=10167 showForAllUsers=true package=com.android.systemui appop=NONE
+  Window #5 Window{c331cde u0 ShellDropTarget}, [type=2038]*noSurface:
+    mOwnerUid=10167 showForAllUsers=true package=com.android.systemui appop=SYSTEM_ALERT_WINDOW
+  Window #6 Window{f5f78e0 u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher}, [type=4]-[Surface(name=*Title#111)/@0x85db3cb, shown=false, alpha=0.0, windowType=4]:
+    mOwnerUid=10132 showForAllUsers=false package=com.android.launcher3 appop=NONE
+  Window #7 Window{d52ad2e u0 InputMethod}, [type=2011]*noSurface:
+    mOwnerUid=10141 showForAllUsers=false package=com.google.android.inputmethod.latin appop=NONE
+  Window #8 Window{2c0a5c5 u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher}, [type=1]-[Surface(name=*Title#105)/@0x2a83793, shown=false, alpha=0.0, windowType=1]:
+    mOwnerUid=10162 showForAllUsers=false package=com.android.launcher3 appop=NONE
+  Window #9 Window{9f18d65 u0 com.android.systemui.wallpapers.ImageWallpaper}, [type=2013]-[Surface(name=*Title#72)/@0xc46fe51, shown=false, alpha=0.0, windowType=2013]:
+    mOwnerUid=10167 showForAllUsers=true package=com.android.systemui appop=NONE

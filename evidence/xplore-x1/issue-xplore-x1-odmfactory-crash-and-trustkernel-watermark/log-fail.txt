@@ -1,0 +1,38 @@
+=== 修前实测基线：blackview/XPLORE_X1 (15-AP3A.240905.015.A2-20251126, Doke OS 5 / Android 15 / MT6877) ===
+
+1) com.android.phone 闪退弹窗（OdmFactory AtCommandService NPE）
+events log (am_crash):
+  11-21 13:19:39.477   713  3626 I am_crash: [3150,0,com.android.phone,952647245,java.lang.NullPointerException,Attempt to read from field 'java.lang.Throwable android.os.AsyncResult.exception' on a null object reference in method 'void com.wtk.factory.AtCommandService$1.handleMessage(android.os.Message)',AtCommandService.java,268,0]
+  11-21 13:25:03.577   713  4451 I am_crash: [9344,0,com.android.phone,952647245,java.lang.NullPointerException,Attempt to read from field 'java.lang.Throwable android.os.AsyncResult.exception' on a null object reference in method 'void com.wtk.factory.AtCommandService$1.handleMessage(android.os.Message)',AtCommandService.java,268,0]
+
+logcat -b crash:
+  11-21 13:19:39.453  3150  3150 E AndroidRuntime: FATAL EXCEPTION: main
+  11-21 13:19:39.453  3150  3150 E AndroidRuntime: Process: com.android.phone, PID: 3150
+  11-21 13:19:39.453  3150  3150 E AndroidRuntime: java.lang.NullPointerException: Attempt to read from field 'java.lang.Throwable android.os.AsyncResult.exception' on a null object reference in method 'void com.wtk.factory.AtCommandService$1.handleMessage(android.os.Message)'
+  11-21 13:19:39.453  3150  3150 E AndroidRuntime: 	at com.wtk.factory.AtCommandService$1.handleMessage(AtCommandService.java:268)
+
+来源 APK 与触发链：
+  package:/system/app/OdmFactory/OdmFactory.apk=com.wtk.factory
+  com.wtk.factory.BootReceiver.onReceive(ACTION_BOOT_COMPLETED) -> startService(com.wtk.factory.AtCommandService)
+  AtCommandService$1.handleMessage -> EVENT_GET_SUPPORT_BRAND -> ((AsyncResult)msg.obj).exception (NPE)
+
+2) 右上角红字水印 "Not Write Google Key" / "Not Write RKP"
+反汇编 /system/framework/services.jar (classes3.dex):
+  Lcom/android/server/wm/WindowManagerService;->createWatermark:()V
+    - 检查 ro.mtk_tee_check_support == "1"
+    - 检查 ro.mtk_trustkernel_tee_support == "1"
+    - 检查 vendor.trustkernel.keybox.deployed (默认 "false") == "false"  -> 绘制 "Not Write Google Key"
+    - 检查 vendor.trustkernel.rkp.uploaded (默认 "false") == "false" 且 ro.mtk_trustkernel_rkp_support == "1" -> 绘制 "Not Write RKP"
+
+修前运行态属性：
+  [ro.mtk_tee_check_support]: [1]
+  [ro.mtk_trustkernel_rkp_support]: [1]
+  [ro.mtk_trustkernel_tee_support]: [1]
+  (vendor.trustkernel.keybox.deployed 与 vendor.trustkernel.rkp.uploaded 均未设置，且无 vendor_property_contexts 授权)
+
+3) 同期发现的缺失 HAL 与日志暴涨（qemu.log 共 924,672 行）
+  - hardware/config.json 漏配 android.hardware.neuralnetworks@1.0，导致 vendor/etc/cdh_nn_placeholders.txt 中 51 个占位服务（含 vendor.blackview.helper.IHelper/default、IMtkPowerService、IComposerExt 等）全部未注册；
+  - hardware/config.json 漏配 android.hardware.drm@1.0，但 /vendor/apex/com.google.android.widevine.nonupdatable.apex 声明了 lazy service android.hardware.drm.IDrmFactory/widevine，导致 com.android.rkpdapp 疯狂触发懒加载失败：
+    [ 24378] init: Control message: Could not ctl.interface_start for 'aidl/android.hardware.drm.IDrmFactory/widevine'
+    [ 23798] servicemanager: Caller(rkpdapp) Since 'android.hardware.drm.IDrmFactory/widevine' could not be found
+    [ 23320] servicemanager: Caller(rkpdapp) Tried to start aidl service android.hardware.drm.IDrmFactory/widevine as a lazy service, but was unable to.

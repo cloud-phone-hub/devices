@@ -125,6 +125,24 @@
         "variant": "default",
         "version": "2.0"
       }
+    },
+    {
+      "android.hardware.radio": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.drm": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.neuralnetworks": {
+        "variant": "default",
+        "version": "1.0"
+      }
     }
   ]
 }
