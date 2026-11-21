@@ -230,6 +230,16 @@
       "from": "/system_ext/bin/unisocaudioutils",
       "to": "/mnt/vendorpatch/system_ext/bin/unisocaudioutils",
       "type": "file"
+    },
+    {
+      "from": "/system_ext/bin/srmi_proxyd",
+      "to": "/mnt/vendorpatch/nonexistent",
+      "type": "file"
+    },
+    {
+      "from": "/system_ext/bin/linkturbonative",
+      "to": "/mnt/vendorpatch/nonexistent",
+      "type": "file"
     }
   ],
   "thermal": {

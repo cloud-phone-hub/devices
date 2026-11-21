@@ -67,7 +67,8 @@
     "ro.vendor.soc.model.part_name": "MT6878V/ZA",
     "ro.vendor.soc.model_ready": "1",
     "ro.vendor.tran.rpmb.support": "0",
-    "ro.zygote": "zygote64"
+    "ro.zygote": "zygote64",
+    "ro.vendor.magt.mtk_magt_support": "0"
   },
   "build-prop-unsets": [
     "ro.frp.pst",

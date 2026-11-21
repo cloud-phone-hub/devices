@@ -178,6 +178,16 @@
       "from": "/system_ext/bin/remotedisplay",
       "to": "/mnt/vendorpatch/system_ext/bin/remotedisplay",
       "type": "file"
+    },
+    {
+      "from": "/system_ext/bin/srmi_proxyd",
+      "to": "/mnt/vendorpatch/nonexistent",
+      "type": "file"
+    },
+    {
+      "from": "/system_ext/bin/linkturbonative",
+      "to": "/mnt/vendorpatch/nonexistent",
+      "type": "file"
     }
   ],
   "thermal": {

@@ -5,5 +5,4 @@ vendor.google.bluetooth_ext.IBluetoothExt/default
 vendor.google.bluetooth_ext.IBluetoothFinder/default
 vendor.google.bluetooth_ext.IBluetoothSar/default
 vendor.google.google_battery.IGoogleBattery/default
-vendor.google.wifi_ext.IWifiExt/default
 vendor.google.wireless_charger.IWirelessCharger/default

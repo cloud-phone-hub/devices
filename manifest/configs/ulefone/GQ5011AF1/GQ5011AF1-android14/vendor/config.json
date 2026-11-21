@@ -37,7 +37,8 @@
     "ro.vendor.product.cpu.abilist": "arm64-v8a",
     "ro.vendor.product.cpu.abilist32": "",
     "ro.vendor.product.cpu.abilist64": "arm64-v8a",
-    "ro.zygote": "zygote64"
+    "ro.zygote": "zygote64",
+    "ro.vendor.magt.mtk_magt_support": "0"
   },
   "build-prop-unsets": [
     "ro.frp.pst",
