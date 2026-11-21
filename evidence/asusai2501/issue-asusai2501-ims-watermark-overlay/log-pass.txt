@@ -1,0 +1,66 @@
+Device: asus/ASUSAI2501 (15-AQ3A.240829.003-20250122)
+Boot time: 46s
+SELinux: Enforcing
+Total packages: 332
+ro.vendor.asus.beta: 1
+pm list packages | grep watermark: (none)
+dumpsys window windows | grep ImsWatermark: (none)
+Restarting services: [init.svc.android-hardware-media-c2-hal]: [restarting]
+[init.svc.vendor-dolby-media-c2-hal]: [restarting]
+Crashes: 01-22 10:17:49.486  1421  1482 E AndroidRuntime: FATAL EXCEPTION: IntentService[ZenMotionConfigRestoreService]
+01-22 10:17:49.535  1500  1500 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 1500 (main), pid 1500 (main)
+01-22 10:17:49.628  1518  1518 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+01-22 10:17:54.483  1567  2337 E AndroidRuntime: FATAL EXCEPTION: QualifiedNetworksService
+
+=== Active Windows ===
+  Window #0 Window{f319166 u0 ScreenDecorOverlayBottom}:
+    mOwnerUid=10060 showForAllUsers=true package=com.android.systemui appop=NONE
+    isOnScreen=true
+  Window #1 Window{4ceaa45 u0 ScreenDecorOverlay}:
+    mOwnerUid=10060 showForAllUsers=true package=com.android.systemui appop=NONE
+    isOnScreen=true
+  Window #2 Window{ebcee5e u0 NavigationBar0}:
+    mOwnerUid=10060 showForAllUsers=true package=com.android.systemui appop=NONE
+    isOnScreen=true
+  Window #3 Window{2f83cef u0 NotificationShade}:
+    mOwnerUid=10060 showForAllUsers=true package=com.android.systemui appop=NONE
+    isOnScreen=true
+  Window #4 Window{784dae7 u0 StatusBar}:
+    mOwnerUid=10060 showForAllUsers=true package=com.android.systemui appop=NONE
+    isOnScreen=true
+  Window #5 Window{903bc15 u0 ShellDropTarget}:
+    mOwnerUid=10060 showForAllUsers=true package=com.android.systemui appop=SYSTEM_ALERT_WINDOW
+    isOnScreen=false
+  Window #6 Window{3b60a5b u0 Splash Screen com.android.settings}:
+    mOwnerUid=10060 showForAllUsers=true package=com.android.settings appop=NONE
+    isOnScreen=false
+  Window #7 Window{174c632 u0 com.android.settings/com.android.settings.homepage.SettingsHomepageActivity}:
+    mOwnerUid=1000 showForAllUsers=false package=com.android.settings appop=NONE
+    isOnScreen=false
+  Window #8 Window{cc4a0ce u0 com.asus.launcher/com.android.launcher3.uioverrides.QuickstepLauncher}:
+    mOwnerUid=10061 showForAllUsers=false package=com.asus.launcher appop=NONE
+    isOnScreen=false
+  Window #9 Window{2fa1ee0 u0 com.asus.livewallpaper.zflivewallpaper.ZFWallpaperService001}:
+    mOwnerUid=10106 showForAllUsers=false package=com.asus.livewallpaper.zf12livewallpaper appop=NONE
+    isOnScreen=true
+
+=== MiscSetupService / Watermark logcat ===
+01-22 10:17:48.571   677   677 D SystemServerTiming: MiscSetupService
+01-22 10:17:48.571   677   677 I SystemServiceManager: Starting com.android.server.MiscSetupService
+01-22 10:17:48.728   677   677 D SystemServerTiming: OnBootPhase_550_com.android.server.MiscSetupService
+01-22 10:17:48.729   677  1327 I MiscSetupService: broadcastProperty CID=unknown COUNTRY_CODE=unknown IDCODE=0 PRODUCT_NAME=ZWWAI2501 ro.vendor.asus.product.mkt_name= ro.vendor.asus.beta=1 ro.vendor.build.asus.sku=ZWW vendor.asus.mediaflag=
+01-22 10:17:48.730   677  1327 D MiscSetupService: <MSG_UPDATE_PRODUCT_CODENAME>: hawaii ,sendStickyBroadcastAsUser
+01-22 10:17:48.911   677   677 D SystemServerTiming: OnBootPhase_600_com.android.server.MiscSetupService
+01-22 10:17:48.925   677  1327 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startService:1928 com.android.server.MiscSetupService$MiscSetupHanlder.handleMessage:574 android.os.Handler.dispatchMessage:107 android.os.Looper.loopOnce:273 android.os.Looper.loop:388 
+01-22 10:17:48.946   677  1327 V MiscSetupService: Start ImsForceDark
+01-22 10:17:48.946   677  1327 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startService:1928 com.android.server.MiscSetupService$MiscSetupHanlder.handleMessage:586 android.os.Handler.dispatchMessage:107 android.os.Looper.loopOnce:273 android.os.Looper.loop:388 
+01-22 10:17:48.968   677   677 D SystemServerTiming: MiscSetupServiceSystemRunning
+01-22 10:17:49.128   677   677 D SystemServerTimingAsync: ssm.onStartUser-0_com.android.server.MiscSetupService
+01-22 10:17:54.455   677   720 D ActivityManagerTiming: OnBootPhase_1000_com.android.server.MiscSetupService
+01-22 10:17:54.456   677  1327 V MiscSetupService: makeMtFontsDirectory()
+01-22 10:17:54.456   677  1327 D MiscSetupService: Watermark: MSG_BOOT_COMPLETE, ro.vendor.asus.beta= 1
+01-22 10:17:54.456   677  1327 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startService:1928 com.android.server.MiscSetupService$MiscSetupHanlder.handleMessage:618 android.os.Handler.dispatchMessage:107 android.os.Looper.loopOnce:273 android.os.Looper.loop:388 
+01-22 10:17:54.456   677  1327 W ActivityManager: Unable to start service Intent { act=com.asus.ims.watermark.service cmp=com.asus.ims.watermark/.ImsWatermarkService } U=0: not found
+01-22 10:17:54.456   677  1327 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startService:1928 com.android.server.MiscSetupService$MiscSetupHanlder.handleMessage:628 android.os.Handler.dispatchMessage:107 android.os.Looper.loopOnce:273 android.os.Looper.loop:388 
+01-22 10:17:54.456   677  1327 W ContextImpl: Calling a method in the system process without a qualified user: android.app.ContextImpl.startService:1928 com.android.server.MiscSetupService$MiscSetupHanlder.handleMessage:650 android.os.Handler.dispatchMessage:107 android.os.Looper.loopOnce:273 android.os.Looper.loop:388 
+01-22 10:17:54.901   677   731 D SystemServerTimingAsync: ssm.onUnlockingUser-0_com.android.server.MiscSetupService

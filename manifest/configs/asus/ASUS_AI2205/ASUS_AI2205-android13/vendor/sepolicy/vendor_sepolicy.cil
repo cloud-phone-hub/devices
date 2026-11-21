@@ -1,0 +1,23 @@
+;; cdh ASUS_AI2205 (ROG Phone 7, Android 14 system / Android 13 vendor 33.0) SELinux 补丁：
+;; 1. 声明未部署的高通 perf2 服务类型并 dontaudit find，消除 596+ 次 default_android_service 刷屏。
+(type vendor_hal_perf2_service)
+(roletype object_r vendor_hal_perf2_service)
+(typeattributeset service_manager_type (vendor_hal_perf2_service))
+(typeattributeset vendor_service (vendor_hal_perf2_service))
+(dontaudit domain vendor_hal_perf2_service (service_manager (find)))
+
+;; 2. 放行 system_server 查询已由 neuralnetworks 占位承载的 vendor_hal_servicetrackeraidl_service，
+;;    消除 1210+ 次 AVC 刷屏。
+(allow system_server_{{vers}} vendor_hal_servicetrackeraidl_service (service_manager (find)))
+
+;; 3. 声明 vendor_cdh_public_prop（公共只读 vendor 属性类型），消除 system_server/audioserver/app
+;;    读取 vendor.mesa.* / vendor.audio.* / vendor.dirac.* 落入 vendor_default_prop 的刷屏。
+(type vendor_cdh_public_prop)
+(roletype object_r vendor_cdh_public_prop)
+(typeattributeset property_type (vendor_cdh_public_prop))
+(typeattributeset vendor_property_type (vendor_cdh_public_prop))
+(typeattributeset vendor_public_property_type (vendor_cdh_public_prop))
+(allow domain vendor_cdh_public_prop (file (read getattr map open)))
+
+;; 4. 消除 bootanim 探测 /proc/asound 产生的无害 AVC 刷屏。
+(dontaudit bootanim_{{vers}} proc_asound_{{vers}} (dir (search)))

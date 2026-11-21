@@ -1,0 +1,4 @@
+# ASUS ROG Phone 7 (ASUS_AI2205 / Android 13 vendor) 服务上下文补充：
+# 显式映射未部署的高通 perf2 服务，避免 system_server/audioserver/mediaserver/app
+# 轮询时落入 default_android_service 触发数百次 SELinux AVC 刷屏。
+vendor.qti.hardware.perf2.IPerf/default	u:object_r:vendor_hal_perf2_service:s0

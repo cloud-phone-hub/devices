@@ -1,0 +1,36 @@
+=== 修前实测基线：asus/ASUS_AI2205 (14-TKQ1.220928.001-20240229, lineage-20.0 + kernel 5.15) ===
+
+1) 锁屏弹窗（系统内部错误）及 logcat 根因
+弹窗文案：
+  Android System
+  There's an internal problem with your device. Contact your manufacturer for details.
+
+logcat VINTF 校验错误：
+  E VintfObject: VintfObject.verifyWithoutAvb() returns 1: For kernel requirements at matrix level 7, For config CONFIG_PPP_MPPE, value = m but required y
+  E Build   : Vendor interface is incompatible, error=1
+
+内核运行态配置：
+  # zcat /proc/config.gz | grep -E 'CONFIG_PPP_MPPE|CONFIG_CRYPTO_LIB_ARC4'
+  CONFIG_PPP_MPPE=m
+  CONFIG_CRYPTO_LIB_ARC4=m
+
+2) 占位服务缺失（hardware/config.json 漏配 android.hardware.neuralnetworks）
+  servicemanager 缺失日志：
+  - vendor.asus.hardware.auralight2.IAuralight2/default: service not found (18 次)
+  - vendor.qti.hardware.servicetrackeraidl.IServicetracker/default: 无宿主承载
+
+3) 修前 qemu.log SELinux avc: denied 统计（qemu.log 共 10,543 行，AVC 总计 3,261 条）
+  Top 高频项：
+  [1210] u:r:system_server:s0 -> u:object_r:vendor_hal_servicetrackeraidl_service:s0 (service_manager) { find }
+  [ 596] domain -> u:object_r:default_android_service:s0 (service_manager) { find } (vendor.qti.hardware.perf2.IPerf/default)
+  [ 243] u:r:system_server:s0 (162) / u:r:audioserver:s0 (81) -> u:object_r:vendor_default_prop:s0 (file) { read }
+  [  43] u:r:bootanim:s0 -> u:object_r:proc_asound:s0 (dir) { search }
+
+4) 修前 logcat 属性读取被拒（Access denied finding property）高频统计
+  - vendor.mesa.*: 5,000+ 次
+  - vendor.dirac.* / ro.vendor.dirac.* / persist.vendor.dirac.*: 1,700+ 次
+  - vendor.audio.*: 591 次
+
+5) 附注（明确跳过项）
+  - com.android.chrome (libmonochrome.so) 32-bit ABI 崩溃：云机为纯 64 位（不支持 arm32），用户明确要求不修。
+  - init.svc.*restarting: (none)；vendor.radio-vhal 与 vhost-modem-controller 握手正常（模拟 SIM CARDSTATE_PRESENT）。

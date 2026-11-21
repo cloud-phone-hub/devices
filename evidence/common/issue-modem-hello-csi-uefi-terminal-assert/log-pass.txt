@@ -1,0 +1,57 @@
+Device: asus/ASUS_AI2205 (14-TKQ1.220928.001-20240229, lineage-20.0 rEFInd)
+Boot time: 60s
+SELinux: Enforcing
+gsm.sim.state: ,ABSENT
+gsm.operator.alpha: 
+gsm.operator.numeric: 
+Radio svc:
+
+Crashes:
+(none)
+
+=== qemu.log head (UEFI -> rEFInd -> Linux) ===
+==== 2026-11-21 13:18:28 daemon 拉起: /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/bin/qemu-system-aarch64 [-L /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/share/qemu -machine virt -rtc base=localtime -m 8192 -smp 8 -accel hvf -object memory-backend-shm,id=stage-ram,size=8192M,share=on -numa node,memdev=stage-ram -chardev socket,id=stage-media-dec,path=/tmp/stage-33671e1d/media-decoder.sock -device vhost-user-media-pci,chardev=stage-media-dec,id=media-dec -chardev socket,id=stage-media-enc,path=/tmp/stage-33671e1d/media-encoder.sock -device vhost-user-media-pci,chardev=stage-media-enc,id=media-enc -device virtio-gpu-gl-pci,blob=on,hostmem=256M,venus=on,edid=on,xres=1080,yres=2400,xmax=1080,ymax=2400,refresh-rates=60,width-mm=70,height-mm=155 -display cgl-headless,gl=on,readback=on -vnc 127.0.0.1:20,websocket=5921,share=force-shared -qmp unix:/tmp/stage-33671e1d/qmp.sock,server=on,wait=off -drive if=pflash,unit=0,file=/Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/firmware/edk2-aarch64-code.fd,file.locking=off,format=raw,readonly=on -drive if=pflash,unit=1,file=/Volumes/work/cloud-phone-hub/out/devices/tmp/test-ai2205-verify/ASUS_AI2205_14-TKQ1.220928.001-20240229/1/efi-vars.fd -drive file=/Volumes/work/cloud-phone-hub/out/devices/tmp/test-ai2205-verify/ASUS_AI2205_14-TKQ1.220928.001-20240229/1/writable-base.qcow2,if=none,id=vda,format=qcow2,node-name=stage-vda,discard=unmap,detect-zeroes=unmap -device virtio-blk-pci,drive=vda,bootindex=0 -drive file=/Volumes/work/cloud-phone-hub/out/devices/tmp/test-ai2205-verify/ASUS_AI2205_14-TKQ1.220928.001-20240229/1/writable-data.qcow2,if=none,id=vdb,format=qcow2,node-name=stage-vdb,discard=unmap,detect-zeroes=unmap -device virtio-blk-pci,drive=vdb,bootindex=1 -drive file=/Volumes/work/cloud-phone-hub/out/devices/dist/asus/ASUS_AI2205/14-TKQ1.220928.001-20240229/patch.img,if=none,id=vdc,format=raw,readonly=on -device virtio-blk-pci,drive=vdc,bootindex=2 -device virtio-net-pci,netdev=net0,romfile= -netdev user,id=net0,restrict=on,ipv6=off,hostfwd=tcp::5919-:5555 -device virtio-net-pci,netdev=net2,romfile=,mac=c2:36:b4:12:34:58 -netdev user,id=net2,net=100.64.155.0/24,dhcpstart=100.64.155.15,ipv6=off -device virtio-multitouch-pci,input-name=goodix_ts,input-bus=2,input-vendor=10182,input-product=1,input-version=256,abs-to-mt=on,abs-x-max=17280,abs-y-max=38400,mt-slots=10,mt-pressure=off,abs-xy=on,touch-keys=116:143:354 -device virtio-keyboard-pci,input-name=gpio-keys,input-bus=25,input-vendor=0,input-product=0,input-version=0 -device virtio-serial,id=stage-vserial -chardev null,id=stage-hvc0 -device virtconsole,chardev=stage-hvc0,id=stage-hvc0-console -chardev null,id=stage-hvc1 -device virtconsole,chardev=stage-hvc1,id=stage-hvc1-console -chardev socket,id=stage-adbkey,fd=3 -device virtconsole,chardev=stage-adbkey,id=stage-hvc2-adbkey -chardev socket,id=stage-keymint,fd=4,logfile=/Volumes/work/cloud-phone-hub/out/devices/tmp/test-ai2205-verify/ASUS_AI2205_14-TKQ1.220928.001-20240229/1/secure-env/keymint-wire.log,logappend=on -device virtconsole,chardev=stage-keymint,id=stage-hvc3-keymint -chardev socket,id=stage-radio,fd=5 -device virtconsole,chardev=stage-radio,id=stage-hvc4-radio -chardev socket,id=stage-bluetooth,path=/tmp/stage-33671e1d/bt-hci.sock,reconnect-ms=1000 -device virtconsole,chardev=stage-bluetooth,id=stage-hvc5-bluetooth -chardev socket,id=stage-haptic,path=/tmp/stage-33671e1d/host-haptic.sock,reconnect-ms=1000 -device virtconsole,chardev=stage-haptic,id=stage-hvc6-haptic -chardev socket,id=stage-event,path=/tmp/stage-33671e1d/event.sock,server=on,wait=off,logfile=/tmp/stage-33671e1d/event.sock.log,logappend=on -device virtconsole,chardev=stage-event,id=stage-hvc7-event -chardev null,id=stage-hvc8 -device virtconsole,chardev=stage-hvc8,id=stage-hvc8-console -chardev socket,id=stage-wifi,path=/tmp/stage-33671e1d/wifi.sock,server=on,wait=off,logfile=/tmp/stage-33671e1d/wifi.sock.log,logappend=on -device virtconsole,chardev=stage-wifi,id=stage-hvc9-wifi -chardev socket,id=stage-wifi-data,path=/tmp/stage-33671e1d/wifi-data.sock,server=on,wait=off,logfile=/tmp/stage-33671e1d/wifi-data.sock.log,logappend=on -device virtconsole,chardev=stage-wifi-data,id=stage-hvc10-wifi-data -device virtio-rng-pci -audiodev none,id=cdhsnd -device intel-hda -device hda-duplex,audiodev=cdhsnd -chardev stdio,mux=on,id=charconsole -serial chardev:charconsole]
+qemu-system-aarch64: -chardev socket,id=stage-media-dec,path=/tmp/stage-33671e1d/media-decoder.sock: info: android console: listening on 127.0.0.1:5918
+UEFI firmware (version edk2-stable202408-prebuilt.qemu.org built at 16:28:50 on Sep 12 2024)
+ArmTrngLib could not be correctly initialized.
+Error: Image at 0023FDB6000 start failed: 00000001
+Error: Image at 0023FD6D000 start failed: Not Found
+Error: Image at 0023FCAC000 start failed: Unsupported
+Error: Image at 0023FC31000 start failed: Not Found
+Error: Image at 0023FB57000 start failed: Aborted
+Tpm2SubmitCommand - Tcg2 - Not Found
+Tpm2GetCapabilityPcrs fail!
+Tpm2SubmitCommand - Tcg2 - Not Found
+[2J[01;01H[=3h[2J[01;01H[2J[01;01H[=3h[2J[01;01Hqemu-system-aarch64: cgl-headless flush #1: rect=0,0 1080x2400 surface=1080x2400 backing=1080x2400 y0top=1
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=38.5 read=6.6 flush=0.0 update=0.0 end=0.0 总=45.1 ms
+qemu-system-aarch64: cgl-headless flush #2: rect=0,0 1080x2400 surface=1080x2400 backing=1080x2400 y0top=1
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=2.8 flush=0.0 update=0.0 end=0.0 总=2.9 ms
+qemu-system-aarch64: virtio-serial-bus: Guest failure in adding port 8 for device stage-vserial.0
+qemu-system-aarch64: virtio-serial-bus: Guest failure in adding port 9 for device stage-vserial.0
+qemu-system-aarch64: virtio-serial-bus: Guest failure in adding port 10 for device stage-vserial.0
+qemu-system-aarch64: cgl-headless flush #3: rect=280,1136 520x128 surface=1080x2400 backing=1080x2400 y0top=1
+qemu-system-aarch64: cgl-headless flush #4: rect=0,2284 1080x116 surface=1080x2400 backing=1080x2400 y0top=1
+qemu-system-aarch64: cgl-headless flush #5: rect=472,2284 136x19 surface=1080x2400 backing=1080x2400 y0top=1
+qemu-system-aarch64: cgl-headless flush #200: rect=710,2304 9x48 surface=1080x2400 backing=1080x2400 y0top=1
+BdsDxe: loading Boot0001 "UEFI Misc Device" from PciRoot(0x0)/Pci(0x4,0x0)
+ProtectUefiImage failed to create image properties record
+BdsDxe: starting Boot0001 "UEFI Misc Device" from PciRoot(0x0)/Pci(0x4,0x0)
+ProtectUefiImage failed to create image properties record
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=4.5 flush=0.0 update=0.0 end=0.0 总=4.6 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=2.2 flush=0.0 update=0.0 end=0.0 总=2.4 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=2.1 flush=0.0 update=0.0 end=0.0 总=2.3 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.3 read=2.0 flush=0.0 update=0.0 end=0.0 总=2.3 ms
+qemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.1 read=2.1 flush=0.0 update=0.0 end=0.0 总=2.2 ms
+[2J[01;01Hqemu-system-aarch64: cgl-headless 大帧 1080x2400: blit=0.2 read=2.3 flush=0.0 update=0.0 end=0.0 总=2.5 ms
+[1m[37m[44m[01;01H                                                                                [02;01H                                                                                [03;01H                                                                                [02;04HrEFInd - Booting OS[0m[37m[40m[05;01HStarting kernel
+Using load options 'log_buf_len=4M loop.max_part=7 printk.devkmsg=on rw androidboot.boot_devices=any,pci0000:00/0000:00:01.0,pci0000:00/0000:00:02.0,pci0000:00/0000:00:03.0,pci0000:00/0000:00:04.0,pci0000:00/0000:00:05.0 androidboot.first_stage_console=0 androidboot.verifiedbootstate=green console=tty0EFI stub: Booting Linux Kernel...
+EFI stub: Generating empty DTB
+EFI stub: Loaded initrd from command line option
+EFI stub: Exiting boot services...
+[    0.000000][    T0] Booting Linux on physical CPU 0x0000000000 [0x610f0000]
+[    0.000000][    T0] Linux version 5.15.151-4k-cdh (root@1309c41b6d2d) (Android (dev, NO PGO PROFILE, NO BOLT PROFILE, based on r487747) clang version 17.0.0 (https://android.googlesource.com/toolchain/llvm-project abf7f3400b057e0460f10da2a390e9d4f2523b09), LLD 17.0.0) #1 SMP PREEMPT Thu Nov 19 03:07:21 UTC 2026
+[    0.000000][    T0] Stack Depot is disabled
+[    0.000000][    T0] KVM is not available. Ignoring kvm-arm.mode
+[    0.000000][    T0] efi: EFI v2.70 by EDK II
+[    0.000000][    T0] efi: SMBIOS 3.0=0x23fed0000 MEMATTR=0x23e2fa018 ACPI 2.0=0x23cb43018 RNG=0x23cb43698 MEMRESERVE=0x23cb40f98 
+[    0.000000][    T0] random: crng init done

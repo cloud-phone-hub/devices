@@ -1,0 +1,31 @@
+# 修前失败取证日志（asus/ASUSAI2501 · 15-AQ3A.240829.003-20250122）
+# 现象：全屏竖排 IMEI 水印浮层（358471234750645 / 358471234750652）遮盖所有应用界面上方
+
+=== dumpsys window windows (修前) ===
+  Window #2 Window{640d0bc u0 ImsWatermark}:
+    mOwnerUid=1000 showForAllUsers=true package=com.asus.ims.watermark appop=NONE
+    mAttrs={(0,0)(2400x2400) sim={adjust=pan} overrideDisplayCutoutMode=always ty=SECURE_SYSTEM_OVERLAY fmt=TRANSPARENT
+    mViewVisibility=0x0 mHaveFrame=true mObscured=false
+    isOnScreen=true
+
+=== pm path & properties (修前) ===
+package:/system/priv-app/ImsWatermarkService/ImsWatermarkService.apk
+[ro.vendor.asus.beta]: [1]
+
+=== logcat (修前) ===
+11-21 04:27:39.306   683  1316 I MiscSetupService: broadcastProperty CID=unknown COUNTRY_CODE=unknown IDCODE=0 PRODUCT_NAME=ZWWAI2501 ro.vendor.asus.product.mkt_name= ro.vendor.asus.beta=1 ro.vendor.build.asus.sku=ZWW vendor.asus.mediaflag=
+11-21 04:27:44.482   683  1316 D MiscSetupService: Watermark: MSG_BOOT_COMPLETE, ro.vendor.asus.beta= 1
+11-21 04:27:44.488   683   683 D ImsWatermarkService: onCreate
+11-21 04:27:44.542   683   683 D ImsWatermarkService: onStartCommand, betaImage= 1, DEBUG= false
+11-21 04:27:44.994   683   683 I ImsWatermarkService: initView 1
+
+=== classes.dex 触发字符串 (ImsWatermarkService.apk) ===
+  ImsWatermark
+  ImsWatermarkService
+  Landroid/os/SystemProperties
+  betaImage
+  getImei
+  removeIMEIView
+  ro.vendor.asus.beta
+  showIMEIView
+  watermark

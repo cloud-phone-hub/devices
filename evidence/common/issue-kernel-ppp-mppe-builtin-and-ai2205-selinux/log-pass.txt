@@ -1,0 +1,69 @@
+Device: asus/ASUS_AI2205 (14-TKQ1.220928.001-20240229)
+Boot time: 73s, SELinux: Enforcing
+Kernel PPP/ARC4:
+CONFIG_PPP_MPPE=y
+CONFIG_CRYPTO_LIB_ARC4=y
+
+VintfObject errors: (NONE)
+Restarting services: (none)
+
+Placeholder services:
+22	android.hardware.neuralnetworks.IDevice/default: [android.hardware.neuralnetworks.IDevice]
+267	vendor.asus.hardware.auralight2.IAuralight2/default: [vendor.asus.hardware.auralight2.IAuralight2]
+291	vendor.qti.hardware.servicetrackeraidl.IServicetracker/default: [vendor.qti.hardware.servicetrackeraidl.IServicetracker]
+
+qemu.log AVC total: 1815 (before: 3261)
+  [  28] u:r:system_server:s0 -> u:object_r:vendor_default_prop:s0 (file) { read }
+  [  26] u:r:pioneer:s0 -> u:object_r:toolbox_exec:s0 (file) { getattr }
+  [  26] u:r:pioneer:s0 -> u:object_r:toolbox_exec:s0 (file) { execute }
+  [  26] u:r:pioneer:s0 -> u:object_r:toolbox_exec:s0 (file) { read open }
+  [  23] u:r:pioneer:s0 -> u:object_r:toolbox_exec:s0 (file) { map }
+  [  22] u:r:pioneer:s0 -> u:object_r:toolbox_exec:s0 (file) { execute_no_trans }
+  [  22] u:r:system_app:s0 -> u:object_r:privapp_data_file:s0:c512,c768 (dir) { search }
+  [  14] u:r:pioneer:s0 -> u:object_r:system_file:s0 (file) { getattr }
+  [  14] u:r:pioneer:s0 -> u:object_r:system_file:s0 (file) { execute }
+  [  12] u:r:pioneer:s0 -> u:object_r:shell_exec:s0 (file) { map }
+  [  12] u:r:pioneer:s0 -> u:object_r:shell_exec:s0 (file) { execute }
+  [  12] u:r:pioneer:s0 -> u:object_r:system_file:s0 (file) { read open }
+  [  11] u:r:pioneer:s0 -> u:object_r:shell_exec:s0 (file) { getattr }
+  [  11] u:r:pioneer:s0 -> u:object_r:system_file:s0 (file) { execute_no_trans }
+  [  10] u:r:bootanim:s0 -> u:r:mediametrics:s0 (binder) { call }
+
+Top denied props:
+13 "vendor.camera.aux.packagelist"
+     11 "ro.vendor.cdh.gpu.gl_version"
+     11 "ro.vendor.cdh.gpu.gl_vendor"
+     11 "ro.vendor.cdh.gpu.gl_sl_version"
+     11 "ro.vendor.cdh.gpu.gl_renderer"
+     11 "ro.vendor.cdh.gpu.gl_extra_exts2"
+     11 "ro.vendor.cdh.gpu.gl_extra_exts"
+      8 "persist.vendor.asus.grip.debug"
+      4 "vendor.radio.asus.mccmnc1"
+      4 "ro.vendor.build.characteristics"
+
+Windows:
+Window #0 Window{2f08072 u0 ScreenDecorOverlayBottom}:
+    mOwnerUid=10057 showForAllUsers=true package=com.android.systemui appop=NONE
+  Window #1 Window{c237037 u0 ScreenDecorOverlay}:
+    mOwnerUid=10057 showForAllUsers=true package=com.android.systemui appop=NONE
+  Window #2 Window{29b3319 u0 NavigationBar0}:
+    mOwnerUid=10057 showForAllUsers=true package=com.android.systemui appop=NONE
+  Window #3 Window{4fe70f7 u0 NotificationShade}:
+    mOwnerUid=10057 showForAllUsers=true package=com.android.systemui appop=NONE
+  Window #4 Window{7f785e7 u0 StatusBar}:
+    mOwnerUid=10057 showForAllUsers=true package=com.android.systemui appop=NONE
+  Window #5 Window{c641dc3 u0 Application Error: com.android.chrome}:
+    mOwnerUid=1000 showForAllUsers=true package=android appop=SYSTEM_ALERT_WINDOW
+  Window #6 Window{351716b u0 com.asus.airtriggers}:
+    mOwnerUid=1000 showForAllUsers=false package=com.asus.airtriggers appop=SYSTEM_ALERT_WINDOW
+  Window #7 Window{145ae29 u0 com.asus.airtriggers}:
+    mOwnerUid=1000 showForAllUsers=false package=com.asus.airtriggers appop=SYSTEM_ALERT_WINDOW
+  Window #8 Window{6a4518b u0 com.asus.airtriggers}:
+    mOwnerUid=1000 showForAllUsers=false package=com.asus.airtriggers appop=SYSTEM_ALERT_WINDOW
+  Window #9 Window{e6f7076 u0 com.asus.airtriggers}:
+    mOwnerUid=1000 showForAllUsers=false package=com.asus.airtriggers appop=SYSTEM_ALERT_WINDOW
+  Window #10 Window{ddb8b9e u0 com.asus.airtriggers}:
+    mOwnerUid=1000 showForAllUsers=false package=com.asus.airtriggers appop=SYSTEM_ALERT_WINDOW
+  Window #11 Window{1a6d96e u0 ShellDropTarget}:
+    mOwnerUid=10057 showForAllUsers=true package=com.android.systemui appop=SYSTEM_ALERT_WINDOW
+  Window #12 Window{fe3ce00 u0 com.asus.launcher/com.android.launcher3.uioverrides.QuickstepLauncher}:

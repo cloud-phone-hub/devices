@@ -122,6 +122,11 @@
       "type": "file"
     },
     {
+      "from": "/system/priv-app/ImsWatermarkService",
+      "to": "/mnt/vendorpatch/system/priv-app/ImsWatermarkService",
+      "type": "dir"
+    },
+    {
       "from": "/vendor/lib64/libunwindstack.so",
       "to": "/mnt/vendorpatch/vendor/lib64/libui.so",
       "type": "maps"

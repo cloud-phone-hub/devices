@@ -1,0 +1,8 @@
+# ASUS ROG Phone 7 (ASUS_AI2205 / Android 13 vendor) 属性上下文补充：
+# 将 Mesa 渲染、音频扩展与 Dirac 音效只读查询属性映射到可读公共 vendor 属性类型，
+# 消除 system_server / audioserver / app 读取 vendor_default_prop 的大量 SELinux 拒绝刷屏。
+vendor.mesa.                 u:object_r:vendor_cdh_public_prop:s0
+vendor.audio.                u:object_r:vendor_cdh_public_prop:s0
+vendor.dirac.                u:object_r:vendor_cdh_public_prop:s0
+ro.vendor.dirac.             u:object_r:vendor_cdh_public_prop:s0
+persist.vendor.dirac.        u:object_r:vendor_cdh_public_prop:s0

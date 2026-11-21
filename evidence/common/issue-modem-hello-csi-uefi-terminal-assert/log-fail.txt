@@ -1,0 +1,37 @@
+# 失败实测日志与根因取证（#294）
+# 设备：asus/ASUS_AI2205（14-TKQ1.220928.001-20240229，lineage-20.0 rEFInd）
+# 现象：UEFI 刚启动 rEFInd (Boot0001) 即触发 EDK2 TerminalDxe ASSERT 死机，连 Linux 内核都进不去
+
+=== 1. 用户实例连续两次卡死日志（out/core/daemon/runtime/ASUS_AI2205.../1/qemu.log）===
+==== 2026-11-21 12:39:33 / 12:40:52 daemon 拉起 ... ====
+BdsDxe: loading Boot0001 "UEFI Misc Device" from PciRoot(0x0)/Pci(0x4,0x0)
+ProtectUefiImage failed to create image properties record
+BdsDxe: starting Boot0001 "UEFI Misc Device" from PciRoot(0x0)/Pci(0x4,0x0)
+ProtectUefiImage failed to create image properties record
+ASSERT [TerminalDxe] /home/kraxel/projects/qemu/roms/edk2/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConIn.c(2082): ((BOOLEAN)(0==1))
+
+=== 2. 精确时间点 nextModemSessionID() = time.Now().UnixNano() 十六进制取证 ===
+2026-11-21 12:39:33 -> ns=1795235973000000000 hex=0x18e9f59b1aaaf200 bytes=18 e9 f5 9b 1a aa f2 00
+                                                                                    ^^ 0x9B (CSI!)
+
+=== 3. EDK2 edk2-stable202408 MdeModulePkg/Universal/Console/TerminalDxe/TerminalConIn.c ===
+  1378    switch (TerminalDevice->InputState) {
+  1379      case INPUT_STATE_DEFAULT:
+  1383      case INPUT_STATE_ESC:
+  ...       // 注意：switch 中完全缺少 case INPUT_STATE_CSI: ！
+  2078      default:
+  2080        // Invalid state. This should never happen.
+  2082        ASSERT (FALSE);
+  2084        UnicodeToEfiKeyFlushState (TerminalDevice);
+  2086        break;
+  2087    }
+  2093    if (UnicodeChar == CSI) {   // CSI = 0x009B
+  2094      TerminalDevice->InputState = INPUT_STATE_CSI;
+  2095    }
+
+=== 4. 隔离复现（向 virtconsole 注入 0x9B + 'A' 100% 逐字节复现同一 ASSERT）===
+BdsDxe: loading Boot0001 "UEFI Misc Device" from PciRoot(0x0)/Pci(0x4,0x0)
+ProtectUefiImage failed to create image properties record
+BdsDxe: starting Boot0001 "UEFI Misc Device" from PciRoot(0x0)/Pci(0x4,0x0)
+ProtectUefiImage failed to create image properties record
+ASSERT [TerminalDxe] /home/kraxel/projects/qemu/roms/edk2/MdeModulePkg/Universal/Console/TerminalDxe/TerminalConIn.c(2082): ((BOOLEAN)(0==1))
