@@ -1,0 +1,20 @@
+=== 修复前宿主机实测残留的 QEMU 后端进程 (2026-11-22 10:57) ===
+  PID  PPID  PGID STAT COMMAND
+29975     1 29938 S    /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/libexec/wifi-host-service --data-socket=/tmp/stage-e1045b3d/wifi-data.sock ...
+29976     1 29938 S    /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/libexec/netsimd --instance 27554 --hci-port 57551 --no-cli-ui --no-web-ui --no-test-beacons --no-shutdown --logtostderr
+59195     1 59195 S    /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/libexec/virgl_render_server --socket-fd 76
+63508     1 63508 S    /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/libexec/virgl_render_server --socket-fd 77
+65396     1 65396 S    /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/libexec/virgl_render_server --socket-fd 77
+75734     1 75734 S    /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/libexec/virgl_render_server --socket-fd 76
+79987     1 79987 S    /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/libexec/virgl_render_server --socket-fd 77
+81536     1 81536 S    /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/libexec/virgl_render_server --socket-fd 76
+89521     1 89521 S    /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/libexec/virgl_render_server --socket-fd 81
+95457     1 95457 S    /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/libexec/virgl_render_server --socket-fd 77
+97202     1 97202 S    /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/libexec/virgl_render_server --socket-fd 77
+
+=== 运行态进程组对照 (实测 virgl_render_server 自立 PGID) ===
+13625 94629 13625 R    .../bin/qemu-system-aarch64 ...
+13628 13625 13628 S    .../libexec/virgl_render_server --socket-fd 72
+
+=== 信号测试 ===
+对 29976 (netsimd --no-shutdown) 与 9 个 virgl_render_server 发送 SIGTERM 后等待 1s，全部继续存活，仅 SIGKILL 可终止。

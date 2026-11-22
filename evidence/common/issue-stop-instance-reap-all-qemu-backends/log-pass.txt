@@ -1,0 +1,29 @@
+=== 1. Go -race 竞态测试全绿 (2026-11-22) ===
+?   	cloud-phone-hub/agent/modules/daemon	[no test files]
+ok  	cloud-phone-hub/agent/modules/daemon/backend	1.391s
+?   	cloud-phone-hub/agent/modules/daemon/backend/bluetooth	[no test files]
+ok  	cloud-phone-hub/agent/modules/daemon/backend/bluetooth/bthci	1.569s
+ok  	cloud-phone-hub/agent/modules/daemon/backend/camera	2.190s
+ok  	cloud-phone-hub/agent/modules/daemon/backend/haptic	2.002s
+ok  	cloud-phone-hub/agent/modules/daemon/backend/nfc	1.800s
+ok  	cloud-phone-hub/agent/modules/daemon/backend/proxy	2.166s
+?   	cloud-phone-hub/agent/modules/daemon/backend/tee	[no test files]
+ok  	cloud-phone-hub/agent/modules/daemon/config	2.745s
+ok  	cloud-phone-hub/agent/modules/daemon/run	2.675s
+=== BUILD & RACE TEST PASS ===
+
+=== 2. 真机端到端停机零残留验证 (task-3782) ===
+Created: spec=oriole_15-BP1A.250505.005-20250326 idx=1 pid=15016 dir=/Volumes/work/cloud-phone-hub/out/devices/tmp/verify-stop-clean/oriole_15-BP1A.250505.005-20250326/1
+Running processes BEFORE stop (9):
+  (15002, 14954, 14953, 'secure_env')
+  (15003, 14954, 14953, 'wifi-host-service')
+  (15004, 14954, 14953, 'modem-data-gateway')
+  (15005, 14954, 14953, 'netsimd')
+  (15011, 14954, 14953, 'vhost-device-media')
+  (15013, 14954, 14953, 'vhost-device-media')
+  (15015, 14954, 14953, 'vhost-modem-controller')
+  (15016, 14954, 15016, 'qemu-system-aarch64')
+  (15018, 15016, 15018, 'virgl_render_server')
+Stop returned in 0.56s: {'dir': '/Volumes/work/cloud-phone-hub/out/devices/tmp/verify-stop-clean/oriole_15-BP1A.250505.005-20250326/1', 'index': '1', 'ok': True, 'spec': 'oriole_15-BP1A.250505.005-20250326'}
+Remaining processes IMMEDIATELY after stop (0):
+=== PASS: 0 lingering backend processes ===
