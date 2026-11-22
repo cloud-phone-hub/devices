@@ -1,0 +1,14 @@
+# 复现与排查失败日志（Pixel 6 #5，oriole_17-CP3A.261005.002.A1-20260905）
+
+## 1. 现象与控制变量实验
+- View Hierarchy 中 BottomBar / ShutterButton / ModeSwitcher / ZoomUi 全部为 VISIBLE，gfxinfo 显示 RenderThread 正常提交数千帧；
+- 禁用 HWC Overlay (`service call SurfaceFlinger 1008 i32 1`)、重启 camera-service、pm clear 均无效；
+- 控制变量：
+  - 直接冷启动 CameraSettingsActivity（不经过 CameraLauncher）：文字与开关 100% 清晰可见；
+  - 先启动 CameraLauncher 1 秒后再打开 CameraSettingsActivity：100% 纯黑（nonblack=0）。
+
+## 2. 宿主机 qemu.log 关键报错（修复前）
+6396:Error linking program:
+6397:ERROR: Built-in variable 'gl_Position' must be redeclared before use, with separate shader objects.
+6398:
+6399:vrend_link_separable_shader: context error reported 22 "RenderThread" Illegal shader 0

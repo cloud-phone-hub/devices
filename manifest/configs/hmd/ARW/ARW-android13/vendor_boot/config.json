@@ -1,6 +1,7 @@
 {
   "fstab": "ums9620",
   "cmdline": [
+    "androidboot.board_device=ARP",
     "androidboot.product.hardware.sku=Arrow_0AIN",
     "androidboot.secureboot=1",
     "androidboot.slot=a",

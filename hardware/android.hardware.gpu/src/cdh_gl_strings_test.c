@@ -242,6 +242,52 @@ static void test_es310_uniform_location_gather_and_3x3_flatten(void) {
     cdh_free_patched_sources(&res);
 }
 
+static void test_skia_vertex_shader_no_sso_extension(void) {
+    // Skia RenderThread 普通顶点着色器含 gl_Position 但不含 gl_PerVertex：
+    // 绝不能注入 GL_EXT_separate_shader_objects，否则 VirGL 报 Illegal shader 导致 UI 全黑。
+    const char *src =
+        "#version 320 es\n"
+        "in vec2 position;\n"
+        "void main() { gl_Position = vec4(position, 0.0, 1.0); }\n";
+    const char *arr[1] = {src};
+    cdh_patched_sources_t res;
+    cdh_prepare_patched_sources(1, arr, NULL, &res);
+    assert(res.patched == 1);
+    assert(strstr(res.ptrs[0], "GL_EXT_separate_shader_objects") == NULL);
+    cdh_free_patched_sources(&res);
+}
+
+static void test_sso_vertex_with_gl_per_vertex_gets_extension(void) {
+    // Google Camera rectiface separate vertex shader 显式声明了 gl_PerVertex：必须注入 SSO 扩展。
+    const char *chunk0 = "#version 310 es\n";
+    const char *chunk1 = "out gl_PerVertex { vec4 gl_Position; };\nvoid main() { gl_Position = vec4(0.0); }\n";
+    const char *arr[2] = {chunk0, chunk1};
+    cdh_patched_sources_t res;
+    cdh_prepare_patched_sources(2, arr, NULL, &res);
+    assert(res.patched == 1);
+    assert(strstr(res.ptrs[0], "#extension GL_EXT_separate_shader_objects : enable\n") != NULL);
+    assert(strstr(res.ptrs[0], "out gl_PerVertex") == NULL);
+    cdh_free_patched_sources(&res);
+}
+
+static void test_sso_vertex_layout_out_redeclares_gl_per_vertex(void) {
+    // rectiface/forward_warp.vert：含 gl_Position 与 layout(location=0) out 但未写 gl_PerVertex，
+    // 需同时注入 SSO 扩展与 out gl_PerVertex { highp vec4 gl_Position; };。
+    const char *src =
+        "#version 310 es\n"
+        "layout(location = 0) in vec2 aPos;\n"
+        "layout(location = 0) out vec2 vUv;\n"
+        "void main() { vUv = aPos; gl_Position = vec4(aPos, 0.0, 1.0); }\n";
+    const char *arr[1] = {src};
+    cdh_patched_sources_t res;
+    cdh_prepare_patched_sources(1, arr, NULL, &res);
+    assert(res.patched == 1);
+    assert(strstr(res.ptrs[0], "#extension GL_EXT_separate_shader_objects : enable\n") != NULL);
+    assert(strstr(res.ptrs[0], "#extension GL_OES_shader_io_blocks : enable\n") != NULL);
+    assert(strstr(res.ptrs[0], "out gl_PerVertex { highp vec4 gl_Position; };\n") != NULL);
+    cdh_free_patched_sources(&res);
+}
+
 int main(void) {
     test_single_chunk_320_with_extension();
     test_explicit_length_array_prevents_truncation();
@@ -251,6 +297,9 @@ int main(void) {
     test_virgl_unsafe_extra_exts_filtered();
     test_es310_layout_binding_and_yuv_stripped();
     test_es310_uniform_location_gather_and_3x3_flatten();
-    printf("[pass] cdh_gl_strings_test: 8/8 passed\n");
+    test_skia_vertex_shader_no_sso_extension();
+    test_sso_vertex_with_gl_per_vertex_gets_extension();
+    test_sso_vertex_layout_out_redeclares_gl_per_vertex();
+    printf("[pass] cdh_gl_strings_test: 11/11 passed\n");
     return 0;
 }

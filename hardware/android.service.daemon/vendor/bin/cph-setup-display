@@ -38,6 +38,21 @@ if [ "$(settings get global sales_nvram_flag 2>/dev/null)" = "null" ]; then
 fi
 settings put secure user_setup_complete 1 2>/dev/null
 settings put global device_provisioned 1 2>/dev/null
+# HMD 机型（如 ARW）首次冷启动由 com.google.android.setupwizard 拉起
+# com.hmdglobal.app.setupwizardext/.WelcomeSetupWizard 占据 HOME 任务，
+# 写入 device_provisioned=1 后该向导不会自动退出；禁用并停止这两个引导包后
+# 幂等拉起 HOME 桌面，避免首启停留在向导或静止首帧。
+if pm path com.hmdglobal.app.setupwizardext >/dev/null 2>&1; then
+    am force-stop com.hmdglobal.app.setupwizardext 2>/dev/null || true
+    am force-stop com.google.android.setupwizard 2>/dev/null || true
+    pm disable com.hmdglobal.app.setupwizardext 2>/dev/null || true
+    pm disable com.google.android.setupwizard 2>/dev/null || true
+    am force-stop com.hmdglobal.app.setupwizardext 2>/dev/null || true
+    am force-stop com.google.android.setupwizard 2>/dev/null || true
+    if [ "$was_provisioned" != "1" ]; then
+        am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null 2>&1 || true
+    fi
+fi
 
 # ---- OPPO/ColorOS 屏幕分辨率档位（先例 devices/oppo/findx9-16）----
 # ColorOS 的 secure 键 oplus_customize_screen_resolution_adjust：0=智能、1=高分辨率、

@@ -15,7 +15,6 @@ static const char CDH_FMA_POLYFILL[] =
     "#ifndef ldexp\n"
     "#define ldexp(x, e) ((x) * exp2(float(e)))\n"
     "#endif\n"
-    "#extension GL_EXT_separate_shader_objects : enable\n"
     "#ifndef GL_EXT_YUV_target\n"
     "#define __samplerExternal2DY2YEXT sampler2D\n"
     "#define yuvCscStandardEXT int\n"
@@ -25,6 +24,37 @@ static const char CDH_FMA_POLYFILL[] =
     "#define rgb_2_yuv(c, s) (c)\n"
     "#define yuv_2_rgb(c, s) (c)\n"
     "#endif\n";
+
+static const char CDH_SSO_EXTENSION[] =
+    "#extension GL_EXT_separate_shader_objects : enable\n"
+    "#extension GL_OES_shader_io_blocks : enable\n";
+
+static const char CDH_GL_PER_VERTEX_DECL[] =
+    "#ifdef GL_OES_shader_io_blocks\n"
+    "out gl_PerVertex { highp vec4 gl_Position; };\n"
+    "#endif\n";
+
+static inline int cdh_chunk_has_layout_in(const char *s, size_t len) {
+    if (!s || len < 10) return 0;
+    return memmem(s, len, "layout", 6) != NULL &&
+           (memmem(s, len, ") in ", 5) != NULL ||
+            memmem(s, len, ") highp in ", 11) != NULL ||
+            memmem(s, len, ") mediump in ", 13) != NULL ||
+            memmem(s, len, ") lowp in ", 10) != NULL ||
+            memmem(s, len, ") flat in ", 10) != NULL ||
+            memmem(s, len, ") smooth in ", 12) != NULL);
+}
+
+static inline int cdh_chunk_has_layout_out(const char *s, size_t len) {
+    if (!s || len < 11) return 0;
+    return memmem(s, len, "layout", 6) != NULL &&
+           (memmem(s, len, ") out ", 6) != NULL ||
+            memmem(s, len, ") highp out ", 12) != NULL ||
+            memmem(s, len, ") mediump out ", 14) != NULL ||
+            memmem(s, len, ") lowp out ", 11) != NULL ||
+            memmem(s, len, ") flat out ", 11) != NULL ||
+            memmem(s, len, ") smooth out ", 13) != NULL);
+}
 
 static const char CDH_TEXTURE_GATHER_POLYFILL[] =
     "highp vec4 textureGather(highp sampler2D s, highp vec2 p) { return texture(s, p).rrrr; }\n"
@@ -388,7 +418,9 @@ static inline size_t cdh_find_after_header_directives(const char *s, size_t len,
 // 对单个着色器分片执行版本降级并在首条被降级的 #version 行后注入 fma() 预处理宏。
 // 未命中 #version 310/320 es 时返回 NULL；命中时返回新分配的以 '\0' 结尾的缓冲区，
 // 并通过 *out_len 返回新长度（不含末尾 '\0'）。调用方负责 free() 返回值。
-static inline char *cdh_patch_glsl_es_chunk(const char *src, size_t slen, size_t *out_len) {
+static inline char *cdh_patch_glsl_es_chunk(const char *src, size_t slen,
+                                            int inject_sso, int inject_per_vertex,
+                                            size_t *out_len) {
     const char *first_hit = cdh_find_glsl_310_or_320_es(src, slen);
     if (!first_hit) {
         return NULL;
@@ -401,11 +433,17 @@ static inline char *cdh_patch_glsl_es_chunk(const char *src, size_t slen, size_t
     size_t insert_off = nl ? (size_t)(nl - src) + 1 : slen;
     int need_leading_nl = (nl == NULL);
 
+    int need_sso = inject_sso ? 1 : 0;
+    int need_per_vtx = inject_per_vertex ? 1 : 0;
     int need_gather = cdh_needs_texture_gather_polyfill(src, slen);
-    size_t gather_off = need_gather ? cdh_find_after_header_directives(src, slen, insert_off) : insert_off;
+    int need_after_hdr = need_gather || need_per_vtx;
+    size_t after_hdr_off =
+        need_after_hdr ? cdh_find_after_header_directives(src, slen, insert_off) : insert_off;
     size_t poly_len = sizeof(CDH_FMA_POLYFILL) - 1;
+    size_t sso_len = need_sso ? (sizeof(CDH_SSO_EXTENSION) - 1) : 0;
+    size_t pv_len = need_per_vtx ? (sizeof(CDH_GL_PER_VERTEX_DECL) - 1) : 0;
     size_t gather_len = need_gather ? (sizeof(CDH_TEXTURE_GATHER_POLYFILL) - 1) : 0;
-    size_t extra_len = (need_leading_nl ? 1 : 0) + poly_len + gather_len;
+    size_t extra_len = (need_leading_nl ? 1 : 0) + poly_len + sso_len + pv_len + gather_len;
     size_t total_len = slen + extra_len;
     char *buf = (char *)malloc(total_len + 1);
     if (!buf) {
@@ -419,15 +457,23 @@ static inline char *cdh_patch_glsl_es_chunk(const char *src, size_t slen, size_t
     }
     memcpy(buf + cur, CDH_FMA_POLYFILL, poly_len);
     cur += poly_len;
-    if (need_gather && gather_off > insert_off) {
-        memcpy(buf + cur, src + insert_off, gather_off - insert_off);
-        cur += (gather_off - insert_off);
+    if (need_sso) {
+        memcpy(buf + cur, CDH_SSO_EXTENSION, sso_len);
+        cur += sso_len;
+    }
+    if (need_after_hdr && after_hdr_off > insert_off) {
+        memcpy(buf + cur, src + insert_off, after_hdr_off - insert_off);
+        cur += (after_hdr_off - insert_off);
+    }
+    if (need_per_vtx) {
+        memcpy(buf + cur, CDH_GL_PER_VERTEX_DECL, pv_len);
+        cur += pv_len;
     }
     if (need_gather) {
         memcpy(buf + cur, CDH_TEXTURE_GATHER_POLYFILL, gather_len);
         cur += gather_len;
     }
-    size_t tail_off = need_gather ? gather_off : insert_off;
+    size_t tail_off = need_after_hdr ? after_hdr_off : insert_off;
     if (tail_off < slen) {
         memcpy(buf + cur, src + tail_off, slen - tail_off);
     }
@@ -499,6 +545,11 @@ static inline void cdh_prepare_patched_sources(int count,
     }
 
     int needs_patch = 0;
+    int any_has_sso_ext = 0;
+    int any_per_vertex = 0;
+    int any_gl_pos = 0;
+    int any_layout_in = 0;
+    int any_layout_out = 0;
     for (int i = 0; i < count; i++) {
         if (!string[i]) {
             continue;
@@ -506,12 +557,36 @@ static inline void cdh_prepare_patched_sources(int count,
         size_t slen = (length && length[i] >= 0) ? (size_t)length[i] : strlen(string[i]);
         if (cdh_find_glsl_310_or_320_es(string[i], slen) != NULL) {
             needs_patch = 1;
-            break;
+        }
+        if (slen >= 30 && memmem(string[i], slen, "GL_EXT_separate_shader_objects", 30) != NULL) {
+            any_has_sso_ext = 1;
+        }
+        if (slen >= 12 && memmem(string[i], slen, "gl_PerVertex", 12) != NULL) {
+            any_per_vertex = 1;
+        }
+        if (slen >= 11 && memmem(string[i], slen, "gl_Position", 11) != NULL) {
+            any_gl_pos = 1;
+        }
+        if (cdh_chunk_has_layout_in(string[i], slen)) {
+            any_layout_in = 1;
+        }
+        if (cdh_chunk_has_layout_out(string[i], slen)) {
+            any_layout_out = 1;
         }
     }
     if (!needs_patch) {
         return;
     }
+    // Separate Shader Objects 按需注入：
+    // 1) 顶点着色器（含 gl_Position）：仅当显式声明 gl_PerVertex 或使用了 ES 3.00 不支持的
+    //    `layout(location=...) out`（如 rectiface/forward_warp.vert）时注入 SSO 扩展；
+    //    若未声明 gl_PerVertex 则同时补写 `out gl_PerVertex { highp vec4 gl_Position; };`，
+    //    防止宿主 VirGL/Apple GL 报 "gl_Position must be redeclared before use"。
+    // 2) 非顶点着色器：仅在出现 `layout(...) in` 时注入 SSO 扩展。
+    // 普通 Skia RenderThread 顶点着色器不含 layout(...) out 也不含 gl_PerVertex，完全不注入。
+    int is_sso_vertex = any_per_vertex || (any_gl_pos && any_layout_out);
+    int inject_sso = !any_has_sso_ext && (is_sso_vertex || (!any_gl_pos && any_layout_in));
+    int inject_per_vertex = (inject_sso || any_has_sso_ext) && any_gl_pos && !any_per_vertex;
 
     out->count = count;
     out->ptrs = (const char **)malloc((size_t)count * sizeof(const char *));
@@ -534,7 +609,8 @@ static inline void cdh_prepare_patched_sources(int count,
         }
         size_t slen = (length && length[i] >= 0) ? (size_t)length[i] : strlen(string[i]);
         size_t new_len = 0;
-        char *copy = cdh_patch_glsl_es_chunk(string[i], slen, &new_len);
+        char *copy =
+            cdh_patch_glsl_es_chunk(string[i], slen, inject_sso, inject_per_vertex, &new_len);
         if (!copy && cdh_has_layout_keyword(string[i], slen)) {
             copy = (char *)malloc(slen + 1);
             if (copy) {

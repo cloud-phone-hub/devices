@@ -1,0 +1,93 @@
+==================== 1. 全新冷启动验收（PID 86628, patch.img 2783574327d1） ====================
+=== 1. BASIC & BOOT ===
+boot_completed=1
+getenforce=Enforcing
+uptime=116.64 509.96
+device_provisioned=1
+user_setup_complete=1
+restarting_services=0
+=== 2. WINDOW / FOREGROUND ===
+  mCurrentFocus=Window{e376299 u0 android}, [type=2007]-[Surface(name=#103)/@0xf3661d3, shown=false, alpha=0.0, windowType=2007]
+  mFocusedApp=ActivityRecord{407ab0f u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher t12 d0}
+=== 3. TELEPHONY / SIM / BASEBAND ===
+gsm.version.baseband=5G_MODEM_V2_23B_W24.26.4_P11,5G_MODEM_V2_23B_W24.26.4_P11
+gsm.sim.state=LOADED,ABSENT
+gsm.operator.alpha=中国联通,
+gsm.operator.numeric=46001,
+gsm.network.type=LTE,Unknown
+    mServiceState={mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE), mChannelNumber=1650, duplexMode()=1, mCellBandwidths=[20000], mOperatorAlphaLong=中国联通, mOperatorAlphaShort=中国联通, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=14(LTE), getRilDataRadioTechnology=14(LTE), mCssIndicator=unsupported, mNetworkId=-1, mSystemId=-1, mCdmaRoamingIndicator=-1, mCdmaDefaultRoamingIndicator=-1, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=NOT_REG_OR_SEARCHING networkRegistrationState=NOT_REG_OR_SEARCHING roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[VOICE,SMS,EMERGENCY] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false}, NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[VOICE,SMS,VIDEO] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=VoiceSpecificRegistrationInfo { mCssSupported=false mRoamingIndicator=0 mSystemIsInPrl=0 mDefaultRoamingIndicator=0} dataSpecificInfo=null nrState=**** rRplmn=46001 isUsingCarrierAggregation=false}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[DATA] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 16 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 null } nrState=**** rRplmn=46001 isUsingCarrierAggregation=false}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=中国联通, mOperatorAlphaShortRaw=中国联通, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataConnectionState=2
+    mServiceState={mVoiceRegState=1(OUT_OF_SERVICE), mDataRegState=1(OUT_OF_SERVICE), mChannelNumber=0, duplexMode()=0, mCellBandwidths=[], mOperatorAlphaLong=null, mOperatorAlphaShort=null, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=0(Unknown), getRilDataRadioTechnology=0(Unknown), mCssIndicator=unsupported, mNetworkId=0, mSystemId=0, mCdmaRoamingIndicator=0, mCdmaDefaultRoamingIndicator=0, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[], mNrFrequencyRange=0, mOperatorAlphaLongRaw=null, mOperatorAlphaShortRaw=null, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataConnectionState=-1
+=== 4. WIFI ===
+16: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    inet 192.168.60.100/24 brd 192.168.60.255 scope global wlan0
+       valid_lft forever preferred_lft forever
+Wi-Fi is enabled
+mWifiInfo SSID: "TP-LINK_2464", BSSID: 74:39:89:0b:24:63, MAC: <none>, IP: /192.168.60.100, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: 1, RSSI: -33, Link speed: 24Mbps, Tx Link speed: 24Mbps, Max Supported Tx Link speed: 54Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: 54Mbps, Frequency: 5180MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"TP-LINK_2464"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>
+mWifiInfo SSID: <unknown ssid>, BSSID: <none>, MAC: 02:00:00:00:00:00, IP: null, Security type: -1, Supplicant state: DISCONNECTED, Wi-Fi standard: 0, RSSI: -127, Link speed: -1Mbps, Tx Link speed: -1Mbps, Max Supported Tx Link speed: -1Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: -1Mbps, Frequency: -1MHz, Net ID: -1, Metered hint: false, score: 0, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 0, Trusted: false, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none><none>MLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>
+=== 5. CELLULAR DATA / ROUTES ===
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 127.0.0.1/8 scope host lo
+6: ccmni2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc pfifo_fast state UP group default qlen 1000
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni2
+16: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    inet 192.168.60.100/24 brd 192.168.60.255 scope global wlan0
+=== 6. ANR / CRASH / RENDER / AVC ===
+total 8
+drwxrwxr-x  2 system system 4096 1970-01-01 08:00 .
+drwxrwx--x 58 system system 4096 2025-06-20 18:26 ..
+anr_events=0
+non_chrome_crashes=1
+dri_image_err=143
+tool_service_avc=2
+=== 7. RADIO INTERACTOR / SIMLOCK ===
+06-20 18:26:25.845  2866  2866 D RadioInteractor: [RadioInteractor] [3654]> GET_SIMLOCK_WHITE_LIST type = 2
+06-20 18:26:25.846  2866  2956 D RadioInteractor: [3654]< GET_SIMLOCK_WHITE_LIST error 6 [SUB0]
+06-20 18:26:25.846  2866  2956 D RadioInteractor: [RIRequest] [3654]< GET_SIMLOCK_WHITE_LIST error: com.android.unisoc.telephony.server.CommandException: REQUEST_NOT_SUPPORTED ret=
+06-20 18:26:25.848  2866  2866 D RadioInteractor: [RadioInteractor] [3656]> GET_SIMLOCK_DUMMYS
+06-20 18:26:25.849  2866  2956 D RadioInteractor: [3656]< GET_SIMLOCK_DUMMYS {} [SUB0]
+06-20 18:26:25.849  2866  3057 D RadioInteractor: [RadioInteractorHandler] handleMessage EVENT_GET_SIMLOCK_DUMMYS
+
+==================== 2. 二次重启零干预终验（stop -> start） ====================
+=== REBOOT VERIFY: 1. BASIC ===
+boot_completed=1
+getenforce=Enforcing
+uptime=108.34 661.24
+device_provisioned=1
+user_setup_complete=1
+restarting_services=0
+=== REBOOT VERIFY: 2. WINDOW ===
+  mCurrentFocus=Window{8ef05b0 u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher}, [type=1]-[Surface(name=*Title#99)/@0x3cccaec, shown=false, alpha=0.0, windowType=1]
+  mFocusedApp=ActivityRecord{9280255 u0 com.android.launcher3/com.android.searchlauncher.SearchLauncher t16 d0}
+=== REBOOT VERIFY: 3. TELEPHONY / SIM / BASEBAND ===
+gsm.version.baseband=5G_MODEM_V2_23B_W24.26.4_P11,5G_MODEM_V2_23B_W24.26.4_P11
+gsm.sim.state=LOADED,ABSENT
+gsm.operator.alpha=中国联通,
+gsm.operator.numeric=46001,
+gsm.network.type=LTE,Unknown
+    mServiceState={mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE), mChannelNumber=1650, duplexMode()=1, mCellBandwidths=[20000], mOperatorAlphaLong=中国联通, mOperatorAlphaShort=中国联通, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=14(LTE), getRilDataRadioTechnology=14(LTE), mCssIndicator=unsupported, mNetworkId=-1, mSystemId=-1, mCdmaRoamingIndicator=-1, mCdmaDefaultRoamingIndicator=-1, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=NOT_REG_OR_SEARCHING networkRegistrationState=NOT_REG_OR_SEARCHING roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[VOICE,SMS,EMERGENCY] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false}, NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[VOICE,SMS,VIDEO] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=VoiceSpecificRegistrationInfo { mCssSupported=false mRoamingIndicator=0 mSystemIsInPrl=0 mDefaultRoamingIndicator=0} dataSpecificInfo=null nrState=**** rRplmn=46001 isUsingCarrierAggregation=false}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[DATA] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 16 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 null } nrState=**** rRplmn=46001 isUsingCarrierAggregation=false}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=中国联通, mOperatorAlphaShortRaw=中国联通, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataConnectionState=2
+    mServiceState={mVoiceRegState=1(OUT_OF_SERVICE), mDataRegState=1(OUT_OF_SERVICE), mChannelNumber=0, duplexMode()=0, mCellBandwidths=[], mOperatorAlphaLong=null, mOperatorAlphaShort=null, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=0(Unknown), getRilDataRadioTechnology=0(Unknown), mCssIndicator=unsupported, mNetworkId=0, mSystemId=0, mCdmaRoamingIndicator=0, mCdmaDefaultRoamingIndicator=0, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[], mNrFrequencyRange=0, mOperatorAlphaLongRaw=null, mOperatorAlphaShortRaw=null, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataConnectionState=-1
+=== REBOOT VERIFY: 4. WIFI & CELLULAR IFACES ===
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 127.0.0.1/8 scope host lo
+6: ccmni2: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc pfifo_fast state UP group default qlen 1000
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni2
+16: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    inet 192.168.60.100/24 brd 192.168.60.255 scope global wlan0
+Wi-Fi is enabled
+mWifiInfo SSID: "TP-LINK_2464", BSSID: 74:39:89:0b:24:63, MAC: <none>, IP: /192.168.60.100, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: 1, RSSI: -37, Link speed: 54Mbps, Tx Link speed: 54Mbps, Max Supported Tx Link speed: 54Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: 54Mbps, Frequency: 5180MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"TP-LINK_2464"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>
+=== REBOOT VERIFY: 5. STABILITY (ANR/CRASH/DRI/AVC) ===
+total 8
+drwxrwxr-x  2 system system 4096 1970-01-01 08:00 .
+drwxrwx--x 58 system system 4096 2026-11-22 20:44 ..
+anr_events=0
+non_chrome_crashes=0
+dri_image_err=0
+tool_service_avc=2
+=== REBOOT VERIFY: 6. KERNEL ===
+Linux localhost 5.15.149-android13-8-00010-gc2e0ba41ba85-ab12040008 #1 SMP PREEMPT Tue Jul 2 00:44:45 UTC 2024 aarch64 Toybox
+CONFIG_PPP_MPPE=y
+CONFIG_CRYPTO_LIB_ARC4=y

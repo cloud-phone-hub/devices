@@ -1,0 +1,101 @@
+=== [FAIL SNAPSHOT] HMD Crest Max (hmd/ARW) ===
+Sun Nov 22 19:34:18 CST 2026
+Linux localhost 5.15.149-android13-8-00010-gc2e0ba41ba85-ab12040008 #1 SMP PREEMPT Tue Jul 2 00:44:45 UTC 2024 aarch64 Toybox
+--- BASEBAND ---
+,
+--- SIM / RADIO ---
+,ABSENT
+    mServiceState={mVoiceRegState=1(OUT_OF_SERVICE), mDataRegState=1(OUT_OF_SERVICE), mChannelNumber=0, duplexMode()=0, mCellBandwidths=[], mOperatorAlphaLong=null, mOperatorAlphaShort=null, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=0(Unknown), getRilDataRadioTechnology=0(Unknown), mCssIndicator=unsupported, mNetworkId=0, mSystemId=0, mCdmaRoamingIndicator=0, mCdmaDefaultRoamingIndicator=0, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[], mNrFrequencyRange=0, mOperatorAlphaLongRaw=null, mOperatorAlphaShortRaw=null, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataConnectionState=-1
+    mServiceState={mVoiceRegState=1(OUT_OF_SERVICE), mDataRegState=1(OUT_OF_SERVICE), mChannelNumber=0, duplexMode()=0, mCellBandwidths=[], mOperatorAlphaLong=null, mOperatorAlphaShort=null, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=0(Unknown), getRilDataRadioTechnology=0(Unknown), mCssIndicator=unsupported, mNetworkId=0, mSystemId=0, mCdmaRoamingIndicator=0, mCdmaDefaultRoamingIndicator=0, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[], mNrFrequencyRange=0, mOperatorAlphaLongRaw=null, mOperatorAlphaShortRaw=null, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataConnectionState=-1
+--- ANR FILES ---
+total 360
+drwxrwxr-x  2 system system  4096 2026-11-22 19:30 .
+drwxrwx--x 58 system system  4096 2026-11-22 19:22 ..
+-rw-------  1 system system 88338 2026-11-22 19:10 anr_2026-11-22-19-10-17-194
+-rw-------  1 system system 88072 2026-11-22 19:16 anr_2026-11-22-19-16-57-521
+-rw-------  1 system system 88382 2026-11-22 19:24 anr_2026-11-22-19-24-16-578
+-rw-------  1 system system 87395 2026-11-22 19:30 anr_2026-11-22-19-30-56-793
+--- PHONE ANR MAIN THREAD ---
+Subject: executing service com.android.stk/.StkAppService
+RssHwmKb: 161244
+RssKb: 146256
+RssAnonKb: 56228
+RssShmemKb: 1004
+VmSwapKb: 0
+
+
+--- CriticalEventLog ---
+capacity: 20
+timestamp_ms: 1795346217519
+window_ms: 300000
+
+----- dumping pid: 4799 at 573503
+
+----- pid 4799 at 2026-11-22 19:16:57.523276683+0800 -----
+Cmd line: com.android.phone
+Build fingerprint: 'HMD/Arrow_0AIN/ARW:14/QP1A.190711.020/00WW_1_590:user/release-keys'
+ABI: 'arm64'
+Build type: optimized
+suspend all histogram:	Sum: 4.745ms 99% C.I. 0.393us-3760.640us Avg: 296.562us Max: 3997us
+DALVIK THREADS (57):
+"main" prio=5 tid=1 Waiting
+  | group="main" sCount=1 ucsCount=0 flags=1 obj=0x735b26d8 self=0xb4000070ead202c0
+  | sysTid=4799 nice=0 cgrp=foreground sched=0/0 handle=0x72b6757540
+  | state=S schedstat=( 710038493 1054647532 2473 ) utm=41 stm=29 core=6 HZ=100
+  | stack=0x7fcf899000-0x7fcf89b000 stackSize=8188KB
+  | held mutexes=
+  at java.lang.Object.wait(Native method)
+  - waiting on <0x0e2947ce> (a com.android.unisoc.telephony.server.RadioInteractorHandler$ThreadRequest)
+  at java.lang.Object.wait(Object.java:386)
+  at java.lang.Object.wait(Object.java:524)
+  at com.android.unisoc.telephony.server.RadioInteractorHandler.waitForResult(RadioInteractorHandler.java:2067)
+  at com.android.unisoc.telephony.server.RadioInteractorHandler.getSimlockWhitelist(RadioInteractorHandler.java:469)
+  - locked <0x0e2947ce> (a com.android.unisoc.telephony.server.RadioInteractorHandler$ThreadRequest)
+  at com.android.unisoc.telephony.server.RadioInteractorManager.getSimlockWhitelist(RadioInteractorManager.java:223)
+  at com.android.unisoc.telephony.RadioInteractor.getSimlockWhitelist(RadioInteractor.java:688)
+  at com.android.internal.telephony.simlock.HMDSimLockController.onRiServiceConnected(HMDSimLockController.java:226)
+  at com.android.internal.telephony.simlock.OpSimLockController.notifyRiServiceConnected(OpSimLockController.java:279)
+  at com.android.internal.telephony.simlock.OpSimLockController.-$$Nest$mnotifyRiServiceConnected(unavailable:0)
+  at com.android.internal.telephony.simlock.OpSimLockController$2.onServiceConnected(OpSimLockController.java:231)
+  at android.app.LoadedApk$ServiceDispatcher.doConnected(LoadedApk.java:2217)
+  at android.app.LoadedApk$ServiceDispatcher$RunConnection.run(LoadedApk.java:2250)
+  at android.os.Handler.handleCallback(Handler.java:958)
+  at android.os.Handler.dispatchMessage(Handler.java:99)
+  at android.os.Looper.loopOnce(Looper.java:205)
+  at android.os.Looper.loop(Looper.java:294)
+  at android.app.ActivityThread.main(ActivityThread.java:8381)
+  at java.lang.reflect.Method.invoke(Native method)
+  at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:640)
+  at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:982)
+
+"ReferenceQueueDaemon" daemon prio=5 tid=7 Waiting
+  | group="system" sCount=1 ucsCount=0 flags=1 obj=0x12c004d0 self=0xb4000070ead49e40
+  | sysTid=4820 nice=4 cgrp=foreground sched=0/0 handle=0x6f60af2cb0
+--- WIFI ---
+16: wlan0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc mq state DOWN group default qlen 1000
+    link/ether 02:00:00:00:00:00 brd ff:ff:ff:ff:ff:ff
+Wi-Fi is enabled
+curState=EnabledState
+curState=ConnectModeState
+curState=DisconnectedState
+curState=DisconnectedState
+startTime=11-22 19:22:19.795, SSID="TP-LINK_2464", BSSID=any, durationMillis=12353, roamType=ROAM_UNRELATED, connectionResult=0, level2FailureCode=FAILURE_NETWORK_NOT_FOUND, connectivityLevelFailureCode=NONE, signalStrength=-35, wifiState=WIFI_DISCONNECTED, screenOn=true, mRouterFingerprint=mConnectionEvent.roamType=0, mChannelInfo=5180, mDtim=0, mAuthentication=1, mHidden=false, mRouterTechnology=0, mSupportsIpv6=false, mEapMethod=0, mAuthPhase2Method=0, mOcspType=0, mPmkCache=false, mMaxSupportedTxLinkSpeedMbps=0, mMaxSupportedRxLinkSpeedMbps=0, mIsFrameworkInitiatedRoaming=false, mIsIncorrectlyConfiguredAsHidden=false, mWifiStandard=0, mIs11bSupported=false, mIsMboSupported=false, mIsOceSupported=false, mIsFilsSupported=false, mIsIndividualTwtSupported=false, mIsBroadcastTwtSupported=false, mIsRestrictedTwtSupported=false, mIsTwtRequired=false, mIs11mcSupported=false, mIs11azSupported=false, mApType6Ghz=AP_TYPE_6GHZ_UNKNOWN, mIsEcpsPriorityAccessSupported=false, mHsRelease=Unknown, useRandomizedMac=true, useAggressiveMac=false, connectionNominator=NOMINATOR_SAVED, networkSelectorExperimentId=42330058, numBssidInBlocklist=0, level2FailureReason=FAILURE_REASON_UNKNOWN, networkType=TYPE_OPEN, networkCreator=CREATOR_USER, numConsecutiveConnectionFailure=0, isOsuProvisioned=false interfaceName=wlan0 interfaceRole=ROLE_CLIENT_PRIMARY, isFirstConnectionAfterBoot=true, isCarrierWifi=false, isOobPseudonymEnabled=false, uid=1010
+startTime=11-22 19:22:32.931, SSID="TP-LINK_2464", BSSID=any, durationMillis=12391, roamType=ROAM_UNRELATED, connectionResult=0, level2FailureCode=FAILURE_NETWORK_NOT_FOUND, connectivityLevelFailureCode=NONE, signalStrength=-35, wifiState=WIFI_DISCONNECTED, screenOn=true, mRouterFingerprint=mConnectionEvent.roamType=0, mChannelInfo=5180, mDtim=0, mAuthentication=1, mHidden=false, mRouterTechnology=0, mSupportsIpv6=false, mEapMethod=0, mAuthPhase2Method=0, mOcspType=0, mPmkCache=false, mMaxSupportedTxLinkSpeedMbps=0, mMaxSupportedRxLinkSpeedMbps=0, mIsFrameworkInitiatedRoaming=false, mIsIncorrectlyConfiguredAsHidden=false, mWifiStandard=0, mIs11bSupported=false, mIsMboSupported=false, mIsOceSupported=false, mIsFilsSupported=false, mIsIndividualTwtSupported=false, mIsBroadcastTwtSupported=false, mIsRestrictedTwtSupported=false, mIsTwtRequired=false, mIs11mcSupported=false, mIs11azSupported=false, mApType6Ghz=AP_TYPE_6GHZ_UNKNOWN, mIsEcpsPriorityAccessSupported=false, mHsRelease=Unknown, useRandomizedMac=true, useAggressiveMac=false, connectionNominator=NOMINATOR_MANUAL, networkSelectorExperimentId=42330058, numBssidInBlocklist=0, level2FailureReason=FAILURE_REASON_UNKNOWN, networkType=TYPE_OPEN, networkCreator=CREATOR_USER, numConsecutiveConnectionFailure=0, isOsuProvisioned=false interfaceName=wlan0 interfaceRole=ROLE_CLIENT_PRIMARY, isFirstConnectionAfterBoot=false, isCarrierWifi=false, isOobPseudonymEnabled=false, uid=1000
+startTime=11-22 19:22:49.19, SSID="TP-LINK_2464", BSSID=any, durationMillis=12322, roamType=ROAM_UNRELATED, connectionResult=0, level2FailureCode=FAILURE_NETWORK_NOT_FOUND, connectivityLevelFailureCode=NONE, signalStrength=-49, wifiState=WIFI_DISCONNECTED, screenOn=true, mRouterFingerprint=mConnectionEvent.roamType=0, mChannelInfo=5180, mDtim=0, mAuthentication=1, mHidden=false, mRouterTechnology=0, mSupportsIpv6=false, mEapMethod=0, mAuthPhase2Method=0, mOcspType=0, mPmkCache=false, mMaxSupportedTxLinkSpeedMbps=0, mMaxSupportedRxLinkSpeedMbps=0, mIsFrameworkInitiatedRoaming=false, mIsIncorrectlyConfiguredAsHidden=false, mWifiStandard=0, mIs11bSupported=false, mIsMboSupported=false, mIsOceSupported=false, mIsFilsSupported=false, mIsIndividualTwtSupported=false, mIsBroadcastTwtSupported=false, mIsRestrictedTwtSupported=false, mIsTwtRequired=false, mIs11mcSupported=false, mIs11azSupported=false, mApType6Ghz=AP_TYPE_6GHZ_UNKNOWN, mIsEcpsPriorityAccessSupported=false, mHsRelease=Unknown, useRandomizedMac=true, useAggressiveMac=false, connectionNominator=NOMINATOR_SAVED, networkSelectorExperimentId=42330058, numBssidInBlocklist=0, level2FailureReason=FAILURE_REASON_UNKNOWN, networkType=TYPE_OPEN, networkCreator=CREATOR_USER, numConsecutiveConnectionFailure=0, isOsuProvisioned=false interfaceName=wlan0 interfaceRole=ROLE_CLIENT_PRIMARY, isFirstConnectionAfterBoot=false, isCarrierWifi=false, isOobPseudonymEnabled=false, uid=1010
+startTime=11-22 19:23:5.20, SSID="TP-LINK_2464", BSSID=any, durationMillis=12361, roamType=ROAM_UNRELATED, connectionResult=0, level2FailureCode=FAILURE_NETWORK_NOT_FOUND, connectivityLevelFailureCode=NONE, signalStrength=-49, wifiState=WIFI_DISCONNECTED, screenOn=true, mRouterFingerprint=mConnectionEvent.roamType=0, mChannelInfo=5180, mDtim=0, mAuthentication=1, mHidden=false, mRouterTechnology=0, mSupportsIpv6=false, mEapMethod=0, mAuthPhase2Method=0, mOcspType=0, mPmkCache=false, mMaxSupportedTxLinkSpeedMbps=0, mMaxSupportedRxLinkSpeedMbps=0, mIsFrameworkInitiatedRoaming=false, mIsIncorrectlyConfiguredAsHidden=false, mWifiStandard=0, mIs11bSupported=false, mIsMboSupported=false, mIsOceSupported=false, mIsFilsSupported=false, mIsIndividualTwtSupported=false, mIsBroadcastTwtSupported=false, mIsRestrictedTwtSupported=false, mIsTwtRequired=false, mIs11mcSupported=false, mIs11azSupported=false, mApType6Ghz=AP_TYPE_6GHZ_UNKNOWN, mIsEcpsPriorityAccessSupported=false, mHsRelease=Unknown, useRandomizedMac=true, useAggressiveMac=false, connectionNominator=NOMINATOR_SAVED, networkSelectorExperimentId=42330058, numBssidInBlocklist=0, level2FailureReason=FAILURE_REASON_UNKNOWN, networkType=TYPE_OPEN, networkCreator=CREATOR_USER, numConsecutiveConnectionFailure=0, isOsuProvisioned=false interfaceName=wlan0 interfaceRole=ROLE_CLIENT_PRIMARY, isFirstConnectionAfterBoot=false, isCarrierWifi=false, isOobPseudonymEnabled=false, uid=1010
+startTime=11-22 19:23:20.979, SSID="TP-LINK_2464", BSSID=any, durationMillis=12376, roamType=ROAM_UNRELATED, connectionResult=0, level2FailureCode=FAILURE_NETWORK_NOT_FOUND, connectivityLevelFailureCode=NONE, signalStrength=-49, wifiState=WIFI_DISCONNECTED, screenOn=true, mRouterFingerprint=mConnectionEvent.roamType=0, mChannelInfo=5180, mDtim=0, mAuthentication=1, mHidden=false, mRouterTechnology=0, mSupportsIpv6=false, mEapMethod=0, mAuthPhase2Method=0, mOcspType=0, mPmkCache=false, mMaxSupportedTxLinkSpeedMbps=0, mMaxSupportedRxLinkSpeedMbps=0, mIsFrameworkInitiatedRoaming=false, mIsIncorrectlyConfiguredAsHidden=false, mWifiStandard=0, mIs11bSupported=false, mIsMboSupported=false, mIsOceSupported=false, mIsFilsSupported=false, mIsIndividualTwtSupported=false, mIsBroadcastTwtSupported=false, mIsRestrictedTwtSupported=false, mIsTwtRequired=false, mIs11mcSupported=false, mIs11azSupported=false, mApType6Ghz=AP_TYPE_6GHZ_UNKNOWN, mIsEcpsPriorityAccessSupported=false, mHsRelease=Unknown, useRandomizedMac=true, useAggressiveMac=false, connectionNominator=NOMINATOR_SAVED, networkSelectorExperimentId=42330058, numBssidInBlocklist=0, level2FailureReason=FAILURE_REASON_UNKNOWN, networkType=TYPE_OPEN, networkCreator=CREATOR_USER, numConsecutiveConnectionFailure=0, isOsuProvisioned=false interfaceName=wlan0 interfaceRole=ROLE_CLIENT_PRIMARY, isFirstConnectionAfterBoot=false, isCarrierWifi=false, isOobPseudonymEnabled=false, uid=0
+startTime=11-22 19:23:37.35, SSID="TP-LINK_2464", BSSID=any, durationMillis=12304, roamType=ROAM_UNRELATED, connectionResult=0, level2FailureCode=FAILURE_NETWORK_NOT_FOUND, connectivityLevelFailureCode=NONE, signalStrength=-35, wifiState=WIFI_DISCONNECTED, screenOn=true, mRouterFingerprint=mConnectionEvent.roamType=0, mChannelInfo=5180, mDtim=0, mAuthentication=1, mHidden=false, mRouterTechnology=0, mSupportsIpv6=false, mEapMethod=0, mAuthPhase2Method=0, mOcspType=0, mPmkCache=false, mMaxSupportedTxLinkSpeedMbps=0, mMaxSupportedRxLinkSpeedMbps=0, mIsFrameworkInitiatedRoaming=false, mIsIncorrectlyConfiguredAsHidden=false, mWifiStandard=0, mIs11bSupported=false, mIsMboSupported=false, mIsOceSupported=false, mIsFilsSupported=false, mIsIndividualTwtSupported=false, mIsBroadcastTwtSupported=false, mIsRestrictedTwtSupported=false, mIsTwtRequired=false, mIs11mcSupported=false, mIs11azSupported=false, mApType6Ghz=AP_TYPE_6GHZ_UNKNOWN, mIsEcpsPriorityAccessSupported=false, mHsRelease=Unknown, useRandomizedMac=true, useAggressiveMac=false, connectionNominator=NOMINATOR_SAVED, networkSelectorExperimentId=42330058, numBssidInBlocklist=0, level2FailureReason=FAILURE_REASON_UNKNOWN, networkType=TYPE_OPEN, networkCreator=CREATOR_USER, numConsecutiveConnectionFailure=0, isOsuProvisioned=false interfaceName=wlan0 interfaceRole=ROLE_CLIENT_PRIMARY, isFirstConnectionAfterBoot=false, isCarrierWifi=false, isOobPseudonymEnabled=false, uid=1010
+startTime=11-22 19:23:51.249, SSID="TP-LINK_2464", BSSID=any, durationMillis=12373, roamType=ROAM_UNRELATED, connectionResult=0, level2FailureCode=FAILURE_NETWORK_NOT_FOUND, connectivityLevelFailureCode=NONE, signalStrength=-35, wifiState=WIFI_DISCONNECTED, screenOn=true, mRouterFingerprint=mConnectionEvent.roamType=0, mChannelInfo=5180, mDtim=0, mAuthentication=1, mHidden=false, mRouterTechnology=0, mSupportsIpv6=false, mEapMethod=0, mAuthPhase2Method=0, mOcspType=0, mPmkCache=false, mMaxSupportedTxLinkSpeedMbps=0, mMaxSupportedRxLinkSpeedMbps=0, mIsFrameworkInitiatedRoaming=false, mIsIncorrectlyConfiguredAsHidden=false, mWifiStandard=0, mIs11bSupported=false, mIsMboSupported=false, mIsOceSupported=false, mIsFilsSupported=false, mIsIndividualTwtSupported=false, mIsBroadcastTwtSupported=false, mIsRestrictedTwtSupported=false, mIsTwtRequired=false, mIs11mcSupported=false, mIs11azSupported=false, mApType6Ghz=AP_TYPE_6GHZ_UNKNOWN, mIsEcpsPriorityAccessSupported=false, mHsRelease=Unknown, useRandomizedMac=true, useAggressiveMac=false, connectionNominator=NOMINATOR_SAVED, networkSelectorExperimentId=42330058, numBssidInBlocklist=0, level2FailureReason=FAILURE_REASON_UNKNOWN, networkType=TYPE_OPEN, networkCreator=CREATOR_USER, numConsecutiveConnectionFailure=0, isOsuProvisioned=false interfaceName=wlan0 interfaceRole=ROLE_CLIENT_PRIMARY, isFirstConnectionAfterBoot=false, isCarrierWifi=false, isOobPseudonymEnabled=false, uid=0
+--- TOP AVC ---
+   1517 u:r:tool_service:s0 -> u:object_r:hwservicemanager_prop:s0 (file)
+    302 u:r:bootanim:s0 -> u:object_r:mediaserver_service:s0 (service_manager)
+    135 u:r:pioneer:s0 -> u:object_r:toolbox_exec:s0 (file)
+    116 u:r:pioneer:s0 -> u:object_r:system_file:s0 (file)
+    109 u:r:pioneer:s0 -> u:object_r:shell_exec:s0 (file)
+     66 u:r:pioneer:s0 -> u:r:pioneer:s0 (netlink_route_socket)
+     50 u:r:tool_service:s0 -> u:r:servicemanager:s0 (binder)
+     49 u:r:sprd_networkcontrol:s0 -> u:r:servicemanager:s0 (binder)
+     32 u:r:pioneer:s0 -> u:r:system_server:s0 (binder)
+     30 u:r:pioneer:s0 -> u:object_r:kmsg_device:s0 (chr_file)

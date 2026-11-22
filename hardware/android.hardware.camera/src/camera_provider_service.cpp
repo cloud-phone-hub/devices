@@ -1127,6 +1127,46 @@ static bool addCommonStaticEntries(camera_metadata_t *metadata,
                         rawSizeCount, 33333333LL);
   appendStreamDurations(&stallDurations, kRawPrivate, rawSizes.data(),
                         rawSizeCount, 33333333LL);
+  // Pixel（oriole 等）GoogleCamera 人像模式（Portrait）需要 PD 深度输出流
+  // （ImageFormat.RAW_DEPTH10 = 4099 / RAW_DEPTH = 4098，Android StreamConfigurationMap
+  // 通过 depthFormatToPublic 将 ANDROID_DEPTH_AVAILABLE_DEPTH_STREAM_CONFIGURATIONS 中的
+  // HAL_PIXEL_FORMAT_RAW10(0x25) / RAW16(0x20) 映射为 4099 / 4098）。
+  std::vector<int32_t> depthStreamConfigurations;
+  std::vector<int64_t> depthMinFrameDurations;
+  std::vector<int64_t> depthStallDurations;
+  const uint8_t depthIsExclusive = ANDROID_DEPTH_DEPTH_IS_EXCLUSIVE_FALSE;
+#if !defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
+  if (isPixelDualRearDevice()) {
+    std::vector<int32_t> pdSizes;
+    const int32_t halfW = (target.pixelWidth / 2) & ~15;
+    const int32_t halfH = (target.pixelHeight / 2) & ~1;
+    if (target.lensFacing == ANDROID_LENS_FACING_BACK) {
+      pdSizes = {
+          halfW, 756,
+          target.pixelWidth, 756,
+          halfW, halfH,
+      };
+    } else {
+      pdSizes = {
+          halfW, halfH,
+          target.pixelWidth, target.pixelHeight,
+      };
+    }
+    const size_t pdCount = pdSizes.size() / 2;
+    appendStreamConfigs(&depthStreamConfigurations, kRaw10, pdSizes.data(),
+                        pdCount);
+    appendStreamConfigs(&depthStreamConfigurations, kRawSensor, pdSizes.data(),
+                        pdCount);
+    appendStreamDurations(&depthMinFrameDurations, kRaw10, pdSizes.data(),
+                          pdCount, 33333333LL);
+    appendStreamDurations(&depthMinFrameDurations, kRawSensor, pdSizes.data(),
+                          pdCount, 33333333LL);
+    appendStreamDurations(&depthStallDurations, kRaw10, pdSizes.data(),
+                          pdCount, 0LL);
+    appendStreamDurations(&depthStallDurations, kRawSensor, pdSizes.data(),
+                          pdCount, 0LL);
+  }
+#endif
   const uint8_t hardwareLevel = ANDROID_INFO_SUPPORTED_HARDWARE_LEVEL_3;
   const uint8_t timestampSource =
       ANDROID_SENSOR_INFO_TIMESTAMP_SOURCE_REALTIME;
@@ -1234,6 +1274,18 @@ static bool addCommonStaticEntries(camera_metadata_t *metadata,
                   minFrameDurations) &&
          addEntry(metadata, ANDROID_SCALER_AVAILABLE_STALL_DURATIONS,
                   stallDurations) &&
+         (depthStreamConfigurations.empty() ||
+          (addEntry(metadata,
+                    ANDROID_DEPTH_AVAILABLE_DEPTH_STREAM_CONFIGURATIONS,
+                    depthStreamConfigurations) &&
+           addEntry(metadata,
+                    ANDROID_DEPTH_AVAILABLE_DEPTH_MIN_FRAME_DURATIONS,
+                    depthMinFrameDurations) &&
+           addEntry(metadata,
+                    ANDROID_DEPTH_AVAILABLE_DEPTH_STALL_DURATIONS,
+                    depthStallDurations) &&
+           addSingle(metadata, ANDROID_DEPTH_DEPTH_IS_EXCLUSIVE,
+                     depthIsExclusive))) &&
          addSingle(metadata, ANDROID_SCALER_AVAILABLE_MAX_DIGITAL_ZOOM,
                    target.maxDigitalZoom) &&
          addEntry(metadata, ANDROID_CONTROL_ZOOM_RATIO_RANGE, zoomRatioRange,
@@ -1514,6 +1566,13 @@ static bool addKeyLists(camera_metadata_t *metadata,
     characteristicsKeys.push_back(ANDROID_LENS_POSE_TRANSLATION);
     characteristicsKeys.push_back(ANDROID_LENS_INTRINSIC_CALIBRATION);
     characteristicsKeys.push_back(ANDROID_LENS_DISTORTION);
+    characteristicsKeys.push_back(
+        ANDROID_DEPTH_AVAILABLE_DEPTH_STREAM_CONFIGURATIONS);
+    characteristicsKeys.push_back(
+        ANDROID_DEPTH_AVAILABLE_DEPTH_MIN_FRAME_DURATIONS);
+    characteristicsKeys.push_back(
+        ANDROID_DEPTH_AVAILABLE_DEPTH_STALL_DURATIONS);
+    characteristicsKeys.push_back(ANDROID_DEPTH_DEPTH_IS_EXCLUSIVE);
   }
 #endif
   for (size_t i = 0; i < kNote13VendorTagCount; i++) {

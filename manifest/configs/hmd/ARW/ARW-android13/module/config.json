@@ -170,6 +170,11 @@
       "from": "/system_ext/bin/slogmodem",
       "to": "/mnt/vendorpatch/system_ext/bin/slogmodem",
       "type": "file"
+    },
+    {
+      "from": "/system_ext/bin/tool_service",
+      "to": "/mnt/vendorpatch/system_ext/bin/tool_service",
+      "type": "file"
     }
   ],
   "input": {

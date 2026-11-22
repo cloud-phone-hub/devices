@@ -24,6 +24,7 @@ class CdhAllocator : public aidl::android::hardware::graphics::allocator::impl::
  public:
   CdhAllocator() = default;
 
+#if !defined(ANDROID_API_LEVEL) || ANDROID_API_LEVEL >= 34
   ndk::ScopedAStatus allocate2(
       const ::aidl::android::hardware::graphics::allocator::BufferDescriptorInfo& descriptor,
       int32_t count,
@@ -190,7 +191,6 @@ class CdhAllocator : public aidl::android::hardware::graphics::allocator::impl::
     return status;
   }
 
-#if !defined(ANDROID_API_LEVEL) || ANDROID_API_LEVEL >= 34
   ndk::ScopedAStatus getIMapperLibrarySuffix(std::string* outResult) override {
     if (outResult == nullptr) {
       return ndk::ScopedAStatus::fromStatus(STATUS_BAD_VALUE);

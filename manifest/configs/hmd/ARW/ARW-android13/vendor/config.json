@@ -1,13 +1,18 @@
 {
   "build-prop-sets": {
+    "gsm.version.baseband": "5G_MODEM_V2_23B_W24.26.4_P11",
     "persist.radio.multisim.config": "dsds",
+    "ro.bionic.2nd_arch": "",
+    "ro.bionic.2nd_cpu_variant": "",
     "ro.hardware.egl": "mesa",
     "ro.hardware.hwcomposer": "unisoc",
     "ro.hw_timeout_multiplier": "10",
     "ro.hwui.use_vulkan": "false",
     "ro.opengles.version": "196608",
+    "ro.product.model.display": "HMD Crest Max",
     "ro.soc.manufacturer": "Unisoc",
     "ro.soc.model": "T770",
+    "ro.surface_flinger.has_HDR_display": "false",
     "ro.vendor.boot_security_patch": "2024-06-05",
     "ro.vendor.build.security_patch": "2024-06-05",
     "ro.vendor.cdh.display.edid_name": "QCMDEV",
@@ -35,7 +40,8 @@
     "ro.vendor.product.cpu.abilist64": "arm64-v8a",
     "ro.vendor.soc.manufacturer": "Unisoc",
     "ro.vendor.soc.model": "T770",
-    "ro.vendor.soc.model_ready": "1"
+    "ro.vendor.soc.model_ready": "1",
+    "ro.zygote": "zygote64"
   },
   "build-prop-unsets": [],
   "files": [
