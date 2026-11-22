@@ -1,0 +1,94 @@
+=== 1. 全套 Go 单元测试回归 (2026-11-22) ===
+=== agent/modules/daemon ===
+?   	cloud-phone-hub/agent/modules/daemon	[no test files]
+ok  	cloud-phone-hub/agent/modules/daemon/backend	1.121s
+?   	cloud-phone-hub/agent/modules/daemon/backend/bluetooth	[no test files]
+ok  	cloud-phone-hub/agent/modules/daemon/backend/bluetooth/bthci	1.430s
+ok  	cloud-phone-hub/agent/modules/daemon/backend/camera	2.662s
+ok  	cloud-phone-hub/agent/modules/daemon/backend/haptic	1.803s
+ok  	cloud-phone-hub/agent/modules/daemon/backend/nfc	2.475s
+ok  	cloud-phone-hub/agent/modules/daemon/backend/proxy	3.034s
+?   	cloud-phone-hub/agent/modules/daemon/backend/tee	[no test files]
+ok  	cloud-phone-hub/agent/modules/daemon/config	2.785s
+ok  	cloud-phone-hub/agent/modules/daemon/run	3.295s
+=== qemu/backend/wifi-host-service ===
+?   	github.com/cloud-phone-hub/cloud-phone-hub/qemu/backend/wifi-host-service/component	[no test files]
+ok  	github.com/cloud-phone-hub/cloud-phone-hub/qemu/backend/wifi-host-service/gw	3.339s
+=== qemu/backend/modem-data-gateway ===
+?   	github.com/cloud-phone-hub/cloud-phone-hub/qemu/backend/modem-data-gateway/component	[no test files]
+=== qemu/backend/modem-host-controller ===
+ok  	github.com/cloud-phone-hub/cloud-phone-hub/qemu/backend/modem-host-controller/component	3.019s
+ok  	github.com/cloud-phone-hub/cloud-phone-hub/qemu/backend/modem-host-controller/linux	0.903s
+ok  	github.com/cloud-phone-hub/cloud-phone-hub/qemu/backend/modem-host-controller/model	0.659s
+ok  	github.com/cloud-phone-hub/cloud-phone-hub/qemu/backend/modem-host-controller/protocol	1.958s
+ok  	github.com/cloud-phone-hub/cloud-phone-hub/qemu/backend/modem-host-controller/provider	1.717s
+ok  	github.com/cloud-phone-hub/cloud-phone-hub/qemu/backend/modem-host-controller/simulated	1.631s
+ok  	github.com/cloud-phone-hub/cloud-phone-hub/qemu/backend/modem-host-controller/startup	2.505s
+?   	github.com/cloud-phone-hub/cloud-phone-hub/qemu/backend/modem-host-controller/telephony	[no test files]
+
+=== 2. 单机深度实测与 VPN 节点热切换 ===
+- google/oriole (A15) Radio ccmni2:
+  * 自动优选日本节点 (jp1.mp.shso.xyz:12014): HTTP 3/3 -> 150.249.241.56 (avg 549ms), HTTPS 204 2/2 (436ms)
+  * POST /api/proxy/select 热切换美国节点 (不重启 QEMU/网关): HTTP 2/2 -> 38.46.218.20
+  * NFC NCI 2.0: connected=true, initialized=true, discovering=true (rxCommands=31), POST /api/nfc/tap 后触发 Guest TagViewer (android.nfc.tech.Ndef)
+  * Camera hvc12: CDCM_READY 握手通过, 稳定推帧 framesDropped=0, 支持 POST /api/camera/source 热切换 MP4 视频文件
+  * Bluetooth: netsimd 0.3.40 STATE_ON, bthci 虚拟外设 3 台在线 (CDH-Headset-Pro / CDH-Speaker-Mini / CDH-Watch-S3)
+- redmi/gold (A15) Wi-Fi wlan0:
+  * 日本节点: HTTP 3/3 -> 150.249.241.56 (avg 580ms), HTTPS 204 2/2 (430ms)
+  * POST /api/proxy/select 热切换美国节点: HTTP 2/2 -> 38.46.218.20
+- vivo/PD2454 / realme/RMX6688 / samsung/pa3q:
+  * 同实例 Wi-Fi + Radio 双网并发/接力走 VPN (日本 150.249.241.56 / 香港 220.246.176.187) 均 PASS
+
+=== 3. 全仓 45 Android 盘集 patch.img 增量刷新 ===
+- 45/45 Android 盘集 patch.img 增量更新新 Radio/Camera/NFC HAL + init rc + vendor_sepolicy.cil
+- 45/45 e2fsck -fn 退出码 0 (零错误), uid/gid/mode/security.selinux 100% 保留, 官方 super.img 0 字节改动
+
+=== 4. 全仓 45 Android 盘集自动化实测汇总 (TOTAL=45, BOOTED=45/45) ===
+WIFI_VPN_PASS=13 | RADIO_VPN_PASS=12 (auto=10, link=2) | ANY_NET_VPN_PASS=22
+BT_PASS=33 | CAM_PASS=24 | NFC_ON=7, NFC_NA=29, NFC_OEM_PENDING=9
+
+01. asus/ASUSAI2501/15-AQ3A.240829.003-20250122 | boot=36.4s | wifi=PASS(150.249.241.56) | radio=- | bt=- | cam=PASS(751,drop=0) | nfc=INIT_FAIL
+02. asus/ASUS_AI2205/14-TKQ1.220928.001-20240229 | boot=44.6s | wifi=- | radio=- | bt=PASS | cam=PASS(769,drop=0) | nfc=ON(2683)
+03. blackview/XPLORE_X1/15-AP3A.240905.015.A2-20251126 | boot=47.0s | wifi=PASS(150.249.241.56) | radio=- | bt=PASS | cam=PASS(998,drop=0) | nfc=N/A
+04. blu/G1130/14-UP1A.231005.007-20260511 | boot=46.6s | wifi=PASS(150.249.241.56) | radio=- | bt=- | cam=- | nfc=N/A
+05. blu/G1170/15-AP3A.240905.015.A2-20260209 | boot=46.9s | wifi=PASS(150.249.241.56) | radio=- | bt=- | cam=PASS(564,drop=0) | nfc=N/A
+06. google/oriole/14-AP2A.240905.003.F1-20240815 | boot=75.2s | wifi=- | radio=PASS[auto](150.249.241.56) | bt=PASS | cam=PASS(911,drop=2) | nfc=ON(26)
+07. google/oriole/15-BP1A.250505.005-20250326 | boot=59.7s | wifi=- | radio=PASS[auto](150.249.241.56) | bt=PASS | cam=PASS(779,drop=0) | nfc=ON(31)
+08. google/oriole/16-CP1A.260405.005-20260310 | boot=129.0s | wifi=- | radio=PASS[auto](150.249.241.56) | bt=PASS | cam=- | nfc=ON(56)
+09. google/oriole/17-CP3A.261005.002.A1-20260905 | boot=98.6s | wifi=- | radio=PASS[auto](150.249.241.56) | bt=- | cam=- | nfc=ON(30)
+10. hmd/ARW/14-QP1A.190711.020-20250620 | boot=101.2s | wifi=- | radio=- | bt=PASS | cam=PASS(1060,drop=0) | nfc=N/A
+11. honor/HNLNA-M/16-TP1A.220624.014-20260422 | boot=73.3s | wifi=- | radio=- | bt=PASS | cam=- | nfc=N/A
+12. honor/bengal_515/16-TKQ1.240227.001-20260708 | boot=113.4s | wifi=- | radio=- | bt=PASS | cam=- | nfc=N/A
+13. honor/bengal_515/16-TKQ1.240227.001-20260922 | boot=91.4s | wifi=- | radio=- | bt=PASS | cam=- | nfc=N/A
+14. honor/chora/16-BQ2A.250913.001-BP2A.250605.031.A3-20260804 | boot=175.6s | wifi=- | radio=- | bt=PASS | cam=PASS(977,drop=0) | nfc=INIT_FAIL
+15. honor/sun/16-AQ3A.250214.001-20260904 | boot=158.7s | wifi=PASS(150.249.241.56) | radio=- | bt=PASS | cam=- | nfc=INIT_FAIL
+16. infinix/Infinix-X6876/16-UP1A.231005.007-20260423 | boot=118.3s | wifi=- | radio=PASS[link](220.246.176.187) | bt=- | cam=- | nfc=N/A
+17. itel/itel-A6612L/16-BP2A.250605.031.A3-20260823 | boot=76.1s | wifi=- | radio=- | bt=PASS | cam=- | nfc=N/A
+18. meizu/Meizu22/16-AQ3A.250411.001-20260127 | boot=107.0s | wifi=PASS(220.246.176.187) | radio=- | bt=PASS | cam=PASS(865,drop=0) | nfc=ON(29)
+19. motorola/aito/16-W1UCS36H.96-35-8-9-20260801 | boot=102.1s | wifi=- | radio=- | bt=PASS | cam=- | nfc=INIT_FAIL
+20. nothing/Asteroids/15-UKQ1.241011.001-20251013 | boot=85.2s | wifi=- | radio=- | bt=- | cam=- | nfc=INIT_FAIL
+21. nothing/Asteroids/16-UKQ1.250612.001-20260810 | boot=49.2s | wifi=- | radio=- | bt=PASS | cam=- | nfc=INIT_FAIL
+22. nubia/P616F05/14-TP1A.220624.014-20260324 | boot=65.4s | wifi=- | radio=- | bt=PASS | cam=PASS(1514,drop=0) | nfc=N/A
+23. oneplus/CPH2767/16-BP2A.250605.015-20260810 | boot=167.7s | wifi=- | radio=- | bt=PASS | cam=PASS(1169,drop=0) | nfc=INIT_FAIL
+24. oneplus/PJE110/15-TP1A.220905.001-20250926 | boot=102.6s | wifi=- | radio=- | bt=PASS | cam=- | nfc=N/A
+25. oppo/CPH2797/16-BP2A.250605.015-20260529 | boot=180.9s | wifi=- | radio=PASS[auto](220.246.176.187) | bt=PASS | cam=PASS(1019,drop=0) | nfc=N/A
+26. oppo/PME110/17-BP2A.250605.015-20260923 | boot=170.0s | wifi=- | radio=PASS[auto](150.249.241.56) | bt=- | cam=- | nfc=N/A
+27. realme/RMX3823/15-TP1A.220905.001-20250912 | boot=118.6s | wifi=- | radio=- | bt=- | cam=- | nfc=N/A
+28. realme/RMX5112/15-TP1A.220905.001-20251025 | boot=101.3s | wifi=- | radio=- | bt=PASS | cam=- | nfc=N/A
+29. realme/RMX6688/15-AP3A.240617.008-20250825 | boot=116.1s | wifi=PASS(220.246.176.187) | radio=PASS[auto](220.246.176.187) | bt=PASS | cam=PASS(865,drop=0) | nfc=INIT_FAIL
+30. redmagic/NX809J/16-BQ2A.250705.001-BP2A.250605.031.A3-20260527 | boot=122.2s | wifi=- | radio=- | bt=PASS | cam=PASS(913,drop=0) | nfc=N/A
+31. redmi/gold/15-OS3.0.10.0.VNQCNXM | boot=111.4s | wifi=PASS(150.249.241.56) | radio=- | bt=PASS | cam=PASS(1467,drop=0) | nfc=N/A
+32. redmi/gold/15-OS3.0.11.0.VNQCNXM | boot=120.3s | wifi=PASS(150.249.241.56) | radio=- | bt=PASS | cam=PASS(1142,drop=0) | nfc=N/A
+33. samsung/pa3q/16-AP3A.240905.015.A2-20260812 | boot=147.7s | wifi=PASS(220.246.176.187) | radio=PASS[link](220.246.176.187) | bt=PASS | cam=PASS(851,drop=0) | nfc=INIT_FAIL
+34. symphony/G27/14-TP1A.220624.014-20240929 | boot=60.9s | wifi=- | radio=- | bt=PASS | cam=PASS(957,drop=0) | nfc=N/A
+35. symphony/MAX_10/14-TP1A.220624.014-20250212 | boot=57.3s | wifi=- | radio=- | bt=PASS | cam=PASS(1736,drop=0) | nfc=N/A
+36. tcl/asterpro/15-TP1A.220624.014-20251217 | boot=60.9s | wifi=- | radio=- | bt=PASS | cam=- | nfc=N/A
+37. tcl/ericanppro/15-AP3A.240905.015.A2-20250702 | boot=124.9s | wifi=PASS(150.249.241.56) | radio=- | bt=- | cam=PASS(1042,drop=0) | nfc=ON(31)
+38. tcl/vinca/16-AP3A.240905.015.A2-20260512 | boot=107.2s | wifi=PASS(150.249.241.56) | radio=- | bt=PASS | cam=- | nfc=N/A
+39. tecno/TECNO-CM5/16-BP2A.250605.031.A3-20260324 | boot=181.9s | wifi=- | radio=- | bt=- | cam=PASS(800,drop=2) | nfc=N/A
+40. ulefone/GQ5011AF1/15-GQ5011AF1_EEA_V17-20260429 | boot=59.8s | wifi=- | radio=- | bt=- | cam=- | nfc=N/A
+41. ulefone/GQ5011AF1/16-GQ5011AF1_EEA_V13-20260825 | boot=126.3s | wifi=- | radio=- | bt=PASS | cam=- | nfc=N/A
+42. villaon/VILLAON-V671NP/16-TP1A.220624.014-20260713 | boot=45.5s | wifi=- | radio=- | bt=PASS | cam=- | nfc=N/A
+43. vivo/PD2454/15-AP3A.240905.015.A2-20250416 | boot=45.5s | wifi=PASS(150.249.241.56) | radio=PASS[auto](150.249.241.56) | bt=PASS | cam=PASS(816,drop=1) | nfc=N/A
+44. xiaomi/popsicle/16-OS3.0.319.0.WPBCNXM | boot=158.8s | wifi=- | radio=PASS[auto](220.246.176.187) | bt=PASS | cam=PASS(1282,drop=0) | nfc=N/A
+45. xiaomi/popsicle/17-OS4.0.5.0.XPBCN | boot=179.5s | wifi=- | radio=PASS[auto](220.246.176.187) | bt=- | cam=PASS(1394,drop=0) | nfc=N/A

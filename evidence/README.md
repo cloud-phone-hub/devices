@@ -32,7 +32,7 @@
 | `x6876/` | Infinix X6876（`infinix/Infinix-X6876` / MediaTek `mt6878` / GRF vendor=14，system=16，kernel 6.1） | 1 | #273 | [x6876/README.md](x6876/README.md) |
 | `xplore-x1/` | Blackview XPLORE X1（`blackview/XPLORE_X1` / Doke OS 5 / MT6877 / Android 15，lineage-22.2 + kernel 6.6） | 1 | #296 | [xplore-x1/README.md](xplore-x1/README.md) |
 | `g1130/` | BLU G65L（`blu/G1130` / Unisoc UMS9230T / GRF vendor=13，system=14，lineage-20.0 + kernel 5.15） | 1 | #297 | [g1130/README.md](g1130/README.md) |
-| `common/` | 引擎级 / 跨机型（构建流水线、选核、vendor 装配口径、内核与模块机制、运行侧验收工具、选核口径、QEMU 触控与 VNC 推流、设备侧目录迁移、ROM 根迁移、repo manifest 收口、devices 仓库声明、agent 产物根迁移、节点 ROM 根配置修复、消灭 engine 目录与统一 out/devices 产物根） | 130 | #102、#107、#108、#116、#117、#119~#122、#124、#134、#137、#138、#139、#141~#145、#147、#148、#152、#154、#156、#157、#163、#167、#168、#170、#172~#184、#186~#193、#196、#199、#202~#221、#223~#226、#228~#245、#250、#251、#252、#253、#254、#255、#257、#258、#261、#263、#264、#265、#266、#269、#272、#274~#292、#294、#295 | [common/README.md](common/README.md) |
+| `common/` | 引擎级 / 跨机型（构建流水线、选核、vendor 装配口径、内核与模块机制、运行侧验收工具、选核口径、QEMU 触控与 VNC 推流、设备侧目录迁移、ROM 根迁移、repo manifest 收口、devices 仓库声明、agent 产物根迁移、节点 ROM 根配置修复、消灭 engine 目录与统一 out/devices 产物根、Host Radio/Wi-Fi SOCKS5 VPN 与 Camera/Bluetooth/NFC 全栈模拟） | 132 | #102、#107、#108、#116、#117、#119~#122、#124、#134、#137、#138、#139、#141~#145、#147、#148、#152、#154、#156、#157、#163、#167、#168、#170、#172~#184、#186~#193、#196、#199、#202~#221、#223~#226、#228~#245、#250、#251、#252、#253、#254、#255、#257、#258、#261、#263、#264、#265、#266、#269、#272、#274~#292、#294、#295、#298、#299 | [common/README.md](common/README.md) |
 
 **分组判据**：条目 `solution.md` 首部的「设备/机型」行指向哪台机就进哪个目录；同一条改动
 同时落在 3 台以上机型、或结论对所有机型成立的，进 `common/`。`gold` 与 `note13-5G-15` 是

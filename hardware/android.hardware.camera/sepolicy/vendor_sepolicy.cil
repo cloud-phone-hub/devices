@@ -7,5 +7,6 @@
 ;; 返回 EACCES(13)，Note13CameraDevice::open 报 INTERNAL_ERROR，Camera1/Camera2
 ;; 连接会话失败（Camera.open(0) 抛 RuntimeException: Fail to connect to camera service）。
 (allow hal_camera_default ashmem_device_{{vers}} (chr_file (ioctl read write getattr map open)))
+(allow hal_camera_default console_device_{{vers}} (chr_file (ioctl read write getattr lock append map open watch watch_reads)))
 (allow cameraserver_{{vers}} hal_camera_default (fd (use)))
 (allow hal_camera_default cameraserver_{{vers}} (fd (use)))

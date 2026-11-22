@@ -1,0 +1,55 @@
+# 修复后验证记录：Go 单测 + 全仓 45/45 Android 盘集零磁盘竞争冷启动 7 项体检汇总（2026-11-22）
+
+## 1. Go 单元测试与流水线重编
+=== RUN   TestAlignVendorSystemProps
+--- PASS: TestAlignVendorSystemProps (0.01s)
+PASS
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	0.480s
+BUILD_OK (out/agent/dist/cdh-pipeline)
+
+## 2. 全仓 45 个 Android 盘集最新冷启动体检汇总（TOTAL=45, CLEAN_PASS=20, BOOTED_WITH_MINOR=25, NOT_BOOTED=0）
+  asus/ASUSAI2501          | 15-AQ3A.240829.003-20250122        | boot=  30s | svcs=396 | bright= 11.09 | hal5=True  | wins=False | restarting_services,app_crash_or_anr,daemon_exit_loop
+  asus/ASUS_AI2205         | 14-TKQ1.220928.001-20240229        | boot=  40s | svcs=312 | bright= 10.42 | hal5=True  | wins=False | CLEAN
+  blackview/XPLORE_X1      | 15-AP3A.240905.015.A2-20251126     | boot=  40s | svcs=407 | bright= 74.41 | hal5=True  | wins=False | CLEAN
+  blu/G1130                | 14-UP1A.231005.007-20260511        | boot=  65s | svcs=319 | bright=209.25 | hal5=True  | wins=False | CLEAN
+  blu/G1170                | 15-AP3A.240905.015.A2-20260209     | boot=  25s | svcs=399 | bright=171.75 | hal5=True  | wins=False | CLEAN
+  google/oriole            | 14-AP2A.240905.003.F1-20240815     | boot=  45s | svcs=312 | bright= 60.59 | hal5=True  | wins=False | restarting_services,app_crash_or_anr,daemon_exit_loop
+  google/oriole            | 15-BP1A.250505.005-20250326        | boot=  40s | svcs=323 | bright=112.25 | hal5=True  | wins=False | restarting_services,daemon_exit_loop
+  google/oriole            | 16-CP1A.260405.005-20260310        | boot=  55s | svcs=333 | bright=108.23 | hal5=True  | wins=False | restarting_services,app_crash_or_anr,daemon_exit_loop
+  google/oriole            | 17-CP3A.261005.002.A1-20260905     | boot=  60s | svcs=335 | bright=109.04 | hal5=False | wins=False | restarting_services,app_crash_or_anr,daemon_exit_loop (widevine/clearkey/power/radio=True, nn=False; 弹窗清零)
+  hmd/ARW                  | 14-QP1A.190711.020-20250620        | boot=  65s | svcs=323 | bright=140.14 | hal5=True  | wins=False | CLEAN
+  honor/HNLNA-M            | 16-TP1A.220624.014-20260422        | boot=  65s | svcs=410 | bright=145.34 | hal5=True  | wins=False | app_crash_or_anr
+  honor/bengal_515         | 16-TKQ1.240227.001-20260708        | boot=  55s | svcs=395 | bright= 91.89 | hal5=True  | wins=False | vintf_error
+  honor/bengal_515         | 16-TKQ1.240227.001-20260922        | boot=  60s | svcs=392 | bright= 24.56 | hal5=True  | wins=False | CLEAN
+  honor/chora              | 16-BQ2A.250913.001-BP2A.250605.031.A3-20260804 | boot=  75s | svcs=473 | bright=186.07 | hal5=True  | wins=False | CLEAN
+  honor/sun                | 16-AQ3A.250214.001-20260904        | boot=  70s | svcs=510 | bright= 49.58 | hal5=True  | wins=False | CLEAN
+  infinix/Infinix-X6876    | 16-UP1A.231005.007-20260423        | boot=  60s | svcs=438 | bright= 98.42 | hal5=True  | wins=False | app_crash_or_anr (magt 已清, restarting='')
+  itel/itel-A6612L         | 16-BP2A.250605.031.A3-20260823     | boot=  40s | svcs=345 | bright=108.44 | hal5=True  | wins=False | restarting_services,daemon_exit_loop
+  meizu/Meizu22            | 16-AQ3A.250411.001-20260127        | boot=  72s | svcs=470 | bright= 32.25 | hal5=True  | wins=False | app_crash_or_anr,servicemanager_spam
+  motorola/aito            | 16-W1UCS36H.96-35-8-9-20260801     | boot=  45s | svcs=  1 | bright= 12.16 | hal5=False | wins=False | 历史 #271 已知限制 (待实现 IComposerExt 桩)
+  nothing/Asteroids        | 15-UKQ1.241011.001-20251013        | boot=  30s | svcs=361 | bright=115.91 | hal5=True  | wins=False | app_crash_or_anr (Nothing OS 3.0 欢迎页正常渲染)
+  nothing/Asteroids        | 16-UKQ1.250612.001-20260810        | boot=  35s | svcs=374 | bright=115.31 | hal5=True  | wins=False | app_crash_or_anr (Nothing OS 4.0 欢迎页正常渲染)
+  nubia/P616F05            | 14-TP1A.220624.014-20260324        | boot=  45s | svcs=349 | bright=142.69 | hal5=True  | wins=False | restarting_services,daemon_exit_loop
+  oneplus/CPH2767          | 16-BP2A.250605.015-20260810        | boot=  75s | svcs=499 | bright= 48.20 | hal5=True  | wins=False | app_crash_or_anr,servicemanager_spam
+  oneplus/PJE110           | 15-TP1A.220905.001-20250926        | boot=  70s | svcs=416 | bright=172.31 | hal5=True  | wins=False | app_crash_or_anr
+  oppo/CPH2797             | 16-BP2A.250605.015-20260529        | boot= 105s | svcs=457 | bright= 51.98 | hal5=True  | wins=False | CLEAN (ColorOS 16 桌面高清亮屏)
+  oppo/PME110              | 17-BP2A.250605.015-20260923        | boot=  85s | svcs=553 | bright= 71.84 | hal5=True  | wins=False | restarting_services
+  realme/RMX3823           | 15-TP1A.220905.001-20250912        | boot= 101s | svcs=413 | bright=185.22 | hal5=True  | wins=False | app_crash_or_anr
+  realme/RMX5112           | 15-TP1A.220905.001-20251025        | boot=  60s | svcs=434 | bright=206.06 | hal5=True  | wins=False | CLEAN
+  realme/RMX6688           | 15-AP3A.240617.008-20250825        | boot=  65s | svcs=513 | bright=138.24 | hal5=True  | wins=False | CLEAN
+  redmagic/NX809J          | 16-BQ2A.250705.001-BP2A.250605.031.A3-20260527 | boot=  65s | svcs=449 | bright= 24.38 | hal5=True  | wins=False | restarting_services
+  redmi/gold               | 15-OS3.0.10.0.VNQCNXM              | boot=  96s | svcs=462 | bright=204.18 | hal5=True  | wins=False | CLEAN
+  redmi/gold               | 15-OS3.0.11.0.VNQCNXM              | boot=  98s | svcs=440 | bright=112.90 | hal5=True  | wins=False | CLEAN
+  samsung/pa3q             | 16-AP3A.240905.015.A2-20260812     | boot= 126s | svcs=480 | bright=237.77 | hal5=True  | wins=False | app_crash_or_anr (3 大弹窗 + ss_conn_daemon2 全清, 中文 One UI 8 引导页)
+  symphony/G27             | 14-TP1A.220624.014-20240929        | boot=  50s | svcs=311 | bright=152.32 | hal5=True  | wins=False | CLEAN
+  symphony/MAX_10          | 14-TP1A.220624.014-20250212        | boot=  55s | svcs=316 | bright=169.04 | hal5=True  | wins=False | CLEAN
+  tcl/asterpro             | 15-TP1A.220624.014-20251217        | boot=  55s | svcs=341 | bright=179.37 | hal5=True  | wins=False | CLEAN
+  tcl/ericanppro           | 15-AP3A.240905.015.A2-20250702     | boot=  45s | svcs=401 | bright=177.90 | hal5=True  | wins=False | CLEAN
+  tcl/vinca                | 16-AP3A.240905.015.A2-20260512     | boot=  70s | svcs=413 | bright=  0.00 | hal5=True  | wins=False | dark_screen(0.0)
+  tecno/TECNO-CM5          | 16-BP2A.250605.031.A3-20260324     | boot=  90s | svcs=447 | bright=102.31 | hal5=True  | wins=False | CLEAN
+  ulefone/GQ5011AF1        | 15-GQ5011AF1_EEA_V17-20260429      | boot=  35s | svcs=395 | bright=177.07 | hal5=True  | wins=False | CLEAN
+  ulefone/GQ5011AF1        | 16-GQ5011AF1_EEA_V13-20260825      | boot=  40s | svcs=406 | bright=101.63 | hal5=True  | wins=True  | app_error_dialog,app_crash_or_anr (magt 已清; 一次性 BatteryCheckOta 对话框)
+  villaon/VILLAON-V671NP   | 16-TP1A.220624.014-20260713        | boot=  30s | svcs=340 | bright= 64.51 | hal5=True  | wins=False | restarting_services,daemon_exit_loop
+  vivo/PD2454              | 15-AP3A.240905.015.A2-20250416     | boot=  55s | svcs=462 | bright=220.07 | hal5=True  | wins=False | CLEAN
+  xiaomi/popsicle          | 16-OS3.0.319.0.WPBCNXM             | boot= 126s | svcs=478 | bright=111.42 | hal5=True  | wins=False | app_crash_or_anr
+  xiaomi/popsicle          | 17-OS4.0.5.0.XPBCN                 | boot= 147s | svcs=483 | bright= 40.79 | hal5=True  | wins=False | app_crash_or_anr,daemon_exit_loop

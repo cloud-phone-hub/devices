@@ -121,24 +121,19 @@
       "type": "dir"
     },
     {
-      "from": "/odm/etc/build.prop",
-      "to": "/mnt/vendorpatch/odm/etc/build.prop",
+      "from": "/odm",
+      "to": "/odm",
       "type": "file"
     },
     {
-      "from": "/odm/etc/selinux/odm_sepolicy.cil",
-      "to": "/mnt/vendorpatch/odm/etc/selinux/odm_sepolicy.cil",
-      "type": "file"
+      "from": "/odm",
+      "to": "/mnt/vendorpatch/odm",
+      "type": "dir"
     },
     {
       "from": "/system/lib/modules",
       "to": "/mnt/vendorpatch/vendor_dlkm/lib/modules",
       "type": "dir"
-    },
-    {
-      "from": "/odm/etc/selinux/precompiled_sepolicy",
-      "to": "/mnt/vendorpatch/odm/etc/selinux/precompiled_sepolicy",
-      "type": "file"
     },
     {
       "from": "/system/bin/update_verifier",

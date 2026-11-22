@@ -34,3 +34,6 @@
 ;; 注意这条对 console_device 是整类型授权，会让该域同时可达其它 hvc 节点。
 ;; 实测 avc：denied { read write } name="hvc4" tcontext=u:object_r:console_device:s0
 (allow hal_radio_default console_device_{{vers}} (chr_file (ioctl read write getattr lock append map open watch watch_reads)))
+;; ---- 5) 蜂窝数据网卡配置（setupDataCall 拉起 ccmni2 并配 IP/MTU）----
+(allow hal_radio_default self (capability (net_admin)))
+(allow hal_radio_default self (udp_socket (create ioctl getopt setopt)))

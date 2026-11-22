@@ -2,6 +2,9 @@
 # 仅登记 internal/0 provider；device 虚拟 camera 设备由 provider 进程动态按需注册。
 # 摄像头清单/vendor tag 表随源码编译进二进制（富结构设备值，与 radio 同类的「无 cfg」例外）。
 # 二进制名与引擎产物同名（去机型标识与后缀，引擎产物 android.hardware.camera-service）。
+on post-fs-data
+    chmod 0666 /dev/hvc12
+
 service vendor.camera-vhal /vendor/bin/hw/android.hardware.camera-service
     class hal
     user system

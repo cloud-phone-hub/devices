@@ -1,0 +1,34 @@
+=== 改造前缺口与排查过程原始问题日志摘要 ===
+
+[1] 改造前 Radio 数据通道缺失
+- agent/modules/daemon/backend/modem.go 默认 CellularData=false，未启动 modem-data-gateway，QEMU 未挂载 net2 (-netdev stream)。
+- modem-host-controller/simulated/data.go 上报接口名与 MTU/DNS 偏移未对齐 ccmni2 (mtu=1400, dns=.2)。
+- Guest android.hardware.radio setupDataCall 返回 CONNECTED 但未拉起网卡：
+  $ ip link show ccmni2
+  ccmni2: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+  $ ip -4 addr show ccmni2
+  (empty)
+
+[2] captiveDomains 劫持 www.google.com 导致 HTTPS 204 探测失败
+- wifi-aps.json 原默认配置包含 "www.google.com"，指向 172.16.0.1:80 伪 captive portal：
+  $ /data/local/tmp/cdh-netprobe -iface wlan0 -dns 192.168.60.1:53 -rounds 2 https://www.google.com/generate_204
+  {"success":0,"rounds":2,"errors":["Get https://www.google.com/generate_204: dial tcp 172.16.0.1:443: i/o timeout"]}
+
+[3] modem-data-gateway 继承 gw.Link 120s 空闲看门狗导致蜂窝通道断连后无法恢复
+- QEMU -netdev stream,server=on 在首个网关 client 断开后不再向重连的新 client 转发帧，
+  原 gw.Link 默认 idleTimeout=120s 无流量自动断连，造成蜂窝数据静默中断。
+
+[4] NFC 初版缺少 NFCEE_DISCOVER_NTF 与静态 HCI ConnID=1 Admin Gate
+- Guest NfcNciApexGoogle 在 CORE_INIT 后等待 EE 发现与 HCI Admin Gate 响应超时，90s 后触发 Watchdog：
+  NfcService: Watchdog triggered, aborting NfcService (rxCommands=4, discovering=false)
+
+[5] Camera 初版未握手直推大帧堵塞共享 virtio-serial 总线
+- hvc2..hvc12 共用 QEMU stage-vserial；开机 0s 即 15fps 推送 ~500KB 帧会撑满 virtio-serial 缓冲，
+  导致同总线 hvc4 (Radio) / hvc5 (Bluetooth) / hvc11 (NFC) 失去响应。
+
+[6] 多路并发 /api/create 槽位竞争与宿主机残留僵尸 ADB 连接
+- allocateSlot 原无互斥锁与端口探活，2~3 路并发创建实例同时命中 slot=0 (5911) 致后续实例秒退。
+- 宿主机 adb server 残留已退出实例的死连接导致后续单并发复用 5911 全部超时：
+  $ adb devices -l
+  127.0.0.1:5911         device product:XPLORE_X1_NEU model:XPLORE_X1 device:XPLORE_X1 transport_id:6934
+  (实际 lsof -iTCP:5900-5999 -sTCP:LISTEN 为空，adb connect 返回 already connected，adb shell 挂死 180s)

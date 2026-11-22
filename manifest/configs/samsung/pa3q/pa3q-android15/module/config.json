@@ -315,6 +315,21 @@
       "from": "/system/bin/update_verifier",
       "to": "/mnt/vendorpatch/system/bin/update_verifier",
       "type": "file"
+    },
+    {
+      "from": "/system/priv-app/SamsungDeviceHealthManagerService",
+      "to": "/mnt/vendorpatch/system/priv-app/SamsungDeviceHealthManagerService",
+      "type": "dir"
+    },
+    {
+      "from": "/system/priv-app/Fmm",
+      "to": "/mnt/vendorpatch/system/priv-app/Fmm",
+      "type": "dir"
+    },
+    {
+      "from": "/system/bin/ss_conn_daemon2",
+      "to": "/mnt/vendorpatch/system/bin/ss_conn_daemon2",
+      "type": "file"
     }
   ],
   "thermal": {

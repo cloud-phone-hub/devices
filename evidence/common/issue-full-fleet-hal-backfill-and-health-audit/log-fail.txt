@@ -1,0 +1,43 @@
+# 修复前关键故障取证摘录（2026-11-21 ~ 2026-11-22）
+
+## 1. nothing/Asteroids (15 & 16): HIDL composer@2.4 拒绝厂商扩展命令停在 fbcon
+hwc-composer: too little data read
+hwc-composer: failed to parse command 0x8000000, length 1
+SurfaceFlinger: presentOrValidate failed: BadParameter (4)
+
+## 2. google/oriole (17): lineage-24.0 预发布 system-sdk Baklava 触发系统内部错误弹窗
+$ /system/bin/vintf
+error=1: Device compatibility matrix requires system-sdk Baklava, not found in framework manifest [29..37]
+Window: Android System - There's an internal problem with your device. Contact your manufacturer for details.
+
+## 3. google/oriole (16): cdh_nn_placeholders.txt 与 APEX 冲突致 boot_timeout
+servicemanager: Cannot add VINTF manifest fragment ... vendor.google.wifi_ext.IWifiExt/default
+servicemanager: NULL VINTF MANIFEST!: device
+RESULT: ISSUES: boot_timeout | boot=273s
+
+## 4. samsung/pa3q (16): LE Audio SIGABRT + sdhms/fmm 弹窗 + ss_conn_daemon2 循环退出
+Abort message: 'system/bta/le_audio/client.cc:8904 Initialize: LE Audio Client requires Bluetooth Audio HAL V2.1 at least. Either disable LE Audio Profile, or update your HAL'
+[bluetooth.profile.bap.broadcast.assist.enabled]: [true]
+[bluetooth.profile.bap.broadcast.source.enabled]: [true]
+[bluetooth.profile.bap.unicast.client.enabled]: [true]
+[bluetooth.profile.ccp.server.enabled]: [true]
+[bluetooth.profile.csip.set_coordinator.enabled]: [true]
+[bluetooth.profile.hap.client.enabled]: [true]
+[bluetooth.profile.mcp.server.enabled]: [true]
+[bluetooth.profile.vcp.controller.enabled]: [true]
+package:/system/priv-app/SamsungDeviceHealthManagerService/SamsungDeviceHealthManagerService.apk
+package:/system/priv-app/Fmm/Fmm.apk
+/system/bin/ss_conn_daemon2 (restarting loop)
+
+## 5. oppo/CPH2797 (16): 空壳 HAL + 直通官方 /odm 阻塞 User 0 解锁致 boot_timeout
+RESULT: ISSUES: boot_timeout | boot=273s
+ACTIVITY MANAGER USERS (dumpsys activity users):
+  mStartedUsers:
+    User #0: state=BOOTING
+  mAllowUserUnlocking:false
+  mLastUserUnlockingUptime: 0
+[service.bootanim.exit]: [0]
+[sys.oplus.boot_completed]: [0]
+mCurrentFocus=Window{2d70387 u0 com.android.settings/com.android.settings.FallbackHome}
+01-01 13:01:24.959  4462  4583 E OplusLockPatternUtils: Failure to cryptoEngCommand
+01-01 13:01:24.959  4462  4583 E crypto-android-sdk: AttestationUtil:isSupportAttestation error: r1.e: Unable to get data from cryptoeng

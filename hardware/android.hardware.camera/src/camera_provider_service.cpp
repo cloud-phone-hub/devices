@@ -61,8 +61,11 @@ binder_status_t AServiceManager_addService(AIBinder *binder,
 #include <mutex>
 #include <string>
 #include <time.h>
+#include <unordered_map>
 #include <utility>
 #include <vector>
+
+#include "host_video_frame.h"
 
 using aidl::android::hardware::camera::common::CameraDeviceStatus;
 using aidl::android::hardware::camera::common::CameraMetadataType;
@@ -1542,9 +1545,16 @@ public:
                       std::shared_ptr<ICameraDeviceCallback> callback)
       : target_(target), callback_(std::move(callback)),
         requestMetadataQueueFd_(createMetadataQueueFd("cdh-camera-request-fmq")),
-        resultMetadataQueueFd_(createMetadataQueueFd("cdh-camera-result-fmq")) {}
+        resultMetadataQueueFd_(createMetadataQueueFd("cdh-camera-result-fmq")) {
+    cdh_camera::HostVideoReceiver::Instance().ensureStarted();
+  }
 
   ~Note13CameraSession() override {
+    {
+      std::lock_guard<std::mutex> lk(streamMu_);
+      bufferCache_.clear();
+      streams_.clear();
+    }
     if (requestMetadataQueueFd_ >= 0) {
       ::close(requestMetadataQueueFd_);
     }
@@ -1557,11 +1567,16 @@ public:
     return requestMetadataQueueFd_ >= 0 && resultMetadataQueueFd_ >= 0;
   }
 
-  ScopedAStatus close() override { return ScopedAStatus::ok(); }
+  ScopedAStatus close() override {
+    std::lock_guard<std::mutex> lk(streamMu_);
+    bufferCache_.clear();
+    streams_.clear();
+    return ScopedAStatus::ok();
+  }
 
   ScopedAStatus configureStreams(const StreamConfiguration &requested,
                                  std::vector<HalStream> *out) override {
-    *out = makeHalStreams(requested);
+    *out = configureStreamsLocked(requested);
     return ScopedAStatus::ok();
   }
 
@@ -1598,12 +1613,29 @@ public:
   }
 
   ScopedAStatus processCaptureRequest(const std::vector<CaptureRequest> &requests,
-                                      const std::vector<BufferCache> &,
+                                      const std::vector<BufferCache> &cachesToRemove,
                                       int32_t *out) override {
     if (callback_ == nullptr) {
       *out = 0;
       return cameraError(Status::INTERNAL_ERROR);
     }
+    {
+      std::lock_guard<std::mutex> lk(streamMu_);
+      for (const auto &rm : cachesToRemove) {
+        bufferCache_.erase(cacheKey(rm.streamId, rm.bufferId));
+      }
+    }
+    // 适度节流（~30fps），避免 repeating preview request 占满 CPU。
+    const int64_t now = nowNs();
+    if (lastCaptureNs_ > 0 && now - lastCaptureNs_ < 30000000LL) {
+      const int64_t waitUs = (30000000LL - (now - lastCaptureNs_)) / 1000LL;
+      if (waitUs > 0 && waitUs <= 30000) {
+        ::usleep(static_cast<useconds_t>(waitUs));
+      }
+    }
+    lastCaptureNs_ = nowNs();
+
+    auto hostFrame = cdh_camera::HostVideoReceiver::Instance().latest();
     std::vector<NotifyMsg> notifications;
     std::vector<CaptureResult> results;
     notifications.reserve(requests.size());
@@ -1631,6 +1663,35 @@ public:
         returned.streamId = buffer.streamId;
         returned.bufferId = buffer.bufferId;
         returned.status = BufferStatus::OK;
+
+        // 将宿主实时视频帧（或兜底测试图）渲染到对应的 AHardwareBuffer
+        cdh_camera::StreamMeta sm;
+        AHardwareBuffer *hwBuf = nullptr;
+        bool hasMeta = false;
+        {
+          std::lock_guard<std::mutex> lk(streamMu_);
+          auto sit = streams_.find(buffer.streamId);
+          if (sit != streams_.end()) {
+            sm = sit->second;
+            hasMeta = true;
+            const uint64_t key = cacheKey(buffer.streamId, buffer.bufferId);
+            if (!buffer.buffer.fds.empty()) {
+              auto imported = cdh_camera::importBuffer(sm, buffer.buffer);
+              if (imported) {
+                bufferCache_[key] = std::move(imported);
+              }
+            }
+            auto bit = bufferCache_.find(key);
+            if (bit != bufferCache_.end()) {
+              hwBuf = bit->second.get();
+            }
+          }
+        }
+        if (hasMeta && hwBuf != nullptr) {
+          cdh_camera::renderFrameToBuffer(
+              sm, hwBuf, buffer.acquireFence, hostFrame,
+              static_cast<uint32_t>(request.frameNumber));
+        }
       }
       result.inputBuffer.streamId = -1;
       result.inputBuffer.bufferId = 0;
@@ -1675,24 +1736,48 @@ public:
 #if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   ScopedAStatus configureStreamsV2(const StreamConfiguration &requested,
                                    ConfigureStreamsRet *out) override {
-    out->halStreams = makeHalStreams(requested);
+    out->halStreams = configureStreamsLocked(requested);
     return ScopedAStatus::ok();
   }
 #endif
 
 private:
-  static std::vector<HalStream>
-  makeHalStreams(const StreamConfiguration &requested) {
+  static uint64_t cacheKey(int32_t streamId, int64_t bufferId) {
+    return (static_cast<uint64_t>(static_cast<uint32_t>(streamId)) << 32) |
+           static_cast<uint32_t>(bufferId);
+  }
+
+  std::vector<HalStream>
+  configureStreamsLocked(const StreamConfiguration &requested) {
+    std::lock_guard<std::mutex> lk(streamMu_);
+    streams_.clear();
+    bufferCache_.clear();
     std::vector<HalStream> halStreams;
     halStreams.reserve(requested.streams.size());
     for (const auto &stream : requested.streams) {
+      const int32_t reqFmt = static_cast<int32_t>(stream.format);
+      const int32_t ovFmt = cdh_camera::selectOverrideFormat(reqFmt);
+      cdh_camera::StreamMeta meta;
+      meta.id = stream.id;
+      meta.width = stream.width;
+      meta.height = stream.height;
+      meta.reqFormat = reqFmt;
+      meta.overrideFormat = ovFmt;
+      meta.bufferSize = stream.bufferSize;
+      meta.usage = static_cast<uint64_t>(stream.usage);
+      streams_[stream.id] = meta;
+
       HalStream hal;
       hal.id = stream.id;
-      hal.overrideFormat = stream.format;
-      hal.producerUsage = BufferUsage(0);
+      hal.overrideFormat = static_cast<PixelFormat>(ovFmt);
+      hal.producerUsage =
+          static_cast<BufferUsage>(AHARDWAREBUFFER_USAGE_CPU_WRITE_OFTEN);
       hal.consumerUsage = BufferUsage(0);
       hal.maxBuffers = 2;
-      hal.overrideDataSpace = stream.dataSpace;
+      hal.overrideDataSpace =
+          (reqFmt == cdh_camera::kFmtImplDefined)
+              ? Dataspace::SRGB
+              : stream.dataSpace;
       hal.physicalCameraId = stream.physicalCameraId;
       hal.supportOffline = false;
 #if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
@@ -1707,6 +1792,10 @@ private:
   std::shared_ptr<ICameraDeviceCallback> callback_;
   int requestMetadataQueueFd_ = -1;
   int resultMetadataQueueFd_ = -1;
+  std::mutex streamMu_;
+  std::unordered_map<int32_t, cdh_camera::StreamMeta> streams_;
+  std::unordered_map<uint64_t, cdh_camera::HwBufPtr> bufferCache_;
+  int64_t lastCaptureNs_ = 0;
 };
 
 class Note13CameraDevice : public BnCameraDevice {
@@ -1953,6 +2042,7 @@ int main() {
   }
   __android_log_print(ANDROID_LOG_INFO, kLogTag, "registered %s",
                       kProviderServiceName);
+  cdh_camera::HostVideoReceiver::Instance().ensureStarted();
   ABinderProcess_joinThreadPool();
   return 0;
 }

@@ -15,8 +15,16 @@
 #include <aidl/android/hardware/radio/data/SetupDataCallResult.h>
 #include <aidl/android/hardware/radio/data/SlicingConfig.h>
 
+#include <arpa/inet.h>
+#include <net/if.h>
+#include <netinet/in.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
 #include <atomic>
 #include <cstdint>
+#include <cstring>
 #include <limits>
 #include <memory>
 #include <optional>
@@ -28,6 +36,82 @@ namespace cdh::radio {
 namespace {
 
 namespace data = ::aidl::android::hardware::radio::data;
+
+// ConfigureCellularInterface 在 setupDataCall 成功后按宿主下发的网口名/IPv4/MTU
+// 将物理承载网卡（如 ccmni2）拉 UP 并配好地址与掩码，确保 netd 路由生效后可立即收发数据。
+void ConfigureCellularInterface(const DataCall &call) {
+  if (call.interface_name.empty() || call.addresses.empty()) {
+    return;
+  }
+  const int sock = ::socket(AF_INET, SOCK_DGRAM | SOCK_CLOEXEC, 0);
+  if (sock < 0) {
+    return;
+  }
+  struct ifreq ifr {};
+  std::strncpy(ifr.ifr_name, call.interface_name.c_str(), IFNAMSIZ - 1);
+
+  // 解析首个 IPv4 地址（如 "100.64.155.15/24"）
+  for (const std::string &cidr : call.addresses) {
+    const auto slash = cidr.find('/');
+    const std::string ip_str =
+        slash == std::string::npos ? cidr : cidr.substr(0, slash);
+    int prefix = 24;
+    if (slash != std::string::npos) {
+      const int parsed = std::atoi(cidr.c_str() + slash + 1);
+      if (parsed >= 1 && parsed <= 32) {
+        prefix = parsed;
+      }
+    }
+    struct in_addr addr {};
+    if (::inet_pton(AF_INET, ip_str.c_str(), &addr) != 1) {
+      continue;
+    }
+    auto *sin = reinterpret_cast<struct sockaddr_in *>(&ifr.ifr_addr);
+    std::memset(sin, 0, sizeof(*sin));
+    sin->sin_family = AF_INET;
+    sin->sin_addr = addr;
+    ::ioctl(sock, SIOCSIFADDR, &ifr);
+
+    const uint32_t mask_host = prefix == 0 ? 0U : (~0U << (32 - prefix));
+    std::memset(sin, 0, sizeof(*sin));
+    sin->sin_family = AF_INET;
+    sin->sin_addr.s_addr = htonl(mask_host);
+    ::ioctl(sock, SIOCSIFNETMASK, &ifr);
+    break;
+  }
+
+  if (call.mtu > 0) {
+    std::memset(&ifr, 0, sizeof(ifr));
+    std::strncpy(ifr.ifr_name, call.interface_name.c_str(), IFNAMSIZ - 1);
+    ifr.ifr_mtu = call.mtu;
+    ::ioctl(sock, SIOCSIFMTU, &ifr);
+  }
+
+  std::memset(&ifr, 0, sizeof(ifr));
+  std::strncpy(ifr.ifr_name, call.interface_name.c_str(), IFNAMSIZ - 1);
+  if (::ioctl(sock, SIOCGIFFLAGS, &ifr) == 0) {
+    ifr.ifr_flags |= (IFF_UP | IFF_RUNNING);
+    ::ioctl(sock, SIOCSIFFLAGS, &ifr);
+  }
+  ::close(sock);
+}
+
+void BringDownCellularInterface(const std::string &ifname) {
+  if (ifname.empty()) {
+    return;
+  }
+  const int sock = ::socket(AF_INET, SOCK_DGRAM | SOCK_CLOEXEC, 0);
+  if (sock < 0) {
+    return;
+  }
+  struct ifreq ifr {};
+  std::strncpy(ifr.ifr_name, ifname.c_str(), IFNAMSIZ - 1);
+  if (::ioctl(sock, SIOCGIFFLAGS, &ifr) == 0) {
+    ifr.ifr_flags &= ~IFF_UP;
+    ::ioctl(sock, SIOCSIFFLAGS, &ifr);
+  }
+  ::close(sock);
+}
 
 data::PdpProtocolType ToPdpProtocol(const std::string &protocol) {
   if (protocol == "IP")
@@ -125,6 +209,10 @@ public:
     command.kind = CommandKind::kDeactivateDataCall;
     command.data_call.id = cid;
     const CommandResult result = Execute(std::move(command));
+    const auto snapshot = SnapshotState();
+    if (!snapshot.has_value() || snapshot->data_calls.empty()) {
+      BringDownCellularInterface("ccmni2");
+    }
     return RespondSimple(callbacks_.ResponseCallback(), serial,
                          ToRadioError(result.status),
                          &data::IRadioDataResponse::deactivateDataCallResponse);
@@ -241,6 +329,7 @@ public:
     }
     data::SetupDataCallResult data_call;
     if (result.data_call.has_value()) {
+      ConfigureCellularInterface(*result.data_call);
       data_call = ToDataCall(*result.data_call, pdu_session_id);
       data_call.type = ToPdpProtocol(data::toString(profile.protocol));
     }

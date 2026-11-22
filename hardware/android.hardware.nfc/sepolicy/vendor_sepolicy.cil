@@ -1,0 +1,2 @@
+;; cdh：NFC AIDL HAL 经 /dev/hvc11（console_device）与宿主侧虚拟 NCI 2.0 NFCC 通信。
+(allow hal_nfc_default console_device_{{vers}} (chr_file (ioctl read write getattr lock append map open watch watch_reads)))
