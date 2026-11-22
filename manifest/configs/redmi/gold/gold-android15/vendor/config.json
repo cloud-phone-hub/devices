@@ -2,6 +2,7 @@
   "build-prop-sets": {
     "dalvik.vm.background-dex2oat-threads": "4",
     "debug.sf.vsync_reactor_ignore_present_fences": "true",
+    "gsm.version.baseband": "MOLY.NR15.R3.MP.V120.3.P82",
     "persist.system.powerhal.applist_enable": "0",
     "ro.frp.pst": "/dev/block/by-name/frp",
     "ro.hardware.egl": "meow",

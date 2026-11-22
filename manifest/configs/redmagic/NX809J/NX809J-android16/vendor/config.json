@@ -1,5 +1,6 @@
 {
   "build-prop-sets": {
+    "gsm.version.baseband": "MPSS.DE.9.0-01805.10-KAANAPALI_GEN_PACK-2.124266.70",
     "persist.radio.multisim.config": "dsda",
     "ro.bionic.2nd_arch": "",
     "ro.bionic.2nd_cpu_variant": "",

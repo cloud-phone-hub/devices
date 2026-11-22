@@ -1,5 +1,6 @@
 {
   "build-prop-sets": {
+    "gsm.version.baseband": "MOLY.NR17.R2.MP2.TC16.PR3.SP.V2.P77",
     "persist.radio.multisim.config": "dsds",
     "ro.bionic.2nd_arch": "",
     "ro.bionic.2nd_cpu_variant": "",

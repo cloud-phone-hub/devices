@@ -1,5 +1,6 @@
 {
   "build-prop-sets": {
+    "gsm.version.baseband": "MPSS.DE.9.0-02004.5-KAANAPALI_GEN_PACK-1",
     "persist.radio.multisim.config": "dsds",
     "ro.hardware.egl": "mesa",
     "ro.hardware.vulkan": "adreno",

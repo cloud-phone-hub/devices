@@ -1,5 +1,6 @@
 {
   "build-prop-sets": {
+    "gsm.version.baseband": "MOLY.NR16.R2.MP3.MP.V75.P4",
     "persist.radio.multisim.config": "dsds",
     "persist.system.powerhal.applist_enable": "0",
     "ro.bionic.2nd_arch": "",
@@ -34,11 +35,11 @@
     "ro.vendor.drm.widevine.oem_crypto_api_version": "18",
     "ro.vendor.drm.widevine.security_level": "L3",
     "ro.vendor.drm.widevine.system_id": "33775",
+    "ro.vendor.magt.mtk_magt_support": "0",
     "ro.vendor.product.cpu.abilist": "arm64-v8a",
     "ro.vendor.product.cpu.abilist32": "",
     "ro.vendor.product.cpu.abilist64": "arm64-v8a",
-    "ro.zygote": "zygote64",
-    "ro.vendor.magt.mtk_magt_support": "0"
+    "ro.zygote": "zygote64"
   },
   "build-prop-unsets": [
     "ro.frp.pst",

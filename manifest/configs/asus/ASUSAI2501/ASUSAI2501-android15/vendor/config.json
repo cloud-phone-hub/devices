@@ -9,6 +9,7 @@
     "bluetooth.profile.hap.client.enabled": "false",
     "bluetooth.profile.mcp.server.enabled": "false",
     "bluetooth.profile.vcp.controller.enabled": "false",
+    "gsm.version.baseband": "MPSS.DE.7.0-02099.3-PAKALA_GEN_PACK-1.89941.2.94413.2",
     "persist.bluetooth.leaudio_offload.disabled": "true",
     "persist.radio.multisim.config": "dsds",
     "ro.bluetooth.leaudio_offload.supported": "false",

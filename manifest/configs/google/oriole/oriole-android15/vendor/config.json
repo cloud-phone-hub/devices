@@ -1,5 +1,6 @@
 {
   "build-prop-sets": {
+    "gsm.version.baseband": "g5123b-145971-250103-B-12866815",
     "ro.bionic.2nd_arch": "",
     "ro.bionic.2nd_cpu_variant": "",
     "ro.board.platform": "gs101",

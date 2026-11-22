@@ -1,5 +1,6 @@
 {
   "build-prop-sets": {
+    "gsm.version.baseband": "MOLY.NR17.R1.MP5.RC.MP.V51.2.P10",
     "persist.radio.multisim.config": "dsds",
     "ro.bionic.2nd_arch": "",
     "ro.bionic.2nd_cpu_variant": "",
@@ -54,6 +55,7 @@
     "ro.vendor.drm.widevine.security_level": "L3",
     "ro.vendor.drm.widevine.system_id": "21897",
     "ro.vendor.drm.widevine.version": "18.0.0",
+    "ro.vendor.magt.mtk_magt_support": "0",
     "ro.vendor.product.cpu.abilist": "arm64-v8a",
     "ro.vendor.product.cpu.abilist32": "",
     "ro.vendor.product.cpu.abilist64": "arm64-v8a",
@@ -67,8 +69,7 @@
     "ro.vendor.soc.model.part_name": "MT6878V/ZA",
     "ro.vendor.soc.model_ready": "1",
     "ro.vendor.tran.rpmb.support": "0",
-    "ro.zygote": "zygote64",
-    "ro.vendor.magt.mtk_magt_support": "0"
+    "ro.zygote": "zygote64"
   },
   "build-prop-unsets": [
     "ro.frp.pst",

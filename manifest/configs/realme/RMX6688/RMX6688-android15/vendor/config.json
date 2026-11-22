@@ -10,6 +10,7 @@
     "bluetooth.profile.mcp.server.enabled": "false",
     "bluetooth.profile.vcp.controller.enabled": "false",
     "debug.sf.vsync_reactor_ignore_present_fences": "true",
+    "gsm.version.baseband": "MOLY.NR17.R2.MP1.TC16.PR2.SP.V1.P41",
     "persist.bluetooth.a2dp_offload.disabled": "true",
     "persist.bluetooth.leaudio_offload.disabled": "true",
     "persist.radio.multisim.config": "dsds",

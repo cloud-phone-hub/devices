@@ -1,6 +1,7 @@
 {
   "build-prop-sets": {
     "drm.service.enabled": "false",
+    "gsm.version.baseband": "MPSS.DE.3.0-02351-KAILUA_GEN_PACK-1.49324.6.53273.2",
     "persist.radio.multisim.config": "dsds",
     "ro.bionic.2nd_arch": "",
     "ro.bionic.2nd_cpu_variant": "",

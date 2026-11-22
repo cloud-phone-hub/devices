@@ -1,5 +1,6 @@
 {
   "build-prop-sets": {
+    "gsm.version.baseband": "MOLY.LR12A.R3.MP.V390.P15",
     "ro.bionic.2nd_arch": "",
     "ro.bionic.2nd_cpu_variant": "",
     "ro.hardware.egl": "mesa",

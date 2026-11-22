@@ -10,6 +10,7 @@
     "bluetooth.profile.mcp.server.enabled": "false",
     "bluetooth.profile.vcp.controller.enabled": "false",
     "debug.hwui.renderer": "skiagl",
+    "gsm.version.baseband": "S9380ZCSDCZH1",
     "persist.bluetooth.leaudio_offload.disabled": "true",
     "ro.bluetooth.leaudio_offload.supported": "false",
     "ro.csc.country_code": "China",

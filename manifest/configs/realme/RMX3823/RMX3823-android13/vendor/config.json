@@ -1,5 +1,6 @@
 {
   "build-prop-sets": {
+    "gsm.version.baseband": "MPSS.DE.3.0-02177.2-KAILUA_GEN_PACK-2.18776.259",
     "persist.radio.multisim.config": "dsds",
     "ro.hardware.egl": "mesa",
     "ro.hardware.vulkan": "adreno",

@@ -3,6 +3,7 @@
     "bluetooth.device.default_name": "BLU G75",
     "debug.sf.vsync_reactor_ignore_present_fences": "true",
     "drm.service.enabled": "true",
+    "gsm.version.baseband": "MOLY.LR12A.R3.MP.V371.3.P3",
     "persist.radio.multisim.config": "dsds",
     "persist.system.powerhal.applist_enable": "0",
     "persist.vendor.em.dy.debug": "1",

@@ -1,6 +1,7 @@
 {
   "build-prop-sets": {
     "dalvik.vm.dex2oat64.enabled": "true",
+    "gsm.version.baseband": "F252_V0_8791_NLWCG_V0.1.3_S251113",
     "persist.radio.multisim.config": "dsds",
     "ro.hardware.egl": "mesa",
     "ro.hardware.hwcomposer": "mtk_common",
