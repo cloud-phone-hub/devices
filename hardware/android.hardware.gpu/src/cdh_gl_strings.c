@@ -33,6 +33,70 @@
 #include "cdh_gl_shader_patch.h"
 #include "cdh_gpu_cfg.h"
 
+#ifdef CDH_HAS_EGLCREATECONTEXT
+void *cdh_ovr_eglCreateContext __attribute__((visibility("hidden")));
+typedef void *(*cdh_eglCreateContext_t)(void *, void *, void *, const int *);
+
+#define CDH_EGL_NONE 0x3038
+#define CDH_EGL_CONTEXT_MAJOR_VERSION 0x3098
+#define CDH_EGL_CONTEXT_MINOR_VERSION 0x30FB
+#define CDH_EGL_CONTEXT_FLAGS_KHR 0x30FC
+#define CDH_EGL_CONTEXT_OPENGL_ROBUST_ACCESS_EXT 0x30BF
+#define CDH_EGL_CONTEXT_PRIORITY_LEVEL_IMG 0x3100
+#define CDH_EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY_EXT 0x3138
+#define CDH_EGL_PROTECTED_CONTENT_EXT 0x32C0
+
+__attribute__((visibility("default")))
+void *eglCreateContext(void *dpy, void *config, void *share_context,
+                       const int *attrib_list) {
+    if (!cdh_ovr_eglCreateContext) {
+        return NULL;
+    }
+    cdh_eglCreateContext_t orig = (cdh_eglCreateContext_t)cdh_ovr_eglCreateContext;
+    void *ctx = orig(dpy, config, share_context, attrib_list);
+    if (ctx != NULL || attrib_list == NULL) {
+        return ctx;
+    }
+    // 宿主 Apple GL 4.1 / VirGL 封顶支持 GLES 3.0：当调用方请求 GLES 3.1/3.2
+    // （如 GoogleCamera fast_moments_hdr）或携带 VirGL 不支持的扩展属性导致
+    // EGL_BAD_MATCH 时，降级 minor version -> 0 并剔除扩展属性后重试。
+    int sanitized[64];
+    int out_idx = 0;
+    int major = 0;
+    for (int i = 0; i < 60 && attrib_list[i] != CDH_EGL_NONE; i += 2) {
+        int key = attrib_list[i];
+        int val = attrib_list[i + 1];
+        if (key == CDH_EGL_CONTEXT_MAJOR_VERSION) {
+            major = val;
+        }
+        if (key == CDH_EGL_CONTEXT_PRIORITY_LEVEL_IMG ||
+            key == CDH_EGL_PROTECTED_CONTENT_EXT ||
+            key == CDH_EGL_CONTEXT_OPENGL_ROBUST_ACCESS_EXT ||
+            key == CDH_EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY_EXT ||
+            key == CDH_EGL_CONTEXT_FLAGS_KHR) {
+            continue;
+        }
+        if (key == CDH_EGL_CONTEXT_MINOR_VERSION && val > 0) {
+            val = 0;
+        }
+        if (out_idx + 3 < 64) {
+            sanitized[out_idx++] = key;
+            sanitized[out_idx++] = val;
+        }
+    }
+    sanitized[out_idx] = CDH_EGL_NONE;
+    ctx = orig(dpy, config, share_context, sanitized);
+    if (ctx != NULL) {
+        return ctx;
+    }
+    if (major >= 3) {
+        const int fallback_es3[] = {CDH_EGL_CONTEXT_MAJOR_VERSION, 3, CDH_EGL_NONE};
+        ctx = orig(dpy, config, share_context, fallback_es3);
+    }
+    return ctx;
+}
+#endif
+
 #ifdef CDH_HAS_EGLGETPROCADDRESS
 void *cdh_ovr_eglGetProcAddress __attribute__((visibility("hidden")));
 typedef void *(*cdh_eglGetProcAddress_t)(const char *);
@@ -61,6 +125,11 @@ void *eglGetProcAddress(const char *procname) {
                 return fn;
             }
         }
+#ifdef CDH_HAS_EGLCREATECONTEXT
+        if (strcmp(procname, "eglCreateContext") == 0) {
+            return (void *)&eglCreateContext;
+        }
+#endif
         if (strcmp(procname, "eglGetProcAddress") == 0) {
             return (void *)&eglGetProcAddress;
         }

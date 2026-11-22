@@ -1,0 +1,52 @@
+=== 1. 全 6 棵内核树 git apply --check ===
+=== git apply --check 5.10 === OK 5.10
+=== git apply --check 5.15 === OK 5.15
+=== git apply --check 6.1 ===  OK 6.1
+=== git apply --check 6.6 ===  OK 6.6
+=== git apply --check 6.12 === OK 6.12
+=== git apply --check 6.18 === OK 6.18
+
+=== 2. oriole Android 17 (17-CP3A.261005.002.A1-20260905) 全链构建产物核对 ===
+- 03_build_kernel: 配方 6.1-cdh-271dd5a8161d，release 6.1.138-4k-cdh
+- 10_build_vendor_dlkm:
+  注入模块: mac80211_hwsim.ko（name=mac80211_hwsim，vermagic=6.1.138-4k-cdh SMP preempt mod_unload modversions aarch64，161872 B）
+  [ok] 回读复核: /lib/modules 已无 .ko
+- 13_pack_vda:
+  device.json: "baseband-version": "g5123b-145971-260721-B-15910359"
+  patch.img: 448.0 MiB (sha256 26b904870ff7)
+
+=== 3. oriole Android 17 #5 上机验收 ===
+backend-pids:
+ALIVE 30273 secure_env
+ALIVE 30280 wifi-host-service
+ALIVE 30281 modem-data-gateway
+ALIVE 30282 netsimd
+ALIVE 30283 media-decoder
+ALIVE 30288 media-encoder
+ALIVE 30290 vhost-modem-controller
+
+$ adb -s 127.0.0.1:5911 shell 'getprop sys.boot_completed; getprop gsm.version.baseband; ip -br addr show wlan0; cmd wifi status'
+1
+g5123b-145971-260721-B-15910359
+wlan0            UP             192.168.60.100/24 fe80::68d3:9ff:fe31:13eb/64
+Wifi is enabled
+Wifi scanning is only available when wifi is enabled
+==== Primary ClientModeManager instance ====
+Wifi is connected to "TP-LINK_2464"
+WifiInfo: SSID: "TP-LINK_2464", BSSID: 74:39:89:0b:24:63, IP: /192.168.60.100, Security type: 0, Supplicant state: COMPLETED, RSSI: -33, Link speed: 54Mbps, Frequency: 5180MHz, score: 100, isUsable: true
+successfulTxPackets: 861
+successfulRxPackets: 2347
+
+host wifi-host-service.log:
+2026/11/22 16:04:31 [tx] #3200 74:39:89:0b:24:01 -> 6a:d3:09:31:13:eb type=0x0800 len=1292
+
+=== 4. Settings「Internet」(WIFI_SETTINGS) 冷启动耗时验收 ===
+$ adb -s 127.0.0.1:5911 shell 'am force-stop com.android.settings && am start -W -a android.settings.WIFI_SETTINGS'
+Status: ok
+LaunchState: COLD
+Activity: com.android.settings/.Settings$WifiSettingsActivity
+TotalTime: 865
+WaitTime: 869
+11-22 16:05:13.337 12839 12839 I wm_on_create_called: [85343033,com.android.settings.Settings$WifiSettingsActivity,performCreate,368]
+11-22 16:05:13.351 12839 12839 I wm_on_resume_called: [85343033,com.android.settings.Settings$WifiSettingsActivity,RESUME_ACTIVITY,1]
+WifiThreadRunner / IRadioData / KeyMint 超时：0 条

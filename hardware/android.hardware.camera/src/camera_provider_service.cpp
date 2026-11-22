@@ -30,6 +30,7 @@ binder_status_t AServiceManager_addService(AIBinder *binder,
 #include <aidl/android/hardware/camera/device/ICameraInjectionSession.h>
 #include <aidl/android/hardware/camera/device/ICameraOfflineSession.h>
 #include <aidl/android/hardware/camera/device/NotifyMsg.h>
+#include <aidl/android/hardware/camera/device/PhysicalCameraMetadata.h>
 #include <aidl/android/hardware/camera/device/RequestTemplate.h>
 #include <aidl/android/hardware/camera/device/ShutterMsg.h>
 #include <aidl/android/hardware/camera/device/StreamConfiguration.h>
@@ -52,6 +53,7 @@ binder_status_t AServiceManager_addService(AIBinder *binder,
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/syscall.h>
+#include <sys/system_properties.h>
 #include <unistd.h>
 
 #include <algorithm>
@@ -62,6 +64,7 @@ binder_status_t AServiceManager_addService(AIBinder *binder,
 #include <string>
 #include <time.h>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -92,6 +95,7 @@ using aidl::android::hardware::camera::device::ICameraDeviceSession;
 using aidl::android::hardware::camera::device::ICameraInjectionSession;
 using aidl::android::hardware::camera::device::ICameraOfflineSession;
 using aidl::android::hardware::camera::device::NotifyMsg;
+using aidl::android::hardware::camera::device::PhysicalCameraMetadata;
 using aidl::android::hardware::camera::device::RequestTemplate;
 using aidl::android::hardware::camera::device::ShutterMsg;
 using aidl::android::hardware::camera::device::StreamBufferRet;
@@ -118,6 +122,7 @@ static constexpr const char *kLogTag = "cdh_note13_camera_provider";
 static constexpr size_t kMetadataMsgQueueSize = 1 << 18;
 static constexpr int32_t kSynchronizedReadWriteFmqFlag = 0x01;
 static constexpr size_t kRingBufferPositionSize = sizeof(uint64_t);
+static constexpr int32_t kPartialResultCount = 10;
 #include "camera_vendor_tags.inc"
 #if defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
 static constexpr uint32_t kOplusSupportedCameraIdTypeTag = 0x81170003;
@@ -260,7 +265,9 @@ static constexpr int32_t kOutputStream = 0;
 static constexpr int32_t kBlob = 0x21;
 static constexpr int32_t kImplementationDefined = 0x22;
 static constexpr int32_t kYCbCr420888 = 0x23;
-static constexpr int32_t kRawSensor = 0x20; // android.graphics.ImageFormat.RAW_SENSOR
+static constexpr int32_t kRawSensor = 0x20;  // android.graphics.ImageFormat.RAW_SENSOR
+static constexpr int32_t kRawPrivate = 0x24; // android.graphics.ImageFormat.RAW_PRIVATE
+static constexpr int32_t kRaw10 = 0x25;      // android.graphics.ImageFormat.RAW10
 // HAL_PIXEL_FORMAT_YV12（0x32315659 = 'YV12'）：真机 SCM 带该输出流，
 // Camera1 legacy 的 preview-format-values 会额外报 yuv420p。
 static constexpr int32_t kYV12 = 0x32315659;
@@ -598,6 +605,196 @@ static const Note13CameraTarget kTargets[] = {
      nullptr,
      0},
 };
+
+// Pixel 6 (oriole) 等 Pixel 双摄机型逻辑多摄拓扑：
+// 后摄逻辑相机 "0" 聚合宽角主摄 "2" (6.81mm, 4064x3072 -> binned 2032x1536) 与
+// 超广角 "3" (2.35mm, 4032x3016 -> binned 2016x1508)，
+// 满足 GoogleCamera 多摄融合管线（RAW_WIDE / RAW_ULTRAWIDE）与 libgcam
+// StaticMetadata::Check 对 active_area / pixel_array / frame_raw_max 精确一致的要求。
+static const int32_t kPixelWideJpegSizes[] = {
+    4064, 3072, 4000, 3000, 4000, 2256, 3840, 2160, 3264, 2448, 2560, 1920,
+    1920, 1440, 1920, 1080, 1440, 1080, 1280, 960,  1280, 720,  640,  480,
+};
+
+static const int32_t kPixelWideStreamSizes[] = {
+    4064, 3072, 4000, 3000, 4000, 2256, 3840, 2160, 3264, 2448, 2560, 1920,
+    2560, 1440, 2400, 1080, 2304, 1728, 2160, 1080, 1920, 1440, 1920, 1080,
+    1600, 1200, 1440, 1080, 1280, 960,  1280, 720,  1080, 1080, 960,  720,
+    720,  480,  640,  480,  640,  360,  352,  288,  320,  240,  176,  144,
+};
+
+static const int32_t kPixelUwJpegSizes[] = {
+    4032, 3016, 4000, 3000, 3840, 2160, 3264, 2448, 2560, 1920,
+    1920, 1440, 1920, 1080, 1440, 1080, 1280, 960,  1280, 720,  640,  480,
+};
+
+static const int32_t kPixelUwStreamSizes[] = {
+    4032, 3016, 4000, 3000, 3840, 2160, 3264, 2448, 2560, 1920, 2560, 1440,
+    2400, 1080, 2304, 1728, 2160, 1080, 1920, 1440, 1920, 1080, 1600, 1200,
+    1440, 1080, 1280, 960,  1280, 720,  1080, 1080, 960,  720,  720,  480,
+    640,  480,  640,  360,  352,  288,  320,  240,  176,  144,
+};
+
+static const uint8_t kPixelBackPhysicalCameraIds[] = {'2', '\0', '3', '\0'};
+
+static const Note13CameraTarget kPixelBackPhysicalTargets[] = {
+    {"2",
+     ANDROID_LENS_FACING_BACK,
+     90,
+     ANDROID_FLASH_INFO_AVAILABLE_TRUE,
+     4064,
+     3072,
+     9.8304f,
+     7.3728f,
+     {0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+     {2764.8f, 2764.8f, 2032.0f, 1536.0f, 0.0f},
+     {0.0f, 0.0f, 0.0f, 1.0f},
+     {0.0f, 0.0f, 0.0f},
+     1.85f,
+     6.81f,
+     {0, 1},
+     2,
+     10.0f,
+     ANDROID_SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_GBRG,
+     100000LL,
+     30000000000LL,
+     50,
+     12800,
+     {1, 0, 1},
+     {0, 1, 2, 5, 3, 6, 7, 9},
+     8,
+     kPixelWideJpegSizes,
+     std::size(kPixelWideJpegSizes) / 2,
+     kPixelWideStreamSizes,
+     std::size(kPixelWideStreamSizes) / 2,
+     kBackHighSpeedVideo,
+     std::size(kBackHighSpeedVideo) / 5,
+     nullptr,
+     0,
+     nullptr,
+     0},
+    {"3",
+     ANDROID_LENS_FACING_BACK,
+     90,
+     ANDROID_FLASH_INFO_AVAILABLE_TRUE,
+     4032,
+     3016,
+     5.60f,
+     4.20f,
+     {0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+     {1680.0f, 1680.0f, 2016.0f, 1508.0f, 0.0f},
+     {0.0f, 0.0f, 0.0f, 1.0f},
+     {0.014f, 0.0f, 0.0f},
+     2.2f,
+     2.35f,
+     {0},
+     1,
+     10.0f,
+     ANDROID_SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_GBRG,
+     100000LL,
+     30000000000LL,
+     50,
+     6400,
+     {1, 0, 1},
+     {0, 1, 2, 5, 3, 6, 7},
+     7,
+     kPixelUwJpegSizes,
+     std::size(kPixelUwJpegSizes) / 2,
+     kPixelUwStreamSizes,
+     std::size(kPixelUwStreamSizes) / 2,
+     nullptr,
+     0,
+     nullptr,
+     0,
+     nullptr,
+     0},
+};
+
+static const Note13CameraTarget kPixelTargets[] = {
+    {"0",
+     ANDROID_LENS_FACING_BACK,
+     90,
+     ANDROID_FLASH_INFO_AVAILABLE_TRUE,
+     4064,
+     3072,
+     9.8304f,
+     7.3728f,
+     {0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+     {2764.8f, 2764.8f, 2032.0f, 1536.0f, 0.0f},
+     {0.0f, 0.0f, 0.0f, 1.0f},
+     {0.0f, 0.0f, 0.0f},
+     1.85f,
+     6.81f,
+     {0, 1},
+     2,
+     10.0f,
+     ANDROID_SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_GBRG,
+     100000LL,
+     30000000000LL,
+     50,
+     12800,
+     {1, 0, 1},
+     {0, 1, 2, 5, 3, 6, 7, 9, 11},
+     9,
+     kPixelWideJpegSizes,
+     std::size(kPixelWideJpegSizes) / 2,
+     kPixelWideStreamSizes,
+     std::size(kPixelWideStreamSizes) / 2,
+     kBackHighSpeedVideo,
+     std::size(kBackHighSpeedVideo) / 5,
+     kPixelBackPhysicalCameraIds,
+     std::size(kPixelBackPhysicalCameraIds),
+     kPixelBackPhysicalTargets,
+     std::size(kPixelBackPhysicalTargets)},
+    {"1",
+     ANDROID_LENS_FACING_FRONT,
+     270,
+     ANDROID_FLASH_INFO_AVAILABLE_FALSE,
+     2304,
+     1728,
+     4.64f,
+     3.48f,
+     {0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+     {1618.56f, 1618.56f, 1152.0f, 864.0f, 0.0f},
+     {0.0f, 0.0f, 0.0f, 1.0f},
+     {0.0f, 0.0f, 0.0f},
+     2.0f,
+     2.74f,
+     {0},
+     1,
+     10.0f,
+     ANDROID_SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_RGGB,
+     100000LL,
+     278443000LL,
+     50,
+     3200,
+     {1, 0, 0},
+     {0, 1, 2, 5, 3, 6, 7},
+     7,
+     kFrontJpegSizes,
+     std::size(kFrontJpegSizes) / 2,
+     kFrontStreamSizes,
+     std::size(kFrontStreamSizes) / 2,
+     nullptr,
+     0,
+     nullptr,
+     0,
+     nullptr,
+     0},
+};
+
+static bool isPixelDualRearDevice() {
+  static const bool kIsPixel = []() {
+    char dev[PROP_VALUE_MAX] = {};
+    if (__system_property_get("ro.product.device", dev) <= 0) {
+      __system_property_get("ro.product.vendor.device", dev);
+    }
+    return strcmp(dev, "oriole") == 0 || strcmp(dev, "raven") == 0 ||
+           strcmp(dev, "bluejay") == 0 || strcmp(dev, "panther") == 0 ||
+           strcmp(dev, "cheetah") == 0 || strcmp(dev, "lynx") == 0;
+  }();
+  return kIsPixel;
+}
 #endif
 
 static ScopedAStatus cameraError(Status status) {
@@ -708,6 +905,27 @@ static bool addLogicalMultiCameraEntries(camera_metadata_t *metadata,
                   physicalRequestKeys, std::size(physicalRequestKeys));
 }
 
+static bool addLensPoseEntries(camera_metadata_t *metadata,
+                               const Note13CameraTarget &target) {
+#if !defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
+  if (!isPixelDualRearDevice()) {
+    return true;
+  }
+#endif
+  const uint8_t poseRef = ANDROID_LENS_POSE_REFERENCE_PRIMARY_CAMERA;
+  return addSingle(metadata, ANDROID_LENS_POSE_REFERENCE, poseRef) &&
+         addEntry(metadata, ANDROID_LENS_POSE_ROTATION,
+                  target.lensPoseRotation, std::size(target.lensPoseRotation)) &&
+         addEntry(metadata, ANDROID_LENS_POSE_TRANSLATION,
+                  target.lensPoseTranslation,
+                  std::size(target.lensPoseTranslation)) &&
+         addEntry(metadata, ANDROID_LENS_INTRINSIC_CALIBRATION,
+                  target.lensIntrinsicCalibration,
+                  std::size(target.lensIntrinsicCalibration)) &&
+         addEntry(metadata, ANDROID_LENS_DISTORTION, target.lensDistortion,
+                  std::size(target.lensDistortion));
+}
+
 static bool addCommonStaticEntries(camera_metadata_t *metadata,
                                    const Note13CameraTarget &target) {
   const uint8_t aeAntibanding[] = {0, 1, 2, 3};
@@ -742,7 +960,23 @@ static bool addCommonStaticEntries(camera_metadata_t *metadata,
   const int32_t activeArray[] = {0, 0, target.pixelWidth, target.pixelHeight};
   const int32_t pixelArraySize[] = {target.pixelWidth, target.pixelHeight};
   const float physicalSize[] = {target.physicalWidth, target.physicalHeight};
-  const float zoomRatioRange[] = {1.0f, target.maxDigitalZoom};
+  const bool hasPhysicalSubcams =
+      target.physicalTargetCount > 0 && target.physicalTargets != nullptr;
+  const float zoomRatioRange[] = {hasPhysicalSubcams ? 0.7f : 1.0f,
+                                  target.maxDigitalZoom};
+  std::vector<float> focalLengths;
+  if (hasPhysicalSubcams) {
+    for (size_t i = 0; i < target.physicalTargetCount; i++) {
+      const float fl = target.physicalTargets[i].focalLength;
+      if (std::find(focalLengths.begin(), focalLengths.end(), fl) ==
+          focalLengths.end()) {
+        focalLengths.push_back(fl);
+      }
+    }
+    std::sort(focalLengths.begin(), focalLengths.end());
+  } else {
+    focalLengths.push_back(target.focalLength);
+  }
   const int32_t maxOutputStreams[] = {target.maxRegions[0] ? 1 : 0, 3, 1};
   const int32_t jpegThumbnailSizes[] = {0, 0, 192, 80, 192, 108, 192, 144,
                                         192, 192};
@@ -759,8 +993,46 @@ static bool addCommonStaticEntries(camera_metadata_t *metadata,
   // RAW_SENSOR 输出流：requestCapabilities 含 RAW(3) 时 StreamConfigurationMap
   // 会解析 RAW surfaceType 的 sizes，缺失抛 "sizes was empty"（真机含 RAW 能力）。
   // 尺寸取 sensor pixel array（后摄 4000x3000 / 前摄 2304x1728），仅输出（不输入）。
-  const int32_t rawSizes[] = {target.pixelWidth, target.pixelHeight};
-  appendStreamConfigs(&streamConfigurations, kRawSensor, rawSizes, 1);
+  // Pixel 机型（oriole 等）Gcam 会对 RAW 走 2x2 ApplySensorBinning 并按内置
+  // camera.{wide,uw,tele}_binned_raw_{width,height} 查 minFrameDuration，故一并宣告。
+  std::vector<int32_t> rawSizes = {target.pixelWidth, target.pixelHeight};
+#if !defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
+  if (isPixelDualRearDevice()) {
+    auto addRawSize = [&](int32_t w, int32_t h) {
+      if (w <= 0 || h <= 0) return;
+      for (size_t i = 0; i + 1 < rawSizes.size(); i += 2) {
+        if (rawSizes[i] == w && rawSizes[i + 1] == h) return;
+      }
+      rawSizes.push_back(w);
+      rawSizes.push_back(h);
+    };
+    const int32_t halfW = (target.pixelWidth / 2) & ~1;
+    const int32_t halfH = (target.pixelHeight / 2) & ~1;
+    addRawSize(halfW, halfH);
+    if (target.lensFacing == ANDROID_LENS_FACING_BACK) {
+      // ApplySensorBinning(2) 把宽减半（4000->2000），高被 gns.{c,e,g} 覆写为
+      // 1536 / 1512 / 1508 / 1500 等，需同时覆盖 (halfW x h) 与原生 Pixel binned 档位。
+      const int32_t kBinnedHeights[] = {1536, 1512, 1508, 1500, 1560, 1424, 1368};
+      for (int32_t h : kBinnedHeights) {
+        addRawSize(halfW, h);
+      }
+      addRawSize(2032, 1536);
+      addRawSize(2016, 1512);
+      addRawSize(2016, 1508);
+      addRawSize(2000, 1500);
+      addRawSize(2104, 1560);
+      addRawSize(1920, 1368);
+      addRawSize(1896, 1424);
+    }
+  }
+#endif
+  const size_t rawSizeCount = rawSizes.size() / 2;
+  appendStreamConfigs(&streamConfigurations, kRawSensor, rawSizes.data(),
+                      rawSizeCount);
+  appendStreamConfigs(&streamConfigurations, kRaw10, rawSizes.data(),
+                      rawSizeCount);
+  appendStreamConfigs(&streamConfigurations, kRawPrivate, rawSizes.data(),
+                      rawSizeCount);
   // YUV input（reprocess）流：requestCapabilities 含 YUV_REPROCESSING(7) 时，
   // 框架生成 SCALER_MANDATORY_STREAM_COMBINATIONS 要求 YUV 输入流存在，否则
   // getKeys() 抛 "sizes was empty"（真机 input=最大 YUV 尺寸）。仅输入（isInput=1）。
@@ -831,8 +1103,12 @@ static bool addCommonStaticEntries(camera_metadata_t *metadata,
                                      target.streamSizes,
                                      target.streamSizeCount, 33333333LL,
                                      streamOverrides, streamOverrideCount);
-  appendStreamDurations(&minFrameDurations, kRawSensor, rawSizes, 1,
-                        33333333LL);
+  appendStreamDurations(&minFrameDurations, kRawSensor, rawSizes.data(),
+                        rawSizeCount, 33333333LL);
+  appendStreamDurations(&minFrameDurations, kRaw10, rawSizes.data(),
+                        rawSizeCount, 33333333LL);
+  appendStreamDurations(&minFrameDurations, kRawPrivate, rawSizes.data(),
+                        rawSizeCount, 33333333LL);
   std::vector<int64_t> stallDurations;
   stallDurations.reserve(streamConfigurations.size());
   // 真机 JPEG/RAW_SENSOR 的 stall 都是 33333333ns：原实现 JPEG 写死 200000000、
@@ -845,7 +1121,12 @@ static bool addCommonStaticEntries(camera_metadata_t *metadata,
                         target.streamSizes, target.streamSizeCount, 0);
   appendStreamDurations(&stallDurations, kYV12, target.streamSizes,
                         target.streamSizeCount, 0);
-  appendStreamDurations(&stallDurations, kRawSensor, rawSizes, 1, 33333333LL);
+  appendStreamDurations(&stallDurations, kRawSensor, rawSizes.data(),
+                        rawSizeCount, 33333333LL);
+  appendStreamDurations(&stallDurations, kRaw10, rawSizes.data(),
+                        rawSizeCount, 33333333LL);
+  appendStreamDurations(&stallDurations, kRawPrivate, rawSizes.data(),
+                        rawSizeCount, 33333333LL);
   const uint8_t hardwareLevel = ANDROID_INFO_SUPPORTED_HARDWARE_LEVEL_3;
   const uint8_t timestampSource =
       ANDROID_SENSOR_INFO_TIMESTAMP_SOURCE_REALTIME;
@@ -856,7 +1137,7 @@ static bool addCommonStaticEntries(camera_metadata_t *metadata,
   const uint8_t lensFocusDistanceCalibration =
       ANDROID_LENS_INFO_FOCUS_DISTANCE_CALIBRATION_UNCALIBRATED;
   const uint8_t pipelineDepth = 8;
-  const int32_t partialResultCount = 10;
+  const int32_t partialResultCount = kPartialResultCount;
   const int32_t jpegMaxSize = target.pixelWidth * target.pixelHeight * 2;
   // 真机 gold 两个摄像头都有 android.scaler.availableInputOutputFormatsMap
   // （int32[4]：输入格式, 输出格式个数, 输出格式…）= YUV_420_888 → {YUV_420_888, BLOB}。
@@ -919,8 +1200,8 @@ static bool addCommonStaticEntries(camera_metadata_t *metadata,
          addSingle(metadata, ANDROID_LENS_FACING, lensFacing) &&
          addSingle(metadata, ANDROID_LENS_INFO_AVAILABLE_APERTURES,
                    target.aperture) &&
-         addSingle(metadata, ANDROID_LENS_INFO_AVAILABLE_FOCAL_LENGTHS,
-                   target.focalLength) &&
+         addEntry(metadata, ANDROID_LENS_INFO_AVAILABLE_FOCAL_LENGTHS,
+                  focalLengths) &&
          addEntry(metadata, ANDROID_LENS_INFO_AVAILABLE_OPTICAL_STABILIZATION,
                   target.opticalStabilization,
                   target.opticalStabilizationCount) &&
@@ -984,6 +1265,7 @@ static bool addCommonStaticEntries(camera_metadata_t *metadata,
                   faceDetectModes, std::size(faceDetectModes)) &&
          addSingle(metadata, ANDROID_STATISTICS_INFO_MAX_FACE_COUNT, 15) &&
          addMissingStandardEntries(metadata, target) &&
+         addLensPoseEntries(metadata, target) &&
          addLogicalMultiCameraEntries(metadata, target);
 }
 
@@ -1025,6 +1307,7 @@ static bool addMissingStandardEntries(camera_metadata_t *metadata,
       {-950, 65536},  {-34648, 65536}, {89680, 65536},
   };
   const uint8_t shadingModes[] = {0, 1, 2};
+  const int32_t shadingMapSize[] = {4, 3};
   const uint8_t hotPixelMapModes[] = {0};
   const uint8_t lensShadingMapModes[] = {0, 1};
   const uint8_t toneMapModes[] = {0, 1, 2};
@@ -1038,6 +1321,8 @@ static bool addMissingStandardEntries(camera_metadata_t *metadata,
                   postRawBoost, std::size(postRawBoost)) &&
          addEntry(metadata, ANDROID_LENS_INFO_AVAILABLE_FILTER_DENSITIES,
                   filterDensities, std::size(filterDensities)) &&
+         addEntry(metadata, ANDROID_LENS_INFO_SHADING_MAP_SIZE,
+                  shadingMapSize, std::size(shadingMapSize)) &&
          addSingle(metadata, ANDROID_REPROCESS_MAX_CAPTURE_STALL, 3) &&
          addEntry(metadata, ANDROID_SENSOR_AVAILABLE_TEST_PATTERN_MODES,
                   testPatternModes, std::size(testPatternModes)) &&
@@ -1122,7 +1407,9 @@ static bool addVendorTagEntries(camera_metadata_t *metadata,
 // getAvailableCaptureRequestKeys() 只剩 38 项（真机 189）、
 // getAvailableCaptureResultKeys() 只剩 13 项（真机 174），
 // 手动曝光/RAW/MTK 与小米 vendor 请求键全部缺失。
-static bool addKeyLists(camera_metadata_t *metadata, const char *cameraId) {
+static bool addKeyLists(camera_metadata_t *metadata,
+                        const Note13CameraTarget &target) {
+  const char *cameraId = target.id;
   const bool isFront = strcmp(cameraId, "1") == 0;
   const uint32_t *requestKeys =
       isFront ? kGoldCam1RequestKeys : kGoldCam0RequestKeys;
@@ -1201,6 +1488,7 @@ static bool addKeyLists(camera_metadata_t *metadata, const char *cameraId) {
       ANDROID_SENSOR_REFERENCE_ILLUMINANT1,
       ANDROID_SENSOR_REFERENCE_ILLUMINANT2,
       ANDROID_SHADING_AVAILABLE_MODES,
+      ANDROID_LENS_INFO_SHADING_MAP_SIZE,
       ANDROID_STATISTICS_INFO_AVAILABLE_FACE_DETECT_MODES,
       ANDROID_STATISTICS_INFO_AVAILABLE_HOT_PIXEL_MAP_MODES,
       ANDROID_STATISTICS_INFO_AVAILABLE_LENS_SHADING_MAP_MODES,
@@ -1213,6 +1501,21 @@ static bool addKeyLists(camera_metadata_t *metadata, const char *cameraId) {
   std::vector<int32_t> characteristicsKeys(
       standardCharacteristicsKeys,
       standardCharacteristicsKeys + std::size(standardCharacteristicsKeys));
+  if (target.physicalCameraIdCount > 0) {
+    characteristicsKeys.push_back(ANDROID_LOGICAL_MULTI_CAMERA_PHYSICAL_IDS);
+    characteristicsKeys.push_back(ANDROID_LOGICAL_MULTI_CAMERA_SENSOR_SYNC_TYPE);
+    characteristicsKeys.push_back(
+        ANDROID_REQUEST_AVAILABLE_PHYSICAL_CAMERA_REQUEST_KEYS);
+  }
+#if !defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
+  if (isPixelDualRearDevice()) {
+    characteristicsKeys.push_back(ANDROID_LENS_POSE_REFERENCE);
+    characteristicsKeys.push_back(ANDROID_LENS_POSE_ROTATION);
+    characteristicsKeys.push_back(ANDROID_LENS_POSE_TRANSLATION);
+    characteristicsKeys.push_back(ANDROID_LENS_INTRINSIC_CALIBRATION);
+    characteristicsKeys.push_back(ANDROID_LENS_DISTORTION);
+  }
+#endif
   for (size_t i = 0; i < kNote13VendorTagCount; i++) {
     const auto &tag = kNote13VendorTags[i];
     if (isFront && (tag.cam1 == nullptr || tag.cam1Count == 0)) {
@@ -1244,7 +1547,7 @@ static CameraMetadata buildStaticMetadata(const Note13CameraTarget &target,
                addVendorTagEntries(metadata, target.id) &&
                addSingle(metadata, ANDROID_SENSOR_ORIENTATION,
                          target.sensorOrientation) &&
-               addKeyLists(metadata, target.id);
+               addKeyLists(metadata, target);
 #if defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
   const uint8_t cameraIdType = oplusCameraIdType(target);
   added = added && addEntry(metadata, kOplusSupportedCameraIdTypeTag,
@@ -1377,27 +1680,145 @@ static CameraMetadata buildRequestMetadata(const Note13CameraTarget &target,
 static CameraMetadata buildResultMetadata(const Note13CameraTarget &target,
                                           int64_t timestamp, bool *ok) {
   CameraMetadata out;
-  camera_metadata_t *metadata = allocate_camera_metadata(32, 1024);
+  camera_metadata_t *metadata = allocate_camera_metadata(96, 4096);
   if (metadata == nullptr) {
     *ok = false;
     return out;
   }
+  const uint8_t aeAntibandingMode = ANDROID_CONTROL_AE_ANTIBANDING_MODE_AUTO;
+  const int32_t aeExposureCompensation = 0;
+  const uint8_t aeLock = ANDROID_CONTROL_AE_LOCK_OFF;
+  const uint8_t aeMode = ANDROID_CONTROL_AE_MODE_ON;
+  const uint8_t aePrecaptureTrigger = ANDROID_CONTROL_AE_PRECAPTURE_TRIGGER_IDLE;
   const uint8_t aeState = ANDROID_CONTROL_AE_STATE_CONVERGED;
-  const uint8_t afState = ANDROID_CONTROL_AF_STATE_INACTIVE;
+  const int32_t aeTargetFpsRange[] = {15, 30};
+  const int32_t zeroRegion[] = {0, 0, 0, 0, 0};
+  const uint8_t afMode = target.lensFacing == ANDROID_LENS_FACING_BACK
+                             ? ANDROID_CONTROL_AF_MODE_CONTINUOUS_PICTURE
+                             : ANDROID_CONTROL_AF_MODE_OFF;
+  const uint8_t afState = ANDROID_CONTROL_AF_STATE_PASSIVE_FOCUSED;
+  const uint8_t afTrigger = ANDROID_CONTROL_AF_TRIGGER_IDLE;
+  const uint8_t awbLock = ANDROID_CONTROL_AWB_LOCK_OFF;
+  const uint8_t awbMode = ANDROID_CONTROL_AWB_MODE_AUTO;
   const uint8_t awbState = ANDROID_CONTROL_AWB_STATE_CONVERGED;
+  const uint8_t captureIntent = ANDROID_CONTROL_CAPTURE_INTENT_PREVIEW;
+  const uint8_t controlMode = ANDROID_CONTROL_MODE_AUTO;
+  const uint8_t effectMode = ANDROID_CONTROL_EFFECT_MODE_OFF;
+  const uint8_t sceneMode = ANDROID_CONTROL_SCENE_MODE_DISABLED;
+  const uint8_t videoStabilizationMode = ANDROID_CONTROL_VIDEO_STABILIZATION_MODE_OFF;
+  const int32_t postRawBoost = 100;
+  const uint8_t flashMode = ANDROID_FLASH_MODE_OFF;
   const uint8_t flashState = ANDROID_FLASH_STATE_UNAVAILABLE;
   const uint8_t lensState = ANDROID_LENS_STATE_STATIONARY;
+  const uint8_t oisMode = ANDROID_LENS_OPTICAL_STABILIZATION_MODE_OFF;
+  const float focusDistance = 0.5f;
+  const float focusRange[] = {0.0f, 1.0f};
+  const float filterDensity = 0.0f;
+  const uint8_t colorCorrectionMode = ANDROID_COLOR_CORRECTION_MODE_FAST;
+  const uint8_t aberrationMode = ANDROID_COLOR_CORRECTION_ABERRATION_MODE_OFF;
+  const float colorGains[] = {1.0f, 1.0f, 1.0f, 1.0f};
+  const camera_metadata_rational_t colorTransform[] = {
+      {1, 1}, {0, 1}, {0, 1},
+      {0, 1}, {1, 1}, {0, 1},
+      {0, 1}, {0, 1}, {1, 1},
+  };
+  const uint8_t edgeMode = ANDROID_EDGE_MODE_FAST;
+  const uint8_t hotPixelMode = ANDROID_HOT_PIXEL_MODE_FAST;
+  const uint8_t noiseReductionMode = ANDROID_NOISE_REDUCTION_MODE_FAST;
+  const uint8_t shadingMode = ANDROID_SHADING_MODE_FAST;
+  const uint8_t tonemapMode = ANDROID_TONEMAP_MODE_FAST;
   const uint8_t faceDetectMode = ANDROID_STATISTICS_FACE_DETECT_MODE_OFF;
+  const uint8_t lensShadingMapMode = ANDROID_STATISTICS_LENS_SHADING_MAP_MODE_ON;
+  float lensShadingMap[4 * 3 * 4];
+  for (float &g : lensShadingMap) g = 1.0f;
+  const uint8_t hotPixelMapMode = ANDROID_STATISTICS_HOT_PIXEL_MAP_MODE_OFF;
+  const uint8_t sceneFlicker = ANDROID_STATISTICS_SCENE_FLICKER_NONE;
   const uint8_t pipelineDepth = 1;
-  const bool added =
+  const int64_t exposureTime = 10000000LL;
+  const int64_t frameDuration = 33333333LL;
+  const int64_t rollingShutterSkew = 10000000LL;
+  const int32_t sensitivity = 100;
+  const float dynamicBlackLevel[] = {64.0f, 64.0f, 64.0f, 64.0f};
+  const int32_t dynamicWhiteLevel = 1023;
+  const camera_metadata_rational_t neutralColorPoint[] = {{1, 1}, {1, 1}, {1, 1}};
+  const double noiseProfile[] = {1e-4, 1e-4, 1e-4, 1e-4, 1e-4, 1e-4, 1e-4, 1e-4};
+  const float zoomRatio = 1.0f;
+  const int32_t cropRegion[] = {0, 0, target.pixelWidth, target.pixelHeight};
+  const int32_t jpegOrientation = 0;
+  const uint8_t jpegQuality = 95;
+  bool added =
+      addSingle(metadata, ANDROID_COLOR_CORRECTION_ABERRATION_MODE, aberrationMode) &&
+      addEntry(metadata, ANDROID_COLOR_CORRECTION_GAINS, colorGains, std::size(colorGains)) &&
+      addSingle(metadata, ANDROID_COLOR_CORRECTION_MODE, colorCorrectionMode) &&
+      addEntry(metadata, ANDROID_COLOR_CORRECTION_TRANSFORM, colorTransform,
+               std::size(colorTransform)) &&
+      addSingle(metadata, ANDROID_CONTROL_AE_ANTIBANDING_MODE, aeAntibandingMode) &&
+      addSingle(metadata, ANDROID_CONTROL_AE_EXPOSURE_COMPENSATION, aeExposureCompensation) &&
+      addSingle(metadata, ANDROID_CONTROL_AE_LOCK, aeLock) &&
+      addSingle(metadata, ANDROID_CONTROL_AE_MODE, aeMode) &&
+      addSingle(metadata, ANDROID_CONTROL_AE_PRECAPTURE_TRIGGER, aePrecaptureTrigger) &&
+      addEntry(metadata, ANDROID_CONTROL_AE_REGIONS, zeroRegion, std::size(zeroRegion)) &&
       addSingle(metadata, ANDROID_CONTROL_AE_STATE, aeState) &&
+      addEntry(metadata, ANDROID_CONTROL_AE_TARGET_FPS_RANGE, aeTargetFpsRange,
+               std::size(aeTargetFpsRange)) &&
+      addSingle(metadata, ANDROID_CONTROL_AF_MODE, afMode) &&
+      addEntry(metadata, ANDROID_CONTROL_AF_REGIONS, zeroRegion, std::size(zeroRegion)) &&
       addSingle(metadata, ANDROID_CONTROL_AF_STATE, afState) &&
+      addSingle(metadata, ANDROID_CONTROL_AF_TRIGGER, afTrigger) &&
+      addSingle(metadata, ANDROID_CONTROL_AWB_LOCK, awbLock) &&
+      addSingle(metadata, ANDROID_CONTROL_AWB_MODE, awbMode) &&
       addSingle(metadata, ANDROID_CONTROL_AWB_STATE, awbState) &&
+      addSingle(metadata, ANDROID_CONTROL_CAPTURE_INTENT, captureIntent) &&
+      addSingle(metadata, ANDROID_CONTROL_EFFECT_MODE, effectMode) &&
+      addSingle(metadata, ANDROID_CONTROL_MODE, controlMode) &&
+      addSingle(metadata, ANDROID_CONTROL_POST_RAW_SENSITIVITY_BOOST, postRawBoost) &&
+      addSingle(metadata, ANDROID_CONTROL_SCENE_MODE, sceneMode) &&
+      addSingle(metadata, ANDROID_CONTROL_VIDEO_STABILIZATION_MODE, videoStabilizationMode) &&
+      addSingle(metadata, ANDROID_CONTROL_ZOOM_RATIO, zoomRatio) &&
+      addSingle(metadata, ANDROID_EDGE_MODE, edgeMode) &&
+      addSingle(metadata, ANDROID_FLASH_MODE, flashMode) &&
       addSingle(metadata, ANDROID_FLASH_STATE, flashState) &&
+      addSingle(metadata, ANDROID_HOT_PIXEL_MODE, hotPixelMode) &&
+      addSingle(metadata, ANDROID_JPEG_ORIENTATION, jpegOrientation) &&
+      addSingle(metadata, ANDROID_JPEG_QUALITY, jpegQuality) &&
+      addSingle(metadata, ANDROID_LENS_APERTURE, target.aperture) &&
+      addSingle(metadata, ANDROID_LENS_FILTER_DENSITY, filterDensity) &&
+      addSingle(metadata, ANDROID_LENS_FOCAL_LENGTH, target.focalLength) &&
+      addSingle(metadata, ANDROID_LENS_FOCUS_DISTANCE, focusDistance) &&
+      addEntry(metadata, ANDROID_LENS_FOCUS_RANGE, focusRange, std::size(focusRange)) &&
+      addSingle(metadata, ANDROID_LENS_OPTICAL_STABILIZATION_MODE, oisMode) &&
       addSingle(metadata, ANDROID_LENS_STATE, lensState) &&
+      addSingle(metadata, ANDROID_NOISE_REDUCTION_MODE, noiseReductionMode) &&
       addSingle(metadata, ANDROID_REQUEST_PIPELINE_DEPTH, pipelineDepth) &&
+      addEntry(metadata, ANDROID_SCALER_CROP_REGION, cropRegion,
+               std::size(cropRegion)) &&
+      addEntry(metadata, ANDROID_SENSOR_DYNAMIC_BLACK_LEVEL, dynamicBlackLevel,
+               std::size(dynamicBlackLevel)) &&
+      addSingle(metadata, ANDROID_SENSOR_DYNAMIC_WHITE_LEVEL, dynamicWhiteLevel) &&
+      addSingle(metadata, ANDROID_SENSOR_EXPOSURE_TIME, exposureTime) &&
+      addSingle(metadata, ANDROID_SENSOR_FRAME_DURATION, frameDuration) &&
+      addEntry(metadata, ANDROID_SENSOR_NEUTRAL_COLOR_POINT, neutralColorPoint,
+               std::size(neutralColorPoint)) &&
+      addEntry(metadata, ANDROID_SENSOR_NOISE_PROFILE, noiseProfile,
+               std::size(noiseProfile)) &&
+      addSingle(metadata, ANDROID_SENSOR_ROLLING_SHUTTER_SKEW, rollingShutterSkew) &&
+      addSingle(metadata, ANDROID_SENSOR_SENSITIVITY, sensitivity) &&
       addSingle(metadata, ANDROID_SENSOR_TIMESTAMP, timestamp) &&
-      addSingle(metadata, ANDROID_STATISTICS_FACE_DETECT_MODE, faceDetectMode);
+      addSingle(metadata, ANDROID_SHADING_MODE, shadingMode) &&
+      addSingle(metadata, ANDROID_STATISTICS_FACE_DETECT_MODE, faceDetectMode) &&
+      addSingle(metadata, ANDROID_STATISTICS_HOT_PIXEL_MAP_MODE, hotPixelMapMode) &&
+      addSingle(metadata, ANDROID_STATISTICS_LENS_SHADING_MAP_MODE, lensShadingMapMode) &&
+      addEntry(metadata, ANDROID_STATISTICS_LENS_SHADING_MAP, lensShadingMap,
+               std::size(lensShadingMap)) &&
+      addSingle(metadata, ANDROID_STATISTICS_SCENE_FLICKER, sceneFlicker) &&
+      addSingle(metadata, ANDROID_TONEMAP_MODE, tonemapMode);
+  if (added && target.physicalTargetCount > 0 &&
+      target.physicalTargets != nullptr) {
+    const char *activePid = target.physicalTargets[0].id;
+    added = addEntry(metadata, ANDROID_LOGICAL_MULTI_CAMERA_ACTIVE_PHYSICAL_ID,
+                     reinterpret_cast<const uint8_t *>(activePid),
+                     std::strlen(activePid) + 1);
+  }
   if (added && validate_camera_metadata_structure(metadata, nullptr) == 0) {
     out.metadata = metadataBytes(metadata);
     *ok = true;
@@ -1496,14 +1917,24 @@ static bool fillMetadataQueueDescriptor(
 
 static void appendExposedCameraTargets(
     std::vector<const Note13CameraTarget *> *out) {
+#if defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
   for (const auto &target : kTargets) {
     out->push_back(&target);
   }
-#if defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
   for (const auto &logicalTarget : kTargets) {
     for (size_t index = 0; index < logicalTarget.physicalTargetCount; index++) {
       out->push_back(&logicalTarget.physicalTargets[index]);
     }
+  }
+#else
+  if (isPixelDualRearDevice()) {
+    for (const auto &target : kPixelTargets) {
+      out->push_back(&target);
+    }
+    return;
+  }
+  for (const auto &target : kTargets) {
+    out->push_back(&target);
   }
 #endif
 }
@@ -1514,6 +1945,11 @@ static const Note13CameraTarget *findTarget(const std::string &id) {
   for (const Note13CameraTarget *target : targets) {
     if (id == target->id) {
       return target;
+    }
+    for (size_t index = 0; index < target->physicalTargetCount; index++) {
+      if (id == target->physicalTargets[index].id) {
+        return &target->physicalTargets[index];
+      }
     }
   }
   return nullptr;
@@ -1658,6 +2094,7 @@ public:
         return cameraError(Status::INTERNAL_ERROR);
       }
       result.outputBuffers.reserve(request.outputBuffers.size());
+      std::unordered_set<std::string> requestedPhysicalIds;
       for (const auto &buffer : request.outputBuffers) {
         auto &returned = result.outputBuffers.emplace_back();
         returned.streamId = buffer.streamId;
@@ -1674,6 +2111,9 @@ public:
           if (sit != streams_.end()) {
             sm = sit->second;
             hasMeta = true;
+            if (!sm.physicalCameraId.empty()) {
+              requestedPhysicalIds.insert(sm.physicalCameraId);
+            }
             const uint64_t key = cacheKey(buffer.streamId, buffer.bufferId);
             if (!buffer.buffer.fds.empty()) {
               auto imported = cdh_camera::importBuffer(sm, buffer.buffer);
@@ -1693,9 +2133,21 @@ public:
               static_cast<uint32_t>(request.frameNumber));
         }
       }
+      for (const auto &pid : requestedPhysicalIds) {
+        const Note13CameraTarget *pt = findPhysicalTarget(target_, pid);
+        bool physOk = false;
+        PhysicalCameraMetadata pm;
+        pm.fmqMetadataSize = 0;
+        pm.physicalCameraId = pid;
+        pm.metadata = buildResultMetadata(pt != nullptr ? *pt : target_,
+                                          timestamp, &physOk);
+        if (physOk) {
+          result.physicalCameraMetadata.push_back(std::move(pm));
+        }
+      }
       result.inputBuffer.streamId = -1;
       result.inputBuffer.bufferId = 0;
-      result.partialResult = 1;
+      result.partialResult = kPartialResultCount;
       results.push_back(std::move(result));
     }
     ScopedAStatus notifyStatus = callback_->notify(notifications);
@@ -1765,6 +2217,7 @@ private:
       meta.overrideFormat = ovFmt;
       meta.bufferSize = stream.bufferSize;
       meta.usage = static_cast<uint64_t>(stream.usage);
+      meta.physicalCameraId = stream.physicalCameraId;
       streams_[stream.id] = meta;
 
       HalStream hal;
@@ -1773,7 +2226,7 @@ private:
       hal.producerUsage =
           static_cast<BufferUsage>(AHARDWAREBUFFER_USAGE_CPU_WRITE_OFTEN);
       hal.consumerUsage = BufferUsage(0);
-      hal.maxBuffers = 2;
+      hal.maxBuffers = 4;
       hal.overrideDataSpace =
           (reqFmt == cdh_camera::kFmtImplDefined)
               ? Dataspace::SRGB

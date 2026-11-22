@@ -69,10 +69,8 @@ static void test_no_newline_header_chunk(void) {
     cdh_prepare_patched_sources(2, arr, lens, &res);
     assert(res.patched == 1);
     assert(res.lens[0] == (int)(15 + 1 + (sizeof(CDH_FMA_POLYFILL) - 1)));
-    assert(strcmp(res.ptrs[0],
-                  "#version 300 es\n"
-                  "#ifndef fma\n#define fma(a, b, c) ((a) * (b) + (c))\n#endif\n"
-                  "#ifndef ldexp\n#define ldexp(x, e) ((x) * exp2(float(e)))\n#endif\n") == 0);
+    assert(strncmp(res.ptrs[0], "#version 300 es\n", 16) == 0);
+    assert(strcmp(res.ptrs[0] + 16, CDH_FMA_POLYFILL) == 0);
     assert(res.ptrs[1] == chunk1);
     assert(res.lens[1] == -1);
     cdh_free_patched_sources(&res);
@@ -190,6 +188,60 @@ static void test_virgl_unsafe_extra_exts_filtered(void) {
     assert(strcmp(cdh_ext_list[1], "GL_QCOM_tiled_rendering") == 0);
 }
 
+static void test_es310_layout_binding_and_yuv_stripped(void) {
+    const char *src =
+        "#version 310 es\n"
+        "layout(binding = 0) uniform sampler2D tex0;\n"
+        "layout(std140, binding = 1) uniform Params { vec4 p; };\n"
+        "layout(binding = 2, std140) uniform Params2 { vec4 q; };\n"
+        "layout(location = 0, yuv) highp out vec4 fragColor;\n"
+        "layout(yuv) out vec4 fragColor2;\n"
+        "layout(location = 1) highp in vec2 vUv;\n";
+    const char *arr[1] = {src};
+    cdh_patched_sources_t res;
+    cdh_prepare_patched_sources(1, arr, NULL, &res);
+    assert(res.patched == 1);
+    assert(strstr(res.ptrs[0], "binding") == NULL);
+    assert(strstr(res.ptrs[0], "uniform sampler2D tex0;") != NULL);
+    assert(strstr(res.ptrs[0], "std140") != NULL);
+    assert(strstr(res.ptrs[0], "location = 0") != NULL);
+    assert(strstr(res.ptrs[0], "out highp vec4 fragColor;") != NULL);
+    assert(strstr(res.ptrs[0], "layout(location = 1) in highp vec2 vUv;") != NULL);
+    assert(strstr(res.ptrs[0], "#define __samplerExternal2DY2YEXT sampler2D") != NULL);
+    assert(strstr(res.ptrs[0], "#extension GL_EXT_separate_shader_objects : enable\n") != NULL);
+    cdh_free_patched_sources(&res);
+}
+
+static void test_es310_uniform_location_gather_and_3x3_flatten(void) {
+    const char *src =
+        "#version 320 es\n"
+        "#extension GL_EXT_YUV_target : enable\n"
+        "precision highp float;\n"
+        "layout(binding = 0) uniform sampler2D uTex;\n"
+        "layout(location = 0) uniform highp float uGain;\n"
+        "layout(location = 0) highp in vec2 vUv;\n"
+        "float helper(in vec4 bayer_3x3[3][3], int c) { return bayer_3x3[1][1].r; }\n"
+        "void main() {\n"
+        "  vec4 bayer_3x3[3][3];\n"
+        "  bayer_3x3[i + 1][j + 1] = textureGather(uTex, vUv);\n"
+        "}\n";
+    const char *arr[1] = {src};
+    cdh_patched_sources_t res;
+    cdh_prepare_patched_sources(1, arr, NULL, &res);
+    assert(res.patched == 1);
+    assert(strstr(res.ptrs[0], "layout(location = 0) uniform") == NULL);
+    assert(strstr(res.ptrs[0], "uniform highp float uGain;") != NULL);
+    assert(strstr(res.ptrs[0], "layout(location = 0) in highp vec2 vUv;") != NULL);
+    assert(strstr(res.ptrs[0], "vec4 bayer_3x3[9]") != NULL);
+    assert(strstr(res.ptrs[0], "bayer_3x3[(1)*3+(1)].r") != NULL);
+    assert(strstr(res.ptrs[0], "bayer_3x3[(i + 1)*3+(j + 1)]") != NULL);
+    // textureGather polyfill 必须位于 #extension 之后
+    const char *ext = strstr(res.ptrs[0], "#extension GL_EXT_YUV_target : enable");
+    const char *tg = strstr(res.ptrs[0], "highp vec4 textureGather(");
+    assert(ext != NULL && tg != NULL && ext < tg);
+    cdh_free_patched_sources(&res);
+}
+
 int main(void) {
     test_single_chunk_320_with_extension();
     test_explicit_length_array_prevents_truncation();
@@ -197,6 +249,8 @@ int main(void) {
     test_300_es_untouched();
     test_ext_strip_exact_and_glgetstringi();
     test_virgl_unsafe_extra_exts_filtered();
-    printf("[pass] cdh_gl_strings_test: 6/6 passed\n");
+    test_es310_layout_binding_and_yuv_stripped();
+    test_es310_uniform_location_gather_and_3x3_flatten();
+    printf("[pass] cdh_gl_strings_test: 8/8 passed\n");
     return 0;
 }

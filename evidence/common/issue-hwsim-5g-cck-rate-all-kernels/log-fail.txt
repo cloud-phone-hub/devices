@@ -1,0 +1,24 @@
+=== 修前实测 1：oriole A17 #4（旧 6.1 补丁，7/7 后端健康在线）===
+$ adb -s 127.0.0.1:5911 shell 'uname -r; cmd wifi list-scan-results | head -10'
+6.1.162-android14-11-g9dd05ae3a1de-ab16261587
+    BSSID              Frequency      RSSI           Age(sec)     SSID                                 Flags
+  74:39:89:0b:24:64       5180        -47             10.797    TP-LINK_5G_2464                   [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  28:6c:07:51:a4:90       5220        -66             10.797    Xiaomi_A490_5G                    [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  c8:3a:35:4c:8f:3a       2412        -62             10.797    ChinaNet-8F3A                     [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  74:39:89:0b:24:63       5180        -33             10.797    TP-LINK_2464                      [ESS]
+
+$ adb -s 127.0.0.1:5911 shell 'logcat -d | grep -E "cph-wifi-bootstrap|Network not found"'
+11-22 15:46:19.208 15229 15229 I cph-wifi-bootstrap: 连接 TP-LINK_2464（第 13 轮）
+11-22 15:46:25.055   760  3623 D WifiClientModeImpl[52991:wlan0]: Network not found event received: network: "TP-LINK_2464"
+11-22 15:46:29.324 15470 15470 I cph-wifi-bootstrap: 连接 TP-LINK_2464（第 14 轮）
+11-22 15:46:32.564   760  3623 D WifiClientModeImpl[52991:wlan0]: Network not found event received: network: "TP-LINK_2464"
+11-22 15:46:39.430 15798 15798 I cph-wifi-bootstrap: 连接 TP-LINK_2464（第 15 轮）
+11-22 15:46:41.279   760  3623 D WifiClientModeImpl[52991:wlan0]: Network not found event received: network: "TP-LINK_2464"
+11-22 15:46:51.513 16094 16094 I cph-wifi-bootstrap: 结果：Wifi is enabled
+11-22 15:46:51.523 16097 16097 I cph-wifi-bootstrap: wlan0：wlan0            DOWN
+
+=== 修前实测 2：oriole A17 #3（secure_env / vhost-modem-controller 退出后 QEMU 孤儿存活）===
+- backend-pids: 13600 secure_env (DEAD), 13624 vhost-modem-controller (DEAD), 13625 qemu (ALIVE)
+- /dev/binderfs/binder_logs/proc/{786,337,287}:
+  system_server(786) WifiHandlerThread(3353) -> keystore2(337, TID 345) -> KeyMint HAL(287, /dev/hvc3) blocked 15,637,534 ms
+- Settings SubSettings (Internet) performCreate = 16,140 ms (4 × IWifiManager 4005ms timeout)

@@ -1,0 +1,33 @@
+=== 1. Pixel 6 #5 实例与 Google Camera 稳态状态 ===
+PID: 4283
+    topResumedActivity=ActivityRecord{266915457 u0 com.google.android.GoogleCamera/com.android.camera.CameraLauncher t44}
+
+=== 2. cdha /api/daemon/instance/config (camera 段) ===
+{
+  "hvcEnabled": true,
+  "hostAttached": true,
+  "hostStatus": {
+    "connected": true,
+    "sourceKind": "file",
+    "sourcePath": "/Volumes/work/cloud-phone-hub/out/devices/tmp/camera-test-input.mp4",
+    "width": 640,
+    "height": 480,
+    "fps": 15,
+    "framesSent": 1504,
+    "framesDropped": 0
+  }
+}
+
+=== 3. Guest cdh_camera_video 与 CameraService 正常日志 ===
+11-22 18:28:01.583   638   652 I cdh_camera_video: host camera frame rx=#300 seq=300 640x480 jpeg=22188B
+11-22 18:28:11.511   638   652 I cdh_camera_video: host camera frame rx=#450 seq=450 640x480 jpeg=22188B
+11-22 18:28:21.523   638   652 I cdh_camera_video: host camera frame rx=#600 seq=600 640x480 jpeg=22188B
+11-22 18:28:31.519   638   652 I cdh_camera_video: host camera frame rx=#750 seq=750 640x480 jpeg=22188B
+11-22 18:28:41.514   638   652 I cdh_camera_video: host camera frame rx=#900 seq=900 640x480 jpeg=22188B
+11-22 18:28:52.395   638   652 I cdh_camera_video: host camera frame rx=#1050 seq=1050 640x480 jpeg=21552B
+11-22 18:29:02.544   638   652 I cdh_camera_video: host camera frame rx=#1200 seq=1200 640x480 jpeg=21552B
+11-22 18:29:13.018   638   652 I cdh_camera_video: host camera frame rx=#1350 seq=1350 640x480 jpeg=21552B
+11-22 18:29:22.825   638   652 I cdh_camera_video: host camera frame rx=#1500 seq=1500 640x480 jpeg=21552B
+
+=== 4. GoogleCamera 关键错误计数（期望全 0） ===
+0

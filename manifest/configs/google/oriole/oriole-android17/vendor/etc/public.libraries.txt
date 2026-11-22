@@ -1,0 +1,3 @@
+lib_aion_buffer.so
+libOpenCL.so
+libOpenCL-pixel.so

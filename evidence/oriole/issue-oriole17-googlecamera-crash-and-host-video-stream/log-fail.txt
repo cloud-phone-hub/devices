@@ -1,0 +1,41 @@
+=== Pixel 6 (oriole) Android 17 原生 Google Camera 闪退全链路失败样本 ===
+
+--- 层 1~5: 共享库 / Vendor Tag / RAW 格式 / 幽灵 Codec2 ---
+- dlopen failed: library "libOpenCL-pixel.so" / "lib_aion_buffer.so" / "pixel-power-ext-V1-ndk.so" not found
+- Missing com.google.pixel.experimental* vendor tags & RAW10/RAW_PRIVATE stream configs
+- 幽灵 Codec2 VINTF (default1 / default9) 导致初始化卡顿
+
+--- 层 6: Logical Multi-Camera 双摄拓扑 & partialResultCount 协议不匹配 ---
+E AndroidRuntime: java.lang.NullPointerException: Attempt to invoke interface method on null object reference
+    at hsy.<init>(PG:18)  # Deblur Fusion map.get(RAW_WIDE) / map.get(RAW_ULTRAWIDE) 为 null
+E Camera3-Device: In-flight list too large: 151..277
+E Camera3-Device: waitUntilDrainedLocked: Connection timed out (-110)
+    # 根因: 静态元数据 partialResultCount=10，但 processCaptureRequest 回传 result.partialResult=1
+E AndroidRuntime: java.lang.IllegalArgumentException: size was not supported
+    at hnd.d(PG:61)       # 缺少 Pixel 6 2x2 binned RAW 档位 2032x1536 / 2016x1508
+E libgcam: [static_metadata.cc:983] frame_raw_max (2000x1508) matches neither active area (2000x1500) nor pixel array (2000x1500)
+E AndroidRuntime: java.lang.NullPointerException (CallbackHndlr)
+    at eru.a(PG:62)       # CaptureResult.LENS_FOCUS_DISTANCE 为 null
+
+--- 层 7: EGL Context 创建失败 ---
+E native: egl_context.cc:102 EGL_BAD_MATCH
+F native: fast_moments_hdr.cc:117 Check failed: egl_context.IsValid()
+
+--- 层 8: GLSL ES 3.10/3.20 着色器在 VirGL GLES 3.00 下编译失败 ---
+- rectiface/forward_warp.vert: 缺 GL_EXT_separate_shader_objects、highp in/out 语序、layout(location=N) uniform
+- moment/*_yuv.frag: 缺 GL_EXT_YUV_target (__samplerExternal2DY2YEXT / rgb_2_yuv / yuv_2_rgb / itu_*)、layout(yuv)
+- raw_preprocessor/unpack_and_gain.frag & suppress_hot_pixels_*.frag: layout(binding=N)、textureGather、[3][3] 二维数组
+
+--- 层 9: Graphics Allocator 拒绝 YUV / RAW10 ---
+E GraphicBufferAllocator: Failed to allocate (1440x1080) format 35 usage 10133
+E GraphicBufferMapper: validateBufferSize(0xb400007a9367dd10) failed: -22
+E GraphicBuffer: unflatten: registerBuffer failed: Invalid argument (-22)
+E Surface : [ImageReader-4064x3072f25m30-6296-0](id:189800000002) dequeueBuffer: IGraphicBufferProducer::requestBuffer failed: -22
+W CAM_MetadataDst: onCaptureFailed for Frame 161955
+
+--- 层 10: RAW10 字节步长断言 & LensShadingCorrectionMap 缺失 ---
+F DEBUG   : pid: 4274, tid: 6108, name: pck-temporal-bi >>> com.google.android.GoogleCamera <<<
+F DEBUG   : Abort message: 'stride (4064) should be at least 5080'
+F DEBUG   :   #04 /system/lib64/libandroid_runtime.so (android::getLockedImageInfo+1352)
+W CAM_krf : Missing expected metadata value for key CaptureResult.Key(android.statistics.lensShadingCorrectionMap).
+W CAM_kqs : Frame rejected: ook{timestamp=31123233055, onStartedId=13, frameNumber=12}.

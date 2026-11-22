@@ -61,6 +61,7 @@ struct StreamMeta {
   int32_t overrideFormat = 0;
   int32_t bufferSize = 0;
   uint64_t usage = 0;
+  std::string physicalCameraId;
 };
 
 inline int32_t selectOverrideFormat(int32_t format) {
@@ -92,6 +93,12 @@ class NativeWindowApi {
     return importFn_(desc, handle, method, out);
   }
 
+  int lock(AHardwareBuffer *buf, uint64_t usage, int32_t fence,
+           const ARect *rect, void **outVirtualAddress) const {
+    if (lockFn_ == nullptr) return -ENOSYS;
+    return lockFn_(buf, usage, fence, rect, outVirtualAddress);
+  }
+
   int lockPlanes(AHardwareBuffer *buf, uint64_t usage, int32_t fence,
                  const ARect *rect, AHardwareBuffer_Planes *out) const {
     return lockPlanesFn_(buf, usage, fence, rect, out);
@@ -117,6 +124,8 @@ class NativeWindowApi {
     }
     importFn_ = reinterpret_cast<ImportFn>(
         dlsym(lib_, "AHardwareBuffer_createFromHandle"));
+    lockFn_ = reinterpret_cast<decltype(&AHardwareBuffer_lock)>(
+        dlsym(lib_, "AHardwareBuffer_lock"));
     lockPlanesFn_ = reinterpret_cast<decltype(&AHardwareBuffer_lockPlanes)>(
         dlsym(lib_, "AHardwareBuffer_lockPlanes"));
     unlockFn_ = reinterpret_cast<decltype(&AHardwareBuffer_unlock)>(
@@ -127,6 +136,7 @@ class NativeWindowApi {
 
   void *lib_ = nullptr;
   ImportFn importFn_ = nullptr;
+  decltype(&AHardwareBuffer_lock) lockFn_ = nullptr;
   decltype(&AHardwareBuffer_lockPlanes) lockPlanesFn_ = nullptr;
   decltype(&AHardwareBuffer_unlock) unlockFn_ = nullptr;
   decltype(&AHardwareBuffer_release) releaseFn_ = nullptr;
@@ -370,6 +380,15 @@ inline HwBufPtr importBuffer(
   desc.format = static_cast<uint32_t>(s.overrideFormat);
   desc.usage = s.usage | AHARDWAREBUFFER_USAGE_CPU_WRITE_OFTEN;
   desc.stride = desc.width;
+  // 若 handle 为 cros_gralloc_handle（magic=0xABCDDCBA 位于 data[26]，pixel_stride 位于 data[27]），
+  // 精确采用其 pixel_stride，避免对齐步长（如 4064 -> 4096）触发 validateBufferSize(-22)。
+  if (!isBlob && raw.size() >= 3 + 29 &&
+      static_cast<uint32_t>(raw[3 + 26]) == 0xABCDDCBAU) {
+    const uint32_t ps = static_cast<uint32_t>(raw[3 + 27]);
+    if (ps >= desc.width && ps <= desc.width * 4U) {
+      desc.stride = ps;
+    }
+  }
 
   AHardwareBuffer *buf = nullptr;
   const auto *nh = reinterpret_cast<const native_handle *>(raw.data());
@@ -426,10 +445,29 @@ inline bool renderFrameToBuffer(
   const int rc = api.lockPlanes(buf, AHARDWAREBUFFER_USAGE_CPU_WRITE_OFTEN, -1,
                                 nullptr, &planes);
   if (rc != 0) {
-    __android_log_print(ANDROID_LOG_WARN, kVideoTag,
-                        "AHardwareBuffer_lockPlanes failed: rc=%d fmt=0x%x", rc,
-                        s.overrideFormat);
-    return false;
+    // RAW10(0x25) / RAW_OPAQUE(0x24) / RAW16(0x20) 等非多平面格式不被 NDK lockPlanes 支持，
+    // 回退单平面 AHardwareBuffer_lock 并写入安全亮度占位数据，保证整帧回调正常完成。
+    void *vaddr = nullptr;
+    const int lrc = api.lock(buf, AHARDWAREBUFFER_USAGE_CPU_WRITE_OFTEN, -1,
+                             nullptr, &vaddr);
+    if (lrc != 0 || vaddr == nullptr) {
+      __android_log_print(ANDROID_LOG_WARN, kVideoTag,
+                          "AHardwareBuffer_lockPlanes/lock failed: rc=%d lrc=%d fmt=0x%x",
+                          rc, lrc, s.overrideFormat);
+      return false;
+    }
+    const uint8_t fillVal =
+        (hostFrame != nullptr && !hostFrame->i420.empty()) ? hostFrame->i420[0] : 128;
+    const size_t fillBytes =
+        static_cast<size_t>(std::max<int32_t>(0, s.width)) *
+        static_cast<size_t>(std::max<int32_t>(0, s.height));
+    // 仅在首几帧或低频刷新全帧 RAW 占位，降低大分辨率（4064x3072）纯 CPU 填充开销；
+    // RAW10/RAW_OPAQUE 至少占 w*h*5/4 字节且底层 BO 按 R16(2B/px) 分配，填充 w*h 绝对安全不越界。
+    if (fillBytes > 0 && (frameNumber < 4 || (frameNumber % 15) == 0)) {
+      std::memset(vaddr, fillVal, fillBytes);
+    }
+    api.unlock(buf, nullptr);
+    return true;
   }
 
   const bool hasHost =
@@ -541,6 +579,15 @@ inline bool renderFrameToBuffer(
           rowV[x * vPix] = V;
         }
       }
+    }
+    ok = true;
+  } else if (planes.planeCount >= 1 && planes.planes[0].data != nullptr) {
+    // RAW_SENSOR / RAW10 / RAW_PRIVATE 等单平面格式：用 Host 帧亮度或常量填充，避免回调报错
+    const uint32_t dh = static_cast<uint32_t>(s.height);
+    const uint32_t stride = planes.planes[0].rowStride;
+    auto *dst = static_cast<uint8_t *>(planes.planes[0].data);
+    if (stride > 0 && dh > 0) {
+      std::memset(dst, hasHost ? srcY[0] : 128, static_cast<size_t>(stride) * dh);
     }
     ok = true;
   }
