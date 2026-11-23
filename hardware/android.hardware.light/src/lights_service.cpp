@@ -32,6 +32,9 @@ binder_status_t AServiceManager_addService(AIBinder *binder,
 #include <aidl/android/hardware/light/HwLight.h>
 #include <aidl/android/hardware/light/HwLightState.h>
 #include <aidl/android/hardware/light/LightType.h>
+#if CDH_LIGHT_MEIZU
+#include "meizu/light_meizu_ext.h"
+#endif
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -240,6 +243,11 @@ int main() {
   if (registerAsService(lights, kLightsServiceName) != STATUS_OK) {
     return 2;
   }
+#if CDH_LIGHT_MEIZU
+  // 魅族变体：同进程注册 vendor.meizu.hardware.aw_light.IAwLight/default。
+  auto meizuAwLight = cdh::light::RegisterMeizuAwLight();
+  (void)meizuAwLight;
+#endif
 
   ABinderProcess_joinThreadPool();
   return 0;

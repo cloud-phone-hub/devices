@@ -1,0 +1,3 @@
+# android.hardware.light@meizu 变体服务名标签。
+# 同进程由 android.hardware.lights-service（域 hal_light_default）注册。
+vendor.meizu.hardware.aw_light.IAwLight/default  u:object_r:hal_aw_light_service:s0

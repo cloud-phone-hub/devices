@@ -1,0 +1,9 @@
+;; android.hardware.health@meizu 变体声明式 SELinux 规则：
+;; 在 hal_health_default 域内同进程注册 vendor.meizu.hardware.meizu_charging.IMeizuCharging/default。
+;; @ensure-type hal_meizu_charging_service
+(typeattributeset service_manager_type (hal_meizu_charging_service))
+(allow hal_health_default {{pick:servicemanager}} (binder (call transfer)))
+(allow hal_health_default hal_meizu_charging_service (service_manager (add find)))
+(allow {{pick:system_server}} hal_meizu_charging_service (service_manager (find)))
+(allow {{pick:system_server}} hal_health_default (binder (call transfer)))
+(allow hal_health_default {{pick:system_server}} (binder (call transfer)))

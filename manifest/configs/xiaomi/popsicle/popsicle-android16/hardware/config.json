@@ -80,7 +80,7 @@
     },
     {
       "android.hardware.power": {
-        "variant": "default",
+        "variant": "qti",
         "version": "1.0"
       }
     },
@@ -116,12 +116,6 @@
     },
     {
       "android.service.daemon": {
-        "variant": "default",
-        "version": "1.0"
-      }
-    },
-    {
-      "vendor.qti.hardware.perf2": {
         "variant": "default",
         "version": "1.0"
       }

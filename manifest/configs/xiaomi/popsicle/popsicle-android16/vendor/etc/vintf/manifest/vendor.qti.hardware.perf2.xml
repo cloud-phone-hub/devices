@@ -1,7 +1,0 @@
-<manifest version="1.0" type="device">
-  <hal format="aidl">
-    <name>vendor.qti.hardware.perf2</name>
-    <version>1</version>
-    <fqname>IPerf/default</fqname>
-  </hal>
-</manifest>

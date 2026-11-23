@@ -1,0 +1,3 @@
+# android.hardware.health@meizu 变体服务名标签。
+# 同进程由 android.hardware.health-service（域 hal_health_default）注册。
+vendor.meizu.hardware.meizu_charging.IMeizuCharging/default  u:object_r:hal_meizu_charging_service:s0

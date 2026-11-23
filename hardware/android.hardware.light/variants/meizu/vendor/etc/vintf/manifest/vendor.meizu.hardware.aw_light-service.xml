@@ -1,0 +1,15 @@
+<!--
+    android.hardware.light@meizu 变体附带的 vendor.meizu.hardware.aw_light VINTF 片段。
+    来源：原厂 flyme-m22 vendor.img 的 etc/vintf/manifest/ 同名文件，对外声明保持不变。
+-->
+<manifest version="1.0" type="device">
+    <hal format="aidl">
+        <name>vendor.meizu.hardware.aw_light</name>
+        <version>1</version>
+        <interface>
+            <name>IAwLight</name>
+            <instance>default</instance>
+        </interface>
+        <fqname>IAwLight/default</fqname>
+    </hal>
+</manifest>

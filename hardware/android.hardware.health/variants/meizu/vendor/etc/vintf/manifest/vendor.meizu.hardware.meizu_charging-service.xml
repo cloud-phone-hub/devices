@@ -1,0 +1,10 @@
+<!--
+    android.hardware.health@meizu 变体附带的 vendor.meizu.hardware.meizu_charging VINTF 片段。
+    来源：原厂 flyme-m22 vendor.img 的 etc/vintf/manifest/ 同名文件，对外声明保持不变。
+-->
+<manifest version="8.0" type="device">
+    <hal format="aidl">
+        <name>vendor.meizu.hardware.meizu_charging</name>
+        <fqname>IMeizuCharging/default</fqname>
+    </hal>
+</manifest>

@@ -3,7 +3,8 @@
 //   - mtk（--variant mtk，-DCDH_NN_MTK=1）：src/mtk/nn_mtk_ext.cpp（IComposerExt）；
 //   - honor（--variant honor，-DCDH_NN_HONOR=1）：src/honor/nn_honor_ext.cpp（INxpNfc）；
 //   - vivo（--variant vivo，-DCDH_NN_VIVO=1）：src/vivo/nn_vivo_ext.cpp（IVASAlgoProvider）；
-//   - nothing（--variant nothing，-DCDH_NN_NOTHING=1）：src/nothing/nn_nothing_ext.cpp（INtCamService）。
+//   - nothing（--variant nothing，-DCDH_NN_NOTHING=1）：src/nothing/nn_nothing_ext.cpp（INtCamService）；
+//   - qti（--variant qti，-DCDH_NN_QTI=1）：src/qti/nn_qti_ext.cpp（同进程注册 vendor.qti.diaghal.Idiag/default）。
 #pragma once
 
 #include <android/binder_ibinder.h>

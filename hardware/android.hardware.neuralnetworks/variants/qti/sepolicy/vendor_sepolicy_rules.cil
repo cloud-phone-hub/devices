@@ -1,0 +1,8 @@
+;; android.hardware.neuralnetworks@qti 变体声明式 SELinux 规则：
+;; 在 hal_neuralnetworks_default 域内同进程注册 vendor.qti.diaghal.Idiag/default。
+;; @ensure-type vendor_hal_diaghal_service
+(typeattributeset service_manager_type (vendor_hal_diaghal_service))
+(allow hal_neuralnetworks_default vendor_hal_diaghal_service (service_manager (add find)))
+(allow domain vendor_hal_diaghal_service (service_manager (find)))
+(allow {{pick:system_server}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:system_server}} (binder (call transfer)))

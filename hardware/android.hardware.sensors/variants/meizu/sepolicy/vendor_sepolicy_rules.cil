@@ -1,0 +1,8 @@
+;; android.hardware.sensors@meizu 变体声明式 SELinux 规则：
+;; 在 hal_sensors_default 域内同进程注册 vendor.meizu.sensor_aux.ISensorAux/default。
+;; @ensure-type hal_sensor_aux_service
+(typeattributeset service_manager_type (hal_sensor_aux_service))
+(allow hal_sensors_default hal_sensor_aux_service (service_manager (add find)))
+(allow {{pick:system_server}} hal_sensor_aux_service (service_manager (find)))
+(allow {{pick:system_server}} hal_sensors_default (binder (call transfer)))
+(allow hal_sensors_default {{pick:system_server}} (binder (call transfer)))

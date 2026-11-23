@@ -1,0 +1,3 @@
+# android.hardware.sensors@meizu 变体服务名标签。
+# 同进程由 android.hardware.sensors-service（域 hal_sensors_default）注册。
+vendor.meizu.sensor_aux.ISensorAux/default      u:object_r:hal_sensor_aux_service:s0

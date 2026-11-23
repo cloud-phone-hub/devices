@@ -56,7 +56,7 @@
     },
     {
       "android.hardware.health": {
-        "variant": "default",
+        "variant": "meizu",
         "version": "1.0"
       }
     },
@@ -80,7 +80,7 @@
     },
     {
       "android.hardware.light": {
-        "variant": "default",
+        "variant": "meizu",
         "version": "1.0"
       }
     },
@@ -110,7 +110,7 @@
     },
     {
       "android.hardware.power": {
-        "variant": "default",
+        "variant": "qti",
         "version": "1.0"
       }
     },
@@ -134,7 +134,7 @@
     },
     {
       "android.hardware.sensors": {
-        "variant": "default",
+        "variant": "meizu",
         "version": "1.0"
       }
     },
@@ -152,7 +152,7 @@
     },
     {
       "android.hardware.vibrator": {
-        "variant": "default",
+        "variant": "meizu",
         "version": "1.0"
       }
     },
@@ -170,48 +170,6 @@
     },
     {
       "android.service.daemon": {
-        "variant": "default",
-        "version": "1.0"
-      }
-    },
-    {
-      "vendor.awa.reality": {
-        "variant": "default",
-        "version": "1.0"
-      }
-    },
-    {
-      "vendor.meizu.hardware.aw_light": {
-        "variant": "default",
-        "version": "1.0"
-      }
-    },
-    {
-      "vendor.meizu.hardware.meizu_charging": {
-        "variant": "default",
-        "version": "1.0"
-      }
-    },
-    {
-      "vendor.meizu.sensor_aux": {
-        "variant": "default",
-        "version": "1.0"
-      }
-    },
-    {
-      "vendor.qti.diaghal": {
-        "variant": "default",
-        "version": "1.0"
-      }
-    },
-    {
-      "vendor.qti.hardware.perf2": {
-        "variant": "default",
-        "version": "1.0"
-      }
-    },
-    {
-      "vendor.qti.hardware.servicetrackeraidl": {
         "variant": "default",
         "version": "1.0"
       }
@@ -236,7 +194,7 @@
     },
     {
       "android.hardware.neuralnetworks": {
-        "variant": "default",
+        "variant": "qti",
         "version": "1.0"
       }
     }

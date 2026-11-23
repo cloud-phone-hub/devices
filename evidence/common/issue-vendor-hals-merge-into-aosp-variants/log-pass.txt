@@ -1,0 +1,89 @@
+=== 1. 7 个命名变体目标交叉编译与 AIDL .hash 验证 ===
+android15 android.hardware.health@meizu:
+    android.hardware.health (v3, hash 3bab6273a549)
+    vendor/meizu/hardware/meizu_charging (v1, hash be64757e0ec3)
+    [ok] -> out/devices/vendor/android15/meizu/bin/hw/android.hardware.health-service (静态树 +3)
+
+android15 android.hardware.light@meizu:
+    android.hardware.light (v2, hash c7d3d941d303)
+    vendor/meizu/hardware/aw_light (v1, hash 85068d518464)
+    [ok] -> out/devices/vendor/android15/meizu/bin/hw/android.hardware.lights-service (静态树 +3)
+
+android15 android.hardware.vibrator@meizu:
+    android.hardware.vibrator (v2, hash ea8742d6993e)
+    vendor/awa/reality (v3, hash 054e79077142)
+    [ok] -> out/devices/vendor/android15/meizu/bin/hw/android.hardware.vibrator-service (静态树 +3)
+
+android15 android.hardware.sensors@meizu:
+    android.hardware.sensors (v2, hash 8cdc9f2ea08f)
+    vendor/meizu/sensor_aux (v1, 模块自带无 hash)
+    [ok] -> out/devices/vendor/android15/meizu/bin/hw/android.hardware.sensors-service (静态树 +2)
+
+android15 android.hardware.power@qti:
+    android.hardware.power (v5, hash d111735ed2b8)
+    vendor/qti/hardware/perf2 (v1, hash c5d67f27386b)
+    vendor/qti/hardware/servicetrackeraidl (v1, hash fd4771abe6e1)
+    [ok] -> out/devices/vendor/android15/qti/bin/hw/android.hardware.power-service (静态树 +4)
+
+android16 android.hardware.power@qti:
+    android.hardware.power (v6, hash 13171cf98a48)
+    vendor/qti/hardware/perf2 (v1, hash c5d67f27386b)
+    vendor/qti/hardware/servicetrackeraidl (v1, hash fd4771abe6e1)
+    [ok] -> out/devices/vendor/android16/qti/bin/hw/android.hardware.power-service (静态树 +4)
+
+android15 android.hardware.neuralnetworks@qti:
+    android.hardware.neuralnetworks (v4, hash 53178f8de9b8)
+    vendor/qti/diaghal (v1, hash 1180103e4052)
+    [ok] -> out/devices/vendor/android15/qti/bin/hw/android.hardware.neuralnetworks-service (静态树 +3)
+
+=== 2. 跨变体符号隔离校验（android15 6 命名变体 + 6 default 变体） ===
+  [HAS]    meizu/bin/hw/android.hardware.health-service         :: vendor.meizu.hardware.meizu_charging.IMeizuCharging => 4
+  [HAS]    meizu/bin/hw/android.hardware.lights-service         :: vendor.meizu.hardware.aw_light.IAwLight => 23
+  [HAS]    meizu/bin/hw/android.hardware.vibrator-service       :: vendor.awa.reality.IRealityTap => 4
+  [HAS]    meizu/bin/hw/android.hardware.sensors-service        :: vendor.meizu.sensor_aux.ISensorAux => 4
+  [HAS]    qti/bin/hw/android.hardware.power-service            :: vendor.qti.hardware.perf2.IPerf => 51
+  [HAS]    qti/bin/hw/android.hardware.power-service            :: vendor.qti.hardware.servicetrackeraidl.IServicetracker => 5
+  [HAS]    qti/bin/hw/android.hardware.neuralnetworks-service   :: vendor.qti.diaghal.Idiag => 1
+  [ABSENT] bin/hw/android.hardware.health-service               :: vendor.meizu.hardware.meizu_charging => 0
+  [ABSENT] bin/hw/android.hardware.lights-service               :: vendor.meizu.hardware.aw_light => 0
+  [ABSENT] bin/hw/android.hardware.vibrator-service             :: vendor.awa.reality => 0
+  [ABSENT] bin/hw/android.hardware.sensors-service              :: vendor.meizu.sensor_aux => 0
+  [ABSENT] bin/hw/android.hardware.power-service                :: vendor.qti.hardware.perf2 => 0
+  [ABSENT] bin/hw/android.hardware.power-service                :: vendor.qti.hardware.servicetrackeraidl => 0
+  [ABSENT] bin/hw/android.hardware.neuralnetworks-service       :: vendor.qti.diaghal => 0
+ALL ISOLATION CHECKS PASSED!
+
+=== 3. 全量 Go 单元测试 + cdh-pipeline 重建 ===
+$ cd /Volumes/work/cloud-phone-hub/agent && go test -count=1 ./modules/pipeline/... && go build -o /Volumes/work/cloud-phone-hub/out/agent/dist/cdh-pipeline ./cmd/cdh-pipeline
+ok  	cloud-phone-hub/agent/modules/pipeline/cli	0.319s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/avb	0.403s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/buildctx	0.609s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/device	3.606s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/engine	1.353s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/env	1.709s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/fsimg	1.776s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/deps	1.825s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/halbuild	8.169s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/profile	2.720s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/spec	2.767s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/toolchain	2.842s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/kmod	3.289s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/manifest	2.744s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/pipeline	2.664s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/stagekit	3.027s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/task	3.371s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/toolfind	3.011s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/01_unpack	3.451s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	3.618s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/03_build_kernel	3.701s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/04_build_modules	3.774s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/05_build_boot	3.496s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/06_build_vendor_boot	6.425s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/07_build_odm	3.297s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/08_build_hardware	2.829s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	2.866s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/10_build_vendor_dlkm	3.900s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/11_build_patch	2.495s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/12_pack_super	2.224s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/13_pack_vda	3.627s
+Command exited with code 0.

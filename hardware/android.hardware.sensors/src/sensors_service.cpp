@@ -37,6 +37,9 @@ binder_status_t AServiceManager_addService(AIBinder *binder,
 #include <fmq/AidlMessageQueue.h>
 
 #include "sensor_event_model.h"
+#if CDH_SENSORS_MEIZU
+#include "meizu/sensors_meizu_ext.h"
+#endif
 
 #include <cctype>
 #include <chrono>
@@ -695,6 +698,11 @@ int main() {
   if (status != STATUS_OK) {
     return 2;
   }
+#if CDH_SENSORS_MEIZU
+  // 魅族变体：同进程注册 vendor.meizu.sensor_aux.ISensorAux/default。
+  auto meizuSensorAux = cdh::sensors::RegisterMeizuSensorAux();
+  (void)meizuSensorAux;
+#endif
   ABinderProcess_joinThreadPool();
   return 0;
 }

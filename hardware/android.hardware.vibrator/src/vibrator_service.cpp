@@ -38,6 +38,9 @@ binder_status_t AServiceManager_addService(AIBinder *binder,
 #include <aidl/android/hardware/vibrator/IVibratorCallback.h>
 #include <aidl/android/hardware/vibrator/IVibratorManager.h>
 #include <aidl/android/hardware/vibrator/PrimitivePwle.h>
+#if CDH_VIBRATOR_MEIZU
+#include "meizu/vibrator_meizu_ext.h"
+#endif
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -478,6 +481,11 @@ int main() {
       return 3;
     }
   }
+#if CDH_VIBRATOR_MEIZU
+  // 魅族变体：同进程注册 vendor.awa.reality.IRealityTap/default。
+  auto meizuRealityTap = cdh::vibrator::RegisterMeizuRealityTap();
+  (void)meizuRealityTap;
+#endif
 
   ABinderProcess_joinThreadPool();
   return 0;

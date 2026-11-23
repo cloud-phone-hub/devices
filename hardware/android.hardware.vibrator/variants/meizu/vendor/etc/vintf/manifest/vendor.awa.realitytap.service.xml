@@ -1,0 +1,11 @@
+<!--
+    android.hardware.vibrator@meizu 变体附带的 vendor.awa.reality VINTF 片段。
+    来源：原厂 flyme-m22 vendor.img 的 etc/vintf/manifest/ 同名文件，对外声明保持不变。
+-->
+<manifest version="8.0" type="device">
+    <hal format="aidl">
+        <name>vendor.awa.reality</name>
+        <version>3</version>
+        <fqname>IRealityTap/default</fqname>
+    </hal>
+</manifest>

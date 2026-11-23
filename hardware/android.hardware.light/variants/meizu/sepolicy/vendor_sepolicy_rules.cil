@@ -1,0 +1,9 @@
+;; android.hardware.light@meizu 变体声明式 SELinux 规则：
+;; 在 hal_light_default 域内同进程注册 vendor.meizu.hardware.aw_light.IAwLight/default。
+;; @ensure-type hal_aw_light_service
+(typeattributeset service_manager_type (hal_aw_light_service))
+(allow hal_light_default {{pick:servicemanager}} (binder (call transfer)))
+(allow hal_light_default hal_aw_light_service (service_manager (add find)))
+(allow {{pick:system_server}} hal_aw_light_service (service_manager (find)))
+(allow {{pick:system_server}} hal_light_default (binder (call transfer)))
+(allow hal_light_default {{pick:system_server}} (binder (call transfer)))

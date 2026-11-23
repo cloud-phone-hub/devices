@@ -1,0 +1,4 @@
+# android.hardware.power@qti 变体服务名标签。
+# 同进程由 android.hardware.power-service（域 hal_power_default）注册。
+vendor.qti.hardware.perf2.IPerf/default	u:object_r:hal_perf2_service:s0
+vendor.qti.hardware.servicetrackeraidl.IServicetracker/default	u:object_r:vendor_hal_srvctracker_service:s0

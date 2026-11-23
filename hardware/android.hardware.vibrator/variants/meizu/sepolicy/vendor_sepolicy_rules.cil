@@ -1,0 +1,11 @@
+;; android.hardware.vibrator@meizu 变体声明式 SELinux 规则：
+;; 在 hal_vibrator_default 域内同进程注册 vendor.awa.reality.IRealityTap/default。
+;; @ensure-type hal_realitytap_service
+(typeattributeset service_manager_type (hal_realitytap_service))
+(allow hal_vibrator_default {{pick:servicemanager}} (binder (call transfer)))
+(allow hal_vibrator_default hal_realitytap_service (service_manager (add find)))
+(allow domain hal_realitytap_service (service_manager (find)))
+(allow {{pick:system_server}} hal_vibrator_default (binder (call transfer)))
+(allow hal_vibrator_default {{pick:system_server}} (binder (call transfer)))
+(allow {{pick:system_app}} hal_vibrator_default (binder (call transfer)))
+(allow hal_vibrator_default {{pick:system_app}} (binder (call transfer)))

@@ -72,6 +72,11 @@ binder_status_t AServiceManager_addService(AIBinder *binder,
 #if CDH_HEALTH_SAMSUNG
 #include "samsung/seh_health.h"
 #endif
+// 魅族变体（Flyme 需要 IMeizuCharging/default）：只在 --variant meizu 时编入，
+// 见 src/meizu/health_meizu_ext.h 与 modules/android.hardware.health.json 的 variants。
+#if CDH_HEALTH_MEIZU
+#include "meizu/health_meizu_ext.h"
+#endif
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -761,6 +766,11 @@ int main() {
         }
       });
   (void)oplusCharger;
+#endif
+#if CDH_HEALTH_MEIZU
+  // 魅族变体：同进程注册 vendor.meizu.hardware.meizu_charging.IMeizuCharging/default。
+  auto meizuCharging = cdh::health::RegisterMeizuCharging();
+  (void)meizuCharging;
 #endif
 
   std::thread([health] {

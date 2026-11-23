@@ -16,8 +16,6 @@
 (allow system_app_{{vers}} sysfs_thermal_{{vers}} (file (read getattr open)))
 (allow system_app_{{vers}} sysfs_thermal_{{vers}} (lnk_file (read getattr)))
 
-;; ---- 3) perf2 HAL (hal_sensors_default) binder 双向调用、SurfaceFlinger 属性与缺失私有服务静默 ----
-(allow domain hal_sensors_default (binder (call transfer)))
-(allow hal_sensors_default domain (binder (call transfer)))
+;; ---- 3) SurfaceFlinger 属性与缺失私有服务静默（perf2/servicetracker 规则已迁入 android.hardware.power@qti 变体） ----
 (allow surfaceflinger_{{vers}} vendor_default_prop_{{vers}} (file (open read getattr map)))
 (dontaudit domain default_android_service_{{vers}} (service_manager (find)))

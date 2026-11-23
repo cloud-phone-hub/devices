@@ -1,0 +1,31 @@
+=== 归并前独立 vendor.* 模块清单（7 个目录 + 7 个 JSON） ===
+devices/hardware/vendor.awa.reality
+devices/hardware/vendor.meizu.hardware.aw_light
+devices/hardware/vendor.meizu.hardware.meizu_charging
+devices/hardware/vendor.meizu.sensor_aux
+devices/hardware/vendor.qti.diaghal
+devices/hardware/vendor.qti.hardware.perf2
+devices/hardware/vendor.qti.hardware.servicetrackeraidl
+
+agent/modules/pipeline/stages/08_build_hardware/modules/vendor.awa.reality.json
+agent/modules/pipeline/stages/08_build_hardware/modules/vendor.meizu.hardware.aw_light.json
+agent/modules/pipeline/stages/08_build_hardware/modules/vendor.meizu.hardware.meizu_charging.json
+agent/modules/pipeline/stages/08_build_hardware/modules/vendor.meizu.sensor_aux.json
+agent/modules/pipeline/stages/08_build_hardware/modules/vendor.qti.diaghal.json
+agent/modules/pipeline/stages/08_build_hardware/modules/vendor.qti.hardware.perf2.json
+agent/modules/pipeline/stages/08_build_hardware/modules/vendor.qti.hardware.servicetrackeraidl.json
+
+=== 改造过程中发现并修复的两处构建引擎边界问题 ===
+1) spec.go 变体 compile.defines 追加合并后旧单测断言更新前失败记录：
+--- FAIL: TestLoadVariant (0.00s)
+    spec_test.go:105: 变体 defines = [-DOLD=1 -DCDH_DEMO_MTK=1], 期望 [-DCDH_DEMO_MTK=1]
+    spec_test.go:129: android16+mtk defines = [-DNEW=1 -DCDH_DEMO_MTK=1]
+FAIL	cloud-phone-hub/agent/modules/pipeline/internal/halcore/spec	2.359s
+
+2) halbuild/vendor.go 共用 vendor-tree.txt 时，后构建 default 变体误删命名变体 VINTF 静态树记录：
+    删 陈旧 etc/vintf/manifest/vendor.meizu.hardware.meizu_charging-service.xml（源已改名或删除）
+    删 陈旧 etc/vintf/manifest/vendor.meizu.hardware.aw_light-service.xml（源已改名或删除）
+    删 陈旧 etc/vintf/manifest/vendor.awa.realitytap.service.xml（源已改名或删除）
+    删 陈旧 etc/vintf/manifest/vendor.qti.hardware.servicetrackeraidl-service.xml（源已改名或删除）
+    删 陈旧 etc/vintf/manifest/vendor.qti.diaghal-service.xml（源已改名或删除）
+（已修复：非基础变体改用独立清单 vendor-tree-<variant>.txt）

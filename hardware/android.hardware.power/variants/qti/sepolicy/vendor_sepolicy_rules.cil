@@ -1,0 +1,14 @@
+;; android.hardware.power@qti 变体声明式 SELinux 规则：
+;; 在 hal_power_default 域内同进程注册高通 IPerf/default 与 IServicetracker/default。
+;; @ensure-type hal_perf2_service
+(typeattributeset service_manager_type (hal_perf2_service))
+(allow hal_power_default hal_perf2_service (service_manager (add find)))
+(allow domain hal_perf2_service (service_manager (find)))
+(allow domain hal_power_default (binder (call transfer)))
+(allow hal_power_default domain (binder (call transfer)))
+;; @ensure-type vendor_hal_srvctracker_service
+(typeattributeset service_manager_type (vendor_hal_srvctracker_service))
+(allow hal_power_default vendor_hal_srvctracker_service (service_manager (add find)))
+(allow {{pick:system_server}} vendor_hal_srvctracker_service (service_manager (find)))
+(allow {{pick:system_server}} hal_power_default (binder (call transfer)))
+(allow hal_power_default {{pick:system_server}} (binder (call transfer)))

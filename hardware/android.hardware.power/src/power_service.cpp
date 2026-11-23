@@ -41,6 +41,9 @@ binder_status_t AServiceManager_addService(AIBinder* binder,
 #include <aidl/android/hardware/power/IPowerHintSession.h>
 #include <aidl/android/hardware/power/Mode.h>
 #include <aidl/android/hardware/power/WorkDuration.h>
+#if CDH_POWER_QTI
+#include "qti/power_qti_ext.h"
+#endif
 
 #include <cstdint>
 #include <memory>
@@ -237,6 +240,12 @@ int main() {
       STATUS_OK) {
     return 2;
   }
+#if CDH_POWER_QTI
+  // 高通变体：同进程注册 vendor.qti.hardware.perf2.IPerf/default 与
+  // vendor.qti.hardware.servicetrackeraidl.IServicetracker/default。
+  auto qtiServices = cdh::power::RegisterQtiServices();
+  (void)qtiServices;
+#endif
   ABinderProcess_joinThreadPool();
   return 0;
 }

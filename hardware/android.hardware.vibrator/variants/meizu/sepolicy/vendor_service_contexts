@@ -1,0 +1,3 @@
+# android.hardware.vibrator@meizu 变体服务名标签。
+# 同进程由 android.hardware.vibrator-service（域 hal_vibrator_default）注册。
+vendor.awa.reality.IRealityTap/default  u:object_r:hal_realitytap_service:s0

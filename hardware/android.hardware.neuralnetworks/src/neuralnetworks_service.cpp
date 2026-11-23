@@ -5,6 +5,9 @@
 // 基础 default 版本零跨厂商代码。
 
 #include "nn_vendor_ext.h"
+#if CDH_NN_QTI
+#include "qti/nn_qti_ext.h"
+#endif
 
 #include <android/binder_ibinder.h>
 #include <android/binder_manager.h>
@@ -244,9 +247,17 @@ int main(int argc, char** argv) {
                         "primary NN service %s not registered (%d); continuing for placeholders",
                         serviceName.c_str(), main_status);
   }
+  int extraRegistered = 0;
+#if CDH_NN_QTI
+  // 高通变体：在占位服务扫描前先以真 AIDL NDK stub 注册 vendor.qti.diaghal.Idiag/default。
+  auto qtiDiagHal = cdh::nn::RegisterQtiDiagHal();
+  if (qtiDiagHal != nullptr) {
+    ++extraRegistered;
+  }
+#endif
   const int placeholders =
       RegisterPlaceholdersFromFile("/vendor/etc/cdh_nn_placeholders.txt");
-  if (main_status != EX_NONE && placeholders <= 0) {
+  if (main_status != EX_NONE && placeholders <= 0 && extraRegistered <= 0) {
     return 2;
   }
   ABinderProcess_joinThreadPool();
