@@ -1,0 +1,8 @@
+# 改造前状态（2026-11-23）
+1. qemu/external/virglrenderer 工作区 28 个文件被原地改脏（M）：
+   server/main.c, server/render_server.c, server/render_socket.c, server/render_worker.c,
+   src/gallium/auxiliary/tgsi/tgsi_text.c, src/proxy/proxy_context.c, src/proxy/proxy_socket.c,
+   src/venus/vkr_*.{c,h}, src/virglrenderer.c, src/vrend/vrend_*.{c,h}, vtest/vtest_renderer.c
+2. 逐字节比对校验：EXACT_MATCH: working tree diff == patches 01..29
+3. build/qemu/build-qemu-darwin & build/qemu/build-qemu-docker.sh 直接原地执行
+   apply-virglrenderer-patches.sh "${EXT}/virglrenderer"，且未将 qemu/patch/virglrenderer/*.patch 纳入摘要。

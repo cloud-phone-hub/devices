@@ -1,0 +1,20 @@
+# 1. 语法检查与上游还原
+bash -n qemu/patch/apply-virglrenderer-patches.sh build/qemu/build-qemu-darwin build/qemu/build-qemu-docker.sh -> exit 0
+git -C qemu/external/virglrenderer checkout -- . && git status --short -> UPSTREAM_CLEAN
+
+# 2. 首次构建验证（只读上游导出 -> 独立工作区应用 29 个补丁 -> meson 编译安装）
+==> 编译 virglrenderer（从只读上游导出并应用补丁到独立构建工作区）
+已应用: 01-linux-vulkan-software-driver-filter.patch .. 29-macos-disable-separable-shaders.patch
+==> 补丁来源: /Volumes/work/cloud-phone-hub/qemu/patch/virglrenderer
+==> 补丁工作区: /Volumes/work/cloud-phone-hub/out/qemu/darwin-arm64/build/virglrenderer-src（上游只读未修改）
+==> 应用29 失败0
+==> virglrenderer -> /Volumes/work/cloud-phone-hub/out/qemu/darwin-arm64/static/virglrenderer
+==> 完成（mode=deps, darwin-arm64）
+
+# 3. 二次复跑验证（摘要命中）
+==> 保留静态库 virglrenderer（上游与补丁未变）
+==> 完成（mode=deps, darwin-arm64）
+
+# 4. 上游工作区复核 & doctor
+git -C qemu/external/virglrenderer status --short -> VERIFIED_CLEAN
+build/qemu/build-qemu-darwin doctor -> 41 项就绪，0 项待补
