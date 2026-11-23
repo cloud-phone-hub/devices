@@ -1,0 +1,4 @@
+# Unisoc 展锐 miscdata HIDL 服务上下文
+# @when-file bin/hw/vendor.sprd.hardware.miscdata@1.0-service
+vendor.sprd.hardware.miscdata::IMiscdata u:object_r:hal_miscdata_hwservice:s0
+# @end

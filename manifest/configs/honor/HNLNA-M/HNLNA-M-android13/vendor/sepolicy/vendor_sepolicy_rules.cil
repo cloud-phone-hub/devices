@@ -1,0 +1,118 @@
+;; Honor MagicOS hwfactoryinterface 条件 SELinux 绑定（兼容 HIDL @1.1 与 AIDL 服务）
+;; @when-file bin/hw/vendor.honor.hardware.hwfactoryinterface@1.1-service | bin/hw/vendor.honor.hardware.hwfactoryinterface-service
+;; @when-any-declared hal_hwfactoryinterface hal_factoryinterface
+;; @ensure-type hal_hwfactoryinterface_default hal_hwfactoryinterface_default_exec hal_hwfactoryinterface_service
+(typeattributeset domain (hal_hwfactoryinterface_default))
+(typeattributeset halserverdomain (hal_hwfactoryinterface_default))
+(typeattributeset hal_hwfactoryinterface (hal_hwfactoryinterface_default))
+(typeattributeset hal_hwfactoryinterface_server (hal_hwfactoryinterface_default))
+(typeattributeset hal_factoryinterface (hal_hwfactoryinterface_default))
+(typeattributeset hal_factoryinterface_server (hal_hwfactoryinterface_default))
+(typeattributeset file_type (hal_hwfactoryinterface_default_exec))
+(typeattributeset exec_type (hal_hwfactoryinterface_default_exec))
+(typeattributeset vendor_file_type (hal_hwfactoryinterface_default_exec))
+;; @when-not-declared hal_hwfactoryinterface_service_{{vers}}
+(typeattributeset service_manager_type (hal_hwfactoryinterface_service))
+(typeattributeset hal_service_type (hal_hwfactoryinterface_service))
+(typeattributeset vendor_service (hal_hwfactoryinterface_service))
+;; @end
+(allow init_{{vers}} hal_hwfactoryinterface_default_exec (file (read getattr map execute open)))
+(allow init_{{vers}} hal_hwfactoryinterface_default (process (transition siginh rlimitinh)))
+(dontaudit init_{{vers}} hal_hwfactoryinterface_default (process (noatsecure)))
+(typetransition init_{{vers}} hal_hwfactoryinterface_default_exec process hal_hwfactoryinterface_default)
+(allow hal_hwfactoryinterface_default init_{{vers}} (unix_stream_socket (connectto)))
+(allow hal_hwfactoryinterface_default hal_hwfactoryinterface_default_exec (file (read getattr map execute open entrypoint)))
+(allow hal_hwfactoryinterface_client hal_hwfactoryinterface_server (binder (call transfer)))
+(allow hal_hwfactoryinterface_server hal_hwfactoryinterface_client (binder (transfer)))
+(allow hal_hwfactoryinterface_client hal_hwfactoryinterface_server (fd (use)))
+(allow hal_factoryinterface_client hal_hwfactoryinterface_server (binder (call transfer)))
+(allow hal_hwfactoryinterface_server hal_factoryinterface_client (binder (transfer)))
+(allow hal_factoryinterface_client hal_hwfactoryinterface_server (fd (use)))
+(allow hal_factoryinterface_client hal_factoryinterface_server (binder (call transfer)))
+(allow hal_factoryinterface_server hal_factoryinterface_client (binder (transfer)))
+(allow hal_factoryinterface_client hal_factoryinterface_server (fd (use)))
+;; @when-file bin/hw/vendor.honor.hardware.hwfactoryinterface@1.1-service
+;; @ensure-type hal_hwfactoryinterface_hwservice
+(typeattributeset hwservice_manager_type (hal_hwfactoryinterface_hwservice))
+(allow hal_hwfactoryinterface_default hwservicemanager_{{vers}} (binder (call transfer)))
+(allow hwservicemanager_{{vers}} hal_hwfactoryinterface_default (binder (call transfer)))
+(allow hwservicemanager_{{vers}} hal_hwfactoryinterface_default (dir (search)))
+(allow hwservicemanager_{{vers}} hal_hwfactoryinterface_default (file (read map open)))
+(allow hwservicemanager_{{vers}} hal_hwfactoryinterface_default (process (getattr)))
+(allow hal_hwfactoryinterface_default hwservicemanager_prop_{{vers}} (file (read getattr map open)))
+(allow hal_hwfactoryinterface_default hwbinder_device_{{vers}} (chr_file (ioctl read write getattr lock append map open)))
+(allow hal_hwfactoryinterface_default hal_hwfactoryinterface_hwservice (hwservice_manager (add find)))
+(allow hal_hwfactoryinterface_default hidl_base_hwservice_{{vers}} (hwservice_manager (add)))
+(allow hal_hwfactoryinterface_client hal_hwfactoryinterface_hwservice (hwservice_manager (find)))
+(allow hal_hwfactoryinterface_client hal_hwfactoryinterface_default (binder (call transfer)))
+(allow hal_hwfactoryinterface_default hal_hwfactoryinterface_client (binder (call transfer)))
+(allow hal_factoryinterface_client hal_hwfactoryinterface_hwservice (hwservice_manager (find)))
+(allow hal_factoryinterface_client hal_hwfactoryinterface_default (binder (call transfer)))
+(allow hal_hwfactoryinterface_default hal_factoryinterface_client (binder (call transfer)))
+(allow system_server_{{vers}} hal_hwfactoryinterface_hwservice (hwservice_manager (find)))
+(allow system_server_{{vers}} hal_hwfactoryinterface_default (binder (call transfer)))
+(allow hal_hwfactoryinterface_default system_server_{{vers}} (binder (call transfer)))
+(allow cust_{{vers}} hal_hwfactoryinterface_hwservice (hwservice_manager (find)))
+(allow cust_{{vers}} hal_hwfactoryinterface_default (binder (call transfer)))
+(allow hal_hwfactoryinterface_default cust_{{vers}} (binder (call transfer)))
+;; @end
+(allow hal_hwfactoryinterface_client {{pick:hal_hwfactoryinterface_service}} (service_manager (find)))
+(allow hal_factoryinterface_client {{pick:hal_hwfactoryinterface_service}} (service_manager (find)))
+(allow system_server_{{vers}} {{pick:hal_hwfactoryinterface_service}} (service_manager (find)))
+(allow cust_{{vers}} {{pick:hal_hwfactoryinterface_service}} (service_manager (find)))
+;; @when-file bin/hw/vendor.honor.hardware.hwfactoryinterface-service
+(allow hal_hwfactoryinterface_default servicemanager_{{vers}} (binder (call transfer)))
+(allow servicemanager_{{vers}} hal_hwfactoryinterface_default (binder (call transfer)))
+(allow servicemanager_{{vers}} hal_hwfactoryinterface_default (dir (search)))
+(allow servicemanager_{{vers}} hal_hwfactoryinterface_default (file (read open)))
+(allow servicemanager_{{vers}} hal_hwfactoryinterface_default (process (getattr)))
+(allow hal_hwfactoryinterface_default {{pick:hal_hwfactoryinterface_service}} (service_manager (add find)))
+;; @end
+(allow hal_hwfactoryinterface_default property_socket_{{vers}} (sock_file (write)))
+(allow hal_hwfactoryinterface_default proc_{{vers}} (file (read getattr open)))
+(allow hal_hwfactoryinterface_default sysfs_{{vers}} (file (read getattr open)))
+;; @end
+;; @end
+;; Honor NFC 条件 SELinux 绑定
+;; @when-any-declared hal_nxpnfc_service hal_hnnfc_service
+(allow {{pick:nfc}} {{pick:sysfs}} (dir (search open read getattr)))
+(allow {{pick:nfc}} {{pick:sysfs}} (file (open read getattr)))
+(allow {{pick:nfc}} {{pick:sysfs}} (lnk_file (read getattr)))
+(allow hal_neuralnetworks_default hal_nxpnfc_service (service_manager (add find)))
+(allow {{pick:nfc}} hal_nxpnfc_service (service_manager (find)))
+(allow hal_neuralnetworks_default hal_hnnfc_service (service_manager (add find)))
+(allow {{pick:nfc}} hal_hnnfc_service (service_manager (find)))
+(allow {{pick:nfc}} hal_neuralnetworks_default (binder (call transfer)))
+;; @end
+;; MTK 开机动画域跨分区授权（严禁授权 vendor_file 普通文件以避开 coredomain neverallow）
+;; @when-declared mtkbootanimation_{{vers}}
+(allow mtkbootanimation_{{vers}} bootanim_system_prop_{{vers}} (file (read getattr map open)))
+(allow mtkbootanimation_{{vers}} bootanim_config_prop_{{vers}} (file (read getattr map open)))
+(allow mtkbootanimation_{{vers}} dri_device (chr_file (ioctl read write getattr lock append map open)))
+(allow surfaceflinger_{{vers}} mtkbootanimation_{{vers}} (binder (call transfer)))
+(allow mtkbootanimation_{{vers}} surfaceflinger_{{vers}} (binder (transfer)))
+(allow surfaceflinger_{{vers}} mtkbootanimation_{{vers}} (fd (use)))
+(allow surfaceflinger_{{vers}} mtkbootanimation_{{vers}} (dir (search)))
+(allow surfaceflinger_{{vers}} mtkbootanimation_{{vers}} (file (read getattr map open)))
+(allow mtkbootanimation_{{vers}} surfaceflinger_{{vers}} (unix_stream_socket (read write)))
+(allow mediaserver_{{vers}} mtkbootanimation_{{vers}} (binder (call transfer)))
+(allow mtkbootanimation_{{vers}} mediaserver_{{vers}} (binder (transfer)))
+(allow mediaserver_{{vers}} mtkbootanimation_{{vers}} (fd (use)))
+(allow mtkbootanimation_{{vers}} statsdw_socket_{{vers}} (sock_file (write)))
+(allow mtkbootanimation_{{vers}} statsd_{{vers}} (unix_dgram_socket (sendto)))
+;; @end
+
+;; MTK audio_vendor_parameter_parser 跨命名空间访问最小授权
+;; @when-any-declared audio_vendor_parameter_parser_{{vers}} audio_vendor_parameter_parser
+(allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_file}} (dir (ioctl read getattr lock open search)))
+(allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_file}} (lnk_file (read getattr open)))
+(allow {{pick:audio_vendor_parameter_parser}} {{pick:same_process_hal_file}} (dir (ioctl read getattr lock open search)))
+(allow {{pick:audio_vendor_parameter_parser}} {{pick:same_process_hal_file}} (file (read getattr map execute open)))
+(allow {{pick:audio_vendor_parameter_parser}} {{pick:same_process_hal_file}} (lnk_file (read getattr open)))
+(allow {{pick:audio_vendor_parameter_parser}} {{pick:vndk_sp_file}} (dir (ioctl read getattr lock open search)))
+(allow {{pick:audio_vendor_parameter_parser}} {{pick:vndk_sp_file}} (file (read getattr map execute open)))
+(allow {{pick:audio_vendor_parameter_parser}} {{pick:vndk_sp_file}} (lnk_file (read getattr open)))
+(allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_configs_file}} (dir (ioctl read getattr lock open search)))
+(allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_configs_file}} (file (read getattr map open)))
+(allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_configs_file}} (lnk_file (read getattr open)))
+;; @end

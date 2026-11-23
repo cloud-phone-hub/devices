@@ -1,0 +1,12 @@
+;; neuralnetworks@honor 变体条件 SELinux 规则：
+;; 放行 Honor NFC 域读 sysfs、neuralnetworks 注册 INxpNfc/IHnNfc 服务及 nfc 查找/调用。
+;; @when-any-declared hal_nxpnfc_service hal_hnnfc_service
+(allow {{pick:nfc}} {{pick:sysfs}} (dir (search open read getattr)))
+(allow {{pick:nfc}} {{pick:sysfs}} (file (open read getattr)))
+(allow {{pick:nfc}} {{pick:sysfs}} (lnk_file (read getattr)))
+(allow hal_neuralnetworks_default hal_nxpnfc_service (service_manager (add find)))
+(allow {{pick:nfc}} hal_nxpnfc_service (service_manager (find)))
+(allow hal_neuralnetworks_default hal_hnnfc_service (service_manager (add find)))
+(allow {{pick:nfc}} hal_hnnfc_service (service_manager (find)))
+(allow {{pick:nfc}} hal_neuralnetworks_default (binder (call transfer)))
+;; @end

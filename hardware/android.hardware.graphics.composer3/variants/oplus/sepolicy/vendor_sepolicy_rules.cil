@@ -1,0 +1,13 @@
+;; composer3@oplus 变体条件 SELinux 规则：
+;; 当官方平台策略声明了 ColorOS / Realme UI / OxygenOS 的 hal_displaycolorfeature 属性时，
+;; 将 hal_graphics_composer_default 绑定为 server 并授予 surfaceflinger 调用权限。
+;; @when-declared hal_displaycolorfeature hal_displaycolorfeature_client hal_displaycolorfeature_server hal_graphics_composer_default surfaceflinger_{{vers}}
+;; @when-not-contains (typeattributeset hal_displaycolorfeature_server (hal_graphics_composer_default))
+(typeattributeset hal_displaycolorfeature (hal_graphics_composer_default))
+(typeattributeset hal_displaycolorfeature_client (surfaceflinger_{{vers}}))
+(typeattributeset hal_displaycolorfeature_server (hal_graphics_composer_default))
+(allow hal_displaycolorfeature_client hal_displaycolorfeature_server (binder (call transfer)))
+(allow hal_displaycolorfeature_server hal_displaycolorfeature_client (binder (transfer)))
+(allow hal_displaycolorfeature_client hal_displaycolorfeature_server (fd (use)))
+;; @end
+;; @end

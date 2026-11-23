@@ -150,6 +150,18 @@
     {
       "from": "official",
       "source": "etc/public.libraries.txt"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "etc/default_feature_config.json"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "etc/product_dynamic_feature_config.json"
     }
   ],
   "lib64-backfills": [],

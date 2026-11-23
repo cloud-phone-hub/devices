@@ -1,0 +1,5 @@
+# ASUS 相机属性上下文映射（仅当 vendor_sepolicy.cil 声明了 vendor_set_camera_prop 时生效）
+# @when-declared vendor_set_camera_prop
+vendor.camera. u:object_r:vendor_set_camera_prop:s0
+ro.vendor.camera.sound.forced u:object_r:vendor_set_camera_prop:s0
+# @end

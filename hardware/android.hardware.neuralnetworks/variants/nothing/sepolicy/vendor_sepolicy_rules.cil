@@ -1,0 +1,6 @@
+;; neuralnetworks@nothing 变体条件 SELinux 规则：
+;; 放行 platform_app 查找 INtCamService (vendor_hal_noth_camera_service) 并调用 neuralnetworks HAL。
+;; @when-declared vendor_hal_noth_camera_service
+(allow {{pick:platform_app}} vendor_hal_noth_camera_service (service_manager (find)))
+(allow {{pick:platform_app}} hal_neuralnetworks_default (binder (call transfer)))
+;; @end

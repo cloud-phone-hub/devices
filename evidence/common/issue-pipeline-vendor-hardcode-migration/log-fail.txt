@@ -1,0 +1,25 @@
+[审计基线 - 改造前 pipeline 特定机型/厂商硬编码清单]
+1. 05/06/07/08/10/11/12/13 阶段：零特定机型 SELinux 或文件重定向硬编码（文件重定向全部来自各机型 module/config.json）。
+2. 09_build_vendor/sepolicy_cil.go 写死 6 个厂商 SELinux CIL 函数（合计 ~600 行）：
+   - reconcileOplusVendorHalBindingsCIL (L1440-1506)
+   - reconcileHonorVendorHalBindingsCIL (L1768-1951)
+   - reconcileUnisocMiscdataBindingsCIL (L1953-2065)
+   - reconcileMtkBootanimationBindingsCIL (L2067-2132)
+   - reconcileAudioParameterParserBindingsCIL (L2145-2206)
+   - reconcileVendorCameraNfcCompatCIL (L2710-2816)
+3. 09_build_vendor/files_compat.go 写死 10 处厂商回填/VINTF/属性特判：
+   - backfillHonorFactoryInterface (L132-277)
+   - backfillUnisocMiscdataHal (L283-373)
+   - backfillOfficialTclFeatureConfigs (L474-511)
+   - alignHonorNfcCompat (L622-738)
+   - alignVendorCameraVintfCompat (L740-782)
+   - alignVendorCameraPropertyContexts (L784-838)
+   - backfillMtkAudioParameterParser (L973-1020)
+   - backfillYftSystemBuildProp / patchYftSystemBuildPropText (L1220-1295)
+   - alignVendorSystemProps HONOR 强塞 persist.sys.chr.chipsettype=1 & isSystemDomainPropKey 特判 vendor.camera.lens_type (L2471-2530)
+   - synthesizePlaceholderVintfManifest 扫描 ELF 字符串特判 IMtkRadioExSim & vendor.oplus.hardware.charger.ICharger (L2919-3042)
+4. 02_prepare 建档期硬编码映射表与特判：
+   - register_parse.go: officialGroupMap (27 品牌) & readableModelMap (37 机型)
+   - apply_profile.go: sanitizeAsusDisplayRefreshRates & deriveVendorPropCandidates 品牌默认属性
+   - vendor_etc_templates.go: sensorPayloadAttr (vivo/iqoo/honor)
+   - firmware_measured_extra.go: elf32Candidates 固定列表

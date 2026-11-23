@@ -1,0 +1,14 @@
+;; health@oplus 变体条件 SELinux 规则：
+;; 当官方平台策略声明了 OPlus hal_charger 属性与服务类型时，
+;; 将 hal_health_default 绑定为 hal_charger_server 并授予 system_server/system_app/platform_app 访问权限。
+;; @when-declared hal_charger hal_charger_client hal_charger_server hal_charger_service hal_health_default system_server_{{vers}}
+;; @when-not-contains (typeattributeset hal_charger_server (hal_health_default))
+(typeattributeset hal_charger (hal_health_default))
+(typeattributeset hal_charger_server (hal_health_default))
+(typeattributeset hal_charger_client ({{pick_list:system_server,system_app,platform_app}}))
+(allow hal_charger_server hal_charger_service (service_manager (add find)))
+(allow hal_charger_client hal_charger_server (binder (call transfer)))
+(allow hal_charger_server hal_charger_client (binder (transfer)))
+(allow hal_charger_client hal_charger_server (fd (use)))
+;; @end
+;; @end

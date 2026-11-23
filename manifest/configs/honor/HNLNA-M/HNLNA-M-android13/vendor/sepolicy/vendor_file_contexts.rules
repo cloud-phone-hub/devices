@@ -1,0 +1,14 @@
+# Honor MagicOS hwfactoryinterface 服务可执行标签
+# @when-file bin/hw/vendor.honor.hardware.hwfactoryinterface-service
+/(vendor|system/vendor)/bin/hw/vendor\.honor\.hardware\.hwfactoryinterface-service u:object_r:hal_hwfactoryinterface_default_exec:s0
+# @end
+# @when-file bin/hw/vendor.honor.hardware.hwfactoryinterface@1.1-service
+/(vendor|system/vendor)/bin/hw/vendor\.honor\.hardware\.hwfactoryinterface@1\.1-service u:object_r:hal_hwfactoryinterface_default_exec:s0
+# @end
+
+# MTK cdh_audio_parameter_parser 可执行标签（配合 cdh_redirect 替换官方 parameter_parser.service）
+# @when-file bin/hw/cdh_audio_parameter_parser
+# @when-any-declared audio_vendor_parameter_parser_exec audio_vendor_parameter_parser_exec_{{vers}}
+/(vendor|system/vendor)/bin/hw/cdh_audio_parameter_parser u:object_r:audio_vendor_parameter_parser_exec:s0
+# @end
+# @end

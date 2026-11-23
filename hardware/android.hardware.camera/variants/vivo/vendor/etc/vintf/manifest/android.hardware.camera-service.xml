@@ -1,0 +1,20 @@
+<manifest version="1.0" type="device">
+  <!-- camera@vivo 变体 VINTF 声明：在标准 ICameraProvider 之外声明 IVivoCameraProvider/default，
+       供 cameraserver 与 Vivo 原生相机绑定扩展相机服务。 -->
+  <hal format="aidl">
+    <name>android.hardware.camera.provider</name>
+    <version>3</version>
+    <interface>
+      <name>ICameraProvider</name>
+      <instance>internal/0</instance>
+    </interface>
+  </hal>
+  <hal format="aidl">
+    <name>vendor.vivo.hardware.vivocameraprovider</name>
+    <version>1</version>
+    <interface>
+      <name>IVivoCameraProvider</name>
+      <instance>default</instance>
+    </interface>
+  </hal>
+</manifest>

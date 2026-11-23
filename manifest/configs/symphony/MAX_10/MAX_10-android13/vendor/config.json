@@ -102,6 +102,36 @@
     {
       "from": "official",
       "source": "etc/public.libraries.txt"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "bin/hw/vendor.sprd.hardware.miscdata@1.0-service"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "etc/init/vendor.sprd.hardware.miscdata@1.0-service.rc"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "etc/vintf/manifest/vendor.sprd.hardware.miscdata@1.0-service.xml"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/vendor.sprd.hardware.miscdata@1.0.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/hw/vendor.sprd.hardware.miscdata@1.0-impl.so"
     }
   ],
   "lib64-backfills": [],

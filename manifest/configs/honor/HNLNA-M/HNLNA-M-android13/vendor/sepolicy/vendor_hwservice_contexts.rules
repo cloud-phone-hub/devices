@@ -1,0 +1,4 @@
+# Honor MagicOS HIDL hwfactoryinterface 服务上下文
+# @when-file bin/hw/vendor.honor.hardware.hwfactoryinterface@1.1-service
+vendor.honor.hardware.hwfactoryinterface::IHwFactoryInterface u:object_r:hal_hwfactoryinterface_hwservice:s0
+# @end

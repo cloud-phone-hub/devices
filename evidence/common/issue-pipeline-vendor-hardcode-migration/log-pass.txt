@@ -1,0 +1,45 @@
+[1] 静态审计复查 09_build_vendor 非测试 Go 代码残留
+Residual non-comment vendor hardcodes in 09_build_vendor: 0
+
+[2] 全仓 JSON 配置文件语法校验
+Validated 131 JSON files: ALL OK
+
+[3] 全量单测 cd agent && go test -count=1 ./modules/pipeline/...
+ok  	cloud-phone-hub/agent/modules/pipeline/cli	0.309s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/avb	0.375s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/buildctx	0.561s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/device	2.740s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/engine	0.757s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/env	1.295s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/fsimg	1.667s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/deps	1.636s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/halbuild	5.979s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/profile	2.094s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/spec	2.197s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/toolchain	2.306s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/kmod	2.414s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/manifest	2.207s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/pipeline	1.992s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/stagekit	1.640s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/task	1.799s
+?   	cloud-phone-hub/agent/modules/pipeline/internal/testkit	[no test files]
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/toolfind	1.558s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/01_unpack	2.150s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	2.591s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/03_build_kernel	2.490s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/04_build_modules	2.724s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/05_build_boot	2.620s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/06_build_vendor_boot	5.841s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/07_build_odm	2.769s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/08_build_hardware	2.388s
+?   	cloud-phone-hub/agent/modules/pipeline/stages/08_build_hardware/cmd/vendor	[no test files]
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	2.581s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/10_build_vendor_dlkm	2.807s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/11_build_patch	1.817s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/12_pack_super	1.741s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/13_pack_vda	2.719s
+
+[4] cdh-pipeline 编译与 dry-run 冒烟
+go build -o ../out/agent/dist/cdh-pipeline ./cmd/cdh-pipeline -> exit 0
+./out/agent/dist/cdh-pipeline device build PD2454 --only build_vendor --dry-run -> 命中 模块层 android.hardware.camera@vivo devices/hardware/android.hardware.camera/variants/vivo/sepolicy
+./out/agent/dist/cdh-pipeline device build chora --only build_vendor --dry-run -> 命中 机型层 vendor/sepolicy 与 67 项基线属性

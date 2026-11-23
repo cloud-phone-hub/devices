@@ -127,5 +127,21 @@
     "lib64/egl/libGLESv1_CM_mesa.so": "u:object_r:same_process_hal_file:s0",
     "lib64/egl/libGLESv2_mesa.so": "u:object_r:same_process_hal_file:s0"
   },
+  "system-build-prop-patch": {
+    "comment-prefixes": [
+      "persist.service.bootanim.displays="
+    ],
+    "sets": {
+      "ro.faceunlock.support": "0",
+      "ro.yft_mini_display_support": "0",
+      "ro.yft_rain_guard_support": "0",
+      "ro.yft_support_gesturewake": "0",
+      "ro.yft_support_reversecharger": "0",
+      "ro.yft_trustkernel_l1_support": "0",
+      "ro.yft_trustkernel_tee_support": "0",
+      "ro.yft_under_water_support": "0"
+    },
+    "target": "etc/cdh_system_build.prop"
+  },
   "vintf-version": "8.0"
 }

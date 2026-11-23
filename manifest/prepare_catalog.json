@@ -1,0 +1,215 @@
+{
+  "officialGroups": {
+    "xiaomi": "小米",
+    "redmi": "小米",
+    "poco": "小米",
+    "oppo": "OPPO",
+    "oneplus": "OPPO",
+    "realme": "OPPO",
+    "vivo": "vivo",
+    "iqoo": "vivo",
+    "huawei": "华为",
+    "honor": "荣耀",
+    "meizu": "魅族",
+    "flyme": "魅族",
+    "samsung": "三星",
+    "google": "Google",
+    "nothing": "Nothing",
+    "asus": "华硕",
+    "blackview": "Blackview",
+    "itel": "传音",
+    "infinix": "传音",
+    "tecno": "传音",
+    "hmd": "HMD",
+    "ulefone": "Ulefone",
+    "blu": "BLU",
+    "motorola": "Motorola",
+    "nubia": "中兴",
+    "redmagic": "中兴",
+    "zte": "中兴"
+  },
+  "readableModels": {
+    "oriole": "Pixel 6",
+    "popsicle": "Xiaomi 17 Pro Max",
+    "gold": "Redmi Note 13 5G",
+    "meizu22": "MEIZU 22",
+    "m22": "MEIZU 22",
+    "cph2767": "OnePlus 15R",
+    "15r": "OnePlus 15R",
+    "pje110": "OnePlus Ace 3",
+    "ace3": "OnePlus Ace 3",
+    "cph2797": "OPPO Find X9",
+    "pme110": "OPPO Find X9s Pro",
+    "rmx3823": "realme GT5 240W",
+    "rmx5112": "realme 15T",
+    "rmx6688": "realme GT7",
+    "pa3q": "Samsung Galaxy S25 Ultra",
+    "ss9380": "Samsung Galaxy S25 Ultra",
+    "pd2454": "vivo X200 Ultra",
+    "3a": "Nothing Phone (3a)",
+    "asteroids": "Nothing Phone (3a)",
+    "asus_ai2205": "ASUS ROG Phone 7",
+    "asusai2501": "ASUS ROG Phone 9 Pro",
+    "xplore_x1": "Blackview Xplore 1",
+    "sun": "Honor Magic7 RSR",
+    "chora": "Honor 400 Lite",
+    "bengal_515": "Honor Pad X7b",
+    "hnlna-m": "Honor X80i 5G",
+    "hbn-al00": "HUAWEI Pura 70 Pro",
+    "hed-al00": "HUAWEI Pura 80",
+    "itel-a6612l": "itel A6612L",
+    "arw": "HMD Crest Max",
+    "gq5011af1": "Ulefone Armor 28 Ultra",
+    "g1130": "BLU G65L",
+    "g1170": "BLU G75",
+    "aito": "Motorola Razr (aito)",
+    "nx809j": "REDMAGIC 11 Pro (NX809J)",
+    "infinix-x6876": "Infinix X6876",
+    "p616f05": "ZTE Blade V70 (Z2459)"
+  },
+  "displayRefreshWhitelists": [
+    {
+      "brands": ["asus"],
+      "productPrefixes": ["Z"],
+      "allowedHz": [60, 120, 144]
+    },
+    {
+      "brands": ["asus"],
+      "devices": ["ASUSAI2501"],
+      "allowedHz": [60, 120, 165, 185]
+    }
+  ],
+  "sensorPayloadRules": [
+    {
+      "brands": ["vivo", "iqoo"],
+      "typeIds": [3, 5, 6, 7, 8, 36],
+      "payload": "data"
+    },
+    {
+      "brands": ["honor"],
+      "typeIds": [5, 8, 36],
+      "payload": "data"
+    }
+  ],
+  "brandDefaultProps": [
+    {
+      "brands": ["xiaomi", "redmi", "poco"],
+      "props": {
+        "persist.sys.boot_audio.enabled": "0"
+      }
+    },
+    {
+      "brands": ["zte", "nubia", "redmagic"],
+      "officials": ["中兴"],
+      "props": {
+        "ro.vendor.feature.zte_feature_screen_refresh_rate_enabled": "false"
+      }
+    },
+    {
+      "brands": ["honor"],
+      "officials": ["荣耀"],
+      "props": {
+        "persist.sys.chr.chipsettype": "1"
+      }
+    }
+  ],
+  "elf32DaemonCandidates": [
+    {
+      "images": ["system_a.img", "system.img"],
+      "relPaths": ["system/bin/drmserver", "bin/drmserver"],
+      "fromAbs": "/system/bin/drmserver"
+    },
+    {
+      "images": ["system_a.img", "system.img"],
+      "relPaths": ["system/bin/mediaserver", "bin/mediaserver"],
+      "fromAbs": "/system/bin/mediaserver"
+    },
+    {
+      "images": ["system_ext_a.img", "system_ext.img"],
+      "relPaths": ["bin/remotedisplay", "system_ext/bin/remotedisplay"],
+      "fromAbs": "/system_ext/bin/remotedisplay"
+    },
+    {
+      "images": ["system_ext_a.img", "system_ext.img"],
+      "relPaths": ["bin/unisocaudioutils", "system_ext/bin/unisocaudioutils"],
+      "fromAbs": "/system_ext/bin/unisocaudioutils"
+    }
+  ],
+  "vendorCompatProfiles": [
+    {
+      "id": "honor-factory-interface",
+      "brands": ["honor"],
+      "officials": ["荣耀"],
+      "files": [
+        {"from": "official", "mode": "add", "optional": true, "source": "bin/hw/vendor.honor.hardware.hwfactoryinterface-service"},
+        {"from": "official", "mode": "add", "optional": true, "source": "etc/init/vendor.honor.hardware.hwfactoryinterface-service.rc"},
+        {"from": "official", "mode": "add", "optional": true, "source": "etc/vintf/manifest/vendor.honor.hardware.hwfactoryinterface-service.xml"},
+        {"from": "official", "mode": "add", "optional": true, "source": "bin/hw/vendor.honor.hardware.hwfactoryinterface@1.1-service"},
+        {"from": "official", "mode": "add", "optional": true, "source": "etc/init/vendor.honor.hardware.hwfactoryinterface@1.1-service.rc"},
+        {"from": "official", "mode": "add", "optional": true, "source": "etc/vintf/manifest/vendor.honor.hardware.hwfactoryinterface@1.1-service.xml"},
+        {"from": "official", "mode": "add", "optional": true, "source": "lib64/libc_secshared.so"},
+        {"from": "official", "mode": "add", "optional": true, "source": "lib64/vendor.honor.hardware.hwfactoryinterface-V1-ndk.so"},
+        {"from": "official", "mode": "add", "optional": true, "source": "lib64/vendor.honor.hardware.hwfactoryinterface@1.0.so"},
+        {"from": "official", "mode": "add", "optional": true, "source": "lib64/vendor.honor.hardware.hwfactoryinterface@1.1.so"},
+        {"from": "official", "mode": "add", "optional": true, "source": "lib64/honor.system.hardware.hwfactorynormalcomm@1.0.so"},
+        {"from": "official", "mode": "add", "optional": true, "source": "lib64/libhidltransport.so"},
+        {"from": "official", "mode": "add", "optional": true, "source": "lib64/libhwbinder.so"}
+      ],
+      "sepolicy": {
+        "vendor_file_contexts.rules": "# Honor MagicOS hwfactoryinterface 服务可执行标签\n# @when-file bin/hw/vendor.honor.hardware.hwfactoryinterface-service\n/(vendor|system/vendor)/bin/hw/vendor\\.honor\\.hardware\\.hwfactoryinterface-service u:object_r:hal_hwfactoryinterface_default_exec:s0\n# @end\n# @when-file bin/hw/vendor.honor.hardware.hwfactoryinterface@1.1-service\n/(vendor|system/vendor)/bin/hw/vendor\\.honor\\.hardware\\.hwfactoryinterface@1\\.1-service u:object_r:hal_hwfactoryinterface_default_exec:s0\n# @end\n",
+        "vendor_hwservice_contexts.rules": "# Honor MagicOS HIDL hwfactoryinterface 服务上下文\n# @when-file bin/hw/vendor.honor.hardware.hwfactoryinterface@1.1-service\nvendor.honor.hardware.hwfactoryinterface::IHwFactoryInterface u:object_r:hal_hwfactoryinterface_hwservice:s0\n# @end\n",
+        "vendor_service_contexts.rules": "# Honor MagicOS AIDL hwfactoryinterface 服务上下文（供 system_server checkService 查询）\n# @when-file bin/hw/vendor.honor.hardware.hwfactoryinterface-service | bin/hw/vendor.honor.hardware.hwfactoryinterface@1.1-service\nvendor.honor.hardware.hwfactoryinterface.IHwFactoryInterface/hwfactoryinterface_hal u:object_r:hal_hwfactoryinterface_service:s0\n# @end\n",
+        "vendor_sepolicy_rules.cil": ";; Honor MagicOS hwfactoryinterface 条件 SELinux 绑定（兼容 HIDL @1.1 与 AIDL 服务）\n;; @when-file bin/hw/vendor.honor.hardware.hwfactoryinterface@1.1-service | bin/hw/vendor.honor.hardware.hwfactoryinterface-service\n;; @when-any-declared hal_hwfactoryinterface hal_factoryinterface\n;; @ensure-type hal_hwfactoryinterface_default hal_hwfactoryinterface_default_exec hal_hwfactoryinterface_service\n(typeattributeset domain (hal_hwfactoryinterface_default))\n(typeattributeset halserverdomain (hal_hwfactoryinterface_default))\n(typeattributeset hal_hwfactoryinterface (hal_hwfactoryinterface_default))\n(typeattributeset hal_hwfactoryinterface_server (hal_hwfactoryinterface_default))\n(typeattributeset hal_factoryinterface (hal_hwfactoryinterface_default))\n(typeattributeset hal_factoryinterface_server (hal_hwfactoryinterface_default))\n(typeattributeset file_type (hal_hwfactoryinterface_default_exec))\n(typeattributeset exec_type (hal_hwfactoryinterface_default_exec))\n(typeattributeset vendor_file_type (hal_hwfactoryinterface_default_exec))\n;; @when-not-declared hal_hwfactoryinterface_service_{{vers}}\n(typeattributeset service_manager_type (hal_hwfactoryinterface_service))\n(typeattributeset hal_service_type (hal_hwfactoryinterface_service))\n(typeattributeset vendor_service (hal_hwfactoryinterface_service))\n;; @end\n(allow init_{{vers}} hal_hwfactoryinterface_default_exec (file (read getattr map execute open)))\n(allow init_{{vers}} hal_hwfactoryinterface_default (process (transition siginh rlimitinh)))\n(dontaudit init_{{vers}} hal_hwfactoryinterface_default (process (noatsecure)))\n(typetransition init_{{vers}} hal_hwfactoryinterface_default_exec process hal_hwfactoryinterface_default)\n(allow hal_hwfactoryinterface_default init_{{vers}} (unix_stream_socket (connectto)))\n(allow hal_hwfactoryinterface_default hal_hwfactoryinterface_default_exec (file (read getattr map execute open entrypoint)))\n(allow hal_hwfactoryinterface_client hal_hwfactoryinterface_server (binder (call transfer)))\n(allow hal_hwfactoryinterface_server hal_hwfactoryinterface_client (binder (transfer)))\n(allow hal_hwfactoryinterface_client hal_hwfactoryinterface_server (fd (use)))\n(allow hal_factoryinterface_client hal_hwfactoryinterface_server (binder (call transfer)))\n(allow hal_hwfactoryinterface_server hal_factoryinterface_client (binder (transfer)))\n(allow hal_factoryinterface_client hal_hwfactoryinterface_server (fd (use)))\n(allow hal_factoryinterface_client hal_factoryinterface_server (binder (call transfer)))\n(allow hal_factoryinterface_server hal_factoryinterface_client (binder (transfer)))\n(allow hal_factoryinterface_client hal_factoryinterface_server (fd (use)))\n;; @when-file bin/hw/vendor.honor.hardware.hwfactoryinterface@1.1-service\n;; @ensure-type hal_hwfactoryinterface_hwservice\n(typeattributeset hwservice_manager_type (hal_hwfactoryinterface_hwservice))\n(allow hal_hwfactoryinterface_default hwservicemanager_{{vers}} (binder (call transfer)))\n(allow hwservicemanager_{{vers}} hal_hwfactoryinterface_default (binder (call transfer)))\n(allow hwservicemanager_{{vers}} hal_hwfactoryinterface_default (dir (search)))\n(allow hwservicemanager_{{vers}} hal_hwfactoryinterface_default (file (read map open)))\n(allow hwservicemanager_{{vers}} hal_hwfactoryinterface_default (process (getattr)))\n(allow hal_hwfactoryinterface_default hwservicemanager_prop_{{vers}} (file (read getattr map open)))\n(allow hal_hwfactoryinterface_default hwbinder_device_{{vers}} (chr_file (ioctl read write getattr lock append map open)))\n(allow hal_hwfactoryinterface_default hal_hwfactoryinterface_hwservice (hwservice_manager (add find)))\n(allow hal_hwfactoryinterface_default hidl_base_hwservice_{{vers}} (hwservice_manager (add)))\n(allow hal_hwfactoryinterface_client hal_hwfactoryinterface_hwservice (hwservice_manager (find)))\n(allow hal_hwfactoryinterface_client hal_hwfactoryinterface_default (binder (call transfer)))\n(allow hal_hwfactoryinterface_default hal_hwfactoryinterface_client (binder (call transfer)))\n(allow hal_factoryinterface_client hal_hwfactoryinterface_hwservice (hwservice_manager (find)))\n(allow hal_factoryinterface_client hal_hwfactoryinterface_default (binder (call transfer)))\n(allow hal_hwfactoryinterface_default hal_factoryinterface_client (binder (call transfer)))\n(allow system_server_{{vers}} hal_hwfactoryinterface_hwservice (hwservice_manager (find)))\n(allow system_server_{{vers}} hal_hwfactoryinterface_default (binder (call transfer)))\n(allow hal_hwfactoryinterface_default system_server_{{vers}} (binder (call transfer)))\n(allow cust_{{vers}} hal_hwfactoryinterface_hwservice (hwservice_manager (find)))\n(allow cust_{{vers}} hal_hwfactoryinterface_default (binder (call transfer)))\n(allow hal_hwfactoryinterface_default cust_{{vers}} (binder (call transfer)))\n;; @end\n(allow hal_hwfactoryinterface_client {{pick:hal_hwfactoryinterface_service}} (service_manager (find)))\n(allow hal_factoryinterface_client {{pick:hal_hwfactoryinterface_service}} (service_manager (find)))\n(allow system_server_{{vers}} {{pick:hal_hwfactoryinterface_service}} (service_manager (find)))\n(allow cust_{{vers}} {{pick:hal_hwfactoryinterface_service}} (service_manager (find)))\n;; @when-file bin/hw/vendor.honor.hardware.hwfactoryinterface-service\n(allow hal_hwfactoryinterface_default servicemanager_{{vers}} (binder (call transfer)))\n(allow servicemanager_{{vers}} hal_hwfactoryinterface_default (binder (call transfer)))\n(allow servicemanager_{{vers}} hal_hwfactoryinterface_default (dir (search)))\n(allow servicemanager_{{vers}} hal_hwfactoryinterface_default (file (read open)))\n(allow servicemanager_{{vers}} hal_hwfactoryinterface_default (process (getattr)))\n(allow hal_hwfactoryinterface_default {{pick:hal_hwfactoryinterface_service}} (service_manager (add find)))\n;; @end\n(allow hal_hwfactoryinterface_default property_socket_{{vers}} (sock_file (write)))\n(allow hal_hwfactoryinterface_default proc_{{vers}} (file (read getattr open)))\n(allow hal_hwfactoryinterface_default sysfs_{{vers}} (file (read getattr open)))\n;; @end\n;; @end\n"
+      }
+    },
+    {
+      "id": "unisoc-miscdata",
+      "platforms": ["unisoc"],
+      "socManufacturers": ["unisoc", "spreadtrum"],
+      "files": [
+        {"from": "official", "mode": "add", "optional": true, "source": "bin/hw/vendor.sprd.hardware.miscdata@1.0-service"},
+        {"from": "official", "mode": "add", "optional": true, "source": "etc/init/vendor.sprd.hardware.miscdata@1.0-service.rc"},
+        {"from": "official", "mode": "add", "optional": true, "source": "etc/vintf/manifest/vendor.sprd.hardware.miscdata@1.0-service.xml"},
+        {"from": "official", "mode": "add", "optional": true, "source": "lib64/vendor.sprd.hardware.miscdata@1.0.so"},
+        {"from": "official", "mode": "add", "optional": true, "source": "lib64/hw/vendor.sprd.hardware.miscdata@1.0-impl.so"}
+      ],
+      "sepolicy": {
+        "vendor_file_contexts.rules": "# Unisoc 展锐 miscdata 服务可执行标签\n# @when-file bin/hw/vendor.sprd.hardware.miscdata@1.0-service\n/(vendor|system/vendor)/bin/hw/vendor\\.sprd\\.hardware\\.miscdata@1\\.0-service u:object_r:hal_miscdata_default_exec:s0\n# @end\n",
+        "vendor_hwservice_contexts.rules": "# Unisoc 展锐 miscdata HIDL 服务上下文\n# @when-file bin/hw/vendor.sprd.hardware.miscdata@1.0-service\nvendor.sprd.hardware.miscdata::IMiscdata u:object_r:hal_miscdata_hwservice:s0\n# @end\n",
+        "vendor_sepolicy_rules.cil": ";; Unisoc 展锐 miscdata HAL 条件 SELinux 绑定\n;; @when-file bin/hw/vendor.sprd.hardware.miscdata@1.0-service\n;; @ensure-type hal_miscdata_default hal_miscdata_default_exec hal_miscdata_hwservice\n(typeattributeset domain (hal_miscdata_default))\n(typeattributeset halserverdomain (hal_miscdata_default))\n(typeattributeset file_type (hal_miscdata_default_exec))\n(typeattributeset exec_type (hal_miscdata_default_exec))\n(typeattributeset vendor_file_type (hal_miscdata_default_exec))\n(typeattributeset hwservice_manager_type (hal_miscdata_hwservice))\n(allow init_{{vers}} hal_miscdata_default_exec (file (read getattr map execute open)))\n(allow init_{{vers}} hal_miscdata_default (process (transition siginh rlimitinh)))\n(dontaudit init_{{vers}} hal_miscdata_default (process (noatsecure)))\n(typetransition init_{{vers}} hal_miscdata_default_exec process hal_miscdata_default)\n(allow hal_miscdata_default hal_miscdata_default_exec (file (read getattr map execute open entrypoint)))\n(allow hal_miscdata_default hwservicemanager_{{vers}} (binder (call transfer)))\n(allow hwservicemanager_{{vers}} hal_miscdata_default (binder (call transfer)))\n(allow hwservicemanager_{{vers}} hal_miscdata_default (dir (search)))\n(allow hwservicemanager_{{vers}} hal_miscdata_default (file (read map open)))\n(allow hwservicemanager_{{vers}} hal_miscdata_default (process (getattr)))\n(allow hal_miscdata_default hwservicemanager_prop_{{vers}} (file (read getattr map open)))\n(allow hal_miscdata_default hwbinder_device_{{vers}} (chr_file (ioctl read write getattr lock append map open)))\n(allow hal_miscdata_default hal_miscdata_hwservice (hwservice_manager (add find)))\n(allow hal_miscdata_default hidl_base_hwservice_{{vers}} (hwservice_manager (add)))\n(allow hal_miscdata_default block_device_{{vers}} (dir (search)))\n(allow hal_miscdata_default ufs_device (blk_file (read write open getattr)))\n(allow hal_miscdata_default factory_block_device (blk_file (read write open getattr)))\n(allow hal_miscdata_default mmcblk_device (blk_file (read write open getattr)))\n(allow hal_miscdata_default userdata_block_device_{{vers}} (blk_file (read write open getattr)))\n(allow system_server_{{vers}} hal_miscdata_hwservice (hwservice_manager (find)))\n(allow system_server_{{vers}} hal_miscdata_default (binder (call transfer)))\n(allow hal_miscdata_default system_server_{{vers}} (binder (transfer)))\n(allow system_app_{{vers}} hal_miscdata_hwservice (hwservice_manager (find)))\n(allow system_app_{{vers}} hal_miscdata_default (binder (call transfer)))\n(allow hal_miscdata_default system_app_{{vers}} (binder (transfer)))\n(allow platform_app_{{vers}} hal_miscdata_hwservice (hwservice_manager (find)))\n(allow platform_app_{{vers}} hal_miscdata_default (binder (call transfer)))\n(allow hal_miscdata_default platform_app_{{vers}} (binder (transfer)))\n;; @end\n"
+      }
+    },
+    {
+      "id": "tcl-feature-configs",
+      "brands": ["tcl"],
+      "files": [
+        {"from": "official", "mode": "add", "optional": true, "source": "etc/default_feature_config.json"},
+        {"from": "official", "mode": "add", "optional": true, "source": "etc/product_dynamic_feature_config.json"}
+      ]
+    },
+    {
+      "id": "asus-camera-prop-contexts",
+      "brands": ["asus"],
+      "sepolicy": {
+        "vendor_property_contexts.rules": "# ASUS 相机属性上下文映射（仅当 vendor_sepolicy.cil 声明了 vendor_set_camera_prop 时生效）\n# @when-declared vendor_set_camera_prop\nvendor.camera. u:object_r:vendor_set_camera_prop:s0\nro.vendor.camera.sound.forced u:object_r:vendor_set_camera_prop:s0\n# @end\n"
+      }
+    },
+    {
+      "id": "oplus-displaycolorfeature",
+      "brands": ["oppo", "oneplus", "realme"],
+      "officials": ["OPPO"],
+      "sepolicy": {
+        "vendor_sepolicy_rules.cil": ";; OPlus displaycolorfeature 条件绑定（对应 hal_graphics_composer_default）\n;; @when-declared hal_displaycolorfeature hal_displaycolorfeature_client hal_displaycolorfeature_server hal_graphics_composer_default surfaceflinger_{{vers}}\n;; @when-not-contains (typeattributeset hal_displaycolorfeature_server (hal_graphics_composer_default))\n(typeattributeset hal_displaycolorfeature (hal_graphics_composer_default))\n(typeattributeset hal_displaycolorfeature_client (surfaceflinger_{{vers}}))\n(typeattributeset hal_displaycolorfeature_server (hal_graphics_composer_default))\n(allow hal_displaycolorfeature_client hal_displaycolorfeature_server (binder (call transfer)))\n(allow hal_displaycolorfeature_server hal_displaycolorfeature_client (binder (transfer)))\n(allow hal_displaycolorfeature_client hal_displaycolorfeature_server (fd (use)))\n;; @end\n;; @end\n"
+      }
+    },
+    {
+      "id": "mtk-bootanim-audio-parser",
+      "platforms": ["mtk"],
+      "socManufacturers": ["mediatek", "mtk"],
+      "sepolicy": {
+        "vendor_file_contexts.rules": "# MTK cdh_audio_parameter_parser 可执行标签（配合 cdh_redirect 替换官方 parameter_parser.service）\n# @when-file bin/hw/cdh_audio_parameter_parser\n# @when-any-declared audio_vendor_parameter_parser_exec audio_vendor_parameter_parser_exec_{{vers}}\n/(vendor|system/vendor)/bin/hw/cdh_audio_parameter_parser u:object_r:audio_vendor_parameter_parser_exec:s0\n# @end\n# @end\n",
+        "vendor_sepolicy_rules.cil": ";; MTK 开机动画域跨分区授权（严禁授权 vendor_file 普通文件以避开 coredomain neverallow）\n;; @when-declared mtkbootanimation_{{vers}}\n(allow mtkbootanimation_{{vers}} bootanim_system_prop_{{vers}} (file (read getattr map open)))\n(allow mtkbootanimation_{{vers}} bootanim_config_prop_{{vers}} (file (read getattr map open)))\n(allow mtkbootanimation_{{vers}} dri_device (chr_file (ioctl read write getattr lock append map open)))\n(allow surfaceflinger_{{vers}} mtkbootanimation_{{vers}} (binder (call transfer)))\n(allow mtkbootanimation_{{vers}} surfaceflinger_{{vers}} (binder (transfer)))\n(allow surfaceflinger_{{vers}} mtkbootanimation_{{vers}} (fd (use)))\n(allow surfaceflinger_{{vers}} mtkbootanimation_{{vers}} (dir (search)))\n(allow surfaceflinger_{{vers}} mtkbootanimation_{{vers}} (file (read getattr map open)))\n(allow mtkbootanimation_{{vers}} surfaceflinger_{{vers}} (unix_stream_socket (read write)))\n(allow mediaserver_{{vers}} mtkbootanimation_{{vers}} (binder (call transfer)))\n(allow mtkbootanimation_{{vers}} mediaserver_{{vers}} (binder (transfer)))\n(allow mediaserver_{{vers}} mtkbootanimation_{{vers}} (fd (use)))\n(allow mtkbootanimation_{{vers}} statsdw_socket_{{vers}} (sock_file (write)))\n(allow mtkbootanimation_{{vers}} statsd_{{vers}} (unix_dgram_socket (sendto)))\n;; @end\n\n;; MTK audio_vendor_parameter_parser 跨命名空间访问最小授权\n;; @when-any-declared audio_vendor_parameter_parser_{{vers}} audio_vendor_parameter_parser\n(allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_file}} (dir (ioctl read getattr lock open search)))\n(allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_file}} (lnk_file (read getattr open)))\n(allow {{pick:audio_vendor_parameter_parser}} {{pick:same_process_hal_file}} (dir (ioctl read getattr lock open search)))\n(allow {{pick:audio_vendor_parameter_parser}} {{pick:same_process_hal_file}} (file (read getattr map execute open)))\n(allow {{pick:audio_vendor_parameter_parser}} {{pick:same_process_hal_file}} (lnk_file (read getattr open)))\n(allow {{pick:audio_vendor_parameter_parser}} {{pick:vndk_sp_file}} (dir (ioctl read getattr lock open search)))\n(allow {{pick:audio_vendor_parameter_parser}} {{pick:vndk_sp_file}} (file (read getattr map execute open)))\n(allow {{pick:audio_vendor_parameter_parser}} {{pick:vndk_sp_file}} (lnk_file (read getattr open)))\n(allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_configs_file}} (dir (ioctl read getattr lock open search)))\n(allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_configs_file}} (file (read getattr map open)))\n(allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_configs_file}} (lnk_file (read getattr open)))\n;; @end\n"
+      }
+    }
+  ]
+}

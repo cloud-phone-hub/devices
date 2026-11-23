@@ -206,6 +206,84 @@
       "mode": "add",
       "source": "etc/init/init.honor.chrproduct.rc",
       "target": "etc/init/init.honor.chrproduct.rc"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "bin/hw/vendor.honor.hardware.hwfactoryinterface-service"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "etc/init/vendor.honor.hardware.hwfactoryinterface-service.rc"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "etc/vintf/manifest/vendor.honor.hardware.hwfactoryinterface-service.xml"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "bin/hw/vendor.honor.hardware.hwfactoryinterface@1.1-service"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "etc/init/vendor.honor.hardware.hwfactoryinterface@1.1-service.rc"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "etc/vintf/manifest/vendor.honor.hardware.hwfactoryinterface@1.1-service.xml"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libc_secshared.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/vendor.honor.hardware.hwfactoryinterface-V1-ndk.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/vendor.honor.hardware.hwfactoryinterface@1.0.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/vendor.honor.hardware.hwfactoryinterface@1.1.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/honor.system.hardware.hwfactorynormalcomm@1.0.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libhidltransport.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libhwbinder.so"
     }
   ],
   "lib64-backfills": [],

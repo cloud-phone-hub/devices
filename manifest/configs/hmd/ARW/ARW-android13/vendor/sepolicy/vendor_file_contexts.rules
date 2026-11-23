@@ -1,0 +1,4 @@
+# Unisoc 展锐 miscdata 服务可执行标签
+# @when-file bin/hw/vendor.sprd.hardware.miscdata@1.0-service
+/(vendor|system/vendor)/bin/hw/vendor\.sprd\.hardware\.miscdata@1\.0-service u:object_r:hal_miscdata_default_exec:s0
+# @end
