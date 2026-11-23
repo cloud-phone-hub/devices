@@ -78,10 +78,6 @@
   "files": [
     {
       "from": "official",
-      "source": "lib64/libOpenCL.so"
-    },
-    {
-      "from": "official",
       "source": "lib64/libpng.so"
     },
     {

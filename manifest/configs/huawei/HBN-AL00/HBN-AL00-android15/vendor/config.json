@@ -28,12 +28,7 @@
     "ro.vendor.product.cpu.abilist64": "arm64-v8a"
   },
   "build-prop-unsets": [],
-  "files": [
-    {
-      "from": "official",
-      "source": "lib64/libOpenCL.so"
-    }
-  ],
+  "files": [],
   "lib64-backfills": [],
   "selinux-labels": {
     "lib64/egl/libEGL_mesa.so": "u:object_r:same_process_hal_file:s0",

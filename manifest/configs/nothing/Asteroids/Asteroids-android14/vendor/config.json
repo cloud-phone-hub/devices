@@ -67,10 +67,6 @@
   "files": [
     {
       "from": "official",
-      "source": "lib64/libOpenCL.so"
-    },
-    {
-      "from": "official",
       "mode": "replace",
       "source": "etc/permissions"
     },

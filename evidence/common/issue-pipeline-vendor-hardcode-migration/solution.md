@@ -48,6 +48,11 @@
 - 升级 [camera_nfc_compat_test.go](../../../../agent/modules/pipeline/stages/09_build_vendor/camera_nfc_compat_test.go)、[files_test.go](../../../../agent/modules/pipeline/stages/09_build_vendor/files_test.go)、[props_test.go](../../../../agent/modules/pipeline/stages/09_build_vendor/props_test.go)、[sepolicy_test.go](../../../../agent/modules/pipeline/stages/09_build_vendor/sepolicy_test.go) 直接加载仓库真实变体/机型规则文件验证等价行为；
 - 新增 [sepolicy_rules_test.go](../../../../agent/modules/pipeline/stages/09_build_vendor/sepolicy_rules_test.go)（含全仓 35+ 份条件规则文件 `@when-*`/`@end` 与括号配平校验）、[catalog_test.go](../../../../agent/modules/pipeline/stages/02_prepare/catalog_test.go)（含工作区与内嵌 catalog 字节同步校验）及 [vendor_test.go](../../../../agent/modules/pipeline/internal/halcore/halbuild/vendor_test.go) 变体静态树覆盖测试。
 
+### 4.5 增补：清除设备清单中残留的 `libOpenCL*.so` 预编译二进制与冗余官方取件
+- 升级 [files_compat.go](../../../../agent/modules/pipeline/stages/09_build_vendor/files_compat.go) 的 `alignVendorOpenCLStub`：遍历 `vendor/etc/public.libraries.txt` 中所有 `libOpenCL*.so*` 条目（含 `libOpenCL.so`、`libOpenCL-pixel.so` 等），统一由 `android.hardware.gpu` 自编兼容桩覆写并绑定 `same_process_hal_file` 标签，且将 `applyVendorFallbackCopies` 调整至其后执行；
+- 删除 [oriole-android17/vendor/lib64/](../../../../devices/manifest/configs/google/oriole/oriole-android17/vendor/) 与 [ARW-android13/vendor/lib64/](../../../../devices/manifest/configs/hmd/ARW/ARW-android13/vendor/) 下全部手放预编译 `libOpenCL*.so*` 及软链，为 `ARW-android13` 改由 `vendor/config.json` `fallback-copies` 从自编 `lib64/libOpenCL.so` 生成 `.so.{1,1.1,1.2}`；
+- 从 [firmware_measured_extra.go](../../../../agent/modules/pipeline/stages/02_prepare/firmware_measured_extra.go) 及全仓 30 份 `vendor/config.json` 移除多余的官方 `lib64/libOpenCL.so` 取件，并补强 `TestAlignVendorOpenCLStub` 覆盖多库名与 `fallback-copies` 串联。
+
 ## 5. 验证
 
 - 静态审计：`09_build_vendor/*.go`（非测试）对 31 项特定厂商/机型特征关键字残留扫描结果为 `0`；

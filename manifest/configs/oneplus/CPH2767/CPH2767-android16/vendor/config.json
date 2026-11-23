@@ -69,11 +69,6 @@
     },
     {
       "from": "official",
-      "note": "官方 vendor 自带的 OpenCL 载入器（应用层 OpenCL 探测面）。内置表那 6 条是 MTK 口径（libGLES_mali.so + libMEOW_*），本机是高通 canoe 平台，固件 vendor 里没有这些件，必须整表覆盖。",
-      "source": "lib64/libOpenCL.so"
-    },
-    {
-      "from": "official",
       "mode": "replace",
       "note": "官方目录 55 个文件；整目录替换（非 merge），否则会残留 lineage 的 *_prebuilt.xml 幽灵特性（有声明无 HAL → system_server 自杀）。本机固件 vendor 没有 etc/security 与 etc/md，不要照抄 gold 的三段。",
       "source": "etc/permissions"

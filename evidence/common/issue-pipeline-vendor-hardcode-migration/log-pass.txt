@@ -43,3 +43,10 @@ ok  	cloud-phone-hub/agent/modules/pipeline/stages/13_pack_vda	2.719s
 go build -o ../out/agent/dist/cdh-pipeline ./cmd/cdh-pipeline -> exit 0
 ./out/agent/dist/cdh-pipeline device build PD2454 --only build_vendor --dry-run -> 命中 模块层 android.hardware.camera@vivo devices/hardware/android.hardware.camera/variants/vivo/sepolicy
 ./out/agent/dist/cdh-pipeline device build chora --only build_vendor --dry-run -> 命中 机型层 vendor/sepolicy 与 67 项基线属性
+
+[5] OpenCL 设备清单清理复核
+Residual OpenCL binary files in devices/manifest: 0
+Residual official OpenCL files entries in vendor/config.json: 0
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	1.659s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	1.701s
+go build -o ../out/agent/dist/cdh-pipeline ./cmd/cdh-pipeline -> exit 0
