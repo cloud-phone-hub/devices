@@ -14,7 +14,7 @@
     },
     {
       "android.hardware.camera": {
-        "variant": "default",
+        "variant": "honor",
         "version": "1.0"
       }
     },
@@ -128,7 +128,7 @@
     },
     {
       "android.hardware.neuralnetworks": {
-        "variant": "default",
+        "variant": "mtk",
         "version": "1.0"
       }
     }

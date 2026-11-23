@@ -72,6 +72,7 @@ void AIBinder_markVintfStability(AIBinder *binder);
 #include <utility>
 #include <vector>
 
+#include "camera_vendor_ext.h"
 #include "host_video_frame.h"
 
 using aidl::android::hardware::camera::common::CameraDeviceStatus;
@@ -161,270 +162,12 @@ static const vendor_tag_ops_t kOplusVendorTagOps = {
     oplusVendorTagName,    oplusVendorTagType, {nullptr},
 };
 #else
-static bool propContainsIgnoreCase(const char *propName, const char *needle) {
-  char buf[PROP_VALUE_MAX] = {};
-  if (__system_property_get(propName, buf) <= 0) {
-    return false;
-  }
-  std::string hay(buf);
-  std::string sub(needle);
-  for (char &c : hay) {
-    c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
-  }
-  for (char &c : sub) {
-    c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
-  }
-  return hay.find(sub) != std::string::npos;
-}
-
-static bool isBrandDevice(const char *brand) {
-  return propContainsIgnoreCase("ro.product.brand", brand) ||
-         propContainsIgnoreCase("ro.product.system.brand", brand) ||
-         propContainsIgnoreCase("ro.product.vendor.brand", brand) ||
-         propContainsIgnoreCase("ro.product.manufacturer", brand);
-}
-
-static bool isOplusDevice() {
-  static const bool kIsOplus = isBrandDevice("oppo") ||
-                               isBrandDevice("oneplus") ||
-                               isBrandDevice("realme");
-  return kIsOplus;
-}
-
-static bool isSamsungDevice() {
-  static const bool kIsSamsung = isBrandDevice("samsung");
-  return kIsSamsung;
-}
-
-static bool isMeizuDevice() {
-  static const bool kIsMeizu = isBrandDevice("meizu");
-  return kIsMeizu;
-}
-
-static bool isHonorDevice() {
-  static const bool kIsHonor = isBrandDevice("honor");
-  return kIsHonor;
-}
-
-static bool isVivoDevice() {
-  static const bool kIsVivo =
-      isBrandDevice("vivo") || isBrandDevice("iqoo");
-  return kIsVivo;
-}
-
-static bool isNothingDevice() {
-  static const bool kIsNothing = isBrandDevice("nothing");
-  return kIsNothing;
-}
-
-static bool isMotorolaDevice() {
-  static const bool kIsMoto =
-      isBrandDevice("motorola") || isBrandDevice("lenovo");
-  return kIsMoto;
-}
-
-static bool isNubiaDevice() {
-  static const bool kIsNubia =
-      isBrandDevice("nubia") || isBrandDevice("redmagic") || isBrandDevice("zte");
-  return kIsNubia;
-}
-
-static constexpr uint32_t kOplusSupportedCameraIdTypeTag = 0x81170003;
-
-// 荣耀 MagicOS 原生相机核心专有 Vendor Tags（使用未冲突的 0x8030xxxx 段）：
-// RealDeviceSingle#createCaptureSessionBySessionConfiguration 未捕获
-// CaptureRequest.get(com.hihonor.capture.metadata.cameraSceneMode) 的缺失异常，
-// 缺失会导致 SessionConfiguration 根本无法下发到 CameraDevice（设备永久卡在 UNCONFIGURED）。
-static constexpr uint32_t kHonorCaptureCameraSceneModeTag = 0x80300001;
-static constexpr uint32_t kHonorCaptureFaceBeautyModeTag = 0x80300002;
-static constexpr uint32_t kHonorCaptureFaceBeautyLevelTag = 0x80300003;
-static constexpr uint32_t kHonorCaptureColorEffectModeTag = 0x80300004;
-static constexpr uint32_t kHonorCaptureHwCamera2FlagTag = 0x80300005;
-static constexpr uint32_t kHonorCaptureExposureCompValueTag = 0x80300006;
-static constexpr uint32_t kHonorCaptureApiVersionTag = 0x80300007;
-static constexpr uint32_t kHonorCaptureHwVideoFpsTag = 0x80300008;
-static constexpr uint32_t kHonorCaptureCaptureStreamResTag = 0x80300009;
-static constexpr uint32_t kHonorCaptureVideoStreamResTag = 0x8030000a;
-static constexpr uint32_t kHonorCapturePortraitModeTag = 0x8030000b;
-static constexpr uint32_t kHonorCaptureLivePhotoModeTag = 0x8030000c;
-static constexpr uint32_t kHonorCaptureSmartCaptureEnableTag = 0x8030000d;
-static constexpr uint32_t kHonorCaptureSensorHdrModeTag = 0x8030000e;
-static constexpr uint32_t kHonorCaptureVideoHdrModeTag = 0x8030000f;
-static constexpr uint32_t kHonorCaptureMasterAiEnableTag = 0x80300010;
-static constexpr uint32_t kHonorCaptureHdrVividEnableTag = 0x80300011;
-// 宣告 honor_sit_supported=1 使荣耀相机进入 isNewArch=true 标准 Camera2 管线，
-// 避免误走依赖高通闭源 HwServiceHost 的 ServiceHostSurfaceProcessController
-//（其 applyTargets 会跳过 normal_preview 导致 CaptureRequest 无目标 surface）。
-static constexpr uint32_t kHonorDevCapSitSupportedTag = 0x80310001;
-// 宣告 mainModeSupported=1 使荣耀 CameraServiceFactory 将后摄 "0" 注册为主后摄
-// （b.f668q），避免首帧预览到达后 SlowmotionUtil#getCameraIdForSlowMotion 返回空串 NPE。
-static constexpr uint32_t kHonorDevCapMainModeSupportedTag = 0x80310002;
-
-static const Note13VendorTagDesc kHonorVendorTagDescs[] = {
-    {kHonorCaptureCameraSceneModeTag, "com.hihonor.capture.metadata", "cameraSceneMode", TYPE_INT32},
-    {kHonorCaptureFaceBeautyModeTag, "com.hihonor.capture.metadata", "faceBeautyMode", TYPE_BYTE},
-    {kHonorCaptureFaceBeautyLevelTag, "com.hihonor.capture.metadata", "faceBeautyLevel", TYPE_INT32},
-    {kHonorCaptureColorEffectModeTag, "com.hihonor.capture.metadata", "colorEffectMode", TYPE_BYTE},
-    {kHonorCaptureHwCamera2FlagTag, "com.hihonor.capture.metadata", "hwCamera2Flag", TYPE_BYTE},
-    {kHonorCaptureExposureCompValueTag, "com.hihonor.capture.metadata", "exposureCompValue", TYPE_FLOAT},
-    {kHonorCaptureApiVersionTag, "com.hihonor.capture.metadata", "apiVersion", TYPE_INT32},
-    {kHonorCaptureHwVideoFpsTag, "com.hihonor.capture.metadata", "hw-video-fps", TYPE_INT32},
-    {kHonorCaptureCaptureStreamResTag, "com.hihonor.capture.metadata", "captureStreamResolution", TYPE_INT32},
-    {kHonorCaptureVideoStreamResTag, "com.hihonor.capture.metadata", "videoStreamResolution", TYPE_INT32},
-    {kHonorCapturePortraitModeTag, "com.hihonor.capture.metadata", "portraitMode", TYPE_BYTE},
-    {kHonorCaptureLivePhotoModeTag, "com.hihonor.capture.metadata", "livePhotoMode", TYPE_BYTE},
-    {kHonorCaptureSmartCaptureEnableTag, "com.hihonor.capture.metadata", "smartCaptureEnable", TYPE_BYTE},
-    {kHonorCaptureSensorHdrModeTag, "com.hihonor.capture.metadata", "sensorHdrMode", TYPE_BYTE},
-    {kHonorCaptureVideoHdrModeTag, "com.hihonor.capture.metadata", "videoHdrMode", TYPE_BYTE},
-    {kHonorCaptureMasterAiEnableTag, "com.hihonor.capture.metadata", "masterAIEnable", TYPE_BYTE},
-    {kHonorCaptureHdrVividEnableTag, "com.hihonor.capture.metadata", "HDRVividEnable", TYPE_INT32},
-    {kHonorDevCapSitSupportedTag, "com.hihonor.device.capabilities", "honor_sit_supported", TYPE_BYTE},
-    {kHonorDevCapMainModeSupportedTag, "com.hihonor.device.capabilities", "mainModeSupported", TYPE_BYTE},
-};
-
-// vivo / iQOO OriginOS 原生相机核心专有 Vendor Tags（使用未冲突的 0x8040xxxx..0x8043xxxx 段）：
-// VCameraInfo.<init> 直接读取 com.vivo.chi.override.CameraType（byte[] ASCII 字符串），
-// 缺失会抛 IllegalArgumentException 崩溃；VModeCharacteristicsTable 按 "Master" 映射主摄全部模式。
-static constexpr uint32_t kVivoChiCameraTypeTag = 0x80400001;
-static constexpr uint32_t kVivoChiLargeSizeThumbTag = 0x80400002;
-static constexpr uint32_t kVivoChiSensorSizeTag = 0x80400003;
-static constexpr uint32_t kVivoFeedbackSensorNameTag = 0x80410001;
-static constexpr uint32_t kVivoSensorFocallen35mmTag = 0x80420001;
-static constexpr uint32_t kVivoImageSizesTag = 0x80430001;
-static constexpr uint32_t kVivoSensorModeSizeListTag = 0x80430002;
-static constexpr uint32_t kVivoRemosaicTypeTag = 0x80430003;
-static constexpr uint32_t kVivoHalVersionTag = 0x80430004;
-static constexpr uint32_t kVivoDisableReconfigTag = 0x80430005;
-static constexpr uint32_t kVivoCurrentModeVersionTag = 0x80430006;
-static constexpr uint32_t kVivoJpegNeedUpscaleTag = 0x80430007;
-static constexpr uint32_t kVivoIsNv21PlatformTag = 0x80430008;
-static constexpr uint32_t kVivoSupportedMaxCfaPatternTag = 0x80430009;
-static constexpr uint32_t kVivoProExpTimeMinTag = 0x8043000a;
-static constexpr uint32_t kVivoProExpTimeMaxTag = 0x8043000b;
-static constexpr uint32_t kVivoProIsoMinTag = 0x8043000c;
-static constexpr uint32_t kVivoProIsoMaxTag = 0x8043000d;
-static constexpr uint32_t kVivoLogicalMcPhysicalIdsTag = 0x8043000e;
-static constexpr uint32_t kVivoPhysicalCamCombinationTag = 0x8043000f;
-static constexpr uint32_t kVivoMultiCamTypeMapSessionIdTag = 0x80430010;
-static constexpr uint32_t kVivoMultiCamBokehSensorSizeTag = 0x80430011;
-static constexpr uint32_t kVivoSensorNotSetStreamPhysIdTag = 0x80440001;
-
-static const Note13VendorTagDesc kVivoVendorTagDescs[] = {
-    {kVivoChiCameraTypeTag, "com.vivo.chi.override", "CameraType", TYPE_BYTE},
-    {kVivoChiLargeSizeThumbTag, "com.vivo.chi.override", "LargeSizeThumbnail", TYPE_BYTE},
-    {kVivoChiSensorSizeTag, "com.vivo.chi.override", "SensorSize", TYPE_INT32},
-    {kVivoFeedbackSensorNameTag, "vivo.feedback", "sensor_name", TYPE_BYTE},
-    {kVivoSensorFocallen35mmTag, "vivo.camera.sensor", "focallen.35mm", TYPE_FLOAT},
-    {kVivoImageSizesTag, "com.vivo", "image_sizes", TYPE_INT32},
-    {kVivoSensorModeSizeListTag, "com.vivo", "sensorModeSizeList", TYPE_INT32},
-    {kVivoRemosaicTypeTag, "com.vivo", "RemosaicType", TYPE_INT32},
-    {kVivoHalVersionTag, "com.vivo", "halversion", TYPE_INT64},
-    {kVivoDisableReconfigTag, "com.vivo", "disablereconfig", TYPE_INT32},
-    {kVivoCurrentModeVersionTag, "com.vivo", "CurrentModeVersion", TYPE_INT32},
-    {kVivoJpegNeedUpscaleTag, "com.vivo", "JPEGNeedUpscale", TYPE_INT32},
-    {kVivoIsNv21PlatformTag, "com.vivo", "isNV21Platform", TYPE_INT32},
-    {kVivoSupportedMaxCfaPatternTag, "com.vivo", "SupportedMaxCFAPattern", TYPE_INT32},
-    {kVivoProExpTimeMinTag, "com.vivo", "pro_exptimeMin", TYPE_INT64},
-    {kVivoProExpTimeMaxTag, "com.vivo", "pro_exptimeMax", TYPE_INT64},
-    {kVivoProIsoMinTag, "com.vivo", "pro_isoMin", TYPE_INT32},
-    {kVivoProIsoMaxTag, "com.vivo", "pro_isoMax", TYPE_INT32},
-    {kVivoLogicalMcPhysicalIdsTag, "com.vivo", "logicalMCPhysicalIds", TYPE_BYTE},
-    {kVivoPhysicalCamCombinationTag, "com.vivo", "PhysicalCameraCombination", TYPE_BYTE},
-    {kVivoMultiCamTypeMapSessionIdTag, "com.vivo", "MultiCameraTypeMapSessionId", TYPE_BYTE},
-    {kVivoMultiCamBokehSensorSizeTag, "com.vivo", "MultiCameraBokehSensorSize", TYPE_BYTE},
-    {kVivoSensorNotSetStreamPhysIdTag, "vivo.control", "sensorNotSetStreamPhysicalId", TYPE_BYTE},
-};
-
-#include "cdh_nothing_vendor_tags.inc"
-#include "cdh_motorola_vendor_tags.inc"
-#include "cdh_nubia_vendor_tags.inc"
-
-// 三星 One UI 原生相机核心专有 Vendor Tags（使用未冲突的 0x8020xxxx..0x8023xxxx 段）
-static constexpr uint32_t kSamScalerAvailPreviewConfigsTag = 0x80200001;
-static constexpr uint32_t kSamScalerAvailPictureConfigsTag = 0x80200002;
-static constexpr uint32_t kSamScalerAvailThumbConfigsTag = 0x80200003;
-static constexpr uint32_t kSamScalerAvailVideoConfigsTag = 0x80200004;
-static constexpr uint32_t kSamScalerAvailMaxDigitalZoomTag = 0x80200005;
-static constexpr uint32_t kSamScalerAvailMinDigitalZoomTag = 0x80200006;
-static constexpr uint32_t kSamScalerAvailMaxDigitalZoomListTag = 0x80200007;
-static constexpr uint32_t kSamScalerAvailMinDigitalZoomListTag = 0x80200008;
-static constexpr uint32_t kSamScalerFlipAvailModesTag = 0x80200009;
-static constexpr uint32_t kSamCtrlAeAvailModesTag = 0x80210001;
-static constexpr uint32_t kSamCtrlAfAvailModesTag = 0x80210002;
-static constexpr uint32_t kSamCtrlAwbAvailModesTag = 0x80210003;
-static constexpr uint32_t kSamCtrlAvailEffectsTag = 0x80210004;
-static constexpr uint32_t kSamCtrlAvailFeaturesTag = 0x80210005;
-static constexpr uint32_t kSamCtrlColorSpaceAvailModesTag = 0x80210006;
-static constexpr uint32_t kSamCtrlLdcAvailModesTag = 0x80210007;
-static constexpr uint32_t kSamCtrlMeteringAvailModeTag = 0x80210008;
-static constexpr uint32_t kSamCtrlLiveHdrAvailModesTag = 0x80210009;
-static constexpr uint32_t kSamUnihalBeautyFaceDetectModesTag = 0x80220001;
-static constexpr uint32_t kSamSensorInfoPhysicalTypeTag = 0x80230001;
-
-static const Note13VendorTagDesc kSamsungVendorTagDescs[] = {
-    {kSamScalerAvailPreviewConfigsTag, "samsung.android.scaler", "availablePreviewStreamConfigurations", TYPE_INT32},
-    {kSamScalerAvailPictureConfigsTag, "samsung.android.scaler", "availablePictureStreamConfigurations", TYPE_INT32},
-    {kSamScalerAvailThumbConfigsTag, "samsung.android.scaler", "availableThumbnailStreamConfigurations", TYPE_INT32},
-    {kSamScalerAvailVideoConfigsTag, "samsung.android.scaler", "availableVideoConfigurations", TYPE_INT32},
-    {kSamScalerAvailMaxDigitalZoomTag, "samsung.android.scaler", "availableMaxDigitalZoom", TYPE_FLOAT},
-    {kSamScalerAvailMinDigitalZoomTag, "samsung.android.scaler", "availableMinDigitalZoom", TYPE_FLOAT},
-    {kSamScalerAvailMaxDigitalZoomListTag, "samsung.android.scaler", "availableMaxDigitalZoomList", TYPE_FLOAT},
-    {kSamScalerAvailMinDigitalZoomListTag, "samsung.android.scaler", "availableMinDigitalZoomList", TYPE_FLOAT},
-    {kSamScalerFlipAvailModesTag, "samsung.android.scaler", "flipAvailableModes", TYPE_INT32},
-    {kSamCtrlAeAvailModesTag, "samsung.android.control", "aeAvailableModes", TYPE_INT32},
-    {kSamCtrlAfAvailModesTag, "samsung.android.control", "afAvailableModes", TYPE_INT32},
-    {kSamCtrlAwbAvailModesTag, "samsung.android.control", "awbAvailableModes", TYPE_INT32},
-    {kSamCtrlAvailEffectsTag, "samsung.android.control", "availableEffects", TYPE_INT32},
-    {kSamCtrlAvailFeaturesTag, "samsung.android.control", "availableFeatures", TYPE_INT32},
-    {kSamCtrlColorSpaceAvailModesTag, "samsung.android.control", "colorSpaceAvailableModes", TYPE_INT32},
-    {kSamCtrlLdcAvailModesTag, "samsung.android.control", "lensDistortionCorrectionAvailableModes", TYPE_INT32},
-    {kSamCtrlMeteringAvailModeTag, "samsung.android.control", "meteringAvailableMode", TYPE_INT32},
-    {kSamCtrlLiveHdrAvailModesTag, "samsung.android.control", "liveHdrAvailableModes", TYPE_INT32},
-    {kSamUnihalBeautyFaceDetectModesTag, "samsung.android.unihal", "statisticsBeautyAvailableFaceDetectModes", TYPE_INT32},
-    {kSamSensorInfoPhysicalTypeTag, "samsung.android.sensor.info", "physicalType", TYPE_INT32},
-};
-
-// note13 真机 vendor tags：真机 gold 全量描述符（331 项 / 24 个 section），
-// 并按运行时设备品牌动态追加 OPlus / Samsung 专有 vendor tags。
 static const std::vector<Note13VendorTagDesc> &activeVendorTagDescs() {
   static const std::vector<Note13VendorTagDesc> kAll = []() {
     std::vector<Note13VendorTagDesc> out(
         kNote13VendorTagDescs,
         kNote13VendorTagDescs + kNote13VendorTagDescCount);
-    if (isOplusDevice()) {
-      out.push_back({kOplusSupportedCameraIdTypeTag, "com.oplus",
-                     "supported.cameraid.type", TYPE_BYTE});
-    }
-    if (isSamsungDevice()) {
-      for (const auto &d : kSamsungVendorTagDescs) {
-        out.push_back(d);
-      }
-    }
-    if (isHonorDevice()) {
-      for (const auto &d : kHonorVendorTagDescs) {
-        out.push_back(d);
-      }
-    }
-    if (isVivoDevice()) {
-      for (const auto &d : kVivoVendorTagDescs) {
-        out.push_back(d);
-      }
-    }
-    if (isNothingDevice()) {
-      for (const auto &d : kNothingVendorTagDescs) {
-        out.push_back(d);
-      }
-    }
-    if (isMotorolaDevice()) {
-      for (const auto &d : kMotorolaVendorTagDescs) {
-        out.push_back(d);
-      }
-    }
-    if (isNubiaDevice()) {
-      for (const auto &d : kNubiaVendorTagDescs) {
-        out.push_back(d);
-      }
-    }
+    cdh::camera::AppendVendorTagDescs(&out);
     return out;
   }();
   return kAll;
@@ -472,43 +215,7 @@ static const vendor_tag_ops_t kNote13VendorTagOps = {
 };
 #endif
 
-struct Note13CameraTarget {
-  const char *id;
-  uint8_t lensFacing;
-  int32_t sensorOrientation;
-  uint8_t flashAvailable;
-  int32_t pixelWidth;
-  int32_t pixelHeight;
-  float physicalWidth;
-  float physicalHeight;
-  float lensDistortion[5];
-  float lensIntrinsicCalibration[5];
-  float lensPoseRotation[4];
-  float lensPoseTranslation[3];
-  float aperture;
-  float focalLength;
-  uint8_t opticalStabilization[2];
-  size_t opticalStabilizationCount;
-  float maxDigitalZoom;
-  uint8_t colorFilterArrangement;
-  int64_t minExposureTime;
-  int64_t maxFrameDuration;
-  int32_t minSensitivity;
-  int32_t maxSensitivity;
-  int32_t maxRegions[3];
-  uint8_t requestCapabilities[16];
-  size_t requestCapabilitiesCount;
-  const int32_t *jpegSizes;
-  size_t jpegSizeCount;
-  const int32_t *streamSizes;
-  size_t streamSizeCount;
-  const int32_t *highSpeedVideo;
-  size_t highSpeedVideoCount;
-  const uint8_t *physicalCameraIds;
-  size_t physicalCameraIdCount;
-  const Note13CameraTarget *physicalTargets;
-  size_t physicalTargetCount;
-};
+// Note13CameraTarget 现已统一定义于 camera_vendor_ext.h，供各厂商 variant 共享。
 
 #if defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
 static uint8_t oplusCameraIdType(const Note13CameraTarget &target) {
@@ -873,304 +580,7 @@ static const Note13CameraTarget kTargets[] = {
      0},
 };
 
-// Pixel 6 (oriole) 等 Pixel 双摄机型逻辑多摄拓扑：
-// 后摄逻辑相机 "0" 聚合宽角主摄 "2" (6.81mm, 4064x3072 -> binned 2032x1536) 与
-// 超广角 "3" (2.35mm, 4032x3016 -> binned 2016x1508)，
-// 满足 GoogleCamera 多摄融合管线（RAW_WIDE / RAW_ULTRAWIDE）与 libgcam
-// StaticMetadata::Check 对 active_area / pixel_array / frame_raw_max 精确一致的要求。
-static const int32_t kPixelWideJpegSizes[] = {
-    4064, 3072, 4000, 3000, 4000, 2256, 3840, 2160, 3264, 2448, 2560, 1920,
-    1920, 1440, 1920, 1080, 1440, 1080, 1280, 960,  1280, 720,  640,  480,
-};
-
-static const int32_t kPixelWideStreamSizes[] = {
-    4064, 3072, 4000, 3000, 4000, 2256, 3840, 2160, 3264, 2448, 2560, 1920,
-    2560, 1440, 2400, 1080, 2304, 1728, 2160, 1080, 1920, 1440, 1920, 1080,
-    1600, 1200, 1440, 1080, 1280, 960,  1280, 720,  1080, 1080, 960,  720,
-    720,  480,  640,  480,  640,  360,  352,  288,  320,  240,  176,  144,
-};
-
-static const int32_t kPixelUwJpegSizes[] = {
-    4032, 3016, 4000, 3000, 3840, 2160, 3264, 2448, 2560, 1920,
-    1920, 1440, 1920, 1080, 1440, 1080, 1280, 960,  1280, 720,  640,  480,
-};
-
-static const int32_t kPixelUwStreamSizes[] = {
-    4032, 3016, 4000, 3000, 3840, 2160, 3264, 2448, 2560, 1920, 2560, 1440,
-    2400, 1080, 2304, 1728, 2160, 1080, 1920, 1440, 1920, 1080, 1600, 1200,
-    1440, 1080, 1280, 960,  1280, 720,  1080, 1080, 960,  720,  720,  480,
-    640,  480,  640,  360,  352,  288,  320,  240,  176,  144,
-};
-
-static const uint8_t kPixelBackPhysicalCameraIds[] = {'2', '\0', '3', '\0'};
-
-static const Note13CameraTarget kPixelBackPhysicalTargets[] = {
-    {"2",
-     ANDROID_LENS_FACING_BACK,
-     90,
-     ANDROID_FLASH_INFO_AVAILABLE_TRUE,
-     4064,
-     3072,
-     9.8304f,
-     7.3728f,
-     {0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
-     {2764.8f, 2764.8f, 2032.0f, 1536.0f, 0.0f},
-     {0.0f, 0.0f, 0.0f, 1.0f},
-     {0.0f, 0.0f, 0.0f},
-     1.85f,
-     6.81f,
-     {0, 1},
-     2,
-     10.0f,
-     ANDROID_SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_GBRG,
-     100000LL,
-     30000000000LL,
-     50,
-     12800,
-     {1, 0, 1},
-     {0, 1, 2, 5, 3, 6, 7, 9},
-     8,
-     kPixelWideJpegSizes,
-     std::size(kPixelWideJpegSizes) / 2,
-     kPixelWideStreamSizes,
-     std::size(kPixelWideStreamSizes) / 2,
-     kBackHighSpeedVideo,
-     std::size(kBackHighSpeedVideo) / 5,
-     nullptr,
-     0,
-     nullptr,
-     0},
-    {"3",
-     ANDROID_LENS_FACING_BACK,
-     90,
-     ANDROID_FLASH_INFO_AVAILABLE_TRUE,
-     4032,
-     3016,
-     5.60f,
-     4.20f,
-     {0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
-     {1680.0f, 1680.0f, 2016.0f, 1508.0f, 0.0f},
-     {0.0f, 0.0f, 0.0f, 1.0f},
-     {0.014f, 0.0f, 0.0f},
-     2.2f,
-     2.35f,
-     {0},
-     1,
-     10.0f,
-     ANDROID_SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_GBRG,
-     100000LL,
-     30000000000LL,
-     50,
-     6400,
-     {1, 0, 1},
-     {0, 1, 2, 5, 3, 6, 7},
-     7,
-     kPixelUwJpegSizes,
-     std::size(kPixelUwJpegSizes) / 2,
-     kPixelUwStreamSizes,
-     std::size(kPixelUwStreamSizes) / 2,
-     nullptr,
-     0,
-     nullptr,
-     0,
-     nullptr,
-     0},
-};
-
-static const Note13CameraTarget kPixelTargets[] = {
-    {"0",
-     ANDROID_LENS_FACING_BACK,
-     90,
-     ANDROID_FLASH_INFO_AVAILABLE_TRUE,
-     4064,
-     3072,
-     9.8304f,
-     7.3728f,
-     {0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
-     {2764.8f, 2764.8f, 2032.0f, 1536.0f, 0.0f},
-     {0.0f, 0.0f, 0.0f, 1.0f},
-     {0.0f, 0.0f, 0.0f},
-     1.85f,
-     6.81f,
-     {0, 1},
-     2,
-     10.0f,
-     ANDROID_SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_GBRG,
-     100000LL,
-     30000000000LL,
-     50,
-     12800,
-     {1, 0, 1},
-     {0, 1, 2, 5, 3, 6, 7, 9, 11},
-     9,
-     kPixelWideJpegSizes,
-     std::size(kPixelWideJpegSizes) / 2,
-     kPixelWideStreamSizes,
-     std::size(kPixelWideStreamSizes) / 2,
-     kBackHighSpeedVideo,
-     std::size(kBackHighSpeedVideo) / 5,
-     kPixelBackPhysicalCameraIds,
-     std::size(kPixelBackPhysicalCameraIds),
-     kPixelBackPhysicalTargets,
-     std::size(kPixelBackPhysicalTargets)},
-    {"1",
-     ANDROID_LENS_FACING_FRONT,
-     270,
-     ANDROID_FLASH_INFO_AVAILABLE_FALSE,
-     2304,
-     1728,
-     4.64f,
-     3.48f,
-     {0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
-     {1618.56f, 1618.56f, 1152.0f, 864.0f, 0.0f},
-     {0.0f, 0.0f, 0.0f, 1.0f},
-     {0.0f, 0.0f, 0.0f},
-     2.0f,
-     2.74f,
-     {0},
-     1,
-     10.0f,
-     ANDROID_SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_RGGB,
-     100000LL,
-     278443000LL,
-     50,
-     3200,
-     {1, 0, 0},
-     {0, 1, 2, 5, 3, 6, 7},
-     7,
-     kFrontJpegSizes,
-     std::size(kFrontJpegSizes) / 2,
-     kFrontStreamSizes,
-     std::size(kFrontStreamSizes) / 2,
-     nullptr,
-     0,
-     nullptr,
-     0,
-     nullptr,
-     0},
-};
-
-static bool isPixelDualRearDevice() {
-  static const bool kIsPixel = []() {
-    char dev[PROP_VALUE_MAX] = {};
-    if (__system_property_get("ro.product.device", dev) <= 0) {
-      __system_property_get("ro.product.vendor.device", dev);
-    }
-    return strcmp(dev, "oriole") == 0 || strcmp(dev, "raven") == 0 ||
-           strcmp(dev, "bluejay") == 0 || strcmp(dev, "panther") == 0 ||
-           strcmp(dev, "cheetah") == 0 || strcmp(dev, "lynx") == 0;
-  }();
-  return kIsPixel;
-}
-
-static const uint8_t kLogicalBackPhysicalIds02[] = {'0', '\0', '2', '\0'};
-
-static const Note13CameraTarget *logicalBackPhysicalTargets02() {
-  static const std::array<Note13CameraTarget, 2> kPhys = []() {
-    std::array<Note13CameraTarget, 2> arr = {kTargets[0], kTargets[0]};
-    arr[0].id = "0";
-    arr[0].focalLength = 5.31f;
-    arr[1].id = "2";
-    arr[1].focalLength = 1.95f;
-    return arr;
-  }();
-  return kPhys.data();
-}
-
-static const uint8_t kOplusRuntimeBackPhysicalIds[] = {'3', '\0', '2', '\0'};
-
-static const Note13CameraTarget *oplusRuntimePhysicalTargets() {
-  static const std::array<Note13CameraTarget, 2> kPhys = []() {
-    std::array<Note13CameraTarget, 2> arr = {kTargets[0], kTargets[0]};
-    arr[0].id = "2";
-    arr[0].focalLength = 5.59f;
-    arr[1].id = "3";
-    arr[1].focalLength = 1.68f;
-    return arr;
-  }();
-  return kPhys.data();
-}
-
-static const std::vector<Note13CameraTarget> &oplusRuntimeCameraTargets() {
-  static const std::vector<Note13CameraTarget> kOplus = []() {
-    std::vector<Note13CameraTarget> out;
-    // 0: 逻辑后摄（带 LOGICAL_MULTI_CAMERA 及物理子摄 2/3）
-    Note13CameraTarget back = kTargets[0];
-    if (back.requestCapabilitiesCount < std::size(back.requestCapabilities)) {
-      back.requestCapabilities[back.requestCapabilitiesCount++] =
-          ANDROID_REQUEST_AVAILABLE_CAPABILITIES_LOGICAL_MULTI_CAMERA;
-    }
-    back.physicalCameraIds = kOplusRuntimeBackPhysicalIds;
-    back.physicalCameraIdCount = std::size(kOplusRuntimeBackPhysicalIds);
-    back.physicalTargets = oplusRuntimePhysicalTargets();
-    back.physicalTargetCount = 2;
-    out.push_back(back);
-    // 1: 前摄
-    out.push_back(kTargets[1]);
-    // 2 / 3: 独立物理后摄（与 CDH_CAMERA_TARGET_ONEPLUSACE6T 一致）
-    out.push_back(oplusRuntimePhysicalTargets()[0]);
-    out.push_back(oplusRuntimePhysicalTargets()[1]);
-    return out;
-  }();
-  return kOplus;
-}
-
-static uint8_t runtimeOplusCameraIdType(const Note13CameraTarget &target) {
-  if (strcmp(target.id, "0") == 0) {
-    return 12;
-  }
-  if (strcmp(target.id, "1") == 0) {
-    return 1;
-  }
-  if (strcmp(target.id, "2") == 0) {
-    return 0;
-  }
-  if (strcmp(target.id, "3") == 0) {
-    return 2;
-  }
-  return 0;
-}
-
-static const std::vector<Note13CameraTarget> &extraBrandCameraTargets() {
-  static const std::vector<Note13CameraTarget> kExtras = []() {
-    std::vector<Note13CameraTarget> out;
-    auto addBackAlias = [&](const char *id, bool logical02) {
-      Note13CameraTarget t = kTargets[0];
-      t.id = id;
-      if (logical02) {
-        if (t.requestCapabilitiesCount < std::size(t.requestCapabilities)) {
-          t.requestCapabilities[t.requestCapabilitiesCount++] =
-              ANDROID_REQUEST_AVAILABLE_CAPABILITIES_LOGICAL_MULTI_CAMERA;
-        }
-        t.physicalCameraIds = kLogicalBackPhysicalIds02;
-        t.physicalCameraIdCount = std::size(kLogicalBackPhysicalIds02);
-        t.physicalTargets = logicalBackPhysicalTargets02();
-        t.physicalTargetCount = 2;
-      }
-      out.push_back(t);
-    };
-    // 魅族 Flyme 原生相机主后摄硬编码逻辑多摄 ID "4"（及辅摄 "2"/"3"）；
-    // 切换人像模式时会以 physicalCameraId="0" 配置流，故为 "4" 宣告 LOGICAL_MULTI_CAMERA
-    // 与物理子摄 {"0", "2"}。
-    if (isMeizuDevice()) {
-      addBackAlias("2", false);
-      addBackAlias("3", false);
-      addBackAlias("4", true);
-    }
-    // 三星 One UI 原生相机（如 S25 Ultra pa3q）启动即查询后置逻辑多摄 ID "20"
-    // （CapabilityProvider.getCapability("20")），并可能查询 "2"/"3"/"21"/"23"/"52"。
-    if (isSamsungDevice()) {
-      addBackAlias("2", false);
-      addBackAlias("3", false);
-      addBackAlias("20", true);
-      addBackAlias("21", false);
-      addBackAlias("23", false);
-      addBackAlias("52", false);
-    }
-    return out;
-  }();
-  return kExtras;
-}
+// Pixel / OPlus / Meizu / Samsung 等厂商专属相机拓扑均已迁至 src/<variant>/。
 #endif
 
 static ScopedAStatus cameraError(Status status) {
@@ -1283,11 +693,11 @@ static bool addLogicalMultiCameraEntries(camera_metadata_t *metadata,
 
 static bool addLensPoseEntries(camera_metadata_t *metadata,
                                const Note13CameraTarget &target) {
-#if !defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
-  if (!isPixelDualRearDevice()) {
-    return true;
-  }
-#endif
+#if !defined(CDH_CAMERA_TARGET_ONEPLUSACE6T) && !defined(CDH_CAMERA_PIXEL)
+  (void)metadata;
+  (void)target;
+  return true;
+#else
   const uint8_t poseRef = ANDROID_LENS_POSE_REFERENCE_PRIMARY_CAMERA;
   return addSingle(metadata, ANDROID_LENS_POSE_REFERENCE, poseRef) &&
          addEntry(metadata, ANDROID_LENS_POSE_ROTATION,
@@ -1300,6 +710,7 @@ static bool addLensPoseEntries(camera_metadata_t *metadata,
                   std::size(target.lensIntrinsicCalibration)) &&
          addEntry(metadata, ANDROID_LENS_DISTORTION, target.lensDistortion,
                   std::size(target.lensDistortion));
+#endif
 }
 
 static bool addCommonStaticEntries(camera_metadata_t *metadata,
@@ -1372,8 +783,8 @@ static bool addCommonStaticEntries(camera_metadata_t *metadata,
   // Pixel 机型（oriole 等）Gcam 会对 RAW 走 2x2 ApplySensorBinning 并按内置
   // camera.{wide,uw,tele}_binned_raw_{width,height} 查 minFrameDuration，故一并宣告。
   std::vector<int32_t> rawSizes = {target.pixelWidth, target.pixelHeight};
-#if !defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
-  if (isPixelDualRearDevice()) {
+#if defined(CDH_CAMERA_PIXEL)
+  {
     auto addRawSize = [&](int32_t w, int32_t h) {
       if (w <= 0 || h <= 0) return;
       for (size_t i = 0; i + 1 < rawSizes.size(); i += 2) {
@@ -1511,8 +922,8 @@ static bool addCommonStaticEntries(camera_metadata_t *metadata,
   std::vector<int64_t> depthMinFrameDurations;
   std::vector<int64_t> depthStallDurations;
   const uint8_t depthIsExclusive = ANDROID_DEPTH_DEPTH_IS_EXCLUSIVE_FALSE;
-#if !defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
-  if (isPixelDualRearDevice()) {
+#if defined(CDH_CAMERA_PIXEL)
+  {
     std::vector<int32_t> pdSizes;
     const int32_t halfW = (target.pixelWidth / 2) & ~15;
     const int32_t halfH = (target.pixelHeight / 2) & ~1;
@@ -1836,198 +1247,10 @@ static bool addVendorTagEntries(camera_metadata_t *metadata,
 // getAvailableCaptureResultKeys() 只剩 13 项（真机 174），
 // 手动曝光/RAW/MTK 与小米 vendor 请求键全部缺失。
 #if !defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
-// 按运行时设备品牌填充专有静态 Vendor Tags（Samsung One UI / OPlus ColorOS）
+// 委托给当前编入的厂商 variant（default 下为空内联返回 true）。
 static bool addBrandVendorTagEntries(camera_metadata_t *metadata,
                                      const Note13CameraTarget &target) {
-  if (isOplusDevice()) {
-    const uint8_t cameraIdType = runtimeOplusCameraIdType(target);
-    if (!addEntry(metadata, kOplusSupportedCameraIdTypeTag, &cameraIdType, 1)) {
-      return false;
-    }
-  }
-  if (isHonorDevice()) {
-    const uint8_t sitSupported = 1;
-    const uint8_t mainModeSupported =
-        target.lensFacing == ANDROID_LENS_FACING_BACK ? 1 : 0;
-    if (!addEntry(metadata, kHonorDevCapSitSupportedTag, &sitSupported, 1) ||
-        !addEntry(metadata, kHonorDevCapMainModeSupportedTag,
-                  &mainModeSupported, 1)) {
-      return false;
-    }
-  }
-  if (isVivoDevice()) {
-    const uint8_t camType[] = {'M', 'a', 's', 't', 'e', 'r', 0};
-    const uint8_t sensorName[] = {'i', 'm', 'x', '8', '9', '0', 0};
-    const uint8_t largeThumb = 0;
-    const int32_t sensorSize[] = {target.pixelWidth, target.pixelHeight};
-    const int32_t imageSizes[] = {
-        target.pixelWidth, target.pixelHeight,
-        3840, 2160,
-        1920, 1080,
-        1440, 1080,
-        1280, 720,
-    };
-    const int32_t zero32 = 0;
-    const int32_t one32 = 1;
-    // halversion=2 (0b10)：避开 bit2(4=VIF_RAW_TYPE，要求 4~5 个 dummyId)、
-    // bit4/6(16/64=VIF_VCF_2_TYPE) 与 bit5(32=VIF_BG_SERVICE)，使 vivo 相机走
-    // 标准 Camera2 VIF_YUV_TYPE / VIF_JPEG_TYPE 预览与拍照管线。
-    const int64_t halVer = 2;
-    const float focal35mm =
-        target.lensFacing == ANDROID_LENS_FACING_BACK ? 23.0f : 26.0f;
-    const int64_t expMin = target.minExposureTime;
-    const int64_t expMax = 30000000000LL;
-    const int32_t isoMin = target.minSensitivity;
-    const int32_t isoMax = target.maxSensitivity;
-    const std::string physComb =
-        std::string("Master,") + target.id + ";";
-    const std::vector<uint8_t> physCombBytes(physComb.begin(), physComb.end());
-    const uint8_t emptyStr[] = {0};
-    if (!addEntry(metadata, kVivoChiCameraTypeTag, camType, std::size(camType)) ||
-        !addEntry(metadata, kVivoChiLargeSizeThumbTag, &largeThumb, 1) ||
-        !addEntry(metadata, kVivoChiSensorSizeTag, sensorSize, std::size(sensorSize)) ||
-        !addEntry(metadata, kVivoFeedbackSensorNameTag, sensorName, std::size(sensorName)) ||
-        !addEntry(metadata, kVivoSensorFocallen35mmTag, &focal35mm, 1) ||
-        !addEntry(metadata, kVivoImageSizesTag, imageSizes, std::size(imageSizes)) ||
-        !addEntry(metadata, kVivoSensorModeSizeListTag, sensorSize, std::size(sensorSize)) ||
-        !addEntry(metadata, kVivoRemosaicTypeTag, &zero32, 1) ||
-        !addEntry(metadata, kVivoHalVersionTag, &halVer, 1) ||
-        !addEntry(metadata, kVivoDisableReconfigTag, &zero32, 1) ||
-        !addEntry(metadata, kVivoCurrentModeVersionTag, &one32, 1) ||
-        !addEntry(metadata, kVivoJpegNeedUpscaleTag, &zero32, 1) ||
-        !addEntry(metadata, kVivoIsNv21PlatformTag, &zero32, 1) ||
-        !addEntry(metadata, kVivoSupportedMaxCfaPatternTag, &zero32, 1) ||
-        !addEntry(metadata, kVivoProExpTimeMinTag, &expMin, 1) ||
-        !addEntry(metadata, kVivoProExpTimeMaxTag, &expMax, 1) ||
-        !addEntry(metadata, kVivoProIsoMinTag, &isoMin, 1) ||
-        !addEntry(metadata, kVivoProIsoMaxTag, &isoMax, 1) ||
-        !addEntry(metadata, kVivoLogicalMcPhysicalIdsTag, emptyStr, 1) ||
-        !addEntry(metadata, kVivoPhysicalCamCombinationTag, physCombBytes) ||
-        !addEntry(metadata, kVivoMultiCamTypeMapSessionIdTag, emptyStr, 1) ||
-        !addEntry(metadata, kVivoMultiCamBokehSensorSizeTag, emptyStr, 1) ||
-        !addEntry(metadata, kVivoSensorNotSetStreamPhysIdTag, emptyStr, 1)) {
-      return false;
-    }
-  }
-  if (isMotorolaDevice()) {
-    // 关闭 MCF 多帧合成与重处理：云机无真机 Mali OpenCL 驱动与原厂 ISP，
-    // SettingsManager.processCharacteristicsStage2() 读到 supports_mcf=0 后
-    // 自动置 MCF_ALLOW=false，跳过 McfInit / OpenCL 并走标准 Camera2 预览/拍照管线。
-    const uint8_t zeroByte = 0;
-    const bool isAito =
-        propContainsIgnoreCase("ro.product.vendor.device", "aito") ||
-        propContainsIgnoreCase("ro.product.device", "aito") ||
-        propContainsIgnoreCase("ro.product.system.device", "aito");
-    std::string sensorStr;
-    if (isAito) {
-      sensorStr = (target.lensFacing == ANDROID_LENS_FACING_BACK)
-                      ? "mot_aito_s5kgn8_mipi_raw"
-                      : "mot_aito_ov32b_mipi_raw";
-    } else {
-      sensorStr = (target.lensFacing == ANDROID_LENS_FACING_BACK)
-                      ? "mot_rear_main_mipi_raw"
-                      : "mot_front_main_mipi_raw";
-    }
-    std::vector<uint8_t> sensorBytes(sensorStr.begin(), sensorStr.end());
-    sensorBytes.push_back(0);
-    if (!addEntry(metadata, kMotoSupportsMcfTag, &zeroByte, 1) ||
-        !addEntry(metadata, kMotoSupportsReprocTag, &zeroByte, 1) ||
-        !addEntry(metadata, kMotoSupportIspHidlTag, &zeroByte, 1) ||
-        !addEntry(metadata, kMotoSensorInfoNameTag, sensorBytes)) {
-      return false;
-    }
-  }
-  if (isSamsungDevice()) {
-    // 预览流配置：PRIVATE (34) + YUV_420_888 (35)，四元组 [fmt, w, h, isInput=0]
-    std::vector<int32_t> previewConfigs;
-    previewConfigs.reserve(target.streamSizeCount * 2 * 4);
-    appendStreamConfigs(&previewConfigs, kImplementationDefined,
-                        target.streamSizes, target.streamSizeCount);
-    appendStreamConfigs(&previewConfigs, kYCbCr420888,
-                        target.streamSizes, target.streamSizeCount);
-
-    // 拍照流配置：BLOB (33 -> SemImageFormat.JPEG) + YUV_420_888 (35)
-    std::vector<int32_t> pictureConfigs;
-    pictureConfigs.reserve((target.jpegSizeCount + target.streamSizeCount) * 4);
-    appendStreamConfigs(&pictureConfigs, kBlob,
-                        target.jpegSizes, target.jpegSizeCount);
-    appendStreamConfigs(&pictureConfigs, kYCbCr420888,
-                        target.streamSizes, target.streamSizeCount);
-
-    // 缩略图流配置：YUV_420_888 (35)
-    const int32_t thumbConfigs[] = {
-        kYCbCr420888, 512, 384, kOutputStream,
-        kYCbCr420888, 384, 384, kOutputStream,
-        kYCbCr420888, 320, 240, kOutputStream,
-        kYCbCr420888, 192, 144, kOutputStream,
-    };
-    // 视频流配置：6 元组 [w, h, minFps, maxFps, previewW, previewH]
-    const int32_t videoConfigs[] = {
-        3840, 2160, 30, 30, 0, 0,
-        1920, 1080, 30, 30, 0, 0,
-        1920, 1080, 60, 60, 0, 0,
-        1280, 720,  30, 30, 0, 0,
-        720,  480,  30, 30, 0, 0,
-    };
-    const float maxZoom = target.maxDigitalZoom;
-    const float minZoom = 1.0f;
-    const float maxZoomList[] = {maxZoom};
-    const float minZoomList[] = {minZoom};
-    const int32_t flipModes[] = {0, 1};
-    const int32_t aeModes[] = {0, 1, 2, 3};
-    const int32_t afModesBack[] = {0, 1, 2, 3, 4};
-    const int32_t afModesFront[] = {0};
-    const int32_t awbModes[] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
-    const int32_t availEffects[] = {0};
-    const int32_t availFeatures[] = {0};
-    const int32_t colorSpaceModes[] = {0};
-    const int32_t ldcModes[] = {0, 1};
-    const int32_t meteringModes[] = {0, 1, 2};
-    const int32_t liveHdrModes[] = {0, 1, 2};
-    const int32_t beautyFaceModes[] = {0, 1};
-    const int32_t physicalType = 0;
-
-    const bool isBack = target.lensFacing == ANDROID_LENS_FACING_BACK;
-    if (!(addEntry(metadata, kSamScalerAvailPreviewConfigsTag, previewConfigs) &&
-          addEntry(metadata, kSamScalerAvailPictureConfigsTag, pictureConfigs) &&
-          addEntry(metadata, kSamScalerAvailThumbConfigsTag, thumbConfigs,
-                   std::size(thumbConfigs)) &&
-          addEntry(metadata, kSamScalerAvailVideoConfigsTag, videoConfigs,
-                   std::size(videoConfigs)) &&
-          addSingle(metadata, kSamScalerAvailMaxDigitalZoomTag, maxZoom) &&
-          addSingle(metadata, kSamScalerAvailMinDigitalZoomTag, minZoom) &&
-          addEntry(metadata, kSamScalerAvailMaxDigitalZoomListTag, maxZoomList,
-                   std::size(maxZoomList)) &&
-          addEntry(metadata, kSamScalerAvailMinDigitalZoomListTag, minZoomList,
-                   std::size(minZoomList)) &&
-          addEntry(metadata, kSamScalerFlipAvailModesTag, flipModes,
-                   std::size(flipModes)) &&
-          addEntry(metadata, kSamCtrlAeAvailModesTag, aeModes,
-                   std::size(aeModes)) &&
-          addEntry(metadata, kSamCtrlAfAvailModesTag,
-                   isBack ? afModesBack : afModesFront,
-                   isBack ? std::size(afModesBack) : std::size(afModesFront)) &&
-          addEntry(metadata, kSamCtrlAwbAvailModesTag, awbModes,
-                   std::size(awbModes)) &&
-          addEntry(metadata, kSamCtrlAvailEffectsTag, availEffects,
-                   std::size(availEffects)) &&
-          addEntry(metadata, kSamCtrlAvailFeaturesTag, availFeatures,
-                   std::size(availFeatures)) &&
-          addEntry(metadata, kSamCtrlColorSpaceAvailModesTag, colorSpaceModes,
-                   std::size(colorSpaceModes)) &&
-          addEntry(metadata, kSamCtrlLdcAvailModesTag, ldcModes,
-                   std::size(ldcModes)) &&
-          addEntry(metadata, kSamCtrlMeteringAvailModeTag, meteringModes,
-                   std::size(meteringModes)) &&
-          addEntry(metadata, kSamCtrlLiveHdrAvailModesTag, liveHdrModes,
-                   std::size(liveHdrModes)) &&
-          addEntry(metadata, kSamUnihalBeautyFaceDetectModesTag, beautyFaceModes,
-                   std::size(beautyFaceModes)) &&
-          addSingle(metadata, kSamSensorInfoPhysicalTypeTag, physicalType))) {
-      return false;
-    }
-  }
-  return true;
+  return cdh::camera::AppendVendorStaticMetadata(metadata, target);
 }
 #endif
 
@@ -2131,22 +1354,6 @@ static bool addKeyLists(camera_metadata_t *metadata,
     characteristicsKeys.push_back(
         ANDROID_REQUEST_AVAILABLE_PHYSICAL_CAMERA_REQUEST_KEYS);
   }
-#if !defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
-  if (isPixelDualRearDevice()) {
-    characteristicsKeys.push_back(ANDROID_LENS_POSE_REFERENCE);
-    characteristicsKeys.push_back(ANDROID_LENS_POSE_ROTATION);
-    characteristicsKeys.push_back(ANDROID_LENS_POSE_TRANSLATION);
-    characteristicsKeys.push_back(ANDROID_LENS_INTRINSIC_CALIBRATION);
-    characteristicsKeys.push_back(ANDROID_LENS_DISTORTION);
-    characteristicsKeys.push_back(
-        ANDROID_DEPTH_AVAILABLE_DEPTH_STREAM_CONFIGURATIONS);
-    characteristicsKeys.push_back(
-        ANDROID_DEPTH_AVAILABLE_DEPTH_MIN_FRAME_DURATIONS);
-    characteristicsKeys.push_back(
-        ANDROID_DEPTH_AVAILABLE_DEPTH_STALL_DURATIONS);
-    characteristicsKeys.push_back(ANDROID_DEPTH_DEPTH_IS_EXCLUSIVE);
-  }
-#endif
   for (size_t i = 0; i < kNote13VendorTagCount; i++) {
     const auto &tag = kNote13VendorTags[i];
     if (isFront && (tag.cam1 == nullptr || tag.cam1Count == 0)) {
@@ -2155,32 +1362,7 @@ static bool addKeyLists(camera_metadata_t *metadata,
     characteristicsKeys.push_back(static_cast<int32_t>(tag.tagId));
   }
 #if !defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
-  if (isOplusDevice()) {
-    characteristicsKeys.push_back(
-        static_cast<int32_t>(kOplusSupportedCameraIdTypeTag));
-  }
-  if (isSamsungDevice()) {
-    for (const auto &d : kSamsungVendorTagDescs) {
-      characteristicsKeys.push_back(static_cast<int32_t>(d.tagId));
-    }
-  }
-  if (isHonorDevice()) {
-    characteristicsKeys.push_back(
-        static_cast<int32_t>(kHonorDevCapSitSupportedTag));
-    characteristicsKeys.push_back(
-        static_cast<int32_t>(kHonorDevCapMainModeSupportedTag));
-  }
-  if (isVivoDevice()) {
-    for (const auto &d : kVivoVendorTagDescs) {
-      characteristicsKeys.push_back(static_cast<int32_t>(d.tagId));
-    }
-  }
-  if (isMotorolaDevice()) {
-    characteristicsKeys.push_back(static_cast<int32_t>(kMotoSupportsMcfTag));
-    characteristicsKeys.push_back(static_cast<int32_t>(kMotoSupportsReprocTag));
-    characteristicsKeys.push_back(static_cast<int32_t>(kMotoSupportIspHidlTag));
-    characteristicsKeys.push_back(static_cast<int32_t>(kMotoSensorInfoNameTag));
-  }
+  cdh::camera::AppendVendorCharacteristicKeys(&characteristicsKeys, target);
 #endif
   return addEntry(metadata, ANDROID_REQUEST_AVAILABLE_REQUEST_KEYS,
                   requestKeys, requestKeyCount) &&
@@ -2327,26 +1509,7 @@ static CameraMetadata buildRequestMetadata(const Note13CameraTarget &target,
       addSingle(metadata, ANDROID_STATISTICS_HOT_PIXEL_MAP_MODE,
                 hotPixelMapMode) &&
       addSingle(metadata, ANDROID_TONEMAP_MODE, tonemapMode);
-  // 展锐 libunisoccameraservice.so 的 UnisocCamera3Device::getSlowMotion 硬编码查询
-  // tagId=0x8000000A 且未判空直接解引用 entry.data.u8[0]；在展锐平台默认请求模板中
-  // 预置该 tag 为 0（与 kNote13VendorTagDescs[0x8000000A] 的 TYPE_INT32 一致），
-  // 防止 cameraserver 在 setStreamingRequestList 时 SIGSEGV。
-  bool extraOk = true;
-  {
-    char camHw[PROP_VALUE_MAX] = {};
-    if (__system_property_get("ro.hardware.camera", camHw) > 0 &&
-        std::strcmp(camHw, "unisoc") == 0) {
-      const int32_t sprdSlowMotionDefault = 0;
-      extraOk = addSingle(metadata, 0x8000000Au, sprdSlowMotionDefault);
-    }
-    if (extraOk && isNubiaDevice()) {
-      // Nubia DeviceUtil.updateParametersSupports() 直接对
-      // org.quic.camera2.tuning.feature.Feature1Mode 拆箱 .byteValue() 且未判空，
-      // 须在默认请求模板中预置 (uint8_t)0。
-      const uint8_t zeroByte = 0;
-      extraOk = addSingle(metadata, kNubiaQcomTuningFeature1ModeTag, zeroByte);
-    }
-  }
+  const bool extraOk = cdh::camera::AppendVendorDefaultRequest(metadata, target);
   if (added && extraOk &&
       validate_camera_metadata_structure(metadata, nullptr) == 0) {
     out.metadata = metadataBytes(metadata);
@@ -2608,23 +1771,28 @@ static void appendExposedCameraTargets(
     }
   }
 #else
-  if (isPixelDualRearDevice()) {
-    for (const auto &target : kPixelTargets) {
-      out->push_back(&target);
-    }
-    return;
-  }
-  if (isOplusDevice()) {
-    for (const auto &target : oplusRuntimeCameraTargets()) {
-      out->push_back(&target);
+  const cdh::camera::CameraTargetDefaults defaults = {
+      kTargets,
+      std::size(kTargets),
+      kBackHighSpeedVideo,
+      std::size(kBackHighSpeedVideo) / 5,
+      kFrontJpegSizes,
+      std::size(kFrontJpegSizes) / 2,
+      kFrontStreamSizes,
+      std::size(kFrontStreamSizes) / 2,
+  };
+  std::vector<const Note13CameraTarget *> vendorTargets;
+  if (cdh::camera::CollectExposedCameraTargets(defaults, &vendorTargets)) {
+    for (const Note13CameraTarget *target : vendorTargets) {
+      out->push_back(target);
     }
     return;
   }
   for (const auto &target : kTargets) {
     out->push_back(&target);
   }
-  for (const auto &extra : extraBrandCameraTargets()) {
-    out->push_back(&extra);
+  for (const Note13CameraTarget *extra : vendorTargets) {
+    out->push_back(extra);
   }
 #endif
 }
@@ -3166,221 +2334,7 @@ private:
   std::shared_ptr<ICameraProviderCallback> callback_;
 };
 
-#if !defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
-namespace {
-
-constexpr const char *kVivoCameraProviderDesc =
-    "vendor.vivo.hardware.vivocameraprovider.IVivoCameraProvider";
-constexpr const char *kVivoCameraProviderInstance =
-    "vendor.vivo.hardware.vivocameraprovider.IVivoCameraProvider/default";
-constexpr const char *kVivoCameraProviderHash =
-    "eee68c0710662f59503dcfb62464d1c7139183a0";
-
-constexpr const char *kVivoCameraDeviceDesc =
-    "vendor.vivo.hardware.camera.vivodevice.IVivoCameraDevice";
-constexpr const char *kVivoCameraDeviceHash =
-    "c351d76052cc9e032c73327d70efe585464cc31f";
-
-constexpr const char *kVivoCameraVifDesc =
-    "vendor.vivo.hardware.camera.vif.ICameraVIF";
-constexpr const char *kVivoCameraVifHash =
-    "eb565c2632918fe598f93a93288030332232108f";
-
-constexpr transaction_code_t kAidlGetInterfaceVersion = 16777215; // 0xffffff
-constexpr transaction_code_t kAidlGetInterfaceHash = 16777214;    // 0xfffffe
-
-AIBinder *gVivoCameraProviderBinder = nullptr;
-AIBinder *gVivoCameraDeviceBinder = nullptr;
-AIBinder *gVivoCameraVifBinder = nullptr;
-
-void *vivoStubOnCreate(void *args) { return args; }
-void vivoStubOnDestroy(void *) {}
-
-binder_status_t writeStatusOk(AParcel *out) {
-  AStatus *ok = AStatus_newOk();
-  binder_status_t st = AParcel_writeStatusHeader(out, ok);
-  AStatus_delete(ok);
-  return st;
-}
-
-binder_status_t onVivoCameraDeviceTransact(AIBinder *, transaction_code_t code,
-                                           const AParcel *, AParcel *out) {
-  switch (code) {
-    case 1: // getversion(out int)
-    case kAidlGetInterfaceVersion: {
-      binder_status_t st = writeStatusOk(out);
-      return st == STATUS_OK ? AParcel_writeInt32(out, 1) : st;
-    }
-    case kAidlGetInterfaceHash: {
-      binder_status_t st = writeStatusOk(out);
-      return st == STATUS_OK
-                 ? AParcel_writeString(out, kVivoCameraDeviceHash,
-                                       static_cast<int32_t>(
-                                           strlen(kVivoCameraDeviceHash)))
-                 : st;
-    }
-    case 2: // setcallback
-    case 3: // CameraServerRestartInfo
-    case 4: // setPropertyValue
-    case 7: // restartCameraProvider
-      return writeStatusOk(out);
-    case 5: { // getPropertyValue(in int, out int)
-      binder_status_t st = writeStatusOk(out);
-      return st == STATUS_OK ? AParcel_writeInt32(out, 0) : st;
-    }
-    case 6: { // getIVivoCameraDeviceCallback(out binder)
-      binder_status_t st = writeStatusOk(out);
-      return st == STATUS_OK ? AParcel_writeStrongBinder(out, nullptr) : st;
-    }
-    default:
-      return writeStatusOk(out);
-  }
-}
-
-binder_status_t onVivoCameraVifTransact(AIBinder *, transaction_code_t code,
-                                        const AParcel *, AParcel *out) {
-  switch (code) {
-    case 1: // getvifversion(out int)
-    case kAidlGetInterfaceVersion: {
-      binder_status_t st = writeStatusOk(out);
-      return st == STATUS_OK ? AParcel_writeInt32(out, 1) : st;
-    }
-    case kAidlGetInterfaceHash: {
-      binder_status_t st = writeStatusOk(out);
-      return st == STATUS_OK
-                 ? AParcel_writeString(out, kVivoCameraVifHash,
-                                       static_cast<int32_t>(
-                                           strlen(kVivoCameraVifHash)))
-                 : st;
-    }
-    case 3: { // getICameraVIFCallback(out binder)
-      binder_status_t st = writeStatusOk(out);
-      return st == STATUS_OK ? AParcel_writeStrongBinder(out, nullptr) : st;
-    }
-    default:
-      return writeStatusOk(out);
-  }
-}
-
-binder_status_t onVivoCameraProviderTransact(AIBinder *,
-                                             transaction_code_t code,
-                                             const AParcel *, AParcel *out) {
-  switch (code) {
-    case 1: // getversion(out int)
-    case kAidlGetInterfaceVersion: {
-      binder_status_t st = writeStatusOk(out);
-      return st == STATUS_OK ? AParcel_writeInt32(out, 1) : st;
-    }
-    case kAidlGetInterfaceHash: {
-      binder_status_t st = writeStatusOk(out);
-      return st == STATUS_OK
-                 ? AParcel_writeString(out, kVivoCameraProviderHash,
-                                       static_cast<int32_t>(
-                                           strlen(kVivoCameraProviderHash)))
-                 : st;
-    }
-    case 2: // getVifInterface_V1_X(in cb, out ICameraVIF)
-    case 4: { // getVivoCameraVIF(out ICameraVIF)
-      binder_status_t st = writeStatusOk(out);
-      return st == STATUS_OK
-                 ? AParcel_writeStrongBinder(out, gVivoCameraVifBinder)
-                 : st;
-    }
-    case 3: // getVivoDeviceInterface_V1_X(in cb, out IVivoCameraDevice)
-    case 5: { // getVivoCameraDevice(out IVivoCameraDevice)
-      binder_status_t st = writeStatusOk(out);
-      return st == STATUS_OK
-                 ? AParcel_writeStrongBinder(out, gVivoCameraDeviceBinder)
-                 : st;
-    }
-    case 6:  // setparam
-    case 7:  // getparam
-    case 8:  // setcameratype
-    case 10: // setoisdata
-    case 12: // setSatCropRegion
-    case 14: // setEisCropRegion
-    case 26: // setCameraStatus
-    case 27: // setCameraCaptureData
-    case 29: { // setPAPCallback
-      binder_status_t st = writeStatusOk(out);
-      return st == STATUS_OK ? AParcel_writeInt32(out, 0) : st;
-    }
-    case 9:  // getcameratype
-    case 21: // getBestFaceResult
-    case 22: // getEyeGazeResult
-    case 23: // getFatigueResult
-    case 24: // getAttentionResult
-    case 25: { // getDistanceResult
-      binder_status_t st = writeStatusOk(out);
-      return st == STATUS_OK ? AParcel_writeString(out, "", 0) : st;
-    }
-    case 16: // setVIF3AInfoCallback
-    case 17: // getVIF3AInfoCallback
-    case 18: // setVIF3AInfoCallbackForHAL
-    case 19: // getJpegInterface_V1_X
-    case 20: { // getVivoPostProcInterface_V1_X
-      binder_status_t st = writeStatusOk(out);
-      return st == STATUS_OK ? AParcel_writeStrongBinder(out, nullptr) : st;
-    }
-    case 28: { // getCameraCaptureData(in int, out vector<byte>)
-      binder_status_t st = writeStatusOk(out);
-      return st == STATUS_OK ? AParcel_writeInt32(out, 0) : st;
-    }
-    default: {
-      __android_log_print(ANDROID_LOG_INFO, kLogTag,
-                          "IVivoCameraProvider unhandled code=%u, returning OK",
-                          code);
-      return writeStatusOk(out);
-    }
-  }
-}
-
-void registerVivoCameraProviderIfNeeded() {
-  if (!isVivoDevice()) {
-    return;
-  }
-  AIBinder_Class *devClass = AIBinder_Class_define(
-      kVivoCameraDeviceDesc, vivoStubOnCreate, vivoStubOnDestroy,
-      onVivoCameraDeviceTransact);
-  AIBinder_Class *vifClass = AIBinder_Class_define(
-      kVivoCameraVifDesc, vivoStubOnCreate, vivoStubOnDestroy,
-      onVivoCameraVifTransact);
-  AIBinder_Class *provClass = AIBinder_Class_define(
-      kVivoCameraProviderDesc, vivoStubOnCreate, vivoStubOnDestroy,
-      onVivoCameraProviderTransact);
-  if (devClass == nullptr || vifClass == nullptr || provClass == nullptr) {
-    __android_log_print(ANDROID_LOG_ERROR, kLogTag,
-                        "failed to define Vivo camera AIDL binder classes");
-    return;
-  }
-  gVivoCameraDeviceBinder = AIBinder_new(devClass, nullptr);
-  gVivoCameraVifBinder = AIBinder_new(vifClass, nullptr);
-  gVivoCameraProviderBinder = AIBinder_new(provClass, nullptr);
-  if (gVivoCameraDeviceBinder != nullptr) {
-    AIBinder_markVintfStability(gVivoCameraDeviceBinder);
-  }
-  if (gVivoCameraVifBinder != nullptr) {
-    AIBinder_markVintfStability(gVivoCameraVifBinder);
-  }
-  if (gVivoCameraProviderBinder == nullptr) {
-    return;
-  }
-  AIBinder_markVintfStability(gVivoCameraProviderBinder);
-  binder_status_t st = AServiceManager_addService(gVivoCameraProviderBinder,
-                                                  kVivoCameraProviderInstance);
-  if (st != STATUS_OK) {
-    __android_log_print(ANDROID_LOG_ERROR, kLogTag,
-                        "failed to register %s: %d",
-                        kVivoCameraProviderInstance, st);
-  } else {
-    __android_log_print(ANDROID_LOG_INFO, kLogTag,
-                        "registered %s (unblocks cameraserver & vivocameraserver)",
-                        kVivoCameraProviderInstance);
-  }
-}
-
-} // namespace
-#endif
+// IVivoCameraProvider 等厂商专属伴生服务已迁至对应 src/<variant>/。
 
 int main() {
   ABinderProcess_setThreadPoolMaxThreadCount(4);
@@ -3409,7 +2363,7 @@ int main() {
   __android_log_print(ANDROID_LOG_INFO, kLogTag, "registered %s",
                       kProviderServiceName);
 #if !defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
-  registerVivoCameraProviderIfNeeded();
+  cdh::camera::RegisterVendorExtraServices();
 #endif
   cdh_camera::HostVideoReceiver::Instance().ensureStarted();
   ABinderProcess_joinThreadPool();

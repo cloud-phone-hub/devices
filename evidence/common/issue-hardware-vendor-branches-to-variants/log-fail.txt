@@ -1,0 +1,8 @@
+# 重构前状态（2026-11-23）
+1. devices/hardware/android.hardware.camera/src/camera_provider_service.cpp: 3417 行
+   - default 混杂 isPixelDualRearDevice/isOplusDevice/isSamsungDevice/isMeizuDevice/isHonorDevice/isVivoDevice/isNothingDevice/isMotorolaDevice/isNubiaDevice/unisoc 共 10 处运行期分支与 IVivoCameraProvider 服务端。
+2. devices/hardware/android.hardware.neuralnetworks/src/neuralnetworks_service.cpp: 655 行
+   - default 硬编码 MTK IComposerExt / Honor INxpNfc / Vivo IVASAlgoProvider / Nothing INtCamService。
+3. devices/hardware/android.hardware.radio/src/main.cpp: 807 行
+   - default 硬编码高通 IQtiOemHook 与展锐 6 组 IExtRadio* 回调表。
+4. 全部 42 份 hardware/config.json 的 camera 与 neuralnetworks 均为 default，高通与展锐机型的 radio 均为 default。

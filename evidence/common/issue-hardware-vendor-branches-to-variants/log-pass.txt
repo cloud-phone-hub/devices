@@ -1,0 +1,19 @@
+# 1. 重构后主文件瘦身
+radio/src/main.cpp: 807 -> 311 行（拆分 src/{mtk,qti,unisoc}/）
+neuralnetworks/src/neuralnetworks_service.cpp: 655 -> 254 行（拆分 src/{mtk,honor,vivo,nothing}/）
+camera/src/camera_provider_service.cpp: 3417 -> 2386 行（拆分 src/{pixel,oplus,samsung,meizu,honor,vivo,nothing,motorola,nubia,unisoc}/）
+
+# 2. 全仓单测
+go -C agent test ./modules/pipeline/... -> 31/31 PASS (含 TestRealCameraRadioAndNNVariants)
+
+# 3. 20 个变体编译 + 跨厂商符号隔离校验（android15）
+ALL_RADIO_VARIANTS_OK (4/4): default, mtk, qti, unisoc
+ALL_NN_VARIANTS_OK (5/5): default, mtk, honor, vivo, nothing
+ALL_CAMERA_VARIANTS_OK (11/11): default, pixel, oplus, samsung, meizu, honor, vivo, nothing, motorola, nubia, unisoc
+
+[PASS] radio@{default,qti,unisoc,mtk} 4/4 symbol isolation
+[PASS] neuralnetworks@{default,mtk,honor,vivo,nothing} 5/5 symbol isolation
+[PASS] camera@{default,pixel,oplus,samsung,meizu,honor,vivo,nothing,motorola,nubia,unisoc} 11/11 symbol isolation
+
+# 4. 机型配置更新
+Updated 40/42 devices/manifest/configs/*/*/*/hardware/config.json (Validated 42 JSON files OK)

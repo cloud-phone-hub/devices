@@ -118,12 +118,15 @@ static const int32_t kVendor_com_xiaomi_capabilities_MasterFilter_quality_1[] = 
 
 // 真机全量 vendor tag 描述符（331 项 / 24 个 section），驱动 vendor_tag_ops 与
 // ICameraProvider::getVendorTags：tagId / section / name / type 全部与真机一致。
+#ifndef CDH_NOTE13_VENDOR_TAG_DESC_DEFINED
+#define CDH_NOTE13_VENDOR_TAG_DESC_DEFINED
 struct Note13VendorTagDesc {
   uint32_t tagId;
   const char *section;
   const char *tagName;  // 全名 = section + "." + tagName
   int tagType;          // camera_metadata_type_enum
 };
+#endif
 static const Note13VendorTagDesc kNote13VendorTagDescs[] = {
     {0x80000000, "com.mediatek.facefeature", "gesturemode", TYPE_INT32},
     {0x80000001, "com.mediatek.facefeature", "gestureresult", TYPE_INT32},

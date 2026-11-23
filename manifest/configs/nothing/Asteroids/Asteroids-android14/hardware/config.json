@@ -14,7 +14,7 @@
     },
     {
       "android.hardware.camera": {
-        "variant": "default",
+        "variant": "nothing",
         "version": "1.0"
       }
     },
@@ -56,7 +56,7 @@
     },
     {
       "android.hardware.radio": {
-        "variant": "default",
+        "variant": "qti",
         "version": "1.0"
       }
     },
@@ -128,7 +128,7 @@
     },
     {
       "android.hardware.neuralnetworks": {
-        "variant": "default",
+        "variant": "nothing",
         "version": "1.0"
       }
     }
