@@ -1,0 +1,28 @@
+=== 1. Samsung NFC 拒启根因 ===
+dumpsys samsungnfc:
+  SamsungExtension Kernel Driver is not exist, so boot is not allowed
+
+反编译 SecNfc.apk (com/samsung/android/nfc/util/NfcUtil.java:187-192):
+  public static boolean isKernelDriverExist() {
+      if (isJdmProduct()) {
+          return true;
+      }
+      return new File("/sys/class/nfc/nfc_support").exists()
+          || new File("/sys/class/nfc_sec/nfc_support").exists();
+  }
+
+冷启前实测:
+  ls: /sys/class/nfc: No such file or directory
+  ls: /sys/class/nfc_sec: No such file or directory
+  dumpsys nfc: mState=off
+  cmd nfc enable-nfc -> NFC is not initialized yet:false
+
+=== 2. Samsung 原生相机缺失 Vendor Tag 与 NV21 分配失败 ===
+阶段 1（缺失 Vendor Tag）:
+  com.sec.android.app.camera: PreviewManagerImpl.changePreviewSurfaceSize NullPointerException
+  SemCameraCharacteristics: samsung.android.scaler.availablePreviewStreamConfigurations is not supported
+
+阶段 2（补齐 20 项 Vendor Tag 后预览黑屏）:
+  11-23 11:02:33.360  6880 24399 E GraphicBufferAllocator: Failed to allocate (1440 x 1080) layerCount 1 format 17 usage 20900: -2147483648
+  11-23 11:02:33.360  6880 24399 E BufferQueueProducer: [94b4c40 SurfaceView[com.sec.android.app.camera/com.sec.android.app.camera.Camera]@0#7(BLAST Consumer)7](id:1ae000000007,api:4,p:1104,c:6880) dequeueBuffer: createGraphicBuffer failed
+  11-23 11:02:33.360  6880 24399 E Core2SurfaceUtil: nativeProduceFrameWithYuv420: Error while producing frame Unknown error -2147483648 (-2147483648).

@@ -1,0 +1,16 @@
+=== Xiaomi popsicle (HyperOS 3 / A16, vendor_sdk=36) 冷启验收 ===
+libEGL_meow.so: egl: 基座导出 47 个 → 转发 43 + 覆写 4 (eglGetProcAddress, eglCreateContext, eglChooseConfig, eglCreateWindowSurface)
+Active Camera Clients:
+  Device 0 is open. Client instance dump:
+    Stream[0]: Output
+    Stream[1]: Output
+    Stream[2]: Output
+MCAM_CRE_ReceivePreviewFrameRateMonitor: preview monitor pass
+MCAM_CRE_RenderPreviewFrameRateMonitor: preview monitor pass
+MCAM_PreviewWatchDogCallback: currentFrameNO 4236; result=true
+
+=== 8 次连续模式/功能/前后摄/快门点击后 PID 与崩溃检查 ===
+system         608     1   10921072  12492 0  R android.hardware.camera-service (稳定零重启)
+u0_a148      13716   575   18482156 409668 0  S com.android.camera (稳定零崩溃)
+12293 / EGL_BAD_CONFIG / CameraFCHandler / FATAL: 0
+实屏截图: popsicle-preview-pass.png (后置实时蓝天白云预览 + LEICA VIBR), popsicle-after-clicks-pass.png (前置镜像预览 + 左下角已出拍摄缩略图)

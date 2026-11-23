@@ -61,6 +61,12 @@
       }
     },
     {
+      "android.hardware.nfc": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
       "android.hardware.radio": {
         "variant": "default",
         "version": "1.0"

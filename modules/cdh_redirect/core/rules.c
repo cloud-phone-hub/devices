@@ -35,6 +35,7 @@
 #include <linux/vmalloc.h>
 
 #ifdef CONFIG_ARM64
+#include <linux/delay.h>
 #include <linux/hardirq.h>
 #ifndef in_hardirq
 #define in_hardirq() in_irq()
@@ -42,6 +43,7 @@
 #include <linux/mm.h>
 #include <linux/mmap_lock.h>
 #include <linux/sched/task_stack.h>
+#include <linux/spinlock.h>
 #include <linux/uaccess.h>
 #include <asm/page.h>
 #include <asm/processor.h>
@@ -146,17 +148,45 @@ static enum cdh_sphal_tier cdh_classify_sphal_lib(const char *buf)
 		"libz.so",
 	};
 	const char *sub;
+	bool is_64;
 	size_t i;
+
+	if (!strcmp(buf, "/system_ext/lib64/libOpenCL_system.so")) {
+		if (!in_compat_syscall() && cdh_maps_has_carrier_opencl(CDH_CARRIER_OPENCL_64))
+			return CDH_SPHAL_TIER_B;
+		return CDH_SPHAL_NONE;
+	}
+	if (!strcmp(buf, "/system_ext/lib/libOpenCL_system.so")) {
+		if (in_compat_syscall() && cdh_maps_has_carrier_opencl(CDH_CARRIER_OPENCL_32))
+			return CDH_SPHAL_TIER_B;
+		return CDH_SPHAL_NONE;
+	}
 
 	if (strncmp(buf, "/vendor/lib64/", 14) == 0) {
 		if (in_compat_syscall())
 			return CDH_SPHAL_NONE;
 		sub = buf + 14;
+		is_64 = true;
 	} else if (strncmp(buf, "/vendor/lib/", 12) == 0) {
 		if (!in_compat_syscall())
 			return CDH_SPHAL_NONE;
 		sub = buf + 12;
+		is_64 = false;
 	} else {
+		return CDH_SPHAL_NONE;
+	}
+
+	/* 仅当载体分区实际携带 OpenCL 兼容桩库时放行 SP-HAL 加载，避免其他机型落空。 */
+	if (!strcmp(sub, "libOpenCL.so")) {
+		if (cdh_maps_has_carrier_opencl(is_64 ? CDH_CARRIER_OPENCL_64
+						      : CDH_CARRIER_OPENCL_32))
+			return CDH_SPHAL_TIER_B;
+		return CDH_SPHAL_NONE;
+	}
+	if (!strcmp(sub, "libOpenCL-pixel.so")) {
+		if (cdh_maps_has_carrier_opencl(is_64 ? CDH_CARRIER_OPENCL_PIXEL_64
+						      : CDH_CARRIER_OPENCL_PIXEL_32))
+			return CDH_SPHAL_TIER_B;
 		return CDH_SPHAL_NONE;
 	}
 
@@ -252,6 +282,73 @@ static bool cdh_path_is_gfx_framework(const char *p)
 }
 
 #define CDH_USER_VA_MASK	(DEFAULT_MAP_WINDOW_64 - 1UL)
+#define CDH_LINKER_CACHE_SIZE	32
+
+struct cdh_linker_vma_entry {
+	struct mm_struct *mm;
+	pid_t tgid;
+	u64 start_time;
+	unsigned long vm_start;
+	unsigned long vm_end;
+};
+
+static struct cdh_linker_vma_entry cdh_linker_cache[CDH_LINKER_CACHE_SIZE];
+static unsigned int cdh_linker_cache_next;
+static DEFINE_SPINLOCK(cdh_linker_cache_lock);
+
+static void cdh_linker_cache_record(struct mm_struct *mm,
+				    unsigned long vm_start,
+				    unsigned long vm_end)
+{
+	pid_t tgid = task_tgid_nr(current);
+	u64 start_time = current->group_leader ? current->group_leader->start_time : 0;
+	unsigned long flags;
+	unsigned int i;
+
+	spin_lock_irqsave(&cdh_linker_cache_lock, flags);
+	for (i = 0; i < CDH_LINKER_CACHE_SIZE; i++) {
+		struct cdh_linker_vma_entry *e = &cdh_linker_cache[i];
+
+		if (e->mm == mm && e->tgid == tgid && e->start_time == start_time &&
+		    e->vm_start == vm_start && e->vm_end == vm_end) {
+			spin_unlock_irqrestore(&cdh_linker_cache_lock, flags);
+			return;
+		}
+	}
+	i = cdh_linker_cache_next++ % CDH_LINKER_CACHE_SIZE;
+	cdh_linker_cache[i].mm = mm;
+	cdh_linker_cache[i].tgid = tgid;
+	cdh_linker_cache[i].start_time = start_time;
+	cdh_linker_cache[i].vm_start = vm_start;
+	cdh_linker_cache[i].vm_end = vm_end;
+	spin_unlock_irqrestore(&cdh_linker_cache_lock, flags);
+}
+
+static bool cdh_linker_cache_hit(struct mm_struct *mm, u64 raw_pc, u64 raw_lr)
+{
+	unsigned long pc = (unsigned long)(raw_pc & CDH_USER_VA_MASK);
+	unsigned long lr = (unsigned long)(raw_lr & CDH_USER_VA_MASK);
+	pid_t tgid = task_tgid_nr(current);
+	u64 start_time = current->group_leader ? current->group_leader->start_time : 0;
+	unsigned long flags;
+	unsigned int i;
+	bool hit = false;
+
+	spin_lock_irqsave(&cdh_linker_cache_lock, flags);
+	for (i = 0; i < CDH_LINKER_CACHE_SIZE; i++) {
+		const struct cdh_linker_vma_entry *e = &cdh_linker_cache[i];
+
+		if (e->mm != mm || e->tgid != tgid || e->start_time != start_time)
+			continue;
+		if ((pc >= e->vm_start && pc < e->vm_end) ||
+		    (lr >= e->vm_start && lr < e->vm_end)) {
+			hit = true;
+			break;
+		}
+	}
+	spin_unlock_irqrestore(&cdh_linker_cache_lock, flags);
+	return hit;
+}
 
 static unsigned int cdh_vma_classify_addr(struct mm_struct *mm, u64 raw_addr)
 {
@@ -271,8 +368,10 @@ static unsigned int cdh_vma_classify_addr(struct mm_struct *mm, u64 raw_addr)
 	if (IS_ERR(p))
 		return 0;
 	len = strlen(p);
-	if (cdh_path_is_linker(p, len))
+	if (cdh_path_is_linker(p, len)) {
 		flags |= CDH_VMA_FLAG_LINKER;
+		cdh_linker_cache_record(mm, vma->vm_start, vma->vm_end);
+	}
 	if (!strncmp(p, CDH_CARRIER_MOUNT_POINT "/", CDH_CARRIER_MOUNT_LEN + 1))
 		flags |= CDH_VMA_FLAG_CARRIER;
 	if (cdh_path_is_gfx_framework(p))
@@ -305,13 +404,23 @@ static bool cdh_sphal_caller_allowed(enum cdh_sphal_tier tier)
 	if (!uregs || !user_mode(uregs))
 		return false;
 
-	for (tries = 0; tries < 16; tries++) {
+	if ((tier == CDH_SPHAL_TIER_B || tier == CDH_SPHAL_VNDK_FALLBACK) &&
+	    cdh_linker_cache_hit(mm, uregs->pc, uregs->regs[30]))
+		return true;
+
+	for (tries = 0; tries < 82; tries++) {
 		if (mmap_read_trylock(mm))
 			break;
-		cpu_relax();
+		if (tries >= 32)
+			udelay(10);
+		else
+			cpu_relax();
 	}
-	if (tries == 16)
+	if (tries == 82) {
+		pr_warn_ratelimited("sphal trylock timeout pid=%d comm=%s tier=%d\n",
+				    task_tgid_nr(current), current->comm, (int)tier);
 		return false;
+	}
 
 	pc_flags = cdh_vma_classify_addr(mm, uregs->pc);
 	lr_flags = cdh_vma_classify_addr(mm, uregs->regs[30]);

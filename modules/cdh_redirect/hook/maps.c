@@ -69,6 +69,7 @@ static bool cdh_maps_registered;
 static bool cdh_maps_vendor_ready;
 static bool cdh_maps_prewarm_logged;
 static bool cdh_sphal_vndk_compat;
+static unsigned int cdh_carrier_opencl_mask;
 static atomic_t cdh_maps_exiting = ATOMIC_INIT(0);
 static int cdh_maps_prewarm_tries;
 
@@ -128,6 +129,8 @@ static const char * const cdh_maps_prewarm_libs[] = {
 	"/vendor/lib64/libhardware.so",
 	"/vendor/lib64/libhidlbase.so",
 	"/vendor/lib64/liblzma.so",
+	"/vendor/lib64/libOpenCL.so",
+	"/vendor/lib64/libOpenCL-pixel.so",
 	"/vendor/lib64/libpng.so",
 	"/vendor/lib64/libunwindstack.so",
 	"/vendor/lib64/libutils.so",
@@ -156,6 +159,8 @@ static const char * const cdh_maps_prewarm_libs[] = {
 	"/vendor/lib/libdrm.so",
 	"/vendor/lib/libhardware.so",
 	"/vendor/lib/libhidlbase.so",
+	"/vendor/lib/libOpenCL.so",
+	"/vendor/lib/libOpenCL-pixel.so",
 	"/vendor/lib/libutils.so",
 	"/vendor/lib/libz.so",
 };
@@ -227,6 +232,11 @@ bool cdh_maps_has_real_file(const char *path)
 bool cdh_maps_sphal_vndk_compat(void)
 {
 	return READ_ONCE(cdh_sphal_vndk_compat);
+}
+
+bool cdh_maps_has_carrier_opencl(unsigned int bit)
+{
+	return !!(READ_ONCE(cdh_carrier_opencl_mask) & bit);
 }
 
 static void cdh_maps_work_fn(struct work_struct *work)
@@ -350,6 +360,36 @@ static bool cdh_probe_sphal_vndk_compat(void)
 	return found_any;
 }
 
+static unsigned int cdh_probe_carrier_opencl_mask(void)
+{
+	static const struct {
+		const char *path;
+		unsigned int bit;
+	} probes[] = {
+		{ CDH_CARRIER_MOUNT_POINT "/vendor/lib64/libOpenCL.so",
+		  CDH_CARRIER_OPENCL_64 },
+		{ CDH_CARRIER_MOUNT_POINT "/vendor/lib64/libOpenCL-pixel.so",
+		  CDH_CARRIER_OPENCL_PIXEL_64 },
+		{ CDH_CARRIER_MOUNT_POINT "/vendor/lib/libOpenCL.so",
+		  CDH_CARRIER_OPENCL_32 },
+		{ CDH_CARRIER_MOUNT_POINT "/vendor/lib/libOpenCL-pixel.so",
+		  CDH_CARRIER_OPENCL_PIXEL_32 },
+	};
+	unsigned int mask = 0;
+	struct path p;
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(probes); i++) {
+		if (kern_path(probes[i].path, LOOKUP_FOLLOW, &p) == 0) {
+			path_put(&p);
+			mask |= probes[i].bit;
+		}
+	}
+	if (mask)
+		pr_info("载体 OpenCL 桩库就绪：mask=0x%x\n", mask);
+	return mask;
+}
+
 static void cdh_maps_prewarm_fn(struct work_struct *work)
 {
 	struct path p;
@@ -395,6 +435,7 @@ static void cdh_maps_prewarm_fn(struct work_struct *work)
 	}
 
 	WRITE_ONCE(cdh_sphal_vndk_compat, cdh_probe_sphal_vndk_compat());
+	WRITE_ONCE(cdh_carrier_opencl_mask, cdh_probe_carrier_opencl_mask());
 
 	builtin_cnt = cdh_gpu_maps_builtin_count();
 

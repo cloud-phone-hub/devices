@@ -83,7 +83,7 @@ sim::CardStatus ToCardStatus(const Snapshot &snapshot, bool card_power_up,
       .cdmaSubscriptionAppIndex = -1,
       .imsSubscriptionAppIndex = -1,
       .applications = {},
-      .atr = present ? "3B9F96801FC7AFC08031E073FE211B66D000000000000000" : "",
+      .atr = present ? "3B9F96801FC78031E073FE211B66D0017A0801000073" : "",
       .iccid = present ? snapshot.sim.identity.iccid : "",
       .eid = "",
       // slotMap.physicalSlotId 必须随槽位变化：gold 真机 phone-1（ABSENT）的

@@ -1,0 +1,49 @@
+=== 1. 全仓 45/45 patch.img 刷新与 e2fsck -fn 零错误校验 ===
+- hal_camera_default -> halclientdomain + hal_graphics_allocator_client: 45/45 patch.img 补齐，全部开机机型 android.hardware.camera-service PID 100% 稳定零 SIGABRT
+- MTK Radio HAL (IMtkRadioExSim): 16/16 MTK 盘集恢复
+- 5GHz OFDM mac80211_hwsim.ko: 重编 6.12 (vermagic=6.12.81-4k-cdh, 203/203 modversions 100% 一致)，全仓刷新 30 个 patch.img (6.12×8, 5.15×14, 6.1×8)
+- opluscamera_app -> opluscamera_app_data_file: 修复 sepolicy_cil.go:1396 并刷新 4 个 OPlus 盘集 (CPH2797/PME110/RMX5112/RMX6688)，go test ./modules/pipeline/stages/09_build_vendor 1.29s PASS
+- Treble 跨代 vendor_sdk 对齐: 31 个盘集对齐 allocator/camera/EGL，35 个盘集对齐 radio(保留 mtk 变体)/nfc，全部 e2fsck -fn 零错误
+
+=== 2. 跨 15 品牌 16 款机型冷启实测通过记录 ===
+[1] google/oriole (Pixel 6, A17, 6.18):
+    WiFi=PASS | Radio=PASS | NFC=PASS(ON+Tap/Remove) | Camera=PASS(Photo+Portrait+LongExposure+ActionPan+Settings)
+[2] redmi/gold (Note 13 5G, A15, 6.6, MTK):
+    WiFi=PASS(192.168.60.100, HTTP 200 / HTTPS 204) | Radio=PASS(LOADED/中国联通/46001/LTE, 18 IMtkRadioEx*)
+    NFC=N/A | Camera=PASS(com.android.camera 14/14 逐功能点击 PASS, CAM_PID=5527 HAL_PID=592 零崩溃, 高清出画)
+[3] tecno/TECNO-CM5 (A16, 6.12, MTK):
+    WiFi=PASS(192.168.60.100, HTTP 200 2/2, HTTPS 204 2/2, 588ms) | Radio=PASS(LOADED/46001/LTE/MOLY.LR13.R2.MP.V236.6.P3/IN_SERVICE)
+    NFC=N/A | Camera=PASS(com.transsion.camera CONNECT device 0, ACTIVE 3 Streams, 满屏高清视频流渲染, 零崩溃)
+[4] meizu/Meizu22 (A16, 6.6, QCOM PAKALA):
+    WiFi=PASS | NFC=PASS(mState=on, hvc11 connected+discovering, Tap=True->Remove=False, rx=29 tx=44)
+    Camera=PARTIAL(新增 ID 4 后 CONNECT device 4 ACTIVE 4 Streams, 拍照快门出缩略图零崩溃; 切人像需 Camera 4 physicalCameraId 0)
+[5] honor/chora (A16, 6.12):
+    WiFi=PASS(5180MHz TP-LINK_2464, 192.168.60.100, HTTP 200 / HTTPS 204 2/2) | Radio=PASS(LOADED/China Unicom/46001/LTE)
+    Camera=PARTIAL(com.hihonor.camera 12/12 点击零崩溃, PID=12400 HAL=579 稳定, CONNECT device 0 但状态 UNCONFIGURED)
+[6] oppo/CPH2797 (Find X9, A16, 6.12):
+    WiFi=PASS(192.168.60.100, HTTP 200 2/2, HTTPS 204 2/2, 546ms) | Radio=PASS(LOADED/中国联通/LTE/M_V3_P10/IN_SERVICE)
+    NFC=N/A | Camera=PARTIAL(修复 opluscamera_app SELinux 后 SQLite 闪退彻底清零, crashes=0)
+[7] oneplus/CPH2767 (15R, A16, 6.12):
+    WiFi=PASS(192.168.60.100, HTTP 200 2/2, HTTPS 204 2/2, 643ms) | Radio=PASS(LOADED/中国联通/LTE/KAANAPALI/IN_SERVICE)
+    Camera=PARTIAL(com.oplus.camera 零崩溃, 缺 OPlus 专有 vendor tag 与 libOplusStringJNI.so 未起预览流)
+[8] motorola/aito (A16, 6.1, MTK, vendor_sdk=34):
+    WiFi=PASS(192.168.60.100, HTTP 200 2/2, HTTPS 204 2/2) | Radio=PASS(IN_SERVICE)
+    NFC=PASS(mState=on, Tap=True->Remove=False, rx=28 tx=43)
+[9] nothing/Asteroids (A16, 6.1, vendor_sdk=34):
+    修复 vendor_sdk=34 跨代 HAL 后 60s 秒开!
+    WiFi=PASS(192.168.60.100, HTTP 200 2/2, HTTPS 204 2/2) | NFC=PASS(mState=on, Tap=True->Remove=False, rx=31 tx=46)
+[10] realme/RMX6688 (A15, 6.6, MTK):
+    WiFi=PASS(192.168.60.100, HTTP 200 2/2, HTTPS 204 2/2) | Radio=PASS(LOADED/中国联通/LTE/M_V3_P10/IN_SERVICE)
+[11] vivo/PD2454 (X200 Ultra, A15, 6.6):
+    WiFi=PASS(192.168.60.100, HTTP 200 2/2, HTTPS 204 2/2) | Radio=PASS(LOADED/46001/LTE/IN_SERVICE)
+[12] samsung/pa3q (S25 Ultra, A16, 6.6):
+    WiFi=PASS | Radio=PASS(IN_SERVICE/中国联通/LTE/S9380ZCSDCZH1)
+    Camera: 突破 capability:20 闪退并成功 CONNECT device 20, 后续缺 samsung.android.scaler.availablePreviewStreamConfigurations
+[13] redmagic/NX809J (A16, 6.12):
+    WiFi=PASS(192.168.60.100, HTTP 200 2/2, HTTPS 204 2/2) | NFC=N/A
+[14] xiaomi/popsicle (HyperOS 3, A16, 6.12):
+    WiFi=PASS(192.168.60.100, HTTP 200 2/2, HTTPS 204 2/2) | NFC=N/A
+[15] hmd/ARW (A14, 5.15):
+    WiFi=PASS | Radio=PASS(LOADED/中国联通/LTE) | NFC=N/A
+[16] asus/ASUSAI2501 (ROG Phone 9 Pro, A15, 6.6):
+    WiFi=PASS | NFC=N/A

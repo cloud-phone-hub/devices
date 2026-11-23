@@ -1,0 +1,26 @@
+=== 1. ASUS ASUSAI2501 (ROG Phone 9 Pro, A15, vendor_sdk=35) ===
+VolumeInfo{emulated;0}: state=MOUNTED, path=/storage/emulated
+service list c2: IComponentStore/default, default1, default9, software (all online)
+cdh_redirect: 载体 OpenCL 桩库就绪：mask=0x1
+/system_ext/lib64/libOpenCL_system.so -> /mnt/vendorpatch/vendor/lib64/libOpenCL.so (43752 B)
+vendor.camera.lens_type=0:std;1:std
+Rear Device 0: ACTIVE, Stream[0]=937 frames, Stream[1]=937 frames (asus-rear.png 758 KB)
+Shutter capture: /sdcard/DCIM/Camera/P_20261123_185604.jpg (1,252,676 B)
+Front Device 1: ACTIVE, Stream[0]=128 frames, Stream[1]=128 frames (asus-front.png 811 KB)
+Dropbox: 0 new crashes/ANRs during camera session
+
+=== 2. HMD ARW (HMD Crest Max, A14, vendor_sdk=33) ===
+patch.img refreshed: android13 camera HAL + android13 EGL interposer (libEGL_meow.so/libGLESv2_meow.so/libGLESv1_CM_meow.so), e2fsck clean
+WhatsNewPage -> Skip -> CameraActivity: 0 ANR
+Rear Device 0: ACTIVE, Stream[0]=249 frames, Stream[1]=248 frames (arw-rear.png 842 KB)
+Shutter capture: /sdcard/DCIM/Camera/IMG_20261123_185909.jpg (1,027,101 B)
+Front Device 1: ACTIVE, Stream[3]=120 frames, Stream[4]=120 frames (arw-front.png 337 KB)
+Dropbox: 0 new crashes/ANRs during camera session
+
+=== 3. Tecno TECNO-CM5 (TECNO Camon 30, A16, vendor_sdk=36) ===
+patch.img refreshed: android16 camera HAL + android16 EGL interposer, e2fsck clean
+Rear Device 0 (AI CAM): ACTIVE, Stream[0]=641+ frames, Stream[2]=640+ frames (tecno-rear.png 780 KB)
+Shutter capture: /sdcard/DCIM/Camera/IMG_20261123_190157_907.jpg (46,207 B)
+Front Device 1 (Portrait & AI CAM): ACTIVE, Stream[0]=126 frames / Stream[4]=94 frames (tecno-front.png 1.0 MB)
+Rear switch back Device 0: ACTIVE, Stream[0]=96 frames, Stream[2]=96 frames
+Dropbox: 0 crashes, 0 ANRs

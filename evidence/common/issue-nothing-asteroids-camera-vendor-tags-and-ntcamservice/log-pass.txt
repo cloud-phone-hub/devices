@@ -1,0 +1,39 @@
+=== Nothing/Asteroids 原生相机冷启与多模式交互验收 ===
+=== 1. 后摄 PHOTO 模式 ===
+Device status: ACTIVE
+    Stream[0]: Output
+      Frames produced: 1877, last timestamp: 81156462037 ns
+    Stream[1]: Output
+      Frames produced: 1877, last timestamp: 81156462037 ns
+    Stream[2]: Output
+      Frames produced: 0, last timestamp: 0 ns
+    Stream[3]: Output
+      Frames produced: 0, last timestamp: 0 ns
+    Stream[4]: Output
+      Frames produced: 0, last timestamp: 0 ns
+
+=== 2. 快门实拍 DCIM ===
+total 0
+-rwxrwx--- 1 u0_a277 media_rw 0 2026-11-23 17:04 .pending-1796029482-IMG_20261123_170442461.jpg
+
+=== 3. 前摄切换 ===
+Active Camera Clients:
+(Camera ID: 1, Cost: 50, PID: 3058, Score: 0, State: 2User Id: 0, Client Package Name: com.nothing.camera, Conflicting Client Devices: {})
+    Device status: ACTIVE
+      Frames produced: 95, last timestamp: 87631867332 ns
+      Frames produced: 0, last timestamp: 0 ns
+
+=== 4. VIDEO 模式切换 ===
+Active Camera Clients:
+(Camera ID: 0, Cost: 50, PID: 3058, Score: 0, State: 2User Id: 0, Client Package Name: com.nothing.camera, Conflicting Client Devices: {})
+    Device status: ACTIVE
+      Frames produced: 96, last timestamp: 93989400376 ns
+      Frames produced: 0, last timestamp: 0 ns
+
+=== 5. 全程存活进程 ===
+system         586     1   10924184  11004 0                   0 S android.hardware.camera-service
+u0_a227       3058   549   19835536 380156 0                   0 S com.nothing.camera
+u0_a227       3865   549   18005488 159848 0                   0 S com.camera.ufs.service
+
+=== 6. 相机相关致命错误/标签缺失检查（预期为空） ===
+(none)

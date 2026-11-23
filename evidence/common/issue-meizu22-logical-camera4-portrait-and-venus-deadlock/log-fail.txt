@@ -1,0 +1,13 @@
+=== 失败现场 1：切换人像模式（PORTRAIT）触发物理子摄缺失崩溃 ===
+CameraDeviceClient: Camera 4: Camera doesn't support physicalCameraId 0
+CameraCaptureSession: onConfigureFailed -> 魅族相机人像模式无法建流退出
+
+=== 失败现场 2：主预览长期冻结在模糊占位图 / 灰黑屏（SurfaceView frame=2）===
+11-23 12:21:41.579  7182  7256 I MESA    : Using gralloc0 CrOS API
+11-23 12:21:41.579  7182  7256 I cdh-gpu : vulkan: 已接管，基座 vulkan.virtio.so
+TID   STAT  TIME      PCPU  NAME
+7256  R     00:01:53  97.7  image_thread (com.meizu.media.camera)
+Layer [225] SurfaceView[com.meizu.media.camera/com.meizu.media.camera.CameraActivity](BLAST)#225
+  visible reason= buffer=30846455119879 frame=2 color{< 0, 0, 0, 1 >}
+（PreviewHolder.onPreviewImageAvailable 调用 VulkanUtil.b() 阻塞于 Mesa Venus，
+  image_thread 100% CPU 自旋死锁，永不到达 imageWriter.queueInputImage()）

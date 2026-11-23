@@ -127,6 +127,11 @@
       "type": "dir"
     },
     {
+      "from": "/system_ext/lib64/libOpenCL_system.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/libOpenCL.so",
+      "type": "file"
+    },
+    {
       "from": "/vendor/lib64/libunwindstack.so",
       "to": "/mnt/vendorpatch/vendor/lib64/libui.so",
       "type": "maps"

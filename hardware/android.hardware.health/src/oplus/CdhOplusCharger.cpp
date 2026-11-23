@@ -7,6 +7,7 @@
 #include <android/binder_status.h>
 #include <android/log.h>
 
+#include <dirent.h>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -41,20 +42,34 @@ bool ParseOplusChargerVintfVersion(const char *path, int32_t *outVersion) {
   if (!fp) {
     return false;
   }
-  char buf[4096] = {0};
-  const size_t n = std::fread(buf, 1, sizeof(buf) - 1, fp);
+  std::string content;
+  char chunk[4096];
+  size_t n = 0;
+  while ((n = std::fread(chunk, 1, sizeof(chunk), fp)) > 0) {
+    content.append(chunk, n);
+    if (content.size() >= 256u * 1024u) {
+      break;
+    }
+  }
   std::fclose(fp);
-  if (n == 0) {
+  if (content.empty()) {
     return false;
   }
-  buf[n] = '\0';
-  if (std::strstr(buf, "vendor.oplus.hardware.charger") == nullptr ||
-      std::strstr(buf, "ICharger") == nullptr) {
+  const size_t namePos = content.find("vendor.oplus.hardware.charger");
+  if (namePos == std::string::npos) {
     return false;
   }
-  const char *verTag = std::strstr(buf, "<version>");
-  if (verTag != nullptr) {
-    const long parsed = std::strtol(verTag + std::strlen("<version>"), nullptr, 10);
+  const size_t halEnd = content.find("</hal>", namePos);
+  const std::string block =
+      halEnd != std::string::npos ? content.substr(namePos, halEnd - namePos)
+                                  : content.substr(namePos);
+  if (block.find("ICharger") == std::string::npos) {
+    return false;
+  }
+  const size_t verPos = block.find("<version>");
+  if (verPos != std::string::npos) {
+    const char *p = block.c_str() + verPos + std::strlen("<version>");
+    const long parsed = std::strtol(p, nullptr, 10);
     if (parsed > 0 && parsed <= 100) {
       *outVersion = static_cast<int32_t>(parsed);
       return true;
@@ -70,11 +85,36 @@ bool DetectOplusChargerVintf(int32_t *outVersion) {
       "/odm/etc/vintf/manifest/vintf_manifest_oplus_charger_aidl.xml",
       "/vendor/etc/vintf/manifest/manifest_oplus_charger_aidl.xml",
       "/vendor/etc/vintf/manifest/vintf_manifest_oplus_charger_aidl.xml",
+      "/vendor/etc/vintf/manifest/cdh_vendor_placeholders.xml",
   };
   for (const char *path : kCandidatePaths) {
     if (ParseOplusChargerVintfVersion(path, outVersion)) {
       return true;
     }
+  }
+  static const char *const kManifestDirs[] = {
+      "/odm/etc/vintf/manifest",
+      "/vendor/etc/vintf/manifest",
+  };
+  for (const char *dirPath : kManifestDirs) {
+    DIR *dir = opendir(dirPath);
+    if (!dir) {
+      continue;
+    }
+    struct dirent *ent = nullptr;
+    while ((ent = readdir(dir)) != nullptr) {
+      const char *name = ent->d_name;
+      const size_t len = std::strlen(name);
+      if (len <= 4 || std::strcmp(name + len - 4, ".xml") != 0) {
+        continue;
+      }
+      std::string full = std::string(dirPath) + "/" + name;
+      if (ParseOplusChargerVintfVersion(full.c_str(), outVersion)) {
+        closedir(dir);
+        return true;
+      }
+    }
+    closedir(dir);
   }
   return false;
 }

@@ -10,10 +10,12 @@
 
 #include <dlfcn.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <android/log.h>
 
@@ -310,6 +312,21 @@ static int cdh_close(cdh_hw_device_t *device) {
     return 0;
 }
 
+static int cdh_is_process_named(const char *target) {
+    int fd = open("/proc/self/cmdline", O_RDONLY | O_CLOEXEC);
+    if (fd < 0) {
+        return 0;
+    }
+    char buf[128];
+    ssize_t n = read(fd, buf, sizeof(buf) - 1);
+    close(fd);
+    if (n <= 0) {
+        return 0;
+    }
+    buf[n] = '\0';
+    return strcmp(buf, target) == 0;
+}
+
 static int cdh_open(const cdh_hw_module_t *module, const char *id,
                     cdh_hw_device_t **device) {
     (void)module;
@@ -329,6 +346,18 @@ static int cdh_open(const cdh_hw_module_t *module, const char *id,
         snprintf(soname_buf, sizeof(soname_buf), "vulkan.%s.so", base_prop);
         base_path = path_buf;
         base_soname = soname_buf;
+    }
+    // 魅族 Flyme 相机内置 libvulkan_util.so 会在 PreviewHolder 的 image_thread 中用
+    // VK_ANDROID_external_memory_android_hardware_buffer 读回预览帧给算法；在 Mesa Venus
+    // (vulkan.virtio.so) 上该调用会导致 image_thread 100% CPU 自旋死锁，阻断 ImageWriter
+    // 向前台 SurfaceTexture 投递任何预览帧。此处跳过 Venus 驱动让相机安全跳过算法读回并
+    // 继续 GLES 预览管线。
+    if (strcmp(base_soname, "vulkan.virtio.so") == 0 &&
+        cdh_is_process_named("com.meizu.media.camera")) {
+        __android_log_print(ANDROID_LOG_INFO, CDH_LOG_TAG,
+                            "vulkan: com.meizu.media.camera 跳过 %s 以避免 image_thread Venus 自旋死锁",
+                            base_soname);
+        return -ENOENT;
     }
     cdh_vk_pastel_on_open(base_soname);
 

@@ -1,0 +1,54 @@
+=== 1. 内核模块编译与符号校验 ===
+[ok] cdh_device_info.ko: 72 个符号版本一致
+kernel log:
+  [    5.761883][  T295] cdh_device_info_nfc: registered /sys/class/nfc/nfc_support
+
+=== 2. Samsung pa3q 冷启 NFC 验证 ===
+$ ls -la /sys/class/nfc/nfc_support && cat /sys/class/nfc/nfc_support
+-r--r--r-- 1 root root 4096 2026-08-12 17:08 /sys/class/nfc/nfc_support
+1
+
+$ dumpsys nfc | head -n 15
+mState=on
+mAlwaysOnState=off
+mScreenState=ON_UNLOCKED
+mIsSecureNfcEnabled=false
+mIsReaderOptionEnabled=true
+mIsAlwaysOnSupported=true
+listenTech=0x7
+pollTech=0x2f
+mTechMask: default
+mEnableLPD: true
+
+$ dumpsys samsungnfc (tail):
+08-12 17:08:17.013 D [NFC_SE]SamsungExtension onStateUpdated: STATE_TURNING_ON
+08-12 17:08:17.121 D [NFC_SE]SamsungExtension onStateUpdated: STATE_ON
+
+POST /api/nfc/tap & /api/nfc/status & /api/nfc/remove:
+{"connected":true,"initialized":true,"discovering":false,"cardPresent":true,"cardUid":"04A1B2C3D4E5F6","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":303,"txResponses":586}
+{"ok":true,"status":{"connected":true,"initialized":true,"discovering":true,"cardPresent":false}}
+
+=== 3. Samsung pa3q 原生相机验证 ===
+dumpsys media.camera (节选):
+  samsung.android.scaler.availablePreviewStreamConfigurations (80200001): int32[400]
+  samsung.android.scaler.availablePictureStreamConfigurations (80200002): int32[336]
+  samsung.android.scaler.availableThumbnailStreamConfigurations (80200003): int32[16]
+  samsung.android.scaler.availableVideoConfigurations (80200004): int32[30]
+  samsung.android.scaler.availableMaxDigitalZoom (80200005): float[1]
+  samsung.android.scaler.availableMinDigitalZoom (80200006): float[1]
+  samsung.android.control.aeAvailableModes (80210001): int32[4]
+  samsung.android.control.afAvailableModes (80210002): int32[5]
+  samsung.android.control.awbAvailableModes (80210003): int32[9]
+  samsung.android.control.availableFeatures (80210005): int32[1]
+  samsung.android.control.lensDistortionCorrectionAvailableModes (80210007): int32[2]
+  samsung.android.unihal.statisticsBeautyAvailableFaceDetectModes (80220001): int32[2]
+
+运行态流与零报错确认:
+  11-23 11:32:41 : CONNECT device 20 client for package com.sec.android.app.camera (PID 4255, priority 0)
+  11-23 11:32:48 : Device 20 is open. Client instance dump:
+    Client PID: 4255
+  11-23 11:32:48.523  1105 25883 I Camera3-IOStreamBase: FpsStats: stream 1, requested=1, received=1, valid=1, invalid=0
+  ...（持续 30fps，零 GraphicBufferAllocator / Core2SurfaceUtil 报错）
+
+实拍产物与模式切换（拍照 -> 前摄 -> 后摄 -> 视频 -> 人像全程零崩溃，PID 4255 保持不变）:
+  -rw-rw---- 1 u0_a284 media_rw 21671 2026-11-23 11:33 /sdcard/DCIM/Camera/20261123_113347.jpg

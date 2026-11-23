@@ -74,6 +74,42 @@
 ;; 对照 gold-15 原厂策略，同名规则权限集正是这一组。
 (allow system_server_{{vers}} pioneer (unix_stream_socket (getattr getopt ioctl read setopt shutdown write)))
 
+;; ---- pioneer 反向授权：独立系统服务与 HAL（nfc / radio / bluetooth / halserverdomain）----
+;; nfc（com.google.android.nfc）、radio（com.android.phone / isub）、bluetooth 与各 AIDL HAL
+;; 均运行在各自独立 enforcing 域中（不在 system_server 内）。adb shell（pioneer）调用
+;; dumpsys nfc / cmd nfc / dumpsys phone / dumpsys isub 时，binder 驱动向目标域传递
+;; pioneer 创建的 pipe / unix socket 并回程调用 ShellCallback；缺此组反向授权会触发
+;; avc: denied { use } scontext=u:r:nfc:s0 tcontext=u:r:pioneer:s0 tclass=fd permissive=0，
+;; 调用方与管理台均收到 FAILED_TRANSACTION (2147483646)。
+(allow nfc_{{vers}} pioneer (fd (use)))
+(allow nfc_{{vers}} pioneer (fifo_file (read write getattr)))
+(allow nfc_{{vers}} pioneer (binder (call transfer)))
+(allow nfc_{{vers}} pioneer (unix_stream_socket (getattr getopt ioctl read setopt shutdown write)))
+(allow radio_{{vers}} pioneer (fd (use)))
+(allow radio_{{vers}} pioneer (fifo_file (read write getattr)))
+(allow radio_{{vers}} pioneer (binder (call transfer)))
+(allow radio_{{vers}} pioneer (unix_stream_socket (getattr getopt ioctl read setopt shutdown write)))
+(allow bluetooth_{{vers}} pioneer (fd (use)))
+(allow bluetooth_{{vers}} pioneer (fifo_file (read write getattr)))
+(allow bluetooth_{{vers}} pioneer (binder (call transfer)))
+(allow bluetooth_{{vers}} pioneer (unix_stream_socket (getattr getopt ioctl read setopt shutdown write)))
+(allow halserverdomain pioneer (fd (use)))
+(allow halserverdomain pioneer (fifo_file (read write getattr)))
+(allow halserverdomain pioneer (binder (call transfer)))
+(allow halserverdomain pioneer (unix_stream_socket (getattr getopt ioctl read setopt shutdown write)))
+(allow cameraserver_{{vers}} pioneer (fd (use)))
+(allow cameraserver_{{vers}} pioneer (fifo_file (read write getattr)))
+(allow cameraserver_{{vers}} pioneer (binder (call transfer)))
+(allow cameraserver_{{vers}} pioneer (unix_stream_socket (getattr getopt ioctl read setopt shutdown write)))
+(allow audioserver_{{vers}} pioneer (fd (use)))
+(allow audioserver_{{vers}} pioneer (fifo_file (read write getattr)))
+(allow audioserver_{{vers}} pioneer (binder (call transfer)))
+(allow audioserver_{{vers}} pioneer (unix_stream_socket (getattr getopt ioctl read setopt shutdown write)))
+(allow surfaceflinger_{{vers}} pioneer (fd (use)))
+(allow surfaceflinger_{{vers}} pioneer (fifo_file (read write getattr)))
+(allow surfaceflinger_{{vers}} pioneer (binder (call transfer)))
+(allow surfaceflinger_{{vers}} pioneer (unix_stream_socket (getattr getopt ioctl read setopt shutdown write)))
+
 ;; ---- pioneer 网络 socket 基础授权（lineage 基底未展开 net_domain）----
 ;; engine 的 vendor_sepolicy.cil 基底取自 lineage（与 plat_pub_versioned.cil 同源，
 ;; 见 07_build_vendor/replace.go），只声明 pioneer 类型、不含 MIUI 策略里 net_domain

@@ -108,6 +108,12 @@ class NativeWindowApi {
     return unlockFn_(buf, fence);
   }
 
+  void describe(const AHardwareBuffer *buf, AHardwareBuffer_Desc *out) const {
+    if (describeFn_ != nullptr && buf != nullptr && out != nullptr) {
+      describeFn_(buf, out);
+    }
+  }
+
   void release(AHardwareBuffer *buf) const {
     if (buf != nullptr && releaseFn_ != nullptr) {
       releaseFn_(buf);
@@ -130,6 +136,8 @@ class NativeWindowApi {
         dlsym(lib_, "AHardwareBuffer_lockPlanes"));
     unlockFn_ = reinterpret_cast<decltype(&AHardwareBuffer_unlock)>(
         dlsym(lib_, "AHardwareBuffer_unlock"));
+    describeFn_ = reinterpret_cast<decltype(&AHardwareBuffer_describe)>(
+        dlsym(lib_, "AHardwareBuffer_describe"));
     releaseFn_ = reinterpret_cast<decltype(&AHardwareBuffer_release)>(
         dlsym(lib_, "AHardwareBuffer_release"));
   }
@@ -139,6 +147,7 @@ class NativeWindowApi {
   decltype(&AHardwareBuffer_lock) lockFn_ = nullptr;
   decltype(&AHardwareBuffer_lockPlanes) lockPlanesFn_ = nullptr;
   decltype(&AHardwareBuffer_unlock) unlockFn_ = nullptr;
+  decltype(&AHardwareBuffer_describe) describeFn_ = nullptr;
   decltype(&AHardwareBuffer_release) releaseFn_ = nullptr;
 };
 
@@ -441,35 +450,6 @@ inline bool renderFrameToBuffer(
 
   waitAcquireFence(acquireFence);
 
-  AHardwareBuffer_Planes planes = {};
-  const int rc = api.lockPlanes(buf, AHARDWAREBUFFER_USAGE_CPU_WRITE_OFTEN, -1,
-                                nullptr, &planes);
-  if (rc != 0) {
-    // RAW10(0x25) / RAW_OPAQUE(0x24) / RAW16(0x20) 等非多平面格式不被 NDK lockPlanes 支持，
-    // 回退单平面 AHardwareBuffer_lock 并写入安全亮度占位数据，保证整帧回调正常完成。
-    void *vaddr = nullptr;
-    const int lrc = api.lock(buf, AHARDWAREBUFFER_USAGE_CPU_WRITE_OFTEN, -1,
-                             nullptr, &vaddr);
-    if (lrc != 0 || vaddr == nullptr) {
-      __android_log_print(ANDROID_LOG_WARN, kVideoTag,
-                          "AHardwareBuffer_lockPlanes/lock failed: rc=%d lrc=%d fmt=0x%x",
-                          rc, lrc, s.overrideFormat);
-      return false;
-    }
-    const uint8_t fillVal =
-        (hostFrame != nullptr && !hostFrame->i420.empty()) ? hostFrame->i420[0] : 128;
-    const size_t fillBytes =
-        static_cast<size_t>(std::max<int32_t>(0, s.width)) *
-        static_cast<size_t>(std::max<int32_t>(0, s.height));
-    // 仅在首几帧或低频刷新全帧 RAW 占位，降低大分辨率（4064x3072）纯 CPU 填充开销；
-    // RAW10/RAW_OPAQUE 至少占 w*h*5/4 字节且底层 BO 按 R16(2B/px) 分配，填充 w*h 绝对安全不越界。
-    if (fillBytes > 0 && (frameNumber < 4 || (frameNumber % 15) == 0)) {
-      std::memset(vaddr, fillVal, fillBytes);
-    }
-    api.unlock(buf, nullptr);
-    return true;
-  }
-
   const bool hasHost =
       hostFrame != nullptr && hostFrame->width > 0 && hostFrame->height > 0 &&
       hostFrame->i420.size() >=
@@ -479,6 +459,100 @@ inline bool renderFrameToBuffer(
   const uint8_t *srcY = hasHost ? hostFrame->i420.data() : nullptr;
   const uint8_t *srcU = hasHost ? (srcY + sw * sh) : nullptr;
   const uint8_t *srcV = hasHost ? (srcU + (sw / 2) * (sh / 2)) : nullptr;
+
+  AHardwareBuffer_Planes planes = {};
+  const int rc = api.lockPlanes(buf, AHARDWAREBUFFER_USAGE_CPU_WRITE_OFTEN, -1,
+                                nullptr, &planes);
+  if (rc != 0) {
+    // 非多平面格式（包括部分厂商实现下拒绝 lockPlanes 的 RGBA_8888 / BLOB，以及 RAW10/RAW16）
+    // 回退单平面 AHardwareBuffer_lock，并按实际 overrideFormat 正确渲染 RGBA / JPEG / RAW。
+    void *vaddr = nullptr;
+    const int lrc = api.lock(buf, AHARDWAREBUFFER_USAGE_CPU_WRITE_OFTEN, -1,
+                             nullptr, &vaddr);
+    if (lrc != 0 || vaddr == nullptr) {
+      __android_log_print(ANDROID_LOG_WARN, kVideoTag,
+                          "AHardwareBuffer_lockPlanes/lock failed: rc=%d lrc=%d fmt=0x%x",
+                          rc, lrc, s.overrideFormat);
+      return false;
+    }
+    AHardwareBuffer_Desc desc = {};
+    api.describe(buf, &desc);
+    if (frameNumber < 2) {
+      __android_log_print(ANDROID_LOG_INFO, kVideoTag,
+                          "renderFrame(lock fallback) stream=%d fmt=0x%x %dx%d stride=%u rc=%d",
+                          s.id, s.overrideFormat, s.width, s.height, desc.stride, rc);
+    }
+    bool fallbackOk = false;
+    if (s.overrideFormat == kFmtRgba8888) {
+      auto *dstBase = static_cast<uint8_t *>(vaddr);
+      const uint32_t dw = static_cast<uint32_t>(s.width);
+      const uint32_t dh = static_cast<uint32_t>(s.height);
+      const uint32_t pixelStride = desc.stride >= dw ? desc.stride : dw;
+      const uint32_t rowBytes = pixelStride * 4U;
+      for (uint32_t y = 0; y < dh; ++y) {
+        uint8_t *row = dstBase + static_cast<size_t>(y) * rowBytes;
+        const uint32_t sy = hasHost ? (y * sh / dh) : 0;
+        const uint32_t suy = sy >> 1;
+        for (uint32_t x = 0; x < dw; ++x) {
+          uint8_t Y, U, V;
+          if (hasHost) {
+            const uint32_t sx = x * sw / dw;
+            Y = srcY[sy * sw + sx];
+            U = srcU[suy * (sw >> 1) + (sx >> 1)];
+            V = srcV[suy * (sw >> 1) + (sx >> 1)];
+          } else {
+            sampleFallbackYUV(x, y, dw, dh, frameNumber, &Y, &U, &V);
+          }
+          const int c = static_cast<int>(Y) - 16;
+          const int d = static_cast<int>(U) - 128;
+          const int e = static_cast<int>(V) - 128;
+          row[x * 4 + 0] = clampByte((298 * c + 409 * e + 128) >> 8);
+          row[x * 4 + 1] = clampByte((298 * c - 100 * d - 208 * e + 128) >> 8);
+          row[x * 4 + 2] = clampByte((298 * c + 516 * d + 128) >> 8);
+          row[x * 4 + 3] = 255;
+        }
+      }
+      fallbackOk = true;
+    } else if (s.overrideFormat == kFmtBlob) {
+      const size_t cap = s.bufferSize > 0
+                             ? static_cast<size_t>(s.bufferSize)
+                             : (2U * 1024U * 1024U);
+      if (hasHost && hostFrame->jpeg.size() >= 4 &&
+          hostFrame->jpeg.size() + 8 <= cap) {
+        auto *dst = static_cast<uint8_t *>(vaddr);
+        std::memcpy(dst, hostFrame->jpeg.data(), hostFrame->jpeg.size());
+        const uint32_t jlen = static_cast<uint32_t>(hostFrame->jpeg.size());
+        const uint8_t tail[8] = {
+            0xff, 0x00, 0x00, 0x00,
+            static_cast<uint8_t>(jlen & 0xff),
+            static_cast<uint8_t>((jlen >> 8) & 0xff),
+            static_cast<uint8_t>((jlen >> 16) & 0xff),
+            static_cast<uint8_t>((jlen >> 24) & 0xff),
+        };
+        std::memcpy(dst + cap - sizeof(tail), tail, sizeof(tail));
+        fallbackOk = true;
+      }
+    } else {
+      const uint8_t fillVal =
+          (hostFrame != nullptr && !hostFrame->i420.empty()) ? hostFrame->i420[0] : 128;
+      const size_t fillBytes =
+          static_cast<size_t>(std::max<int32_t>(0, s.width)) *
+          static_cast<size_t>(std::max<int32_t>(0, s.height));
+      if (fillBytes > 0 && (frameNumber < 4 || (frameNumber % 15) == 0)) {
+        std::memset(vaddr, fillVal, fillBytes);
+      }
+      fallbackOk = true;
+    }
+    api.unlock(buf, nullptr);
+    return fallbackOk;
+  }
+
+  if (frameNumber < 2) {
+    __android_log_print(ANDROID_LOG_INFO, kVideoTag,
+                        "renderFrame(lockPlanes) stream=%d fmt=0x%x %dx%d planes=%u row0=%u",
+                        s.id, s.overrideFormat, s.width, s.height, planes.planeCount,
+                        planes.planeCount > 0 ? planes.planes[0].rowStride : 0U);
+  }
 
   bool ok = false;
   if (s.overrideFormat == kFmtBlob && planes.planeCount >= 1 &&

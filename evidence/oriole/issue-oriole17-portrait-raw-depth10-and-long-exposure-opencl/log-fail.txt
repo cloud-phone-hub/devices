@@ -1,0 +1,28 @@
+=== 1. Portrait 模式无画面失败日志（修复前，Pixel 6 #5，oriole_17-CP3A.261005.002.A1-20260905） ===
+现象：切换 Portrait（人像模式）后底部 UI 完整显示（1×/2、快门、模式栏），但上方取景框全黑无预览画面。
+根因日志与反编译定位：
+- GoogleCamera.apk classes.dex: knd.a(PG:19) <- koc.a <- koi.a(kow.j /* PD */, ...)
+  当 gpg.l (pd_image_format_is_raw_depth10 = true) 时查询 ImageFormat.RAW_DEPTH10 (4099 = 0x1003)
+- 相机静态元数据缺失 ANDROID_DEPTH_AVAILABLE_DEPTH_STREAM_CONFIGURATIONS（RAW10=0x25 -> RAW_DEPTH10=4099），抛出：
+  java.lang.IllegalStateException: No supported output sizes found!!
+  OneCamera failed to open
+
+=== 2. Long Exposure 模式点击闪退失败日志（修复前） ===
+现象：点击 Long Exposure 模式立即闪退（SIGSEGV）。
+根因日志与反汇编定位：
+- libgcastartup.so:
+  LasagnaNativeProcessorJni_create (0x2f8b758) -> CreatePaneerProcessor (0x2fa44d4)
+  只读配置表 0x70cab0 = {4, 4032, 3024, 1} 将 use_opencl 默认置 1
+  线程 MotionBlurProc 调用 clGetPlatformIDs 返回 CL_PLATFORM_NOT_FOUND_KHR (-1001) ->
+  "No OpenCL platforms found" -> CreatePaneerProcessor 返回 nullptr
+  lasagna_processor_jni.cc 未判空直接将 nullptr 写入 LasagnaNativeProcessor + 0x48 返回 Java
+  切入 Long Exposure 调用 setOptions 时 ldr w8, [x0, #0x10] 触发 SIGSEGV (fault addr 0x10)
+- 二次定位（初版桩库缺失 Pixel 专属符号）：
+  GoogleCamera LoadOpenCL() (0x590bd58..0x590bf00) 强依赖 libOpenCL-pixel.so 导出
+  enableOpenCL() 与 loadOpenCLPointer(const char*)，缺失时函数指针表全 0 致
+  NativeDeblurFusion_nativeInitialize (0x59141ac) 跳转 pc=0x0 崩溃。
+- 三次定位（冷启未命中载体桩库）：
+  GoogleCamera UID=10138 > cdh_max_uid(10000)，cdh_redirect 的 cdh_classify_sphal_lib()
+  未收录 libOpenCL.so / libOpenCL-pixel.so，导致冷启跳过重定向仍加载官方 dm-4 原厂 Mali
+  libOpenCL*.so（82808 B），linker 告警：
+  W linker: library "/vendor/lib/egl/libGLES_mali.so" needed or dlopened by "/vendor/lib64/libOpenCL.so"

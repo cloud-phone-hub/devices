@@ -1,0 +1,60 @@
+# 1. 新增白盒单测（09_build_vendor/camera_nfc_compat_test.go）
+=== RUN   TestAlignHonorNfcCompatAndVintfSynthesis
+--- PASS: TestAlignHonorNfcCompatAndVintfSynthesis (0.00s)
+=== RUN   TestAlignVendorCameraVintfCompat
+--- PASS: TestAlignVendorCameraVintfCompat (0.00s)
+=== RUN   TestAlignVendorCameraPropertyContexts
+--- PASS: TestAlignVendorCameraPropertyContexts (0.00s)
+=== RUN   TestAlignVendorOpenCLStub
+--- PASS: TestAlignVendorOpenCLStub (0.00s)
+=== RUN   TestReconcileVendorCameraNfcCompatCIL
+--- PASS: TestReconcileVendorCameraNfcCompatCIL (0.00s)
+=== RUN   TestIsSystemDomainPropKeyCameraLensType
+--- PASS: TestIsSystemDomainPropKeyCameraLensType (0.00s)
+PASS
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	1.083s
+
+# 2. 全仓 pipeline + daemon/backend/nfc 单测
+ok  	cloud-phone-hub/agent/modules/pipeline/cli	0.469s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/avb	(cached)
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/buildctx	0.712s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/device	4.093s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/engine	1.343s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/env	1.646s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/fsimg	2.183s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/deps	2.247s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/halbuild	7.588s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/profile	2.719s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/spec	2.671s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/toolchain	2.781s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/kmod	2.930s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/manifest	2.450s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/pipeline	2.616s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/stagekit	2.214s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/task	2.451s
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/toolfind	2.557s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/01_unpack	3.022s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	3.066s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/03_build_kernel	3.667s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/04_build_modules	3.205s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/05_build_boot	2.808s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/06_build_vendor_boot	6.070s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/07_build_odm	3.068s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/08_build_hardware	2.716s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	2.882s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/10_build_vendor_dlkm	3.817s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/11_build_patch	2.229s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/12_pack_super	2.028s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/13_pack_vda	3.215s
+ok  	cloud-phone-hub/agent/modules/daemon/backend/nfc	2.234s
+
+# 3. 全 5 代 HAL 同步重编产物校验（android13..17）
+android13: camera-service (1.6M), neuralnetworks-service (1.0M), libGLESv2_meow.so (74K), libOpenCL.so (43536 B, SONAME=libOpenCL.so)
+android14: camera-service (1.6M), neuralnetworks-service (1.1M), libGLESv2_meow.so (74K), libOpenCL.so (43536 B, SONAME=libOpenCL.so)
+android15: camera-service (1.6M), neuralnetworks-service (1.1M), libGLESv2_meow.so (74K), libOpenCL.so (43536 B, SONAME=libOpenCL.so)
+android16: camera-service (1.6M), neuralnetworks-service (1.1M), libGLESv2_meow.so (74K), libOpenCL.so (43536 B, SONAME=libOpenCL.so)
+android17: camera-service (1.6M), neuralnetworks-service (1.1M), libGLESv2_meow.so (74K), libOpenCL.so (43536 B, SONAME=libOpenCL.so)
+
+# 4. 清理与进程复核
+ps aux | grep -E 'host-daemon|qemu-system' | grep -v grep -> NO_ORPHAN_VM_OR_DAEMON
+out/devices/tmp/*_inspect & *.png removed; retained 5b56c8b31b1ad.mp4, patch_hal_refresh.py, oplus_patch_fix.py, qmp_tap.py, official_libOpenCL.so

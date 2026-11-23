@@ -1,0 +1,28 @@
+=== OPPO CPH2797 PASS ===
+OPPO
+CPH2797
+Service vendor.oplus.hardware.charger.ICharger/default: found
+Current OPLUS Battery Service state:
+  Charger voltage : 0
+  Battery current : 0
+  ChargerTechnology: 0
+  ChargeFastCharger: false
+  PlugType: 1
+  UpdatesStopped: false
+  UsbHwStatus: 0
+  BatteryHwStatus: 1
+  HwStatusIsSet: 1
+  BatteryIcStatus: 0
+  IcStatusIsSet: 1
+
+  mUsbStatus: 0
+  mCurrentFocus=Window{fee177a u0 com.android.launcher/com.android.launcher.Launcher}
+  mFocusedApp=ActivityRecord{14088869 u0 com.android.launcher/.Launcher t2}
+overlay-overlay on /product/lib64 type overlay (ro,seclabel,noatime,lowerdir=/my_region/lib64:/my_product/lib64:/my_heytap/lib64:/my_stock/lib64:/my_engineering/lib64:/product/lib64,redirect_dir=nofollow,userxattr)
+=== OnePlus CPH2767 PASS (captured prior to switch) ===
+Service vendor.oplus.hardware.charger.ICharger/default: found (health@oplus)
+ChargerTechnology: 0 / UsbHwStatus: 0 / BatteryHwStatus: 1 / BatteryIcStatus: 0 / mUsbStatus: 0
+mCurrentFocus=Window{398e465 u0 com.android.launcher/com.android.launcher.Launcher}
+overlay-overlay on /product/lib64 type overlay (lowerdir=/my_region/lib64:/my_product/lib64:...)
+Load libCombineLutJni.so / libAPSClient-alog-jni.so: ok
+Active Camera Clients: Camera ID: 0 (com.oplus.camera), 8 streams configured, Stream[0] Frames produced: 4143

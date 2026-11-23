@@ -9,7 +9,6 @@
     "ro.hw_timeout_multiplier": "10",
     "ro.hwui.use_vulkan": "false",
     "ro.opengles.version": "196608",
-    "ro.product.model.display": "HMD Crest Max",
     "ro.soc.manufacturer": "Unisoc",
     "ro.soc.model": "T770",
     "ro.surface_flinger.has_HDR_display": "false",
@@ -51,10 +50,6 @@
     },
     {
       "from": "official",
-      "source": "lib64/libOpenCL.so"
-    },
-    {
-      "from": "official",
       "mode": "replace",
       "source": "etc/permissions"
     },
@@ -83,7 +78,11 @@
   "selinux-labels": {
     "lib64/egl/libEGL_mesa.so": "u:object_r:same_process_hal_file:s0",
     "lib64/egl/libGLESv1_CM_mesa.so": "u:object_r:same_process_hal_file:s0",
-    "lib64/egl/libGLESv2_mesa.so": "u:object_r:same_process_hal_file:s0"
+    "lib64/egl/libGLESv2_mesa.so": "u:object_r:same_process_hal_file:s0",
+    "lib64/libOpenCL.so": "u:object_r:same_process_hal_file:s0",
+    "lib64/libOpenCL.so.1": "u:object_r:same_process_hal_file:s0",
+    "lib64/libOpenCL.so.1.1": "u:object_r:same_process_hal_file:s0",
+    "lib64/libOpenCL.so.1.2": "u:object_r:same_process_hal_file:s0"
   },
   "vintf-version": "7.0"
 }

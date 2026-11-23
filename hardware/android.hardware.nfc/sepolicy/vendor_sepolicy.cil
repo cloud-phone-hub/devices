@@ -1,2 +1,6 @@
 ;; cdh：NFC AIDL HAL 经 /dev/hvc11（console_device）与宿主侧虚拟 NCI 2.0 NFCC 通信。
 (allow hal_nfc_default console_device_{{vers}} (chr_file (ioctl read write getattr lock append map open watch watch_reads)))
+;; cdh #312：放行 nfc 域读取 cdh_device_info 暴露的 /sys/nfc/nfc_chip_type 与 /sys/class/nfc/nfc_support。
+(allow nfc_{{vers}} sysfs_{{vers}} (dir (search open read getattr)))
+(allow nfc_{{vers}} sysfs_{{vers}} (file (open read getattr)))
+(allow nfc_{{vers}} sysfs_{{vers}} (lnk_file (read getattr)))

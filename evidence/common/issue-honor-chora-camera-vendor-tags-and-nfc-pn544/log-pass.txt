@@ -1,0 +1,48 @@
+=== 1. 6.12 内核 cdh_device_info.ko 符号校验 ===
+[ok] cdh_device_info.ko: 76 个符号版本一致
+[    5.380699][  T274] cdh_device_info_nfc: registered /sys/class/nfc/nfc_support
+[    5.381801][  T274] cdh_device_info_nfc: registered /sys/nfc/nfc_chip_type (sn220u)
+[    5.383965][  T274] cdh_device_info_nfc: registered /dev/pn544
+
+=== 2. Honor chora 原生相机实测通过（拍照预览 + JPEG 实拍 + 1080P 录像）===
+# 拍照模式预览与快门实拍
+Active Camera Clients:
+(Camera ID: 0, Cost: 50, PID: 6977, Score: 0, State: 2User Id: 0, Client Package Name: com.hihonor.camera, Conflicting Client Devices: {})
+    Device status: ACTIVE
+      Dims: 1440 x 1088, format 0x1, dataspace 0x8810000
+      Frames produced: 1872, last timestamp: 133618687979 ns
+      Dims: 3264 x 2448, format 0x21, dataspace 0x8c20000
+      Frames produced: 1, last timestamp: 133577477313 ns
+/sdcard/DCIM/Camera/IMG_20261123_140232_1.jpg (21770 bytes)
+
+# 录像模式切换（VIDEO 1080 · 30）
+Active Camera Clients:
+(Camera ID: 0, Cost: 50, PID: 6977, Score: 0, State: 2User Id: 0, Client Package Name: com.hihonor.camera, Conflicting Client Devices: {})
+    Device status: ACTIVE
+      Dims: 1920 x 1080, format 0x1, dataspace 0x8810000
+      Frames produced: 86, last timestamp: 273583829546 ns
+      Dims: 1920 x 1080, format 0x21, dataspace 0x8c20000
+      Frames produced: 0, last timestamp: 0 ns
+
+=== 3. Honor chora NFC 稳态服务与虚拟刷卡通过 ===
+Service nfc: found
+mState=on
+mAlwaysOnState=off
+mScreenState=ON_UNLOCKED
+mIsSecureNfcEnabled=false
+mNfcPollingEnabled=false
+mHnNfcService.getOpenEe()=null
+mLockscreenPollMask=0
+mIsReaderOptionEnabled=true
+mTechMask: default
+mEnableLPD: true
+mEnableHostRouting: true
+
+# POST /api/nfc/tap
+{"ok":true,"status":{"connected":true,"initialized":true,"discovering":true,"cardPresent":true,"cardUid":"04A1B2C3","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":38,"txResponses":48,"apduCount":0}}
+
+# POST /api/nfc/remove
+{"ok":true,"status":{"connected":true,"initialized":true,"discovering":true,"cardPresent":false,"rxCommands":38,"txResponses":49,"apduCount":0}}
+
+=== 4. 宿主 NFC 后端单测 ===
+ok  	cloud-phone-hub/agent/modules/daemon/backend/nfc	1.531s

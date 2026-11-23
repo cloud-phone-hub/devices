@@ -10,3 +10,15 @@
 (allow hal_camera_default console_device_{{vers}} (chr_file (ioctl read write getattr lock append map open watch watch_reads)))
 (allow cameraserver_{{vers}} hal_camera_default (fd (use)))
 (allow hal_camera_default cameraserver_{{vers}} (fd (use)))
+
+;; cdh：camera AIDL HAL 在 importBuffer 时经 libnativewindow/libui 构造
+;; GraphicBufferMapper（访问 hal_graphics_mapper_hwservice /
+;; hal_graphics_allocator_service 与 same_process_hal_file）；
+;; Android 13（lineage-20.0）基底未把 hal_camera_default 纳入
+;; hal_graphics_allocator_client，导致 GraphicBufferMapper() 报
+;; "gralloc-mapper is missing" SIGABRT。
+;; 按 AOSP hal_client_domain(hal_camera_default, hal_graphics_allocator)
+;; 展开为 halclientdomain + hal_graphics_allocator_client，避免触发
+;; base_typeattr neverallow。
+(typeattributeset halclientdomain (hal_camera_default))
+(typeattributeset hal_graphics_allocator_client (hal_camera_default))

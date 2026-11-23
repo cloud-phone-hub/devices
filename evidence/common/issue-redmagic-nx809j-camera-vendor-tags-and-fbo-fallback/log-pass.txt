@@ -1,0 +1,21 @@
+=== 1. 快门拍照 ===
+total 48
+-rwxrwx--- 1 u0_a488 media_rw 48211 2026-11-23 17:56 IMG_20261123_175602.jpg
+=== 2. 切换前摄 ===
+=== pids ===
+600 697 6627
+=== dumpsys media.camera ===
+  11-23 17:56:09 : Device 1 is open. Client instance dump:
+    Client PID: 6627
+    Client package: com.android.camera
+    Stream[0]: Output
+      Frames produced: 0, last timestamp: 0 ns
+    Stream[1]: Output
+      Frames produced: 125, last timestamp: 102131815131 ns
+=== dropbox ===
+2026-11-23 17:47:41 system_app_crash (text, 1256 bytes)
+2026-11-23 17:50:36 SYSTEM_BOOT (text, 661 bytes)
+2026-11-23 17:50:57 system_app_crash (text, 1032 bytes)
+2026-11-23 17:54:48 SYSTEM_BOOT (text, 661 bytes)
+
+Usage: dumpsys dropbox [--print|--file] [YYYY-mm-dd] [HH:MM:SS] [tag]

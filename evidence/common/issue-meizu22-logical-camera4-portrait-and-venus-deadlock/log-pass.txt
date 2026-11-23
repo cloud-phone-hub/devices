@@ -1,0 +1,62 @@
+=== Meizu22 Camera PASS verification ===
+Model: MEIZU 22
+Vendor SDK: 35
+Camera PID: 6399
+Photo files:
+-rwxrwx--- 1 u0_a207 media_rw 1129261 2026-11-23 12:03 /sdcard/DCIM/P20261123-120301.jpg
+-rwxrwx--- 1 u0_a207 media_rw 1087762 2026-11-23 12:30 /sdcard/DCIM/P20261123-123027.jpg
+--- Camera 4 logical multi-camera characteristics ---
+== Camera HAL device device@1.0/internal/4 (v1.3) static information: ==
+  Resource cost: 50
+  Conflicting devices: None
+  API1 info:
+    Has a flash unit: true
+    Facing: Back
+    Orientation: 90
+  API2 camera characteristics:
+    Dumping camera metadata array: 150 / 150 entries, 19544 / 19544 bytes of extra data.
+--
+      android.logicalMultiCamera.physicalIds (1a0000): byte[4]
+        [0 2 ]
+      android.logicalMultiCamera.sensorSyncType (1a0001): byte[1]
+        [CALIBRATED ]
+      com.mediatek.facefeature.availableforceface3a (8000000a): int32[2]
+        [0 1 ]
+      com.mediatek.nrfeature.available3dnrmodes (80010001): int32[2]
+        [0 1 ]
+      com.mediatek.hdrfeature.availableHdrModesPhoto (80030003): int32[2]
+--
+== Camera HAL device device@1.0/internal/4 (v1.3) dumpState: ==
+
+== Vendor tags: ==
+
+  Dumping vendor tag descriptors for vendor with id 8932615658386372252 
+  Dumping configured vendor tag descriptors: 476 entries
+    0x80000000 (gesturemode) with type 1 (int32) defined in section com.mediatek.facefeature
+    0x80000001 (gestureresult) with type 1 (int32) defined in section com.mediatek.facefeature
+    0x80000002 (smiledetectmode) with type 1 (int32) defined in section com.mediatek.facefeature
+--- Active camera & SurfaceFlinger BLAST ---
+Active Camera Clients:
+(Camera ID: 1, Cost: 50, PID: 6399, Score: 0, State: 2User Id: 0, Client Package Name: com.meizu.media.camera, Conflicting Client Devices: {})
+    Stream[0]: Output
+      Frames produced: 3314, last timestamp: 213712830267 ns
+    Stream[2]: Output
+      Frames produced: 0, last timestamp: 0 ns
+    visible reason= color{< 0, 0, 0, 1 >}
+  Layer [178] c1f648d SurfaceView[com.meizu.media.camera/com.meizu.media.camera.CameraActivity](BLAST)#178
+    visible reason= buffer=27483495727113 frame=5208 color{< 0, 0, 0, 1 >} contentDirty
+    visible reason= buffer=27483495730621 frame=143 color{< 0, 0, 0, 1 >}
+    visible reason= buffer=5063766442022 frame=34 color{< 0, 0, 0, 0.799805 >}
+    visible reason= buffer=5063766441993 frame=48 color{< 0, 0, 0, 1 >}
+--- Key HAL / GPU logs ---
+11-23 12:29:37.633   701   823 I DisplayDeviceRepository: Display device changed render timings: "内置屏幕", renderFrameRate=120.00001, presentationDeadlineNanos=11500000, appVsyncOffsetNanos=833333, frameRateOverrides=[]
+11-23 12:29:38.691   701   823 I DisplayDeviceRepository: Display device changed render timings: "内置屏幕", renderFrameRate=60.0, presentationDeadlineNanos=11500000, appVsyncOffsetNanos=9166668, frameRateOverrides=[]
+11-23 12:29:38.827   701   823 I DisplayDeviceRepository: Display device changed render timings: "内置屏幕", renderFrameRate=60.0, presentationDeadlineNanos=11500000, appVsyncOffsetNanos=9166668, frameRateOverrides=[{uid=10100 frameRateHz=60.0}]
+11-23 12:29:39.080   701   823 I DisplayDeviceRepository: Display device changed render timings: "内置屏幕", renderFrameRate=60.0, presentationDeadlineNanos=11500000, appVsyncOffsetNanos=9166668, frameRateOverrides=[]
+11-23 12:29:39.098   701   823 I DisplayDeviceRepository: Display device changed render timings: "内置屏幕", renderFrameRate=120.00001, presentationDeadlineNanos=11500000, appVsyncOffsetNanos=833333, frameRateOverrides=[]
+11-23 12:29:39.360   701   823 I DisplayDeviceRepository: Display device changed render timings: "内置屏幕", renderFrameRate=120.00001, presentationDeadlineNanos=11500000, appVsyncOffsetNanos=833333, frameRateOverrides=[{uid=10100 frameRateHz=60.000004}]
+11-23 12:29:39.388   701   823 I DisplayDeviceRepository: Display device changed render timings: "内置屏幕", renderFrameRate=120.00001, presentationDeadlineNanos=11500000, appVsyncOffsetNanos=833333, frameRateOverrides=[]
+11-23 12:29:39.396   701   823 I DisplayDeviceRepository: Display device changed render timings: "内置屏幕", renderFrameRate=60.0, presentationDeadlineNanos=11500000, appVsyncOffsetNanos=9166668, frameRateOverrides=[{uid=10100 frameRateHz=60.0}]
+11-23 12:29:39.396   701   823 I DisplayDeviceRepository: Display device same: DisplayDeviceInfo{"内置屏幕": uniqueId="local:4633222715505392384", 1080 x 2400, modeId 2, renderFrameRate 60.0, hasArrSupport false, frameRateCategoryRate FrameRateCategoryRate {normal=60.0, high=90.0}, supportedRefreshRates [30.000002, 60.0, 90.0, 120.00001], defaultModeId 2, userPreferredModeId -1, supportedModes [{id=1, width=1080, height=2400, fps=30.000002, vsync=30.000002, synthetic=false, alternativeRefreshRates=[60.0, 120.00001], supportedHdrTypes=[]}, {id=2, width=1080, height=2400, fps=60.0, vsync=60.0, synthetic=false, alternativeRefreshRates=[30.000002, 120.00001], supportedHdrTypes=[]}, {id=3, width=1080, height=2400, fps=90.0, vsync=90.0, synthetic=false, alternativeRefreshRates=[], supportedHdrTypes=[]}, {id=4, width=1080, height=2400, fps=120.00001, vsync=120.00001, synthetic=false, alternativeRefreshRates=[30.000002, 60.0], supportedHdrTypes=[]}], colorMode 0, supportedColorModes [0, 7, 9], hdrCapabilities HdrCapabilities{mSupportedHdrTypes=[], mMaxLuminance=500.0, mMaxAverageLuminance=500.0, mMinLuminance=0.0}, isForceSdr false, allmSupported false, gameContentTypeSupported false, density 440, 464.6 x 464.8 dpi, appVsyncOff 9166668, presDeadline 11500000, cutout DisplayCutout{insets=Rect(0, 124 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(540, 0 - 618, 124), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1080 displayHeight=2400 physicalDisplayWidth=1080 physicalDisplayHeight=2400 density={3.0} cutoutSpec={M0,33a39,39 0,1 1,0 78a39,39 0,1 1,0 -78} rotation={0} scale={1.0} physicalPixelDisplaySizeRatio={1.0}}} sideOverrides={}}, touch INTERNAL, rotation 0, type INTERNAL, address {port=0, model=0x404c83830af83b}, deviceProductInfo DeviceProductInfo{name=SDC_MEIZU22, manufacturerPnpId=SDC, productId=8865, modelYear=null, manufactureDate=ManufactureDate{week=26, year=2025}, connectionToSinkType=1}, state ON, committedState ON, frameRateOverride {uid=10100 frameRateHz=60.0} , brightnessMinimum 0.0, brightnessMaximum 1.3540069, brightnessDefault 0.46805978, brightnessDim 0.0, hdrSdrRatio NaN, roundedCorners RoundedCorners{[RoundedCorner{position=TopLeft, radius=130, center=Point(130, 130)}, RoundedCorner{position=TopRight, radius=130, center=Point(950, 130)}, RoundedCorner{position=BottomRight, radius=130, center=Point(950, 2270)}, RoundedCorner{position=BottomLeft, radius=130, center=Point(130, 2270)}]}, FLAG_ALLOWED_TO_BE_DEFAULT_DISPLAY, FLAG_ROTATES_WITH_CONTENT, FLAG_SECURE, FLAG_SUPPORTS_PROTECTED_BUFFERS, FLAG_TRUSTED, installOrientation 0, displayShape DisplayShape{ spec=1406003047 displayWidth=1080 displayHeight=2400 physicalPixelDisplaySizeRatio=1.0 rotation=0 offsetX=0 offsetY=0 scale=1.0}}
+11-23 12:31:27.873   592   592 I cdh_note13_camera_provider: configureStream id=0 1440x1080 reqFmt=0x22 ovFmt=0x1 ds=0x0 ovDs=0x8810000 usage=0x100 phys=
+11-23 12:31:27.873   592   592 I cdh_note13_camera_provider: configureStream id=2 2304x1728 reqFmt=0x23 ovFmt=0x23 ds=0x8c20000 ovDs=0x8c20000 usage=0x3 phys=

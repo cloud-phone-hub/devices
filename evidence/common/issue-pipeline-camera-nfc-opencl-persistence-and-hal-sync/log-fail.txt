@@ -1,0 +1,11 @@
+# 改动前缺口记录（2026-11-23）
+1. ls out/devices/vendor/android15/lib64/libOpenCL.so -> No such file or directory
+   - halbuild/gpu.go 未编译 devices/hardware/android.hardware.gpu/src/cdh_opencl_stub.c
+2. 09_build_vendor/files_compat.go & sepolicy_cil.go 尚未持久化：
+   - Honor NFC: com.hihonor.nfc.xml, libnfc-{nci,nxp}-sz.conf, cdh_nn_placeholders.txt + CIL
+   - Vivo Camera: IVivoCameraProvider VINTF 注入 + platform_app CIL
+   - Nothing Camera: vendor_hal_noth_camera_service platform_app CIL
+   - OpenCL: public.libraries.txt -> vendor/lib64/libOpenCL.so 自动覆写与 same_process_hal_file
+   - ASUS Camera: vendor_set_camera_prop property_contexts 补齐与 vendor.camera.lens_type=0:std;1:std
+3. android13/14/15/17 camera 与 android13/16/17 neuralnetworks 及全代 gpu(OpenCL) 产物版本未全代同步。
+4. out/devices/tmp/ 残留 9 个 *_inspect 反编译目录（约 2.3 GB）与过程截屏 *.png。

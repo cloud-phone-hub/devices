@@ -69,7 +69,8 @@
     "ro.vendor.soc.model": "SM8750-AB",
     "ro.vendor.soc.model.external_name": "SM8750-AB",
     "ro.vendor.soc.model.part_name": "SM8750-AB",
-    "ro.vendor.soc.model_ready": "1"
+    "ro.vendor.soc.model_ready": "1",
+    "vendor.camera.lens_type": "0:std;1:std"
   },
   "build-prop-unsets": [
     "ro.frp.pst",

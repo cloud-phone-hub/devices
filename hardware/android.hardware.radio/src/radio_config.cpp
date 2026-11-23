@@ -40,7 +40,7 @@ ToSimSlotStatus(const std::optional<Snapshot> &snapshot) {
   const bool present = snapshot.has_value() && snapshot->sim.present;
   slots.push_back(config::SimSlotStatus{
       .cardState = static_cast<int8_t>(present ? 1 : 0),
-      .atr = present ? "3B9F96801FC7AFC08031E073FE211B66D000000000000000" : "",
+      .atr = present ? "3B9F96801FC78031E073FE211B66D0017A0801000073" : "",
       .eid = "",
       .portInfo = {config::SimPortInfo{
           .iccId = snapshot.has_value() ? snapshot->sim.identity.iccid : "",

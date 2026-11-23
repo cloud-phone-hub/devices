@@ -139,6 +139,56 @@ class CdhAllocator : public aidl::android::hardware::graphics::allocator::impl::
         return st3;
       }
     }
+    // 第四级兜底：minigbm cros_gralloc_convert_format 未映射
+    // HAL_PIXEL_FORMAT_YCrCb_420_SP (17 = 0x11, NV21)，导致三星 One UI
+    // Core2SurfaceUtil.nativeProduceFrameWithYuv420 等直接向 SurfaceView 分配 NV21
+    // GraphicBuffer 时失败。VirGL 下 HAL_PIXEL_FORMAT_YCbCr_420_888 (35) 底层分配
+    // 2-plane DRM_FORMAT_NV12（与 NV21 的 plane/stride/offset/total_size 布局完全一致）；
+    // 分配后仅将 handle 的 droid_format 回写为 17 满足框架 validateBufferSize，
+    // 保留底层 DRM_FORMAT_NV12 使 Mesa EGL / SurfaceFlinger 正确按 2-plane YUV 纹理采样
+    // （避免改写为 DRM_FORMAT_NV21 导致 Mesa 退化为单平面采样出现黄绿与 1/3 UV 条纹）。
+    if (fmt == 17) {
+      const uint64_t nv21Usages[] = {
+          origUsage,
+          (origUsage & ~kStripPass1) != 0 ? (origUsage & ~kStripPass1) : 0x133ULL,
+          0x133ULL,  // GPU_SAMPLED_IMAGE | CPU_READ_OFTEN | CPU_WRITE_OFTEN
+          0x33ULL,   // CPU_READ_OFTEN | CPU_WRITE_OFTEN
+      };
+      for (uint64_t tryUsage : nv21Usages) {
+        auto asYuv = descriptor;
+        asYuv.format =
+            static_cast<::aidl::android::hardware::graphics::common::PixelFormat>(35);
+        asYuv.usage =
+            static_cast<::aidl::android::hardware::graphics::common::BufferUsage>(
+                tryUsage);
+        auto st4 =
+            aidl::android::hardware::graphics::allocator::impl::Allocator::allocate2(
+                asYuv, count, outResult);
+        if (st4.isOk() && outResult != nullptr) {
+          constexpr size_t kMagicDataIdx =
+              (offsetof(struct cros_gralloc_handle, magic) -
+               offsetof(struct cros_gralloc_handle, fds[0])) /
+              sizeof(int32_t);
+          constexpr size_t kDroidFmtDataIdx =
+              (offsetof(struct cros_gralloc_handle, droid_format) -
+               offsetof(struct cros_gralloc_handle, fds[0])) /
+              sizeof(int32_t);
+          for (auto& nh : outResult->buffers) {
+            const size_t nFds = nh.fds.size();
+            if (nFds <= kMagicDataIdx && nFds <= kDroidFmtDataIdx) {
+              const size_t magicIdx = kMagicDataIdx - nFds;
+              const size_t droidFmtIdx = kDroidFmtDataIdx - nFds;
+              if (magicIdx < nh.ints.size() && droidFmtIdx < nh.ints.size() &&
+                  static_cast<uint32_t>(nh.ints[magicIdx]) == cros_gralloc_magic &&
+                  nh.ints[droidFmtIdx] == 35) {
+                nh.ints[droidFmtIdx] = 17;
+              }
+            }
+          }
+          return st4;
+        }
+      }
+    }
     return status;
   }
 
@@ -187,6 +237,16 @@ class CdhAllocator : public aidl::android::hardware::graphics::allocator::impl::
               0x33ULL);
       return aidl::android::hardware::graphics::allocator::impl::Allocator::isSupported(
           asRaw16, outResult);
+    }
+    if (fmt == 17) {
+      auto asYuv = descriptor;
+      asYuv.format =
+          static_cast<::aidl::android::hardware::graphics::common::PixelFormat>(35);
+      asYuv.usage =
+          static_cast<::aidl::android::hardware::graphics::common::BufferUsage>(
+              0x133ULL);
+      return aidl::android::hardware::graphics::allocator::impl::Allocator::isSupported(
+          asYuv, outResult);
     }
     return status;
   }

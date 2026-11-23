@@ -80,4 +80,7 @@ void cdh_thermal_sysfs_exit(void);
 int cdh_ethtool_init(void);
 void cdh_ethtool_exit(void);
 
+int cdh_nfc_sysfs_init(void);
+void cdh_nfc_sysfs_exit(void);
+
 #endif

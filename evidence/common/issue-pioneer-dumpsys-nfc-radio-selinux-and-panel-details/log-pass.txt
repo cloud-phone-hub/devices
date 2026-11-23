@@ -1,0 +1,51 @@
+=== 冷启实机与前端验收日志（2026-11-22，Pixel 6 #5，patch.img 047d804bccec，vda-a7581225ec43） ===
+
+1. Guest dumpsys / cmd 实测（零 FAILED_TRANSACTION）：
+BOOT=1
+=== DUMPSYS NFC ===
+mState=on
+mAlwaysOnState=off
+mScreenState=ON_UNLOCKED
+mIsSecureNfcEnabled=false
+mIsReaderOptionEnabled=true
+listenTech=0xf
+pollTech=0x2f
+mEnableLPD: true
+mEnableHostRouting: true
+
+=== CMD NFC STATUS ===
+Nfc is enabled
+
+=== DUMPSYS PHONE ===
+------- PhoneGlobals -------
+  mDefaultDataSubId=1
+  isSmsCapable=true
+
+=== DUMPSYS ISUB ===
+SubscriptionManagerService:
+Active modem count=1
+Logical SIM slot sub id mapping:
+  Logical SIM slot 0: subId=1
+
+2. 管理台 API (/api/daemon/instance/config) 返回：
+{
+  "supported": true,
+  "enabled": true,
+  "guestState": "ON",
+  "hostAttached": true,
+  "hostStatus": {
+    "connected": true,
+    "initialized": true,
+    "discovering": true,
+    "cardPresent": false,
+    "rxCommands": 56,
+    "txResponses": 82,
+    "apduCount": 0
+  }
+}
+实测 POST /api/daemon/nfc/tap -> cardPresent=true (cardUid=04112233445566, cardPayload=cloud-phone-hub-nfc-ok, txResponses=83)
+实测 POST /api/daemon/nfc/remove -> cardPresent=false (txResponses=84)
+
+3. 前端构建与 Go 单测：
+- cd agent/web && npm run build (tsc --noEmit && vite build): 0 错误，产出 index-B2ornQbe.js，重启 cdha serve 验证首页已下发新 bundle
+- go test ./modules/daemon/run ./modules/daemon/backend/nfc: PASS

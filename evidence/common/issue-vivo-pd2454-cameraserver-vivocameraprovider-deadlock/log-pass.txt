@@ -1,0 +1,116 @@
+=== 1. Service Check (开机 44s 内全就绪，此前 media.camera 卡死 1000s/17min) ===
+service check media.camera => Service media.camera: found
+service check android.frameworks.cameraservice.service.ICameraService/default => Service android.frameworks.cameraservice.service.ICameraService/default: found
+service check vendor.vivo.hardware.vivocameraprovider.IVivoCameraProvider/default => Service vendor.vivo.hardware.vivocameraprovider.IVivoCameraProvider/default: found
+service check android.hardware.camera.provider.ICameraProvider/internal/0 => Service android.hardware.camera.provider.ICameraProvider/internal/0: found
+service check media.vivocamera => Service media.vivocamera: found
+service check vendor.vivo.hardware.vivoalgoservice.IVASAlgoProvider/default => Service vendor.vivo.hardware.vivoalgoservice.IVASAlgoProvider/default: found
+service check nfc => Service nfc: found
+
+=== 2. 相机与 NFC 进程状态 ===
+system         547     1   10915004   7108 0                   0 S android.hardware.camera-service
+system         555     1   10984544   5872 0                   0 S android.hardware.neuralnetworks-service
+nfc            556     1   10860188   5600 0                   0 S android.hardware.nfc-service
+cameraserver   900     1   11709672  46604 0                   0 S cameraserver
+root           915     1   10937904   5768 0                   0 S vendor.vivo.hardware.camera.cameralog@1.0-service
+cameraserver   922     1   10983672  15440 0                   0 S vivocameraserver
+system        1021     1   10892600  11488 0                   0 S virtual_camera
+nfc           4387   513   24853808 170472 0                   0 S com.android.nfc
+u0_a162       8509   513   26573080 269488 0                   0 S com.android.camera
+
+=== 3. dumpsys media.camera (事件时间线 + Vivo 专有 Vendor Tags) ===
+== Service global info: ==
+
+Number of camera devices: 2
+Number of normal camera devices: 2
+Number of public camera devices visible to API1: 2
+    Device 0 maps to "0"
+    Device 1 maps to "1"
+Active Camera Clients:
+[]
+Allowed user IDs: 0
+
+== Camera service events log (most recent at top): ==
+  11-23 16:45:00 : USER_SWITCH previous allowed user IDs: <None>, current allowed user IDs: 0
+  11-23 16:44:57 : ADD device 0, reason: (Device added)
+  11-23 16:44:57 : ADD device 1, reason: (Device added)
+
+== Camera device 0 dynamic info: ==
+  Device 0 is closed, no client instance
+== Camera device 1 dynamic info: ==
+  Device 1 is closed, no client instance
+== Camera Provider HAL android.hardware.camera.provider.ICameraProvider/internal/0-0 (v2.0, remote) static info: 2 devices: ==
+== Camera HAL device device@1.0/internal/0 (v1.3) static information: ==
+  Resource cost: 50
+  Conflicting devices: None
+  API1 info:
+    Has a flash unit: true
+    Facing: Back
+    Orientation: 90
+  API2 camera characteristics:
+    Dumping camera metadata array: 168 / 168 entries, 19680 / 19680 bytes of extra data.
+      Version: 1, Flags: 00000000
+      android.colorCorrection.availableAberrationModes (00004): byte[1]
+        [0 ]
+      android.control.aeAvailableAntibandingModes (10012): byte[4]
+        [0 1 2 3 ]
+      android.control.aeAvailableModes (10013): byte[4]
+        [0 1 2 3 ]
+      android.control.aeAvailableTargetFpsRanges (10014): int32[14]
+        [10 10 15 15 ]
+        [15 20 20 20 ]
+        [24 24 10 30 ]
+        [30 30 ]
+      android.control.aeCompensationRange (10015): int32[2]
+        [-24 24 ]
+
+--- Vivo Vendor Tags 样本 ---
+com.vivo.chi.override.CameraType (80400001): byte[7]
+        [77 97 115 116 101 114 0 ]
+      com.vivo.chi.override.LargeSizeThumbnail (80400002): byte[1]
+        [0 ]
+      com.vivo.chi.override.SensorSize (80400003): int32[2]
+        [4000 3000 ]
+--
+      com.vivo.image_sizes (80430001): int32[10]
+        [4000 3000 3840 2160 ]
+--
+      com.vivo.sensorModeSizeList (80430002): int32[2]
+        [4000 3000 ]
+      com.vivo.RemosaicType (80430003): int32[1]
+        [0 ]
+      com.vivo.halversion (80430004): int64[1]
+        [2 ]
+      com.vivo.disablereconfig (80430005): int32[1]
+        [0 ]
+      com.vivo.CurrentModeVersion (80430006): int32[1]
+        [1 ]
+      com.vivo.JPEGNeedUpscale (80430007): int32[1]
+        [0 ]
+      com.vivo.isNV21Platform (80430008): int32[1]
+        [0 ]
+      com.vivo.SupportedMaxCFAPattern (80430009): int32[1]
+        [0 ]
+      com.vivo.pro_exptimeMin (8043000a): int64[1]
+        [100000 ]
+      com.vivo.pro_exptimeMax (8043000b): int64[1]
+        [30000000000 ]
+      com.vivo.pro_isoMin (8043000c): int32[1]
+        [50 ]
+      com.vivo.pro_isoMax (8043000d): int32[1]
+        [12800 ]
+      com.vivo.logicalMCPhysicalIds (8043000e): byte[1]
+        [0 ]
+      com.vivo.PhysicalCameraCombination (8043000f): byte[9]
+        [77 97 115 116 101 114 44 48 59 ]
+      com.vivo.MultiCameraTypeMapSessionId (80430010): byte[1]
+        [0 ]
+      com.vivo.MultiCameraBokehSensorSize (80430011): byte[1]
+        [0 ]
+--
+      com.vivo.chi.override.CameraType (80400001): byte[7]
+        [77 97 115 116 101 114 0 ]
+
+=== 4. NFC 回归确认 ===
+mState=on
+mScreenState=ON_UNLOCKED

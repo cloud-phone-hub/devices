@@ -1,0 +1,31 @@
+=== 1. 高通 PAKALA/KAANAPALI/MILOS Radio POWER_OFF 主线程死锁栈 (Meizu 22) ===
+Process: com.android.phone (PID 2739, UID 1001)
+Subject: Input dispatching timed out (Application does not have a focused window).
+"main" prio=5 tid=1 Native
+  native: #02 /system/lib64/libbinder.so (android::IPCThreadState::talkWithDriver+244)
+  at android.os.BinderProxy.transactNative(Native method)
+  at android.os.BinderProxy.transact(BinderProxy.java:592)
+  at com.qualcomm.qcrilmsgtunnel.IQcrilMsgTunnel$Stub$Proxy.sendOemRilRequestRaw(IQcrilMsgTunnel.java:170)
+  at com.qualcomm.qcrilhook.QcRilHook.sendRilOemHookMsg(QcRilHook.java:277)
+  at com.qualcomm.qcrilhook.QcRilHook.sendRilOemHookMsg(QcRilHook.java:266)
+  at com.qualcomm.qcrilhook.QcRilHook.sendQcRilHookMsg(QcRilHook.java:1645)
+  at com.qualcomm.qti.internal.telephony.QtiRilInterface.getMaxDataAllowed(QtiRilInterface.java:190)
+  at com.qualcomm.qti.internal.telephony.data.QtiPhoneSwitcher.queryMaxDataAllowed(QtiPhoneSwitcher.java:409)
+  at com.qualcomm.qti.internal.telephony.data.QtiPhoneSwitcher.handleMessage(QtiPhoneSwitcher.java:438)
+  at com.meizu.internal.telephony.MzPhoneSwitcher.handleMessage(MzPhoneSwitcher.java:74)
+
+=== 同步现象 ===
+gsm.sim.state=,ABSENT
+mServiceState={mVoiceRegState=3(POWER_OFF), mDataRegState=3(POWER_OFF), ...}
+dumpsys activity service com.android.phone/.TelephonyDebugService:
+  Failure while dumping the service: java.io.IOException: Timeout
+E AnswerToReset: Unexpected bytes after the check byte.
+
+=== 2. vivo/PD2454 漏装 android.hardware.nfc-service ===
+devices/manifest/configs/vivo/PD2454/PD2454-android15/hardware/config.json: 缺少 android.hardware.nfc
+patch.img: stat /vendor/bin/hw/android.hardware.nfc-service -> File not found
+fleet_todo_results: vivo/PD2454 nfc={status: INIT_FAIL, discovering: false, rxCommands: 0}
+
+=== 3. Treble 跨代脚本/流水线缺少 vendor_sdk 强制防线 ===
+out/devices/tmp/patch_hal_refresh.py: detect_android_ver() 优先从目录名 (如 16-*) 取系统版本而非 /vendor/build.prop 的 ro.vendor.build.version.sdk
+09_build_vendor/execute.go: 步骤 1b 解包官方/基底 vendor 后未校验 plan.Android 与 ro.vendor.build.version.sdk/ro.vndk.version 一致性

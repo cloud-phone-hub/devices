@@ -1,0 +1,11 @@
+=== 失败现场 1：OnePlus CPH2767 / OPPO CPH2797 80% 充电弹窗抢焦点 ===
+mCurrentFocus=Window{d6654c7 u0 com.oplus.battery}
+ChargerTechnology: -1 / UsbHwStatus: -1 / BatteryHwStatus: -1 / BatteryIcStatus: -1
+CPH2767: E OplusBatteryServiceFeature: ICharger getPsyBatteryNotify failed, err = android.os.RemoteException: Method getPsyBatteryNotify is unimplemented.
+CPH2797: Service vendor.oplus.hardware.charger.ICharger/default: not found / D OplusBatteryServiceFeature: getIChargerService fail
+
+=== 失败现场 2：fstab overlay 含已剔除分区 /my_preload/* 致 /product/lib64 叠加失败 ===
+[    6.995982] overlayfs: failed to resolve '/my_preload/lib64': -2
+[    6.999506] init: [libfs_mgr] Failed to mount ... overlay-overlay at /product/lib64 ... lowerdir=/my_region/lib64:/my_preload/lib64:/my_product/lib64:...
+11-23 12:47:03.192 19946 19968 D nativeloader: Load libCombineLutJni.so using class loader ns product-clns-9: dlopen failed: library "libCombineLutJni.so" not found
+11-23 12:47:03.193 19946 19968 E AndroidRuntime: java.lang.UnsatisfiedLinkError: dlopen failed: library "libCombineLutJni.so" not found

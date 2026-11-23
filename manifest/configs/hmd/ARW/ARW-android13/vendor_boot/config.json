@@ -3,6 +3,7 @@
   "cmdline": [
     "androidboot.board_device=ARP",
     "androidboot.product.hardware.sku=Arrow_0AIN",
+    "androidboot.product.model.display=TA-1635",
     "androidboot.secureboot=1",
     "androidboot.slot=a",
     "androidboot.veritymode.managed=yes"

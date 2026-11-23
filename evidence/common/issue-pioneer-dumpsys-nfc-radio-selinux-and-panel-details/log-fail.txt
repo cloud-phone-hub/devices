@@ -1,0 +1,33 @@
+=== 1. NFC（及 phone/isub/NFC HAL）服务异常（修复前，Pixel 6 #5，oriole_17-CP3A.261005.002.A1-20260905） ===
+$ dumpsys nfc
+Error with service 'nfc' while dumping: FAILED_TRANSACTION
+
+$ cmd nfc status
+cmd: Failure calling service nfc: Failed transaction (2147483646)
+
+$ dumpsys phone
+Error with service 'phone' while dumping: FAILED_TRANSACTION
+
+$ dumpsys isub
+Error with service 'isub' while dumping: FAILED_TRANSACTION
+
+$ dumpsys android.hardware.nfc.INfc/default
+Error with service 'android.hardware.nfc.INfc/default' while dumping: FAILED_TRANSACTION
+
+核心 AVC 拒绝日志（logcat -b all）：
+11-22 21:39:56.212  1716  1716 I auditd  : type=1400 audit(0.0:377): avc:  denied  { use } for  comm="dumpsys" path="pipe:[35366]" dev="pipefs" ino=35366 scontext=u:r:nfc:s0 tcontext=u:r:pioneer:s0 tclass=fd permissive=0
+
+管理台 API (/api/daemon/instance/config) 返回：
+{
+  "supported": true,
+  "enabled": null,
+  "guestState": "服务异常 (FAILED_TRANSACTION)",
+  "hostAttached": true,
+  "hostStatus": { "connected": true, "initialized": true, "discovering": true, "rxCommands": 56, "txResponses": 82 }
+}
+
+=== 2. 前端「双卡双待与基带高级配置」展开后自动折叠 ===
+agent/web/src/modules/daemon/config-panel.ts:
+- startInstanceConfigPolling() 每 8 秒静默调用 refreshInstanceConfig(true) -> renderConfigPanel(snap)
+- renderConfigPanel() 整体替换 #vnc-cfg-body 的 innerHTML
+- <details class="cfg-details">（双卡双待与基带高级配置）未保存 open 状态，导致每次轮询刷新立即重置折叠，且未保存的下拉框选择也会被重置

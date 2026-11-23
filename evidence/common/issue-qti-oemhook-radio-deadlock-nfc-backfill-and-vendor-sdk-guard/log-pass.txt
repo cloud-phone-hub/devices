@@ -1,0 +1,41 @@
+=== 1. 高通 PAKALA/KAANAPALI/MILOS Radio 全 5 款机型冷启 PASS ===
+[1] meizu/Meizu22 (A16, vendor_sdk=35, QCOM sun/PAKALA):
+    gsm.sim.state=LOADED,ABSENT | gsm.operator.alpha=中国联通, | 46001 | LTE,Unknown
+    Phone Id=0: mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE)
+    TelephonyDebugService: sMadeDefaults=true, mPreferredDataPhoneId=0, mPreferredDataSubId=1 (秒返)
+    QtiOemHookAidl: oemHookRawResponse: serial no: 1010..1017 error: 6length=0
+
+[2] asus/ASUSAI2501 (A15, vendor_sdk=35, QCOM sun/PAKALA):
+    gsm.sim.state=LOADED,ABSENT | gsm.operator.alpha=中国联通, | 46001 | LTE,Unknown
+    Phone Id=0: mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE)
+    TelephonyDebugService: sMadeDefaults=true, mPreferredDataPhoneId=0 (秒返)
+
+[3] nothing/Asteroids (A16, vendor_sdk=34, QCOM volcano/MILOS):
+    gsm.sim.state=LOADED,ABSENT | gsm.operator.alpha=中国联通, | 46001 | LTE,Unknown
+    Phone Id=0: mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE)
+    TelephonyDebugService: sMadeDefaults=true, mPreferredDataPhoneId=0 (秒返)
+
+[4] redmagic/NX809J (A16, vendor_sdk=36, QCOM canoe/KAANAPALI):
+    gsm.sim.state=LOADED,ABSENT | gsm.operator.alpha=中国联通, | 46001 | LTE,Unknown
+    Phone Id=0: mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE)
+    TelephonyDebugService: sMadeDefaults=true, mPreferredDataPhoneId=0 (秒返)
+
+[5] xiaomi/popsicle (HyperOS 3 A16, vendor_sdk=36, QCOM canoe/KAANAPALI):
+    gsm.sim.state=LOADED,ABSENT | gsm.operator.alpha=中国联通, | 46001 | LTE,Unknown
+    Phone Id=0: mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE)
+    TelephonyDebugService: sMadeDefaults=true, mPreferredDataPhoneId=0, mPreferredDataSubId=1 (秒返)
+
+=== 2. vivo/PD2454 补装 android.hardware.nfc-service 冷启闭环 PASS ===
+ps: nfc 536 android.hardware.nfc-service | nfc 5269 com.android.nfc
+service list: android.hardware.nfc.INfc/default | nfc
+dumpsys nfc: mState=on, mEnableHostRouting=true
+GET /api/nfc/status (before): connected=true, initialized=true, discovering=true, cardPresent=false, rxCommands=138, txResponses=177
+POST /api/nfc/tap: ok=true, cardPresent=true, cardUid=04112233445566, cardPayload=cdh-pd2454-nfc-ok
+GET /api/nfc/status (after 2s): rxCommands=189 (+51), txResponses=280 (+103), apduCount=43
+POST /api/nfc/remove: ok=true, cardPresent=false
+
+=== 3. 全仓 45/45 盘集按真实 vendor_sdk 刷新与单测全绿 ===
+patch_hal_refresh.py --only radio out/devices/dist/*/*/*/patch.img: 45/45 [OK] (全数通过 ea_get -V security.selinux 回读与 e2fsck -fn)
+go test ./modules/pipeline/stages/02_prepare ./modules/pipeline/stages/09_build_vendor -count=1:
+  ok cloud-phone-hub/agent/modules/pipeline/stages/02_prepare 1.485s
+  ok cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor 1.424s

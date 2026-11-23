@@ -97,6 +97,159 @@ void *eglCreateContext(void *dpy, void *config, void *share_context,
 }
 #endif
 
+#ifdef CDH_HAS_EGLCHOOSECONFIG
+void *cdh_ovr_eglChooseConfig __attribute__((visibility("hidden")));
+typedef unsigned int (*cdh_eglChooseConfig_t)(void *, const int *, void **, int, int *);
+
+#ifndef CDH_EGL_NONE
+#define CDH_EGL_NONE 0x3038
+#endif
+#define CDH_EGL_ALPHA_SIZE 0x3021
+#define CDH_EGL_BLUE_SIZE 0x3022
+#define CDH_EGL_GREEN_SIZE 0x3023
+#define CDH_EGL_RED_SIZE 0x3024
+#define CDH_EGL_CONFIG_CAVEAT 0x3027
+#define CDH_EGL_NATIVE_VISUAL_ID 0x302E
+#define CDH_EGL_SAMPLES 0x3031
+#define CDH_EGL_SAMPLE_BUFFERS 0x3032
+#define CDH_EGL_SURFACE_TYPE 0x3033
+#define CDH_EGL_RENDERABLE_TYPE 0x3040
+#define CDH_EGL_CONFORMANT 0x3042
+#define CDH_EGL_RECORDABLE_ANDROID 0x3142
+#define CDH_EGL_FRAMEBUFFER_TARGET_ANDROID 0x3147
+#define CDH_EGL_COLOR_COMPONENT_TYPE_EXT 0x3339
+#define CDH_EGL_WINDOW_BIT 0x0004
+#define CDH_EGL_PBUFFER_BIT 0x0001
+#define CDH_EGL_OPENGL_ES2_BIT 0x0004
+
+__attribute__((visibility("default")))
+unsigned int eglChooseConfig(void *dpy, const int *attrib_list, void **configs,
+                             int config_size, int *num_config) {
+    if (!cdh_ovr_eglChooseConfig) {
+        if (num_config) *num_config = 0;
+        return 0;
+    }
+    cdh_eglChooseConfig_t orig = (cdh_eglChooseConfig_t)cdh_ovr_eglChooseConfig;
+    int local_count = 0;
+    int *cnt_ptr = num_config ? num_config : &local_count;
+    unsigned int ok = orig(dpy, attrib_list, configs, config_size, cnt_ptr);
+    if (ok && *cnt_ptr > 0) {
+        return ok;
+    }
+    if (attrib_list != NULL) {
+        // 第 1 级回退：HyperOS 3 (Xiaomi popsicle) 等相机请求 10-bit / FP16 / 广色域 /
+        // EGL_RECORDABLE_ANDROID / 多重采样属性在 VirGL/Mesa 下返回 0 个 EGLConfig，
+        // 触发 MIGLUtil Config chosen: R0 G0 B0 A0 -> EGL_BAD_CONFIG (12293)。
+        // 这里将高色深收窄为 8-bit，剔除扩展/采样约束后重试。
+        int sanitized[64];
+        int out_idx = 0;
+        for (int i = 0; i < 60 && attrib_list[i] != CDH_EGL_NONE; i += 2) {
+            int key = attrib_list[i];
+            int val = attrib_list[i + 1];
+            if (key == CDH_EGL_COLOR_COMPONENT_TYPE_EXT ||
+                key == CDH_EGL_RECORDABLE_ANDROID ||
+                key == CDH_EGL_FRAMEBUFFER_TARGET_ANDROID ||
+                key == CDH_EGL_SAMPLES ||
+                key == CDH_EGL_SAMPLE_BUFFERS ||
+                key == CDH_EGL_CONFORMANT ||
+                key == CDH_EGL_CONFIG_CAVEAT ||
+                key == CDH_EGL_NATIVE_VISUAL_ID) {
+                continue;
+            }
+            if ((key == CDH_EGL_RED_SIZE || key == CDH_EGL_GREEN_SIZE ||
+                 key == CDH_EGL_BLUE_SIZE || key == CDH_EGL_ALPHA_SIZE) &&
+                val > 8) {
+                val = 8;
+            }
+            if (key == CDH_EGL_RENDERABLE_TYPE) {
+                val = CDH_EGL_OPENGL_ES2_BIT;
+            }
+            if (key == CDH_EGL_SURFACE_TYPE) {
+                int masked = val & (CDH_EGL_WINDOW_BIT | CDH_EGL_PBUFFER_BIT);
+                val = masked ? masked : CDH_EGL_WINDOW_BIT;
+            }
+            if (out_idx + 3 < 64) {
+                sanitized[out_idx++] = key;
+                sanitized[out_idx++] = val;
+            }
+        }
+        sanitized[out_idx] = CDH_EGL_NONE;
+        *cnt_ptr = 0;
+        ok = orig(dpy, sanitized, configs, config_size, cnt_ptr);
+        if (ok && *cnt_ptr > 0) {
+            return ok;
+        }
+    }
+    // 第 2 级兜底：标准 RGBA8888 + ES2 窗口配置
+    const int fallback_rgba8[] = {
+        CDH_EGL_SURFACE_TYPE, CDH_EGL_WINDOW_BIT,
+        CDH_EGL_RENDERABLE_TYPE, CDH_EGL_OPENGL_ES2_BIT,
+        CDH_EGL_RED_SIZE, 8,
+        CDH_EGL_GREEN_SIZE, 8,
+        CDH_EGL_BLUE_SIZE, 8,
+        CDH_EGL_ALPHA_SIZE, 8,
+        CDH_EGL_NONE,
+    };
+    *cnt_ptr = 0;
+    return orig(dpy, fallback_rgba8, configs, config_size, cnt_ptr);
+}
+#endif
+
+#ifdef CDH_HAS_EGLCREATEWINDOWSURFACE
+void *cdh_ovr_eglCreateWindowSurface __attribute__((visibility("hidden")));
+typedef void *(*cdh_eglCreateWindowSurface_t)(void *, void *, void *, const int *);
+
+#ifndef CDH_EGL_NONE
+#define CDH_EGL_NONE 0x3038
+#endif
+#define CDH_EGL_RENDER_BUFFER 0x3086
+#define CDH_EGL_GL_COLORSPACE_KHR 0x309D
+#define CDH_EGL_SURFACE_PROTECTED_EXT 0x32C0
+#define CDH_EGL_SMPTE2086_MIN 0x3341
+#define CDH_EGL_SMPTE2086_MAX 0x334A
+#define CDH_EGL_CTA861_3_MAX_CONTENT 0x3360
+#define CDH_EGL_CTA861_3_MAX_FRAME 0x3361
+
+__attribute__((visibility("default")))
+void *eglCreateWindowSurface(void *dpy, void *config, void *win,
+                             const int *attrib_list) {
+    if (!cdh_ovr_eglCreateWindowSurface) {
+        return NULL;
+    }
+    cdh_eglCreateWindowSurface_t orig =
+        (cdh_eglCreateWindowSurface_t)cdh_ovr_eglCreateWindowSurface;
+    void *surf = orig(dpy, config, win, attrib_list);
+    if (surf != NULL || attrib_list == NULL) {
+        return surf;
+    }
+    // 剔除广色域/HDR 元数据/受保护内容等 Mesa VirGL 不支持属性后重试
+    int sanitized[64];
+    int out_idx = 0;
+    for (int i = 0; i < 60 && attrib_list[i] != CDH_EGL_NONE; i += 2) {
+        int key = attrib_list[i];
+        int val = attrib_list[i + 1];
+        if (key == CDH_EGL_GL_COLORSPACE_KHR ||
+            key == CDH_EGL_SURFACE_PROTECTED_EXT ||
+            key == CDH_EGL_RENDER_BUFFER ||
+            (key >= CDH_EGL_SMPTE2086_MIN && key <= CDH_EGL_SMPTE2086_MAX) ||
+            key == CDH_EGL_CTA861_3_MAX_CONTENT ||
+            key == CDH_EGL_CTA861_3_MAX_FRAME) {
+            continue;
+        }
+        if (out_idx + 3 < 64) {
+            sanitized[out_idx++] = key;
+            sanitized[out_idx++] = val;
+        }
+    }
+    sanitized[out_idx] = CDH_EGL_NONE;
+    surf = orig(dpy, config, win, out_idx > 0 ? sanitized : NULL);
+    if (surf != NULL) {
+        return surf;
+    }
+    return orig(dpy, config, win, NULL);
+}
+#endif
+
 #ifdef CDH_HAS_EGLGETPROCADDRESS
 void *cdh_ovr_eglGetProcAddress __attribute__((visibility("hidden")));
 typedef void *(*cdh_eglGetProcAddress_t)(const char *);
@@ -119,7 +272,8 @@ void *eglGetProcAddress(const char *procname) {
         if (strcmp(procname, "glGetString") == 0 ||
             strcmp(procname, "glGetStringi") == 0 ||
             strcmp(procname, "glGetIntegerv") == 0 ||
-            strcmp(procname, "glShaderSource") == 0) {
+            strcmp(procname, "glShaderSource") == 0 ||
+            strcmp(procname, "glFramebufferTexture2D") == 0) {
             void *fn = cdh_lookup_gles2_ovr(procname);
             if (fn) {
                 return fn;
@@ -128,6 +282,16 @@ void *eglGetProcAddress(const char *procname) {
 #ifdef CDH_HAS_EGLCREATECONTEXT
         if (strcmp(procname, "eglCreateContext") == 0) {
             return (void *)&eglCreateContext;
+        }
+#endif
+#ifdef CDH_HAS_EGLCHOOSECONFIG
+        if (strcmp(procname, "eglChooseConfig") == 0) {
+            return (void *)&eglChooseConfig;
+        }
+#endif
+#ifdef CDH_HAS_EGLCREATEWINDOWSURFACE
+        if (strcmp(procname, "eglCreateWindowSurface") == 0) {
+            return (void *)&eglCreateWindowSurface;
         }
 #endif
         if (strcmp(procname, "eglGetProcAddress") == 0) {
@@ -148,6 +312,9 @@ void *cdh_ovr_glGetStringi __attribute__((visibility("hidden")));
 void *cdh_ovr_glGetIntegerv __attribute__((visibility("hidden")));
 #ifdef CDH_HAS_GLSHADERSOURCE
 void *cdh_ovr_glShaderSource __attribute__((visibility("hidden")));
+#endif
+#ifdef CDH_HAS_GLFRAMEBUFFERTEXTURE2D
+void *cdh_ovr_glFramebufferTexture2D __attribute__((visibility("hidden")));
 #endif
 
 #define CDH_GL_VENDOR 0x1F00
@@ -582,6 +749,115 @@ void glShaderSource(unsigned int shader, int count, const char *const *string, c
     }
     real_fn(shader, count, patched.ptrs, length ? patched.lens : NULL);
     cdh_free_patched_sources(&patched);
+}
+#endif
+
+#ifdef CDH_HAS_GLFRAMEBUFFERTEXTURE2D
+// 部分高通/努比亚相机（如 RedMagic NX809J 的 HardwareBufferRenderer）在离屏辅助通道
+// 依赖 GL_EXT_YUV_target，将 GL_TEXTURE_EXTERNAL_OES (0x8D65) 纹理直接挂到 FBO；
+// Mesa VirGL 不支持外部纹理作为 FBO 颜色附件，原样调用会留下 GL_INVALID_ENUM 并导致
+// glCheckFramebufferStatus 返回 GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT (0x8CD7) 崩溃。
+// 当检测到底层拒绝 GL_TEXTURE_EXTERNAL_OES 挂载时，清掉该错误并改挂线程本地兜底
+// GL_TEXTURE_2D (RGBA8) 纹理，确保离屏辅助 FBO 完整、主屏幕 FBO 0 预览零崩溃正常出画。
+typedef void (*cdh_glFramebufferTexture2D_t)(unsigned int, unsigned int, unsigned int, unsigned int, int);
+typedef unsigned int (*cdh_glGetError_t)(void);
+typedef unsigned int (*cdh_glCheckFramebufferStatus_t)(unsigned int);
+typedef void (*cdh_glGenTextures_t)(int, unsigned int *);
+typedef unsigned char (*cdh_glIsTexture_t)(unsigned int);
+typedef void (*cdh_glBindTexture_t)(unsigned int, unsigned int);
+typedef void (*cdh_glTexImage2D_t)(unsigned int, int, int, int, int, int, unsigned int, unsigned int, const void *);
+typedef void (*cdh_glTexParameteri_t)(unsigned int, unsigned int, int);
+
+#define CDH_GL_TEXTURE_2D 0x0DE1u
+#define CDH_GL_TEXTURE_EXTERNAL_OES 0x8D65u
+#define CDH_GL_TEXTURE_BINDING_2D 0x8069u
+#define CDH_GL_RGBA 0x1908u
+#define CDH_GL_UNSIGNED_BYTE 0x1401u
+#define CDH_GL_TEXTURE_MIN_FILTER 0x2801u
+#define CDH_GL_TEXTURE_MAG_FILTER 0x2800u
+#define CDH_GL_LINEAR 0x2601
+#define CDH_GL_FRAMEBUFFER_COMPLETE 0x8CD5u
+
+static void *cdh_gles2_base_handle;
+static cdh_glGetError_t cdh_base_glGetError;
+static cdh_glCheckFramebufferStatus_t cdh_base_glCheckFramebufferStatus;
+static cdh_glGenTextures_t cdh_base_glGenTextures;
+static cdh_glIsTexture_t cdh_base_glIsTexture;
+static cdh_glBindTexture_t cdh_base_glBindTexture;
+static cdh_glTexImage2D_t cdh_base_glTexImage2D;
+static cdh_glTexParameteri_t cdh_base_glTexParameteri;
+static int cdh_gles2_fb_helpers_ready;
+
+static void cdh_init_fb_helpers(void) {
+    if (cdh_gles2_fb_helpers_ready) {
+        return;
+    }
+    cdh_gles2_fb_helpers_ready = 1;
+#ifdef CDH_BASE_PATH
+    cdh_gles2_base_handle = dlopen(CDH_BASE_PATH, RTLD_NOLOAD | RTLD_LOCAL);
+    if (!cdh_gles2_base_handle) {
+        cdh_gles2_base_handle = dlopen(CDH_BASE_PATH, RTLD_NOW | RTLD_LOCAL);
+    }
+#endif
+    if (!cdh_gles2_base_handle) {
+        return;
+    }
+    cdh_base_glGetError = (cdh_glGetError_t)dlsym(cdh_gles2_base_handle, "glGetError");
+    cdh_base_glCheckFramebufferStatus =
+        (cdh_glCheckFramebufferStatus_t)dlsym(cdh_gles2_base_handle, "glCheckFramebufferStatus");
+    cdh_base_glGenTextures = (cdh_glGenTextures_t)dlsym(cdh_gles2_base_handle, "glGenTextures");
+    cdh_base_glIsTexture = (cdh_glIsTexture_t)dlsym(cdh_gles2_base_handle, "glIsTexture");
+    cdh_base_glBindTexture = (cdh_glBindTexture_t)dlsym(cdh_gles2_base_handle, "glBindTexture");
+    cdh_base_glTexImage2D = (cdh_glTexImage2D_t)dlsym(cdh_gles2_base_handle, "glTexImage2D");
+    cdh_base_glTexParameteri = (cdh_glTexParameteri_t)dlsym(cdh_gles2_base_handle, "glTexParameteri");
+}
+
+static __thread unsigned int cdh_ext_fbo_fallback_tex;
+
+__attribute__((visibility("default")))
+void glFramebufferTexture2D(unsigned int target, unsigned int attachment,
+                            unsigned int textarget, unsigned int texture, int level) {
+    if (!cdh_ovr_glFramebufferTexture2D) {
+        return;
+    }
+    cdh_glFramebufferTexture2D_t real_fn =
+        (cdh_glFramebufferTexture2D_t)cdh_ovr_glFramebufferTexture2D;
+    real_fn(target, attachment, textarget, texture, level);
+    if (textarget != CDH_GL_TEXTURE_EXTERNAL_OES || texture == 0) {
+        return;
+    }
+    cdh_init_fb_helpers();
+    if (!cdh_base_glGetError || !cdh_base_glCheckFramebufferStatus ||
+        !cdh_base_glGenTextures || !cdh_base_glIsTexture ||
+        !cdh_base_glBindTexture || !cdh_base_glTexImage2D ||
+        !cdh_base_glTexParameteri || !cdh_ovr_glGetIntegerv) {
+        return;
+    }
+    unsigned int err = cdh_base_glGetError();
+    unsigned int status = cdh_base_glCheckFramebufferStatus(target);
+    if (err == 0 && status == CDH_GL_FRAMEBUFFER_COMPLETE) {
+        return;
+    }
+    while (cdh_base_glGetError() != 0) {}
+
+    int prev_tex2d = 0;
+    ((cdh_glGetIntegerv_t)cdh_ovr_glGetIntegerv)(CDH_GL_TEXTURE_BINDING_2D, &prev_tex2d);
+    if (cdh_ext_fbo_fallback_tex == 0 || !cdh_base_glIsTexture(cdh_ext_fbo_fallback_tex)) {
+        cdh_ext_fbo_fallback_tex = 0;
+        cdh_base_glGenTextures(1, &cdh_ext_fbo_fallback_tex);
+        if (cdh_ext_fbo_fallback_tex != 0) {
+            cdh_base_glBindTexture(CDH_GL_TEXTURE_2D, cdh_ext_fbo_fallback_tex);
+            cdh_base_glTexParameteri(CDH_GL_TEXTURE_2D, CDH_GL_TEXTURE_MIN_FILTER, CDH_GL_LINEAR);
+            cdh_base_glTexParameteri(CDH_GL_TEXTURE_2D, CDH_GL_TEXTURE_MAG_FILTER, CDH_GL_LINEAR);
+            cdh_base_glTexImage2D(CDH_GL_TEXTURE_2D, 0, (int)CDH_GL_RGBA, 64, 64, 0,
+                                  CDH_GL_RGBA, CDH_GL_UNSIGNED_BYTE, NULL);
+            cdh_base_glBindTexture(CDH_GL_TEXTURE_2D, (unsigned int)prev_tex2d);
+        }
+    }
+    if (cdh_ext_fbo_fallback_tex != 0) {
+        real_fn(target, attachment, CDH_GL_TEXTURE_2D, cdh_ext_fbo_fallback_tex, 0);
+        while (cdh_base_glGetError() != 0) {}
+    }
 }
 #endif
 #endif  // CDH_HAS_GLGETSTRING

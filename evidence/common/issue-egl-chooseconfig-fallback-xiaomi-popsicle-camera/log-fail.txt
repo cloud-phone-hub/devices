@@ -1,0 +1,8 @@
+11-23 09:53:51.994 13049 15440 I MCAM_MIGLUtil: Config chosen: R0 G0 B0 A0 D0 S0 RT0
+11-23 09:53:51.994 13049 15440 E MCAM_CRE_MIEGL: Failed to create EGLContext: 12293
+11-23 09:53:51.995 13049 15440 E AndroidRuntime: FATAL EXCEPTION: PreviewRenderEngine
+11-23 09:53:51.995 13049 15440 E AndroidRuntime: Process: com.android.camera, PID: 13049
+11-23 09:53:51.995 13049 15440 E AndroidRuntime: java.lang.RuntimeException: Failed to create window surface. error:12293
+11-23 09:53:51.995 13049 15440 E AndroidRuntime: 	at com.xiaomi.gl.MIGLUtil.checkEglSurface(Unknown Source:21)
+11-23 09:53:51.995 13049 15440 E AndroidRuntime: 	at Uk.d.<init>(Unknown Source:23)
+11-23 09:53:51.995 13049 15440 E AndroidRuntime: 	at E5.x.run(Unknown Source:80)

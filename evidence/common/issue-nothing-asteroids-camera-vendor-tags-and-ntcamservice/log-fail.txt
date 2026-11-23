@@ -1,0 +1,21 @@
+=== 修复前故障现象（Nothing/Asteroids，A16，vendor_sdk=34） ===
+1. com.nothing.camera 主崩溃（首帧预览回调到达后立即闪退）：
+11-23 16:52:56.392  7532  7572 E CAMap_BurstContinuousShot: java.lang.IllegalArgumentException: Could not find tag for key 'org.quic.camera.BurstFPS.isBurstShotSupported')
+11-23 16:52:56.407  7532  7572 E CAMap_SettingApplier: java.lang.IllegalArgumentException: Could not find tag for key 'com.nothing.camera.glyphlight.enable')
+11-23 16:52:56.598  7532  7624 E AndroidRuntime: FATAL EXCEPTION: preview-frame-process-thread
+11-23 16:52:56.598  7532  7624 E AndroidRuntime: Process: com.nothing.camera, PID: 7532
+11-23 16:52:56.598  7532  7624 E AndroidRuntime: java.lang.IllegalArgumentException: Could not find tag for key 'com.nothing.camera.sr.enable')
+	at android.hardware.camera2.impl.CameraMetadataNative.nativeGetTagFromKeyLocal(Native Method)
+	at android.hardware.camera2.CaptureResult.get(CaptureResult.java:322)
+	at com.nothing.camera.mode.NcfPhotoMode$2.onCaptureCompleted(NcfPhotoMode.java:1615)
+
+2. 伴生崩溃（com.camera.ufs.service / UFSManager）：
+11-23 16:52:56.527   243   243 E SELinux : avc:  denied  { find } for pid=7598 uid=10227 name=vendor.noth.hardware.camera.INtCamService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:vendor_hal_noth_camera_service:s0 tclass=service_manager permissive=0
+11-23 16:52:56.552  7598  7598 E CAMap_UFSManager: [UFSManager] connectNtCameraServiceLocked:219  failed get INtCamService binder
+11-23 16:52:56.718  7598  7598 E AndroidRuntime: Caused by: java.lang.NullPointerException: Attempt to invoke interface method 'void vendor.noth.hardware.camera.INtCamSession.setParameters(java.lang.String)' on a null object reference
+	at com.nothing.algolib.cameraufs.UFSManager.setParameters(UFSManager.java:792)
+
+3. 排查中间踩坑（VendorTagDescriptor 前缀截断）：
+首次按末级点拆分 94 个子 section 时，`com.nothing.camera.capture` 成为 `com.nothing.camera.captureNumber` 的最长前缀，导致 AOSP VendorTagDescriptor::lookupTag 把键名误截为 `umber`：
+11-23 17:00:52.402  7143  7398 E VendorTagDescriptor: lookupTag: Tag name 'umber' does not exist.
+11-23 17:00:52.402  7143  7398 E AndroidRuntime: java.lang.IllegalArgumentException: Could not find tag for key 'com.nothing.camera.captureNumber')

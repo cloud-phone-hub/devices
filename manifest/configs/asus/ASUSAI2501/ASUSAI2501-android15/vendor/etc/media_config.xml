@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ASUS ROG Phone 9 Pro (asus/ASUSAI2501) Codec2 Store 实例与组件登记（rank=1 确保软解优先，且保证每个 store 非空） -->
 <media-c2-config>
-    <instance binary="/vendor/bin/vendor.qti.hardware.c2pa-aidl-service-qti" store="default2"/>
-    <instance binary="/vendor/bin/vendor.qti.media.c2@1.0-service" store="default2"/>
-    <instance binary="/vendor/bin/vendor.qti.media.c2audio@1.0-service" store="default2"/>
+    <instance binary="android.hardware.media.c2-mediatek" store="default1"/>
+    <instance binary="vendor.dolby.media.c2-default-service-dax" store="default9"/>
+    <instance binary="vendor.qti.media.c2@1.0-service" store="default2"/>
+    <instance binary="vendor.qti.media.c2audio@1.0-service" store="default2"/>
+    <component store="default1" name="c2.qti.avc.decoder" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default9" name="c2.dolby.eac3.decoder" kind="decoder" domain="audio" media-type="audio/eac3" rank="1" aliases="" profiles="" levels=""/>
     <component store="default2" name="c2.qti.avc.decoder" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="" profiles="" levels=""/>
     <component store="default2" name="c2.qti.avc.decoder.secure" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="" profiles="" levels=""/>
     <component store="default2" name="c2.qti.hevc.decoder" kind="decoder" domain="video" media-type="video/hevc" rank="1" aliases="" profiles="" levels=""/>

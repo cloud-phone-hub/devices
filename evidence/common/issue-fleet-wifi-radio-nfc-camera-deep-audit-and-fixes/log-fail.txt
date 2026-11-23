@@ -1,0 +1,34 @@
+=== 1. 全仓 A14/A15/A16 相机 HAL 自杀 (gralloc-mapper is missing) ===
+Abort message: 'gralloc-mapper is missing'
+avc: denied { find } scontext=u:r:hal_camera_default:s0 tcontext=u:object_r:hal_graphics_allocator_service:s0 tclass=service_manager permissive=0
+
+=== 2. 16 个 MTK 盘集被错刷 AOSP Radio HAL 致 SIM ABSENT ===
+redmi/gold: gsm.sim.state=ABSENT,ABSENT (缺少 IMtkRadioExSim 等 18 个 MTK 扩展服务)
+
+=== 3. 全仓 6.12 (+ 部分 5.15/6.1) 机型 5GHz WiFi 无法连接 ===
+6.12 构建卷 cdh-kernel-6.12-cdh-9db5770c1760 内 drivers/net/wireless/virtual/mac80211_hwsim.c: NO rates_5g
+oppo/CPH2797, oneplus/CPH2767, honor/chora, redmagic/NX809J: Wifi is not connected (wpa_supplicant 5GHz 速率集校验失败)
+
+=== 4. OPlus 系相机 (OPPO CPH2797 等 4 台) SELinux 拒绝访问自身数据目录 ===
+avc: denied { getattr } for comm="om.oplus.camera" path="/data/data/com.oplus.camera" scontext=u:r:opluscamera_app:s0 tcontext=u:object_r:opluscamera_app_data_file:s0 tclass=dir permissive=0
+android.database.sqlite.SQLiteCantOpenDatabaseException: Cannot open database (code 14 SQLITE_CANTOPEN): Permission denied '/data/user/0/com.oplus.camera/databases/mode_data.db'
+
+=== 5. Meizu 22 / Samsung pa3q 原生相机硬编码逻辑多摄 ID 缺失 ===
+Meizu 22: E MzCam_CameraCtlV2: open fail-Main :getCameraCharacteristics:1339: Unable to retrieve camera characteristics for unknown device 4: No such file or directory (-2)
+Samsung pa3q: java.lang.IllegalArgumentException: There is no capability for : 20 (CapabilityProvider.getCapability)
+
+=== 6. Treble 跨代 vendor_sdk=34 (Android 14) 跑 A15/A16 机型 HAL 动态链接崩溃 ===
+Nothing Asteroids (ro.vendor.build.version.sdk=34, system=A16):
+CANNOT LINK EXECUTABLE "/vendor/bin/hw/android.hardware.graphics.allocator-service.minigbm": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz"
+CANNOT LINK EXECUTABLE "/vendor/bin/hw/android.hardware.radio-service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz"
+CANNOT LINK EXECUTABLE "/vendor/bin/hw/android.hardware.nfc-service": cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz"
+(boot_timeout_180s)
+
+=== 7. 其余实测厂商原生相机/Radio/NFC 个案故障日志摘录 ===
+- Samsung pa3q (突破 ID 20 后): SemCameraCharacteristics: CameraCharacteristics.Key(samsung.android.scaler.availablePreviewStreamConfigurations) is not supported -> PreviewManagerImpl.changePreviewSurfaceSize NullPointerException
+- Meizu 22 (突破 ID 4 后切人像模式): CameraDevice-JV-4: checkPhysicalCameraId:1077: Camera 4: Camera doesn't support physicalCameraId 0 -> onConfigureFailed
+- Xiaomi popsicle (HyperOS 3): com.xiaomi.gl.MIGLUtil.checkEglSurface: Failed to create window surface. error:12293 (EGL_BAD_CONFIG)
+- Nothing Asteroids: CameraMetadataNative: Could not find tag for key 'com.nothing.camera.sr.enable' + UFSManager NullPointerException on vendor.noth.hardware.camera.INtCamSession
+- Motorola aito: com.motorola.camera.mcf.McfException: Could not start (PhotoMode.setupMcf)
+- vivo PD2454: ls /vendor/bin/hw/*nfc*: No such file or directory; media.vivocamera 注册而 media.camera 未注册
+- QCOM PAKALA/KAANAPALI/MILOS (Meizu22/ASUSAI2501/NX809J/Asteroids): mVoiceRegState=3(POWER_OFF), gsm.sim.state=,ABSENT

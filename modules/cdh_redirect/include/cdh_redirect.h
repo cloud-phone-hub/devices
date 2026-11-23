@@ -20,6 +20,7 @@
 #ifndef _CDH_REDIRECT_H
 #define _CDH_REDIRECT_H
 
+#include <linux/bits.h>
 #include <linux/cred.h>
 #include <linux/sched.h>
 #include <linux/types.h>
@@ -94,6 +95,13 @@ const char *cdh_gpu_maps_builtin_virt(int idx);
 bool cdh_maps_has_real_file(const char *path);
 /* 判断原厂 /vendor 与载体 /mnt/vendorpatch/vendor 的图形 NDK 代际是否一致。 */
 bool cdh_maps_sphal_vndk_compat(void);
+/* 载体分区 OpenCL 桩库存在掩码位定义。 */
+#define CDH_CARRIER_OPENCL_64		BIT(0)
+#define CDH_CARRIER_OPENCL_PIXEL_64	BIT(1)
+#define CDH_CARRIER_OPENCL_32		BIT(2)
+#define CDH_CARRIER_OPENCL_PIXEL_32	BIT(3)
+/* 判断载体分区是否提供指定的 OpenCL 兼容桩库（避免未提供该库的机型落空 ENOENT）。 */
+bool cdh_maps_has_carrier_opencl(unsigned int bit);
 
 int cdh_namei_hook_init(void);
 void cdh_namei_hook_exit(void);

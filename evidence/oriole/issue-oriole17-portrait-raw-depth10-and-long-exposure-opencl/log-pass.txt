@@ -1,0 +1,31 @@
+=== 冷启无热挂终验日志（2026-11-22，Pixel 6 #5，oriole_17-CP3A.261005.002.A1-20260905） ===
+镜像版本：
+- 模块配方: 6.1-cdh-e12cb389986b（含 cdh_redirect.ko 载体 OpenCL 桩库 SP-HAL 放行）
+- patch.img: sha256 4fd5a8d80a74（含新 camera HAL RAW_DEPTH10 与 43864 B libOpenCL*.so 桩库）
+- vda.img:   vda-9f488adfa426
+
+1. 启动与无热挂确认：
+   sys.boot_completed = 1
+   全程无手工 mount --bind
+
+2. GoogleCamera 连续切换全流程（Long Exposure -> Portrait -> Long Exposure -> 按快门 -> Action Pan）：
+   START_PID=4057
+   PORTRAIT_PID=4057
+   LE_PID=4057
+   AFTER_SHUTTER_PID=4057
+   AP_PID=4057
+   PID 全程恒定为 4057，零重启、零闪退。
+
+3. Portrait 深度流命中日志：
+   11-22 21:46:25.741  4057  4218 W CAM_RAW_DEPTH10w2032h15: Tag RAW_DEPTH10w2032h1536 is 2 chars longer than limit.
+   OneCamera failed to open: 0 次
+   No supported output sizes found!!: 0 次
+
+4. OpenCL 与崩溃检查：
+   logcat -b crash -d | grep -i GoogleCamera -> ZERO_GCAM_CRASH
+   libGLES_mali.so linker 告警: 0 次
+   No OpenCL platforms found: 0 次
+
+5. VNC 实屏人工审图（1088x2400）：
+   - portrait-pass.png (88781 B)：Portrait 胶囊高亮，1×/2 变焦胶囊与完整控件正常，取景框实时视频流清晰渲染。
+   - long-exposure-pass.png (91947 B)：Long Exposure 胶囊高亮，专属动态条纹快门图标、.7/1×/2 变焦胶囊与实时视频流清晰渲染。

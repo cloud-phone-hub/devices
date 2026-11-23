@@ -602,6 +602,7 @@ static const Note13VendorTagDesc kNote13VendorTagDescs[] = {
     {0xC20A0002, "com.mediatek.hmd.3rd.party.algo", "arcSoftSuperPortraitBlurStrength", TYPE_INT32},
     {0xC20A0003, "com.mediatek.hmd.3rd.party.algo", "arcSoftSuperPortraitImageOrientation", TYPE_INT32},
     {0xC20A0004, "com.mediatek.hmd.3rd.party.algo", "arcSoftSuperPortraitSpotType", TYPE_INT32},
+    {0xC20B0000, "com.sxscamera.comp", "2ndsourceflag", TYPE_INT32},
 };
 static const size_t kNote13VendorTagDescCount =
     sizeof(kNote13VendorTagDescs) / sizeof(kNote13VendorTagDescs[0]);

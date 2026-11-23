@@ -1,0 +1,49 @@
+Drop box contents: 5 entries
+Max entries: 1000
+Low priority rate limit period: 2000 ms
+Low priority tags: {data_app_wtf, keymaster, system_server_wtf, system_app_strictmode, system_app_wtf, system_server_strictmode, data_app_strictmode, netstats}
+Searching for: system_app_crash
+
+========================================
+2026-11-23 17:42:53 system_app_crash (text, 2584 bytes)
+SystemUptimeMs: 73261
+Process: com.android.camera
+PID: 4566
+UID: 10311
+Frozen: false
+Flags: 0x30d83e45
+Package: com.android.camera v40004 (11.0.011-redmagic.2605230246)
+Foreground: Yes
+Process-Runtime: 46755
+Timestamp: 2026-11-23 17:42:53.270+0800
+Build: REDMAGIC/NX809J-UN/NX809J:16/BQ2A.250705.001-BP2A.250605.031.A3/20260527.205523:user/release-keys
+Crash-Handler: com.android.internal.os.RuntimeInit$KillApplicationHandler
+Loading-Progress: 1.0
+Dropped-Count: 0
+
+java.lang.IllegalArgumentException: Could not find tag for key 'org.codeaurora.qcamera3.iso_exp_priority.iso_available_modes')
+	at android.hardware.camera2.impl.CameraMetadataNative.nativeGetTagFromKeyLocal(Native Method)
+	at android.hardware.camera2.impl.CameraMetadataNative.getBase(CameraMetadataNative.java:614)
+	at android.hardware.camera2.impl.CameraMetadataNative.get(CameraMetadataNative.java:492)
+	at android.hardware.camera2.impl.CameraMetadataNative.get(CameraMetadataNative.java:461)
+	at android.hardware.camera2.CameraCharacteristics.get(CameraCharacteristics.java:402)
+	at cn.nubia.camera.devicecontroller.AESettingHelper.<init>(AESettingHelper.java:62)
+	at cn.nubia.camera.devicecontroller.ParametersSetter.<init>(ParametersSetter.java:117)
+	at cn.nubia.camera.devicecontroller.StreamController.init(StreamController.java:199)
+	at cn.nubia.camera.normal.NormalStreamController.init(NormalStreamController.java:92)
+	at cn.nubia.camera.devicecontroller.StreamController.init(StreamController.java:170)
+	at cn.nubia.camera.normal.NormalMemberFragment.onCameraInitDone(NormalMemberFragment.java:1224)
+	at cn.nubia.camera.fragment.MemberFragment.notifyCameraInitDone(MemberFragment.java:601)
+	at cn.nubia.camera.switchers.FamilyManager.notifyCameraInitDone(FamilyManager.java:406)
+	at cn.nubia.camera.activity.ActivityBase.onCameraOpenedCallback(ActivityBase.java:499)
+	at cn.nubia.camera.activity.ActivityBase.access$600(ActivityBase.java:164)
+	at cn.nubia.camera.activity.ActivityBase$3.onCameraOpened(ActivityBase.java:326)
+	at cn.nubia.camera.devicecontroller.CameraOpener$OpenCameraThread$DeviceStateCallback.onOpened(CameraOpener.java:767)
+	at cn.nubia.cameraframework.CameraHolder$MyDeviceStateCallback.onOpened(CameraHolder.java:473)
+	at android.hardware.camera2.impl.CameraDeviceImpl$ClientStateCallback$4.run(CameraDeviceImpl.java:403)
+	at android.os.Handler.handleCallback(Handler.java:995)
+	at android.os.Handler.dispatchMessage(Handler.java:103)
+	at android.os.Looper.loopOnce(Looper.java:282)
+	at android.os.Looper.loop(Looper.java:397)
+	at android.os.HandlerThread.run(HandlerThread.java:85)
+

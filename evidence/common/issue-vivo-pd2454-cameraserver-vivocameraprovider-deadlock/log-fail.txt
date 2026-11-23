@@ -1,0 +1,11 @@
+=== 修复前故障现象（实测与反汇编铁证） ===
+1. 开机冷启 15:18:53 启动 cameraserver (PID 834)，但 service check media.camera 持续返回 not found 长达近 17 分钟，直到 15:35:50 才完成 ADD device 0 / ADD device 1 并注册 media.camera。
+2. 反汇编 /system/lib64/libcameraservice.so 确认根因：
+   - CameraService::instantiate() -> CameraService::onFirstRef() -> VivoDevice::GetInstance() -> VivoDevice::registVivoDevice() (0x3b7868..0x3b7af0)
+   - 主线程硬编码循环 100 次 (mov w24, #0x64) 调用 AServiceManager_getService("vendor.vivo.hardware.vivocameraprovider.IVivoCameraProvider/default")，Android 15 每次缺失超时 10s，累计阻塞 1000s (16 分 40 秒)。
+3. vivocameraserver (libvivocameraservice.so) 处理 com.android.camera 的 connectDevice (code 1) 时同步调用 AServiceManager_waitForService("vendor.vivo.hardware.vivocameraprovider.IVivoCameraProvider/default") 永久阻塞。
+4. 注册 IVivoCameraProvider 后，com.android.camera 依次暴露两项 vivo 专有特性校验失败：
+   - java.lang.IllegalArgumentException: Could not find tag for key 'com.vivo.chi.override.CameraType' at com.android.vcamera.core.VCameraInfo.<init>(VCameraInfo.java:60)
+   - java.lang.RuntimeException: CAMAP_ERROR:VIVO_RUNTIME_EXCEPTION physicalId 0 do not have a dummyId!!! at com.android.vcamera.mode.manager.w1.n(VModeCharacteristicsTable.java:126) (因 com.vivo.halversion bit2=4 触发 RawVifCameraDeviceImpl 强校验 4~5 个 Master_Dummy 相机)
+5. SELinux 拒绝 platform_app (com.vivo.vivo3rdalgoservice) 查找 hal_camera3rd_service / hal_cameralog_service / hal_camera_service：
+   avc: denied { find } name=vendor.vivo.hardware.vivoalgoservice.IVASAlgoProvider/default scontext=u:r:platform_app tcontext=u:object_r:hal_camera3rd_service permissive=0

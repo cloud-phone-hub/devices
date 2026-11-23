@@ -9,6 +9,7 @@ $(MODULE_NAME)-objs := \
 	cpu/cpufreq_sysfs.o \
 	meminfo/meminfo.o \
 	net/ethtool_drvinfo.o \
+	nfc/nfc_sysfs.o \
 	thermal/thermal_sysfs.o \
 	time/uptime.o \
 	uts/uts.o

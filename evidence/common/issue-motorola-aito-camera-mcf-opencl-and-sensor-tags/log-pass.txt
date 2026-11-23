@@ -1,0 +1,27 @@
+=== pids ===
+610 687 8441
+=== DCIM ===
+total 24
+-rwxrwx--- 1 u0_a487 media_rw 21530 2026-11-23 17:38 IMG_20261123_173825556.jpg
+=== /vendor/lib64/libOpenCL.so ===
+-rw-r--r-- 1 root root u:object_r:same_process_hal_file:s0  43752 2026-11-23 17:36 /mnt/vendorpatch/vendor/lib64/libOpenCL.so
+-rw-r--r-- 1 root root u:object_r:same_process_hal_file:s0  43752 2026-11-23 17:36 /vendor/lib64/libOpenCL.so
+=== dumpsys media.camera ===
+    Device 0 maps to "0"
+    Device 1 maps to "1"
+  Device 0 is closed, no client instance
+  11-23 17:38:48 : Device 1 is open. Client instance dump:
+    Client PID: 8441
+    Client package: com.motorola.camera5
+    Stream[0]: Output
+      Frames produced: 597, last timestamp: 134608896979 ns
+    Stream[1]: Output
+      Frames produced: 0, last timestamp: 0 ns
+      com.lenovo.moto.sensor.info.name (83000045): byte[25]
+      com.lenovo.moto.staticinfo.support_isp-hidl (83000069): byte[1]
+      com.lenovo.moto.staticinfo.supports_mcf (8300006d): byte[1]
+      com.lenovo.moto.staticinfo.supports_reproc (8300006f): byte[1]
+      com.lenovo.moto.sensor.info.name (83000045): byte[24]
+      com.lenovo.moto.staticinfo.support_isp-hidl (83000069): byte[1]
+      com.lenovo.moto.staticinfo.supports_mcf (8300006d): byte[1]
+      com.lenovo.moto.staticinfo.supports_reproc (8300006f): byte[1]
