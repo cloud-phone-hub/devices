@@ -272,6 +272,28 @@ ndk::ScopedAStatus CdhComposerClient::destroyVirtualDisplay(int64_t display) {
 ndk::ScopedAStatus CdhComposerClient::executeCommands(
     const std::vector<DisplayCommand>& commands,
     std::vector<CommandResultPayload>* results) {
+  // 荣耀 MagicOS 等定制 SurfaceFlinger 会在 DisplayCommand.layers 尾部追加
+  // 负数 layer ID 的私有哨兵命令（如 layer = -1 / -3）向原厂 HWC 传递扩展信号。
+  // 标准 HWC3 createLayer 仅分配非负 ID；上游 drm_hwcomposer 遇到未知 layer 会写入
+  // CommandError(EX_BAD_LAYER=3)，导致同批 ExecuteValidateDisplay 因 HasError()
+  // 提前返回并跳过本帧 RenderEngine 合成，引发 FramebufferSurface 3 槽位旧帧乒乓回放。
+  // 转发前原地剔除 layer < 0 的 OEM 私有哨兵条目；无哨兵时零开销直通。
+  for (const auto& cmd : commands) {
+    bool has_oem_sentinel = false;
+    for (const auto& lc : cmd.layers) {
+      if (lc.layer < 0) {
+        has_oem_sentinel = true;
+        break;
+      }
+    }
+    if (has_oem_sentinel) {
+      auto& mutable_layers = const_cast<std::vector<LayerCommand>&>(cmd.layers);
+      mutable_layers.erase(
+          std::remove_if(mutable_layers.begin(), mutable_layers.end(),
+                         [](const LayerCommand& lc) { return lc.layer < 0; }),
+          mutable_layers.end());
+    }
+  }
   return inner_->executeCommands(commands, results);
 }
 

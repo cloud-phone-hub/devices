@@ -1,0 +1,52 @@
+=== 1. 修复前 sun #1 (RE GLES Ganesh) human_drag 逐帧追踪（复现 48 次回跳 + 精确 3 槽位死循环） ===
+Frame 075 t= 1971.1ms (dt= 34.9ms): dy=+182px  cum_y= +1530px  <=== REVERSAL (DOWNWARD JUMP)!
+Frame 076 t= 2004.7ms (dt= 33.5ms): dy= +37px  cum_y= +1567px  <=== REVERSAL (DOWNWARD JUMP)!
+Frame 077 t= 2022.3ms (dt= 17.6ms): dy= -13px  cum_y= +1554px
+Frame 078 t= 2050.6ms (dt= 28.3ms): dy= -24px  cum_y= +1530px
+Frame 079 t= 2068.9ms (dt= 18.3ms): dy= +37px  cum_y= +1567px  <=== REVERSAL (DOWNWARD JUMP)!
+Frame 080 t= 2084.4ms (dt= 15.5ms): dy= -13px  cum_y= +1554px
+Frame 081 t= 2103.6ms (dt= 19.1ms): dy= -24px  cum_y= +1530px
+Frame 082 t= 2136.0ms (dt= 32.4ms): dy= +37px  cum_y= +1567px  <=== REVERSAL (DOWNWARD JUMP)!
+Frame 083 t= 2163.1ms (dt= 27.1ms): dy= -13px  cum_y= +1554px
+Frame 084 t= 2185.2ms (dt= 22.2ms): dy= -24px  cum_y= +1530px
+Frame 085 t= 2212.8ms (dt= 27.6ms): dy= +37px  cum_y= +1567px  <=== REVERSAL (DOWNWARD JUMP)!
+Total reversals (dy > +2px): 48
+
+全屏 PNG MD5 字节级一致历史旧帧回放证据（前期样本）：
+- Frame 003 / 010 / 017: 2ce861bf5b6d7ab9fd61f4e8023daa24
+- Frame 009 / 012 / 014 / 016: a55d6ed881cdf58a951ef3800f1ea5e1
+- Frame 013 / 015: 47a76868f62b334e8d0b516434803016
+- Frame 002 / 006: 20f0b7dd36cc6d2732440e4e3a4ff29
+
+=== 2. 同宿主机对照机型 oriole_17-CP3A.261005.002.A1-20260905 #1 (同为 RE GLES Ganesh + meow + 3 槽位) ===
+Frame 128 t= 3075.1ms (dt= 35.7ms): dy=  -9px  cum_y=  -843px
+Frame 129 t= 3107.7ms (dt= 32.6ms): dy=  -6px  cum_y=  -849px
+Frame 130 t= 3123.3ms (dt= 15.7ms): dy=  -5px  cum_y=  -854px
+Frame 131 t= 3169.3ms (dt= 46.0ms): dy= -14px  cum_y=  -868px
+Frame 132 t= 3185.2ms (dt= 15.9ms): dy=  -7px  cum_y=  -875px
+Frame 133 t= 3201.2ms (dt= 15.9ms): dy=  -4px  cum_y=  -879px
+Total reversals (dy > +2px): 0
+
+=== 3. sun #1 滑动期间 SurfaceFlinger / HWComposer / CompositionEngine 报错日志 ===
+11-24 18:41:57.505   607   607 I CompositionEngine: map unknown (DCI-P3 sRGB Full range)/(Unknown RenderIntent) to default color mode
+11-24 18:41:57.505   607   607 E HWComposer: getDeviceCompositionChanges: presentOrValidate failed for display 4614472116889401600: BAD_LAYER (3)
+11-24 18:41:57.505   607   607 E CompositionEngine: chooseCompositionStrategy failed for BOE0B1F: -2147483648 (Unknown error -2147483648)
+11-24 18:41:57.656   607   607 I CompositionEngine: map unknown (DCI-P3 sRGB Full range)/(Unknown RenderIntent) to default color mode
+11-24 18:41:57.657   607   607 E HWComposer: getDeviceCompositionChanges: presentOrValidate failed for display 4614472116889401600: BAD_LAYER (3)
+11-24 18:41:57.657   607   607 E CompositionEngine: chooseCompositionStrategy failed for BOE0B1F: -2147483648 (Unknown error -2147483648)
+11-24 18:41:57.665   607   607 E HWComposer: getDeviceCompositionChanges: presentOrValidate failed for display 4614472116889401600: BAD_LAYER (3)
+11-24 18:41:57.665   607   607 E CompositionEngine: chooseCompositionStrategy failed for BOE0B1F: -2147483648 (Unknown error -2147483648)
+
+=== 4. CdhComposerClient::executeCommands 诊断探针实录（锁定 L=-1 / L=-3 OEM 私有哨兵） ===
+-- cdh-composer3 diag --
+alive_layers=3 total_cmd_errors=72
+  #1 errs=[(idx=0,code=3)] cmds=1 cmd[0]{disp=0 val=0 pres=0 pov=1 acc=0 ct=0 br=0 layers=5:[{L=3 comp=2 br=1}{L=2 comp=2 br=1}{L=1 comp=2 br=1}{L=0 comp=2 br=1}{L=-3(DEAD!)}]}
+  #2 errs=[(idx=0,code=3)] cmds=1 cmd[0]{disp=0 val=0 pres=0 pov=1 acc=0 ct=0 br=0 layers=5:[{L=3 br=1}{L=2 br=1}{L=1 br=1}{L=0 br=1}{L=-1(DEAD!)}]}
+  #3 errs=[(idx=0,code=3)] cmds=1 cmd[0]{disp=0 val=0 pres=0 pov=1 acc=0 ct=0 br=0 layers=5:[{L=3 br=1}{L=2 br=1}{L=1 buf(slot=2,h=0) br=1}{L=0 br=1}{L=-1(DEAD!)}]}
+  #20 errs=[(idx=0,code=3)] cmds=1 cmd[0]{disp=0 val=0 pres=0 pov=1 acc=0 ct=0 br=0 layers=4:[{L=9 comp=2 buf(slot=3,h=0) br=1}{L=2 comp=2 br=1}{L=5 comp=2 br=1}{L=-1(DEAD!)}]}
+  #40 errs=[(idx=0,code=3)] cmds=1 cmd[0]{disp=0 val=0 pres=0 pov=1 acc=0 ct=0 br=0 layers=4:[{L=9 buf(slot=0,h=0) br=1}{L=2 br=1}{L=5 br=1}{L=-1(DEAD!)}]}
+
+单次 human_drag 前后 total_cmd_errors 暴增对比：
+Before human_drag: alive_layers=3 total_cmd_errors=72
+human_drag result: Total reversals (dy > +2px): 48
+After  human_drag: alive_layers=3 total_cmd_errors=174  (+102 BAD_LAYER errors)

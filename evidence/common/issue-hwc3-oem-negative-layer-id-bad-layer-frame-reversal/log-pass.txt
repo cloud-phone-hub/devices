@@ -1,0 +1,50 @@
+=== 1. HAL 编译与 sun 盘集构建产物 ===
+android15 composer3@default: [ok] -> out/devices/vendor/android15/bin/hw/android.hardware.composer.hwc3-service.drm
+android15 composer3@oplus:   [ok] -> out/devices/vendor/android15/oplus/bin/hw/android.hardware.composer.hwc3-service.drm
+sun 增量构建 (09_build_vendor -> 11_build_patch -> 13_pack_vda):
+  配方变化: vda-08880d4bfd5b -> vda-d55e2f4d8341
+  patch.img -> out/devices/dist/honor/sun/16-AQ3A.250214.001-20260904/patch.img (384.0 MiB, sha256 a535881030ef)
+
+=== 2. 修复后 sun #1 (默认 60/120Hz 动态切刷) human_drag 完整 79 帧追踪 ===
+Before drag:
+  60.00 Hz: 0d00:01:47.484
+  120.00 Hz: 0d00:00:30.329
+  Total frames count: 2588
+  Failed to commit frames: 47
+
+Captured 79 frames for mode=human_drag
+Frame 001 t=  232.6ms (dt= 28.4ms): dy= -43px  cum_y=   -43px
+Frame 002 t=  257.5ms (dt= 24.9ms): dy= -17px  cum_y=   -60px
+Frame 003 t=  281.9ms (dt= 24.4ms): dy= -13px  cum_y=   -73px
+Frame 004 t=  309.2ms (dt= 27.3ms): dy= -35px  cum_y=  -108px
+Frame 005 t=  343.7ms (dt= 34.6ms): dy= -18px  cum_y=  -126px
+Frame 006 t=  371.8ms (dt= 28.1ms): dy= -23px  cum_y=  -149px
+Frame 007 t=  402.9ms (dt= 31.1ms): dy= -14px  cum_y=  -163px
+Frame 008 t=  438.6ms (dt= 35.6ms): dy= -44px  cum_y=  -207px
+Frame 009 t=  462.8ms (dt= 24.3ms): dy= -28px  cum_y=  -235px
+Frame 010 t=  528.7ms (dt= 65.9ms): dy= -18px  cum_y=  -253px
+...
+Frame 065 t= 2332.9ms (dt= 25.2ms): dy=  -9px  cum_y= -1840px
+Frame 066 t= 2371.3ms (dt= 38.4ms): dy= -21px  cum_y= -1861px
+Frame 067 t= 2392.4ms (dt= 21.2ms): dy= -14px  cum_y= -1875px
+Frame 068 t= 2417.8ms (dt= 25.4ms): dy= -17px  cum_y= -1892px
+Frame 069 t= 2893.6ms (dt=475.7ms): dy=  +0px  cum_y= -1892px
+Frame 070 t= 2973.9ms (dt= 80.3ms): dy= -13px  cum_y= -1905px
+Frame 071 t= 3009.2ms (dt= 35.3ms): dy= -23px  cum_y= -1928px
+Frame 072 t= 3055.8ms (dt= 46.6ms): dy= -25px  cum_y= -1953px
+Frame 073 t= 3090.8ms (dt= 35.0ms): dy= -12px  cum_y= -1965px
+Frame 074 t= 3121.4ms (dt= 30.6ms): dy= -16px  cum_y= -1981px
+Frame 075 t= 3154.8ms (dt= 33.5ms): dy= -10px  cum_y= -1991px
+Frame 076 t= 3190.5ms (dt= 35.7ms): dy=  -6px  cum_y= -1997px
+Frame 077 t= 3223.8ms (dt= 33.3ms): dy=  -6px  cum_y= -2003px
+Frame 078 t= 3261.8ms (dt= 38.0ms): dy=  -5px  cum_y= -2008px
+Total reversals (dy > +2px): 0
+
+=== 3. 滑动后状态与日志校验 ===
+After drag:
+  60.00 Hz: 0d00:01:48.654
+  120.00 Hz: 0d00:00:33.334 (+3.005s 正常高刷)
+  Total frames count: 2743 (+155 frames)
+  Failed to commit frames: 47 (+0)
+  logcat (BAD_LAYER | presentOrValidate failed | chooseCompositionStrategy failed): 0
+  pointer_location=0, peak_refresh_rate=null, min_refresh_rate=null
