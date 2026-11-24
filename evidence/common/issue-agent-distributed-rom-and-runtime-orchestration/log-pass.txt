@@ -1,0 +1,66 @@
+# 通过验证日志（2026-11-24，真实双机联调 + 全仓 Go 单测 + 前端构建）
+
+## 1. ROM 服务器下发 pipeline + 构建上下文同步（192.168.31.164, x86_64）
+$ ./out/agent/dist/cdha node deploy-pipeline rom-main --sync-workspace=true
+==> [1/3] 交叉编译 pipeline (linux/amd64) -> /Volumes/work/cloud-phone-hub/out/agent/dist/pipeline-linux-amd64
+==> [2/3] 推送 pipeline 至节点 rom-main:/home/backup/cloud-phone-hub/runtime/bin/pipeline...
+==> 同步构建上下文 devices/manifest -> rom-main:/home/backup/cloud-phone-hub/runtime/devices/manifest
+==> 同步构建上下文 devices/hardware -> rom-main:/home/backup/cloud-phone-hub/runtime/devices/hardware
+==> [3/3] 校验节点 rom-main 上 pipeline 可执行状态...
+==> ROM 节点 rom-main pipeline 部署完成: /home/backup/cloud-phone-hub/runtime/bin/pipeline (linux/amd64, 5619ms)
+
+远端执行验证：
+$ CDH_WORKSPACE_ROOT=/home/backup/cloud-phone-hub/runtime /home/backup/cloud-phone-hub/runtime/bin/pipeline device list
+序号  厂商       型号            名称                      设备参数  版本
+   1  google     oriole          Pixel 6                   就位      14-AP2A.240905.003.F1-20240815
+   ...（14+ 款机型清单正常识别）
+
+## 2. 双机 ED25519 直传免密打通（rom-main -> rom-main-runtime）
+$ ./out/agent/dist/cdha node trust --src rom-main --dst rom-main-runtime
+==> [1/3] 在源节点 rom-main 准备专用直传密钥 ~/.ssh/id_ed25519_cdh...
+==> [2/3] 将公钥授权写入目标节点 rom-main-runtime 的 ~/.ssh/authorized_keys...
+==> [3/3] 实测验证 rom-main -> rom-main-runtime (orangepi@192.168.31.207:22) 直传免密连通性...
+CDH_DIRECT_TRUST_OK
+==> 双机直传免密已打通: rom-main -> rom-main-runtime (orangepi@192.168.31.207:22, 689ms)
+
+## 3. 运行服务器一键部署运行栈（192.168.31.207, ARM64 OrangePi 5 Plus）
+$ ./out/agent/dist/cdha node deploy-runtime rom-main-runtime
+==> 探测目标运行节点 rom-main-runtime 平台架构与存储状态...
+==> [1/5] 交叉编译独立 daemon (linux/arm64)...
+==> [2/5] 交叉编译宿主网络与基带后端 (linux/arm64)...
+==> [3/5] 检索并打包 QEMU 与 GPU/Media 后端 (linux/arm64)...
+==> [4/5] 复制 edk2 固件 (edk2-aarch64-code.fd, efi-vars.fd)...
+==> [5/5] 归档独立运行栈发布包 /Volumes/work/cloud-phone-hub/out/agent/dist/daemon-linux-arm64.tar.gz...
+==> 推送并部署运行栈至运行节点 rom-main-runtime...
+远端运行栈与 daemon 已拉起并通过健康检查: pid=2690476 port=9050 dir=/home/orangepi/cloud-phone-hub/runtime/daemon qemu=/home/orangepi/cloud-phone-hub/runtime/qemu
+==> 运行节点 rom-main-runtime 运行栈部署完成: /Volumes/work/cloud-phone-hub/out/agent/dist/daemon-linux-arm64.tar.gz (hasQemu=false, backends=[vhost-modem-controller net-host-service], missing=[qemu-system-aarch64 qemu-img virgl_render_server vhost-device-media])
+
+## 4. 双机探活与 Agent cluster.status 工具全绿
+$ ./out/agent/dist/cdha tool cluster.status '{}'
+分布式节点状态（共 3 个节点）:
+- [local] 本机节点 (Local) | mode=local roles=[rom-builder runtime-host]
+    探活=在线 darwin/arm64 磁盘=700Gi / 1.9Ti (64%) | pipeline=true work=true roms=47 directSSH=false | daemon=false(viaSSH=false) qemu=true kvm=false backends=6/6 bundles=30
+- [rom-main] ROM 服务器 (81.70.30.115) | mode=ssh roles=[rom-builder] ssh=cuimingqiang@192.168.31.164:22(lan)
+    探活=在线 linux/amd64 磁盘=1.3T / 1.8T (24%) | pipeline=true work=true roms=1494 directSSH=true
+- [rom-main-runtime] 运行服务器 (192.168.31.207 · OrangePi ARM64) | mode=ssh roles=[runtime-host] ssh=orangepi@192.168.31.207:22(lan)
+    探活=在线 linux/arm64 磁盘=294G / 464G (37%) | daemon=true(viaSSH=false) qemu=false kvm=true backends=3/6 bundles=0
+
+## 5. 跨机直传同步（remote-direct-rsync）+ OrangePi daemon 实时识别盘集
+$ ./out/agent/dist/cdha node sync --src rom-main --dst rom-main-runtime --subpath _cdh_smoke/test_gold --only-patch
+==> 同步完成 [remote-direct-rsync]: /home/backup/cloud-phone-hub/runtime/out/devices/dist/_cdh_smoke/test_gold -> /home/orangepi/cloud-phone-hub/runtime/images/_cdh_smoke/test_gold (690ms)
+$ curl -sS http://192.168.31.207:9050/api/state
+{"deviceRoot":"/home/orangepi/cloud-phone-hub/runtime/images","runtimeRoot":"/home/orangepi/cloud-phone-hub/runtime/instances","qemuRoot":"/home/orangepi/cloud-phone-hub/runtime/qemu","images":[{"index":0,"specId":"","layout":"","path":"/home/orangepi/cloud-phone-hub/runtime/images/_cdh_smoke/test_gold"}],"running":[],"instances":[]}
+
+## 6. 全仓 Go 单测 + AST 独立性审计 + 前端 TypeScript/Vite 构建全绿
+$ cd agent/core && TMPDIR=../../out/agent/tmp go test -count=1 ./internal/cluster ./internal/release ./internal/daemonctl ./internal/server ./internal/tools ./internal/agent ./cmd/cdha ./web
+ok  cloud-phone-hub/agent/internal/cluster    0.460s
+ok  cloud-phone-hub/agent/internal/release    2.809s
+ok  cloud-phone-hub/agent/internal/daemonctl  0.585s
+ok  cloud-phone-hub/agent/internal/server     5.031s
+ok  cloud-phone-hub/agent/internal/tools      1.380s
+ok  cloud-phone-hub/agent/internal/agent      3.145s
+ok  cloud-phone-hub/agent/cmd/cdha            2.479s
+ok  cloud-phone-hub/agent/web                 1.910s
+
+$ cd agent/core/web && npm run build
+tsc --noEmit && vite build -> ✓ built in 286ms

@@ -1,0 +1,51 @@
+# 失败现场日志（改造前）
+
+## 1. ROM 服务器探活触发 SIGPIPE (141) 导致在线节点误判离线
+命令：
+POST http://127.0.0.1:9050/api/nodes/rom-main/probe
+
+响应摘要：
+{
+  "nodeId": "rom-main",
+  "online": false,
+  "error": "OS=linux\nARCH=x86_64\nDISK=1.3T / 1.8T\nDISK_PK=1920641288|427920996|1388394816|24%\nENGINE_READY=0\nROM:/home/3t/moto_free_a14plus/...\n（30 条 ROM 输出后，head -n 30 提前关闭管道导致 find 收到 SIGPIPE exit 141，被 set -euo pipefail 判为失败）"
+}
+
+## 2. ROM 服务器与运行服务器间无免密直传通道
+在 rom-main (192.168.31.164) 上执行：
+ssh -o BatchMode=yes -o ConnectTimeout=5 orangepi@192.168.31.207 echo OK
+
+输出：
+orangepi@192.168.31.207: Permission denied (publickey,password).
+
+## 3. 运行服务器未部署运行栈，daemon 离线且无宿主后端
+在 rom-main-runtime (192.168.31.207) 探活：
+{
+  "nodeId": "rom-main-runtime",
+  "online": true,
+  "os": "linux",
+  "arch": "arm64",
+  "diskFree": "294G / 464G",
+  "daemonOnline": false,
+  "backendsMissing": ["qemu-img","net-host-service","vhost-modem-controller","virgl_render_server","vhost-device-media","edk2-firmware"]
+}
+
+## 4. 存储红线硬拦截边界测试（验证触发时立即零字节停止）
+命令：
+./out/agent/dist/cdha node check-space rom-main-runtime --min-free-gb 999999
+
+输出（Exit Code = 1）：
+{
+  "nodeId": "rom-main-runtime",
+  "targetPath": "/home/orangepi/cloud-phone-hub/runtime/images",
+  "totalBytes": 497922072576,
+  "usedBytes": 177545981952,
+  "availBytes": 315223011328,
+  "requiredBytes": 0,
+  "minFreeBytes": 1073740750258176,
+  "usedPercent": 37,
+  "maxUsagePercent": 90,
+  "allowed": false,
+  "reason": "节点 rom-main-runtime (/home/orangepi/cloud-phone-hub/runtime/images) 可用 293.57 GiB，需要写入 0.00 GiB + 安全保留 999999 GiB 不足"
+}
+cdha 错误: cluster: 目标运行节点磁盘空间不足，已立即停止: 节点 rom-main-runtime (/home/orangepi/cloud-phone-hub/runtime/images) 可用 293.57 GiB，需要写入 0.00 GiB + 安全保留 999999 GiB 不足
