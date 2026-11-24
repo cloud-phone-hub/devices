@@ -134,11 +134,11 @@ readlink[vfs]: entries=58904 rets=58904 hits=0 skipped=58904
    且「第 2、3 个参数是 buffer/buflen」的假设要成立。6.1 / 6.6 / 6.12 实测通过；
    注意 6.12 的 `getname_flags()` 已只有两个参数（少了 `empty` 出参），但本模块只取
    返回值，不解析入参，所以不受影响。
-3. **旧的构建二进制静默不注入**：`out/agent/dist/cdh-pipeline` 没重编时，06 不会打印
+3. **旧的构建二进制静默不注入**：`out/agent/dist/pipeline` 没重编时，06 不会打印
    `==> 重定向模块: …` 那一行，vendor_ramdisk 里就是没有模块，起机表现为
    `init: Unable to open /lib/modules, skipping module loading.`（实例 21 踩过）。
    改了 `agent/modules/pipeline/stages/06_build_vendor_boot/` 就要
-   `cd agent && TMPDIR=$PWD/../out/agent/tmp go build -o ../out/agent/dist/cdh-pipeline ./cmd/cdh-pipeline`。
+   `cd agent && TMPDIR=$PWD/../out/agent/tmp go build -o ../out/agent/dist/pipeline ./cmd/pipeline`。
 4. **改 `.ko` 必须重跑 05 → 09 → 11**：模块只在 vendor_boot 里，`patch.img`/`vda.img`
    不带它；只重跑 11 拿不到新模块。按 #101/#102 的经验，`10_pack_super` 对这种机型是 no-op。
    **08 不再往 vendor_dlkm 里塞它**（`08_build_vendor_dlkm` 的 `firstStageModules`）：

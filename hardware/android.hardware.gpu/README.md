@@ -26,10 +26,10 @@
 
 ```bash
 # 构建默认变体（Venus + VirGL）
-cdh-pipeline build-hardware --android 15 --module android.hardware.gpu --refresh
+pipeline build-hardware --android 15 --module android.hardware.gpu --refresh
 
 # 构建 pastel 变体（SwiftShader Vulkan + VirGL）
-cdh-pipeline build-hardware --android 16 --module android.hardware.gpu --variant pastel --refresh
+pipeline build-hardware --android 16 --module android.hardware.gpu --variant pastel --refresh
 
 # 运行 Go 与宿主 C 单元测试
 cd agent && go test ./modules/pipeline/internal/halcore/...

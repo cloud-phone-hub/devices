@@ -98,7 +98,7 @@ kernelsu 需要的额外条件都在 `Kbuild` 里给默认值，而不是让 03 
 
 ```bash
 # 随 03 构建（清单 modules.external 里声明过 kernelsu，或命令行指定）
-cd agent && go run ./cmd/cdh-pipeline build-modules --module kernelsu
+cd agent/modules/pipeline && GOWORK=off go run ./cmd/pipeline build-modules --module kernelsu
 
 # 手工编译（只需要内核源码 + 一个 O= 输出目录，参数全在模块 Kbuild 里）
 mkdir -p out/devices/tmp/ksuout && make -C devices/kernels/lineage-22-6.6 O="$PWD/out/devices/tmp/ksuout" ARCH=arm64 LLVM=1 gki_defconfig

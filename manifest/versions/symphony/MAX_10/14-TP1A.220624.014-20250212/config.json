@@ -10,7 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh-pipeline prepare 从 Symphony-Max-10.zip (vendor/build.prop) 自动生成。",
+    "comment": "由 pipeline prepare 从 Symphony-Max-10.zip (vendor/build.prop) 自动生成。",
     "osVersion": "14-TP1A.220624.014-20250212",
     "securityPatch": "2024-12-05",
     "partitionAndroidVersions": {

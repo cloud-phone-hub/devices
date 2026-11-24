@@ -10,7 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
-    "comment": "由 cdh-pipeline prepare 从 SYMPHONY_G27_HW2_V9_2024-09-05_FACTORY_SIGNED.rar (vendor/build.prop) 自动生成。",
+    "comment": "由 pipeline prepare 从 SYMPHONY_G27_HW2_V9_2024-09-05_FACTORY_SIGNED.rar (vendor/build.prop) 自动生成。",
     "osVersion": "14-TP1A.220624.014-20240929",
     "securityPatch": "2024-08-05",
     "partitionAndroidVersions": {
