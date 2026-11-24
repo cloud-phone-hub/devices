@@ -1,0 +1,30 @@
+# 失败现场：sun 基带版本显示不全（Honor Magic7 RSR / 16-AQ3A.250214.001-20260904）
+
+## 1) 设置页口径的最终属性：双槽拼接后被截尾
+
+$ adb -s 127.0.0.1:5911 shell getprop gsm.version.baseband
+-02024.3-PAKALA_GEN_PACK-1.80805.123.93847.33,-02024.3-PAKALA_GEN_PACK-1.80805.123.93847.33
+
+长度 91 = PROP_VALUE_MAX-1，两段各 45 字节；完整固件版本 56 字节，前缀
+`MPSS.DE.7.0` 被切掉。
+
+## 2) 注入值本身是正确的
+
+# patch.img -> /vendor/build.prop 第 411 行
+gsm.version.baseband=MPSS.DE.7.0-02024.3-PAKALA_GEN_PACK-1.80805.123.93847.33
+
+# qemu.log 启动期（14.19s）room-daemon 经 property_service 写入完整值
+[...][room-daemon] gsm.version.baseband=MPSS.DE.7.0-02024.3-PAKALA_GEN_PACK-1.80805.123.93847.33（property_service）
+
+## 3) 定位过程：框架按「槽数」把每项截到 (91/槽数)=45 字节
+
+只让次槽回报错（消掉重复）后，属性仍只有 45 字节：
+
+$ adb -s 127.0.0.1:5911 shell getprop gsm.version.baseband
+-02024.3-PAKALA_GEN_PACK-1.80805.123.93847.33
+# 单个条目仍是 45 字节，说明截尾发生在框架拼写属性环节，且与条目数无关，
+# 是按手机数把每项限制在 (PROP_VALUE_MAX-1)/phoneCount。
+
+# 对照实验：device.json 的 baseband-version 临时改为 56 字节、但前缀不是 MPSS
+# （AAAAAAAAAAA-02024.3-...），重启后属性同样只剩两段 45 字节的「尾部」，
+# 排除「专门剥离 MPSS.DE.7.0 前缀」的假设，确认是长度截尾。

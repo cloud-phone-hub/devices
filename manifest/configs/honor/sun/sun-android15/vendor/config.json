@@ -1,5 +1,6 @@
 {
   "build-prop-sets": {
+    "gsm.version.baseband": "MPSS.DE.7.0-02024.3-PAKALA_GEN_PACK-1.80805.123.93847.33",
     "persist.radio.multisim.config": "dsds",
     "persist.sys.chr.chipsettype": "1",
     "ro.hardware.egl": "mesa",

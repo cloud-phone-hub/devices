@@ -302,6 +302,19 @@ public:
         version = kBasebandVersion;
       }
     }
+    // 属性 gsm.version.baseband 的值上限 91 字节（PROP_VALUE_MAX-1）。框架把各槽
+    // 上报值按槽拼成逗号列表回写同一属性，并按 (91/槽数)=45 字节/项截尾（sun 的
+    // 56 字节完整版本实测被切掉 MPSS.DE.7.0 前缀）。拼不下时各槽一律回报错：框架的
+    // EVENT_GET_BASEBAND_VERSION_DONE 遇到异常直接跳过，属性保留启动时从
+    // /vendor/build.prop 注入的完整值，设置页即显示整串。
+    if (!version.empty() &&
+        version.size() * static_cast<std::size_t>(kLogicalModemCount) +
+                static_cast<std::size_t>(kLogicalModemCount - 1) >
+            static_cast<std::size_t>(91)) {
+      return response->getBasebandVersionResponse(
+          ResponseInfo(serial, aidl_radio::RadioError::REQUEST_NOT_SUPPORTED),
+          "");
+    }
     return response->getBasebandVersionResponse(
         ResponseInfo(serial, snapshot.has_value()
                                  ? aidl_radio::RadioError::NONE

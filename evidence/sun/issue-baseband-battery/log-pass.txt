@@ -1,0 +1,27 @@
+# 通过现场：sun 基带显示完整值 + 电池属性正确（2026-11-24，实例 1）
+
+## 1) 基带：属性为完整单值 56 字节
+
+$ adb -s 127.0.0.1:5911 shell getprop gsm.version.baseband
+MPSS.DE.7.0-02024.3-PAKALA_GEN_PACK-1.80805.123.93847.33
+len=56
+
+# 无逗号、无重复、无截尾；设置页「基带版本」直接显示该串。
+
+## 2) 电池：technology / 容量按 sun 口径
+
+$ adb -s 127.0.0.1:5911 shell dumpsys battery | grep -iE "technology|charge counter|level"
+  Charge counter: 5810000
+  level: 100
+  technology: 3rd Gen Silicon-Carbon Battery
+
+## 3) 构建产物
+
+vda.img 14.94 GiB（5 个分区已刷新）
+patch.img 384.0 MiB（402653184 字节，sha256 850428040e0d）
+data.qcow2 重新生成（全新 userdata 冷启动）
+
+## 4) 启动状态
+
+$ adb -s 127.0.0.1:5911 shell getprop sys.boot_completed
+1
