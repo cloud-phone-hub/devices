@@ -1,0 +1,16 @@
+=== 测试 1: 运行服务器触发存储红线硬拦截 (ErrInsufficientDiskSpace) ===
+$ /Volumes/work/cloud-phone-hub/out/agent/dist/cdh-pipeline dist push gold --manifest 15-OS3.0.10.0.VNQCNXM --only-patch --min-free-gb 999999
+[err] 磁盘空间不足，已立即停止: 运行服务器 (192.168.31.207 挂载 /) 可用 304.59 GiB，待写入 384.00 MiB + 安全保留 976.56 TiB = 需要 976.56 TiB
+退出码: 1
+
+=== 测试 2: 单闸门 AST 审计拦截直接调用 os 文件操作 ===
+$ cd agent && go test -v -count=1 ./cmd/cdha
+=== RUN   TestSingleGatewayASTAudit
+    indep_test.go:115: 违反单闸门约束：internal/manifestview/merge.go 直接调用了 os.ReadFile（必须走 internal/fsx）
+--- FAIL: TestSingleGatewayASTAudit (0.02s)
+FAIL
+
+=== 测试 3: 缺少工作目录时向未配置节点推送 ===
+$ /Volumes/work/cloud-phone-hub/out/agent/dist/cdh-pipeline dist push gold --target invalid
+[err] dist push: ROM 服务器未配置工作目录 (workDir)
+退出码: 1
