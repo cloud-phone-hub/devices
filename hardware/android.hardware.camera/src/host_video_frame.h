@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <condition_variable>
 #include <cstdint>
 #include <cstring>
 #include <memory>
@@ -190,6 +191,33 @@ class HostVideoReceiver {
     }
   }
 
+  void acquireSession() {
+    {
+      std::lock_guard<std::mutex> lk(stateMu_);
+      ++activeSessions_;
+    }
+    ensureStarted();
+    stateCv_.notify_all();
+  }
+
+  void releaseSession() {
+    {
+      std::lock_guard<std::mutex> lk(stateMu_);
+      if (activeSessions_ > 0) {
+        --activeSessions_;
+        if (activeSessions_ == 0) {
+          idleSince_ = std::chrono::steady_clock::now();
+        }
+      }
+    }
+    stateCv_.notify_all();
+  }
+
+  bool isSessionActive() const {
+    std::lock_guard<std::mutex> lk(stateMu_);
+    return activeSessions_ > 0;
+  }
+
   std::shared_ptr<const VideoFrame> latest() const {
     std::lock_guard<std::mutex> lk(mu_);
     return latest_;
@@ -242,7 +270,34 @@ class HostVideoReceiver {
     return true;
   }
 
-  static bool syncHeader(int fd, uint8_t hdr[kCdcmHeaderSize]) {
+  static void drainNonBlocking(int fd) {
+    int flags = ::fcntl(fd, F_GETFL, 0);
+    if (flags >= 0) {
+      (void)::fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+    }
+    uint8_t discard[4096];
+    while (::read(fd, discard, sizeof(discard)) > 0) {
+    }
+    if (flags >= 0) {
+      (void)::fcntl(fd, F_SETFL, flags);
+    }
+  }
+
+  bool shouldPauseAfterGrace() const {
+    std::lock_guard<std::mutex> lk(stateMu_);
+    if (activeSessions_ > 0) {
+      return false;
+    }
+    return std::chrono::steady_clock::now() - idleSince_ >=
+           std::chrono::seconds(2);
+  }
+
+  void waitForActiveSession() {
+    std::unique_lock<std::mutex> lk(stateMu_);
+    stateCv_.wait(lk, [this]() { return activeSessions_ > 0; });
+  }
+
+  bool syncHeader(int fd, uint8_t hdr[kCdcmHeaderSize]) {
     // 逐字节对齐魔数 "CDCM"；若持续 2 秒未收到宿主帧则重发 CDCM_READY 心跳，
     // 避免 Guest 先于 QEMU socket 连接发送的首包握手丢失造成双向死等。
     static constexpr uint8_t kMagic[4] = {'C', 'D', 'C', 'M'};
@@ -250,11 +305,17 @@ class HostVideoReceiver {
     size_t matched = 0;
     int idlePolls = 0;
     while (matched < 4) {
+      if (shouldPauseAfterGrace()) {
+        return false;
+      }
       struct pollfd pfd {};
       pfd.fd = fd;
       pfd.events = POLLIN;
       int pr = ::poll(&pfd, 1, 1000);
       if (pr == 0) {
+        if (shouldPauseAfterGrace()) {
+          return false;
+        }
         if (++idlePolls >= 2) {
           idlePolls = 0;
           (void)::write(fd, kReadyMsg, sizeof(kReadyMsg) - 1);
@@ -289,7 +350,12 @@ class HostVideoReceiver {
 
   void runLoop() {
     bool warnedOpen = false;
+    static constexpr char kReadyMsg[] = "CDCM_READY\n";
+    static constexpr char kPauseMsg[] = "CDCM_PAUSE\n";
     for (;;) {
+      // 按需门控：无活跃 CameraDeviceSession 时完全挂起休眠（0% CPU、不唤醒宿主推流）
+      waitForActiveSession();
+
       int fd = openRawHvc();
       if (fd < 0) {
         if (!warnedOpen) {
@@ -302,13 +368,14 @@ class HostVideoReceiver {
         continue;
       }
       warnedOpen = false;
+      drainNonBlocking(fd);
       // 向宿主发送 CDCM_READY 握手信号，触发宿主侧开始推流（避免 UEFI/启动期拥塞共享 virtio-serial）
-      static constexpr char kReadyMsg[] = "CDCM_READY\n";
       (void)::write(fd, kReadyMsg, sizeof(kReadyMsg) - 1);
       __android_log_print(ANDROID_LOG_INFO, kVideoTag,
                           "connected to host camera channel %s (fd=%d), sent CDCM_READY",
                           kCameraHvcPath, fd);
       uint8_t hdr[kCdcmHeaderSize];
+      bool pausedIdle = false;
       while (syncHeader(fd, hdr)) {
         const uint8_t ver = hdr[4];
         const uint16_t width = readBE16(hdr + 6);
@@ -347,14 +414,32 @@ class HostVideoReceiver {
                               static_cast<unsigned long long>(n), seq, width,
                               height, jpegLen);
         }
+        if (shouldPauseAfterGrace()) {
+          pausedIdle = true;
+          break;
+        }
+      }
+      if (pausedIdle || shouldPauseAfterGrace()) {
+        (void)::write(fd, kPauseMsg, sizeof(kPauseMsg) - 1);
+        drainNonBlocking(fd);
+        __android_log_print(ANDROID_LOG_INFO, kVideoTag,
+                            "camera session idle, sent CDCM_PAUSE on %s",
+                            kCameraHvcPath);
       }
       ::close(fd);
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+      if (!pausedIdle && isSessionActive()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+      }
     }
   }
 
   std::atomic<bool> started_{false};
   std::atomic<uint64_t> rxFrames_{0};
+  mutable std::mutex stateMu_;
+  std::condition_variable stateCv_;
+  int activeSessions_ = 0;
+  std::chrono::steady_clock::time_point idleSince_{
+      std::chrono::steady_clock::now()};
   mutable std::mutex mu_;
   std::shared_ptr<const VideoFrame> latest_;
   std::thread worker_;

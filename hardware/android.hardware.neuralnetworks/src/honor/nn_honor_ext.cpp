@@ -5,6 +5,7 @@
 #include <android/binder_auto_utils.h>
 #include <android/binder_parcel.h>
 #include <android/binder_status.h>
+#include <unistd.h>
 
 #include <cstdint>
 #include <cstring>
@@ -18,6 +19,11 @@ constexpr const char* kHonorNxpNfcDescriptor =
     "vendor.honor.hardware.nxpnfc.INxpNfc";
 constexpr const char* kHonorNxpNfcInterfaceHash =
     "b1e9a470c2e6879277d271b0fa9c327b876d341e";
+
+constexpr const char* kHonorMotionDescriptor =
+    "vendor.honor.hardware.motion.IMotion";
+constexpr const char* kHonorMotionInterfaceHash =
+    "23e142b84a03669b0e133b4e70a081427def7462";
 
 bool ReadByteVecAllocator(void* arrayData, int32_t length, int8_t** outBuffer) {
   auto* vec = static_cast<std::vector<int8_t>*>(arrayData);
@@ -88,12 +94,71 @@ binder_status_t OnHonorNxpNfcTransact(AIBinder* /*binder*/,
   return STATUS_UNKNOWN_TRANSACTION;
 }
 
+// 荣耀 MagicOS system_server (HWExtMotionService) 轮询 vendor.honor.hardware.motion.IMotion/default：
+// 若返回 STATUS_UNKNOWN_TRANSACTION 会陷入每 10ms 死循环重试并刷屏 "Max Aidl transport errors this cycle : 51"。
+// 按官方 vendor.honor.hardware.motion-V1-ndk.so 协议响应全方法，使 HWExtMotionService 正常完成初始化并静默休眠。
+binder_status_t OnHonorMotionTransact(AIBinder* /*binder*/,
+                                      transaction_code_t code,
+                                      const AParcel* /*in*/,
+                                      AParcel* out) {
+  if (out == nullptr) {
+    return STATUS_BAD_VALUE;
+  }
+  ndk::ScopedAStatus ok = ndk::ScopedAStatus::ok();
+  // code 1..3, 5..8, 10：deinitMotion / disableMotionAttr / enableMotionAttr /
+  // registerMotionCallback / initMoiton / startMotionReco / stopMotionReco / sendInfoToMotion -> int32(0)
+  if ((code >= FIRST_CALL_TRANSACTION + 0 && code <= FIRST_CALL_TRANSACTION + 2) ||
+      (code >= FIRST_CALL_TRANSACTION + 4 && code <= FIRST_CALL_TRANSACTION + 7) ||
+      code == FIRST_CALL_TRANSACTION + 9) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) return st;
+    return AParcel_writeInt32(out, 0);
+  }
+  // code 4：pollMotionResult(out Motions_event_t, int32* _aidl_return)
+  // 真机该调用阻塞等待底层动作事件；云机适度休眠 500ms 后返回 -1（无事件），避免调用线程零延迟忙等。
+  if (code == FIRST_CALL_TRANSACTION + 3) {
+    usleep(500 * 1000);
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) return st;
+    st = AParcel_writeInt32(out, -1);
+    if (st != STATUS_OK) return st;
+    // Motions_event_t non-null parcelable: present=1, size=16, field0=0, field1=0, empty vec=0
+    AParcel_writeInt32(out, 1);
+    AParcel_writeInt32(out, 16);
+    AParcel_writeInt32(out, 0);
+    AParcel_writeInt32(out, 0);
+    return AParcel_writeInt32(out, 0);
+  }
+  // code 9：supportMotionFeature(out int[] features, int32* _aidl_return)
+  if (code == FIRST_CALL_TRANSACTION + 8) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) return st;
+    st = AParcel_writeInt32(out, 0);
+    if (st != STATUS_OK) return st;
+    return AParcel_writeInt32(out, 0);  // length = 0（无支持的物理动作特性）
+  }
+  if (code == 0xffffff) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) return st;
+    return AParcel_writeInt32(out, 1);
+  }
+  if (code == 0xfffffe) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) return st;
+    return AParcel_writeString(out, kHonorMotionInterfaceHash, 40);
+  }
+  return STATUS_UNKNOWN_TRANSACTION;
+}
+
 }  // namespace
 
 AIBinder_Class_onTransact ResolveVendorPlaceholderTransact(
     const std::string& descriptor) {
   if (descriptor == kHonorNxpNfcDescriptor) {
     return OnHonorNxpNfcTransact;
+  }
+  if (descriptor == kHonorMotionDescriptor) {
+    return OnHonorMotionTransact;
   }
   return nullptr;
 }

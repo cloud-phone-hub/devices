@@ -3,7 +3,6 @@ vendor.honor.hardware.activity_recognition.IActivityRecognition/default
 vendor.honor.hardware.airenderlaunch.IAiRenderLaunch/default
 vendor.honor.hardware.aiservice.IAiService/default
 vendor.honor.hardware.aoservice.IAOService/default
-vendor.honor.hardware.biometrics.fingerprint.IFingerprint/default
 vendor.honor.hardware.biometrics.hwfacerecognize.IBiometricsFaceRecognize/default
 vendor.honor.hardware.bluetoothex.IHonorBluetoothInterface/default
 vendor.honor.hardware.camera.cfgsvr.IHwCamCfgSvr/default

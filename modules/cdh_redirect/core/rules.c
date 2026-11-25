@@ -625,7 +625,8 @@ bool cdh_rewrite_forward(char *buf, size_t cap)
 			return false;
 		}
 		atomic64_inc(&cdh_forward_hits);
-		pr_info_ratelimited("forward %s\n", buf);
+		if (cdh_debug)
+			pr_info_ratelimited("forward %s\n", buf);
 		return true;
 	}
 	return false;

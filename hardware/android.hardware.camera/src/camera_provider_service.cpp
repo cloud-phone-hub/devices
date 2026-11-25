@@ -1840,10 +1840,12 @@ public:
       : target_(target), callback_(std::move(callback)),
         requestMetadataQueueFd_(createMetadataQueueFd("cdh-camera-request-fmq")),
         resultMetadataQueueFd_(createMetadataQueueFd("cdh-camera-result-fmq")) {
-    cdh_camera::HostVideoReceiver::Instance().ensureStarted();
+    cdh_camera::HostVideoReceiver::Instance().acquireSession();
+    sessionAcquired_ = true;
   }
 
   ~Note13CameraSession() override {
+    releaseReceiverSessionOnce();
     {
       std::lock_guard<std::mutex> lk(streamMu_);
       bufferCache_.clear();
@@ -1862,6 +1864,7 @@ public:
   }
 
   ScopedAStatus close() override {
+    releaseReceiverSessionOnce();
     std::lock_guard<std::mutex> lk(streamMu_);
     bufferCache_.clear();
     streams_.clear();
@@ -2107,10 +2110,18 @@ private:
     return halStreams;
   }
 
+  void releaseReceiverSessionOnce() {
+    bool expected = true;
+    if (sessionAcquired_.compare_exchange_strong(expected, false)) {
+      cdh_camera::HostVideoReceiver::Instance().releaseSession();
+    }
+  }
+
   const Note13CameraTarget &target_;
   std::shared_ptr<ICameraDeviceCallback> callback_;
   int requestMetadataQueueFd_ = -1;
   int resultMetadataQueueFd_ = -1;
+  std::atomic<bool> sessionAcquired_{false};
   std::mutex streamMu_;
   std::unordered_map<int32_t, cdh_camera::StreamMeta> streams_;
   std::unordered_map<uint64_t, cdh_camera::HwBufPtr> bufferCache_;
@@ -2365,7 +2376,8 @@ int main() {
 #if !defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
   cdh::camera::RegisterVendorExtraServices();
 #endif
-  cdh_camera::HostVideoReceiver::Instance().ensureStarted();
+  // 不在开机空闲态预拉起 hvc12 视频接收器，改为由 Note13CameraSession 打开/关闭时按需发送
+  // CDCM_READY / CDCM_PAUSE，消除未打开相机时的宿主编码与 virtio-serial 中断空转。
   ABinderProcess_joinThreadPool();
   return 0;
 }

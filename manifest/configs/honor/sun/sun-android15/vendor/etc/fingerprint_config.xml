@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  sun（Honor Magic7 RSR Porsche Design）虚拟 3D 超声波屏下指纹硬件规格配置：
+  - sensor-type="udfps_ultrasonic"：屏下超声波指纹（对应 FingerprintSensorType::UNDER_DISPLAY_ULTRASONIC）
+  - strength="strong"：Class 3 强生物特征（对应 SensorStrength::STRONG）
+  - max-enrollments="5"：MagicOS 标准上限 5 枚指纹
+  - enrolled-ids=""：与未录入模板的 framework 初始状态一致，确保开机 InternalCleanup / UpdateActiveUser 正常收口
+-->
+<fingerprint-config
+    sensor-id="0"
+    sensor-type="udfps_ultrasonic"
+    strength="strong"
+    max-enrollments="5"
+    enrolled-ids=""
+    authenticator-id="0"
+    loc-x="640"
+    loc-y="2320"
+    loc-radius="110"/>

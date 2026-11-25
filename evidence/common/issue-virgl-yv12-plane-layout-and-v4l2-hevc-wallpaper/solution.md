@@ -60,7 +60,10 @@
 2. **实机冷启动与画面像素复核（`Xiaomi 17 Pro Max #1`）**：
    - 刷新 `patch.img`（`e2fsck -fy` 零错误、`security.selinux` 扩展属性核验通过）后重启实例，`sys.boot_completed=1`；
    - 桌面与锁屏动态壁纸经 `c2.v4l2.hevc.decoder` 60fps 硬解流畅渲染，深蓝色相完整还原，水平断层与右侧 16px 黑绿边彻底消失（对比见 `wallpaper-fail.png` vs `wallpaper-pass.png`）。
+3. **跨代实机复测（`Pixel 6 #1`，`google/oriole`，`17-CP3A.261005.002.A1-20260905`，Android 17）**：
+   - 旧盘集（`11-23` `patch.img`）在播放 32 像素对齐分辨率（`1152×1920`，`HAL_PIXEL_FORMAT_YV12` / `fourcc=842094169`）的 YouTube Shorts 视频时，虽无右侧 16px 黑边，但因色度半宽步幅（`576` vs `1152`）失配且缺 `VIRGL_CCMD_PIPE_RESOURCE_SET_TYPE` 同步，同样必现上半屏色度纵向压缩重影、正中 `y=960` 水平断层与下半屏亮绿失真（见 `oriole17-youtube-fail.png`）；
+   - 重跑 `09_build_vendor` + `11_build_patch` 刷新 `patch.img`（`sha256: 73759d1683b5`，更新 `allocator-service.minigbm` / `mapper.pixel.so` 并生成 `vendor/etc/media_codecs_c2.xml`）后冷启动 `Pixel 6 #1`（PID `30743`，ADB `:5911`），YouTube Shorts 60fps 播放色彩自然还原，半屏水平断层与绿屏彻底消失（对比见 `oriole17-youtube-fail.png` vs `oriole17-youtube-pass.png`）。
 
 ## 6. 遗留
 
-- 无阻塞项。其他已生成历史 `patch.img` 的存量盘集若使用非 32 像素对齐分辨率播放 `YV12` 视频，在下次跑 `09_build_vendor -> 11_build_patch` 或增量刷新 `allocator` / `media_codecs_c2.xml` 时即可自动获得同等修复。
+- 其他已生成历史 `patch.img` 的存量盘集在播放 `HAL_PIXEL_FORMAT_YV12` 视频时（无论分辨率是否 32 像素对齐，均受色度半宽步幅失配影响），在下次跑 `09_build_vendor -> 11_build_patch` 刷新 `patch.img` 时即可自动获得同等修复；此外对于官方 `/vendor/etc/` 原生无顶层 `media_codecs.xml` 的机型（如 `oriole`），后续可在 `align-media-codecs-c2` 中同步补齐最小 `<Include href="media_codecs_c2.xml" />` 入口以使 `c2.v4l2.*` 直接进 `MediaCodecList`。
