@@ -1,0 +1,19 @@
+=== [1] Linux x86_64 NDK prebuilt 硬编码 darwin-x86_64 ===
+[err] 阶段 build_hardware 失败: 未找到 NDK clang: /home/cuimingqiang/Android/Sdk/ndk/28.0.13004108/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang
+
+=== [2] NDK r28 (Clang 19) 下 __config_site ABI 宏冲突 ===
+In file included from .../llvm-libc++/include/__config:13:
+devices/hardware/common/libcxx-platform/__config_site:31:9: error: '_LIBCPP_ABI_FORCE_ITANIUM' macro redefined
+
+=== [3] Linux 上 android.service.daemon bindgen 缺 stdbool.h ===
+fatal error: 'stdbool.h' file not found
+thread 'main' panicked at rquickjs-sys/build.rs: unable to generate bindings
+
+=== [4] Linux 非 root 执行 fsck.erofs --xattrs 报 EPERM ===
+[err] 阶段 build_vendor 失败: 解包厂商 vendor 镜像失败: exit status 1（<E> erofs: failed to set xattr `security.selinux` @ nid 54 because of `[Error -1] Unknown error -1`）
+
+=== [5] OrangePi ARM64 Debian 12 (GLIBC 2.36) 运行高版本容器编译的后端 ===
+/home/orangepi/cloud-phone-hub/runtime/qemu/libexec/secure_env: /lib/aarch64-linux-gnu/libc.so.6: version `GLIBC_2.38' not found
+/home/orangepi/cloud-phone-hub/runtime/qemu/libexec/netsimd: /lib/aarch64-linux-gnu/libm.so.6: version `GLIBC_2.43' not found
+创建实例失败:linux 媒体decoder需宿主 V4L2 节点:设置 CDH_MEDIA_V4L2_DECODER
+qemu-system-aarch64: -vnc: invalid option

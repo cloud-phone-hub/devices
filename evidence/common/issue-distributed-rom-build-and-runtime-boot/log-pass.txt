@@ -1,0 +1,57 @@
+=== [1] 构建源码按需下发至 ROM 服务器 (rom-main: 192.168.31.164) ===
+==> 下发 [manifest] devices/manifest -> rom-main:/home/backup/cloud-phone-hub/runtime/devices/manifest
+==> 下发 [hardware] devices/hardware -> rom-main:/home/backup/cloud-phone-hub/runtime/devices/hardware
+==> 下发 [modules] devices/modules -> rom-main:/home/backup/cloud-phone-hub/runtime/devices/modules
+==> 下发 [kernel-config] devices/kernels/patches + lineage-kernel.config -> rom-main
+==> 下发 [cuttlefish] cuttlefish/{patch,scripts,source} -> rom-main
+==> 下发 [kernel:6.1] devices/kernels/6.1 -> rom-main:/home/backup/cloud-phone-hub/runtime/devices/kernels/6.1
+==> 下发 [hal-deps:android14] out/devices/hal/android14/aosp -> rom-main:/home/backup/cloud-phone-hub/runtime/out/devices/hal/android14/aosp
+
+=== [2] rom-main 实地完成 motorola/aito (16-W1UCS36H.96-35-8-9-20260801) 13/13 阶段全链路构建 ===
+==> 设备: Motorola Razr (aito)（motorola/aito）
+    厂商固件: /home/3t/moto_free_a14plus/AITO_RETAIL_16_W1UCS36H.96-35-8-9_subsidy-DEFAULT_regulatory-DEFAULT_cid50_CFC.xml.zip
+    lineage 底包: /home/backup/cloud-phone-hub/roms/lineage/UTM-VM-lineage-21.0-20261107-UNOFFICIAL-virtio_arm64.zip
+==> 内核线: 6.1（release 6.1.138-4k-cdh）
+==> 官方 EROFS 镜像标签真值: 4183 条（镜像直读）
+==> [步骤 13.7] 发布盘集（patch.img / data.qcow2 / device.json）
+    [ok] patch.img -> out/devices/dist/motorola/aito/16-W1UCS36H.96-35-8-9-20260801/patch.img（384.0 MiB，sha256 d27ab79fb84a）
+    [ok] data.qcow2: 195.4 KiB（虚拟 214.23 GiB）
+    [ok] device.json（id=aito_16-W1UCS36H.96-35-8-9-20260801）
+    产物: out/devices/dist/motorola/aito/16-W1UCS36H.96-35-8-9-20260801（vda.img 23.00 GiB，10 个分区已刷新）
+[ok] 已完成 (durationMs=276464, exitCode=0)
+
+=== [3] rom-main -> rom-main-runtime 局域网免密直传 ===
+{"srcNodeId":"rom-main","dstNodeId":"rom-main-runtime","bundleSubPath":"motorola/aito/16-W1UCS36H.96-35-8-9-20260801","strategy":"remote-direct-rsync","durationMs":224718}
+sent 8,209,636,196 bytes  received 152 bytes  36,732,153.68 bytes/sec
+total size is 25,098,927,373  speedup is 3.06
+
+=== [4] rom-main-runtime (OrangePi 5 Plus ARM64 Debian 12) GPU 硬件探针与云机实机运行验证 ===
+{"gl_vendor": "Mesa", "schema": "cdh.gpu-probe.v1", "egl_vendor": "Mesa Project", "gl_version": "3.1 (Core Profile) Mesa 26.0.3-1ubuntu1", "fbo_status": 36053, "hardware": true, "gl_renderer": "Mali-G610 MC4 (Panfrost)", "gl_error": 0, "render_flags": 619, "pixel_rgba": [255, 0, 0, 255]}
+PROBE_EXIT=0
+
+List of devices attached
+127.0.0.1:5911         device product:aito_g_sys model:motorola_razr_50 device:aito transport_id:20
+
+ro.product.model=motorola razr 50
+ro.product.device=aito
+ro.build.version.release=16
+ro.build.fingerprint=motorola/aito_g_sys/aito:16/W1UCS36H.96-35-8-9/4907d6-43c152:user/release-keys
+Linux localhost 6.1.141-android14-11-gd77c4cd65aed-ab14680598 #1 SMP PREEMPT Wed Jan  7 15:04:33 UTC 2026 aarch64 Toybox
+
+Module                  Size  Used by
+zram                   40960  0
+zsmalloc               40960  1 zram
+virtio_console         40960  0
+mac80211_hwsim        102400  0
+mac80211             1056768  1 mac80211_hwsim
+libarc4                20480  1 mac80211
+cfg80211             1081344  2 mac80211_hwsim,mac80211
+rfkill                 40960  1 cfg80211
+cdh_media              53248  0
+cdh_input_identity     24576  0
+cdh_device_info        81920  0
+kernelsu              200704  0
+cdh_redirect          159744  0
+
+cdh_redirect: rules 21/32, forward_hits: 62244, reverse_hits: 16625
+HAL services running: keymint-service, wifi-service, bluetooth-service, service_daemon, allocator-service.minigbm, camera-service, drm-service.clearkey, drm-service.widevine, neuralnetworks-service, nfc-service, power-service, radio-service, graphics.composer@2.4-service, audio.service, audio.effect.service, audio.parameter_parser.service

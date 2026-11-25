@@ -1,0 +1,11 @@
+=== Negative Gate A: local_keybox with untrusted/forged root rejected before VM launch ===
+exit_code=1
+daemon: 创建实例失败: 准备证明PKI失败: [ERR_KEYBOX_UNTRUSTED_ROOT] ecdsa 根证书未命中内置受信任硬件证明根表（root_fingerprint=81536c2cc1609e751f660b74bf7a48e73080d824590a668ebcb2ac4876b74f43）
+
+=== Negative Gate B: mismatched/stale vbmeta.img digest rejected before VM launch ===
+exit_code=1
+daemon: 创建实例失败: verified-boot-hash(fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f) 与镜像实际 vbmeta 摘要(82aa41e9b82abd1bcdcbd6d97040c25dcdac40762519733ed21e710c4a8af61c, 来源 <TMP_VERIFY_DIR>/images-neg2/google/oriole/15/vbmeta.img) 不一致，拒绝启动
+
+=== Negative Gate C: provisioned mode (local_keybox) without extractable AVB public key rejected (no random ES256 fallback) ===
+exit_code=1
+daemon: 创建实例失败: 解析启动证据失败: 镜像未包含可提取 AVB 公钥的 vbmeta 且未配置 factory-tee-verified-boot-key，已供证模式禁止生成随机启动公钥

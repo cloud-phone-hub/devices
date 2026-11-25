@@ -1,0 +1,80 @@
+=== Positive Live 1: google/oriole (Android 15) unprovisioned mode (with reboot persistence) ===
+boot1_root_fingerprint=a04d49d936890ffe15026b9ccb9287cfafc3ff3e216320b9117f876c7d29fb94
+boot2_root_fingerprint=a04d49d936890ffe15026b9ccb9287cfafc3ff3e216320b9117f876c7d29fb94
+boot1_input_sha256=8078d4447815866af7a48b3a9d416ea3d7040306f2e6f735a60e5b07c76f7217
+boot2_input_sha256=8078d4447815866af7a48b3a9d416ea3d7040306f2e6f735a60e5b07c76f7217
+--- daemon attestation verify --kv ---
+mode=unprovisioned
+input_sha256=8078d4447815866af7a48b3a9d416ea3d7040306f2e6f735a60e5b07c76f7217
+chain_depth=2
+root_fingerprint=a04d49d936890ffe15026b9ccb9287cfafc3ff3e216320b9117f876c7d29fb94
+root_trusted=false
+revocation=OK
+rkp_issued=false
+vbmeta_digest=fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f
+verified_boot_state=unverified
+device_locked=false
+play_integrity=NOT_TESTED
+--- daemon attestation verify (JSON) ---
+{
+  "instance_dir": "<TMP_VERIFY_DIR>/rt-live/oriole_unprov_live/1",
+  "mode": "unprovisioned",
+  "source": "ephemeral",
+  "ephemeral": true,
+  "input_sha256": "8078d4447815866af7a48b3a9d416ea3d7040306f2e6f735a60e5b07c76f7217",
+  "chain_depth": 2,
+  "algorithms": [
+    "rsa",
+    "ecdsa"
+  ],
+  "root_fingerprint": "a04d49d936890ffe15026b9ccb9287cfafc3ff3e216320b9117f876c7d29fb94",
+  "root_trusted": false,
+  "revocation": "OK",
+  "rkp_issued": false,
+  "vbmeta_digest": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f",
+  "verified_boot_key_sha256": "1f71fe89d1e94946046f9a3b192f120b9e05092645879e93da162ca8e6c9920d",
+  "verified_boot_state": "unverified",
+  "device_locked": false,
+  "play_integrity": "NOT_TESTED"
+}
+--- KeyAttestation UI texts (unprovisioned) ---
+
+
+=== Positive Live 2: google/oriole (Android 15) local_keybox mode (Google Hardware Attestation Root + AVB verified boot) ===
+--- daemon attestation verify --kv ---
+mode=local_keybox
+input_sha256=64c02acec45644eb780b2a23f27c800b338303ca24c12904d1fd72546b2e0987
+chain_depth=3
+root_fingerprint=cedb1cb6dc896ae5ec797348bce9286753c2b38ee71ce0fbe34a9a1248800dfc
+root_trusted=true
+revocation=OK
+rkp_issued=false
+vbmeta_digest=fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f
+verified_boot_state=verified
+device_locked=true
+play_integrity=NOT_TESTED
+--- daemon attestation verify (JSON) ---
+{
+  "instance_dir": "<TMP_VERIFY_DIR>/rt-live/oriole_keybox_live/1",
+  "mode": "local_keybox",
+  "source": "keybox_xml",
+  "ephemeral": false,
+  "input_sha256": "64c02acec45644eb780b2a23f27c800b338303ca24c12904d1fd72546b2e0987",
+  "chain_depth": 3,
+  "algorithms": [
+    "rsa",
+    "ecdsa"
+  ],
+  "root_fingerprint": "cedb1cb6dc896ae5ec797348bce9286753c2b38ee71ce0fbe34a9a1248800dfc",
+  "root_name": "Google Hardware Attestation Root",
+  "root_trusted": true,
+  "revocation": "OK",
+  "rkp_issued": false,
+  "vbmeta_digest": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f",
+  "verified_boot_key_sha256": "ca10e2a42c9164cff9133a4c2ecec469ca5faaf241cb06622f0c1fc0415a7132",
+  "verified_boot_state": "verified",
+  "device_locked": true,
+  "play_integrity": "NOT_TESTED"
+}
+--- KeyAttestation UI texts (local_keybox) ---
+

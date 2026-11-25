@@ -1,3 +1,8 @@
 kernels/
 modules/kernelsu/source/
 **/.DS_Store
+**/*keybox*.xml
+**/gaybox.xml
+**/*.pk8
+**/factory-pki/
+**/*rkp*token*
