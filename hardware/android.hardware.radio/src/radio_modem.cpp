@@ -302,15 +302,25 @@ public:
         version = kBasebandVersion;
       }
     }
+    if (version.empty()) {
+      return response->getBasebandVersionResponse(
+          ResponseInfo(serial, aidl_radio::RadioError::REQUEST_NOT_SUPPORTED),
+          "");
+    }
     // 属性 gsm.version.baseband 的值上限 91 字节（PROP_VALUE_MAX-1）。框架把各槽
     // 上报值按槽拼成逗号列表回写同一属性，并按 (91/槽数)=45 字节/项截尾（sun 的
-    // 56 字节完整版本实测被切掉 MPSS.DE.7.0 前缀）。拼不下时各槽一律回报错：框架的
-    // EVENT_GET_BASEBAND_VERSION_DONE 遇到异常直接跳过，属性保留启动时从
-    // /vendor/build.prop 注入的完整值，设置页即显示整串。
-    if (!version.empty() &&
-        version.size() * static_cast<std::size_t>(kLogicalModemCount) +
-                static_cast<std::size_t>(kLogicalModemCount - 1) >
-            static_cast<std::size_t>(91)) {
+    // 56 字节完整版本实测被切掉 MPSS.DE.7.0 前缀）。拼不下时先将完整单槽版本写入
+    // gsm.version.baseband（若尚未预置或被初始化为空槽 ","），再回 REQUEST_NOT_SUPPORTED
+    // 让框架 EVENT_GET_BASEBAND_VERSION_DONE 跳过覆盖，设置页即完整显示整串。
+    if (version.size() * static_cast<std::size_t>(kLogicalModemCount) +
+            static_cast<std::size_t>(kLogicalModemCount - 1) >
+        static_cast<std::size_t>(91)) {
+      if (version.size() < static_cast<std::size_t>(PROP_VALUE_MAX)) {
+        const std::string cur = ReadProperty("gsm.version.baseband");
+        if (cur.empty() || cur == ",") {
+          __system_property_set("gsm.version.baseband", version.c_str());
+        }
+      }
       return response->getBasebandVersionResponse(
           ResponseInfo(serial, aidl_radio::RadioError::REQUEST_NOT_SUPPORTED),
           "");

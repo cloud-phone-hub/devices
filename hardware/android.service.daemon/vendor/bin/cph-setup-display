@@ -38,6 +38,46 @@ if [ "$(settings get global sales_nvram_flag 2>/dev/null)" = "null" ]; then
 fi
 settings put secure user_setup_complete 1 2>/dev/null
 settings put global device_provisioned 1 2>/dev/null
+
+# ---- 小米 HyperOS / MIUI「我的设备 · 全部参数与信息」硬件规格离线预置 ----
+# Settings 的 DeviceParamsManager 首次进入「我的设备」时跨进程请求 port.sec.miui.com 拉取处理器营销名与前后摄像素，
+# 并持久化到 DE 存储 /data/user_de/0/com.android.settings/shared_prefs/device_params_pref.xml。
+# 若云机处于离线或首启尚未缓存有效 BasicInfoToggle，则由 02_prepare 生成的 /vendor/etc/cdh_miui_device_params.xml 幂等预置。
+# 注意：/data/user_de/0/com.android.settings 由 installd 按 seapp_contexts 标为 system_app_data_file，
+# 切勿直接 restorecon（plat_file_contexts 会误标为 system_data_file 导致 system_app 被 SELinux 拒绝读写），
+# 必须继承父目录自身的 SELinux 上下文与属主。
+miui_params_src="/vendor/etc/cdh_miui_device_params.xml"
+settings_de_dir="/data/user_de/0/com.android.settings"
+if [ -f "$miui_params_src" ] && [ -d "$settings_de_dir" ]; then
+    miui_pref_dir="${settings_de_dir}/shared_prefs"
+    miui_pref_file="${miui_pref_dir}/device_params_pref.xml"
+    if [ ! -s "$miui_pref_file" ] || ! grep -q 'BasicInfoToggle' "$miui_pref_file" 2>/dev/null; then
+        settings_ug="$(stat -c '%u:%g' "$settings_de_dir" 2>/dev/null)"
+        [ -z "$settings_ug" ] && settings_ug="1000:1000"
+        settings_ctx="$(stat -c '%C' "$settings_de_dir" 2>/dev/null)"
+        mkdir -p "$miui_pref_dir" 2>/dev/null || true
+        chown "$settings_ug" "$miui_pref_dir" 2>/dev/null || true
+        chmod 0771 "$miui_pref_dir" 2>/dev/null || true
+        if cp "$miui_params_src" "${miui_pref_file}.cdh_tmp" 2>/dev/null &&
+           mv -f "${miui_pref_file}.cdh_tmp" "$miui_pref_file" 2>/dev/null; then
+            chown "$settings_ug" "$miui_pref_file" 2>/dev/null || true
+            chmod 0660 "$miui_pref_file" 2>/dev/null || true
+            if [ -n "$settings_ctx" ] && [ "$settings_ctx" != "?" ]; then
+                chcon "$settings_ctx" "$miui_pref_dir" "$miui_pref_file" 2>/dev/null || true
+            else
+                restorecon -RF "$miui_pref_dir" 2>/dev/null || true
+            fi
+            log -t cdh_provision "seeded MIUI/HyperOS device_params_pref.xml from ${miui_params_src} (ctx=${settings_ctx})"
+            if [ -n "$(pidof com.android.settings)" ]; then
+                if ! dumpsys window displays 2>/dev/null | grep -q 'mCurrentFocus=.*com\.android\.settings'; then
+                    am force-stop com.android.settings 2>/dev/null || kill -9 "$(pidof com.android.settings)" 2>/dev/null || true
+                fi
+            fi
+        else
+            rm -f "${miui_pref_file}.cdh_tmp" 2>/dev/null || true
+        fi
+    fi
+fi
 # HMD 机型（如 ARW）首次冷启动由 com.google.android.setupwizard 拉起
 # com.hmdglobal.app.setupwizardext/.WelcomeSetupWizard 占据 HOME 任务，
 # 写入 device_provisioned=1 后该向导不会自动退出；禁用并停止这两个引导包后

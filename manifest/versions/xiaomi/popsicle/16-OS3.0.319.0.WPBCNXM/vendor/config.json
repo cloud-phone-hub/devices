@@ -1,0 +1,18 @@
+{
+  "build-prop-sets": {
+    "ro.bionic.2nd_arch": "",
+    "ro.bionic.2nd_cpu_variant": "",
+    "ro.hardware.gralloc": "minigbm",
+    "ro.zygote": "zygote64"
+  },
+  "build-prop-unsets": [
+    "ro.gfx.driver.1",
+    "ro.vendor.audio.soundfx.type",
+    "ro.vendor.seriallogging",
+    "ro.vendor.seriallogging.logcat_buffer",
+    "ro.crypto.metadata_init_delete_all_keys.enabled",
+    "ro.frp.pst",
+    "ro.gfx.driver.0",
+    "ro.vndk.lite"
+  ]
+}

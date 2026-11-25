@@ -61,14 +61,8 @@
       }
     },
     {
-      "android.hardware.nfc": {
-        "variant": "default",
-        "version": "1.0"
-      }
-    },
-    {
       "android.hardware.radio": {
-        "variant": "qti",
+        "variant": "default",
         "version": "1.0"
       }
     },

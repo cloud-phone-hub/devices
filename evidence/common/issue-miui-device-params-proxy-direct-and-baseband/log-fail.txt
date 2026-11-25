@@ -1,0 +1,45 @@
+=== [FAIL] getprop ===
+Xiaomi
+popsicle
+2509FPN0BC
+Xiaomi 17 Pro Max
+SM8850
+=== [FAIL] logcat DeviceParamsManager ===
+11-25 10:14:32.767  2390  2390 W System.err: 	at com.android.settings.device.DeviceParamsManager.resume(SourceFile:79)
+11-25 10:14:32.768  2390  2390 W System.err: 	at com.android.settings.device.DeviceParamsManager.resume(SourceFile:79)
+11-25 10:14:53.411  2390  9877 W DeviceParamsManager: Failed to get basic device info 
+11-25 10:14:55.590  2390  2390 E MiuiAboutPhoneUtils: 	at com.android.settings.device.DeviceParamsManager.resume(SourceFile:79)
+11-25 10:14:55.591  2390  2390 W System.err: 	at com.android.settings.device.DeviceParamsManager.resume(SourceFile:79)
+11-25 10:14:55.592  2390  2390 W System.err: 	at com.android.settings.device.DeviceParamsManager.resume(SourceFile:79)
+11-25 10:14:55.592  2390  2390 W System.err: 	at com.android.settings.device.DeviceParamsManager.resume(SourceFile:79)
+11-25 10:15:16.205  2390 11342 W DeviceParamsManager: Failed to get basic device info 
+11-25 10:15:39.640  2390  2390 E MiuiAboutPhoneUtils: 	at com.android.settings.device.DeviceParamsManager.resume(SourceFile:79)
+11-25 10:15:39.640  2390  2390 W System.err: 	at com.android.settings.device.DeviceParamsManager.resume(SourceFile:79)
+11-25 10:15:39.641  2390  2390 W System.err: 	at com.android.settings.device.DeviceParamsManager.resume(SourceFile:79)
+11-25 10:15:39.641  2390  2390 W System.err: 	at com.android.settings.device.DeviceParamsManager.resume(SourceFile:79)
+11-25 10:16:00.342  2390  2550 W DeviceParamsManager: Failed to get basic device info 
+11-25 10:22:17.758  2390  2390 E MiuiAboutPhoneUtils: 	at com.android.settings.device.DeviceParamsManager.resume(SourceFile:79)
+11-25 10:22:17.758  2390  2390 W System.err: 	at com.android.settings.device.DeviceParamsManager.resume(SourceFile:79)
+11-25 10:22:17.759  2390  2390 W System.err: 	at com.android.settings.device.DeviceParamsManager.resume(SourceFile:79)
+11-25 10:22:17.759  2390  2390 W System.err: 	at com.android.settings.device.DeviceParamsManager.resume(SourceFile:79)
+11-25 10:22:36.632  2390  2422 W DeviceParamsManager: Failed to get basic device info 
+11-25 10:24:18.323   555   555 I adbd    :   echo "=== [FAIL] logcat DeviceParamsManager ==="
+11-25 10:24:18.323   555   555 I adbd    :   logcat -d | grep -E "DeviceParamsManager|DeviceBasicInfoPresenter" | tail -n 20
+=== [FAIL] guest curl https://port.sec.miui.com/myDevClound/devInfoNew ===
+Note: Unnecessary use of -X or --request, POST is already inferred.
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Host port.sec.miui.com:443 was resolved.
+* IPv6: (none)
+* IPv4: 39.101.90.139, 124.251.34.42, 39.101.90.138, 120.133.33.137
+*   Trying 39.101.90.139:443...
+* ALPN: curl offers http/1.1
+} [5 bytes data]
+* TLSv1.2 (OUT), TLS handshake, Client hello (1):
+} [512 bytes data]
+*  CAfile: none
+*  CApath: /system/etc/security/cacerts
+  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:02 --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:02 --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:03 --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:04 --:--:--     0* Connection timed out after 5001 milliseconds
+  0     0    0     0    0     0      0      0 --:--:--  0:00:05 --:--:--     0
+* closing connection #0
+curl: (28) Connection timed out after 5001 milliseconds

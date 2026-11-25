@@ -1,0 +1,43 @@
+=== [PASS] Go Unit Tests ===
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/device	1.851s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/01_unpack	2.005s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	0.858s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	2.013s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/13_pack_vda	1.184s
+ok  	cloud-phone-hub/agent/modules/daemon/config	0.612s
+ok  	cloud-phone-hub/agent/modules/daemon/backend/proxy	1.015s
+ok  	cloud-phone-hub/qemu/backend/net-host-service/gw	1.422s
+
+=== [PASS] pipeline device apply-profile xiaomi/popsicle ===
+==> [apply-profile] 已同步机型真机档案到 manifest:
+  - devices/manifest/devices/xiaomi/popsicle/device-profile.json
+  - devices/manifest/devices/xiaomi/popsicle/device-profile.md
+  [ok] 已对齐设备表 devices/manifest/devices/xiaomi/popsicle.json（extra.basebandVersion=MPSS.DE.9.0-01805.10-KAANAPALI_GEN_PACK-2.121444.55.124572.67）
+  [ok] 已对齐配置模版 devices/manifest/configs/xiaomi/popsicle/popsicle-android16:
+       - vendor/config.json: 同步 1 项真机属性（SoC / Display / GPU / Vulkan / DRM / Radio）
+  [ok] 已同步版本基带 devices/manifest/versions/xiaomi/popsicle/16-OS3.0.319.0.WPBCNXM -> MPSS.DE.9.0-01805.10-KAANAPALI_GEN_PACK-2.121444.55.124572.67（来源: tgz:popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/MODEM-FW.bin）
+  [ok] 已同步版本基带 devices/manifest/versions/xiaomi/popsicle/17-OS4.0.5.0.XPBCN -> MPSS.DE.9.0-01805.10-KAANAPALI_GEN_PACK-2.121444.286.166769.13（来源: tgz:popsicle_images_OS4.0.5.0.XPBCNXM_17.0/images/MODEM-FW.bin）
+==> [apply-profile] 一键反补完成: xiaomi/popsicle（更新设备表=true，更新配置模版=1）
+
+=== [PASS] Offline First-Boot Provisioning (Xiaomi 17 Pro Max #1) ===
+11-25 11:14:01.986  1313  1313 I cdh_provision: seeded MIUI/HyperOS device_params_pref.xml from /vendor/etc/cdh_miui_device_params.xml (ctx=u:object_r:system_app_data_file:s0)
+
+=== [PASS] Guest Online Domestic DIRECT Bypass & Overseas Trojan Proxy ===
+$ adb -s 127.0.0.1:5927 shell 'curl -sS -w "\nHTTP=%{http_code} TIME=%{time_total}s\n" -m 6 -X POST "https://port.sec.miui.com/myDevClound/devInfoNew" -d "device=popsicle&model=2509FPN0BC&product=popsicle&langType=zhCN&version=0"'
+{"Mishop":{"RightValue":"","ShowRedDot":"false","Url":""},"BasicInfoToggle":"1","BasicItems":[{"Title":"处理器","Summary":"第五代骁龙®8至尊版移动平台","Index":"0"},{"Title":"电池容量","Summary":"7500mAh(typ)","Index":"1"},{"Title":"后置摄像头","Summary":"50+50+50MP","Index":"2"},{"Title":"屏幕尺寸","Summary":"6.9″","Index":"3"},{"Title":"分辨率","Summary":"2608×1200 超级像素","Index":"4"},{"Title":"运行内存","Summary":"","Index":"5"}]}
+HTTP=200 TIME=0.389807s
+
+$ adb -s 127.0.0.1:5927 shell 'curl -sS -o /dev/null -w "GOOGLE_HTTP=%{http_code} TIME=%{time_total}s\n" -m 8 "https://www.google.com/generate_204"'
+GOOGLE_HTTP=204 TIME=0.514169s
+
+=== [PASS] Live Re-populated device_params_pref.xml After Cache Deletion ===
+-rw-rw---- 1 system system u:object_r:system_app_data_file:s0  1313 2026-11-25 11:43 /data/user_de/0/com.android.settings/shared_prefs/device_params_pref.xml
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <string name="basic_info_key">{&quot;Mishop&quot;:{&quot;RightValue&quot;:&quot;&quot;,&quot;ShowRedDot&quot;:&quot;false&quot;,&quot;Url&quot;:&quot;&quot;},&quot;BasicInfoToggle&quot;:&quot;1&quot;,&quot;BasicItems&quot;:[{&quot;Title&quot;:&quot;处理器&quot;,&quot;Summary&quot;:&quot;第五代骁龙®8至尊版移动平台&quot;,&quot;Index&quot;:&quot;0&quot;},{&quot;Title&quot;:&quot;电池容量&quot;,&quot;Summary&quot;:&quot;7500mAh(typ)&quot;,&quot;Index&quot;:&quot;1&quot;},{&quot;Title&quot;:&quot;后置摄像头&quot;,&quot;Summary&quot;:&quot;50+50+50MP&quot;,&quot;Index&quot;:&quot;2&quot;},{&quot;Title&quot;:&quot;屏幕尺寸&quot;,&quot;Summary&quot;:&quot;6.9″&quot;,&quot;Index&quot;:&quot;3&quot;},{&quot;Title&quot;:&quot;分辨率&quot;,&quot;Summary&quot;:&quot;2608×1200 超级像素&quot;,&quot;Index&quot;:&quot;4&quot;},{&quot;Title&quot;:&quot;运行内存&quot;,&quot;Summary&quot;:&quot;&quot;,&quot;Index&quot;:&quot;5&quot;}]}</string>
+    <string name="camera_info_key">{&quot;data&quot;:{&quot;BasicInfoToggle&quot;:&quot;1&quot;,&quot;camera&quot;:{&quot;front_camera&quot;:&quot;50MP&quot;,&quot;rear_camera&quot;:&quot;50MP+50MP+50MP&quot;}},&quot;status&quot;:&quot;true&quot;}</string>
+</map>
+
+=== [PASS] Live Guest Baseband Property ===
+$ adb -s 127.0.0.1:5927 shell getprop gsm.version.baseband
+MPSS.DE.9.0-01805.10-KAANAPALI_GEN_PACK-2.121444.55.124572.67

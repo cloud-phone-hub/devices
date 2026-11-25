@@ -23,9 +23,12 @@
 (allow hal_radio_default hal_radio_service_{{vers}} (service_manager (add find)))
 
 ;; ---- 3) 运行库与厂商属性 ----
-;; vendor.ril.* 等由 host provider 在启动时下发。
+;; vendor.ril.* 等由 host provider 在启动时下发；长基带串（>45B）由 hal_radio_default 直接写入 gsm.version.baseband。
 (allow hal_radio_default vendor_file (file (read getattr map open execute)))
 (allow hal_radio_default vendor_default_prop (file (read getattr map open)))
+(allow hal_radio_default property_socket_{{vers}} (sock_file (write)))
+(allow hal_radio_default init_{{vers}} (unix_stream_socket (connectto)))
+(allow hal_radio_default radio_prop_{{vers}} (property_service (set)))
 
 ;; ---- 4) 宿主通道 ----
 ;; 虚拟 RIL 经 /dev/hvc4 与 host provider 收发（rc 注释里的「设备集成层遗留项」）。

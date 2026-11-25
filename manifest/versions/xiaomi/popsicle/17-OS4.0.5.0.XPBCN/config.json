@@ -10,13 +10,14 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MPSS.DE.9.0-01805.10-KAANAPALI_GEN_PACK-2.121444.286.166769.13",
     "comment": "由 cdh unpack prepare 从 popsicle_images_OS4.0.5.0.XPBCNXM_20261021.0000.00_17.0_cn_087454683a.tgz (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
+      "odm": "16",
+      "product": "17",
       "system": "17",
       "system_ext": "17",
-      "product": "17",
       "vendor": "16",
-      "odm": "16",
       "vendor_dlkm": "16"
     }
   },

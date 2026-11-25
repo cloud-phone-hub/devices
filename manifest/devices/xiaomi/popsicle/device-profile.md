@@ -2,8 +2,7 @@
 
 - **生成时间**: `2026-11-18T12:31:10+08:00`
 - **ROM Build ID**: `17-OS4.0.5.0.XPBCN`
-- **分区 Android 版本**: `system=17, system_ext=17, product=17, vendor=16, odm=16, vendor_dlkm=16`
-- **DSH 聊天会话 ID**: `session-ee571953-a60e-47c7-a8c9-f6a658bd26e1`（标题：`[02_prepare] 真机规格采集 · Xiaomi 17 Pro Max (xiaomi/popsicle · 17-OS4.0.5.0.XPBCN)`）
+- **DSH 聊天会话 ID**: `session-ee571953-a60e-47c7-a8c9-f6a658bd26e1`（标题：`[02_prepare] 真机规格采集 · Xiaomi 17 Pro Max (xiaomi/popsicle · 16-OS4.0.5.0.XPBCN)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `false`）
 
 ---
@@ -165,7 +164,7 @@
 - **触控与按键对齐**: touch=`goodix_ts` · keyboard=`gpio-keys` · input_identity 外设数=`5` 项
 - **硬件 HAL 变体与开关**: radioVariant=`default` · NFC=`true` · 红外=`true` · 3.5mm=`false` · 立体声双扬声器
 - **影像规格**: 后置 50MP 主摄 (1/1.28英寸, OIS) + 50MP 5x 潜望长焦 + 50MP 超广角 | 前置 50MP
-- **电池与通信**: `7500 mAh`（有线 `100W` / 无线 `50W`） · Wi-Fi 7 (802.11be, 三频)（Wi-Fi 6=`true`） · BT `6.0` · 5G=`true` · Widevine `L1` (sysId=`36280`) · TAC `86135206` · MAC OUI `[3c:38:24 0c:1d:af 8c:be:be]`
+- **电池与通信**: `7500 mAh`（有线 `100W` / 无线 `50W`） · Wi-Fi 7 (802.11be, 三频)（Wi-Fi 6=`true`） · BT `6.0` · 5G=`true` · Widevine `L1` (sysId=`36280`) · TAC `86135206` · 基带 `MPSS.DE.9.0-01805.10-KAANAPALI_GEN_PACK-2.121444.55.124572.67` · MAC OUI `[3c:38:24 0c:1d:af 8c:be:be]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `25` 项对齐传感器
@@ -192,7 +191,9 @@
 - `board`: `canoe` | `soc`: `QTI  ()`
 - `densityDpi`: `0` | `egl`: `adreno` | `vulkan`: `adreno` | `abilist`: `arm64-v8a`
 - `securityPatch`: `2026-10-01` | `buildDate`: `20261020` | `kernelLine`: `6.12` | `vintfVersion`: `-`
+- `partitionAndroidVersions`: `system=17, system_ext=17, product=17, vendor=16, odm=16, vendor_dlkm=16`
 - `uname`: `Linux localhost 6.12.69-android16-6-g43b5ab7e247d-abogki558343811-4k #1 SMP PREEMPT Tue Sep  8 15:08:49 UTC 2026 aarch64 Toybox`
+- `basebandVersion`: `MPSS.DE.9.0-01805.10-KAANAPALI_GEN_PACK-2.121444.55.124572.67`（来源: `tgz:popsicle_images_OS3.0.319.0.WPBCNXM_16.0/images/MODEM-FW.bin`）
 - `fingerprint`: `Xiaomi/popsicle/popsicle:16/BQ2A.260225.001-BP2A.250705.008/OS4.0.5.0.XPBCN:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=popsicle`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `vda.partitions` (3 个附加分区): `cust.img->/cust`, `vendor_persist.img->/mnt/vendor/persist`, `rescue.img->/mnt/rescue`
@@ -528,7 +529,7 @@
     "ro.vendor.build.fingerprint": "Xiaomi/popsicle/popsicle:16/BQ2A.260225.001-BP2A.250705.008/OS4.0.5.0.XPBCN:user/release-keys",
     "ro.vendor.build.security_patch": "2026-10-01",
     "ro.vendor.build.date": "20261020",
-    "ro.vendor.build.os_version": "17-OS4.0.5.0.XPBCN",
+    "ro.vendor.build.os_version": "16-OS4.0.5.0.XPBCN",
     "ro.vendor.soc.manufacturer": "QTI",
     "ro.vendor.soc.model": "SM8850",
     "ro.vendor.soc.platform": "canoe",
