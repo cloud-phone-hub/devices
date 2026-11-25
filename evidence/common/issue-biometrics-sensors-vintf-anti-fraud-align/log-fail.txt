@@ -1,0 +1,41 @@
+=== Pre-Fix Baseline (out/agent/tmp/gold11-compare-20261125, patch.img sha256=a34a8915dce6db97d5f9a8b3fcb6a5c7835929cf53ca78f2567b6ca25e036364) ===
+Real Device : fmvwkrheonugvgjb (ec519c7d513a3ad3, Redmi Note 13 5G 2312DRAABC, OS3.0.11.0.VNQCNXM)
+Cloud #1    : 127.0.0.1:5911   (4c17e53fbaef35ca-cloud, gold_15-OS3.0.11.0.VNQCNXM/1)
+
+[1] aligner.app_full:
+  summary: {"identity": 0, "capability": 1, "state": 3, "availability": 1, "fatal": 1}
+  capability features[name=android.hardware.fingerprint]: base={"name": "android.hardware.fingerprint"} -> target="<缺>"
+  availability.features: base=93 -> target=92
+
+[2] aligner.sensors_full:
+  summary: {"identity": 0, "capability": 2, "state": 0, "availability": 0, "fatal": 2}
+  sensors[handle=2].name:   base="qmc6308" -> target="mmc5603"
+  sensors[handle=2].vendor: base="QST"     -> target="Memsic"
+
+[3] aligner.services_full:
+  summary: {"identity": 0, "capability": 40, "state": 1, "availability": 4, "fatal": 40}
+  availability.getServiceResolved:       base=88  -> target=87
+  availability.getSystemServiceResolved: base=115 -> target=114
+  getService.fingerprint:                base="android.hardware.fingerprint.IFingerprintService" -> target="<缺>"
+  getSystemService.fingerprint:          base="android.hardware.fingerprint.FingerprintManager"  -> target="<缺>"
+  serviceList.count:                     base=470 -> target=438
+  missing 22 radio placeholders (dmesg: servicemanager: Could not find ... in the VINTF manifest):
+    android.hardware.radio.ims.IRadioIms/slot1..2
+    android.hardware.radio.modem.IRadioModem/{imsSlot1..2,se1..2}
+    android.hardware.radio.network.IRadioNetwork/imsSlot1..2
+    android.hardware.radio.sap.ISap/slot1..2
+    android.hardware.radio.sim.IRadioSim/{imsSlot1..2,se1..2}
+    android.hardware.radio.voice.IRadioVoice/imsSlot1..2
+    vendor.mediatek.hardware.mtkradioex.{dch.IMtkRadioExDc,ims.IMtkRadioExIms,rcs.IMtkRadioExRcs}/slot1..2
+  missing system services due to scrubbed ro.frp.pst:
+    oem_lock, persistent_data_block
+
+[4] aligner.build_props_full:
+  identity props.ro.frp.pst:           base="/dev/block/by-name/frp" -> target="<缺>"
+  state    props.sys.oem_unlock_allowed: base="0"                    -> target="<缺>"
+
+[5] ultimate.hardware_env & ultimate.attestation_integrity:
+  ultimate.hardware_env:
+    cloud_only=1 ["U-HW-WIDEVINE"] (ro.boot.verifiedbootstate="green" with ro.vendor.drm.widevine.security_level="L3")
+  ultimate.attestation_integrity:
+    cloud status=failed (timeout / keystore2 blocked after host cdha restart killed secure_env & changed dynamic SOCKS5 port)

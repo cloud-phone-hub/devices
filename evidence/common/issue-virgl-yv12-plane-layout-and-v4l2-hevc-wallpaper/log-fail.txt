@@ -1,0 +1,66 @@
+=== [BEFORE FIX] FastPlayer / CCodec / ANWDisplay Fallback Logs ===
+11-25 12:59:36.638  1428 13444 D FastPlayerVideoFrameReleaseHelper: doFrame, postdely vsyncTimeNs: 4385771381
+11-25 12:59:37.285 24471 24471 I VideoDepth: VideoDepthManager##releaseAndInitFastPlayer mFastPlayer = null
+11-25 12:59:37.287 24471 24471 I FastPlayerJni: [JNI_OnLoad::947]
+11-25 12:59:37.287 24471 24471 E FastPlayerJni: build time Apr 20 2026, 07:05:54
+11-25 12:59:37.287 24471 24471 V FastPlayerWrapper: init done.
+11-25 12:59:37.287 24471 24471 I FastPlayerJni: [register_jni_methods::932]
+11-25 12:59:37.287 24471 24471 I FastPlayerJni: [register_FastPlayer::908]
+11-25 12:59:37.287 24471 24471 I FastPlayerJni: [register_FastPlayer::920]
+11-25 12:59:37.287 24471 24471 I FastPlayerJni: [register_jni_methods::939]
+11-25 12:59:37.287 24471 24471 I FastPlayerJni: register_jni_methods: 1
+11-25 12:59:37.287 24471 24471 I FastPlayerJni: [FastPlayer_native_init::411]
+11-25 12:59:37.287 24471 24471 I FastPlayerJni: [FastPlayer_native_init::423]
+11-25 12:59:37.288 24471 24471 I FastPlayerVideoFrameReleaseHelper: defaultDisplayRefreshRate: 60.0
+11-25 12:59:37.288 24471 24471 D FastPlayerVideoFrameReleaseHelper: start VideoFrameReleaseHelper success
+11-25 12:59:37.288 24471 24471 I FastPlayerJni: [FastPlayer_native_setup::428]
+11-25 12:59:37.288 24471 24471 V FastPlayerWrapper: MetadataRetrieverWrapper() + version 26.4.20.370.1.4.66
+11-25 12:59:37.288 24471 24471 V FastPlayerWrapper: MetadataRetrieverWrapper::setCallback
+11-25 12:59:37.288 24471 24471 I FastPlayerJni: [FastPlayer_native_setup::442]
+11-25 12:59:37.288 24471 24471 I VideoDepth: VideoDepthManager##init fastplayer mFastPlayer = com.miui.fastplayer.FastPlayer@ec1f21d
+11-25 12:59:37.288 24471 24471 I FastPlayerJni: [FastPlayer_set_callback::449]
+11-25 12:59:37.288 24471 24471 I FastPlayerJni: [FastPlayer_set_callback::451]
+11-25 12:59:37.288 24471 24471 I FastPlayerJni: [FastPlayer_set_callback::453]
+11-25 12:59:37.288 24471 24471 I FastPlayerJni: [FastPlayer_set_callback::456]
+11-25 12:59:37.288 24471 24471 I FastPlayerJni: [FastPlayer_set_callback::461]
+11-25 12:59:37.288 24471 24471 V FastPlayerWrapper: MetadataRetrieverWrapper::setCallback
+11-25 12:59:37.288 24471 24471 I FastPlayerJni: [FastPlayer_set_callback::464]
+11-25 12:59:37.288 24471 24471 D FastPlayer: startVsyncObserver start
+11-25 12:59:37.288 24471 24471 D FastPlayerVideoFrameReleaseHelper: startObserver start isObserverAdded:true
+11-25 12:59:37.288 24471 24471 D FastPlayerVideoFrameReleaseHelper: startObserver end
+11-25 12:59:37.288 24471 24471 D FastPlayer: startVsyncObserver end
+11-25 12:59:37.288 24471 24471 D FastPlayer: open fd failed, IOException!
+11-25 12:59:37.288 24471 24471 D FastPlayer: open fd failed, finally!
+11-25 12:59:37.288 24471 24471 I FastPlayerJni: [FastPlayer_addDataSourceAndHeaders::119]
+11-25 12:59:37.288 24471 24471 V FastPlayerWrapper: MetadataRetrieverWrapper::addDataSource
+11-25 12:59:37.289 24471 24471 V FastPlayerWrapper: MetadataRetrieverWrapper::setVideoTrack
+11-25 12:59:37.289 24471 24471 V FastPlayerWrapper: use default videoTrack:1
+11-25 12:59:37.289 24471 24471 V FastPlayerWrapper: use default videoTrack:1
+11-25 12:59:37.289 24471 24471 I FastPlayerJni: [FastPlayer_setLoop::250]
+11-25 12:59:37.289 24471 24471 V FastPlayerWrapper: MetadataRetrieverWrapper::setLoop 0
+11-25 12:59:37.289 24471 24529 I FastPlayerJni: [native_callback::53]
+11-25 12:59:37.291 24471 24471 I FastPlayerJni: [FastPlayer_extractMetadata::361]
+11-25 12:59:37.291 24471 24471 V FastPlayerWrapper: MetadataRetrieverWrapper::extractMetadata,line:765
+11-25 12:59:37.291 24471 24471 V FastPlayerWrapper: extractMetadata: value (0) for keyCode(24)
+11-25 12:59:37.291 24471 24471 I FastPlayerJni: [FastPlayer_extractMetadata::361]
+11-25 12:59:37.291 24471 24471 V FastPlayerWrapper: MetadataRetrieverWrapper::extractMetadata,line:765
+11-25 12:59:37.291 24471 24471 V FastPlayerWrapper: extractMetadata: value (1200) for keyCode(18)
+11-25 12:59:37.291 24471 24471 I FastPlayerJni: [FastPlayer_extractMetadata::361]
+11-25 12:59:37.291 24471 24471 V FastPlayerWrapper: MetadataRetrieverWrapper::extractMetadata,line:765
+11-25 12:59:37.291 24471 24471 V FastPlayerWrapper: extractMetadata: value (2608) for keyCode(19)
+11-25 12:59:37.294 24471 24528 D FastPlayerVideoFrameReleaseHelper: doFrame, postdely vsyncTimeNs: 4386425984
+11-25 12:59:37.294 24471 24471 D FastPlayer: setVideoScalingMode, mode: 2, rotation: 0, width: 1200, height: 2608
+11-25 12:59:37.294 24471 24471 I FastPlayerJni: [FastPlayer_setVideoScalingMode::714]
+11-25 12:59:37.294 24471 24471 I FastPlayerJni: [FastPlayer_setVideoScalingMode::723]
+11-25 12:59:37.294 24471 24471 I FastPlayerJni: [FastPlayer_extractMetadata::361]
+11-25 12:59:37.294 24471 24471 V FastPlayerWrapper: MetadataRetrieverWrapper::extractMetadata,line:765
+11-25 12:59:37.294 24471 24471 V FastPlayerWrapper: extractMetadata: value (60.00) for keyCode(50)
+11-25 12:59:37.294 24471 24471 I FastPlayerJni: [FastPlayer_extractMetadata::361]
+11-25 12:59:37.294 24471 24471 V FastPlayerWrapper: MetadataRetrieverWrapper::extractMetadata,line:765
+11-25 12:59:37.294 24471 24471 V FastPlayerWrapper: extractMetadata: value (2000) for keyCode(9)
+11-25 12:59:37.294 24471 24471 I FastPlayerJni: [FastPlayer_extractMetadata::361]
+
+=== [BEFORE FIX] Pixel Metrics (1200x2608 Home Screen) ===
+Top RGB=[  0.  153.1  66.2]
+Non-widget wallpaper seam @ y=1304: 1302->1303=7.63, 1303->1304=16.57, 1304->1305=8.28
+Right(1168..1183 vs 1184..1199)=[  1.6 207.3 163.6] vs [ 0.  85.4  0. ], Jump@1184=79.90

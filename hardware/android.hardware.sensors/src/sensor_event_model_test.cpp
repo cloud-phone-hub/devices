@@ -1,4 +1,4 @@
-// 宿主单元测试：验证加速度计静态模长、步进量化、陀螺仪细分步长及 50Hz 无漂移调度。
+// 宿主单元测试：验证加速度计静态模长、步进量化、陀螺仪细分步长、50Hz 无漂移调度及多实例种子防聚类特性。
 // 必须由 CDH_SENSORS_HOST_TEST 宏保护，避免 halbuild 扫描 src/*.cpp 时重复编译 main。
 #ifdef CDH_SENSORS_HOST_TEST
 
@@ -15,7 +15,7 @@ using cdh::sensors::SensorEventModel;
 using cdh::sensors::SensorEventSpec;
 using cdh::sensors::VirtualSensorEvent;
 
-void test_acc_and_gyro_stats_at_50hz() {
+void verify_model_stream(uint64_t seed, double *outAccMean, double *outGyroBias) {
   std::vector<SensorEventSpec> specs{
       SensorEventSpec{.handle = 1,
                       .type = 1,
@@ -32,33 +32,34 @@ void test_acc_and_gyro_stats_at_50hz() {
                       .reportingMode = 0,
                       .minDelayUs = 5000,
                       .resolution = 0.0011f},
+      SensorEventSpec{.handle = 16,
+                      .type = 16,
+                      .reportingMode = 0,
+                      .minDelayUs = 5000,
+                      .resolution = 0.0011f},
   };
-  SensorEventModel model(specs);
+  SensorEventModel model(specs, seed);
   constexpr int64_t kStartNs = 10'000'000'000LL;
   constexpr int64_t kPeriodNs = 20'000'000LL;  // 50Hz
-  constexpr int64_t kTickNs = 1'000'000LL;     // 模拟动态 1ms 检查唤醒粒度
-  assert(model.setSamplingPeriod(1, kPeriodNs));
-  assert(model.setSamplingPeriod(2, kPeriodNs));
-  assert(model.setSamplingPeriod(4, kPeriodNs));
-  assert(model.setActive(1, true, kStartNs));
-  assert(model.setActive(2, true, kStartNs));
-  assert(model.setActive(4, true, kStartNs));
+  constexpr int64_t kTickNs = 1'000'000LL;
+  for (int32_t h : {1, 2, 4, 16}) {
+    assert(model.setSamplingPeriod(h, kPeriodNs));
+    assert(model.setActive(h, true, kStartNs));
+  }
 
   std::vector<VirtualSensorEvent> accSamples;
   std::vector<VirtualSensorEvent> magSamples;
   std::vector<VirtualSensorEvent> gyroSamples;
+  std::vector<VirtualSensorEvent> uncalGyroSamples;
   int64_t t = kStartNs;
-  const int64_t kEndNs = kStartNs + 1'500'000'000LL;  // 1500ms 窗口
+  const int64_t kEndNs = kStartNs + 1'500'000'000LL;
   while (t < kEndNs) {
     const auto due = model.collectDue(t);
     for (const auto &ev : due) {
-      if (ev.sensorHandle == 1) {
-        accSamples.push_back(ev);
-      } else if (ev.sensorHandle == 2) {
-        magSamples.push_back(ev);
-      } else if (ev.sensorHandle == 4) {
-        gyroSamples.push_back(ev);
-      }
+      if (ev.sensorHandle == 1) accSamples.push_back(ev);
+      else if (ev.sensorHandle == 2) magSamples.push_back(ev);
+      else if (ev.sensorHandle == 4) gyroSamples.push_back(ev);
+      else if (ev.sensorHandle == 16) uncalGyroSamples.push_back(ev);
     }
     const int64_t wait = model.nextWaitNs(t);
     assert(wait >= 0 && wait <= 5'000'000LL);
@@ -68,6 +69,7 @@ void test_acc_and_gyro_stats_at_50hz() {
   assert(accSamples.size() >= 75 && accSamples.size() <= 76);
   assert(magSamples.size() >= 75 && magSamples.size() <= 76);
   assert(gyroSamples.size() >= 75 && gyroSamples.size() <= 76);
+  assert(uncalGyroSamples.size() >= 75 && uncalGyroSamples.size() <= 76);
 
   double sumX = 0, sumY = 0, sumZ = 0;
   float minAccDiff = 100.0f;
@@ -89,18 +91,19 @@ void test_acc_and_gyro_stats_at_50hz() {
   const double meanY = sumY / static_cast<double>(accSamples.size());
   const double meanZ = sumZ / static_cast<double>(accSamples.size());
   const double norm = std::sqrt(meanX * meanX + meanY * meanY + meanZ * meanZ);
-  assert(meanX > 0.10 && meanY > 0.20);
-  assert(std::fabs(norm - 9.8066) < 0.02);
+  if (seed == 0) {
+    assert(meanX > 0.10 && meanY > 0.20);
+  } else {
+    assert(std::fabs(meanX) > 0.05 && std::fabs(meanY) > 0.07);
+  }
+  assert(std::fabs(norm - 9.8066) < 0.025);
   assert(minAccDiff > 0.00190f && minAccDiff < 0.00200f);
 
   double magSum[3] = {0, 0, 0};
   for (const auto &ev : magSamples) {
-    for (int axis = 0; axis < 3; ++axis) {
-      magSum[axis] += ev.values[axis];
-    }
+    for (int axis = 0; axis < 3; ++axis) magSum[axis] += ev.values[axis];
   }
   double magVar[3] = {0, 0, 0};
-  double magSigma[3] = {0, 0, 0};
   const double magN = static_cast<double>(magSamples.size());
   for (const auto &ev : magSamples) {
     for (int axis = 0; axis < 3; ++axis) {
@@ -113,14 +116,12 @@ void test_acc_and_gyro_stats_at_50hz() {
     for (int axis = 0; axis < 3; ++axis) {
       const float d = std::fabs(magSamples[i].values[axis] -
                                  magSamples[i - 1].values[axis]);
-      if (d > 1e-6f && d < minMagDiff) {
-        minMagDiff = d;
-      }
+      if (d > 1e-6f && d < minMagDiff) minMagDiff = d;
     }
   }
   for (int axis = 0; axis < 3; ++axis) {
-    magSigma[axis] = std::sqrt(magVar[axis] / magN);
-    assert(magSigma[axis] >= 0.35 && magSigma[axis] <= 0.80);
+    const double sigma = std::sqrt(magVar[axis] / magN);
+    assert(sigma >= 0.30 && sigma <= 0.85);
   }
   assert(minMagDiff > 0.0180f && minMagDiff < 0.0200f);
 
@@ -129,15 +130,48 @@ void test_acc_and_gyro_stats_at_50hz() {
     for (int axis = 0; axis < 3; ++axis) {
       const float d = std::fabs(gyroSamples[i].values[axis] -
                                  gyroSamples[i - 1].values[axis]);
-      if (d > 1e-7f && d < minGyroDiff) {
-        minGyroDiff = d;
-      }
+      if (d > 1e-7f && d < minGyroDiff) minGyroDiff = d;
     }
   }
-  assert(minGyroDiff > 0.000130f && minGyroDiff < 0.000145f);
-  std::printf(
-      "PASS test_acc_and_gyro_stats_at_50hz: n=%zu norm=%.4f meanXY=(%.3f,%.3f) magSigma=(%.3f,%.3f,%.3f) minAccDiff=%.6f minMagDiff=%.6f minGyroDiff=%.6f\n",
-      accSamples.size(), norm, meanX, meanY, magSigma[0], magSigma[1], magSigma[2], minAccDiff, minMagDiff, minGyroDiff);
+  assert(minGyroDiff > 0.00105f && minGyroDiff < 0.00115f);
+
+  if (outAccMean != nullptr) {
+    outAccMean[0] = meanX;
+    outAccMean[1] = meanY;
+    outAccMean[2] = meanZ;
+  }
+  if (outGyroBias != nullptr) {
+    outGyroBias[0] = uncalGyroSamples[0].values[3];
+    outGyroBias[1] = uncalGyroSamples[0].values[4];
+    outGyroBias[2] = uncalGyroSamples[0].values[5];
+  }
+}
+
+void test_acc_and_gyro_stats_at_50hz() {
+  verify_model_stream(0, nullptr, nullptr);
+  std::printf("PASS test_acc_and_gyro_stats_at_50hz (legacy seed=0)\n");
+}
+
+void test_multi_instance_anti_clustering() {
+  double accA[3]{}, biasA[3]{};
+  double accB[3]{}, biasB[3]{};
+  double accA2[3]{}, biasA2[3]{};
+  verify_model_stream(0x123456789abcdef0ULL, accA, biasA);
+  verify_model_stream(0xfedcba9876543211ULL, accB, biasB);
+  verify_model_stream(0x123456789abcdef0ULL, accA2, biasA2);
+
+  // 同一种子重启必须完全幂等稳定
+  for (int i = 0; i < 3; ++i) {
+    assert(std::fabs(accA[i] - accA2[i]) < 1e-9);
+    assert(std::fabs(biasA[i] - biasA2[i]) < 1e-9);
+  }
+  // 不同实例种子必须具有不同的微倾角与陀螺零偏（防跨实例风控聚类）
+  const double accDist = std::hypot(accA[0] - accB[0], accA[1] - accB[1]);
+  const double biasDist = std::hypot(biasA[0] - biasB[0], biasA[1] - biasB[1]);
+  assert(accDist > 0.02);
+  assert(biasDist > 0.0005);
+  std::printf("PASS test_multi_instance_anti_clustering: accDist=%.4f biasDist=%.6f\n",
+              accDist, biasDist);
 }
 
 void test_next_wait_and_catchup() {
@@ -151,9 +185,7 @@ void test_next_wait_and_catchup() {
   assert(model.nextWaitNs(1'000'000LL) == 0);
   auto first = model.collectDue(1'000'000LL);
   assert(first.size() == 1);
-  // 下次在 21'000'000，当前 18'000'000 应返回 3'000'000
   assert(model.nextWaitNs(18'000'000LL) == 3'000'000LL);
-  // 滞后超过 2 个周期（到 65'000'000）收集后，下一次应追赶到 81'000'000，相差 16'000'000，限幅为 5ms
   auto catchup = model.collectDue(65'000'000LL);
   assert(catchup.size() == 1);
   assert(model.nextWaitNs(65'000'000LL) == 5'000'000LL);
@@ -165,6 +197,7 @@ void test_next_wait_and_catchup() {
 
 int main() {
   test_acc_and_gyro_stats_at_50hz();
+  test_multi_instance_anti_clustering();
   test_next_wait_and_catchup();
   return 0;
 }

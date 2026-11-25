@@ -1,0 +1,55 @@
+=== Post-Fix Verification (out/agent/tmp/gold11-postfix-20261125, patch.img sha256=09c8a3dbce593150398c0bc7dd3457be02d13544e8dabfa66e921c18f8997441) ===
+
+[1] Host C++ & Go Unit Tests:
+  PASS test_acc_and_gyro_stats_at_50hz (legacy seed=0)
+  PASS test_multi_instance_anti_clustering: accDist=0.5359 biasDist=0.005104
+  PASS test_next_wait_and_catchup
+  ok   cloud-phone-hub/agent/modules/pipeline/... (all 28 packages PASS)
+  ok   cloud-phone-hub/agent/modules/daemon/...   (all 9 packages PASS)
+
+[2] Cloud #1 Boot & ADB Smoke Check (BOOTED in 22s, Enforcing):
+  ro.frp.pst=/dev/block/by-name/frp (u:object_r:exported_default_prop:s0)
+  sys.oem_unlock_allowed=0
+  widevine=L1
+  fp_svc=running
+  feature:android.hardware.fingerprint
+  Dumping for sensorId: 0, provider: FingerprintProvider
+  {"service":"FingerprintProvider\/default","prints":[{"id":0,"count":0,"accept":0,"reject":0,"acquire":0,"lockout":0,"permanentLockout":0,"acceptCrypto":0,"rejectCrypto":0,"acquireCrypto":0}]}
+  HAL deaths since last reboot: 0
+  Dump of BiometricScheduler BiometricScheduler
+  Type: 3
+  Current operation: null
+  Pending operations: 0
+  0x00000002) qmc6308 | QST | ver: 1 | type: android.sensor.magnetic_field(2)
+
+[3] Live Dual-Device Aligner Comparison (ec519c7d513a3ad3 vs 4c17e53fbaef35ca-cloud):
+  aligner.app_full         (run-00378): fatal  1 ->  0 (-1)  | {'identity': 0, 'capability': 0, 'state': 3, 'availability': 0, 'fatal': 0}
+  aligner.sensors_full     (run-00402): fatal  2 ->  0 (-2)  | {'identity': 0, 'capability': 0, 'state': 0, 'availability': 0, 'fatal': 0}
+  aligner.services_full    (run-00380): fatal 40 -> 16 (-24) | {'identity': 0, 'capability': 16, 'state': 1, 'availability': 0, 'fatal': 16}
+  aligner.build_props_full (run-00381): ro.frp.pst & sys.oem_unlock_allowed diffs eliminated (0 diff)
+  aligner.ids_full         (run-00403): fatal 10 ->  9 (-1)  | {'identity': 5, 'capability': 4, 'state': 31, 'availability': 0, 'fatal': 9}
+
+[4] Sensor Dynamic Quantization & Reboot Persistence (run-00398 vs run-00401):
+  cloud gyro: {'count': 76, 'mean': [-1.4e-05, 7.2e-05, -7.2e-05], 'minDiff': [0.0011, 0.0011, 0.0011], 'name': 'lsm6dso_gyro', 'sigma': [0.001093, 0.000999, 0.00103]} gyroQuantizationStepMatchesResolution=True
+  D1_sensorsCountIs29AndMagnetometerValid    = True
+  D2_sensorsDynamic50HzStreamsActive         = True
+  D3_sensorsAdcQuantizationAndGyroDriftReal  = True
+  D4_inputsValidAndNoRiskyControlIme         = True
+  Boot #1 acc mean: [-0.157437, -0.285111, 9.803010], mag mean: [22.267001, 11.166250, -39.160002]
+  Boot #2 acc mean: [-0.156488, -0.283879, 9.801137], mag mean: [22.265873, 11.287994, -39.300495]
+
+[5] Ultimate 14 Suites Post-Fix (14/14 succeeded on both devices):
+  super_scan               (run-00384): succeeded/succeeded | cloud_only=[]
+  root_selinux             (run-00385): succeeded/succeeded | cloud_only=[]
+  boot_unlock              (run-00386): succeeded/succeeded | cloud_only=[]
+  hook_inject              (run-00400): succeeded/succeeded | cloud_only=[]
+  debug_integrity          (run-00388): succeeded/succeeded | cloud_only=[]
+  device_identity          (run-00389): succeeded/succeeded | cloud_only=[]
+  cloud_emulator           (run-00390): succeeded/succeeded | cloud_only=[]
+  location_network         (run-00391): succeeded/succeeded | cloud_only=[]
+  app_risk                 (run-00392): succeeded/succeeded | cloud_only=[]
+  attestation_integrity    (run-00393): succeeded/succeeded | cloud_only=['U-ATTEST-APPID', 'U-ATTEST-ROOT-KEY', 'U-ATTEST-SIGN-PROBE']
+  probe_runtime            (run-00394): succeeded/succeeded | cloud_only=[]
+  webview_fp               (run-00395): succeeded/succeeded | cloud_only=[]
+  native_env               (run-00396): succeeded/succeeded | cloud_only=[]
+  hardware_env             (run-00397): succeeded/succeeded | cloud_only=[]

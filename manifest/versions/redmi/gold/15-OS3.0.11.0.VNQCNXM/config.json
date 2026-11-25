@@ -10,14 +10,15 @@
   "factoryDir": "OS3.0.11.0.VNQCNXM",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MOLY.NR15.R3.MP.V120.3.P82",
     "partitionAndroidVersions": {
+      "odm": "15",
+      "odm_dlkm": "15",
+      "product": "15",
       "system": "15",
       "system_ext": "15",
-      "product": "15",
       "vendor": "15",
-      "odm": "15",
-      "vendor_dlkm": "15",
-      "odm_dlkm": "15"
+      "vendor_dlkm": "15"
     }
   },
   "updatedAt": "2026-11-05T04:33:33Z"

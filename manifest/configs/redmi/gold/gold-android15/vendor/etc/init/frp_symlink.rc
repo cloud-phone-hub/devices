@@ -1,5 +1,14 @@
-# FRP 分区路径补建：让 PersistentDataBlockService 与 OemLockService 找得到 ro.frp.pst 指向的节点。
-on post-fs-data
+# FRP 分区路径补建：必须在 on early-init / on init 阶段完成（早于 class core 的
+# service_daemon scrub_early_virtual_props 检查 ro.frp.pst 节点存在性），
+# 让 PersistentDataBlockService 与 OemLockService 正常启动并保留 ro.frp.pst。
+on early-init
+    mkdir /dev/block/by-name 0755 root root
+    symlink /dev/block/vda3 /dev/block/by-name/frp
+    mkdir /dev/block/bootdevice 0755 root root
+    mkdir /dev/block/bootdevice/by-name 0755 root root
+    symlink /dev/block/vda3 /dev/block/bootdevice/by-name/frp
+
+on init
     chmod 0660 /dev/block/vda3
     chown root system /dev/block/vda3
     mkdir /dev/block/by-name 0755 root root
@@ -7,3 +16,7 @@ on post-fs-data
     mkdir /dev/block/bootdevice 0755 root root
     mkdir /dev/block/bootdevice/by-name 0755 root root
     symlink /dev/block/vda3 /dev/block/bootdevice/by-name/frp
+
+on post-fs-data
+    chmod 0660 /dev/block/vda3
+    chown root system /dev/block/vda3

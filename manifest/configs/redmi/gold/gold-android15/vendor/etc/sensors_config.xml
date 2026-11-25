@@ -33,8 +33,8 @@
         reporting="0"/>
     <sensor
         handle="2"
-        name="mmc5603"
-        vendor="Memsic"
+        name="qmc6308"
+        vendor="QST"
         version="1"
         type-id="2"
         type="android.sensor.magnetic_field"

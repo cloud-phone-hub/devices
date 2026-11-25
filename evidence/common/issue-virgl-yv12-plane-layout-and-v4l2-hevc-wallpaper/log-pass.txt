@@ -1,0 +1,52 @@
+=== [AFTER FIX] CCodec + V4L2Decoder Hardware HEVC 10-bit 1200x2608 Logs ===
+11-25 14:29:26.058  1391  1391 I VideoDepth: VideoDepthManager##setDataSource path = /system/media/wallpaper/wallpaper_group/00_CMFdynamic/wallpaper_BK.mp4
+11-25 14:29:26.437  1391  2263 I CCodec  : Created component [c2.v4l2.hevc.decoder] for [c2.v4l2.hevc.decoder]
+11-25 14:29:26.639   616  2342 I V4L2Decoder: Input queue memory=2 sizeimage=8388608 buffers=4
+11-25 14:29:26.650   616  2342 I V4L2Decoder: Need 6 output buffers with CAPTURE refill low watermark 2. coded size: 16x16, visible rect: (0,0) 16x16
+11-25 14:29:26.697   616  2342 I V4L2Decoder: Set state Idle => Decoding
+11-25 14:29:26.697   616  2342 I V4L2Decoder: QBUF to input queue, bitstreamId=0
+11-25 14:29:26.783   616  2342 I V4L2Decoder: QBUF to input queue, bitstreamId=1
+11-25 14:29:26.814   616  2342 I V4L2Decoder: QBUF to input queue, bitstreamId=2
+11-25 14:29:26.822   616  2342 I V4L2Decoder: QBUF to input queue, bitstreamId=3
+11-25 14:29:26.833   616  2342 I V4L2Decoder: DQBUF from input queue, v4l2Id=0 bitstreamId=0
+11-25 14:29:26.833   616  2342 I V4L2Decoder: DQBUF from input queue, v4l2Id=1 bitstreamId=1
+11-25 14:29:26.833   616  2342 I V4L2Decoder: DQBUF from input queue, v4l2Id=2 bitstreamId=2
+11-25 14:29:26.834   616  2342 I V4L2Decoder: DQBUF from input queue, v4l2Id=3 bitstreamId=3
+11-25 14:29:26.841   616  2342 I V4L2Decoder: Need 25 output buffers with CAPTURE refill low watermark 2. coded size: 1200x2608, visible rect: (0,0) 1200x2608
+11-25 14:29:27.180   616  2342 I V4L2Decoder: QBUF to output queue, blockId=122, V4L2Id=0
+11-25 14:29:27.201   616  2342 I V4L2Decoder: QBUF to output queue, blockId=124, V4L2Id=1
+11-25 14:29:27.204   616  2342 I V4L2Decoder: DRC sync-filled 2 CAPTURE buffers (free=23 queued=2)
+11-25 14:29:27.204   616  2342 I V4L2Decoder: DQBUF from output queue, bufferId=0, bitstreamId=1, bytesused=4694400, isLast=0
+11-25 14:29:27.322   616  2342 I V4L2Decoder: Copied USERPTR CAPTURE staging to YV12 graphic 1200x2608 format=NV12
+11-25 14:29:27.323   616  2342 I V4L2Decoder: Send output frame(bitstreamId=1) to client
+11-25 14:29:27.323   616  2342 I V4L2Decoder: Calling mOutputCb for bitstreamId=1
+11-25 14:29:27.338   616  2342 I V4L2Decoder: Returned from mOutputCb for bitstreamId=1
+11-25 14:29:27.356  1391  1391 I VideoDepth: onWallpaperFirstFrameRendered
+11-25 14:29:27.356  1391  1391 I MiuiWallpaper-MiuiWallpaperManagerService: dispatch onWallpaperFirstFrameRendered to remote=WallpaperRemoteCallback{which=3, pid=1391, packageName=com.miui.miwallpaper, callback=com.miui.miwallpaper.manager.WallpaperServiceController$1@8fc8ce}
+11-25 14:29:27.359  1391  1391 I MiuiWallpaper-MiuiWallpaperManagerService: dispatch onWallpaperFirstFrameRendered to remote=WallpaperRemoteCallback{which=1, pid=1352, packageName=com.miui.home, callback=com.miui.miwallpaper.IMiuiWallpaperManagerCallback$Stub$Proxy@f7e27af}
+11-25 14:29:27.398   616  2342 I V4L2Decoder: QBUF to input queue, bitstreamId=4
+11-25 14:29:27.409   616  2342 I V4L2Decoder: QBUF to input queue, bitstreamId=5
+11-25 14:29:27.418   616  2342 I V4L2Decoder: QBUF to input queue, bitstreamId=6
+11-25 14:29:27.426   616  2342 I V4L2Decoder: DQBUF from input queue, v4l2Id=0 bitstreamId=4
+11-25 14:29:27.426   616  2342 I V4L2Decoder: DQBUF from input queue, v4l2Id=1 bitstreamId=5
+11-25 14:29:27.426   616  2342 I V4L2Decoder: DQBUF from input queue, v4l2Id=2 bitstreamId=6
+11-25 14:29:27.427   616  2342 I V4L2Decoder: DQBUF from output queue, bufferId=1, bitstreamId=2, bytesused=4694400, isLast=0
+11-25 14:29:27.461   616  2342 I V4L2Decoder: Copied USERPTR CAPTURE staging to YV12 graphic 1200x2608 format=NV12
+11-25 14:29:27.461   616  2342 I V4L2Decoder: Send output frame(bitstreamId=2) to client
+11-25 14:29:27.461   616  2342 I V4L2Decoder: Calling mOutputCb for bitstreamId=2
+11-25 14:29:27.472   616  2342 I V4L2Decoder: Returned from mOutputCb for bitstreamId=2
+11-25 14:29:27.472   616  2342 I V4L2Decoder: QBUF to input queue, bitstreamId=7
+11-25 14:29:27.480   616  2342 I V4L2Decoder: QBUF to input queue, bitstreamId=8
+11-25 14:29:27.493   616  2342 I V4L2Decoder: QBUF to input queue, bitstreamId=9
+11-25 14:29:27.512   616  2342 I V4L2Decoder: QBUF to input queue, bitstreamId=10
+11-25 14:29:27.529   616  2342 I V4L2Decoder: DQBUF from input queue, v4l2Id=0 bitstreamId=7
+11-25 14:29:27.529   616  2342 I V4L2Decoder: DQBUF from input queue, v4l2Id=1 bitstreamId=8
+11-25 14:29:27.530   616  2342 I V4L2Decoder: DQBUF from input queue, v4l2Id=2 bitstreamId=9
+11-25 14:29:27.530   616  2342 I V4L2Decoder: DQBUF from input queue, v4l2Id=3 bitstreamId=10
+11-25 14:29:27.532   616  2342 I V4L2Decoder: QBUF to output queue, blockId=126, V4L2Id=2
+
+=== [AFTER FIX] Pixel Metrics (1200x2608 Home Screen vs Official Lock Reference) ===
+[REF_LOCK]   Top RGB=[ 61.8 101.6 167. ], Right(1168..1183 vs 1184..1199)=[145.  162.3 214.2] vs [147.7 163.5 214.4], Jump@1184=0.42
+[PASS_AFTER] Top RGB=[ 62.2  93.6 152.4], Non-widget seam @ y=1304: 1302->1303=0.55, 1303->1304=0.65, 1304->1305=0.56
+[PASS_AFTER] Right(1168..1183 vs 1184..1199)=[126.  147.7 200.3] vs [129.9 149.  200.8], Jump@1184=0.74
+qemu.log virgl dispatch errors: 0

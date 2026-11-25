@@ -61,7 +61,7 @@
     "ro.vendor.cdh.wifi.disable_he": "1",
     "ro.vendor.customer_logpath": "/data",
     "ro.vendor.drm.widevine.oem_crypto_api_version": "18",
-    "ro.vendor.drm.widevine.security_level": "L3",
+    "ro.vendor.drm.widevine.security_level": "L1",
     "ro.vendor.drm.widevine.system_id": "33098",
     "ro.vendor.drm.widevine.version": "19.0.1@AV1A.240725.002",
     "ro.vendor.md_mims_support": "2",

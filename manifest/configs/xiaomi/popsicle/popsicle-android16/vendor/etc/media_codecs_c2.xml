@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  popsicle 云机 Codec2 V4L2 硬件编解码能力声明（CDH 增量）。
+
+  说明：
+  - 官方 /vendor/etc/ 不含 media_codecs_c2.xml；AOSP Codec2InfoBuilder 会与 media_codecs.xml
+    并列加载本文件。
+  - 必须显式给出 <Limit name="size" .../>，否则 MediaCodecList::codecHandlesFormat 无法匹配
+    size-range，会导致 FastPlayer（如 HyperOS 动态壁纸 10-bit HEVC 1200x2608）跳过
+    c2.v4l2.hevc.decoder 回退软解报错 0x43dd。
+-->
+<MediaCodecs>
+    <Decoders>
+        <MediaCodec name="c2.v4l2.avc.decoder" type="video/avc">
+            <Limit name="size" min="2x2" max="4096x4096" />
+            <Limit name="alignment" value="2x2" />
+            <Limit name="block-size" value="16x16" />
+            <Feature name="adaptive-playback" />
+        </MediaCodec>
+        <MediaCodec name="c2.v4l2.hevc.decoder" type="video/hevc">
+            <Limit name="size" min="2x2" max="4096x4096" />
+            <Limit name="alignment" value="2x2" />
+            <Limit name="block-size" value="16x16" />
+            <Feature name="adaptive-playback" />
+        </MediaCodec>
+    </Decoders>
+    <Encoders>
+        <MediaCodec name="c2.v4l2.avc.encoder" type="video/avc">
+            <Limit name="size" min="32x32" max="1920x1088" />
+            <Limit name="alignment" value="2x2" />
+            <Limit name="block-size" value="16x16" />
+            <Limit name="bitrate" range="1-40000000" />
+            <Feature name="bitrate-modes" value="VBR,CBR" />
+        </MediaCodec>
+    </Encoders>
+</MediaCodecs>

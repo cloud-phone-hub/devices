@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  gold（Redmi Note 13 5G）虚拟侧边电容指纹硬件规格配置：
+  - sensor-type="power_button"：侧边电源键电容指纹（对应 FingerprintSensorType::POWER_BUTTON）
+  - strength="strong"：Class 3 强生物特征（对应 SensorStrength::STRONG）
+  - max-enrollments="5"：小米 MIUI/HyperOS 标准上限 5 枚指纹
+  - enrolled-ids=""：与未录入模板的 framework 初始状态及在线对比真机一致，防开机 InternalCleanup 移除未知模板
+-->
+<fingerprint-config
+    sensor-id="0"
+    sensor-type="power_button"
+    strength="strong"
+    max-enrollments="5"
+    enrolled-ids=""
+    authenticator-id="0"
+    loc-x="1080"
+    loc-y="960"
+    loc-radius="90"/>

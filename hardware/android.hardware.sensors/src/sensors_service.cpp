@@ -44,11 +44,13 @@ binder_status_t AServiceManager_addService(AIBinder *binder,
 #include <cctype>
 #include <chrono>
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 #include <memory>
 #include <mutex>
 #include <condition_variable>
 #include <string>
+#include <sys/system_properties.h>
 #include <thread>
 #include <unordered_map>
 #include <utility>
@@ -381,6 +383,72 @@ static int64_t bootTimeNanos() {
   return static_cast<int64_t>(now.tv_sec) * 1'000'000'000LL + now.tv_nsec;
 }
 
+static uint64_t fnv1aHash64(const std::string &material) {
+  uint64_t h = 14695981039346656037ULL;
+  for (unsigned char c : material) {
+    h ^= static_cast<uint64_t>(c);
+    h *= 1099511628211ULL;
+  }
+  return h == 0 ? 0x6364685f73656e73ULL : h;
+}
+
+// 计算单云机实例持久确定性种子（跨重启幂等，多实例互异）：
+// 1. 优先读取环境变量 SENSORS_INSTANCE_SEED（测试注入）；
+// 2. 依次采集实例专属属性（ro.vendor.oem.* / ro.ril.oem.* / ro.boot.serialno）；
+// 3. 若早启动属性尚未就绪（*hasStableIdentity == false），回退读取内核 boot_id，
+//    并在 SensorService 调用 initialize() 时再次尝试升级为持久身份种子。
+static uint64_t resolveInstanceSeed(bool *hasStableIdentity) {
+  if (hasStableIdentity != nullptr) {
+    *hasStableIdentity = false;
+  }
+  if (const char *env = std::getenv("SENSORS_INSTANCE_SEED");
+      env != nullptr && env[0] != '\0') {
+    if (hasStableIdentity != nullptr) {
+      *hasStableIdentity = true;
+    }
+    return fnv1aHash64(std::string("env:") + env);
+  }
+
+  static constexpr const char *kIdentityProps[] = {
+      "ro.vendor.oem.serialno",
+      "ro.vendor.oem.wifimac",
+      "ro.vendor.oem.btmac",
+      "ro.vendor.oem.imei",
+      "ro.ril.oem.wifimac",
+      "ro.ril.oem.btmac",
+      "ro.boot.serialno",
+  };
+  std::string material;
+  char propBuf[PROP_VALUE_MAX] = {};
+  for (const char *key : kIdentityProps) {
+    int len = __system_property_get(key, propBuf);
+    if (len > 0) {
+      material.append(key);
+      material.push_back('=');
+      material.append(propBuf, static_cast<size_t>(len));
+      material.push_back(';');
+    }
+  }
+  if (!material.empty()) {
+    if (hasStableIdentity != nullptr) {
+      *hasStableIdentity = true;
+    }
+    return fnv1aHash64(material);
+  }
+
+  if (FILE *fp = std::fopen("/proc/sys/kernel/random/boot_id", "rb");
+      fp != nullptr) {
+    char buf[128] = {};
+    size_t n = std::fread(buf, 1, sizeof(buf) - 1, fp);
+    std::fclose(fp);
+    std::string bootId = trim(std::string(buf, n));
+    if (!bootId.empty()) {
+      return fnv1aHash64("boot_id:" + bootId);
+    }
+  }
+  return 0x6364685f73656e73ULL;
+}
+
 static Event toAidlEvent(const VirtualSensorEvent &sample) {
   using Payload = Event::EventPayload;
   Event event;
@@ -454,7 +522,8 @@ class TargetSensors : public BnSensors {
 public:
   explicit TargetSensors(std::vector<SensorTarget> targets)
       : targets_(std::move(targets)),
-        eventModel_(buildSensorEventSpecs(targets_)) {
+        eventModel_(buildSensorEventSpecs(targets_),
+                    resolveInstanceSeed(&seedFromStableIdentity_)) {
     for (const auto &target : targets_) {
       sensorStates_.emplace(target.handle, SensorState{});
     }
@@ -550,6 +619,15 @@ public:
       return badValue();
     }
     std::lock_guard<std::mutex> guard(lock_);
+    if (!seedFromStableIdentity_) {
+      bool stableNow = false;
+      uint64_t refreshedSeed = resolveInstanceSeed(&stableNow);
+      if (stableNow) {
+        eventModel_ =
+            SensorEventModel(buildSensorEventSpecs(targets_), refreshedSeed);
+        seedFromStableIdentity_ = true;
+      }
+    }
     eventQueue_ = std::move(eventQueue);
     wakeLockQueue_ = std::move(wakeLockQueue);
     callback_ = sensorsCallback;
@@ -679,6 +757,7 @@ private:
   ISensors::OperationMode operationMode_ = ISensors::OperationMode::NORMAL;
   bool stopEventThread_ = false;
   bool initialized_ = false;
+  bool seedFromStableIdentity_ = false;
   int32_t eventQueueQuantum_ = 0;
   int32_t wakeLockQueueQuantum_ = 0;
 };

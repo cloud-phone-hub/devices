@@ -5,6 +5,8 @@
 // 返回空列表，createSession 无从建立 → 返回 EX_UNSUPPORTED_OPERATION。
 // 设备无关，不内置机型常量。
 
+#if !defined(CDH_BIOMETRICS_FINGERPRINT_ONLY)
+
 #include <android/binder_ibinder.h>
 #include <android/binder_status.h>
 
@@ -64,3 +66,5 @@ int main() {
   ABinderProcess_joinThreadPool();
   return 0;
 }
+
+#endif  // !CDH_BIOMETRICS_FINGERPRINT_ONLY
