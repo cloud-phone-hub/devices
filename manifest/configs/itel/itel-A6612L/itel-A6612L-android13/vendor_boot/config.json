@@ -3,7 +3,8 @@
     "androidboot.product.hardware.sku=A6612L-OP64",
     "androidboot.secureboot=1",
     "androidboot.slot=a",
-    "androidboot.veritymode.managed=yes"
+    "androidboot.veritymode.managed=yes",
+    "androidboot.ddrsize=8192M"
   ],
   "fstab": "sp9863a"
 }

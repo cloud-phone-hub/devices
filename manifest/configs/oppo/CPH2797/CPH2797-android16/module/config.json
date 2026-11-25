@@ -347,5 +347,12 @@
         "type": "skin"
       }
     ]
+  },
+  "display": {
+    "refresh-rates": [
+      60,
+      90,
+      120
+    ]
   }
 }

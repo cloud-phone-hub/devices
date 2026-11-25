@@ -1,0 +1,77 @@
+# 修复前失败与卡顿取证记录（Honor Magic7 RSR #1 / sun_16-AQ3A.250214.001-20260904）
+
+## 1. 桌面滑动帧耗时与掉帧率（dumpsys gfxinfo com.hihonor.android.launcher）
+
+** Graphics info for pid [com.hihonor.android.launcher] **
+Total frames rendered: 425
+Janky frames: 146 (34.35%)
+Janky frames (legacy): 276 (64.94%)
+50th percentile: 23ms
+90th percentile: 73ms
+95th percentile: 113ms
+99th percentile: 450ms
+Number Missed Vsync: 42
+Number High input latency: 456
+Number Slow UI thread: 89
+Number Slow bitmap uploads: 8
+Number Slow issue draw commands: 94
+Number Frame deadline missed: 146
+
+SurfaceFlinger 统计：
+GPU missed frame count: 26
+
+## 2. Guest 静息态高 CPU、线程热点与中断风暴（top -H / vmstat）
+
+800%cpu  89%user   4%nice  63%sys 644%idle   0%iow   0%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  892 system       18  -2  26G 812M 590M S 66.4   5.3  42:18.12 system_server
+    - TID FingerprintHand (system_server): 52.0% CPU (持续零延迟重入队死循环)
+    - TID HeapTaskDaemon  (system_server): 15.1% CPU (高频异常对象 GC)
+  245 system       20   0  12G 7.4M 5.6M S  9.6   0.0   8:41.05 servicemanager
+  240 logd         30  10  12G  12M 6.1M S  7.1   0.0   6:15.33 logd
+  638 system       20   0  12G  11M 8.0M S  4.9   0.0   4:12.80 android.hardware.camera-service
+  280 root         20   0    0    0    0 S  2.0   0.0   1:52.10 [khvcd]
+
+vmstat 静息采样：
+procs ------------memory------------ ---swap-- -----io---- --system- ----cpu----
+ r  b    swpd    free   buff   cache   si   so    bi    bo   in   cs us sy id wa
+ 4  0 6291452  612480 982104 9412880    0    0     0    32 22496 43659 12  8 80  0
+
+宿主侧：
+- `cdha` 进程在客机无任何相机应用打开时常驻占用 ~5.8% CPU（8fps 彩条渲染 + JPEG 编码写 `/dev/hvc12`）。
+
+## 3. 指纹 HIDL 回退死循环与体感 IMotion 空桩高频报错（logcat）
+
+# 3.1 FingerprintServiceEx / HnHidlToAidlSensorAdapter（实测速率 ~2,038 次/秒）
+E HidlToAidlSensorAdapter: Failed to get IBiometricsFingerprint
+E HidlToAidlSensorAdapter: java.util.NoSuchElementException
+E HidlToAidlSensorAdapter: 	at android.hardware.biometrics.fingerprint.V2_1.IBiometricsFingerprint.getService(IBiometricsFingerprint.java:74)
+E HidlToAidlSensorAdapter: 	at android.hardware.biometrics.fingerprint.V2_1.IBiometricsFingerprint.getService(IBiometricsFingerprint.java:86)
+E HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSensorAdapter.getIBiometricsFingerprint(HidlToAidlSensorAdapter.java:212)
+W BiometricScheduler: [Finishing] {[... ] FingerprintUpdateActiveUserClient} ...
+D BiometricSchedulerEx: checkCurrentUserAndStartNextOperation -> 立即零延迟重入队下一轮 FingerprintUpdateActiveUserClient
+
+# 3.2 HWExtMotionServ 连接 neuralnetworks@honor 通用空桩（每秒 2 轮 × 51 次 = 102 次/秒）
+W ServiceManagerCppClient: Service vendor.honor.hardware.motion.IMotion/default has transport errors
+W ServiceManagerCppClient: Max Aidl transport errors this cycle : 51 (进程 system_server 线程 HWExtMotionServ)
+
+## 4. 内核 cdh_redirect 非调试模式串口刷屏（单次运行 qemu.log 达 16,141 行）
+
+$ grep -c "cdh_redirect: forward" out/core/daemon/runtime/sun_16-AQ3A.250214.001-20260904/1/qemu.log
+16141
+
+[ 9071.479371][ T3327] cdh_redirect: forward /mnt/vendorpatch/vendor/etc/cellular_cloud/version.txt
+[ 9071.481057][ T3327] cdh_redirect: forward /mnt/vendorpatch/odm/etc/cellular_cloud/version.txt
+[ 9071.906655][T30095] cdh_redirect: forward /mnt/vendorpatch/odm/lib64/vndk-sp
+[ 9071.907762][T30095] cdh_redirect: forward /mnt/vendorpatch/odm/lib64/vndk-sp
+[ 9071.908637][T30095] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64/vndk-sp
+[ 9071.909496][T30095] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64/vndk-sp
+[ 9083.599916][T30155] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64
+[ 9083.602296][T30155] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64
+[ 9083.608245][T30155] cdh_redirect: forward /mnt/vendorpatch/vendor/lib64/egl
+
+=== [Web VNC 投屏链路修复前实测 (vnc_jpeg=disabled, 1280x2800)] ===
+Build Options: -Dvnc=enabled -Dvnc_jpeg=disabled -Dvnc_sasl=disabled
+config-host.h: #undef CONFIG_VNC_JPEG
+[noVNC-Tight] 1280x2800: 91 frames in 2.22s => total=401.98 MiB (181.1 MB/s, 4525.1 KB/frame)
+Subtypes: {'TightZlib(f=0)': 1964, 'TightFill': 482, 'TightZlib(f=1)': 165}  # TightJPEG = 0 !

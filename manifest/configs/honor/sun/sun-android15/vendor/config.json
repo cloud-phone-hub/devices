@@ -12,6 +12,7 @@
     "ro.soc.model": "SM8750-AB",
     "ro.vendor.boot_security_patch": "2026-09-01",
     "ro.vendor.build.security_patch": "2026-09-01",
+    "ro.vendor.cdh.device.market_name": "HONOR Magic7 RSR 保时捷设计",
     "ro.vendor.cdh.display.default_refresh_rate": "120",
     "ro.vendor.cdh.display.edid_name": "BOE0B1F",
     "ro.vendor.cdh.display.edid_pnp": "BOE",
@@ -221,6 +222,90 @@
       "from": "official",
       "mode": "add",
       "optional": true,
+      "source": "lib64/lib_factory_interface.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/lib_mmi_interface.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libfaccommon_share.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libfacsignedapi_share.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libqmi_nv_api.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libqmi_oem_api.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libqmi_cci.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libqmi_common_so.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libqmi_encdec.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/liboeminfo.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libhiview.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libjsoncpp.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libhitrace.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libhilog.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
       "source": "lib64/libhidltransport.so"
     },
     {
@@ -235,5 +320,6 @@
     "lib64/egl/libEGL_mesa.so": "u:object_r:same_process_hal_file:s0",
     "lib64/egl/libGLESv1_CM_mesa.so": "u:object_r:same_process_hal_file:s0",
     "lib64/egl/libGLESv2_mesa.so": "u:object_r:same_process_hal_file:s0"
-  }
+  },
+  "vintf-version": "8.0"
 }

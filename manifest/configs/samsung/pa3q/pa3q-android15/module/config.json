@@ -365,5 +365,13 @@
         "type": "socd-0"
       }
     ]
+  },
+  "display": {
+    "refresh-rates": [
+      30,
+      60,
+      90,
+      120
+    ]
   }
 }

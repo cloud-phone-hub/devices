@@ -4,7 +4,7 @@
   "brand": "nubia",
   "model": "ZTE Blade V70 (Z2459)",
   "device": "P616F05",
-  "platform": "qcom",
+  "platform": "unisoc",
   "resolution": "1080x2400",
   "inch": "70x155",
   "density": 320,
@@ -17,6 +17,7 @@
     256000
   ],
   "extra": {
+    "basebandVersion": "4G_MODEM_22B_W25.24.3_P5",
     "board": "ums9230",
     "hostHvc": {
       "host-hvc-adbkey": "hvc2",

@@ -19,6 +19,7 @@
     256000
   ],
   "extra": {
+    "basebandVersion": "MOLY.NR17.R1.MP5.RC.MP.V1.7.P56",
     "board": "mt6835",
     "hostHvc": {
       "host-hvc-adbkey": "hvc2",

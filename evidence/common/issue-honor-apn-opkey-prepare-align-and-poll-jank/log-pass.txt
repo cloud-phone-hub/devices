@@ -1,0 +1,67 @@
+=== 1. Fleet Sync Summary (44/45 Non-Running Dist Images) ===
+apply-profile aligned devices: 36/36 (excluding running blu/G1130)
+pipeline device build full repack: 5/5 (honor/sun, asus/ASUSAI2501, redmi/gold 15-OS3.0.11.0.VNQCNXM, hmd/ARW, google/oriole 17-CP3A)
+debugfs incremental patch.img + device.json sync: 39/39 (e2fsck -fn 39/39 clean, 0 super.img modified)
+
+=== 2. Honor Magic7 RSR #1 (sun_16-AQ3A.250214.001-20260904) Final Verification ===
+[sun_final] BOOT_COMPLETED=1 at iter=21
+market_name=HONOR Magic7 RSR 保时捷设计
+baseband=MPSS.DE.7.0-02024.3-PAKALA_GEN_PACK-1.80805.123.93847.33
+device_name=HONOR Magic7 RSR 保时捷设计
+persist.sys.opkey0=46001
+ril.hw_sim_opkey0=46001
+carrier_config_applied_bool=true
+-rw-rw-rw- 1 root root u:object_r:proc_fas:s0        0 2026-11-26 02:28 /proc/fas/ioctl
+-rw-rw-rw- 1 root root u:object_r:proc_vip_ioctl:s0  0 2026-11-26 02:28 /proc/vip/ioctl
+Row: 0 apn=3gnet, type=default,supl,xcap
+Row: 1 apn=3gwap, type=mms
+Row: 2 apn=ims, type=ims
+19: ccmni0: <BROADCAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet6 2408:8456:30:b52b:c31d:715:ed74:5fdf/64 scope global nodad
+6: ccmni1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc pfifo_fast state UP group default qlen 1000
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+    inet6 2408:8456:30:b52a:c31d:615:ed74:5e2c/64 scope global nodad
+[sun_final] /api/instance/config: mode=wifi+host-vpn validated=True wifi=True nfc=ON radio=China Unicom,/46001, sim=LOADED,ABSENT dataConn=CONNECTED baseband=MPSS.DE.7.0-02024.3-PAKALA_GEN_PACK-1.80805.123.93847.33
+IPv4 ping 223.5.5.5: 0% packet loss, rtt avg = 0.697 ms
+IPv6 ping 2400:3200::1: 0% packet loss, rtt avg = 0.625 ms
+
+# Settings 8x long scroll + 4x concurrent /api/instance/config polls:
+Total frames rendered: 349
+Janky frames: 15 (4.30%)
+50th percentile: 9ms
+90th percentile: 15ms
+95th percentile: 18ms
+99th gpu percentile: 14ms
+VipSchedProxy errors: 0
+FASProxy errors: 0
+lib_factory_interface.so errors: 0
+com.android.nfc GC / Unreachable memory scans during polls: 0
+binder: reply target not found during polls: 0
+
+=== 3. Redmi Note 13 5G #1 (gold_15-OS3.0.11.0.VNQCNXM) Verification ===
+[gold] BOOT_COMPLETED=1 at iter=13
+market_name=Redmi Note 13 5G
+baseband=MOLY.NR15.R3.MP.V120.3.P82,MOLY.NR15.R3.MP.V120.3.P82
+device_name=Redmi Note 13 5G
+-rw-rw-rw- 1 root root u:object_r:proc:s0  0 2026-11-26 02:27 /proc/fas/ioctl
+-rw-rw-rw- 1 root root u:object_r:proc:s0  0 2026-11-26 02:27 /proc/vip/ioctl
+Row: 0 apn=3gnet, type=default,supl,xcap
+Row: 1 apn=3gwap, type=mms
+Row: 2 apn=ims, type=ims
+19: ccmni0: <BROADCAST,NOARP,UP,LOWER_UP> mtu 1400 state UNKNOWN
+    inet6 2408:8456:30:b52b:c31d:715:ed74:5fdf/64 scope global nodad
+[gold] /api/instance/config: mode=wifi+host-vpn validated=True wifi=True nfc=OFF radio=中国联通,/46001, sim=LOADED,ABSENT dataConn=-1 baseband=MOLY.NR15.R3.MP.V120.3.P82,MOLY.NR15.R3.MP.V120.3.P82
+
+=== 4. BLU G75 #1 (G1170_15-AP3A.240905.015.A2-20260209) Verification ===
+[g1170] BOOT_COMPLETED=1 at iter=7
+baseband=MOLY.LR12A.R3.MP.V371.3.P3,MOLY.LR12A.R3.MP.V371.3.P3
+device_name=BLU G75
+Row: 0 apn=3gnet, type=default,supl
+Row: 2 apn=3gwap, type=mms
+Row: 7 apn=ims, type=ims
+20: ccmni1: <BROADCAST,NOARP,UP,LOWER_UP> mtu 1400 state UNKNOWN
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+[g1170] /api/instance/config: mode=wifi+host-vpn validated=True wifi=True nfc=OFF radio=CU,/46001, sim=LOADED,ABSENT dataConn=CONNECTED baseband=MOLY.LR12A.R3.MP.V371.3.P3,MOLY.LR12A.R3.MP.V371.3.P3
+Total frames rendered: 63
+Janky frames: 4 (6.35%)
+50th percentile: 9ms

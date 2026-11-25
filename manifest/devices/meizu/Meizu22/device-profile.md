@@ -2,7 +2,6 @@
 
 - **生成时间**: `2026-11-18T19:08:18+08:00`
 - **ROM Build ID**: `16-AQ3A.250411.001-20260127`
-- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=15, odm=15, vendor_dlkm=15`
 - **DSH 聊天会话 ID**: `session-cddeab54-28c1-43d4-8d80-ba96ae3a35cb`（标题：`[02_prepare] 真机规格采集 · MEIZU 22 (meizu/Meizu22 · 16-AQ3A.250411.001-20260127)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
@@ -205,7 +204,7 @@
 - **触控与按键对齐**: touch=`goodix_ts` · keyboard=`gpio-keys` · input_identity 外设数=`4` 项
 - **硬件 HAL 变体与开关**: radioVariant=`default` · NFC=`true` · 红外=`true` · 3.5mm=`false` · 立体声双扬声器
 - **影像规格**: 后置 50MP 主摄 (1/1.3", OIS) + 50MP 潜望长焦 (72mm, 3x) + 50MP 超广角 (122°) | 前置 50MP
-- **电池与通信**: `5510 mAh`（有线 `80W` / 无线 `66W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `5.4` · 5G=`true` · Widevine `L1` (sysId=`26719`) · TAC `86854204` · MAC OUI `[3c:2e:f9]`
+- **电池与通信**: `5510 mAh`（有线 `80W` / 无线 `66W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `5.4` · 5G=`true` · Widevine `L1` (sysId=`26719`) · TAC `86854204` · 基带 `MPSS.DE.7.0-02776-PAKALA_GEN_PACK-1` · MAC OUI `[3c:2e:f9]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `21` 项对齐传感器
@@ -234,6 +233,8 @@
 - `board`: `sun` | `soc`: `QTI  ()`
 - `densityDpi`: `0` | `egl`: `adreno` | `vulkan`: `adreno` | `abilist`: `arm64-v8a`
 - `securityPatch`: `2025-04-05` | `buildDate`: `20260127` | `kernelLine`: `` | `vintfVersion`: `-`
+- `partitionAndroidVersions`: `system=16, system_ext=16, product=16, vendor=15, odm=15, vendor_dlkm=15`
+- `basebandVersion`: `MPSS.DE.7.0-02776-PAKALA_GEN_PACK-1`（来源: `zip:payload.bin/modem`）
 - `fingerprint`: `meizu/Meizu_22_CN/Meizu22:16/BQ2A.251016.001-BP2A.250605.031.A3/1763452226:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=Meizu_22_CN`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `vda.partitions` (1 个附加分区): `vendor_persist.img->/mnt/vendor/persist`

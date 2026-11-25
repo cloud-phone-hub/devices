@@ -18,6 +18,7 @@
     512000
   ],
   "extra": {
+    "basebandVersion": "MT6878_NR17.RC.MP.V40.2.P247.01.339R",
     "board": "mt6878",
     "hostHvc": {
       "host-hvc-adbkey": "hvc2",

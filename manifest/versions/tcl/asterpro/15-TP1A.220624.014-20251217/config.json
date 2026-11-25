@@ -10,6 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MOLY.NR17.R1.MP5.RC.MP.V1.7.P56",
     "comment": "由 pipeline prepare 从 TCL-T521.zip (vendor/build.prop) 自动生成。",
     "osVersion": "15-TP1A.220624.014-20251217",
     "partitionAndroidVersions": {

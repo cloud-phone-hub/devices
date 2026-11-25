@@ -10,6 +10,7 @@
     "ro.soc.model": "SM8550-AB",
     "ro.vendor.boot_security_patch": "2025-09-01",
     "ro.vendor.build.security_patch": "2025-09-01",
+    "ro.vendor.cdh.device.market_name": "realme GT5 (150W)",
     "ro.vendor.cdh.display.default_refresh_rate": "144",
     "ro.vendor.cdh.display.edid_name": "TMA_AMOLED_1P5K",
     "ro.vendor.cdh.display.edid_pnp": "TMA",

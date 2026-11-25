@@ -10,6 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MPSS.DE.3.1.4-00560.1-MILOS_GEN_PACK-1",
     "comment": "由 cdh unpack prepare 从 Asteroids_V3.2-251013-1406.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
       "odm": "14",

@@ -41,3 +41,5 @@
 (allow hal_radio_default self (capability (net_admin)))
 (allow hal_radio_default self (udp_socket (create ioctl getopt setopt)))
 (allow hal_radio_default self (netlink_route_socket (create bind getattr write nlmsg_read nlmsg_write read getopt setopt)))
+;; libc 初始化试探读取 serialno_prop（受平台 neverallow 限制不可 allow，dontaudit 消除无害 avc 刷屏）
+(dontaudit hal_radio_default serialno_prop_{{vers}} (file (ioctl read getattr lock map open watch watch_reads)))

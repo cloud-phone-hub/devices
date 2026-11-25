@@ -2,8 +2,7 @@
 
 - **生成时间**: `2026-11-18T21:58:40+08:00`
 - **ROM Build ID**: `16-AQ3A.250214.001-20260904`
-- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=15, vendor_dlkm=15`
-- **DSH 聊天会话 ID**: `session-03495597-5523-43e7-b77a-80c4c4361c45`（标题：`[02_prepare] 真机规格采集 · Honor Magic7 RSR (honor/sun · 16-AQ3A.250214.001-20260904)`）
+- **DSH 聊天会话 ID**: `session-03495597-5523-43e7-b77a-80c4c4361c45`（标题：`[02_prepare] 真机规格采集 · Honor Magic7 RSR (honor/sun · 15-AQ3A.250214.001-20260904)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
 ---
@@ -185,7 +184,7 @@
 - **触控与按键对齐**: touch=`synaptics_tcm2` · keyboard=`gpio-keys` · input_identity 外设数=`5` 项
 - **硬件 HAL 变体与开关**: radioVariant=`default` · NFC=`true` · 红外=`true` · 3.5mm=`false` · 立体声双扬声器
 - **影像规格**: 后置 50MP 主摄 + 200MP 潜望长焦 + 50MP 超广角 | 前置 50MP
-- **电池与通信**: `5850 mAh`（有线 `100W` / 无线 `80W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `5.4` · 5G=`true` · Widevine `L1` (sysId=`4436`) · TAC `86214206` · MAC OUI `[00:e0:fc 50:8f:4c]`
+- **电池与通信**: `5850 mAh`（有线 `100W` / 无线 `80W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `5.4` · 5G=`true` · Widevine `L1` (sysId=`4436`) · TAC `86214206` · 基带 `-` · MAC OUI `[00:e0:fc 50:8f:4c]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `22` 项对齐传感器
@@ -210,6 +209,7 @@
 - `board`: `sun` | `soc`: `QTI  ()`
 - `densityDpi`: `0` | `egl`: `adreno` | `vulkan`: `adreno` | `abilist`: `arm64-v8a`
 - `securityPatch`: `2026-09-01` | `buildDate`: `20260904` | `kernelLine`: `6.6` | `vintfVersion`: `-`
+- `partitionAndroidVersions`: `system=16, system_ext=16, product=16, vendor=15, vendor_dlkm=15`
 - `uname`: `Linux localhost 6.6.118-android15-8-gc901ea41aa32-ab15981388-4k #1 SMP PREEMPT Thu Jul 30 02:48:45 UTC 2026 aarch64 Toybox`
 - `fingerprint`: `qti/sun/sun:15/AQ3A.250214.001/eng.root.00000000.000000:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=sun`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
@@ -225,8 +225,8 @@
 - **Audio 策略与音效配置**: 模块=`[primary a2dp usb]` · 采样率=`[48000]` · 听筒=`true` · 有线耳机路由=`false` · 双麦=`true` · 音效描述符=`0` 项（源: `-`）
 - **Media Codec2 硬编解码配置**: Store实例=`[vendor.hardware.media.c2-dtscodec-aidl-service->default3 vendor.qti.media.c2@1.0-service->default3]` · 厂商/杜比组件=`16` 项 (`c2.qti.avc.decoder`, `c2.qti.avc.decoder.low_latency`, `c2.qti.avc.decoder.secure`, `c2.qti.hevc.decoder`, `c2.qti.hevc.decoder.low_latency`, `c2.qti.hevc.decoder.secure`, `c2.qti.vp9.decoder`, `c2.qti.vp9.decoder.low_latency`, `c2.qti.vp9.decoder.secure`, `c2.qti.av1.decoder`, `c2.qti.av1.decoder.low_latency`, `c2.qti.av1.decoder.secure`, `c2.qti.avc.encoder`, `c2.qti.hevc.encoder`, `c2.qti.hevc.encoder.cq`, `c2.qti.heic.encoder`)
 - **GNSS 定位配置**: 源文件=`vendor/etc/gps.conf` · 版本=`-` · 模式=`-` · L1Only=`false` · L5配置=`false`
-- **ODM SKU / NFC / Wi-Fi / 影像场景**: NFC芯片=`STMicroelectronics ST21NFC` · RSC区域=`[]` · 相机Tuning角色=`[]`
-- **已扫描解析的 `vendor/etc` & `odm/etc` 配置文件**: 共 `424` 个
+- **ODM SKU / NFC / Wi-Fi / 影像场景**: NFC芯片=`NXP NFC` · RSC区域=`[]` · 相机Tuning角色=`[]`
+- **已扫描解析的 `vendor/etc` & `odm/etc` 配置文件**: 共 `433` 个
 
 ## 四、DSH 聊天界面回复原文
 
@@ -664,7 +664,7 @@
     "待真机回采项：glVersionFull/vulkan.driver_version 的具体 blob 号、EDID（/sys/class/drm/card0-*/edid）、imeiTac 与 MAC OUI 全集、Widevine systemId；Codec2 两个二进制实测都报 default3，暂以 default3/default3_dts 区分 store，需 dumpsys media.codec 复核。"
   ],
   "sources": [
-    "目标机固件实测：build.prop / boot DTB / VINTF / vendor/etc / odm/etc（buildId 16-AQ3A.250214.001-20260904，securityPatch 2026-09-01）",
+    "目标机固件实测：build.prop / boot DTB / VINTF / vendor/etc / odm/etc（buildId 15-AQ3A.250214.001-20260904，securityPatch 2026-09-01）",
     "gold 标杆 schema 与颗粒度：devices/manifest/configs/redmi/gold/gold-android15/（vendor/config.json、module/config.json、hardware/config.json、vendor/etc/*）",
     "honor/sun 现有骨架：devices/manifest/configs/honor/sun/sun-android15/（照抄 gold 的 mt6833/mtk/swtp 残留已逐项替换）",
     "公开规格：荣耀 Magic7 RSR 保时捷设计（6.8 英寸 1.5K LTPO 1280x2800 / 骁龙 8 至尊版 / 5850mAh / 100W 有线 + 80W 无线 / 16+512 与 24+1TB / 200MP 潜望）"

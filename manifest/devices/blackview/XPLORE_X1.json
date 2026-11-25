@@ -19,6 +19,7 @@
     512000
   ],
   "extra": {
+    "basebandVersion": "F252_V0_8791_NLWCG_V0.1.3_S251113",
     "board": "mt6877",
     "hostHvc": {
       "host-hvc-adbkey": "hvc2",

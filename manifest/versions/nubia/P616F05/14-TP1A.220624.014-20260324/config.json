@@ -10,13 +10,14 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "4G_MODEM_22B_W25.24.3_P5",
     "comment": "由 cdh unpack prepare 从 ZTE_Blade_V70_Z2459_528970B1273MyOS14.0.3_GEN_NEEA_P616F05V1.0.0B12_P616F05_1_20260325_ID_SPD.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
+      "odm": "13",
+      "product": "14",
       "system": "14",
       "system_ext": "14",
-      "product": "14",
       "vendor": "13",
-      "odm": "13",
       "vendor_dlkm": "13"
     }
   },

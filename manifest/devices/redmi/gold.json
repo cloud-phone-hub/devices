@@ -19,6 +19,7 @@
     256000
   ],
   "extra": {
+    "basebandVersion": "MOLY.NR15.R3.MP.V120.3.P82",
     "board": "mt6833",
     "cmdline": [
       "androidboot.product.hardware.sku=gold_cn"

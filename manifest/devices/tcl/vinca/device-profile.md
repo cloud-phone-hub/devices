@@ -2,8 +2,7 @@
 
 - **生成时间**: `2026-11-19T22:35:11+08:00`
 - **ROM Build ID**: `16-AP3A.240905.015.A2-20260512`
-- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=15, odm=15, vendor_dlkm=15, odm_dlkm=15`
-- **DSH 聊天会话 ID**: `session-7777044e-6d53-47c2-bf7c-67d242b0ed95`（标题：`[02_prepare] 真机规格采集 · tcl/vinca (16-AP3A.240905.015.A2-20260512)`）
+- **DSH 聊天会话 ID**: `session-7777044e-6d53-47c2-bf7c-67d242b0ed95`（标题：`[02_prepare] 真机规格采集 · tcl/vinca (15-AP3A.240905.015.A2-20260512)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
 ---
@@ -153,7 +152,7 @@
 - **触控与按键对齐**: touch=`fts_ts` · keyboard=`mtk-kpd` · input_identity 外设数=`4` 项
 - **硬件 HAL 变体与开关**: radioVariant=`mtk` · NFC=`false` · 红外=`false` · 3.5mm=`true` · 单扬声器
 - **影像规格**: 后置 50MP + 2MP | 前置 8MP
-- **电池与通信**: `5010 mAh`（有线 `10W` / 无线 `0W`） · Wi-Fi 5 (802.11ac)（Wi-Fi 6=`false`） · BT `5.0` · 5G=`false` · Widevine `L1` (sysId=`40112`) · TAC `86853404` · MAC OUI `[d4:3a:2e 44:e4:d9]`
+- **电池与通信**: `5010 mAh`（有线 `10W` / 无线 `0W`） · Wi-Fi 5 (802.11ac)（Wi-Fi 6=`false`） · BT `5.0` · 5G=`false` · Widevine `L1` (sysId=`40112`) · TAC `86853404` · 基带 `MOLY.LR12A.R3.MP.V390.P15` · MAC OUI `[d4:3a:2e 44:e4:d9]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `10` 项对齐传感器
@@ -181,7 +180,9 @@
 - `board`: `mt6768` | `soc`: `  ()`
 - `densityDpi`: `320` | `egl`: `meow` | `vulkan`: `mali` | `abilist`: `arm64-v8a`
 - `securityPatch`: `2026-05-05` | `buildDate`: `20260512` | `kernelLine`: `6.6` | `vintfVersion`: `8.0`
+- `partitionAndroidVersions`: `system=16, system_ext=16, product=16, vendor=15, odm=15, vendor_dlkm=15, odm_dlkm=15`
 - `uname`: `Linux localhost 6.6.89-android15-8-gbe8d201b0d27-ab13762941-4k #1 SMP PREEMPT Thu Jul 10 06:35:14 UTC 2025 aarch64 Toybox`
+- `basebandVersion`: `MOLY.LR12A.R3.MP.V390.P15`（来源: `zip:payload.bin/modem`）
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=vinca_cn`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `vda.partitions` (5 个附加分区): `vendor_persist.img->/mnt/vendor/persist`, `protect_f.img->/mnt/vendor/protect_f`, `protect_s.img->/mnt/vendor/protect_s`, `nvdata.img->/mnt/vendor/nvdata`, `nvcfg.img->/mnt/vendor/nvcfg`
 - `vintfPlaceholders`: radio=`0` 项 · audio=`1` 项 · gnss=`1` 项 · nn=`55` 项
@@ -574,7 +575,7 @@
     "Wi-Fi MAC OUI、IMEI TAC、Widevine systemId 均换为 TCL 口径，未复用小米的 3c:38:24 / 86717107 / 33098。"
   ],
   "sources": [
-    "目标机官方固件实测：build.prop / boot DTB / VINTF manifest / vendor/etc / odm/etc（16-AP3A.240905.015.A2-20260512）",
+    "目标机官方固件实测：build.prop / boot DTB / VINTF manifest / vendor/etc / odm/etc（15-AP3A.240905.015.A2-20260512）",
     "对标字段结构：devices/manifest/configs/redmi/gold/gold-android15/",
     "TCL 60 SE 公开规格：6.67\" 720×1600 90Hz、Helio G81、5010mAh、50MP+2MP/8MP、侧边指纹",
     "ARM Mali-G52 (Bifrost) GLES/Vulkan 驱动标识、deviceId 0x72120000、driverId 9",

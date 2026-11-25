@@ -4,7 +4,7 @@
   "brand": "hmd",
   "model": "HMD Crest Max",
   "device": "ARW",
-  "platform": "qcom",
+  "platform": "unisoc",
   "resolution": "1080x2400",
   "inch": "70x155",
   "density": 400,

@@ -2,8 +2,7 @@
 
 - **生成时间**: `2026-11-20T01:38:47+08:00`
 - **ROM Build ID**: `16-TP1A.220624.014-20260713`
-- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=13, odm=13, vendor_dlkm=13`
-- **DSH 聊天会话 ID**: `session-23050fe1-983d-4054-a37b-fe3e5b5a14b2`（标题：`[02_prepare] 真机规格采集 · VILLAON V671NP (villaon/VILLAON-V671NP · 16-TP1A.220624.014-20260713)`）
+- **DSH 聊天会话 ID**: `session-23050fe1-983d-4054-a37b-fe3e5b5a14b2`（标题：`[02_prepare] 真机规格采集 · VILLAON V671NP (villaon/VILLAON-V671NP · 13-TP1A.220624.014-20260713)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
 ---
@@ -151,7 +150,7 @@
 - **触控与按键对齐**: touch=`focaltech_ats` · keyboard=`gpio-keys` · input_identity 外设数=`2` 项
 - **硬件 HAL 变体与开关**: radioVariant=`default` · NFC=`false` · 红外=`false` · 3.5mm=`false` · 单扬声器
 - **影像规格**: 后置 50MP + 2MP | 前置 8MP
-- **电池与通信**: `5000 mAh`（有线 `18W` / 无线 `0W`） · Wi-Fi 5 (802.11ac)（Wi-Fi 6=`false`） · BT `5.1` · 5G=`true` · Widevine `L1` (sysId=`33152`) · TAC `86963021` · MAC OUI `[74:5C:9F]`
+- **电池与通信**: `5000 mAh`（有线 `18W` / 无线 `0W`） · Wi-Fi 5 (802.11ac)（Wi-Fi 6=`false`） · BT `5.1` · 5G=`true` · Widevine `L1` (sysId=`33152`) · TAC `86963021` · 基带 `5G_MODEM_V2_23B_W26.04.3_P5` · MAC OUI `[74:5C:9F]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `9` 项对齐传感器
@@ -180,7 +179,9 @@
 - `board`: `ums9621` | `soc`: `Spreadtrum  ()`
 - `densityDpi`: `480` | `egl`: `` | `vulkan`: `` | `abilist`: `arm64-v8a,armeabi-v7a,armeabi`
 - `securityPatch`: `2025-09-05` | `buildDate`: `20260713` | `kernelLine`: `5.15` | `vintfVersion`: `7.0`
+- `partitionAndroidVersions`: `system=16, system_ext=16, product=16, vendor=13, odm=13, vendor_dlkm=13`
 - `uname`: `Linux localhost 5.15.189-android13-8-00012-g742fd6fce289-ab14327796 #1 SMP PREEMPT Fri Oct 24 02:22:42 UTC 2025 aarch64 Toybox`
+- `basebandVersion`: `5G_MODEM_V2_23B_W26.04.3_P5`（来源: `zip:V671NP-SF557C-WGo-IN-20260713V014_user.pac/Modem_NR(SC9600_QogirN6Lite_PS_modem.bin)`）
 - `fingerprint`: `VILLAON/V671NP-IN/VILLAON-V671NP:13/TP1A.220624.014/20260713:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=V671NP-IN`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `thermal.zones` (27 个温区): `soc-thmzone`, `thm0phy-thmzone`, `big7-thmzone`, `thm1phy-thmzone`, `mid6-thmzone`, `thm2phy-thmzone`, `core0-thmzone`, `core1-thmzone`, `core2-thmzone`, `core3-thmzone`, `core4-thmzone`, `core5-thmzone`, `cluster-thmzone`, `thm3phy-thmzone`, `gpu-thmzone`, `mm-thmzone`, `lte-thmzone`, `nr15-thmzone`, `nr12-thmzone`, `front-thmzone`, `back-thmzone`, `skin-thmzone`, `osctsen-thmzone`, `outtsen-thmzone`, `board-thmzone`, `pa-thmzone`, `chg-thmzone`

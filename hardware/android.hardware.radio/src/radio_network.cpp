@@ -607,7 +607,9 @@ public:
         serial, true,
         &network::IRadioNetworkResponse::setN1ModeEnabledResponse);
   }
+#endif
 
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 15
   ::ndk::ScopedAStatus
   isCellularIdentifierTransparencyEnabled(int32_t serial) override {
     return RespondBoolean(serial, cellular_identifier_transparency_.load(),
@@ -701,6 +703,8 @@ private:
 #if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
   std::atomic_bool null_cipher_integrity_{false};
   std::atomic_bool n1_mode_{true};
+#endif
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 15
   std::atomic_bool cellular_identifier_transparency_{true};
   std::atomic_bool security_algorithms_updated_{true};
 #endif

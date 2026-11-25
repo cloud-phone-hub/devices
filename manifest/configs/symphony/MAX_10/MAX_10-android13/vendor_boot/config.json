@@ -4,6 +4,7 @@
     "androidboot.product.hardware.sku=MAX10",
     "androidboot.secureboot=1",
     "androidboot.slot=a",
-    "androidboot.veritymode.managed=yes"
+    "androidboot.veritymode.managed=yes",
+    "androidboot.ddrsize=3072M"
   ]
 }

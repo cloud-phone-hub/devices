@@ -30,3 +30,15 @@
 (allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_configs_file}} (file (read getattr map open)))
 (allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_configs_file}} (lnk_file (read getattr open)))
 ;; @end
+
+;; OPlus displaycolorfeature 条件绑定（对应 hal_graphics_composer_default）
+;; @when-declared hal_displaycolorfeature hal_displaycolorfeature_client hal_displaycolorfeature_server hal_graphics_composer_default surfaceflinger_{{vers}}
+;; @when-not-contains (typeattributeset hal_displaycolorfeature_server (hal_graphics_composer_default))
+(typeattributeset hal_displaycolorfeature (hal_graphics_composer_default))
+(typeattributeset hal_displaycolorfeature_client (surfaceflinger_{{vers}}))
+(typeattributeset hal_displaycolorfeature_server (hal_graphics_composer_default))
+(allow hal_displaycolorfeature_client hal_displaycolorfeature_server (binder (call transfer)))
+(allow hal_displaycolorfeature_server hal_displaycolorfeature_client (binder (transfer)))
+(allow hal_displaycolorfeature_client hal_displaycolorfeature_server (fd (use)))
+;; @end
+;; @end

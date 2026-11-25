@@ -19,6 +19,7 @@
     128000
   ],
   "extra": {
+    "basebandVersion": "4G_MODEM_22B_W24.24.7_P0.2",
     "board": "sp9863a",
     "hostHvc": {
       "host-hvc-adbkey": "hvc2",

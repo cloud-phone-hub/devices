@@ -326,5 +326,13 @@
         "type": "wlan-therm"
       }
     ]
+  },
+  "display": {
+    "refresh-rates": [
+      30,
+      60,
+      90,
+      120
+    ]
   }
 }

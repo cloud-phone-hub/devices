@@ -4,19 +4,19 @@
   "brand": "blu",
   "model": "BLU G65L",
   "device": "G1130",
-  "platform": "qcom",
-  "resolution": "1080x2400",
-  "inch": "70x155",
+  "platform": "unisoc",
+  "resolution": "720x1600",
+  "inch": "69x154",
   "density": 320,
   "smp": 8,
   "memory": [
-    8192
+    4096
   ],
   "storage": [
-    128000,
-    256000
+    128000
   ],
   "extra": {
+    "basebandVersion": "4G_MODEM_22B_W26.02.5_P2",
     "board": "ums9230",
     "hostHvc": {
       "host-hvc-adbkey": "hvc2",
@@ -28,6 +28,9 @@
       "host-hvc-wifi": "hvc9",
       "host-hvc-wifi-data": "hvc10"
     },
+    "skuCombinations": [
+      "4GB+128GB"
+    ],
     "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
   },
   "updatedAt": "2026-11-09T03:16:51Z"

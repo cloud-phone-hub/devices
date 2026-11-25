@@ -1,5 +1,6 @@
 {
   "build-prop-sets": {
+    "gsm.version.baseband": "5G_MODEM_V2_23B_W26.04.3_P5",
     "persist.radio.multisim.config": "dsds",
     "ro.bionic.2nd_arch": "",
     "ro.bionic.2nd_cpu_variant": "",
@@ -11,8 +12,10 @@
     "ro.hwui.use_vulkan": "false",
     "ro.soc.manufacturer": "Unisoc",
     "ro.soc.model": "UMS9621",
+    "ro.surface_flinger.has_HDR_display": "false",
     "ro.vendor.boot_security_patch": "2025-09-05",
     "ro.vendor.build.security_patch": "2025-09-05",
+    "ro.vendor.cdh.device.market_name": "VILLAON V671NP",
     "ro.vendor.cdh.display.default_refresh_rate": "120",
     "ro.vendor.cdh.display.edid_name": "BOE_BF067",
     "ro.vendor.cdh.display.edid_pnp": "BOE",

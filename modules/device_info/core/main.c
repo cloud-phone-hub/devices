@@ -116,6 +116,7 @@ static int __init cdh_device_info_init(void)
 	}
 
 	cdh_nfc_sysfs_init();
+	cdh_sched_proc_init();
 
 	pr_info("loaded gki_abi_release=%s\n", cdh_gki_abi_release);
 	return 0;
@@ -123,6 +124,7 @@ static int __init cdh_device_info_init(void)
 
 static void __exit cdh_device_info_exit(void)
 {
+	cdh_sched_proc_exit();
 	cdh_nfc_sysfs_exit();
 	cdh_ethtool_exit();
 	cdh_thermal_sysfs_exit();

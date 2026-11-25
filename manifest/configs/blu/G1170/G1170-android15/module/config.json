@@ -370,5 +370,11 @@
         "type": "tz6358buck3"
       }
     ]
+  },
+  "display": {
+    "refresh-rates": [
+      60,
+      120
+    ]
   }
 }

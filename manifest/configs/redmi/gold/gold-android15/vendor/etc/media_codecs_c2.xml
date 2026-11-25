@@ -352,6 +352,18 @@
             <Limit name="bitrate" range="1-20000000" />
             <Feature name="adaptive-playback" />
         </MediaCodec>
+            <MediaCodec name="c2.v4l2.avc.decoder" type="video/avc">
+            <Limit name="size" min="2x2" max="4096x4096" />
+            <Limit name="alignment" value="2x2" />
+            <Limit name="block-size" value="16x16" />
+            <Feature name="adaptive-playback" />
+        </MediaCodec>
+        <MediaCodec name="c2.v4l2.hevc.decoder" type="video/hevc">
+            <Limit name="size" min="2x2" max="4096x4096" />
+            <Limit name="alignment" value="2x2" />
+            <Limit name="block-size" value="16x16" />
+            <Feature name="adaptive-playback" />
+        </MediaCodec>
     </Decoders>
     <Encoders>
         <MediaCodec name="c2.android.aac.encoder" type="audio/mp4a-latm">
@@ -514,6 +526,13 @@
             <Limit name="complexity" range="0-5"  default="0" />
             <Feature name="bitrate-modes" value="VBR,CBR,CQ" />
             <Attribute name="software-codec" />
+        </MediaCodec>
+            <MediaCodec name="c2.v4l2.avc.encoder" type="video/avc">
+            <Limit name="size" min="32x32" max="1920x1088" />
+            <Limit name="alignment" value="2x2" />
+            <Limit name="block-size" value="16x16" />
+            <Limit name="bitrate" range="1-40000000" />
+            <Feature name="bitrate-modes" value="VBR,CBR" />
         </MediaCodec>
     </Encoders>
 </MediaCodecs>

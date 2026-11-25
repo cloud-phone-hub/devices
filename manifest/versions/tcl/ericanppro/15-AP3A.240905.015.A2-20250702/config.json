@@ -10,18 +10,19 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MOLY.LR12A.R3.MP.V342.6.P8",
     "comment": "由 pipeline prepare 从 TCL-60-NXTPAPER.zip (vendor/build.prop) 自动生成。",
     "osVersion": "15-AP3A.240905.015.A2-20250702",
-    "securityPatch": "2025-07-05",
     "partitionAndroidVersions": {
+      "odm": "15",
+      "odm_dlkm": "15",
+      "product": "15",
       "system": "15",
       "system_ext": "15",
-      "product": "15",
       "vendor": "15",
-      "odm": "15",
-      "vendor_dlkm": "15",
-      "odm_dlkm": "15"
-    }
+      "vendor_dlkm": "15"
+    },
+    "securityPatch": "2025-07-05"
   },
   "updatedAt": "2026-11-19T13:17:15Z"
 }

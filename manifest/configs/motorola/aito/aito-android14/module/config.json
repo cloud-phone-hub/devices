@@ -216,6 +216,11 @@
       "type": "dir"
     },
     {
+      "from": "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service",
+      "to": "/mnt/vendorpatch/vendor/bin/hw/cdh_audio_parameter_parser",
+      "type": "file"
+    },
+    {
       "from": "/vendor/bin",
       "to": "/mnt/vendorpatch/vendor/bin",
       "type": "dir"
@@ -263,11 +268,6 @@
     {
       "from": "/system/bin/update_verifier",
       "to": "/mnt/vendorpatch/system/bin/update_verifier",
-      "type": "file"
-    },
-    {
-      "from": "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service",
-      "to": "/mnt/vendorpatch/vendor/bin/hw/cdh_audio_parameter_parser",
       "type": "file"
     },
     {
@@ -543,6 +543,15 @@
         "jitter-mc": 140,
         "type": "consys"
       }
+    ]
+  },
+  "display": {
+    "refresh-rates": [
+      60,
+      90,
+      120,
+      144,
+      165
     ]
   }
 }

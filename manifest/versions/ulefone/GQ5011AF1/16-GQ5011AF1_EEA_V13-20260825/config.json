@@ -10,6 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MOLY.NR16.R2.MP3.MP.V119.3.P2",
     "partitionAndroidVersions": {
       "odm": "14",
       "odm_dlkm": "14",

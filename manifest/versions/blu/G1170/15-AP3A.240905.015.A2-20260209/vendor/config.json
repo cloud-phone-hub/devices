@@ -1,0 +1,11 @@
+{
+  "build-prop-sets": {
+    "ro.hardware.gralloc": "minigbm"
+  },
+  "build-prop-unsets": [
+    "ro.vndk.lite",
+    "ro.crypto.metadata_init_delete_all_keys.enabled",
+    "ro.gfx.driver.0",
+    "ro.gfx.driver.1"
+  ]
+}

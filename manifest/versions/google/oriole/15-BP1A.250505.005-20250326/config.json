@@ -10,13 +10,14 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "g5123b-145971-260721-B-15910359",
     "comment": "由 cdh unpack prepare 从 oriole-bp1a.250505.005-factory-9fc37bcc.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
+      "odm": "15",
+      "product": "15",
       "system": "15",
       "system_ext": "15",
-      "product": "15",
       "vendor": "15",
-      "odm": "15",
       "vendor_dlkm": "15"
     }
   },

@@ -15,6 +15,7 @@
     "ro.soc.model": "MT6878",
     "ro.vendor.boot_security_patch": "2026-04-01",
     "ro.vendor.build.security_patch": "2026-04-01",
+    "ro.vendor.cdh.device.market_name": "Infinix X6876",
     "ro.vendor.cdh.display.default_refresh_rate": "120",
     "ro.vendor.cdh.display.edid_name": "BOE_0A1F",
     "ro.vendor.cdh.display.edid_pnp": "BOE",

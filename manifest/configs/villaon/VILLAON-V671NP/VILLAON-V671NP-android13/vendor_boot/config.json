@@ -3,7 +3,8 @@
     "androidboot.product.hardware.sku=V671NP-IN",
     "androidboot.secureboot=1",
     "androidboot.slot=a",
-    "androidboot.veritymode.managed=yes"
+    "androidboot.veritymode.managed=yes",
+    "androidboot.ddrsize=4096M"
   ],
   "fstab": "ums9621"
 }

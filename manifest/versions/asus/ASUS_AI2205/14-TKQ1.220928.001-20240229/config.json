@@ -10,13 +10,14 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MPSS.DE.3.0-02351-KAILUA_GEN_PACK-1.49324.6.53273.2",
     "comment": "由 cdh unpack prepare 从 R2-Asus-ROG-Phone-7-AI2205.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
+      "odm": "13",
+      "product": "14",
       "system": "14",
       "system_ext": "14",
-      "product": "14",
       "vendor": "13",
-      "odm": "13",
       "vendor_dlkm": "13"
     }
   },

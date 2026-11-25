@@ -1,0 +1,12 @@
+{
+  "build-prop-sets": {
+    "gsm.version.baseband": "g5123b-145971-260721-B-15910359"
+  },
+  "build-prop-unsets": [
+    "ro.frp.pst",
+    "ro.crypto.metadata_init_delete_all_keys.enabled",
+    "ro.gfx.driver.0",
+    "ro.gfx.driver.1",
+    "ro.vndk.lite"
+  ]
+}

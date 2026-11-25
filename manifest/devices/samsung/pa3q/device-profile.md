@@ -2,7 +2,6 @@
 
 - **生成时间**: `2026-11-18T21:36:21+08:00`
 - **ROM Build ID**: `16-AP3A.240905.015.A2-20260812`
-- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=15, odm=15, vendor_dlkm=15`
 - **DSH 聊天会话 ID**: `session-1881071f-cfcc-48f5-8d87-1402bb75e606`（标题：`[02_prepare] 真机规格采集 · Samsung Galaxy S25 Ultra (samsung/pa3q · 16-AP3A.240905.015.A2-20260812)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
@@ -209,7 +208,7 @@
 - **触控与按键对齐**: touch=`sec_touchscreen` · keyboard=`gpio-keys` · input_identity 外设数=`4` 项
 - **硬件 HAL 变体与开关**: radioVariant=`default` · NFC=`true` · 红外=`false` · 3.5mm=`false` · 立体声双扬声器 (AKG 调校)
 - **影像规格**: 后置 200MP + 50MP 超广角 + 50MP 5x 潜望长焦 + 10MP 3x 长焦 | 前置 12MP
-- **电池与通信**: `5000 mAh`（有线 `45W` / 无线 `15W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `5.4` · 5G=`true` · Widevine `L1` (sysId=`20346`) · TAC `35693811` · MAC OUI `[5c:0a:5b 8c:77:12 e4:7c:f9]`
+- **电池与通信**: `5000 mAh`（有线 `45W` / 无线 `15W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `5.4` · 5G=`true` · Widevine `L1` (sysId=`20346`) · TAC `35693811` · 基带 `S9380ZCSDCZH1` · MAC OUI `[5c:0a:5b 8c:77:12 e4:7c:f9]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `22` 项对齐传感器
@@ -239,6 +238,8 @@
 - `board`: `sun` | `soc`: `QTI  ()`
 - `densityDpi`: `450` | `egl`: `adreno` | `vulkan`: `adreno` | `abilist`: `arm64-v8a`
 - `securityPatch`: `2026-08-05` | `buildDate`: `20260812` | `kernelLine`: `` | `vintfVersion`: `-`
+- `partitionAndroidVersions`: `system=16, system_ext=16, product=16, vendor=15, odm=15, vendor_dlkm=15`
+- `basebandVersion`: `S9380ZCSDCZH1`（来源: `zip:CP_S9380ZCSDCZH1_CP35846090_MQB113296591_REV00_user_low_ship_MULTI_CERT.tar.md5`）
 - `fingerprint`: `samsung/pa3qzcx/pa3q:15/AP3A.240905.015.A2/S9380ZCSDCZH1:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=pa3qzcx`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `vda.partitions` (1 个附加分区): `vendor_persist.img->/mnt/vendor/persist`

@@ -2,8 +2,7 @@
 
 - **生成时间**: `2026-11-19T10:45:02+08:00`
 - **ROM Build ID**: `15-GQ5011AF1_EEA_V17-20260429`
-- **分区 Android 版本**: `system=15, system_ext=15, product=15, vendor=14, odm=14, vendor_dlkm=14, odm_dlkm=14`
-- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · Ulefone Armor 28 Ultra (ulefone/GQ5011AF1 · 15-GQ5011AF1_EEA_V17-20260429)`）
+- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · Ulefone Armor 28 Ultra (ulefone/GQ5011AF1 · 14-GQ5011AF1_EEA_V17-20260429)`）
 
 ---
 
@@ -160,7 +159,7 @@
 - **触控与按键对齐**: touch=`-` · keyboard=`-` · input_identity 外设数=`0` 项
 - **硬件 HAL 变体与开关**: radioVariant=`-` · NFC=`false` · 红外=`false` · 3.5mm=`false` · -
 - **影像规格**: 后置 - | 前置 -
-- **电池与通信**: `0 mAh`（有线 `0W` / 无线 `0W`） · -（Wi-Fi 6=`false`） · BT `-` · 5G=`false` · Widevine `-` (sysId=`-`) · TAC `-` · MAC OUI `[]`
+- **电池与通信**: `0 mAh`（有线 `0W` / 无线 `0W`） · -（Wi-Fi 6=`false`） · BT `-` · 5G=`false` · Widevine `-` (sysId=`-`) · TAC `-` · 基带 `MOLY.NR16.R2.MP3.MP.V75.P4` · MAC OUI `[]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `0` 项对齐传感器
@@ -176,6 +175,8 @@
 - `board`: `mt6989` | `soc`: `  ()`
 - `densityDpi`: `480` | `egl`: `meow` | `vulkan`: `mali` | `abilist`: `arm64-v8a`
 - `securityPatch`: `2026-03-05` | `buildDate`: `20260429` | `kernelLine`: `` | `vintfVersion`: `8.0`
+- `partitionAndroidVersions`: `system=15, system_ext=15, product=15, vendor=14, odm=14, vendor_dlkm=14, odm_dlkm=14`
+- `basebandVersion`: `MOLY.NR16.R2.MP3.MP.V75.P4`（来源: `zip:m190a-gq-gq5011-1024g16g-fhdp-V0-bom104-cts-eu-lr_GQ5011AF1_EEA_V17_user_20260429/modem.img`）
 - `fingerprint`: `Ulefone/GQ5011AF1_EEA/GQ5011AF1:15/AP3A.240905.015.A2/1777434795:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=GQ5011AF1_EEA`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `thermal.zones` (62 个温区): `soc_max`, `cpu-little-core0`, `cpu-little-core1`, `cpu-little-core2`, `cpu-little-core3`, `cpu-medium-core4-0`, `cpu-medium-core4-1`, `cpu-medium-core5-0`, `cpu-medium-core5-1`, `cpu-medium-core6-0`, `cpu-medium-core6-1`, `cpu-big-core7-0`, `cpu-big-core7-1`, `cpu-dsu0`, `cpu-dsu1`, `cpu-dsu2`, `cpu-dsu3`, `apu-a0`, `apu-a1`, `apu-a2`, `apu-a3`, `apu-b0`, `gpu0`, `gpu1`, `gpu2`, `soc-top0`, `soc-top1`, `soc-top2`, `soc-top3`, `soc-bot0`, `soc-bot1`, `soc-bot2`, `soc-bot3`, `ap_ntc`, `ltepa_ntc`, `nrpa_ntc`, `tsx-ntc`, `quiet_ntc`, `quiet-mdpa-ntc`, `quiet-pmic-ntc-ntc`, `wifi-ntc`, `wifi-adie-0`, `wifi-ddie-0`, `wifi-ddie-1`, `wifi-ddie-2`, `wifi-ddie-3`, `ambient-ntc`, `pmic6363-vio18`, `pmic6363-vs1-vs3`, `pmic6363-bk3-bk7`, `pmic6363-vs2`, `pmic6373-bk0`, `pmic6373-ldo`, `pmic6373-bk3-bk7`, `pmic6373-bk4-bk8`, `vtskin-max`, `vtskin1`, `vtskin2`, `vtskin3`, `vtskin4`, `vtskin5`, `vtskin6`

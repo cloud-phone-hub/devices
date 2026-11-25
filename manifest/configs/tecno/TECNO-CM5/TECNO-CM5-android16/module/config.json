@@ -423,5 +423,12 @@
         "type": "vtshell_back"
       }
     ]
+  },
+  "display": {
+    "refresh-rates": [
+      60,
+      90,
+      120
+    ]
   }
 }

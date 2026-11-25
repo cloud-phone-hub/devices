@@ -380,5 +380,11 @@
         "type": "chg-thmzone"
       }
     ]
+  },
+  "display": {
+    "refresh-rates": [
+      60,
+      120
+    ]
   }
 }

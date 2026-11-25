@@ -15,6 +15,7 @@
     "ro.product.first_api_level": "34",
     "ro.vendor.boot_security_patch": "2026-03-05",
     "ro.vendor.build.security_patch": "2026-03-05",
+    "ro.vendor.cdh.device.market_name": "Ulefone Armor 28 Ultra",
     "ro.vendor.cdh.display.edid_name": "MTKDEV",
     "ro.vendor.cdh.display.edid_pnp": "MTK",
     "ro.vendor.cdh.display.edid_product_id": "41384",

@@ -4,6 +4,7 @@
     "androidboot.product.hardware.sku=G27_3GB",
     "androidboot.secureboot=1",
     "androidboot.slot=a",
-    "androidboot.veritymode.managed=yes"
+    "androidboot.veritymode.managed=yes",
+    "androidboot.ddrsize=3072M"
   ]
 }

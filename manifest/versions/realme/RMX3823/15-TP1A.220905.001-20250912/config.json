@@ -10,6 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MPSS.DE.3.0-02177.2-KAILUA_GEN_PACK-2.18776.259",
     "comment": "由 cdh unpack prepare 从 1862_sign_RMX3823_11_F_OTA_2160_all_Mfq9LH_10010111.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
       "product": "15",

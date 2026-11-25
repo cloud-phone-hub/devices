@@ -182,9 +182,19 @@
   },
   "redirect": [
     {
+      "from": "/system/build.prop",
+      "to": "/mnt/vendorpatch/vendor/etc/cdh_system_build.prop",
+      "type": "file"
+    },
+    {
       "from": "/vendor/etc",
       "to": "/mnt/vendorpatch/vendor/etc",
       "type": "dir"
+    },
+    {
+      "from": "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service",
+      "to": "/mnt/vendorpatch/vendor/bin/hw/cdh_audio_parameter_parser",
+      "type": "file"
     },
     {
       "from": "/vendor/bin",
@@ -237,11 +247,6 @@
       "type": "file"
     },
     {
-      "from": "/system/build.prop",
-      "to": "/mnt/vendorpatch/vendor/etc/cdh_system_build.prop",
-      "type": "file"
-    },
-    {
       "from": "/vendor/lib64/mt6989/libdpframework.so",
       "to": "/mnt/vendorpatch/vendor/lib64/egl/libEGL_mesa.so",
       "type": "maps"
@@ -285,11 +290,6 @@
       "from": "/vendor/lib64/egl/libMEOW_data.so",
       "to": "/mnt/vendorpatch/vendor/lib64/android.hardware.graphics.common-V6-ndk.so",
       "type": "maps"
-    },
-    {
-      "from": "/system_ext/bin/hw/android.hardware.audio.parameter_parser.service",
-      "to": "/mnt/vendorpatch/vendor/bin/hw/cdh_audio_parameter_parser",
-      "type": "file"
     }
   ],
   "thermal": {

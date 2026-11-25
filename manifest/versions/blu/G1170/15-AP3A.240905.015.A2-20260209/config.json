@@ -10,16 +10,17 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MOLY.LR12A.R3.MP.V371.3.P3",
     "comment": "由 cdh unpack prepare 从 BLU-G75-G1170.zip (vendor/build.prop) 自动生成。",
     "fingerprint": "BLU/G75/G1170:15/AP3A.240905.015.A2/1770610308:user/release-keys",
     "partitionAndroidVersions": {
+      "odm": "15",
+      "odm_dlkm": "15",
+      "product": "15",
       "system": "15",
       "system_ext": "15",
-      "product": "15",
       "vendor": "15",
-      "odm": "15",
-      "vendor_dlkm": "15",
-      "odm_dlkm": "15"
+      "vendor_dlkm": "15"
     }
   },
   "updatedAt": "2026-11-09T03:17:21Z"

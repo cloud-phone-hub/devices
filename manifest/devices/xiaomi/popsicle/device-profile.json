@@ -454,12 +454,6 @@
           "android.hardware.location",
           "android.hardware.location.network",
           "android.hardware.microphone",
-          "android.hardware.nfc",
-          "android.hardware.nfc.any",
-          "android.hardware.nfc.ese",
-          "android.hardware.nfc.hce",
-          "android.hardware.nfc.hcef",
-          "android.hardware.nfc.uicc",
           "android.hardware.opengles.aep",
           "android.hardware.screen.landscape",
           "android.hardware.screen.portrait",
@@ -575,7 +569,7 @@
           ]
         },
         "hasConsumerIr": false,
-        "hasNfc": true,
+        "hasNfc": false,
         "hasFingerprint": true,
         "hasWifiDirect": true,
         "hasWifiPasspoint": true,
@@ -918,9 +912,6 @@
       "connectivity": {
         "nfcChipHint": "NXP NFC",
         "nfcConfigFiles": [
-          "odm/etc/libnfc-nci.conf",
-          "odm/etc/libnfc-nxp.conf",
-          "odm/etc/libnfc-nxp_RF.conf",
           "vendor/etc/libnfc-SN220_19_2MHZ.conf",
           "vendor/etc/libnfc-SN220_38_4MHZ.conf",
           "vendor/etc/libnfc-SN300_19_2MHZ.conf",

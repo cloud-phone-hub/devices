@@ -2,7 +2,6 @@
 
 - **生成时间**: `2026-11-19T04:39:15+08:00`
 - **ROM Build ID**: `16-BQ2A.250705.001-BP2A.250605.031.A3-20260527`
-- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=16, odm=16, vendor_dlkm=16`
 - **DSH 聊天会话 ID**: `session-d2dee2fc-e4d8-4139-a984-9bbd3df447c6`（标题：`[02_prepare] 真机规格采集 · REDMAGIC 11 Pro (NX809J) (redmagic/NX809J · 16-BQ2A.250705.001-BP2A.250605.031.A3-20260527)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
@@ -154,7 +153,7 @@
 - **触控与按键对齐**: touch=`goodix_ts` · keyboard=`gpio-keys` · input_identity 外设数=`4` 项
 - **硬件 HAL 变体与开关**: radioVariant=`default` · NFC=`true` · 红外=`true` · 3.5mm=`false` · 对称式双扬声器（立体声）
 - **影像规格**: 后置 50MP 主摄 + 50MP 超广角 + 2MP 微距 | 前置 16MP 屏下
-- **电池与通信**: `7500 mAh`（有线 `100W` / 无线 `80W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `6.0` · 5G=`true` · Widevine `L1` (sysId=`30932`) · TAC `86732405` · MAC OUI `[34:4b:50 3c:e0:72 08:3e:5e]`
+- **电池与通信**: `7500 mAh`（有线 `100W` / 无线 `80W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `6.0` · 5G=`true` · Widevine `L1` (sysId=`30932`) · TAC `86732405` · 基带 `MPSS.DE.9.0-01805.10-KAANAPALI_GEN_PACK-2.124266.70` · MAC OUI `[34:4b:50 3c:e0:72 08:3e:5e]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `24` 项对齐传感器
@@ -183,7 +182,9 @@
 - `board`: `canoe` | `soc`: `QTI  ()`
 - `densityDpi`: `520` | `egl`: `adreno` | `vulkan`: `adreno` | `abilist`: `arm64-v8a`
 - `securityPatch`: `2026-05-01` | `buildDate`: `20260527` | `kernelLine`: `6.12` | `vintfVersion`: `9.0`
+- `partitionAndroidVersions`: `system=16, system_ext=16, product=16, vendor=16, odm=16, vendor_dlkm=16`
 - `uname`: `Linux localhost 6.12.23-android16-5-ga82fc641d6d2-ab14804636-4k #1 SMP PREEMPT Wed Jan  7 14:55:52 UTC 2026 aarch64 Toybox`
+- `basebandVersion`: `MPSS.DE.9.0-01805.10-KAANAPALI_GEN_PACK-2.124266.70`（来源: `zip:payload.bin/modem`）
 - `fingerprint`: `REDMAGIC/NX809J-UN/NX809J:16/BQ2A.250705.001-BP2A.250605.031.A3/20260527.113722:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=NX809J-UN`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `vda.partitions` (1 个附加分区): `vendor_persist.img->/mnt/vendor/persist`

@@ -3,6 +3,21 @@
 <media-c2-config>
     <instance binary="android.hardware.media.c2-mediatek" store="default1"/>
     <instance binary="vendor.dolby.media.c2-default-service-dax" store="default9"/>
-    <component store="default1" name="c2.mtk.avc.decoder" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="OMX.MTK.VIDEO.DECODER.AVC" profiles="20480,20481,20482,20484,20487" levels="20495"/>
+    <component store="default1" name="c2.unisoc.jpeg.decoder" kind="decoder" domain="video" media-type="video/jpeg" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.unisoc.imaadpcm.decoder" kind="decoder" domain="audio" media-type="audio/ima-adpcm" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.unisoc.mp3.decoder" kind="decoder" domain="audio" media-type="audio/mpeg" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.unisoc.mpl1.decoder" kind="decoder" domain="audio" media-type="audio/mpeg-L1" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.unisoc.mpl2.decoder" kind="decoder" domain="audio" media-type="audio/mpeg-L2" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.unisoc.hevc.decoder" kind="decoder" domain="video" media-type="video/hevc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.unisoc.mpeg4.decoder" kind="decoder" domain="video" media-type="video/mp4v-es" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.unisoc.h263.decoder" kind="decoder" domain="video" media-type="video/3gpp" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.unisoc.avc.decoder" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.unisoc.av1.decoder" kind="decoder" domain="video" media-type="video/av01" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.unisoc.vp8.decoder" kind="decoder" domain="video" media-type="video/x-vnd.on2.vp8" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.unisoc.vp9.decoder" kind="decoder" domain="video" media-type="video/x-vnd.on2.vp9" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.unisoc.jpeg.encoder" kind="encoder" domain="video" media-type="video/jpeg" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.unisoc.mp3.encoder" kind="encoder" domain="audio" media-type="audio/mpeg" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.unisoc.avc.encoder" kind="encoder" domain="video" media-type="video/avc" rank="1" aliases="" profiles="" levels=""/>
+    <component store="default1" name="c2.unisoc.hevc.encoder" kind="encoder" domain="video" media-type="video/hevc" rank="1" aliases="" profiles="" levels=""/>
     <component store="default9" name="c2.dolby.eac3.decoder" kind="decoder" domain="audio" media-type="audio/eac3" rank="1" aliases="" profiles="" levels=""/>
 </media-c2-config>

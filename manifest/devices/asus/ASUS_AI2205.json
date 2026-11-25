@@ -17,6 +17,7 @@
     256000
   ],
   "extra": {
+    "basebandVersion": "MPSS.DE.3.0-02351-KAILUA_GEN_PACK-1.49324.6.53273.2",
     "board": "kalama",
     "hostHvc": {
       "host-hvc-adbkey": "hvc2",

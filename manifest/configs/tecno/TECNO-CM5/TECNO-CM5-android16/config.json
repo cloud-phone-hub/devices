@@ -9,7 +9,7 @@
   "vendorAndroidVersion": "16",
   "lineageVersion": "lineage-23.2",
   "extra": {
-    "versionRelation": "system=A16 + vendor=A16 -> lineage-23.2（同代对齐：system 决定 buildId，vendor 决定 Lineage 底包）"
+    "versionRelation": "system=A16 + vendor=A16 -\u003e lineage-23.2（同代对齐：system 决定 buildId，vendor 决定 Lineage 底包）"
   },
   "updatedAt": "2026-11-19T16:56:17Z"
 }

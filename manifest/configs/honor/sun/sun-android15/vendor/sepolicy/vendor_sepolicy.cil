@@ -38,7 +38,10 @@
 (allow hal_hwfactoryinterface_default proc_202404 (file (read getattr open)))
 (allow hal_hwfactoryinterface_default sysfs_202404 (file (read getattr open)))
 
-;; 2) 荣耀平台服务查询与属性读取规则（对齐官方 vendor_sepolicy.cil）
+;; 2) 荣耀平台服务查询与属性读取规则（对齐官方 vendor_sepolicy.cil，补齐客户端属性集合消除 SF/system_server/UI 审计阻塞）
+(typeattributeset vendor_hal_perf_client (surfaceflinger_202404 system_server_202404 platform_app_202404 system_app_202404 priv_app_202404))
+(typeattributeset hal_hndisplayengine_client (displayengineserver_202404 hal_graphics_composer_default))
+(typeattributeset hal_uniperf_aidl_client (platform_app_202404 system_server_202404 system_app_202404 priv_app_202404 hal_camera_default hal_graphics_composer_default hal_power_default))
 (allow hal_hndisplayengine_client hal_hndisplayengine_service (service_manager (find)))
 (allow hal_uniperf_aidl_client hal_uniperf_aidl_service (service_manager (find)))
 (allow system_server_202404 mmi_prop_202404 (file (read getattr map open)))

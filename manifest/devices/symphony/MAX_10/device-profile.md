@@ -2,8 +2,7 @@
 
 - **生成时间**: `2026-11-20T17:54:57+08:00`
 - **ROM Build ID**: `14-TP1A.220624.014-20250212`
-- **分区 Android 版本**: `system=14, system_ext=14, product=14, vendor=13, odm=13, vendor_dlkm=13`
-- **DSH 聊天会话 ID**: `session-a7323a14-c5ef-4440-9e76-0eb8bf1791e3`（标题：`[02_prepare] 真机规格采集 · MAX 10 (symphony/MAX_10 · 14-TP1A.220624.014-20250212)`）
+- **DSH 聊天会话 ID**: `session-a7323a14-c5ef-4440-9e76-0eb8bf1791e3`（标题：`[02_prepare] 真机规格采集 · MAX 10 (symphony/MAX_10 · 13-TP1A.220624.014-20250212)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `false`）
 
 ---
@@ -117,7 +116,7 @@
 - **触控与按键对齐**: touch=`focaltech_ats` · keyboard=`gpio-keys` · input_identity 外设数=`4` 项
 - **硬件 HAL 变体与开关**: radioVariant=`default` · NFC=`false` · 红外=`false` · 3.5mm=`true` · 单扬声器
 - **影像规格**: 后置 13MP + 2MP | 前置 8MP
-- **电池与通信**: `5000 mAh`（有线 `10W` / 无线 `0W`） · Wi-Fi 5 (802.11ac)（Wi-Fi 6=`false`） · BT `5.0` · 5G=`false` · Widevine `L3` (sysId=`30251`) · TAC `35851009` · MAC OUI `[00:1e:3a]`
+- **电池与通信**: `5000 mAh`（有线 `10W` / 无线 `0W`） · Wi-Fi 5 (802.11ac)（Wi-Fi 6=`false`） · BT `5.0` · 5G=`false` · Widevine `L3` (sysId=`30251`) · TAC `35851009` · 基带 `4G_MODEM_22B_W24.24.7_P0.2` · MAC OUI `[00:1e:3a]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `11` 项对齐传感器
@@ -144,7 +143,9 @@
 - `board`: `sp9863a` | `soc`: `Spreadtrum SC9863A ()`
 - `densityDpi`: `320` | `egl`: `` | `vulkan`: `` | `abilist`: `arm64-v8a,armeabi-v7a,armeabi`
 - `securityPatch`: `2024-12-05` | `buildDate`: `20250212` | `kernelLine`: `5.15` | `vintfVersion`: `7.0`
+- `partitionAndroidVersions`: `system=14, system_ext=14, product=14, vendor=13, odm=13, vendor_dlkm=13`
 - `uname`: `Linux localhost 5.15.149-android13-8-00008-gbe074b05e5af-ab12096863 #1 SMP PREEMPT Tue Jul 16 15:36:08 UTC 2024 aarch64 Toybox`
+- `basebandVersion`: `4G_MODEM_22B_W24.24.7_P0.2`（来源: `zip:Symphony_MAX10_HW2_V5_3GB.pac/Modem_LTE(SC9600_sharkl3_pubcp_modem.bin)`）
 - `fingerprint`: `Symphony/MAX10/MAX_10:14/UP1A.231005.007/1739350789:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=MAX10`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `thermal.zones` (5 个温区): `gpu-thmzone`, `cpu-thmzone`, `board-thmzone`, `pa-thmzone`, `chg-thmzone`

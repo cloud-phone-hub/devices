@@ -18,6 +18,7 @@
     256000
   ],
   "extra": {
+    "basebandVersion": "MOLY.LR12A.R3.MP.V390.P15",
     "board": "mt6768",
     "hostHvc": {
       "host-hvc-adbkey": "hvc2",

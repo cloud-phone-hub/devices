@@ -20,6 +20,7 @@
     256000
   ],
   "extra": {
+    "basebandVersion": "5G_MODEM_V2_23B_W26.04.3_P5",
     "board": "ums9621",
     "hostHvc": {
       "host-hvc-adbkey": "hvc2",

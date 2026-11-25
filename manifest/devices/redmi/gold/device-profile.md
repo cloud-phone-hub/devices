@@ -2,7 +2,6 @@
 
 - **生成时间**: `2026-11-17T17:13:08+08:00`
 - **ROM Build ID**: `15-OS3.0.11.0.VNQCNXM`
-- **分区 Android 版本**: `system=15, system_ext=15, product=15, vendor=15, odm=15, vendor_dlkm=15, odm_dlkm=15`
 - **DSH 聊天会话 ID**: `session-21b38ad5-5ab3-409f-89ab-0062bac13c8a`（标题：`[02_prepare] 真机规格采集 · Redmi Note 13 5G (redmi/gold · 15-OS3.0.11.0.VNQCNXM)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
@@ -142,20 +141,27 @@
 ```
 </details>
 
-### 2. 显示面板、GPU 与图形栈（`gpu_id.cfg` / `buildVendor` 参考）
-- **面板类型与刷新率**: AMOLED · 刷新率 `[60 90 120] Hz`（默认 `120 Hz`） · 广色域 `true` · EDID 厂商提示 `MTK`
+### 2. 显示面板、GPU 与图形栈（`gpu_id.cfg` / `buildVendor` 对标 `gold`）
+- **面板类型与刷新率**: AMOLED · 刷新率 `[60 90 120] Hz`（默认 `120 Hz`） · 广色域 `true` · EDID `MTK` (`-`, product=`0`, year=`0`W`0`)
 - **OpenGL ES**: `ARM` / `Mali-G57 MC2` / `OpenGL ES 3.2`
-- **Vulkan**: `ro.hardware.vulkan=mali` · VendorID `0x13b5` · API `1.1`
+- **Vulkan**: `ro.hardware.vulkan=mali` · VendorID `0x13b5` · DeviceID `-` · API `1.1` (`-`) · DriverID `0` (`-`)
 
-### 3. 触控、指纹、物理传感器与外设（`input_identity` / Sensors HAL 参考）
+### 3. 触控、指纹、外设与输入节点对齐（`module/config.json` & `hardware/config.json` 对标 `gold`）
 - **指纹方案**: 侧边电容指纹 (FPC / Goodix)
-- **常见触控 IC 驱动名**: `goodix_ts`, `fts_ts`
-- **物理传感器清单**: `accelerometer`, `gyroscope`, `magnetometer`, `ambient_light`, `proximity`, `ir_blaster`
-- **NFC / 红外遥控 / 3.5mm 耳机孔 / 扬声器**: NFC=`false` · 红外=`true` · 3.5mm=`true` · 单扬声器
+- **触控与按键对齐**: touch=`goodix_ts/fts_ts` · keyboard=`-` · input_identity 外设数=`0` 项
+- **硬件 HAL 变体与开关**: radioVariant=`-` · NFC=`false` · 红外=`true` · 3.5mm=`true` · 单扬声器
 - **影像规格**: 后置 100MP + 2MP | 前置 16MP
-- **电池与通信**: `5000 mAh`（有线 `33W` / 无线 `0W`） · Wi-Fi 5 (802.11ac)（Wi-Fi 6=`false`） · BT `5.3` · 5G=`true` · Widevine `L1` · MAC OUI `[3c:38:24 64:cc:2e 78:11:dc 28:6c:07]`
+- **电池与通信**: `5000 mAh`（有线 `33W` / 无线 `0W`） · Wi-Fi 5 (802.11ac)（Wi-Fi 6=`false`） · BT `5.3` · 5G=`true` · Widevine `L1` (sysId=`-`) · TAC `-` · 基带 `MOLY.NR15.R3.MP.V120.3.P82` · MAC OUI `[3c:38:24 64:cc:2e 78:11:dc 28:6c:07]`
 
-### 4. AI 真机对齐提示
+### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
+- **`sensors_config.xml`**: 共 `0` 项对齐传感器
+- **`battery_config.xml`**: `Li-poly` · 容量 `5000 mAh` · 满电/充电电压 `0 / 0 mV`
+- **`thermal_config.xml`**: 皮肤基温 `0.000 ℃` · 温区传感器 `0` 项 · Cooling=`-`
+- **`gnss_config.xml`**: systemInfo=`-` · yearOfHw=`0` · L5=`false`
+- **`vibrator_config.xml` & `light_config.xml`**: 马达 `-` (cap=`0`, effects=`[]`) · 逻辑灯 `0` 项
+- **`audio_effects_descriptors.xml` & `media_config.xml`**: AI 音效描述符 `0` 项 · AI Codec2 实例 `0` 项 / 组件 `0` 项
+
+### 5. AI 真机对齐提示
 - 本机为 gold 的国内（CN）SKU：固件 VNQCNXM、型号 2312DRAABC；海外孪生 2312DRAABG（2024-01 上市）为 108MP+8MP+2MP 三摄且带 NFC，其余硬件同源，跨 ROM 对齐时勿混用相机/NFC 字段。
 - 大簇频点是本任务最大坑点：vendor_boot/dtbo FDT 实测大簇最高仅 2203000 kHz（天玑 700 档低频底座），而天玑 6080 公开最高 OPP 为 2400000 kHz，vendor/etc 电源/温度表亦出现 2400000。故取 DTB 16 档保序 + 顶部补 2400000 = 17 档；2306000 在 DTB 与 vendor 频点线索中均不存在，不编造，避免 cdh_cpufreq 暴露非原厂频点。
 - 小簇 16 档严格按 DTB 原表（2000000…500000），未采用部分第三方站点的 1287000/968000/756000 变体；vendorEtcFreqHintsKhz 中 1287000/1162000/1075000 属于温控/GPU/CCI 等旁路线索，不作为 CPU 簇 OPP 直接写入。
@@ -173,11 +179,13 @@
 - `board`: `mt6833` | `soc`: `  ()`
 - `densityDpi`: `480` | `egl`: `meow` | `vulkan`: `mali` | `abilist`: `arm64-v8a,armeabi-v7a,armeabi`
 - `securityPatch`: `2026-02-01` | `buildDate`: `20260924` | `kernelLine`: `6.6` | `vintfVersion`: `6.0`
+- `partitionAndroidVersions`: `system=15, system_ext=15, product=15, vendor=15, odm=15, vendor_dlkm=15, odm_dlkm=15`
 - `uname`: `Linux localhost 6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k #1 SMP PREEMPT Thu May 28 07:48:46 UTC 2026 aarch64 Toybox`
+- `basebandVersion`: `MOLY.NR15.R3.MP.V120.3.P82`（来源: `unpack-marker`）
 - `fingerprint`: `Redmi/vnd_gold/gold:15/AP3A.240905.015.A2/OS3.0.11.0.VNQCNXM:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=vnd_gold`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `vda.partitions` (6 个附加分区): `cust.img->/cust`, `vendor_persist.img->/mnt/vendor/persist`, `protect_f.img->/mnt/vendor/protect_f`, `protect_s.img->/mnt/vendor/protect_s`, `nvdata.img->/mnt/vendor/nvdata`, `nvcfg.img->/mnt/vendor/nvcfg`
-- `vintfPlaceholders`: radio=`34` 项 · audio=`1` 项 · gnss=`1` 项 · nn=`57` 项
+- `vintfPlaceholders`: radio=`34` 项 · audio=`1` 项 · gnss=`1` 项 · nn=`54` 项
 
 ### `vendor/etc` 与 `odm/etc` 硬件配置实测详情
 

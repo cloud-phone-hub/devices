@@ -192,7 +192,7 @@ public:
         &config::IRadioConfigResponse::setSimSlotsMappingResponse);
   }
 
-#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 15
   ::ndk::ScopedAStatus getSimultaneousCallingSupport(int32_t serial) override {
     const auto response = callbacks_.ResponseCallback();
     if (response == nullptr)

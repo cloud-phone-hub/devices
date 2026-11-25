@@ -4,6 +4,7 @@
     "androidboot.product.hardware.sku=G65L",
     "androidboot.secureboot=1",
     "androidboot.slot=a",
-    "androidboot.veritymode.managed=yes"
+    "androidboot.veritymode.managed=yes",
+    "androidboot.ddrsize=4096M"
   ]
 }

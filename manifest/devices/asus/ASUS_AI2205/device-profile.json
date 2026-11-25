@@ -1,226 +1,22 @@
 {
-  "aiSpec": {
-    "batteryAndConnectivity": {
-      "basebandVersion": "MPSS.DE.3.0-02351-KAILUA_GEN_PACK-1.49324.6.53273.2"
-    },
-    "camera": {},
-    "cpu": {
-      "clusters": [
-        {
-          "capacity": 443,
-          "coreName": "qcom,kryo",
-          "cpus": [
-            0,
-            1,
-            2
-          ],
-          "implementer": "0x41",
-          "policy": 0,
-          "revidr": "0x0000000000000000",
-          "revision": 0,
-          "variant": 0
-        },
-        {
-          "capacity": 973,
-          "coreName": "qcom,kryo",
-          "cpus": [
-            3,
-            4,
-            5,
-            6
-          ],
-          "implementer": "0x41",
-          "policy": 3,
-          "revidr": "0x0000000000000000",
-          "revision": 0,
-          "variant": 0
-        },
-        {
-          "capacity": 1024,
-          "coreName": "qcom,kryo",
-          "cpus": [
-            7
-          ],
-          "implementer": "0x41",
-          "policy": 7,
-          "revidr": "0x0000000000000000",
-          "revision": 0,
-          "variant": 0
-        }
-      ],
-      "transitionLatency": 1000
-    },
-    "display": {
-      "heightMm": 155,
-      "widthMm": 70
-    },
-    "gpu": {},
-    "hardwareHals": {},
-    "inputAlignment": {
-      "inputIdentity": {},
-      "keyboard": {},
-      "touch": {}
-    },
-    "memory": {
-      "variantsMb": [
-        8192
-      ]
-    },
-    "peripherals": {},
-    "soc": {},
-    "storage": {
-      "variantsManifestMb": [
-        128000,
-        256000
-      ]
-    },
-    "vendorEtcConfigs": {
-      "audioEngine": {},
-      "battery": {},
-      "gnss": {},
-      "media": {},
-      "thermal": {},
-      "vibrator": {}
-    }
-  },
+  "protocol": "cph-device-profile/v1",
+  "generatedAt": "2026-11-19T13:06:05+08:00",
   "buildId": "14-TKQ1.220928.001-20240229",
-  "chatSession": {
-    "reusedLiveWeb": false,
-    "sessionId": "measured-only",
-    "title": "[02_prepare] 真机规格采集 · ASUS ROG Phone 7 (asus/ASUS_AI2205 · 13-TKQ1.220928.001-20240229)"
-  },
-  "cpufreqModuleConfig": {
-    "package-per-cluster": false,
-    "policies": [
-      {
-        "available-frequencies": [],
-        "capacity": 443,
-        "cpus": [
-          0,
-          1,
-          2
-        ],
-        "cur-freq": 0,
-        "implementer": "0x41",
-        "max-freq": 0,
-        "min-freq": 0,
-        "policy": 0,
-        "revidr": "0x0000000000000000",
-        "revision": 0,
-        "variant": 0
-      },
-      {
-        "available-frequencies": [],
-        "capacity": 973,
-        "cpus": [
-          3,
-          4,
-          5,
-          6
-        ],
-        "cur-freq": 0,
-        "implementer": "0x41",
-        "max-freq": 0,
-        "min-freq": 0,
-        "policy": 3,
-        "revidr": "0x0000000000000000",
-        "revision": 0,
-        "variant": 0
-      },
-      {
-        "available-frequencies": [],
-        "capacity": 1024,
-        "cpus": [
-          7
-        ],
-        "cur-freq": 0,
-        "implementer": "0x41",
-        "max-freq": 0,
-        "min-freq": 0,
-        "policy": 7,
-        "revidr": "0x0000000000000000",
-        "revision": 0,
-        "variant": 0
-      }
-    ],
-    "scaling-readable": false,
-    "transition-latency": 1000
-  },
+  "vendor": "asus",
   "device": "ASUS_AI2205",
+  "chatSession": {
+    "sessionId": "measured-only",
+    "title": "[02_prepare] 真机规格采集 · ASUS ROG Phone 7 (asus/ASUS_AI2205 · 13-TKQ1.220928.001-20240229)",
+    "reusedLiveWeb": false
+  },
   "firmwareMeasured": {
-    "androidVersion": "13",
-    "basebandSource": "zip:payload.bin/modem",
-    "basebandVersion": "MPSS.DE.3.0-02351-KAILUA_GEN_PACK-1.49324.6.53273.2",
-    "board": "kalama",
-    "bootCmdline": [
-      "androidboot.product.hardware.sku=WW_AI2205",
-      "androidboot.secureboot=1",
-      "androidboot.slot=a",
-      "androidboot.veritymode.managed=yes"
-    ],
     "brand": "asus",
-    "buildDate": "20240229",
-    "cpuAbiList": "arm64-v8a,armeabi-v7a,armeabi",
-    "device": "ASUS_AI2205",
-    "fingerprint": "asus/WW_AI2205/ASUS_AI2205:13/TKQ1.220928.001/33.0820.0810.225-0:user/release-keys",
-    "frpPst": "/dev/block/bootdevice/by-name/frp",
-    "hardwareEgl": "adreno",
-    "hardwareVulkan": "adreno",
-    "kernelLine": "5.15",
-    "kernelUname": "Linux localhost 5.15.104-android13-8-00001-g8a444658051f-ab10823334 #1 SMP PREEMPT Mon Sep 18 07:20:47 UTC 2023 aarch64 Toybox",
     "manufacturer": "asus",
-    "measuredCpuClusters": [
-      {
-        "capacityDmipsMhz": 820,
-        "compatible": "qcom,kryo",
-        "cpus": [
-          0,
-          1,
-          2
-        ],
-        "normalizedCapacity": 443,
-        "policy": 0
-      },
-      {
-        "capacityDmipsMhz": 1800,
-        "compatible": "qcom,kryo",
-        "cpus": [
-          3,
-          4,
-          5,
-          6
-        ],
-        "normalizedCapacity": 973,
-        "policy": 3
-      },
-      {
-        "capacityDmipsMhz": 1894,
-        "compatible": "qcom,kryo",
-        "cpus": [
-          7
-        ],
-        "normalizedCapacity": 1024,
-        "policy": 7
-      }
-    ],
-    "measuredInputHints": {
-      "headsetJackName": "kalama-snd-card Headset Jack",
-      "keyboardName": "gpio-keys"
-    },
-    "measuredMapsRedirects": [
-      {
-        "from": "/system/bin/drmserver",
-        "to": "/mnt/vendorpatch/system/bin/drmserver",
-        "type": "file"
-      },
-      {
-        "from": "/system/bin/mediaserver",
-        "to": "/mnt/vendorpatch/system/bin/mediaserver",
-        "type": "file"
-      }
-    ],
+    "device": "ASUS_AI2205",
     "modelCode": "ASUS_AI2205",
-    "osVersion": "14-TKQ1.220928.001-20240229",
+    "board": "kalama",
+    "socManufacturer": "QTI",
+    "androidVersion": "13",
     "partitionAndroidVersions": {
       "odm": "13",
       "product": "14",
@@ -229,26 +25,429 @@
       "vendor": "13",
       "vendor_dlkm": "13"
     },
-    "radioMultisim": "dsds",
+    "osVersion": "14-TKQ1.220928.001-20240229",
     "securityPatch": "2024-03-05",
-    "socManufacturer": "QTI",
+    "buildDate": "20240229",
+    "hardwareEgl": "adreno",
+    "hardwareVulkan": "adreno",
+    "frpPst": "/dev/block/bootdevice/by-name/frp",
+    "radioMultisim": "dsds",
+    "basebandVersion": "MPSS.DE.3.0-02351-KAILUA_GEN_PACK-1.49324.6.53273.2",
+    "basebandSource": "zip:payload.bin/modem",
+    "cpuAbiList": "arm64-v8a,armeabi-v7a,armeabi",
+    "fingerprint": "asus/WW_AI2205/ASUS_AI2205:13/TKQ1.220928.001/33.0820.0810.225-0:user/release-keys",
+    "kernelUname": "Linux localhost 5.15.104-android13-8-00001-g8a444658051f-ab10823334 #1 SMP PREEMPT Mon Sep 18 07:20:47 UTC 2023 aarch64 Toybox",
+    "kernelLine": "5.15",
+    "vintfPlaceholders": {
+      "radio": [
+        "vendor.qti.hardware.radio.am.IQcRilAudio/slot1",
+        "vendor.qti.hardware.radio.am.IQcRilAudio/slot2",
+        "vendor.qti.hardware.radio.ims.IImsRadio/imsradio0",
+        "vendor.qti.hardware.radio.ims.IImsRadio/imsradio1",
+        "vendor.qti.hardware.radio.internal.deviceinfo.IDeviceInfo/deviceinfo",
+        "vendor.qti.hardware.radio.qcrilhook.IQtiOemHook/oemhook0",
+        "vendor.qti.hardware.radio.qcrilhook.IQtiOemHook/oemhook1",
+        "vendor.qti.hardware.radio.qtiradio.IQtiRadioStable/slot1",
+        "vendor.qti.hardware.radio.qtiradio.IQtiRadioStable/slot2",
+        "vendor.qti.hardware.radio.qtiradioconfig.IQtiRadioConfig/default"
+      ],
+      "audio": [
+        "android.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default"
+      ],
+      "gnss": [
+        "vendor.qti.gnss.ILocAidlGnss/default"
+      ],
+      "neuralNetworks": [
+        "vendor.asus.hardware.auralight2.IAuralight2/default",
+        "vendor.qti.data.txpwrservice.ITxPwrService/default",
+        "vendor.qti.hardware.bttpi.IBtTpi/default",
+        "vendor.qti.hardware.data.connectionfactory.IFactory/slot0",
+        "vendor.qti.hardware.data.connectionfactory.IFactory/slot1",
+        "vendor.qti.hardware.display.config.IDisplayConfig/default",
+        "vendor.qti.hardware.qxr.IQXRAudioService/default",
+        "vendor.qti.hardware.qxr.IQXRCamService/default",
+        "vendor.qti.hardware.qxr.IQXRCoreService/default",
+        "vendor.qti.hardware.qxr.IQXRModService/default",
+        "vendor.qti.hardware.qxr.IQXRSplitService/default",
+        "vendor.qti.hardware.servicetrackeraidl.IServicetracker/default"
+      ]
+    },
+    "vendorOfficialFiles": [
+      {
+        "from": "official",
+        "source": "lib64/libOpenCL.so"
+      },
+      {
+        "from": "official",
+        "mode": "replace",
+        "source": "etc/permissions"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_c2_audio.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_google_audio.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_google_c2.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_google_c2_audio.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_google_c2_video.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_google_telephony.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_google_video.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_google_video_le.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_kalama.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_kalama_vendor.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_performance_kalama.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_performance_kalama_vendor.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/media_codecs_vendor_audio.xml"
+      },
+      {
+        "from": "official",
+        "source": "etc/public.libraries.txt"
+      },
+      {
+        "from": "official",
+        "source": "etc/vintf/manifest/qtiradio-saidl.xml"
+      }
+    ],
+    "measuredMapsRedirects": [
+      {
+        "type": "file",
+        "from": "/system/bin/drmserver",
+        "to": "/mnt/vendorpatch/system/bin/drmserver"
+      },
+      {
+        "type": "file",
+        "from": "/system/bin/mediaserver",
+        "to": "/mnt/vendorpatch/system/bin/mediaserver"
+      }
+    ],
+    "measuredCpuClusters": [
+      {
+        "policy": 0,
+        "cpus": [
+          0,
+          1,
+          2
+        ],
+        "compatible": "qcom,kryo",
+        "capacityDmipsMhz": 820,
+        "normalizedCapacity": 443
+      },
+      {
+        "policy": 3,
+        "cpus": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "compatible": "qcom,kryo",
+        "capacityDmipsMhz": 1800,
+        "normalizedCapacity": 973
+      },
+      {
+        "policy": 7,
+        "cpus": [
+          7
+        ],
+        "compatible": "qcom,kryo",
+        "capacityDmipsMhz": 1894,
+        "normalizedCapacity": 1024
+      }
+    ],
+    "vendorEtcFreqHintsKhz": [
+      2841600,
+      2592000,
+      2476800,
+      2323200,
+      2227200,
+      2188800,
+      2092800,
+      2054400,
+      1785600,
+      1708800,
+      1651200,
+      1593600,
+      1536000,
+      1459200,
+      1401600,
+      1248000,
+      1171200,
+      1132800,
+      1113600,
+      1056000,
+      1017600,
+      864000,
+      729000,
+      700000,
+      614400
+    ],
+    "measuredInputHints": {
+      "keyboardName": "gpio-keys",
+      "headsetJackName": "kalama-snd-card Headset Jack"
+    },
+    "bootCmdline": [
+      "androidboot.product.hardware.sku=WW_AI2205",
+      "androidboot.secureboot=1",
+      "androidboot.slot=a",
+      "androidboot.veritymode.managed=yes"
+    ],
     "vdaPartitions": [
       {
-        "flags": "wait,first_stage_mount,nofail",
-        "fstype": "ext4",
-        "gid": 1000,
         "image": "vendor_persist.img",
-        "label": "u:object_r:persist_file:s0",
-        "mode": "0771",
-        "mount": "/mnt/vendor/persist",
         "name": "vendor_persist",
-        "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+        "mount": "/mnt/vendor/persist",
+        "fstype": "ext4",
         "size": 33554432,
-        "uid": 1000
+        "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
+        "flags": "wait,first_stage_mount,nofail",
+        "mode": "0771",
+        "uid": 1000,
+        "gid": 1000,
+        "label": "u:object_r:persist_file:s0"
       }
     ],
     "vendorEtcConfigs": {
+      "permissions": {
+        "features": [
+          "android.hardware.audio.low_latency",
+          "android.hardware.audio.output",
+          "android.hardware.audio.pro",
+          "android.hardware.bluetooth",
+          "android.hardware.bluetooth_le",
+          "android.hardware.camera",
+          "android.hardware.camera.any",
+          "android.hardware.camera.autofocus",
+          "android.hardware.camera.capability.manual_post_processing",
+          "android.hardware.camera.capability.manual_sensor",
+          "android.hardware.camera.capability.raw",
+          "android.hardware.camera.concurrent",
+          "android.hardware.camera.flash",
+          "android.hardware.camera.front",
+          "android.hardware.camera.level.full",
+          "android.hardware.faketouch",
+          "android.hardware.fingerprint",
+          "android.hardware.hardware_keystore",
+          "android.hardware.keystore.app_attest_key",
+          "android.hardware.location",
+          "android.hardware.location.gps",
+          "android.hardware.location.network",
+          "android.hardware.microphone",
+          "android.hardware.nfc",
+          "android.hardware.nfc.any",
+          "android.hardware.nfc.hce",
+          "android.hardware.nfc.hcef",
+          "android.hardware.nfc.uicc",
+          "android.hardware.opengles.aep",
+          "android.hardware.screen.landscape",
+          "android.hardware.screen.portrait",
+          "android.hardware.se.omapi.uicc",
+          "android.hardware.security.model.compatible",
+          "android.hardware.sensor.accelerometer",
+          "android.hardware.sensor.compass",
+          "android.hardware.sensor.gyroscope",
+          "android.hardware.sensor.light",
+          "android.hardware.sensor.proximity",
+          "android.hardware.sensor.stepcounter",
+          "android.hardware.sensor.stepdetector",
+          "android.hardware.telephony",
+          "android.hardware.telephony.calling",
+          "android.hardware.telephony.cdma",
+          "android.hardware.telephony.data",
+          "android.hardware.telephony.gsm",
+          "android.hardware.telephony.ims",
+          "android.hardware.telephony.mbms",
+          "android.hardware.telephony.messaging",
+          "android.hardware.telephony.radio.access",
+          "android.hardware.telephony.subscription",
+          "android.hardware.touchscreen",
+          "android.hardware.touchscreen.multitouch",
+          "android.hardware.touchscreen.multitouch.distinct",
+          "android.hardware.touchscreen.multitouch.jazzhand",
+          "android.hardware.usb.accessory",
+          "android.hardware.usb.host",
+          "android.hardware.vulkan.compute",
+          "android.hardware.vulkan.level",
+          "android.hardware.vulkan.version",
+          "android.hardware.wifi",
+          "android.hardware.wifi.aware",
+          "android.hardware.wifi.direct",
+          "android.hardware.wifi.passpoint",
+          "android.hardware.wifi.rtt",
+          "android.software.activities_on_secondary_displays",
+          "android.software.app_widgets",
+          "android.software.autofill",
+          "android.software.backup",
+          "android.software.cant_save_state",
+          "android.software.companion_device_setup",
+          "android.software.controls",
+          "android.software.cts",
+          "android.software.device_admin",
+          "android.software.device_id_attestation",
+          "android.software.home_screen",
+          "android.software.input_methods",
+          "android.software.ipsec_tunnels",
+          "android.software.managed_users",
+          "android.software.midi",
+          "android.software.opengles.deqp.level",
+          "android.software.picture_in_picture",
+          "android.software.print",
+          "android.software.secure_lock_screen",
+          "android.software.sip",
+          "android.software.sip.voip",
+          "android.software.telecom",
+          "android.software.verified_boot",
+          "android.software.voice_recognizers",
+          "android.software.vulkan.deqp.level",
+          "android.software.window_magnification",
+          "com.nxp.mifare"
+        ],
+        "sensorFeatures": [
+          "accelerometer",
+          "compass",
+          "gyroscope",
+          "light",
+          "proximity",
+          "stepcounter",
+          "stepdetector"
+        ],
+        "vendorFeatures": [
+          "com.nxp.mifare"
+        ],
+        "skuFeatures": {
+          "sku_CN": [
+            "android.hardware.nfc.ese",
+            "android.hardware.se.omapi.ese"
+          ]
+        },
+        "hasConsumerIr": false,
+        "hasNfc": true,
+        "hasFingerprint": true,
+        "hasWifiDirect": true,
+        "hasWifiPasspoint": true,
+        "hasWifiRtt": true,
+        "hasBluetoothLe": true,
+        "hasAudioLowLatency": true,
+        "hasAudioPro": true,
+        "vulkanLevel": 1,
+        "vulkanVersion": "1.3",
+        "openglesDeqpLevel": "132514561",
+        "vulkanDeqpLevel": "132514561"
+      },
+      "sensors": {
+        "subHals": [
+          "sensors.ssc.so"
+        ],
+        "chipOwners": {
+          "imu": "lsm6dsv",
+          "magnetometer": "mmc56x3x_0_platform"
+        },
+        "configFiles": [
+          "vendor/etc/sensors/config/af6133e_0.json",
+          "vendor/etc/sensors/config/af6837_0.json",
+          "vendor/etc/sensors/config/kailua_af6133e_0.json",
+          "vendor/etc/sensors/config/kailua_af6837_0.json",
+          "vendor/etc/sensors/config/kailua_default_sensors.json",
+          "vendor/etc/sensors/config/kailua_dynamic_sensors.json",
+          "vendor/etc/sensors/config/kailua_dynamic_sensors_template.json",
+          "vendor/etc/sensors/config/kailua_icm4x6xx_0.json",
+          "vendor/etc/sensors/config/kailua_irq.json",
+          "vendor/etc/sensors/config/kailua_mmc56x3x_0.json",
+          "vendor/etc/sensors/config/kailua_power_0.json",
+          "vendor/etc/sensors/config/kailua_qsh_ble_0.json",
+          "vendor/etc/sensors/config/mmc56x3x_0.json",
+          "vendor/etc/sensors/config/qsh_ble.json",
+          "vendor/etc/sensors/config/qsh_camera.json",
+          "vendor/etc/sensors/config/sns_amd.json",
+          "vendor/etc/sensors/config/sns_amd_sw_disabled.json",
+          "vendor/etc/sensors/config/sns_amd_sw_enabled.json",
+          "vendor/etc/sensors/config/sns_aont.json",
+          "vendor/etc/sensors/config/sns_basic_gestures.json",
+          "vendor/etc/sensors/config/sns_bring_to_ear.json",
+          "vendor/etc/sensors/config/sns_ccd_v1_0_amd.json",
+          "vendor/etc/sensors/config/sns_ccd_v1_0_ttw.json",
+          "vendor/etc/sensors/config/sns_ccd_v2_0_walk.json",
+          "vendor/etc/sensors/config/sns_ccd_v3_0_walk.json",
+          "vendor/etc/sensors/config/sns_ccd_v3_1_walk.json",
+          "vendor/etc/sensors/config/sns_ccd_v4_0_sensors.json",
+          "vendor/etc/sensors/config/sns_ccd_v4_0_te_cd_regs.json",
+          "vendor/etc/sensors/config/sns_ccd_v5.json",
+          "vendor/etc/sensors/config/sns_ccd_v5_0_te_cd_regs.json",
+          "vendor/etc/sensors/config/sns_cm.json",
+          "vendor/etc/sensors/config/sns_dae.json",
+          "vendor/etc/sensors/config/sns_device_orient.json",
+          "vendor/etc/sensors/config/sns_diag_filter.json",
+          "vendor/etc/sensors/config/sns_direct_channel.json",
+          "vendor/etc/sensors/config/sns_distance_bound.json",
+          "vendor/etc/sensors/config/sns_dpc.json",
+          "vendor/etc/sensors/config/sns_facing.json",
+          "vendor/etc/sensors/config/sns_fmv.json",
+          "vendor/etc/sensors/config/sns_fmv_legacy.json",
+          "vendor/etc/sensors/config/sns_geomag_rv.json",
+          "vendor/etc/sensors/config/sns_gyro_cal.json",
+          "vendor/etc/sensors/config/sns_heart_rate.json",
+          "vendor/etc/sensors/config/sns_mag_cal.json",
+          "vendor/etc/sensors/config/sns_mag_cal_legacy.json",
+          "vendor/etc/sensors/config/sns_multishake.json",
+          "vendor/etc/sensors/config/sns_offbody_detect_phone.json",
+          "vendor/etc/sensors/config/sns_pedometer.json",
+          "vendor/etc/sensors/config/sns_rmd.json",
+          "vendor/etc/sensors/config/sns_rotv.json",
+          "vendor/etc/sensors/config/sns_smd.json",
+          "vendor/etc/sensors/config/sns_tilt.json",
+          "vendor/etc/sensors/config/sns_tilt_sw_disabled.json",
+          "vendor/etc/sensors/config/sns_tilt_sw_enabled.json",
+          "vendor/etc/sensors/config/sns_tilt_to_wake.json",
+          "vendor/etc/sensors/config/sns_transport_ppe.json",
+          "vendor/etc/sensors/config/sns_wrist_pedo.json",
+          "vendor/etc/sensors/hals.conf"
+        ]
+      },
       "audio": {
+        "sourceEffectFile": "vendor/etc/audio_effects.xml",
+        "modules": [
+          "primary",
+          "a2dp",
+          "usb"
+        ],
         "attachedDevices": [
           "Built-In Back Mic",
           "Built-In Mic",
@@ -280,106 +479,13 @@
           "USB Headset Out",
           "USB Host Out"
         ],
-        "effectDescriptors": [
-          {
-            "connect": "Pre Processing",
-            "implementor": "The Android Open Source Project",
-            "name": "Acoustic Echo Canceler",
-            "type": "7b491460-8d4d-11e0-bd61-0002a5d5c51b",
-            "uuid": "0f8d0d2a-59e5-45fe-b6e4-248c8a799109"
-          },
-          {
-            "connect": "Insert",
-            "implementor": "The Android Open Source Project",
-            "name": "DynamicsProcessing",
-            "type": "7261676f-6d75-7369-6364-28e2fd3ac39e",
-            "uuid": "e0e6539b-1781-7261-676f-6d7573696340"
-          },
-          {
-            "connect": "Insert",
-            "implementor": "The Android Open Source Project",
-            "name": "Loudness Enhancer",
-            "type": "fe3199be-aed0-413f-87bb-11260eb63cf1",
-            "uuid": "fa415329-2034-4bea-b5dc-5b381c8d1e2c"
-          },
-          {
-            "connect": "Insert",
-            "implementor": "The Android Open Source Project",
-            "name": "Multichannel Downmix To Stereo",
-            "type": "381e49cc-a858-4aa2-87f6-e8388e7601b2",
-            "uuid": "93f04452-e4fe-41cc-91f9-e475b6d1d69f"
-          },
-          {
-            "connect": "Pre Processing",
-            "implementor": "The Android Open Source Project",
-            "name": "Noise Suppression",
-            "type": "58b4b260-8e06-11e0-aa8e-0002a5d5c51b",
-            "uuid": "1d97bb0b-9e2f-4403-9ae3-58c2554306f8"
-          },
-          {
-            "connect": "Insert",
-            "implementor": "NXP Software Ltd.",
-            "name": "Volume",
-            "type": "09e8ede0-ddde-11db-b4f6-0002a5d5c51b",
-            "uuid": "119341a0-8469-11df-81f9-0002a5d5c51b"
-          },
-          {
-            "connect": "Insert",
-            "implementor": "OEM Audio Effect",
-            "name": "alarm_helper",
-            "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
-            "uuid": "09f303e2-0590-11e5-8fdb-0025b32654a0"
-          },
-          {
-            "connect": "Insert",
-            "implementor": "OEM Audio Effect",
-            "name": "audiosphere",
-            "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
-            "uuid": "184e62ab-2d19-4364-9d1b-c0a40733866c"
-          },
-          {
-            "connect": "Insert",
-            "implementor": "OEM Audio Effect",
-            "name": "hw_acc",
-            "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
-            "uuid": "7d1580bd-297f-4683-9239-e475b6d1d69f"
-          },
-          {
-            "connect": "Insert",
-            "implementor": "OEM Audio Effect",
-            "name": "music_helper",
-            "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
-            "uuid": "08b8b058-0590-11e5-ac71-0025b32654a0"
-          },
-          {
-            "connect": "Insert",
-            "implementor": "OEM Audio Effect",
-            "name": "notification_helper",
-            "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
-            "uuid": "0b776dde-0590-11e5-81ba-0025b32654a0"
-          },
-          {
-            "connect": "Insert",
-            "implementor": "OEM Audio Effect",
-            "name": "quasar",
-            "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
-            "uuid": "71d0e2ee-e44d-483d-a809-09e75ee55ecd"
-          },
-          {
-            "connect": "Insert",
-            "implementor": "OEM Audio Effect",
-            "name": "ring_helper",
-            "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
-            "uuid": "0956df94-0590-11e5-bdbe-0025b32654a0"
-          },
-          {
-            "connect": "Insert",
-            "implementor": "OEM Audio Effect",
-            "name": "voice_helper",
-            "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
-            "uuid": "0ace5c08-0590-11e5-ae9e-0025b32654a0"
-          }
+        "primarySamplingRates": [
+          "48000"
         ],
+        "hasEarpiece": true,
+        "hasWiredHeadset": false,
+        "hasDualMic": true,
+        "hasVolumeTables": true,
         "effectLibraries": [
           "libasphere.so",
           "libbundlewrapper.so",
@@ -395,19 +501,285 @@
           "libvisualizer.so",
           "libvolumelistener.so"
         ],
-        "hasDualMic": true,
-        "hasEarpiece": true,
-        "hasVolumeTables": true,
-        "hasWiredHeadset": false,
-        "modules": [
-          "primary",
-          "a2dp",
-          "usb"
+        "effectDescriptors": [
+          {
+            "name": "Acoustic Echo Canceler",
+            "implementor": "The Android Open Source Project",
+            "type": "7b491460-8d4d-11e0-bd61-0002a5d5c51b",
+            "uuid": "0f8d0d2a-59e5-45fe-b6e4-248c8a799109",
+            "connect": "Pre Processing"
+          },
+          {
+            "name": "DynamicsProcessing",
+            "implementor": "The Android Open Source Project",
+            "type": "7261676f-6d75-7369-6364-28e2fd3ac39e",
+            "uuid": "e0e6539b-1781-7261-676f-6d7573696340",
+            "connect": "Insert"
+          },
+          {
+            "name": "Loudness Enhancer",
+            "implementor": "The Android Open Source Project",
+            "type": "fe3199be-aed0-413f-87bb-11260eb63cf1",
+            "uuid": "fa415329-2034-4bea-b5dc-5b381c8d1e2c",
+            "connect": "Insert"
+          },
+          {
+            "name": "Multichannel Downmix To Stereo",
+            "implementor": "The Android Open Source Project",
+            "type": "381e49cc-a858-4aa2-87f6-e8388e7601b2",
+            "uuid": "93f04452-e4fe-41cc-91f9-e475b6d1d69f",
+            "connect": "Insert"
+          },
+          {
+            "name": "Noise Suppression",
+            "implementor": "The Android Open Source Project",
+            "type": "58b4b260-8e06-11e0-aa8e-0002a5d5c51b",
+            "uuid": "1d97bb0b-9e2f-4403-9ae3-58c2554306f8",
+            "connect": "Pre Processing"
+          },
+          {
+            "name": "Volume",
+            "implementor": "NXP Software Ltd.",
+            "type": "09e8ede0-ddde-11db-b4f6-0002a5d5c51b",
+            "uuid": "119341a0-8469-11df-81f9-0002a5d5c51b",
+            "connect": "Insert"
+          },
+          {
+            "name": "alarm_helper",
+            "implementor": "OEM Audio Effect",
+            "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+            "uuid": "09f303e2-0590-11e5-8fdb-0025b32654a0",
+            "connect": "Insert"
+          },
+          {
+            "name": "audiosphere",
+            "implementor": "OEM Audio Effect",
+            "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+            "uuid": "184e62ab-2d19-4364-9d1b-c0a40733866c",
+            "connect": "Insert"
+          },
+          {
+            "name": "hw_acc",
+            "implementor": "OEM Audio Effect",
+            "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+            "uuid": "7d1580bd-297f-4683-9239-e475b6d1d69f",
+            "connect": "Insert"
+          },
+          {
+            "name": "music_helper",
+            "implementor": "OEM Audio Effect",
+            "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+            "uuid": "08b8b058-0590-11e5-ac71-0025b32654a0",
+            "connect": "Insert"
+          },
+          {
+            "name": "notification_helper",
+            "implementor": "OEM Audio Effect",
+            "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+            "uuid": "0b776dde-0590-11e5-81ba-0025b32654a0",
+            "connect": "Insert"
+          },
+          {
+            "name": "quasar",
+            "implementor": "OEM Audio Effect",
+            "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+            "uuid": "71d0e2ee-e44d-483d-a809-09e75ee55ecd",
+            "connect": "Insert"
+          },
+          {
+            "name": "ring_helper",
+            "implementor": "OEM Audio Effect",
+            "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+            "uuid": "0956df94-0590-11e5-bdbe-0025b32654a0",
+            "connect": "Insert"
+          },
+          {
+            "name": "voice_helper",
+            "implementor": "OEM Audio Effect",
+            "type": "fa81dbde-588b-11ed-9b6a-0242ac120002",
+            "uuid": "0ace5c08-0590-11e5-ae9e-0025b32654a0",
+            "connect": "Insert"
+          }
+        ]
+      },
+      "media": {
+        "codec2Instances": [
+          {
+            "binary": "vendor.qti.media.c2@1.0-service",
+            "store": "default2"
+          },
+          {
+            "binary": "vendor.qti.media.c2audio@1.0-service",
+            "store": "default2"
+          }
         ],
-        "primarySamplingRates": [
-          "48000"
+        "hardwareCodecs": [
+          {
+            "store": "default2",
+            "name": "c2.qti.avc.decoder",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/avc",
+            "aliases": "OMX.qcom.video.decoder.avc",
+            "maxSize": "4096x2176",
+            "profiles": "20480,20481,20482,20484,20487",
+            "levels": "20495"
+          },
+          {
+            "store": "default2",
+            "name": "c2.qti.avc.decoder.low_latency",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/avc",
+            "aliases": "OMX.qcom.video.decoder.avc.low_latency",
+            "maxSize": "4096x2176",
+            "profiles": "20480,20481,20482,20484,20487",
+            "levels": "20495"
+          },
+          {
+            "store": "default2",
+            "name": "c2.qti.avc.decoder.secure",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/avc",
+            "aliases": "OMX.qcom.video.decoder.avc.secure",
+            "maxSize": "4096x2176",
+            "profiles": "20480,20481,20482,20484,20487",
+            "levels": "20495"
+          },
+          {
+            "store": "default2",
+            "name": "c2.qti.hevc.decoder",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/hevc",
+            "aliases": "OMX.qcom.video.decoder.hevc",
+            "maxSize": "4096x2176",
+            "profiles": "24576,24578,24577",
+            "levels": "24835"
+          },
+          {
+            "store": "default2",
+            "name": "c2.qti.hevc.decoder.low_latency",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/hevc",
+            "aliases": "OMX.qcom.video.decoder.hevc.low_latency",
+            "maxSize": "4096x2176",
+            "profiles": "24576,24578,24577",
+            "levels": "24835"
+          },
+          {
+            "store": "default2",
+            "name": "c2.qti.hevc.decoder.secure",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/hevc",
+            "aliases": "OMX.qcom.video.decoder.hevc.secure",
+            "maxSize": "4096x2176",
+            "profiles": "24576,24578,24577",
+            "levels": "24835"
+          },
+          {
+            "store": "default2",
+            "name": "c2.qti.vp9.decoder",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/x-vnd.on2.vp9",
+            "aliases": "OMX.qcom.video.decoder.vp9",
+            "maxSize": "4096x2176",
+            "profiles": "28672,28673,28674",
+            "levels": "28680"
+          },
+          {
+            "store": "default2",
+            "name": "c2.qti.vp9.decoder.low_latency",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/x-vnd.on2.vp9",
+            "aliases": "OMX.qcom.video.decoder.vp9.low_latency",
+            "maxSize": "4096x2176",
+            "profiles": "28672,28673,28674",
+            "levels": "28680"
+          },
+          {
+            "store": "default2",
+            "name": "c2.qti.vp9.decoder.secure",
+            "kind": "decoder",
+            "domain": "video",
+            "mediaType": "video/x-vnd.on2.vp9",
+            "aliases": "OMX.qcom.video.decoder.vp9.secure",
+            "maxSize": "4096x2176",
+            "profiles": "28672,28673,28674",
+            "levels": "28680"
+          },
+          {
+            "store": "default2",
+            "name": "c2.qti.avc.encoder",
+            "kind": "encoder",
+            "domain": "video",
+            "mediaType": "video/avc",
+            "aliases": "OMX.qcom.video.encoder.avc",
+            "maxSize": "4096x2176",
+            "profiles": "20480,20482,20484",
+            "levels": "20494"
+          },
+          {
+            "store": "default2",
+            "name": "c2.qti.hevc.encoder",
+            "kind": "encoder",
+            "domain": "video",
+            "mediaType": "video/hevc",
+            "aliases": "OMX.qcom.video.encoder.hevc",
+            "maxSize": "4096x2176",
+            "profiles": "24576",
+            "levels": "24834"
+          },
+          {
+            "store": "default2",
+            "name": "c2.qti.hevc.encoder.cq",
+            "kind": "encoder",
+            "domain": "video",
+            "mediaType": "video/hevc",
+            "aliases": "OMX.qcom.video.encoder.hevc.cq",
+            "maxSize": "512x512",
+            "profiles": "24576",
+            "levels": "24834"
+          },
+          {
+            "store": "default2",
+            "name": "c2.qti.heic.encoder",
+            "kind": "encoder",
+            "domain": "video",
+            "mediaType": "image/vnd.android.heic",
+            "aliases": "OMX.qcom.video.encoder.heic",
+            "maxSize": "16384x16384"
+          }
         ],
-        "sourceEffectFile": "vendor/etc/audio_effects.xml"
+        "codecXmlFiles": [
+          "vendor/etc/media_codecs.xml",
+          "vendor/etc/media_codecs_c2_audio.xml",
+          "vendor/etc/media_codecs_google_audio.xml",
+          "vendor/etc/media_codecs_google_c2.xml",
+          "vendor/etc/media_codecs_google_c2_audio.xml",
+          "vendor/etc/media_codecs_google_c2_video.xml",
+          "vendor/etc/media_codecs_google_telephony.xml",
+          "vendor/etc/media_codecs_google_video.xml",
+          "vendor/etc/media_codecs_google_video_le.xml",
+          "vendor/etc/media_codecs_kalama.xml",
+          "vendor/etc/media_codecs_kalama_vendor.xml",
+          "vendor/etc/media_codecs_performance_kalama.xml",
+          "vendor/etc/media_codecs_performance_kalama_vendor.xml",
+          "vendor/etc/media_codecs_vendor_audio.xml"
+        ]
+      },
+      "thermal": {
+        "scenarioConfigs": [
+          "vendor/etc/thermal-engine.conf"
+        ]
+      },
+      "gnss": {
+        "configFile": "vendor/etc/gps.conf"
       },
       "connectivity": {
         "nfcChipHint": "NXP NFC",
@@ -420,30 +792,27 @@
           "vendor/etc/libnfc-nxp_SN220_UICC.conf",
           "vendor/etc/libnfc-nxp_SN220_eSE.conf"
         ],
-        "odmSkuVariants": [
-          {
-            "device": "CN_AI2205",
-            "sku": "CN_AI2205"
-          },
-          {
-            "device": "EU_AI2205",
-            "sku": "EU_AI2205"
-          },
-          {
-            "device": "RU_AI2205",
-            "sku": "RU_AI2205"
-          }
-        ],
         "wifiConfigFiles": [
           "vendor/etc/wifi/icm.conf",
           "vendor/etc/wifi/p2p_supplicant_overlay.conf",
           "vendor/etc/wifi/vendor_cmd.xml",
           "vendor/etc/wifi/wpa_supplicant.conf",
           "vendor/etc/wifi/wpa_supplicant_overlay.conf"
+        ],
+        "odmSkuVariants": [
+          {
+            "sku": "CN_AI2205",
+            "device": "CN_AI2205"
+          },
+          {
+            "sku": "EU_AI2205",
+            "device": "EU_AI2205"
+          },
+          {
+            "sku": "RU_AI2205",
+            "device": "RU_AI2205"
+          }
         ]
-      },
-      "gnss": {
-        "configFile": "vendor/etc/gps.conf"
       },
       "inspectedFiles": [
         "odm/etc/build_CN_AI2205.prop",
@@ -586,537 +955,168 @@
         "vendor/etc/wifi/vendor_cmd.xml",
         "vendor/etc/wifi/wpa_supplicant.conf",
         "vendor/etc/wifi/wpa_supplicant_overlay.conf"
-      ],
-      "media": {
-        "codec2Instances": [
-          {
-            "binary": "vendor.qti.media.c2@1.0-service",
-            "store": "default2"
-          },
-          {
-            "binary": "vendor.qti.media.c2audio@1.0-service",
-            "store": "default2"
-          }
-        ],
-        "codecXmlFiles": [
-          "vendor/etc/media_codecs.xml",
-          "vendor/etc/media_codecs_c2_audio.xml",
-          "vendor/etc/media_codecs_google_audio.xml",
-          "vendor/etc/media_codecs_google_c2.xml",
-          "vendor/etc/media_codecs_google_c2_audio.xml",
-          "vendor/etc/media_codecs_google_c2_video.xml",
-          "vendor/etc/media_codecs_google_telephony.xml",
-          "vendor/etc/media_codecs_google_video.xml",
-          "vendor/etc/media_codecs_google_video_le.xml",
-          "vendor/etc/media_codecs_kalama.xml",
-          "vendor/etc/media_codecs_kalama_vendor.xml",
-          "vendor/etc/media_codecs_performance_kalama.xml",
-          "vendor/etc/media_codecs_performance_kalama_vendor.xml",
-          "vendor/etc/media_codecs_vendor_audio.xml"
-        ],
-        "hardwareCodecs": [
-          {
-            "aliases": "OMX.qcom.video.decoder.avc",
-            "domain": "video",
-            "kind": "decoder",
-            "levels": "20495",
-            "maxSize": "4096x2176",
-            "mediaType": "video/avc",
-            "name": "c2.qti.avc.decoder",
-            "profiles": "20480,20481,20482,20484,20487",
-            "store": "default2"
-          },
-          {
-            "aliases": "OMX.qcom.video.decoder.avc.low_latency",
-            "domain": "video",
-            "kind": "decoder",
-            "levels": "20495",
-            "maxSize": "4096x2176",
-            "mediaType": "video/avc",
-            "name": "c2.qti.avc.decoder.low_latency",
-            "profiles": "20480,20481,20482,20484,20487",
-            "store": "default2"
-          },
-          {
-            "aliases": "OMX.qcom.video.decoder.avc.secure",
-            "domain": "video",
-            "kind": "decoder",
-            "levels": "20495",
-            "maxSize": "4096x2176",
-            "mediaType": "video/avc",
-            "name": "c2.qti.avc.decoder.secure",
-            "profiles": "20480,20481,20482,20484,20487",
-            "store": "default2"
-          },
-          {
-            "aliases": "OMX.qcom.video.decoder.hevc",
-            "domain": "video",
-            "kind": "decoder",
-            "levels": "24835",
-            "maxSize": "4096x2176",
-            "mediaType": "video/hevc",
-            "name": "c2.qti.hevc.decoder",
-            "profiles": "24576,24578,24577",
-            "store": "default2"
-          },
-          {
-            "aliases": "OMX.qcom.video.decoder.hevc.low_latency",
-            "domain": "video",
-            "kind": "decoder",
-            "levels": "24835",
-            "maxSize": "4096x2176",
-            "mediaType": "video/hevc",
-            "name": "c2.qti.hevc.decoder.low_latency",
-            "profiles": "24576,24578,24577",
-            "store": "default2"
-          },
-          {
-            "aliases": "OMX.qcom.video.decoder.hevc.secure",
-            "domain": "video",
-            "kind": "decoder",
-            "levels": "24835",
-            "maxSize": "4096x2176",
-            "mediaType": "video/hevc",
-            "name": "c2.qti.hevc.decoder.secure",
-            "profiles": "24576,24578,24577",
-            "store": "default2"
-          },
-          {
-            "aliases": "OMX.qcom.video.decoder.vp9",
-            "domain": "video",
-            "kind": "decoder",
-            "levels": "28680",
-            "maxSize": "4096x2176",
-            "mediaType": "video/x-vnd.on2.vp9",
-            "name": "c2.qti.vp9.decoder",
-            "profiles": "28672,28673,28674",
-            "store": "default2"
-          },
-          {
-            "aliases": "OMX.qcom.video.decoder.vp9.low_latency",
-            "domain": "video",
-            "kind": "decoder",
-            "levels": "28680",
-            "maxSize": "4096x2176",
-            "mediaType": "video/x-vnd.on2.vp9",
-            "name": "c2.qti.vp9.decoder.low_latency",
-            "profiles": "28672,28673,28674",
-            "store": "default2"
-          },
-          {
-            "aliases": "OMX.qcom.video.decoder.vp9.secure",
-            "domain": "video",
-            "kind": "decoder",
-            "levels": "28680",
-            "maxSize": "4096x2176",
-            "mediaType": "video/x-vnd.on2.vp9",
-            "name": "c2.qti.vp9.decoder.secure",
-            "profiles": "28672,28673,28674",
-            "store": "default2"
-          },
-          {
-            "aliases": "OMX.qcom.video.encoder.avc",
-            "domain": "video",
-            "kind": "encoder",
-            "levels": "20494",
-            "maxSize": "4096x2176",
-            "mediaType": "video/avc",
-            "name": "c2.qti.avc.encoder",
-            "profiles": "20480,20482,20484",
-            "store": "default2"
-          },
-          {
-            "aliases": "OMX.qcom.video.encoder.hevc",
-            "domain": "video",
-            "kind": "encoder",
-            "levels": "24834",
-            "maxSize": "4096x2176",
-            "mediaType": "video/hevc",
-            "name": "c2.qti.hevc.encoder",
-            "profiles": "24576",
-            "store": "default2"
-          },
-          {
-            "aliases": "OMX.qcom.video.encoder.hevc.cq",
-            "domain": "video",
-            "kind": "encoder",
-            "levels": "24834",
-            "maxSize": "512x512",
-            "mediaType": "video/hevc",
-            "name": "c2.qti.hevc.encoder.cq",
-            "profiles": "24576",
-            "store": "default2"
-          },
-          {
-            "aliases": "OMX.qcom.video.encoder.heic",
-            "domain": "video",
-            "kind": "encoder",
-            "maxSize": "16384x16384",
-            "mediaType": "image/vnd.android.heic",
-            "name": "c2.qti.heic.encoder",
-            "store": "default2"
-          }
-        ]
-      },
-      "permissions": {
-        "features": [
-          "android.hardware.audio.low_latency",
-          "android.hardware.audio.output",
-          "android.hardware.audio.pro",
-          "android.hardware.bluetooth",
-          "android.hardware.bluetooth_le",
-          "android.hardware.camera",
-          "android.hardware.camera.any",
-          "android.hardware.camera.autofocus",
-          "android.hardware.camera.capability.manual_post_processing",
-          "android.hardware.camera.capability.manual_sensor",
-          "android.hardware.camera.capability.raw",
-          "android.hardware.camera.concurrent",
-          "android.hardware.camera.flash",
-          "android.hardware.camera.front",
-          "android.hardware.camera.level.full",
-          "android.hardware.faketouch",
-          "android.hardware.fingerprint",
-          "android.hardware.hardware_keystore",
-          "android.hardware.keystore.app_attest_key",
-          "android.hardware.location",
-          "android.hardware.location.gps",
-          "android.hardware.location.network",
-          "android.hardware.microphone",
-          "android.hardware.nfc",
-          "android.hardware.nfc.any",
-          "android.hardware.nfc.hce",
-          "android.hardware.nfc.hcef",
-          "android.hardware.nfc.uicc",
-          "android.hardware.opengles.aep",
-          "android.hardware.screen.landscape",
-          "android.hardware.screen.portrait",
-          "android.hardware.se.omapi.uicc",
-          "android.hardware.security.model.compatible",
-          "android.hardware.sensor.accelerometer",
-          "android.hardware.sensor.compass",
-          "android.hardware.sensor.gyroscope",
-          "android.hardware.sensor.light",
-          "android.hardware.sensor.proximity",
-          "android.hardware.sensor.stepcounter",
-          "android.hardware.sensor.stepdetector",
-          "android.hardware.telephony",
-          "android.hardware.telephony.calling",
-          "android.hardware.telephony.cdma",
-          "android.hardware.telephony.data",
-          "android.hardware.telephony.gsm",
-          "android.hardware.telephony.ims",
-          "android.hardware.telephony.mbms",
-          "android.hardware.telephony.messaging",
-          "android.hardware.telephony.radio.access",
-          "android.hardware.telephony.subscription",
-          "android.hardware.touchscreen",
-          "android.hardware.touchscreen.multitouch",
-          "android.hardware.touchscreen.multitouch.distinct",
-          "android.hardware.touchscreen.multitouch.jazzhand",
-          "android.hardware.usb.accessory",
-          "android.hardware.usb.host",
-          "android.hardware.vulkan.compute",
-          "android.hardware.vulkan.level",
-          "android.hardware.vulkan.version",
-          "android.hardware.wifi",
-          "android.hardware.wifi.aware",
-          "android.hardware.wifi.direct",
-          "android.hardware.wifi.passpoint",
-          "android.hardware.wifi.rtt",
-          "android.software.activities_on_secondary_displays",
-          "android.software.app_widgets",
-          "android.software.autofill",
-          "android.software.backup",
-          "android.software.cant_save_state",
-          "android.software.companion_device_setup",
-          "android.software.controls",
-          "android.software.cts",
-          "android.software.device_admin",
-          "android.software.device_id_attestation",
-          "android.software.home_screen",
-          "android.software.input_methods",
-          "android.software.ipsec_tunnels",
-          "android.software.managed_users",
-          "android.software.midi",
-          "android.software.opengles.deqp.level",
-          "android.software.picture_in_picture",
-          "android.software.print",
-          "android.software.secure_lock_screen",
-          "android.software.sip",
-          "android.software.sip.voip",
-          "android.software.telecom",
-          "android.software.verified_boot",
-          "android.software.voice_recognizers",
-          "android.software.vulkan.deqp.level",
-          "android.software.window_magnification",
-          "com.nxp.mifare"
-        ],
-        "hasAudioLowLatency": true,
-        "hasAudioPro": true,
-        "hasBluetoothLe": true,
-        "hasConsumerIr": false,
-        "hasFingerprint": true,
-        "hasNfc": true,
-        "hasWifiDirect": true,
-        "hasWifiPasspoint": true,
-        "hasWifiRtt": true,
-        "openglesDeqpLevel": "132514561",
-        "sensorFeatures": [
-          "accelerometer",
-          "compass",
-          "gyroscope",
-          "light",
-          "proximity",
-          "stepcounter",
-          "stepdetector"
-        ],
-        "skuFeatures": {
-          "sku_CN": [
-            "android.hardware.nfc.ese",
-            "android.hardware.se.omapi.ese"
-          ]
-        },
-        "vendorFeatures": [
-          "com.nxp.mifare"
-        ],
-        "vulkanDeqpLevel": "132514561",
-        "vulkanLevel": 1,
-        "vulkanVersion": "1.3"
-      },
-      "sensors": {
-        "chipOwners": {
-          "imu": "lsm6dsv",
-          "magnetometer": "mmc56x3x_0_platform"
-        },
-        "configFiles": [
-          "vendor/etc/sensors/config/af6133e_0.json",
-          "vendor/etc/sensors/config/af6837_0.json",
-          "vendor/etc/sensors/config/kailua_af6133e_0.json",
-          "vendor/etc/sensors/config/kailua_af6837_0.json",
-          "vendor/etc/sensors/config/kailua_default_sensors.json",
-          "vendor/etc/sensors/config/kailua_dynamic_sensors.json",
-          "vendor/etc/sensors/config/kailua_dynamic_sensors_template.json",
-          "vendor/etc/sensors/config/kailua_icm4x6xx_0.json",
-          "vendor/etc/sensors/config/kailua_irq.json",
-          "vendor/etc/sensors/config/kailua_mmc56x3x_0.json",
-          "vendor/etc/sensors/config/kailua_power_0.json",
-          "vendor/etc/sensors/config/kailua_qsh_ble_0.json",
-          "vendor/etc/sensors/config/mmc56x3x_0.json",
-          "vendor/etc/sensors/config/qsh_ble.json",
-          "vendor/etc/sensors/config/qsh_camera.json",
-          "vendor/etc/sensors/config/sns_amd.json",
-          "vendor/etc/sensors/config/sns_amd_sw_disabled.json",
-          "vendor/etc/sensors/config/sns_amd_sw_enabled.json",
-          "vendor/etc/sensors/config/sns_aont.json",
-          "vendor/etc/sensors/config/sns_basic_gestures.json",
-          "vendor/etc/sensors/config/sns_bring_to_ear.json",
-          "vendor/etc/sensors/config/sns_ccd_v1_0_amd.json",
-          "vendor/etc/sensors/config/sns_ccd_v1_0_ttw.json",
-          "vendor/etc/sensors/config/sns_ccd_v2_0_walk.json",
-          "vendor/etc/sensors/config/sns_ccd_v3_0_walk.json",
-          "vendor/etc/sensors/config/sns_ccd_v3_1_walk.json",
-          "vendor/etc/sensors/config/sns_ccd_v4_0_sensors.json",
-          "vendor/etc/sensors/config/sns_ccd_v4_0_te_cd_regs.json",
-          "vendor/etc/sensors/config/sns_ccd_v5.json",
-          "vendor/etc/sensors/config/sns_ccd_v5_0_te_cd_regs.json",
-          "vendor/etc/sensors/config/sns_cm.json",
-          "vendor/etc/sensors/config/sns_dae.json",
-          "vendor/etc/sensors/config/sns_device_orient.json",
-          "vendor/etc/sensors/config/sns_diag_filter.json",
-          "vendor/etc/sensors/config/sns_direct_channel.json",
-          "vendor/etc/sensors/config/sns_distance_bound.json",
-          "vendor/etc/sensors/config/sns_dpc.json",
-          "vendor/etc/sensors/config/sns_facing.json",
-          "vendor/etc/sensors/config/sns_fmv.json",
-          "vendor/etc/sensors/config/sns_fmv_legacy.json",
-          "vendor/etc/sensors/config/sns_geomag_rv.json",
-          "vendor/etc/sensors/config/sns_gyro_cal.json",
-          "vendor/etc/sensors/config/sns_heart_rate.json",
-          "vendor/etc/sensors/config/sns_mag_cal.json",
-          "vendor/etc/sensors/config/sns_mag_cal_legacy.json",
-          "vendor/etc/sensors/config/sns_multishake.json",
-          "vendor/etc/sensors/config/sns_offbody_detect_phone.json",
-          "vendor/etc/sensors/config/sns_pedometer.json",
-          "vendor/etc/sensors/config/sns_rmd.json",
-          "vendor/etc/sensors/config/sns_rotv.json",
-          "vendor/etc/sensors/config/sns_smd.json",
-          "vendor/etc/sensors/config/sns_tilt.json",
-          "vendor/etc/sensors/config/sns_tilt_sw_disabled.json",
-          "vendor/etc/sensors/config/sns_tilt_sw_enabled.json",
-          "vendor/etc/sensors/config/sns_tilt_to_wake.json",
-          "vendor/etc/sensors/config/sns_transport_ppe.json",
-          "vendor/etc/sensors/config/sns_wrist_pedo.json",
-          "vendor/etc/sensors/hals.conf"
-        ],
-        "subHals": [
-          "sensors.ssc.so"
-        ]
-      },
-      "thermal": {
-        "scenarioConfigs": [
-          "vendor/etc/thermal-engine.conf"
-        ]
-      }
-    },
-    "vendorEtcFreqHintsKhz": [
-      2841600,
-      2592000,
-      2476800,
-      2323200,
-      2227200,
-      2188800,
-      2092800,
-      2054400,
-      1785600,
-      1708800,
-      1651200,
-      1593600,
-      1536000,
-      1459200,
-      1401600,
-      1248000,
-      1171200,
-      1132800,
-      1113600,
-      1056000,
-      1017600,
-      864000,
-      729000,
-      700000,
-      614400
-    ],
-    "vendorOfficialFiles": [
-      {
-        "from": "official",
-        "source": "lib64/libOpenCL.so"
-      },
-      {
-        "from": "official",
-        "mode": "replace",
-        "source": "etc/permissions"
-      },
-      {
-        "from": "official",
-        "source": "etc/media_codecs.xml"
-      },
-      {
-        "from": "official",
-        "source": "etc/media_codecs_c2_audio.xml"
-      },
-      {
-        "from": "official",
-        "source": "etc/media_codecs_google_audio.xml"
-      },
-      {
-        "from": "official",
-        "source": "etc/media_codecs_google_c2.xml"
-      },
-      {
-        "from": "official",
-        "source": "etc/media_codecs_google_c2_audio.xml"
-      },
-      {
-        "from": "official",
-        "source": "etc/media_codecs_google_c2_video.xml"
-      },
-      {
-        "from": "official",
-        "source": "etc/media_codecs_google_telephony.xml"
-      },
-      {
-        "from": "official",
-        "source": "etc/media_codecs_google_video.xml"
-      },
-      {
-        "from": "official",
-        "source": "etc/media_codecs_google_video_le.xml"
-      },
-      {
-        "from": "official",
-        "source": "etc/media_codecs_kalama.xml"
-      },
-      {
-        "from": "official",
-        "source": "etc/media_codecs_kalama_vendor.xml"
-      },
-      {
-        "from": "official",
-        "source": "etc/media_codecs_performance_kalama.xml"
-      },
-      {
-        "from": "official",
-        "source": "etc/media_codecs_performance_kalama_vendor.xml"
-      },
-      {
-        "from": "official",
-        "source": "etc/media_codecs_vendor_audio.xml"
-      },
-      {
-        "from": "official",
-        "source": "etc/public.libraries.txt"
-      },
-      {
-        "from": "official",
-        "source": "etc/vintf/manifest/qtiradio-saidl.xml"
-      }
-    ],
-    "vintfPlaceholders": {
-      "audio": [
-        "android.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default"
-      ],
-      "gnss": [
-        "vendor.qti.gnss.ILocAidlGnss/default"
-      ],
-      "neuralNetworks": [
-        "vendor.asus.hardware.auralight2.IAuralight2/default",
-        "vendor.qti.data.txpwrservice.ITxPwrService/default",
-        "vendor.qti.hardware.bttpi.IBtTpi/default",
-        "vendor.qti.hardware.data.connectionfactory.IFactory/slot0",
-        "vendor.qti.hardware.data.connectionfactory.IFactory/slot1",
-        "vendor.qti.hardware.display.config.IDisplayConfig/default",
-        "vendor.qti.hardware.qxr.IQXRAudioService/default",
-        "vendor.qti.hardware.qxr.IQXRCamService/default",
-        "vendor.qti.hardware.qxr.IQXRCoreService/default",
-        "vendor.qti.hardware.qxr.IQXRModService/default",
-        "vendor.qti.hardware.qxr.IQXRSplitService/default",
-        "vendor.qti.hardware.servicetrackeraidl.IServicetracker/default"
-      ],
-      "radio": [
-        "vendor.qti.hardware.radio.am.IQcRilAudio/slot1",
-        "vendor.qti.hardware.radio.am.IQcRilAudio/slot2",
-        "vendor.qti.hardware.radio.ims.IImsRadio/imsradio0",
-        "vendor.qti.hardware.radio.ims.IImsRadio/imsradio1",
-        "vendor.qti.hardware.radio.internal.deviceinfo.IDeviceInfo/deviceinfo",
-        "vendor.qti.hardware.radio.qcrilhook.IQtiOemHook/oemhook0",
-        "vendor.qti.hardware.radio.qcrilhook.IQtiOemHook/oemhook1",
-        "vendor.qti.hardware.radio.qtiradio.IQtiRadioStable/slot1",
-        "vendor.qti.hardware.radio.qtiradio.IQtiRadioStable/slot2",
-        "vendor.qti.hardware.radio.qtiradioconfig.IQtiRadioConfig/default"
       ]
     }
   },
-  "generatedAt": "2026-11-19T13:06:05+08:00",
   "manifestAligned": {
-    "board": "kalama",
+    "official": "华硕",
     "brand": "asus",
-    "density": 440,
+    "model": "ASUS ROG Phone 7",
     "device": "ASUS_AI2205",
+    "platform": "qcom",
+    "board": "kalama",
+    "resolution": "1080x2400",
     "inch": "70x155",
+    "density": 440,
+    "smp": 8,
     "memory": [
       8192
     ],
-    "model": "ASUS ROG Phone 7",
-    "official": "华硕",
-    "platform": "qcom",
-    "resolution": "1080x2400",
-    "smp": 8,
     "storage": [
       128000,
       256000
     ]
   },
-  "protocol": "cph-device-profile/v1",
-  "rawReply": "CDH_PREPARE_MEASURED_ONLY=1",
-  "vendor": "asus"
+  "cpufreqModuleConfig": {
+    "transition-latency": 1000,
+    "scaling-readable": false,
+    "package-per-cluster": false,
+    "policies": [
+      {
+        "policy": 0,
+        "cpus": [
+          0,
+          1,
+          2
+        ],
+        "min-freq": 0,
+        "max-freq": 0,
+        "cur-freq": 0,
+        "available-frequencies": [],
+        "implementer": "0x41",
+        "variant": 0,
+        "revision": 0,
+        "capacity": 443,
+        "revidr": "0x0000000000000000"
+      },
+      {
+        "policy": 3,
+        "cpus": [
+          3,
+          4,
+          5,
+          6
+        ],
+        "min-freq": 0,
+        "max-freq": 0,
+        "cur-freq": 0,
+        "available-frequencies": [],
+        "implementer": "0x41",
+        "variant": 0,
+        "revision": 0,
+        "capacity": 973,
+        "revidr": "0x0000000000000000"
+      },
+      {
+        "policy": 7,
+        "cpus": [
+          7
+        ],
+        "min-freq": 0,
+        "max-freq": 0,
+        "cur-freq": 0,
+        "available-frequencies": [],
+        "implementer": "0x41",
+        "variant": 0,
+        "revision": 0,
+        "capacity": 1024,
+        "revidr": "0x0000000000000000"
+      }
+    ]
+  },
+  "aiSpec": {
+    "soc": {},
+    "display": {
+      "widthMm": 70,
+      "heightMm": 155
+    },
+    "cpu": {
+      "transitionLatency": 1000,
+      "clusters": [
+        {
+          "policy": 0,
+          "cpus": [
+            0,
+            1,
+            2
+          ],
+          "coreName": "qcom,kryo",
+          "implementer": "0x41",
+          "variant": 0,
+          "revision": 0,
+          "capacity": 443,
+          "revidr": "0x0000000000000000"
+        },
+        {
+          "policy": 3,
+          "cpus": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "coreName": "qcom,kryo",
+          "implementer": "0x41",
+          "variant": 0,
+          "revision": 0,
+          "capacity": 973,
+          "revidr": "0x0000000000000000"
+        },
+        {
+          "policy": 7,
+          "cpus": [
+            7
+          ],
+          "coreName": "qcom,kryo",
+          "implementer": "0x41",
+          "variant": 0,
+          "revision": 0,
+          "capacity": 1024,
+          "revidr": "0x0000000000000000"
+        }
+      ]
+    },
+    "gpu": {},
+    "memory": {
+      "variantsMb": [
+        8192
+      ]
+    },
+    "storage": {
+      "variantsManifestMb": [
+        128000,
+        256000
+      ]
+    },
+    "peripherals": {},
+    "camera": {},
+    "batteryAndConnectivity": {
+      "basebandVersion": "MPSS.DE.3.0-02351-KAILUA_GEN_PACK-1.49324.6.53273.2"
+    },
+    "inputAlignment": {
+      "touch": {},
+      "keyboard": {},
+      "inputIdentity": {}
+    },
+    "hardwareHals": {},
+    "vendorEtcConfigs": {
+      "battery": {},
+      "vibrator": {},
+      "gnss": {},
+      "thermal": {},
+      "media": {},
+      "audioEngine": {}
+    }
+  },
+  "rawReply": "CDH_PREPARE_MEASURED_ONLY=1"
 }

@@ -10,6 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MT6878_NR17.RC.MP.V40.2.P247.01.339R",
     "comment": "由 cdh unpack prepare 从 AITO_RETAIL_16_W1UCS36H.96-35-8-9_subsidy-DEFAULT_regulatory-DEFAULT_cid50_CFC.xml.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
       "odm": "14",

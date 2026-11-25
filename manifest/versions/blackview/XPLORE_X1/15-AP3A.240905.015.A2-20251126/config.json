@@ -10,15 +10,16 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "F252_V0_8791_NLWCG_V0.1.3_S251113",
     "comment": "由 cdh unpack prepare 从 R3-Blackview-Xplore-1.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
+      "odm": "15",
+      "odm_dlkm": "15",
+      "product": "15",
       "system": "15",
       "system_ext": "15",
-      "product": "15",
       "vendor": "15",
-      "odm": "15",
-      "vendor_dlkm": "15",
-      "odm_dlkm": "15"
+      "vendor_dlkm": "15"
     }
   },
   "updatedAt": "2026-11-06 02:47:41"

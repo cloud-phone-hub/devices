@@ -10,13 +10,14 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "4G_MODEM_22B_W26.02.5_P2",
     "comment": "由 cdh unpack prepare 从 BLU-G65L-G1130.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
+      "odm": "13",
+      "product": "14",
       "system": "14",
       "system_ext": "14",
-      "product": "14",
       "vendor": "13",
-      "odm": "13",
       "vendor_dlkm": "13"
     }
   },

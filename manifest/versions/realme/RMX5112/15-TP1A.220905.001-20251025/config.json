@@ -10,6 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MOLY.NR17.R1.MP5.TC16.PR1.SP.V1.P138",
     "comment": "由 cdh unpack prepare 从 851_sign_RMX5112_11_A_OTA_0520_all_0Q8VwS_10010111.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
       "odm_dlkm": "13",

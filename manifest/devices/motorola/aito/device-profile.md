@@ -2,8 +2,7 @@
 
 - **生成时间**: `2026-11-19T08:05:29+08:00`
 - **ROM Build ID**: `16-W1UCS36H.96-35-8-9-20260801`
-- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=14, odm=14, vendor_dlkm=14`
-- **DSH 聊天会话 ID**: `session-8c7eb564-47e3-4812-8b19-f6e42049b4f6`（标题：`[02_prepare] 真机规格采集 · Motorola Razr (aito) (motorola/aito · 16-W1UCS36H.96-35-8-9-20260801)`）
+- **DSH 聊天会话 ID**: `session-8c7eb564-47e3-4812-8b19-f6e42049b4f6`（标题：`[02_prepare] 真机规格采集 · Motorola Razr (aito) (motorola/aito · 14-W1UCS36H.96-35-8-9-20260801)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
 ---
@@ -163,7 +162,7 @@
 - **触控与按键对齐**: touch=`synaptics_tcm` · keyboard=`mtk-kpd` · input_identity 外设数=`4` 项
 - **硬件 HAL 变体与开关**: radioVariant=`mtk` · NFC=`true` · 红外=`false` · 3.5mm=`false` · 立体声双扬声器
 - **影像规格**: 后置 50MP + 13MP | 前置 32MP
-- **电池与通信**: `4200 mAh`（有线 `30W` / 无线 `15W`） · Wi-Fi 6E (802.11ax)（Wi-Fi 6=`true`） · BT `5.3` · 5G=`true` · Widevine `L1` (sysId=`33098`) · TAC `35667408` · MAC OUI `[44:80:eb]`
+- **电池与通信**: `4200 mAh`（有线 `30W` / 无线 `15W`） · Wi-Fi 6E (802.11ax)（Wi-Fi 6=`true`） · BT `5.3` · 5G=`true` · Widevine `L1` (sysId=`33098`) · TAC `35667408` · 基带 `MT6878_NR17.RC.MP.V40.2.P247.01.339R` · MAC OUI `[44:80:eb]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `22` 项对齐传感器
@@ -191,11 +190,13 @@
 - `board`: `mt6878` | `soc`: `  ()`
 - `densityDpi`: `420` | `egl`: `meow` | `vulkan`: `mali` | `abilist`: `arm64-v8a`
 - `securityPatch`: `2026-08-01` | `buildDate`: `20260801` | `kernelLine`: `` | `vintfVersion`: `8.0`
+- `partitionAndroidVersions`: `system=16, system_ext=16, product=16, vendor=14, odm=14, vendor_dlkm=14`
+- `basebandVersion`: `MT6878_NR17.RC.MP.V40.2.P247.01.339R`（来源: `zip:modem.img`）
 - `fingerprint`: `motorola/aito_g_vext/aito:14/W1UCS36H.96-35-8-9/4907d6:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=aito_g_vext`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `thermal.zones` (45 个温区): `soc_max`, `cpu-big-core0-1`, `cpu-big-core0-2`, `cpu-big-core1-1`, `cpu-big-core1-2`, `cpu-big-core2-1`, `cpu-big-core2-2`, `cpu-big-core3-1`, `cpu-big-core3-2`, `cpu-little-core0`, `cpu-little-core1`, `cpu-little-core2`, `cpu-little-core3`, `cpu-dsu-1`, `cpu-dsu-2`, `soc-top1`, `soc-top2`, `apu`, `soc-bot1`, `soc-bot2`, `md1`, `md2`, `md3`, `md4`, `gpu`, `ap_ntc`, `ltepa_ntc`, `nrpa_ntc`, `tsx-ntc`, `pmic6363-vio18`, `pmic6363-vs1-vs3`, `pmic6363-bk3-bk7`, `pmic6363-vs2`, `pmic6369-vpa`, `pmic6369-vbk1`, `pmic6369-vcn33-1`, `pmic6369-vefuse`, `vtskin-max`, `vtskin1`, `vtskin2`, `vtskin3`, `vtskin4`, `vtskin5`, `vtskin6`, `consys`
 - `vda.partitions` (5 个附加分区): `vendor_persist.img->/mnt/vendor/persist`, `protect_f.img->/mnt/vendor/protect_f`, `protect_s.img->/mnt/vendor/protect_s`, `nvdata.img->/mnt/vendor/nvdata`, `nvcfg.img->/mnt/vendor/nvcfg`
-- `vintfPlaceholders`: radio=`34` 项 · audio=`1` 项 · gnss=`2` 项 · nn=`46` 项
+- `vintfPlaceholders`: radio=`34` 项 · audio=`1` 项 · gnss=`2` 项 · nn=`44` 项
 
 ### `vendor/etc` 与 `odm/etc` 硬件配置实测详情
 

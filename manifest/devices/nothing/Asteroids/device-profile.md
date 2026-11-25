@@ -2,8 +2,7 @@
 
 - **生成时间**: `2026-11-19T06:49:24+08:00`
 - **ROM Build ID**: `16-UKQ1.250612.001-20260810`
-- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=14, odm=14, vendor_dlkm=14`
-- **DSH 聊天会话 ID**: `session-b5a08e90-de11-47a5-bd44-584db0483917`（标题：`[02_prepare] 真机规格采集 · Nothing Phone (3a) (nothing/Asteroids · 16-UKQ1.250612.001-20260810)`）
+- **DSH 聊天会话 ID**: `session-b5a08e90-de11-47a5-bd44-584db0483917`（标题：`[02_prepare] 真机规格采集 · Nothing Phone (3a) (nothing/Asteroids · 14-UKQ1.250612.001-20260810)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
 ---
@@ -190,7 +189,7 @@
 - **触控与按键对齐**: touch=`goodix_ts` · keyboard=`gpio-keys` · input_identity 外设数=`3` 项
 - **硬件 HAL 变体与开关**: radioVariant=`default` · NFC=`true` · 红外=`false` · 3.5mm=`false` · 双扬声器
 - **影像规格**: 后置 50MP (三星 GN9, OIS) + 50MP 长焦 (三星 GN5, 2x) + 8MP 超广角 (索尼 IMX355) | 前置 32MP
-- **电池与通信**: `5000 mAh`（有线 `50W` / 无线 `0W`） · Wi-Fi 6 (802.11ax)（Wi-Fi 6=`true`） · BT `5.4` · 5G=`true` · Widevine `L1` (sysId=`33098`) · TAC `35258900` · MAC OUI `[00:03:7f]`
+- **电池与通信**: `5000 mAh`（有线 `50W` / 无线 `0W`） · Wi-Fi 6 (802.11ax)（Wi-Fi 6=`true`） · BT `5.4` · 5G=`true` · Widevine `L1` (sysId=`33098`) · TAC `35258900` · 基带 `MPSS.DE.3.1.4-00560.1-MILOS_GEN_PACK-1` · MAC OUI `[00:03:7f]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `22` 项对齐传感器
@@ -217,7 +216,9 @@
 - `board`: `volcano` | `soc`: `QTI  ()`
 - `densityDpi`: `0` | `egl`: `` | `vulkan`: `` | `abilist`: `arm64-v8a`
 - `securityPatch`: `2026-04-05` | `buildDate`: `20260810` | `kernelLine`: `6.1` | `vintfVersion`: `-`
+- `partitionAndroidVersions`: `system=16, system_ext=16, product=16, vendor=14, odm=14, vendor_dlkm=14`
 - `uname`: `Linux localhost 6.1.157-android14-11-g82d681c9b06b-ab14634535 #1 SMP PREEMPT Mon Dec 22 19:22:33 UTC 2025 aarch64 Toybox`
+- `basebandVersion`: `MPSS.DE.3.1.4-00560.1-MILOS_GEN_PACK-1`（来源: `zip:payload.bin/modem`）
 - `fingerprint`: `Nothing/Asteroids/Asteroids:14/UKQ1.250612.001/2608101153:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=Asteroids`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `thermal.zones` (51 个温区): `sdr0_pa`, `sdr0`, `mmw0`, `mmw1`, `mmw2`, `mmw3`, `mmw_pa1`, `mmw_pa2`, `mmw_pa3`, `mmw_ific0`, `sub1_modem_cfg`, `sub1_lte_cc`, `sub1_mcg_fr1_cc`, `sub1_mcg_fr2_cc`, `sub1_scg_fr1_cc`, `sub1_scg_fr2_cc`, `aoss-0`, `cpuss-0`, `cpuss-1`, `cpu-1-0-0`, `cpu-1-0-1`, `cpu-1-1-0`, `cpu-1-1-1`, `cpu-1-2-0`, `cpu-1-2-1`, `cpu-1-3-0`, `cpu-1-3-1`, `cpu-2-0-0`, `cpu-2-0-1`, `cpu-2-0-2`, `aoss-1`, `cpu-0-0-0`, `cpu-0-1-0`, `cpu-0-2-0`, `nsphvx-0`, `nsphvx-1`, `nsphmx-0`, `nsphmx-1`, `gpuss-0`, `gpuss-1`, `gpuss-2`, `gpuss-3`, `video`, `ddr`, `camera-0`, `camera-1`, `aoss-2`, `mdmss-0`, `mdmss-1`, `mdmss-2`, `mdmss-3`

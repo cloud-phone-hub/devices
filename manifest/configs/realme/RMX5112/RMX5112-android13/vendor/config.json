@@ -12,6 +12,7 @@
     "ro.soc.model": "MT6835",
     "ro.vendor.boot_security_patch": "2025-10-01",
     "ro.vendor.build.security_patch": "2025-10-01",
+    "ro.vendor.cdh.device.market_name": "RMX5112",
     "ro.vendor.cdh.display.edid_name": "MTKDEV",
     "ro.vendor.cdh.display.edid_pnp": "MTK",
     "ro.vendor.cdh.display.edid_product_id": "45630",

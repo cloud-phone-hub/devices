@@ -10,15 +10,16 @@
   "factoryDir": "OS3.0.10.0.VNQCNXM",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MOLY.NR15.R3.MP.V120.3.P82",
     "comment": "gold-15 CN OS3.0.10.0 基线件清单：属性/标签基底取同机型 note13 模板（lineage 基座路线），版本相关身份串按 gold CN OS3.0.10.0.VNQCNXM 官方 vendor_a/build.prop + build_gold_cn.prop 实测覆盖；rom/lineage/vendor-dlkm/version-description 为本 ROM 实测。",
     "partitionAndroidVersions": {
+      "odm": "15",
+      "odm_dlkm": "15",
+      "product": "15",
       "system": "15",
       "system_ext": "15",
-      "product": "15",
       "vendor": "15",
-      "odm": "15",
-      "vendor_dlkm": "15",
-      "odm_dlkm": "15"
+      "vendor_dlkm": "15"
     }
   },
   "updatedAt": "2026-11-05T04:33:33Z"

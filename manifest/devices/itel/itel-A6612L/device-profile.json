@@ -17,6 +17,14 @@
     "board": "sp9863a",
     "socManufacturer": "Spreadtrum",
     "androidVersion": "13",
+    "partitionAndroidVersions": {
+      "odm": "13",
+      "product": "16",
+      "system": "16",
+      "system_ext": "16",
+      "vendor": "13",
+      "vendor_dlkm": "13"
+    },
     "osVersion": "16-BP2A.250605.031.A3-20260823",
     "securityPatch": "2026-04-05",
     "buildDate": "20260823",
@@ -24,6 +32,8 @@
     "hardwareHwcomposer": "unisoc",
     "frpPst": "/dev/block/by-name/persist",
     "radioMultisim": "dsds",
+    "basebandVersion": "4G_MODEM_22B_W26.24.1_P2",
+    "basebandSource": "zip:A6612L-A553-1HJKYULMNZV-Wgo-OP-20260822V022.pac/Modem_LTE(SC9600_sharkl3_pubcp_ts_modem.bin)",
     "cpuAbiList": "arm64-v8a,armeabi-v7a,armeabi",
     "fingerprint": "itel/A6612L-OP64/itel-A6612L:16/BP2A.250605.031.A3/A6612L_260822V4:user/release-keys",
     "kernelUname": "Linux localhost 5.15.197-android13-8-00005-g2d8ad9139b89-ab15063902 #1 SMP PREEMPT Fri Mar 20 11:14:06 UTC 2026 aarch64 Toybox",
@@ -640,14 +650,6 @@
         "vendor/etc/wifi/wpa_supplicant.conf",
         "vendor/etc/wifi/wpa_supplicant_overlay.conf"
       ]
-    },
-    "partitionAndroidVersions": {
-      "system": "16",
-      "system_ext": "16",
-      "product": "16",
-      "vendor": "13",
-      "odm": "13",
-      "vendor_dlkm": "13"
     }
   },
   "manifestAligned": {
@@ -742,7 +744,9 @@
     },
     "peripherals": {},
     "camera": {},
-    "batteryAndConnectivity": {},
+    "batteryAndConnectivity": {
+      "basebandVersion": "4G_MODEM_22B_W26.24.1_P2"
+    },
     "inputAlignment": {
       "touch": {},
       "keyboard": {},

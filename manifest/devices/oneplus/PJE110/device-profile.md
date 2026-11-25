@@ -2,8 +2,7 @@
 
 - **生成时间**: `2026-11-19T11:07:05+08:00`
 - **ROM Build ID**: `15-TP1A.220905.001-20250926`
-- **分区 Android 版本**: `system=15, system_ext=15, product=15, vendor=13, vendor_dlkm=13`
-- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · oneplus/PJE110 (15-TP1A.220905.001-20250926)`）
+- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · oneplus/PJE110 (13-TP1A.220905.001-20250926)`）
 
 ---
 
@@ -39,7 +38,7 @@
 - **触控与按键对齐**: touch=`-` · keyboard=`-` · input_identity 外设数=`0` 项
 - **硬件 HAL 变体与开关**: radioVariant=`-` · NFC=`false` · 红外=`false` · 3.5mm=`false` · -
 - **影像规格**: 后置 - | 前置 -
-- **电池与通信**: `0 mAh`（有线 `0W` / 无线 `0W`） · -（Wi-Fi 6=`false`） · BT `-` · 5G=`false` · Widevine `-` (sysId=`-`) · TAC `-` · MAC OUI `[]`
+- **电池与通信**: `0 mAh`（有线 `0W` / 无线 `0W`） · -（Wi-Fi 6=`false`） · BT `-` · 5G=`false` · Widevine `-` (sysId=`-`) · TAC `-` · 基带 `MPSS.DE.3.0-02177.2-KAILUA_GEN_PACK-2.18776.259` · MAC OUI `[]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `0` 项对齐传感器
@@ -55,7 +54,9 @@
 - `board`: `kalama` | `soc`: `QTI  ()`
 - `densityDpi`: `0` | `egl`: `adreno` | `vulkan`: `adreno` | `abilist`: `arm64-v8a,armeabi-v7a,armeabi`
 - `securityPatch`: `2025-10-01` | `buildDate`: `20250926` | `kernelLine`: `5.15` | `vintfVersion`: `-`
+- `partitionAndroidVersions`: `system=15, system_ext=15, product=15, vendor=13, vendor_dlkm=13`
 - `uname`: `Linux localhost 5.15.167-android13-8-o-01144-gdc8278c1c5f9 #1 SMP PREEMPT Wed Sep 3 15:30:49 UTC 2025 aarch64 Toybox`
+- `basebandVersion`: `MPSS.DE.3.0-02177.2-KAILUA_GEN_PACK-2.18776.259`（来源: `zip:payload.bin/modem`）
 - `fingerprint`: `oplus/ossi/ossi:13/TP1A.220905.001/1758858667782:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=ossi`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `vda.partitions` (1 个附加分区): `vendor_persist.img->/mnt/vendor/persist`

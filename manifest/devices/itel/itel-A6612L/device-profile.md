@@ -2,8 +2,7 @@
 
 - **生成时间**: `2026-11-19T11:32:57+08:00`
 - **ROM Build ID**: `16-BP2A.250605.031.A3-20260823`
-- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=13, odm=13, vendor_dlkm=13`
-- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · itel A6612L (itel/itel-A6612L · 16-BP2A.250605.031.A3-20260823)`）
+- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · itel A6612L (itel/itel-A6612L · 13-BP2A.250605.031.A3-20260823)`）
 
 ---
 
@@ -84,7 +83,7 @@
 - **触控与按键对齐**: touch=`-` · keyboard=`-` · input_identity 外设数=`0` 项
 - **硬件 HAL 变体与开关**: radioVariant=`-` · NFC=`false` · 红外=`false` · 3.5mm=`false` · -
 - **影像规格**: 后置 - | 前置 -
-- **电池与通信**: `0 mAh`（有线 `0W` / 无线 `0W`） · -（Wi-Fi 6=`false`） · BT `-` · 5G=`false` · Widevine `-` (sysId=`-`) · TAC `-` · MAC OUI `[]`
+- **电池与通信**: `0 mAh`（有线 `0W` / 无线 `0W`） · -（Wi-Fi 6=`false`） · BT `-` · 5G=`false` · Widevine `-` (sysId=`-`) · TAC `-` · 基带 `4G_MODEM_22B_W26.24.1_P2` · MAC OUI `[]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `0` 项对齐传感器
@@ -100,7 +99,9 @@
 - `board`: `sp9863a` | `soc`: `Spreadtrum  ()`
 - `densityDpi`: `320` | `egl`: `` | `vulkan`: `` | `abilist`: `arm64-v8a,armeabi-v7a,armeabi`
 - `securityPatch`: `2026-04-05` | `buildDate`: `20260823` | `kernelLine`: `5.15` | `vintfVersion`: `7.0`
+- `partitionAndroidVersions`: `system=16, system_ext=16, product=16, vendor=13, odm=13, vendor_dlkm=13`
 - `uname`: `Linux localhost 5.15.197-android13-8-00005-g2d8ad9139b89-ab15063902 #1 SMP PREEMPT Fri Mar 20 11:14:06 UTC 2026 aarch64 Toybox`
+- `basebandVersion`: `4G_MODEM_22B_W26.24.1_P2`（来源: `zip:A6612L-A553-1HJKYULMNZV-Wgo-OP-20260822V022.pac/Modem_LTE(SC9600_sharkl3_pubcp_ts_modem.bin)`）
 - `fingerprint`: `itel/A6612L-OP64/itel-A6612L:16/BP2A.250605.031.A3/A6612L_260822V4:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=A6612L-OP64`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `thermal.zones` (5 个温区): `gpu-thmzone`, `cpu-thmzone`, `board-thmzone`, `pa-thmzone`, `chg-thmzone`

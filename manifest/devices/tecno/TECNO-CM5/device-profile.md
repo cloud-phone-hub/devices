@@ -2,7 +2,6 @@
 
 - **生成时间**: `2026-11-20T00:56:16+08:00`
 - **ROM Build ID**: `16-BP2A.250605.031.A3-20260324`
-- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=16, odm=16, vendor_dlkm=16, odm_dlkm=16`
 - **DSH 聊天会话 ID**: `session-f50d2648-8682-44ce-ae4c-823fee4ecb6c`（标题：`[02_prepare] 真机规格采集 · TECNO CM5 (tecno/TECNO-CM5 · 16-BP2A.250605.031.A3-20260324)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
@@ -154,7 +153,7 @@
 - **触控与按键对齐**: touch=`fts_ts` · keyboard=`mtk-kpd` · input_identity 外设数=`3` 项
 - **硬件 HAL 变体与开关**: radioVariant=`mtk` · NFC=`true` · 红外=`true` · 3.5mm=`true` · 单扬声器
 - **影像规格**: 后置 50MP (OIS) + 2MP | 前置 50MP
-- **电池与通信**: `5000 mAh`（有线 `70W` / 无线 `0W`） · Wi-Fi 5 (802.11ac)（Wi-Fi 6=`false`） · BT `5.3` · 5G=`false` · Widevine `L1` (sysId=`29351`) · TAC `86945003` · MAC OUI `[3c:9c:0f]`
+- **电池与通信**: `5000 mAh`（有线 `70W` / 无线 `0W`） · Wi-Fi 5 (802.11ac)（Wi-Fi 6=`false`） · BT `5.3` · 5G=`false` · Widevine `L1` (sysId=`29351`) · TAC `86945003` · 基带 `MOLY.LR13.R2.MP.V236.6.P3` · MAC OUI `[3c:9c:0f]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `19` 项对齐传感器
@@ -181,6 +180,8 @@
 - `board`: `mt6789` | `soc`: `  ()`
 - `densityDpi`: `480` | `egl`: `meow` | `vulkan`: `mali` | `abilist`: `arm64-v8a`
 - `securityPatch`: `2026-02-01` | `buildDate`: `20260324` | `kernelLine`: `` | `vintfVersion`: `9.0`
+- `partitionAndroidVersions`: `system=16, system_ext=16, product=16, vendor=16, odm=16, vendor_dlkm=16, odm_dlkm=16`
+- `basebandVersion`: `MOLY.LR13.R2.MP.V236.6.P3`（来源: `zip:Open/md1img.img`）
 - `fingerprint`: `TECNO/CM5-OP/TECNO-CM5:16/BP2A.250605.031.A3/201200035:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=CM5-OP`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `thermal.zones` (24 个温区): `soc_max`, `cpu_little1`, `cpu_little2`, `cpu_little3`, `cpu_little4`, `cpu_big1`, `cpu_big2`, `cpu_big3`, `cpu_big4`, `gpu2`, `gpu1`, `soc1`, `soc2`, `md`, `ap_ntc`, `ltepa_ntc`, `pmic6366_pmu`, `pmic6366_bk1`, `pmic6366_bk2`, `pmic6366_bk3`, `consys`, `vtshell_max`, `vtshell_front`, `vtshell_back`

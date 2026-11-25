@@ -18,6 +18,14 @@
     "socManufacturer": "Spreadtrum",
     "socModel": "T770",
     "androidVersion": "13",
+    "partitionAndroidVersions": {
+      "odm": "13",
+      "product": "14",
+      "system": "14",
+      "system_ext": "14",
+      "vendor": "13",
+      "vendor_dlkm": "13"
+    },
     "osVersion": "14-QP1A.190711.020-20250620",
     "securityPatch": "2024-06-05",
     "buildDate": "20250620",
@@ -77,10 +85,6 @@
       },
       {
         "from": "official",
-        "source": "lib64/libOpenCL.so"
-      },
-      {
-        "from": "official",
         "mode": "replace",
         "source": "etc/permissions"
       },
@@ -120,6 +124,31 @@
         "type": "file",
         "from": "/system_ext/bin/remotedisplay",
         "to": "/mnt/vendorpatch/system_ext/bin/remotedisplay"
+      },
+      {
+        "type": "file",
+        "from": "/system_ext/bin/linkturbonative",
+        "to": "/mnt/vendorpatch/system_ext/bin/linkturbonative"
+      },
+      {
+        "type": "file",
+        "from": "/system_ext/bin/srmi_proxyd",
+        "to": "/mnt/vendorpatch/system_ext/bin/srmi_proxyd"
+      },
+      {
+        "type": "file",
+        "from": "/system_ext/bin/ylog",
+        "to": "/mnt/vendorpatch/system_ext/bin/ylog"
+      },
+      {
+        "type": "file",
+        "from": "/system_ext/bin/slogmodem",
+        "to": "/mnt/vendorpatch/system_ext/bin/slogmodem"
+      },
+      {
+        "type": "file",
+        "from": "/system_ext/bin/tool_service",
+        "to": "/mnt/vendorpatch/system_ext/bin/tool_service"
       }
     ],
     "measuredCpuClusters": [
@@ -336,15 +365,11 @@
       "permissions": {
         "features": [
           "android.hardware.audio.output",
+          "android.hardware.biometrics.face",
           "android.hardware.bluetooth",
           "android.hardware.bluetooth_le",
           "android.hardware.broadcastradio",
           "android.hardware.camera",
-          "android.hardware.camera.any",
-          "android.hardware.camera.autofocus",
-          "android.hardware.camera.capability.manual_sensor",
-          "android.hardware.camera.flash",
-          "android.hardware.camera.front",
           "android.hardware.faketouch",
           "android.hardware.fingerprint",
           "android.hardware.hardware_keystore",
@@ -360,12 +385,6 @@
           "android.hardware.screen.portrait",
           "android.hardware.se.omapi.uicc",
           "android.hardware.security.model.compatible",
-          "android.hardware.sensor.accelerometer",
-          "android.hardware.sensor.compass",
-          "android.hardware.sensor.light",
-          "android.hardware.sensor.proximity",
-          "android.hardware.sensor.stepcounter",
-          "android.hardware.sensor.stepdetector",
           "android.hardware.telephony",
           "android.hardware.telephony.calling",
           "android.hardware.telephony.cdma",
@@ -409,21 +428,15 @@
           "android.software.telecom",
           "android.software.verified_boot",
           "android.software.voice_recognizers",
-          "android.software.vulkan.deqp.level"
-        ],
-        "unavailableFeatures": [
-          "android.hardware.biometrics.face",
+          "android.software.vulkan.deqp.level",
           "vendor.sprd.hardware.ifaa",
           "vendor.sprd.hardware.soter",
           "vendor.sprd.hardware.tui"
         ],
-        "sensorFeatures": [
-          "accelerometer",
-          "compass",
-          "light",
-          "proximity",
-          "stepcounter",
-          "stepdetector"
+        "vendorFeatures": [
+          "vendor.sprd.hardware.ifaa",
+          "vendor.sprd.hardware.soter",
+          "vendor.sprd.hardware.tui"
         ],
         "hasConsumerIr": false,
         "hasNfc": false,
@@ -746,19 +759,6 @@
         ]
       },
       "inspectedFiles": [
-        "odm/etc/permissions/android.hardware.biometrics.face.unavailable.xml",
-        "odm/etc/permissions/android.hardware.camera.flash-autofocus.xml",
-        "odm/etc/permissions/android.hardware.camera.front.xml",
-        "odm/etc/permissions/android.hardware.camera.manual_sensor.xml",
-        "odm/etc/permissions/android.hardware.sensor.accelerometer.xml",
-        "odm/etc/permissions/android.hardware.sensor.compass.xml",
-        "odm/etc/permissions/android.hardware.sensor.light.xml",
-        "odm/etc/permissions/android.hardware.sensor.proximity.xml",
-        "odm/etc/permissions/android.hardware.sensor.stepcounter.xml",
-        "odm/etc/permissions/android.hardware.sensor.stepdetector.xml",
-        "odm/etc/permissions/vendor.sprd.hardware.ifaa.xml",
-        "odm/etc/permissions/vendor.sprd.hardware.soter.xml",
-        "odm/etc/permissions/vendor.sprd.hardware.tui.xml",
         "vendor/etc/audio_effects.xml",
         "vendor/etc/audio_policy_configuration.xml",
         "vendor/etc/audio_policy_volumes.xml",
@@ -812,14 +812,6 @@
         "vendor/etc/wifi/wpa_supplicant.conf",
         "vendor/etc/wifi/wpa_supplicant_overlay.conf"
       ]
-    },
-    "partitionAndroidVersions": {
-      "system": "14",
-      "system_ext": "14",
-      "product": "14",
-      "vendor": "13",
-      "odm": "13",
-      "vendor_dlkm": "13"
     }
   },
   "manifestAligned": {

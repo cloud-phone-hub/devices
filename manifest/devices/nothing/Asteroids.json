@@ -18,6 +18,7 @@
     256000
   ],
   "extra": {
+    "basebandVersion": "MPSS.DE.3.1.4-00560.1-MILOS_GEN_PACK-1",
     "board": "volcano",
     "hostHvc": {
       "host-hvc-adbkey": "hvc2",

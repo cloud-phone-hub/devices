@@ -1361,13 +1361,16 @@ static bool addKeyLists(camera_metadata_t *metadata,
     }
     characteristicsKeys.push_back(static_cast<int32_t>(tag.tagId));
   }
+  std::vector<uint32_t> reqKeys(requestKeys, requestKeys + requestKeyCount);
+  std::vector<uint32_t> resKeys(resultKeys, resultKeys + resultKeyCount);
 #if !defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
   cdh::camera::AppendVendorCharacteristicKeys(&characteristicsKeys, target);
+  cdh::camera::AppendVendorRequestAndResultKeys(&reqKeys, &resKeys, target);
 #endif
   return addEntry(metadata, ANDROID_REQUEST_AVAILABLE_REQUEST_KEYS,
-                  requestKeys, requestKeyCount) &&
-         addEntry(metadata, ANDROID_REQUEST_AVAILABLE_RESULT_KEYS, resultKeys,
-                  resultKeyCount) &&
+                  reqKeys.data(), reqKeys.size()) &&
+         addEntry(metadata, ANDROID_REQUEST_AVAILABLE_RESULT_KEYS,
+                  resKeys.data(), resKeys.size()) &&
          addEntry(metadata, ANDROID_REQUEST_AVAILABLE_CHARACTERISTICS_KEYS,
                   characteristicsKeys) &&
          addEntry(metadata, ANDROID_REQUEST_AVAILABLE_SESSION_KEYS,
@@ -1524,7 +1527,7 @@ static CameraMetadata buildRequestMetadata(const Note13CameraTarget &target,
 static CameraMetadata buildResultMetadata(const Note13CameraTarget &target,
                                           int64_t timestamp, bool *ok) {
   CameraMetadata out;
-  camera_metadata_t *metadata = allocate_camera_metadata(96, 4096);
+  camera_metadata_t *metadata = allocate_camera_metadata(128, 8192);
   if (metadata == nullptr) {
     *ok = false;
     return out;
@@ -1663,6 +1666,9 @@ static CameraMetadata buildResultMetadata(const Note13CameraTarget &target,
                      reinterpret_cast<const uint8_t *>(activePid),
                      std::strlen(activePid) + 1);
   }
+#if !defined(CDH_CAMERA_TARGET_ONEPLUSACE6T)
+  added = added && cdh::camera::AppendVendorResultMetadata(metadata, target);
+#endif
   if (added && validate_camera_metadata_structure(metadata, nullptr) == 0) {
     out.metadata = metadataBytes(metadata);
     *ok = true;

@@ -2,8 +2,7 @@
 
 - **生成时间**: `2026-11-19T22:56:33+08:00`
 - **ROM Build ID**: `15-TP1A.220624.014-20251217`
-- **分区 Android 版本**: `system=15, system_ext=15, product=15, vendor=13, odm=13, vendor_dlkm=13, odm_dlkm=13`
-- **DSH 聊天会话 ID**: `session-b74c51c4-b7a3-4714-aa7b-2d0fca99f1d5`（标题：`[02_prepare] 真机规格采集 · tcl/asterpro (15-TP1A.220624.014-20251217)`）
+- **DSH 聊天会话 ID**: `session-b74c51c4-b7a3-4714-aa7b-2d0fca99f1d5`（标题：`[02_prepare] 真机规格采集 · tcl/asterpro (13-TP1A.220624.014-20251217)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
 ---
@@ -153,7 +152,7 @@
 - **触控与按键对齐**: touch=`fts_ts` · keyboard=`mtk-kpd` · input_identity 外设数=`2` 项
 - **硬件 HAL 变体与开关**: radioVariant=`mtk` · NFC=`false` · 红外=`false` · 3.5mm=`true` · 单扬声器
 - **影像规格**: 后置 50MP + 2MP | 前置 8MP
-- **电池与通信**: `5000 mAh`（有线 `10W` / 无线 `0W`） · Wi-Fi 5 (802.11ac)（Wi-Fi 6=`false`） · BT `5.2` · 5G=`true` · Widevine `L1` (sysId=`32638`) · TAC `35421509` · MAC OUI `[00:0c:43 00:0c:e7]`
+- **电池与通信**: `5000 mAh`（有线 `10W` / 无线 `0W`） · Wi-Fi 5 (802.11ac)（Wi-Fi 6=`false`） · BT `5.2` · 5G=`true` · Widevine `L1` (sysId=`32638`) · TAC `35421509` · 基带 `MOLY.NR17.R1.MP5.RC.MP.V1.7.P56` · MAC OUI `[00:0c:43 00:0c:e7]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `19` 项对齐传感器
@@ -180,7 +179,9 @@
 - `board`: `mt6835` | `soc`: `  ()`
 - `densityDpi`: `320` | `egl`: `meow` | `vulkan`: `mali` | `abilist`: `arm64-v8a,armeabi-v7a,armeabi`
 - `securityPatch`: `2025-11-05` | `buildDate`: `20251217` | `kernelLine`: `5.15` | `vintfVersion`: `7.0`
+- `partitionAndroidVersions`: `system=15, system_ext=15, product=15, vendor=13, odm=13, vendor_dlkm=13, odm_dlkm=13`
 - `uname`: `Linux localhost 5.15.178-android13-8-00009-g18a89f1307e2-ab13471816 #1 SMP PREEMPT Fri May 9 06:36:19 UTC 2025 aarch64 Toybox`
+- `basebandVersion`: `MOLY.NR17.R1.MP5.RC.MP.V1.7.P56`（来源: `zip:payload.bin/md1img`）
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=asterpro_cn`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `thermal.zones` (20 个温区): `soc_max`, `cpu_big1`, `cpu_big2`, `cpu_big3`, `cpu_big4`, `cpu_little1`, `cpu_little2`, `cpu_little3`, `cpu_little4`, `gpu2`, `gpu1`, `soc1`, `soc2`, `soc3`, `soc4`, `md1`, `md2`, `md3`, `md4`, `consys`
 - `vda.partitions` (5 个附加分区): `vendor_persist.img->/mnt/vendor/persist`, `protect_f.img->/mnt/vendor/protect_f`, `protect_s.img->/mnt/vendor/protect_s`, `nvdata.img->/mnt/vendor/nvdata`, `nvcfg.img->/mnt/vendor/nvcfg`
@@ -592,7 +593,7 @@
     "待真机回读微调项：EDID productId/week/year、Widevine systemId、IMEI TAC/MEID 前缀、Wi-Fi MAC OUI、电池 fullMv/chargeMv（MTK 单电芯 4.40V/4.46V 为同平台估值）。"
   ],
   "sources": [
-    "固件实测：build.prop / boot DTB / VINTF manifest / vendor/etc / odm/etc（本机 asterpro，15-TP1A.220624.014-20251217）",
+    "固件实测：build.prop / boot DTB / VINTF manifest / vendor/etc / odm/etc（本机 asterpro，13-TP1A.220624.014-20251217）",
     "https://www.deviceinfohw.ru/devices/item.php?item=99400",
     "https://www.mediatek.com/products/smartphones/mediatek-dimensity-6100plus"
   ]

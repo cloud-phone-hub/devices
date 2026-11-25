@@ -1,0 +1,123 @@
+# 修复后验证与实机复测记录（Honor Magic7 RSR #1 / sun_16-AQ3A.250214.001-20260904）
+
+## 1. Go 单元测试与镜像增量构建摘要
+
+$ cd agent/modules/daemon && go test -race ./...
+ok  	cloud-phone-hub/agent/modules/daemon/backend	2.295s
+ok  	cloud-phone-hub/agent/modules/daemon/backend/bluetooth/bthci	2.428s
+ok  	cloud-phone-hub/agent/modules/daemon/backend/camera	3.878s
+ok  	cloud-phone-hub/agent/modules/daemon/backend/haptic	1.552s
+ok  	cloud-phone-hub/agent/modules/daemon/backend/nfc	1.271s
+ok  	cloud-phone-hub/agent/modules/daemon/backend/proxy	2.769s
+ok  	cloud-phone-hub/agent/modules/daemon/backend/tee	5.849s
+ok  	cloud-phone-hub/agent/modules/daemon/config	3.341s
+ok  	cloud-phone-hub/agent/modules/daemon/run	3.507s
+
+$ cd agent/modules/pipeline && go test ./stages/08_build_hardware/... ./stages/09_build_vendor/...
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/08_build_hardware
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	0.704s
+
+$ out/agent/dist/pipeline device build --from 04_build_modules sun
+- vendor_boot.img: vboot-cbabae4806bf（21,743,890 B，注入新版 cdh_redirect.ko）
+- patch.img: sha256 fe3a43315780（384.0 MiB，含 biometrics@fingerprint-only、camera@honor、neuralnetworks@honor）
+- vda.img: vda-f52ca0ccbb57（14.94 GiB，5 个分区刷新，super.img 保持原厂直通）
+
+## 2. 冷启动状态、服务注册与刷屏清零对账
+
+BOOT_COMPLETED=1 at 119s
+Enforcing
+1
+6.6.118-android15-8-gc901ea41aa32-ab15981388-4k
+
+[init.svc.cameraserver]: [running]
+[init.svc.vendor.camera-vhal]: [running]
+[init.svc.vendor.fingerprint-default]: [running]
+[init.svc.vendor.neuralnetworks-default]: [running]
+
+Registered Binder Services:
+36	android.frameworks.cameraservice.service.ICameraService/default: [android.frameworks.cameraservice.service.ICameraService]
+47	android.hardware.biometrics.fingerprint.IFingerprint/default: [android.hardware.biometrics.fingerprint.IFingerprint]
+49	android.hardware.camera.provider.ICameraProvider/internal/0: [android.hardware.camera.provider.ICameraProvider]
+121	auth: [android.hardware.biometrics.IAuthService]
+130	biometric: [android.hardware.biometrics.IBiometricService]
+194	fingerprint: [android.hardware.fingerprint.IFingerprintService]
+433	vendor.honor.hardware.motion.IMotion/default: [vendor.honor.hardware.motion.IMotion]
+
+错误与刷屏计数复核：
+HidlToAidlSensorAdapter_count=0
+Max_Aidl_transport_errors_count=0
+HWExtMotion_error_count=0
+Host qemu.log cdh_redirect: forward count=0
+
+## 3. 相机按需唤醒（CDCM_READY）与退出自动休眠（CDCM_PAUSE）实测
+
+# 3.1 开机静息态（未打开相机）：零帧推流
+$ curl -s "http://127.0.0.1:19061/api/camera/status?spec=sun_16-AQ3A.250214.001-20260904&index=1"
+{"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":0,"framesDropped":0}
+
+# 3.2 打开 com.hihonor.camera 进入预览（见 sun-cam-preview.png）：实时唤醒推流
+$ curl -s "http://127.0.0.1:19061/api/camera/status?spec=sun_16-AQ3A.250214.001-20260904&index=1"
+{"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":32,"framesDropped":0}
+
+# 3.3 按 HOME 退出相机回到桌面：2s 宽限期后发 CDCM_PAUSE，第 4s 与第 6s 采样帧数恒定为 55，camera-service 0.0% CPU
+11-26 00:11:03.290   636 19387 I cdh_camera_video: camera session idle, sent CDCM_PAUSE on /dev/hvc12
+
+--- Camera status 4s AFTER EXIT (sample 1) ---
+{"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":55,"framesDropped":0}
+--- Camera status 6s AFTER EXIT (sample 2) ---
+{"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":55,"framesDropped":0}
+
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  636 system       20   0  12G  11M 8.2M S  0.0   0.0   0:02.27 android.hardware.camera-service
+
+## 4. 桌面 14 次连续滑动帧率指标（dumpsys gfxinfo com.hihonor.android.launcher）
+
+** Graphics info for pid 9448 [com.hihonor.android.launcher] **
+Total frames rendered: 709
+Janky frames: 132 (18.62%)
+50th percentile: 18ms
+90th percentile: 34ms
+95th percentile: 44ms
+99th percentile: 81ms
+Number Missed Vsync: 27
+Number High input latency: 876
+Number Slow UI thread: 77
+Number Slow bitmap uploads: 11
+Number Slow issue draw commands: 123
+Number Frame deadline missed: 132
+
+50th gpu percentile: 7ms
+90th gpu percentile: 14ms
+95th gpu percentile: 15ms
+99th gpu percentile: 21ms
+Pipeline=Skia (OpenGL)
+
+## 5. 稳态静息 Guest top / vmstat 与宿主 CPU
+
+800%cpu 102%user  19%nice  33%sys 617%idle   4%iow  25%irq   1%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  874 system       18  -2  26G 723M 544M S  3.0   4.7   4:22.26 system_server
+  240 logd                               S  0.0   0.0           logd (跌出 Top 15)
+  245 system                             S  0.0   0.0           servicemanager (跌出 Top 15)
+  636 system                             S  0.0   0.0           android.hardware.camera-service (跌出 Top 15)
+
+procs ------------memory------------ ---swap-- -----io---- --system- ----cpu----
+ r  b    swpd    free   buff   cache   si   so    bi    bo   in   cs us sy id wa
+ 2  0 6291452  417672 1145356 11270140  0    0   176  7152 2895 3646 16  5 78  0
+ 1  0 6291452  417672 1145356 11270140  0    0     0     0  747  809 13  0 87  0
+ 1  0 6291452  416064 1145356 11270188  0    0     0 93936 2304 5231 13  5 82  0
+ 1  0 6291452  422560 1145356 11270200  0    0     0     0 1537 2190 13  1 86  0
+
+Host QEMU & daemon CPU:
+  PID  %CPU %MEM ELAPSED COMMAND
+32161   0.2  0.2   15:49 /Volumes/work/cloud-phone-hub/out/agent/dist/daemon serve --addr 127.0.0.1:19061
+33489 110.7  7.9   11:34 /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/bin/qemu-system-aarch64 ...
+
+=== [Web VNC 投屏链路修复后实测 (CONFIG_VNC_JPEG + libjpeg-turbo + lossy=on,non-adaptive=on + INC=4)] ===
+#define CONFIG_VNC_JPEG
+/opt/homebrew/opt/jpeg-turbo/lib/libjpeg.8.dylib (compatibility version 8.0.0, current version 8.3.2)
+-vnc 127.0.0.1:20,websocket=5921,share=force-shared,lossy=on,non-adaptive=on
+[old-web q=6 c=2] 1280x2800: 59 frames in 2.20s => 7.19 MiB (124.8 KB/f, init=200.5KB) | P50=16.7ms
+  Subtypes: {'JPEG': 956, 'Fill': 1057, 'Zlib(f=1)': 667, 'Zlib(f=0)': 115}  # Gradient Filter f=2 = 0 !
+[new-web q=6 c=1] 1280x2800: 48 frames in 2.26s => 5.42 MiB (115.5 KB/f, init=189.8KB) | P50=20.0ms
+  Subtypes: {'JPEG': 940, 'Fill': 247, 'Zlib(f=1)': 100, 'Zlib(f=0)': 51}

@@ -4,7 +4,7 @@
   "brand": "itel",
   "model": "itel A6612L",
   "device": "itel-A6612L",
-  "platform": "qcom",
+  "platform": "unisoc",
   "resolution": "1080x2400",
   "inch": "70x155",
   "density": 320,
@@ -17,6 +17,7 @@
     256000
   ],
   "extra": {
+    "basebandVersion": "4G_MODEM_22B_W26.24.1_P2",
     "board": "sp9863a",
     "hostHvc": {
       "host-hvc-adbkey": "hvc2",

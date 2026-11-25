@@ -2,7 +2,6 @@
 
 - **生成时间**: `2026-11-18T19:02:46+08:00`
 - **ROM Build ID**: `14-AP2A.240905.003.F1-20240815`
-- **分区 Android 版本**: `system=14, system_ext=14, product=14, vendor=14, odm=14, vendor_dlkm=14`
 - **DSH 聊天会话 ID**: `session-ced36e45-d244-4a35-8701-a47fb3e7d257`（标题：`[02_prepare] 真机规格采集 · Pixel 6 (google/oriole · 14-AP2A.240905.003.F1-20240815)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
@@ -203,7 +202,7 @@
 - **触控与按键对齐**: touch=`synaptics_tcm2` · keyboard=`gpio-keys` · input_identity 外设数=`3` 项
 - **硬件 HAL 变体与开关**: radioVariant=`default` · NFC=`true` · 红外=`false` · 3.5mm=`false` · 立体声双扬声器
 - **影像规格**: 后置 50MP + 12MP | 前置 8MP
-- **电池与通信**: `4614 mAh`（有线 `24W` / 无线 `21W`） · Wi-Fi 6 (802.11ax)（Wi-Fi 6=`true`） · BT `5.2` · 5G=`true` · Widevine `L1` (sysId=`42084`) · TAC `35402609` · MAC OUI `[3c:28:6d 3c:5a:b4 f4:f5:d8]`
+- **电池与通信**: `4614 mAh`（有线 `24W` / 无线 `21W`） · Wi-Fi 6 (802.11ax)（Wi-Fi 6=`true`） · BT `5.2` · 5G=`true` · Widevine `L1` (sysId=`42084`) · TAC `35402609` · 基带 `g5123b-145971-260721-B-15910359` · MAC OUI `[3c:28:6d 3c:5a:b4 f4:f5:d8]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `22` 项对齐传感器
@@ -230,26 +229,20 @@
 - `marketName`: `` | `modelCode`: `Pixel 6` | `manufacturer`: `Google`
 - `board`: `gs101` | `soc`: `Google Tensor ()`
 - `densityDpi`: `420` | `egl`: `mali` | `vulkan`: `mali` | `abilist`: `arm64-v8a,armeabi-v7a,armeabi`
-- `securityPatch`: `2024-09-05` | `buildDate`: `20240815` | `kernelLine`: `6.1` | `vintfVersion`: `6.0`
+- `securityPatch`: `2024-09-05` | `buildDate`: `20240815` | `kernelLine`: `6.1` | `vintfVersion`: `-`
+- `partitionAndroidVersions`: `system=14, system_ext=14, product=14, vendor=14, odm=14, vendor_dlkm=14`
 - `uname`: `Linux localhost 6.1.99-android14-11-gd7dac4b14270-ab12946699 #1 SMP PREEMPT Tue Jan 21 13:39:43 UTC 2025 aarch64 Toybox`
+- `basebandVersion`: `g5123b-145971-260721-B-15910359`（来源: `build.prop:ro.build.expect.baseband`）
 - `fingerprint`: `google/oriole/oriole:14/AP2A.240905.003.F1/12235381:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=oriole`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `thermal.zones` (6 个温区): `BIG`, `MID`, `LITTLE`, `G3D`, `ISP`, `TPU`
-- `vda.partitions` (1 个附加分区): `vendor_persist.img->/mnt/vendor/persist`
-- `vintfPlaceholders`: radio=`0` 项 · audio=`1` 项 · gnss=`0` 项 · nn=`9` 项
 
 ### `vendor/etc` 与 `odm/etc` 硬件配置实测详情
 
-- **Permissions 硬件特性**（共 `103` 项）: 红外=`false` · NFC=`true` · 指纹=`true` · BLE=`true` · Wi-Fi Direct=`true` · Audio LowLatency=`true` · Vulkan Level=`1` (API `1.3`)
+- **Permissions 硬件特性**（共 `102` 项）: 红外=`false` · NFC=`true` · 指纹=`true` · BLE=`true` · Wi-Fi Direct=`true` · Audio LowLatency=`true` · Vulkan Level=`1` (API `1.4`)
   - 声明的传感器特性 (`10` 项): `accelerometer`, `barometer`, `compass`, `dynamic.head_tracker`, `gyroscope`, `hifi_sensors`, `light`, `proximity`, `stepcounter`, `stepdetector`
-- **Sensors 原厂配置**: SubHALs=`[sensors.dynamic_sensor_hal.so sensors.usf.so]` · 芯片归属=`map[]`
-- **Audio 策略与音效配置**: 模块=`[primary usbv2]` · 采样率=`[48000]` · 听筒=`true` · 有线耳机路由=`true` · 双麦=`true` · 音效描述符=`8` 项（源: `vendor/etc/audio_effects.xml`）
-  - 实测音效清单: `Acoustic Echo Canceler (The Android Open Source Project)`, `DynamicsProcessing (The Android Open Source Project)`, `Haptic Generator (The Android Open Source Project)`, `Loudness Enhancer (The Android Open Source Project)`, `Multichannel Downmix To Stereo (The Android Open Source Project)`, `Noise Suppression (The Android Open Source Project)`, `Spatializer (The Android Open Source Project)`, `Volume (NXP Software Ltd.)`
-- **Media Codec2 硬编解码配置**: Store实例=`[google.hardware.media.c2@1.0-service->default1 samsung.hardware.media.c2@1.2-service->default1 vendor.dolby.media.c2@1.0-service->default9]` · 厂商/杜比组件=`2` 项 (`c2.google.av1.decoder`, `c2.google.av1.decoder.secure`)
-- **Thermal 温控与冷却设备**: GPU Cooling=`thermal-gpufreq-0` · 冷却节点=`[thermal-cpufreq-0 thermal-cpufreq-1 thermal-cpufreq-2 thermal-gpufreq-0 fcc dc_icl wlc_fcc usbc-port tpu_cooling]` · 温控场景表=`3` 份
 - **ODM SKU / NFC / Wi-Fi / 影像场景**: NFC芯片=`STMicroelectronics ST21NFC` · RSC区域=`[]` · 相机Tuning角色=`[]`
-- **Power 调频/核数控制表**: 各簇最大核数=`[]` · 配置文件=`[vendor/etc/powerhint-mainline.json vendor/etc/powerhint.json vendor/etc/task_profiles.json]`
-- **已扫描解析的 `vendor/etc` & `odm/etc` 配置文件**: 共 `85` 个
+- **已扫描解析的 `vendor/etc` & `odm/etc` 配置文件**: 共 `63` 个
 
 ## 四、DSH 聊天界面回复原文
 

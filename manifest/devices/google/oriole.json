@@ -17,6 +17,7 @@
     256000
   ],
   "extra": {
+    "basebandVersion": "g5123b-145971-260721-B-15910359",
     "board": "oriole",
     "hasReadme": true,
     "hostHvc": {

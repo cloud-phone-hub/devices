@@ -53,6 +53,8 @@ public final class ImsNetAgent {
     private static final String PRESET_APNS_XML = "/vendor/etc/cph-apns-preset.xml";
     private static final Uri CARRIERS_URI = Uri.parse("content://telephony/carriers");
     private static final String[] CANDIDATE_PKGS = new String[] {
+        "com.android.settings",
+        "android",
         "com.mediatek.ims",
         "org.codeaurora.ims",
         "com.shannon.imsservice",
@@ -94,8 +96,10 @@ public final class ImsNetAgent {
     private final TelephonyManager tm;
     private final Handler handler;
     private final Set<String> provisionedNumerics = new HashSet<>();
+    private final Set<String> syncedCarrierConfigs = new HashSet<>();
     private int activeSubId = -1;
     private boolean imsConnected = false;
+    private int apnRetryCount = 0;
     private ConnectivityManager.NetworkCallback activeCallback = null;
 
     private ImsNetAgent(Context pkgContext, ConnectivityManager cm,
@@ -306,6 +310,149 @@ public final class ImsNetAgent {
         }
     }
 
+    private static boolean setSysProp(String key, String val) {
+        try {
+            Class<?> sp = Class.forName("android.os.SystemProperties");
+            sp.getMethod("set", String.class, String.class).invoke(null, key, val);
+            return true;
+        } catch (Throwable t) {
+            Throwable cause = t.getCause() != null ? t.getCause() : t;
+            Log.w(TAG, "SystemProperties.set(" + key + "=" + val + ") failed: " + cause.getMessage());
+            return false;
+        }
+    }
+
+    private static boolean hasClass(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
+    private static boolean isHonorOrHuaweiOpKeyRom() {
+        if ("true".equalsIgnoreCase(getSysProp("ro.config.delay_setapn", ""))) {
+            return true;
+        }
+        if (!getSysProp("ro.honor.build.display.id", "").isEmpty() ||
+            !getSysProp("ro.build.version.magic", "").isEmpty() ||
+            !getSysProp("ro.build.version.emui", "").isEmpty()) {
+            return true;
+        }
+        return hasClass("com.hihonor.android.cust.HwCfgFilePolicy")
+            || hasClass("hihonor.cust.HwCfgFilePolicy")
+            || hasClass("huawei.cust.HwCfgFilePolicy");
+    }
+
+    private int resolveSlotIndex(int subId) {
+        Object isub = obtainISub();
+        if (isub != null) {
+            try {
+                Object v = isub.getClass().getMethod("getSlotIndex", int.class).invoke(isub, subId);
+                if (v instanceof Integer) {
+                    int idx = (Integer) v;
+                    if (idx >= 0 && idx <= 3) {
+                        return idx;
+                    }
+                }
+            } catch (Throwable ignored) {
+            }
+        }
+        try {
+            int idx = SubscriptionManager.getSlotIndex(subId);
+            if (idx >= 0 && idx <= 3) {
+                return idx;
+            }
+        } catch (Throwable ignored) {
+        }
+        return 0;
+    }
+
+    /**
+     * 荣耀 MagicOS / 华为 EMUI 运营商 opkey 与 CarrierConfig 动态对齐：
+     * 荣耀 CarrierConfigLoader.isConnectCarrierService 与 TpDatabaseHelperHn/TpProviderHn
+     * 强校验 HwCfgFilePolicy.getOpKey(slotId)（底层读 persist.sys.opkey<slot>）；
+     * 若为空，CarrierConfigLoader 直接放弃绑定 CarrierConfig（carrier_config_applied_bool=false，
+     * 导致 Settings -> APNs 显示“此用户无法使用接入点名称设置”且 DataNetworkController 报
+     * DATA_CONFIG_NOT_READY），同时 TpProviderHn 查询与写入丢失 opKey 关联。
+     */
+    private boolean ensureHonorOpKeyAndCarrierConfig(int subId, String numeric) {
+        if (!isHonorOrHuaweiOpKeyRom() || !isValidNumeric(numeric)) {
+            return true;
+        }
+        int slotId = resolveSlotIndex(subId);
+        String propKey = "persist.sys.opkey" + slotId;
+        String rilPropKey = "ril.hw_sim_opkey" + slotId;
+        boolean changedProp = false;
+        if (!numeric.equals(getSysProp(propKey, ""))) {
+            if (setSysProp(propKey, numeric)) {
+                changedProp = true;
+            }
+        }
+        if (!numeric.equals(getSysProp(rilPropKey, ""))) {
+            setSysProp(rilPropKey, numeric);
+        }
+
+        String cfgKey = slotId + ":" + subId + ":" + numeric;
+        if (!changedProp && syncedCarrierConfigs.contains(cfgKey)) {
+            return true;
+        }
+
+        boolean applied = false;
+        try {
+            Class<?> smCls = Class.forName("android.os.ServiceManager");
+            Object binder = smCls.getMethod("getService", String.class).invoke(null, "carrier_config");
+            if (binder != null) {
+                Class<?> stubCls = Class.forName("com.android.internal.telephony.ICarrierConfigLoader$Stub");
+                Object loader = stubCls.getMethod("asInterface", IBinder.class).invoke(null, binder);
+                if (loader != null) {
+                    android.os.PersistableBundle bundle = null;
+                    try {
+                        Method getCfg = loader.getClass().getMethod("getConfigForSubIdWithFeature",
+                            int.class, String.class, String.class);
+                        bundle = (android.os.PersistableBundle) getCfg.invoke(
+                            loader, subId, pkgContext.getPackageName(), null);
+                    } catch (Throwable ignored) {
+                        try {
+                            Method getCfgLegacy = loader.getClass().getMethod("getConfigForSubId",
+                                int.class, String.class);
+                            bundle = (android.os.PersistableBundle) getCfgLegacy.invoke(
+                                loader, subId, pkgContext.getPackageName());
+                        } catch (Throwable ignored2) {
+                        }
+                    }
+                    if (bundle != null && bundle.getBoolean("carrier_config_applied_bool", false)) {
+                        applied = true;
+                    }
+                    if (changedProp || !applied) {
+                        try {
+                            loader.getClass()
+                                .getMethod("updateConfigForPhoneId", int.class, String.class)
+                                .invoke(loader, slotId, "LOADED");
+                        } catch (Throwable t) {
+                            try {
+                                loader.getClass()
+                                    .getMethod("notifyConfigChangedForSubId", int.class)
+                                    .invoke(loader, subId);
+                            } catch (Throwable ignored) {
+                            }
+                        }
+                        Log.w(TAG, "triggered CarrierConfig reload for Honor/Huawei slot=" + slotId +
+                            " subId=" + subId + " opkey=" + numeric + " (wasApplied=" + applied + ")");
+                    }
+                    if (applied && !changedProp) {
+                        syncedCarrierConfigs.add(cfgKey);
+                    }
+                }
+            }
+        } catch (Throwable t) {
+            Throwable cause = t.getCause() != null ? t.getCause() : t;
+            Log.w(TAG, "ensureHonorOpKeyAndCarrierConfig failed: " + cause.getMessage());
+        }
+        return applied;
+    }
+
     private String resolveSimNumeric(int subId) {
         if (tm != null && subId > 0) {
             try {
@@ -370,35 +517,51 @@ public final class ImsNetAgent {
         if (!isValidNumeric(numeric)) {
             return;
         }
+        boolean honorOpKeyRom = isHonorOrHuaweiOpKeyRom();
+        boolean ccApplied = ensureHonorOpKeyAndCarrierConfig(subId, numeric);
+
         String cacheKey = subId + ":" + numeric;
         if (provisionedNumerics.contains(cacheKey)) {
             return;
         }
 
-        // app_process 未在 AMS 注册 ProcessRecord：优先用 getContentProvider(null, pkg, "telephony", 0, false)
-        // （无需 ACCESS_CONTENT_PROVIDERS_EXTERNALLY 权限，直接兼容 uid=1001 radio），回退 getContentProviderExternal。
+        // app_process 未在 AMS 注册 ProcessRecord，getContentProvider(null, ...) 在 Android 14+ 会抛
+        // SecurityException: null IApplicationThread。进程以 system(1000)/root(0)/shell(2000) 运行时
+        // 直接走 getContentProviderExternal，uid=1001 时回退尝试 getContentProvider。
         Object am = null;
         Object provider = null;
         IBinder token = new Binder();
         boolean usedExternal = false;
         AttributionSource attr = pkgContext.getAttributionSource();
+        int myUid = Process.myUid();
         try {
             Class<?> amCls = Class.forName("android.app.ActivityManager");
             am = amCls.getMethod("getService").invoke(null);
             Object holder = null;
-            try {
-                Method getCp = am.getClass().getMethod(
-                    "getContentProvider",
-                    Class.forName("android.app.IApplicationThread"),
-                    String.class, String.class, int.class, boolean.class);
-                holder = getCp.invoke(am, null, pkgContext.getPackageName(), "telephony", 0, false);
-            } catch (Throwable ignored) {
+            if (myUid == 0 || myUid == Process.SYSTEM_UID || myUid == 2000) {
+                try {
+                    holder = am.getClass()
+                        .getMethod("getContentProviderExternal", String.class, int.class, IBinder.class, String.class)
+                        .invoke(am, "telephony", 0, token, "*cmd*");
+                    usedExternal = (holder != null);
+                } catch (Throwable ignored) {
+                }
             }
             if (holder == null) {
+                try {
+                    Method getCp = am.getClass().getMethod(
+                        "getContentProvider",
+                        Class.forName("android.app.IApplicationThread"),
+                        String.class, String.class, int.class, boolean.class);
+                    holder = getCp.invoke(am, null, pkgContext.getPackageName(), "telephony", 0, false);
+                } catch (Throwable ignored) {
+                }
+            }
+            if (holder == null && !usedExternal) {
                 holder = am.getClass()
                     .getMethod("getContentProviderExternal", String.class, int.class, IBinder.class, String.class)
                     .invoke(am, "telephony", 0, token, "*cmd*");
-                usedExternal = true;
+                usedExternal = (holder != null);
             }
             if (holder != null) {
                 Field fProv = holder.getClass().getField("provider");
@@ -406,18 +569,27 @@ public final class ImsNetAgent {
             }
         } catch (Throwable t) {
             Throwable cause = t.getCause() != null ? t.getCause() : t;
-            Log.w(TAG, "acquire telephony provider failed: " + cause.getMessage());
-            provisionedNumerics.add(cacheKey);
+            Log.w(TAG, "acquire telephony provider failed (try=" + apnRetryCount + "): " + cause.getMessage());
+            if (++apnRetryCount >= 6) {
+                provisionedNumerics.add(cacheKey);
+            }
             return;
         }
         if (provider == null) {
-            provisionedNumerics.add(cacheKey);
+            if (++apnRetryCount >= 6) {
+                provisionedNumerics.add(cacheKey);
+            }
             return;
         }
+
+        Uri subCarriersUri = (honorOpKeyRom && subId > 0)
+            ? Uri.parse("content://telephony/carriers/subId/" + subId)
+            : CARRIERS_URI;
 
         try {
             boolean hasDefault = false;
             boolean hasIms = false;
+            long existingDefaultId = -1L;
             Cursor cur = null;
             try {
                 Bundle qArgs = new Bundle();
@@ -426,16 +598,20 @@ public final class ImsNetAgent {
                 Method qMethod = provider.getClass().getMethod(
                     "query", AttributionSource.class, Uri.class, String[].class, Bundle.class,
                     Class.forName("android.os.ICancellationSignal"));
-                cur = (Cursor) qMethod.invoke(provider, attr, CARRIERS_URI,
+                cur = (Cursor) qMethod.invoke(provider, attr, subCarriersUri,
                     new String[] {"_id", "apn", "type"}, qArgs, null);
                 if (cur == null) {
                     return;
                 }
                 while (cur.moveToNext()) {
+                    long rowId = cur.getLong(0);
                     String apn = cur.getString(1);
                     String type = cur.getString(2);
                     if (hasApnType(type, "default")) {
                         hasDefault = true;
+                        if (existingDefaultId < 0) {
+                            existingDefaultId = rowId;
+                        }
                     }
                     if (hasApnType(type, "ims") || "ims".equalsIgnoreCase(apn)) {
                         hasIms = true;
@@ -455,8 +631,11 @@ public final class ImsNetAgent {
             }
 
             if (hasDefault && hasIms) {
-                provisionedNumerics.add(cacheKey);
-                Log.i(TAG, "APN DB already complete for numeric=" + numeric + " (default+ims)");
+                if (ccApplied) {
+                    provisionedNumerics.add(cacheKey);
+                }
+                Log.w(TAG, "APN DB ready for numeric=" + numeric + " subId=" + subId +
+                    " (default+ims, ccApplied=" + ccApplied + ")");
                 return;
             }
 
@@ -470,7 +649,7 @@ public final class ImsNetAgent {
 
             Method insMethod = provider.getClass().getMethod(
                 "insert", AttributionSource.class, Uri.class, ContentValues.class, Bundle.class);
-            long insertedDefaultId = -1L;
+            long insertedDefaultId = existingDefaultId;
             int insertedCount = 0;
             for (PresetApn p : presets) {
                 boolean isImsRow = hasApnType(p.type, "ims") && !hasApnType(p.type, "default");
@@ -503,7 +682,16 @@ public final class ImsNetAgent {
                     cv.put("mmsport", p.mmsPort);
                 }
                 try {
-                    Uri res = (Uri) insMethod.invoke(provider, attr, CARRIERS_URI, cv, new Bundle());
+                    Uri res = null;
+                    if (honorOpKeyRom && subId > 0) {
+                        try {
+                            res = (Uri) insMethod.invoke(provider, attr, subCarriersUri, cv, new Bundle());
+                        } catch (Throwable ignored) {
+                        }
+                    }
+                    if (res == null) {
+                        res = (Uri) insMethod.invoke(provider, attr, CARRIERS_URI, cv, new Bundle());
+                    }
                     if (res != null) {
                         insertedCount++;
                         if (isDefaultRow && insertedDefaultId < 0) {
@@ -516,7 +704,7 @@ public final class ImsNetAgent {
                 }
             }
 
-            if (!hasDefault && insertedDefaultId > 0 && subId > 0) {
+            if (insertedDefaultId > 0 && subId > 0) {
                 try {
                     Method updMethod = provider.getClass().getMethod(
                         "update", AttributionSource.class, Uri.class, ContentValues.class, Bundle.class);
@@ -528,9 +716,23 @@ public final class ImsNetAgent {
                 }
             }
 
-            provisionedNumerics.add(cacheKey);
-            Log.i(TAG, "provisioned " + insertedCount + " preset APN(s) for numeric=" + numeric +
-                " (hadDefault=" + hasDefault + ", hadIms=" + hasIms + ")");
+            if (insertedCount > 0) {
+                try {
+                    ContentResolver cr = pkgContext.getContentResolver();
+                    if (cr != null) {
+                        cr.notifyChange(CARRIERS_URI, null);
+                    }
+                } catch (Throwable ignored) {
+                }
+            }
+
+            if (ccApplied && insertedCount > 0) {
+                provisionedNumerics.add(cacheKey);
+            }
+            apnRetryCount = 0;
+            Log.w(TAG, "provisioned " + insertedCount + " preset APN(s) for numeric=" + numeric +
+                " subId=" + subId + " (hadDefault=" + hasDefault + ", hadIms=" + hasIms +
+                ", ccApplied=" + ccApplied + ")");
         } catch (Throwable t) {
             Log.w(TAG, "ensureCarrierApns failed: " + t.getMessage());
         } finally {

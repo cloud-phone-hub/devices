@@ -143,6 +143,18 @@
         "variant": "default",
         "version": "1.0"
       }
+    },
+    {
+      "android.hardware.soundtrigger3": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.biometrics": {
+        "variant": "fakefingerprint",
+        "version": "1.0"
+      }
     }
   ]
 }

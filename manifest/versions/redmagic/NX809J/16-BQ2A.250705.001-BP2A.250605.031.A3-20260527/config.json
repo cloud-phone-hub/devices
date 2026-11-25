@@ -10,13 +10,14 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MPSS.DE.9.0-01805.10-KAANAPALI_GEN_PACK-2.124266.70",
     "comment": "由 cdh unpack prepare 从 NX809S_GB_REDMAGICOS11.0.05MR1_update.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
+      "odm": "16",
+      "product": "16",
       "system": "16",
       "system_ext": "16",
-      "product": "16",
       "vendor": "16",
-      "odm": "16",
       "vendor_dlkm": "16"
     }
   },

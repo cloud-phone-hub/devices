@@ -14,6 +14,7 @@
     "ro.soc.model": "MT6768",
     "ro.vendor.boot_security_patch": "2026-05-05",
     "ro.vendor.build.security_patch": "2026-05-05",
+    "ro.vendor.cdh.device.market_name": "TCL 60 SE",
     "ro.vendor.cdh.display.default_refresh_rate": "90",
     "ro.vendor.cdh.display.edid_name": "NT36525B",
     "ro.vendor.cdh.display.edid_pnp": "TCL",

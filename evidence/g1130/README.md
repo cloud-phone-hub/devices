@@ -1,9 +1,10 @@
 # g1130：BLU G65L（`blu/G1130` / Unisoc UMS9230T / GRF vendor=13，system=14，kernel 5.15）
 
-1 条机型条目：#297 记录 `blu/G1130`（`14-UP1A.231005.007-20260511`，`lineage-20.0` + `kernel 5.15`）接入 `#295` 的 `CONFIG_PPP_MPPE=y` 5.15 新内核彻底消除「There's an internal problem with your device.」系统弹窗，并屏蔽循环重启的展锐后台进程（`linkturbonative`、`srmi_proxyd`、`ylog`、`slogmodem`）及补齐 `android.hardware.neuralnetworks@1.0` 占位宿主。
+2 条机型条目：#297 记录 `blu/G1130`（`14-UP1A.231005.007-20260511`，`lineage-20.0` + `kernel 5.15`）接入 `#295` 的 `CONFIG_PPP_MPPE=y` 5.15 新内核消除系统内部错误弹窗并屏蔽循环重启后台进程；#336 记录 `02_prepare` 展锐真机规格全链对齐，以及无线电 `/dev/hvc4` 启动竞态、`ro.boot.ddrsize` RAM 显示、`tool_service` AVC 与展锐原生相机 `DreamCamera2` 冷启动/拍照全链打通。
 
 ## 条目
 
 | # | 问题标识 | 说明 | 状态 |
 | :--- | :--- | :--- | :--- |
 | 297 | [issue-g1130-ppp-mppe-and-unisoc-restarting-daemons](issue-g1130-ppp-mppe-and-unisoc-restarting-daemons/solution.md) | 运行旧 5.15 内核（`CONFIG_PPP_MPPE=m`）触发 Android 14 VINTF 系统内部错误弹窗；同时 `/system_ext/bin/{linkturbonative,srmi_proxyd}` 无限重启（各退出 511 次）、`ylog`/`slogmodem` 刷 9,800+ 次 AVC、漏配 `neuralnetworks@1.0` 占位宿主。**改动**：`module/config.json` 屏蔽上述 4 个展锐后台二进制，`hardware/config.json` 补入 `neuralnetworks@1.0`，基于 `#295` 新 5.15 内核全链重打包并原子替换盘集 | **已闭环**（2026-11-21）：冷启动 `Enforcing`、`CONFIG_PPP_MPPE=y`、`VintfObject` 0 错误、`restarting=none`、13 项展锐占位服务全在线、`qemu.log` 降 88%（AVC 降 85%），桌面审图系统内部错误弹窗 100% 消失 |
+| 336 | [issue-g1130-boot-radio-ddrsize-camera-and-prepare-align](issue-g1130-boot-radio-ddrsize-camera-and-prepare-align/solution.md) | `02_prepare` 漏提内嵌 `.pac` 基带与展锐 DTB 频点/品牌/A75 `0xd0a`/EDID `"SPR"`；运行态 `About device` `RAM: null`、`/dev/hvc4` `open->tcsetattr` 竞态致 `N_TTY` 污染锁死无线电通道（无 SIM/LTE/基带）、`tool_service` 刷 4.5 万条 AVC、原生相机 `DreamCamera2` 缺静态/结果 Vendor Tags 冷启 NPE 且快门因 `sprdSwitchCaptureRequestEnable=0` 拒拍。**改动**：`02_prepare` 全维度对齐展锐采集与落盘；`service_daemon` 动态同步 `ro.boot.ddrsize`；`radio` `channel.cpp` 清软流控 + `tcflush` + 128 KiB 滑窗重同步；`camera_unisoc_ext.cpp` 补齐 `/system_ext/app/DreamCamera2` 路径及 20 项静态 + 20 项结果 Vendor Tags（置 `0xC200004A=1`、`0xC2000041=1`） | **已闭环**（2026-11-26）：稳态 `181s` `Enforcing`、0 ANR、`tool_service` 0 AVC；中国联通 LTE `IN_SERVICE` + `ccmni1`/`wlan0` 双网在线、基带 `4G_MODEM_22B_W26.02.5_P2`、`RAM: 4.0 GB`；`DreamCamera2` 冷启 5/5（100%）通过并连拍落盘 2 张 JPEG 审图正常 |

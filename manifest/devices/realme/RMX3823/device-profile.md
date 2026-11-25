@@ -2,8 +2,7 @@
 
 - **生成时间**: `2026-11-19T11:24:31+08:00`
 - **ROM Build ID**: `15-TP1A.220905.001-20250912`
-- **分区 Android 版本**: `system=15, system_ext=15, product=15, vendor=13, vendor_dlkm=13`
-- **DSH 聊天会话 ID**: `session-f3293897-adad-4461-80cc-ce8ce4be780b`（标题：`[02_prepare] 真机规格采集 · realme/RMX3823 (15-TP1A.220905.001-20250912)`）
+- **DSH 聊天会话 ID**: `session-f3293897-adad-4461-80cc-ce8ce4be780b`（标题：`[02_prepare] 真机规格采集 · realme/RMX3823 (13-TP1A.220905.001-20250912)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
 ---
@@ -239,7 +238,7 @@
 - **触控与按键对齐**: touch=`synaptics_tcm` · keyboard=`gpio-keys` · input_identity 外设数=`4` 项
 - **硬件 HAL 变体与开关**: radioVariant=`default` · NFC=`true` · 红外=`true` · 3.5mm=`false` · 立体声双扬声器
 - **影像规格**: 后置 50MP IMX890 (OIS) + 8MP 超广角 + 2MP 微距 | 前置 16MP
-- **电池与通信**: `5240 mAh`（有线 `150W` / 无线 `0W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `5.3` · 5G=`true` · Widevine `L1` (sysId=`33098`) · TAC `86702705` · MAC OUI `[c0:ee:fb 64:a2:f9]`
+- **电池与通信**: `5240 mAh`（有线 `150W` / 无线 `0W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `5.3` · 5G=`true` · Widevine `L1` (sysId=`33098`) · TAC `86702705` · 基带 `MPSS.DE.3.0-02177.2-KAILUA_GEN_PACK-2.18776.259` · MAC OUI `[c0:ee:fb 64:a2:f9]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `23` 项对齐传感器
@@ -262,7 +261,7 @@
 - vendor/etc：battery 取 5240mAh（Li-poly、150W SuperVOOC、无无线充）；vibrator 为 X 轴线性马达并支持丰富振动原语；audioEffects 以 Dolby Atmos + AOSP 标准音效（bassboost/equalizer/virtualizer）登记；media 按固件实测 Codec2 实例登记，store=default1、rank=1，不占用 default，AV1 虽为平台能力但实测未列出故不虚增。
 - thermal：kernel 温区改为 Qualcomm 口径（battery / cpu-0-0-usr / gpuss-0-usr / skin-therm / quiet-therm），thermal_config 的 coolingDeviceName 取 kgsl-3d0（Adreno KGSL），与 MTK 的 devfreq-*.mali 完全不同。
 - 待真机复测项：EDID 面板厂/产品号（当前按天马 TMA 1.5K 面板推断）、触控 IC 具体型号、imeiTac 与 Wi-Fi macOuiCandidates、Widevine systemId；这些必须在设备端 dump 后回填，勿直接上线。
-- 落盘位置注意：工作区现有 realme/RMX3823/RMX3823-android15 是 Android 15 + lineage-22.2 的空脚手架（vendor 仅 2 条 mesa 占位），本输出按 Android 13 固件 15-TP1A.220905.001-20250912 口径，需新建 13 基线目录，不能写入 15 目录。
+- 落盘位置注意：工作区现有 realme/RMX3823/RMX3823-android15 是 Android 15 + lineage-22.2 的空脚手架（vendor 仅 2 条 mesa 占位），本输出按 Android 13 固件 13-TP1A.220905.001-20250912 口径，需新建 13 基线目录，不能写入 15 目录。
 
 ## 三、官方固件包解包实测对账（`build.prop` + `boot.img` + `VINTF` + `DTB` + `fstab` + `vendor/etc`）
 
@@ -270,7 +269,9 @@
 - `board`: `kalama` | `soc`: `QTI  ()`
 - `densityDpi`: `0` | `egl`: `adreno` | `vulkan`: `adreno` | `abilist`: `arm64-v8a,armeabi-v7a,armeabi`
 - `securityPatch`: `2025-09-01` | `buildDate`: `20250912` | `kernelLine`: `5.15` | `vintfVersion`: `-`
+- `partitionAndroidVersions`: `system=15, system_ext=15, product=15, vendor=13, vendor_dlkm=13`
 - `uname`: `Linux localhost 5.15.167-android13-8-o-01142-g18bd462653c5 #1 SMP PREEMPT Fri Sep 12 08:36:21 UTC 2025 aarch64 Toybox`
+- `basebandVersion`: `MPSS.DE.3.0-02177.2-KAILUA_GEN_PACK-2.18776.259`（来源: `zip:payload.bin/modem`）
 - `fingerprint`: `oplus/ossi/ossi:13/TP1A.220905.001/1757666287837:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=ossi`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `vda.partitions` (1 个附加分区): `vendor_persist.img->/mnt/vendor/persist`
@@ -312,7 +313,7 @@
 - `battery` 5240mAh（Li-poly、双电芯 150W SuperVOOC）；`vibrator` X 轴线性马达 + 丰富振动原语；`audioEffects` 按真我 Dolby Atmos + AOSP 标准音效给出；`audioEngine` 默认 `default,bluetooth,r_submix`。
 - `hardwareHals`：`radioVariant=default`、`enableIr=true`（固件 `hasConsumerIr` 实测为真）、`enableNfc=true`（`hasNfc` 为真 + `oplus.hardware.nfc` 在 VINTF 登记）。
 
-**需要真机复测才敢定稿的项（已在 alignmentNotes 标注）**：EDID 面板厂/产品号、触控 IC 具体型号（Synaptics vs Goodix）、`imeiTac`、Wi-Fi `macOuiCandidates`、Widevine `systemId`。另外工作区现有 `RMX3823-android15/` 是 Android 15 + lineage-22.2 的空脚手架（vendor 只有 2 条 mesa 占位属性），本次按 **Android 13 固件（15-TP1A.220905.001-20250912）** 口径输出，真正落盘时还需新建对应 baseline，不能把 13 的数据塞进 15 目录。
+**需要真机复测才敢定稿的项（已在 alignmentNotes 标注）**：EDID 面板厂/产品号、触控 IC 具体型号（Synaptics vs Goodix）、`imeiTac`、Wi-Fi `macOuiCandidates`、Widevine `systemId`。另外工作区现有 `RMX3823-android15/` 是 Android 15 + lineage-22.2 的空脚手架（vendor 只有 2 条 mesa 占位属性），本次按 **Android 13 固件（13-TP1A.220905.001-20250912）** 口径输出，真正落盘时还需新建对应 baseline，不能把 13 的数据塞进 15 目录。
 
 ```json
 {
@@ -716,10 +717,10 @@
     "vendor/etc：battery 取 5240mAh（Li-poly、150W SuperVOOC、无无线充）；vibrator 为 X 轴线性马达并支持丰富振动原语；audioEffects 以 Dolby Atmos + AOSP 标准音效（bassboost/equalizer/virtualizer）登记；media 按固件实测 Codec2 实例登记，store=default1、rank=1，不占用 default，AV1 虽为平台能力但实测未列出故不虚增。",
     "thermal：kernel 温区改为 Qualcomm 口径（battery / cpu-0-0-usr / gpuss-0-usr / skin-therm / quiet-therm），thermal_config 的 coolingDeviceName 取 kgsl-3d0（Adreno KGSL），与 MTK 的 devfreq-*.mali 完全不同。",
     "待真机复测项：EDID 面板厂/产品号（当前按天马 TMA 1.5K 面板推断）、触控 IC 具体型号、imeiTac 与 Wi-Fi macOuiCandidates、Widevine systemId；这些必须在设备端 dump 后回填，勿直接上线。",
-    "落盘位置注意：工作区现有 realme/RMX3823/RMX3823-android15 是 Android 15 + lineage-22.2 的空脚手架（vendor 仅 2 条 mesa 占位），本输出按 Android 13 固件 15-TP1A.220905.001-20250912 口径，需新建 13 基线目录，不能写入 15 目录。"
+    "落盘位置注意：工作区现有 realme/RMX3823/RMX3823-android15 是 Android 15 + lineage-22.2 的空脚手架（vendor 仅 2 条 mesa 占位），本输出按 Android 13 固件 13-TP1A.220905.001-20250912 口径，需新建 13 基线目录，不能写入 15 目录。"
   ],
   "sources": [
-    "目标机官方固件实测 JSON（build.prop / boot cmdline / VINTF / vendor/etc / odm/etc，buildId 15-TP1A.220905.001-20250912）",
+    "目标机官方固件实测 JSON（build.prop / boot cmdline / VINTF / vendor/etc / odm/etc，buildId 13-TP1A.220905.001-20250912）",
     "devices/manifest/configs/redmi/gold/gold-android15/（gold 标杆字段结构与颗粒度，值已全部替换为本机平台口径）",
     "https://www.gsmarena.com/realme_gt5-12528.php（realme GT5：6.74 英寸、Snapdragon 8 Gen 2、5240mAh）",
     "https://www.gsmarena.com/realme_gt5_240w-12529.php（RMX3820 240W 版：4600mAh、24GB+1TB，与本机容量档位区分）",

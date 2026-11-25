@@ -127,6 +127,11 @@
       "type": "dir"
     },
     {
+      "from": "/system/lib/modules",
+      "to": "/mnt/vendorpatch/vendor_dlkm/lib/modules",
+      "type": "dir"
+    },
+    {
       "from": "/system/bin/update_verifier",
       "to": "/mnt/vendorpatch/system/bin/update_verifier",
       "type": "file"
@@ -328,6 +333,13 @@
         "jitter-mc": 200,
         "type": "mtktsgpu"
       }
+    ]
+  },
+  "display": {
+    "refresh-rates": [
+      60,
+      90,
+      120
     ]
   }
 }

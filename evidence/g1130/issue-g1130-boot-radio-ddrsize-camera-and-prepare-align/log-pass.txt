@@ -1,0 +1,102 @@
+=== 1. UPTIME & SELINUX ===
+181.07 1269.42
+ 03:21:25 up 3 min,  0 users,  load average: 1.00, 0.65, 0.27
+Enforcing
+1
+=== 2. RADIO & NETWORK & BASEBAND ===
+11-26 03:18:34.881   939   954 D RILJ    : convertHalRadioCapability: session=0, phase=0, rat=561156, logicModemUuid=cdh-radio-modem-0, status=1, rcRil.raf=1130504 [PHONE0]
+11-26 03:18:34.881   939   954 D RILJ    : [0016]< GET_RADIO_CAPABILITY {mPhoneId = 0 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1} [PHONE0]
+11-26 03:18:34.997   939   955 D RILJ    : convertHalRadioCapability: session=0, phase=0, rat=561156, logicModemUuid=cdh-radio-modem-0, status=1, rcRil.raf=1130504 [PHONE1]
+11-26 03:18:34.997   939   955 D RILJ    : [0046]< GET_RADIO_CAPABILITY {mPhoneId = 1 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1} [PHONE1]
+11-26 03:18:35.130   939   939 D GsmCdmaPhone: EVENT_GET_RADIO_CAPABILITY: phone rc: {mPhoneId = 0 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1}
+11-26 03:18:35.195   939   939 D GsmCdmaPhone: EVENT_GET_RADIO_CAPABILITY: phone rc: {mPhoneId = 1 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1}
+11-26 03:18:35.791   939  1426 D RILJ    : convertHalRadioCapability: session=0, phase=0, rat=561156, logicModemUuid=cdh-radio-modem-0, status=1, rcRil.raf=1130504 [PHONE1]
+11-26 03:18:35.791   939  1426 D RILJ    : [0155]< GET_RADIO_CAPABILITY {mPhoneId = 1 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1} [PHONE1]
+11-26 03:18:35.797   939   939 D GsmCdmaPhone: EVENT_GET_RADIO_CAPABILITY: phone rc: {mPhoneId = 1 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1}
+11-26 03:18:35.884   939  1001 D RILJ    : convertHalRadioCapability: session=0, phase=0, rat=561156, logicModemUuid=cdh-radio-modem-0, status=1, rcRil.raf=1130504 [PHONE0]
+11-26 03:18:35.884   939  1001 D RILJ    : [0170]< GET_RADIO_CAPABILITY {mPhoneId = 0 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1} [PHONE0]
+11-26 03:18:35.909   939   939 D GsmCdmaPhone: EVENT_GET_RADIO_CAPABILITY: phone rc: {mPhoneId = 0 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1}
+11-26 03:18:35.946   939  1491 D RILJ    : convertHalRadioCapability: session=0, phase=0, rat=561156, logicModemUuid=cdh-radio-modem-0, status=1, rcRil.raf=1130504 [PHONE0]
+11-26 03:18:35.946   939  1491 D RILJ    : [0184]< GET_RADIO_CAPABILITY {mPhoneId = 0 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1} [PHONE0]
+11-26 03:18:35.953   939   939 D GsmCdmaPhone: EVENT_GET_RADIO_CAPABILITY: phone rc: {mPhoneId = 0 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1}
+11-26 03:18:36.186   939   953 D RILJ    : convertHalRadioCapability: session=0, phase=0, rat=561156, logicModemUuid=cdh-radio-modem-0, status=1, rcRil.raf=1130504 [PHONE0]
+11-26 03:18:36.186   939   953 D RILJ    : [0211]< GET_RADIO_CAPABILITY {mPhoneId = 0 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1} [PHONE0]
+11-26 03:18:36.192   939   939 D GsmCdmaPhone: EVENT_GET_RADIO_CAPABILITY: phone rc: {mPhoneId = 0 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1}
+11-26 03:19:07.103   939  1425 D RILJ    : convertHalRadioCapability: session=0, phase=0, rat=561156, logicModemUuid=cdh-radio-modem-0, status=1, rcRil.raf=1130504 [PHONE0]
+11-26 03:19:07.103   939  1425 D RILJ    : [0242]< GET_RADIO_CAPABILITY {mPhoneId = 0 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1} [PHONE0]
+11-26 03:19:07.167   939   939 D GsmCdmaPhone: EVENT_GET_RADIO_CAPABILITY: phone rc: {mPhoneId = 0 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1}
+11-26 03:19:07.906   939  1392 D RILJ    : convertHalRadioCapability: session=0, phase=0, rat=561156, logicModemUuid=cdh-radio-modem-0, status=1, rcRil.raf=1130504 [PHONE0]
+11-26 03:19:07.906   939  1392 D RILJ    : [0254]< GET_RADIO_CAPABILITY {mPhoneId = 0 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1} [PHONE0]
+11-26 03:19:07.913   939   939 D GsmCdmaPhone: EVENT_GET_RADIO_CAPABILITY: phone rc: {mPhoneId = 0 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1}
+11-26 03:19:07.961   939  1442 D RILJ    : convertHalRadioCapability: session=0, phase=0, rat=561156, logicModemUuid=cdh-radio-modem-0, status=1, rcRil.raf=1130504 [PHONE1]
+11-26 03:19:07.961   939  1442 D RILJ    : [0257]< GET_RADIO_CAPABILITY {mPhoneId = 1 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1} [PHONE1]
+11-26 03:19:07.968   939   939 D GsmCdmaPhone: EVENT_GET_RADIO_CAPABILITY: phone rc: {mPhoneId = 1 mVersion=1 mSession=0 mPhase=0 mRadioAccessFamily=561156 mLogicModemId=cdh-radio-modem-0 mStatus=1}
+LOADED,ABSENT
+China Unicom,
+46001,
+LTE,Unknown
+4G_MODEM_22B_W26.02.5_P2,4G_MODEM_22B_W26.02.5_P2
+    mServiceState={mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE), mChannelNumber=1650, duplexMode()=1, mCellBandwidths=[20000], mOperatorAlphaLong=中国联通, mOperatorAlphaShort=中国联通, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=14(LTE), getRilDataRadioTechnology=14(LTE), mCssIndicator=unsupported, mNetworkId=-1, mSystemId=-1, mCdmaRoamingIndicator=-1, mCdmaDefaultRoamingIndicator=-1, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=NOT_REG_OR_SEARCHING networkRegistrationState=NOT_REG_OR_SEARCHING roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[VOICE,SMS,EMERGENCY] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false}, NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[VOICE,SMS,VIDEO] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=VoiceSpecificRegistrationInfo { mCssSupported=false mRoamingIndicator=0 mSystemIsInPrl=0 mDefaultRoamingIndicator=0} dataSpecificInfo=null nrState=**** rRplmn=46001 isUsingCarrierAggregation=false}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[DATA] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 16 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 null } nrState=**** rRplmn=46001 isUsingCarrierAggregation=false}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=中国联通, mOperatorAlphaShortRaw=中国联通, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataConnectionState=2
+    mServiceState={mVoiceRegState=1(OUT_OF_SERVICE), mDataRegState=1(OUT_OF_SERVICE), mChannelNumber=0, duplexMode()=0, mCellBandwidths=[], mOperatorAlphaLong=null, mOperatorAlphaShort=null, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=0(Unknown), getRilDataRadioTechnology=0(Unknown), mCssIndicator=unsupported, mNetworkId=0, mSystemId=0, mCdmaRoamingIndicator=0, mCdmaDefaultRoamingIndicator=0, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[], mNrFrequencyRange=0, mOperatorAlphaLongRaw=null, mOperatorAlphaShortRaw=null, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataConnectionState=-1
+1: lo    inet 127.0.0.1/8 scope host lo\       valid_lft forever preferred_lft forever
+6: ccmni1    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1\       valid_lft forever preferred_lft forever
+16: wlan0    inet 192.168.10.100/24 brd 192.168.10.255 scope global wlan0\       valid_lft forever preferred_lft forever
+=== 3. DEVICE IDENTITY & RAM & DISPLAY ===
+BLU
+G65L
+G1130
+4096M
+MemTotal:        3809720 kB
+Physical size: 720x1600
+Physical density: 320
+    activeMode=60.00 Hz (60.00 Hz)
+GLES: ARM, Mali-G57 MP1, OpenGL ES 3.2 v1.r38p1-01eac0.24081d5b6a2c4e8f9b0d3a7c5e1f2d84
+=== 4. CPUFREQ & SENSORS ===
+1820000 1728000 1632000 1536000 1416000 1320000 1228800 1120000 1024000 921600 819200 691200 614400 
+2028000 1920000 1820000 1728000 1632000 1536000 1416000 1320000 1228800 1120000 1024000 921600 
+0x00000001) active-count = 3; sampling_period(ms) = {80.0, 80.0, 80.0}, selected = 80.00 ms; batching_period(ms) = {2000.0, 0.0, 0.0}, selected = 0.00 ms
+0x00000008) active-count = 1; sampling_period(ms) = {1.0}, selected = 1.00 ms; batching_period(ms) = {0.0}, selected = 0.00 ms
+0x0000001b) active-count = 2; sampling_period(ms) = {66.7, 66.7}, selected = 66.67 ms; batching_period(ms) = {0.0, 0.0}, selected = 0.00 ms
+0x00000001) lis2dw12_acc              | STMicroelectronics | ver: 1 | type: android.sensor.accelerometer(1) | perm: n/a | flags: 0x00000000
+0x00000005) stk3335_l                 | Sensortek       | ver: 1 | type: android.sensor.light(5) | perm: n/a | flags: 0x00000002
+0x00000008) stk3335_p                 | Sensortek       | ver: 1 | type: android.sensor.proximity(8) | perm: n/a | flags: 0x00000003
+0x00000009) GRAVITY                   | Unisoc          | ver: 1 | type: android.sensor.gravity(9) | perm: n/a | flags: 0x00000000
+0x0000000a) LINEARACCEL               | Unisoc          | ver: 1 | type: android.sensor.linear_acceleration(10) | perm: n/a | flags: 0x00000000
+0x00000011) SIGNIFICANT_MOTION        | Unisoc          | ver: 1 | type: android.sensor.significant_motion(17) | perm: n/a | flags: 0x00000005
+0x00000012) STEP_DETECTOR             | Unisoc          | ver: 1 | type: android.sensor.step_detector(18) | perm: android.permission.ACTIVITY_RECOGNITION | flags: 0x00000006
+0x00000013) STEP_COUNTER              | Unisoc          | ver: 1 | type: android.sensor.step_counter(19) | perm: android.permission.ACTIVITY_RECOGNITION | flags: 0x00000002
+0x00000016) TILT_DETECTOR             | Unisoc          | ver: 1 | type: android.sensor.tilt_detector(22) | perm: n/a | flags: 0x00000007
+0x0000001b) DEVICE_ORIENTATION        | Unisoc          | ver: 1 | type: android.sensor.device_orientation(27) | perm: n/a | flags: 0x00000002
+0x00000023) UNCALI_ACC                | Unisoc          | ver: 1 | type: android.sensor.accelerometer_uncalibrated(35) | perm: n/a | flags: 0x00000000
+=== 5. CAMERA 5/5 & PHOTOS & SELINUX AVC & ANR ===
+CAMERA_COLD_START_PASS=5/5 (PIDs: 5083, 6673, 6929, 7135, 7380; cameraserver=508, hal=423)
+423 508 7380
+total 32K
+-rwxrwx--- 1 u0_a198 media_rw 16K 2026-11-26 03:19 IMG_20261126_031933.jpg
+-rwxrwx--- 1 u0_a198 media_rw 16K 2026-11-26 03:19 IMG_20261126_031936.jpg
+tool_service_avc_denied=0
+anr_files=0
+=== CRASH BUFFER ===
+--------- beginning of crash
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: FATAL EXCEPTION: Thread-2
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: Process: com.android.chrome, PID: 4560
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: java.lang.RuntimeException: Starting in 64-bit mode requires the 64-bit native library. If the device is 64-bit only, see alternatives here: https://crbug.com/1303857#c7.
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: 	at nM3.onResult(chromium-TrichromeChromeGoogle.aab-stable-653306431:47)
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: 	at org.chromium.base.library_loader.b.f(chromium-TrichromeChromeGoogle.aab-stable-653306431:174)
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: 	at org.chromium.base.library_loader.b.b(chromium-TrichromeChromeGoogle.aab-stable-653306431:11)
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: 	at org.chromium.base.library_loader.b.a(chromium-TrichromeChromeGoogle.aab-stable-653306431:8)
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: 	at OU.run(chromium-TrichromeChromeGoogle.aab-stable-653306431:3)
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:1012)
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: Caused by: java.lang.UnsatisfiedLinkError: Failed at System.loadLibrary()
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: 	at org.chromium.base.library_loader.d.b(chromium-TrichromeChromeGoogle.aab-stable-653306431:133)
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: 	at org.chromium.base.library_loader.b.g(chromium-TrichromeChromeGoogle.aab-stable-653306431:68)
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: 	at org.chromium.base.library_loader.b.f(chromium-TrichromeChromeGoogle.aab-stable-653306431:38)
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: 	... 4 more
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: Caused by: java.lang.UnsatisfiedLinkError: dlopen failed: library "libmonochrome.so" not found
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: 	at java.lang.Runtime.loadLibrary0(Runtime.java:1082)
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: 	at java.lang.Runtime.loadLibrary0(Runtime.java:1003)
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: 	at java.lang.System.loadLibrary(System.java:1661)
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: 	at org.chromium.base.library_loader.d.b(chromium-TrichromeChromeGoogle.aab-stable-653306431:98)
+11-26 03:19:11.245  4560  4636 E AndroidRuntime: 	... 6 more

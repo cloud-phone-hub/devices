@@ -2,7 +2,6 @@
 
 - **生成时间**: `2026-11-18T18:59:40+08:00`
 - **ROM Build ID**: `16-BP2A.250605.015-20260810`
-- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=16, vendor_dlkm=16`
 - **DSH 聊天会话 ID**: `session-9113289d-9850-4661-9342-1f6560e697fa`（标题：`[02_prepare] 真机规格采集 · oneplus/CPH2767 (16-BP2A.250605.015-20260810)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
@@ -164,7 +163,7 @@
 - **触控与按键对齐**: touch=`synaptics_tcm` · keyboard=`gpio-keys` · input_identity 外设数=`4` 项
 - **硬件 HAL 变体与开关**: radioVariant=`default` · NFC=`true` · 红外=`true` · 3.5mm=`false` · 双扬声器（立体声）
 - **影像规格**: 后置 50MP + 8MP | 前置 16MP
-- **电池与通信**: `7800 mAh`（有线 `80W` / 无线 `0W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `5.4` · 5G=`true` · Widevine `L1` (sysId=`27109`) · TAC `35741206` · MAC OUI `[c0:ee:fb 94:65:2d 64:a2:f9]`
+- **电池与通信**: `7800 mAh`（有线 `80W` / 无线 `0W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `5.4` · 5G=`true` · Widevine `L1` (sysId=`27109`) · TAC `35741206` · 基带 `MPSS.DE.9.0-02004.5-KAANAPALI_GEN_PACK-1` · MAC OUI `[c0:ee:fb 94:65:2d 64:a2:f9]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `26` 项对齐传感器
@@ -194,7 +193,9 @@
 - `board`: `canoe` | `soc`: `QTI  ()`
 - `densityDpi`: `0` | `egl`: `adreno` | `vulkan`: `adreno` | `abilist`: `arm64-v8a`
 - `securityPatch`: `2026-08-01` | `buildDate`: `20260810` | `kernelLine`: `6.12` | `vintfVersion`: `-`
+- `partitionAndroidVersions`: `system=16, system_ext=16, product=16, vendor=16, vendor_dlkm=16`
 - `uname`: `Linux localhost 6.12.38-android16-5-g844001fb8721-ab14552068-4k #1 SMP PREEMPT Fri Dec  5 02:15:49 UTC 2025 aarch64 Toybox`
+- `basebandVersion`: `MPSS.DE.9.0-02004.5-KAANAPALI_GEN_PACK-1`（来源: `zip:payload.bin/modem`）
 - `fingerprint`: `oplus/ossi/ossi:16/BP2A.250605.015/1786365054409:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=ossi`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `vda.partitions` (1 个附加分区): `vendor_persist.img->/mnt/vendor/persist`

@@ -1,0 +1,12 @@
+{
+  "build-prop-sets": {
+    "gsm.version.baseband": "MOLY.NR16.R2.MP3.MP.V119.3.P2"
+  },
+  "build-prop-unsets": [
+    "ro.frp.pst",
+    "ro.vndk.lite",
+    "ro.crypto.metadata_init_delete_all_keys.enabled",
+    "ro.gfx.driver.0",
+    "ro.gfx.driver.1"
+  ]
+}

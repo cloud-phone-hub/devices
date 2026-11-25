@@ -2,7 +2,6 @@
 
 - **生成时间**: `2026-11-18T19:16:23+08:00`
 - **ROM Build ID**: `16-BP2A.250605.015-20260529`
-- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=16, vendor_dlkm=16, odm_dlkm=16`
 - **DSH 聊天会话 ID**: `session-ab23d997-14df-4851-a372-6649b5a122a2`（标题：`[02_prepare] 真机规格采集 · oppo/CPH2797 (16-BP2A.250605.015-20260529)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
@@ -200,7 +199,7 @@
 - **触控与按键对齐**: touch=`synaptics_tcm` · keyboard=`mtk-kpd` · input_identity 外设数=`4` 项
 - **硬件 HAL 变体与开关**: radioVariant=`mtk` · NFC=`true` · 红外=`false` · 3.5mm=`false` · 立体声双扬声器
 - **影像规格**: 后置 50MP 主摄 + 50MP 超广角 + 50MP 潜望长焦(3x) | 前置 32MP
-- **电池与通信**: `7025 mAh`（有线 `80W` / 无线 `50W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `6.0` · 5G=`true` · Widevine `L1` (sysId=`24025`) · TAC `86432051` · MAC OUI `[f8:a9:d0 3c:cd:57]`
+- **电池与通信**: `7025 mAh`（有线 `80W` / 无线 `50W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `6.0` · 5G=`true` · Widevine `L1` (sysId=`24025`) · TAC `86432051` · 基带 `MOLY.NR17.R2.MP2.TC16.PR1.SP.V1.P111` · MAC OUI `[f8:a9:d0 3c:cd:57]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `24` 项对齐传感器
@@ -233,10 +232,12 @@
 - `board`: `mt6993` | `soc`: `Mediatek  ()`
 - `densityDpi`: `480` | `egl`: `mali` | `vulkan`: `mali` | `abilist`: `arm64-v8a`
 - `securityPatch`: `2026-06-01` | `buildDate`: `20260529` | `kernelLine`: `` | `vintfVersion`: `202504.0`
+- `partitionAndroidVersions`: `system=16, system_ext=16, product=16, vendor=16, vendor_dlkm=16, odm_dlkm=16`
+- `basebandVersion`: `MOLY.NR17.R2.MP2.TC16.PR1.SP.V1.P111`（来源: `zip:payload.bin/modem`）
 - `fingerprint`: `oplus/ossi/ossi:16/BP2A.250605.015/1780051221844:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=ossi`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `vda.partitions` (5 个附加分区): `vendor_persist.img->/mnt/vendor/persist`, `protect_f.img->/mnt/vendor/protect_f`, `protect_s.img->/mnt/vendor/protect_s`, `nvdata.img->/mnt/vendor/nvdata`, `nvcfg.img->/mnt/vendor/nvcfg`
-- `vintfPlaceholders`: radio=`36` 项 · audio=`1` 项 · gnss=`2` 项 · nn=`102` 项
+- `vintfPlaceholders`: radio=`36` 项 · audio=`1` 项 · gnss=`2` 项 · nn=`100` 项
 
 ### `vendor/etc` 与 `odm/etc` 硬件配置实测详情
 

@@ -12,8 +12,13 @@
     "ro.hwui.use_vulkan": "false",
     "ro.sf.lcd_density": "440",
     "ro.soc.manufacturer": "Qualcomm",
+    "ro.vendor.asus.beta": "0",
+    "ro.vendor.asus.product.mkt_name": "ASUS ROG Phone 7",
     "ro.vendor.boot_security_patch": "2024-03-05",
+    "ro.vendor.build.asus.sku": "WW",
+    "ro.vendor.build.csc.version": "WW_AI2205_33.0820.0810.225",
     "ro.vendor.build.security_patch": "2024-03-05",
+    "ro.vendor.cdh.device.market_name": "ASUS ROG Phone 7",
     "ro.vendor.cdh.display.edid_name": "QCMDEV",
     "ro.vendor.cdh.display.edid_pnp": "QCM",
     "ro.vendor.cdh.display.edid_product_id": "60476",
@@ -31,9 +36,12 @@
     "ro.vendor.cdh.vulkan.device_uuid": "4a1caf609eb61746363e3e918e283bd7",
     "ro.vendor.cdh.vulkan.driver_uuid": "eedd159950138ce01e872c1c77df7069",
     "ro.vendor.cdh.vulkan.pipeline_uuid": "2e5a5e00c2a4a4c0711d8d816806b370",
+    "ro.vendor.config.idcode": "1A",
+    "ro.vendor.cpufreq": "2.8GHz",
     "ro.vendor.drm.widevine.oem_crypto_api_version": "18",
     "ro.vendor.drm.widevine.security_level": "L3",
     "ro.vendor.drm.widevine.system_id": "33999",
+    "ro.vendor.memsize": "8GB",
     "ro.vendor.product.cpu.abilist": "arm64-v8a",
     "ro.vendor.product.cpu.abilist32": "",
     "ro.vendor.product.cpu.abilist64": "arm64-v8a",
@@ -69,6 +77,66 @@
     {
       "from": "official",
       "source": "etc/vintf/manifest/qtiradio-saidl.xml"
+    },
+    {
+      "from": "official",
+      "optional": true,
+      "source": "etc/media_codecs.xml"
+    },
+    {
+      "from": "official",
+      "optional": true,
+      "source": "etc/media_codecs_c2_audio.xml"
+    },
+    {
+      "from": "official",
+      "optional": true,
+      "source": "etc/media_codecs_google_audio.xml"
+    },
+    {
+      "from": "official",
+      "optional": true,
+      "source": "etc/media_codecs_google_c2.xml"
+    },
+    {
+      "from": "official",
+      "optional": true,
+      "source": "etc/media_codecs_google_c2_audio.xml"
+    },
+    {
+      "from": "official",
+      "optional": true,
+      "source": "etc/media_codecs_google_c2_video.xml"
+    },
+    {
+      "from": "official",
+      "optional": true,
+      "source": "etc/media_codecs_google_telephony.xml"
+    },
+    {
+      "from": "official",
+      "optional": true,
+      "source": "etc/media_codecs_google_video.xml"
+    },
+    {
+      "from": "official",
+      "optional": true,
+      "source": "etc/media_codecs_google_video_le.xml"
+    },
+    {
+      "from": "official",
+      "optional": true,
+      "source": "etc/media_codecs_kalama.xml"
+    },
+    {
+      "from": "official",
+      "optional": true,
+      "source": "etc/media_codecs_kalama_vendor.xml"
+    },
+    {
+      "from": "official",
+      "optional": true,
+      "source": "etc/media_codecs_vendor_audio.xml"
     }
   ],
   "lib64-backfills": [],

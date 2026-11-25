@@ -2,7 +2,6 @@
 
 - **生成时间**: `2026-11-19T21:17:15+08:00`
 - **ROM Build ID**: `15-AP3A.240905.015.A2-20250702`
-- **分区 Android 版本**: `system=15, system_ext=15, product=15, vendor=15, odm=15, vendor_dlkm=15, odm_dlkm=15`
 - **DSH 聊天会话 ID**: `session-cae75c6e-4564-4354-9513-8f0db1c1d678`（标题：`[02_prepare] 真机规格采集 · tcl/ericanppro (15-AP3A.240905.015.A2-20250702)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `false`）
 
@@ -153,7 +152,7 @@
 - **触控与按键对齐**: touch=`fts_ts` · keyboard=`mtk-kpd` · input_identity 外设数=`4` 项
 - **硬件 HAL 变体与开关**: radioVariant=`mtk` · NFC=`true` · 红外=`false` · 3.5mm=`true` · 单扬声器
 - **影像规格**: 后置 50MP + 2MP 景深 | 前置 8MP
-- **电池与通信**: `5000 mAh`（有线 `15W` / 无线 `0W`） · Wi-Fi 5 (802.11ac)（Wi-Fi 6=`false`） · BT `5.0` · 5G=`false` · Widevine `L1` (sysId=`27175`) · TAC `86851703` · MAC OUI `[3c:cd:5d 5c:8c:30]`
+- **电池与通信**: `5000 mAh`（有线 `15W` / 无线 `0W`） · Wi-Fi 5 (802.11ac)（Wi-Fi 6=`false`） · BT `5.0` · 5G=`false` · Widevine `L1` (sysId=`27175`) · TAC `86851703` · 基带 `MOLY.LR12A.R3.MP.V342.6.P8` · MAC OUI `[3c:cd:5d 5c:8c:30]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `19` 项对齐传感器
@@ -180,7 +179,9 @@
 - `board`: `mt6768` | `soc`: `  ()`
 - `densityDpi`: `480` | `egl`: `meow` | `vulkan`: `mali` | `abilist`: `arm64-v8a`
 - `securityPatch`: `2025-07-05` | `buildDate`: `20250702` | `kernelLine`: `6.6` | `vintfVersion`: `8.0`
+- `partitionAndroidVersions`: `system=15, system_ext=15, product=15, vendor=15, odm=15, vendor_dlkm=15, odm_dlkm=15`
 - `uname`: `Linux localhost 6.6.57-android15-8-g9dfb2bc0c466-ab12845201-4k #1 SMP PREEMPT Mon Dec 23 18:52:15 UTC 2024 aarch64 Toybox`
+- `basebandVersion`: `MOLY.LR12A.R3.MP.V342.6.P8`（来源: `zip:payload.bin/modem`）
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=ericanppro_cn`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `vda.partitions` (5 个附加分区): `vendor_persist.img->/mnt/vendor/persist`, `protect_f.img->/mnt/vendor/protect_f`, `protect_s.img->/mnt/vendor/protect_s`, `nvdata.img->/mnt/vendor/nvdata`, `nvcfg.img->/mnt/vendor/nvcfg`
 - `vintfPlaceholders`: radio=`0` 项 · audio=`1` 项 · gnss=`1` 项 · nn=`54` 项

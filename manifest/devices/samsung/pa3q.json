@@ -19,6 +19,7 @@
     1024000
   ],
   "extra": {
+    "basebandVersion": "S9380ZCSDCZH1",
     "board": "qcom",
     "hasReadme": true,
     "hostHvc": {

@@ -1,0 +1,36 @@
+=== 1. Honor Magic7 RSR #1: Settings -> APNs locked & Dual-PDN blocked (Before Fix) ===
+UI Screen text on android.settings.APN_SETTINGS:
+  "Access Point Name settings are not available for this user"
+
+$ adb shell 'getprop persist.sys.opkey0; getprop gsm.sim.operator.numeric'
+<empty>
+46001,
+
+$ adb shell 'dumpsys carrier_config | grep -E "opkey|carrier_config_applied_bool"'
+opkey: null
+carrier_config_applied_bool = false
+
+$ adb shell 'dumpsys phone | grep -E "DATA_CONFIG_NOT_READY|mDataProfiles"'
+DataEvaluation: reason=SIM_LOADED, disallowedReasons=[DATA_CONFIG_NOT_READY]
+DataProfileManager: mAllDataProfiles=[]
+
+$ adb shell 'logcat -d | grep -i CphImsNetMgr'
+W CphImsNetMgr: ensureApns failed: java.lang.SecurityException: Isolated process not allowed to call getContentProvider
+W CphImsNetMgr: getContentProviderExternal failed: java.lang.SecurityException: Permission Denial: Accessing service ComponentInfo{com.android.providers.telephony/com.android.providers.telephony.TelephonyProvider} from pid=..., uid=1001 requires android.permission.ACCESS_CONTENT_PROVIDERS_EXTERNALLY
+
+=== 2. Touch/Fling hot-path error spam & SELinux / factory lib errors (Before Fix) ===
+# During 2.5s Settings scroll:
+E VipSchedProxy: Open failed: /proc/vip/ioctl   (repeated 1,525+ times per scroll session)
+E FASProxy: Open failed: /proc/fas/ioctl
+E hwfactoryinterface-service: dlopen lib_factory_interface.so is nullptr: dlopen failed: library "lib_factory_interface.so" not found
+W audit   : audit_lost=355679 audit_rate_limit=5 audit_backlog_limit=64
+W SELinux : avc:  denied  { find } for interface=vendor.honor.hardware.perf::IPerf sid=u:r:surfaceflinger:s0 pid=650 scontext=u:r:surfaceflinger:s0 tcontext=u:object_r:vendor_hal_perf_hwservice:s0 tclass=hwservice_manager permissive=0
+
+=== 3. Host daemon 8s /api/instance/config poll triggering NFC heap scan GC & broken pipe (Before Fix) ===
+I com.android.nfc: Thread[3,tid=2102,WaitingInMainSignalCatcherLoop...]: Unreachable memory scan
+I com.android.nfc: Explicit concurrent copying GC freed 412KB ... paused 1.2ms,2.8ms total 186.452ms
+E kernel  : binder: 2480:3013 transaction failed 29189/-22, size 88-0 line 3260
+W kernel  : binder: send failed reply for transaction 94812 to 4812:4812: reply target not found
+
+=== 4. LTPO 1Hz refresh-rate rejected by QEMU virtio-gpu EDID (Before Sanitization) ===
+qemu-system-aarch64: -device virtio-gpu-pci,edid=on,xres=1280,yres=2800,refresh-rates=1:60:90:120: invalid refresh-rates '1:60:90:120': expected 1 to 8 unique integer values between 24 and 240 Hz

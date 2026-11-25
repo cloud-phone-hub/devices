@@ -2,7 +2,6 @@
 
 - **生成时间**: `2026-11-19T02:46:23+08:00`
 - **ROM Build ID**: `15-AP3A.240905.015.A2-20251126`
-- **分区 Android 版本**: `system=15, system_ext=15, product=15, vendor=15, odm=15, vendor_dlkm=15, odm_dlkm=15`
 - **DSH 聊天会话 ID**: `session-109f2ddf-0029-4968-be88-fe7248953470`（标题：`[02_prepare] 真机规格采集 · Blackview Xplore 1 (blackview/XPLORE_X1 · 15-AP3A.240905.015.A2-20251126)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
@@ -153,7 +152,7 @@
 - **触控与按键对齐**: touch=`fts_ts` · keyboard=`mtk-kpd` · input_identity 外设数=`4` 项
 - **硬件 HAL 变体与开关**: radioVariant=`mtk` · NFC=`true` · 红外=`true` · 3.5mm=`true` · 单扬声器
 - **影像规格**: 后置 50MP + 2MP | 前置 16MP
-- **电池与通信**: `10000 mAh`（有线 `33W` / 无线 `0W`） · Wi-Fi 6 (802.11ax)（Wi-Fi 6=`true`） · BT `5.2` · 5G=`true` · Widevine `L1` (sysId=`33098`) · TAC `-` · MAC OUI `[00:0c:43]`
+- **电池与通信**: `10000 mAh`（有线 `33W` / 无线 `0W`） · Wi-Fi 6 (802.11ax)（Wi-Fi 6=`true`） · BT `5.2` · 5G=`true` · Widevine `L1` (sysId=`33098`) · TAC `-` · 基带 `F252_V0_8791_NLWCG_V0.1.3_S251113` · MAC OUI `[00:0c:43]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `19` 项对齐传感器
@@ -189,10 +188,12 @@
 - `board`: `mt6877` | `soc`: `  ()`
 - `densityDpi`: `480` | `egl`: `mali` | `vulkan`: `mali` | `abilist`: `arm64-v8a,armeabi-v7a,armeabi`
 - `securityPatch`: `2025-11-05` | `buildDate`: `20251126` | `kernelLine`: `` | `vintfVersion`: `8.0`
+- `partitionAndroidVersions`: `system=15, system_ext=15, product=15, vendor=15, odm=15, vendor_dlkm=15, odm_dlkm=15`
+- `basebandVersion`: `F252_V0_8791_NLWCG_V0.1.3_S251113`（来源: `zip:F252_DK_DK100A_8791_V0_NEU_V1.3.4_S251126/modem.img`）
 - `fingerprint`: `Blackview/XPLORE_X1_NEU/XPLORE_X1:15/AP3A.240905.015.A2/1764155304:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=XPLORE_X1_NEU`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `vda.partitions` (5 个附加分区): `vendor_persist.img->/mnt/vendor/persist`, `protect_f.img->/mnt/vendor/protect_f`, `protect_s.img->/mnt/vendor/protect_s`, `nvdata.img->/mnt/vendor/nvdata`, `nvcfg.img->/mnt/vendor/nvcfg`
-- `vintfPlaceholders`: radio=`34` 项 · audio=`1` 项 · gnss=`1` 项 · nn=`53` 项
+- `vintfPlaceholders`: radio=`34` 项 · audio=`1` 项 · gnss=`1` 项 · nn=`51` 项
 
 ### `vendor/etc` 与 `odm/etc` 硬件配置实测详情
 

@@ -12,6 +12,7 @@
     "ro.soc.model": "MT6877",
     "ro.vendor.boot_security_patch": "2025-11-05",
     "ro.vendor.build.security_patch": "2025-11-05",
+    "ro.vendor.cdh.device.market_name": "Blackview Xplore 1",
     "ro.vendor.cdh.display.default_refresh_rate": "120",
     "ro.vendor.cdh.display.edid_name": "MTKDEV",
     "ro.vendor.cdh.display.edid_pnp": "MTK",

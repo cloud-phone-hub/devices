@@ -15,6 +15,7 @@
     "ro.soc.model": "MT6878",
     "ro.vendor.boot_security_patch": "2026-08-01",
     "ro.vendor.build.security_patch": "2026-08-01",
+    "ro.vendor.cdh.device.market_name": "Motorola Razr 2024",
     "ro.vendor.cdh.display.default_refresh_rate": "120",
     "ro.vendor.cdh.display.edid_name": "MTKDEV",
     "ro.vendor.cdh.display.edid_pnp": "MTK",

@@ -1,0 +1,89 @@
+=== BEFORE FIX: BLU G65L #1 (127.0.0.1:5911) ===
+--- date & uptime ---
+Thu Nov 26 01:42:21 CST 2026
+ 01:42:21 up  1:42,  0 users,  load average: 0.39, 0.39, 0.41
+Enforcing
+Linux localhost 5.15.197-android13-8-00005-g2d8ad9139b89-ab15063902 #1 SMP PREEMPT Fri Mar 20 11:14:06 UTC 2026 aarch64 Toybox
+--- display & memory & baseband & sim props ---
+Physical size: 1080x2400
+Physical density: 320
+
+,
+UNKNOWN,ABSENT
+,
+Unknown,Unknown
+
+MemTotal:        7760724 kB
+MemFree:          468056 kB
+MemAvailable:    5643960 kB
+--- IRadioNetwork interface version (16777215) ---
+/system/bin/sh: su: inaccessible or not found
+--- telephony registry summary ---
+    mServiceState={mVoiceRegState=1(OUT_OF_SERVICE), mDataRegState=1(OUT_OF_SERVICE), mChannelNumber=-1, duplexMode()=0, mCellBandwidths=[], mOperatorAlphaLong=null, mOperatorAlphaShort=null, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=0(Unknown), getRilDataRadioTechnology=0(Unknown), mCssIndicator=unsupported, mNetworkId=-1, mSystemId=-1, mCdmaRoamingIndicator=-1, mCdmaDefaultRoamingIndicator=-1, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false}, NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=null, mOperatorAlphaShortRaw=null, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataConnectionState=-1
+    mServiceState={mVoiceRegState=1(OUT_OF_SERVICE), mDataRegState=1(OUT_OF_SERVICE), mChannelNumber=0, duplexMode()=0, mCellBandwidths=[], mOperatorAlphaLong=null, mOperatorAlphaShort=null, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=0(Unknown), getRilDataRadioTechnology=0(Unknown), mCssIndicator=unsupported, mNetworkId=0, mSystemId=0, mCdmaRoamingIndicator=0, mCdmaDefaultRoamingIndicator=0, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[], mNrFrequencyRange=0, mOperatorAlphaLongRaw=null, mOperatorAlphaShortRaw=null, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataConnectionState=-1
+--- tool_service avc & camera crash in logcat/dmesg ---
+11-26 01:42:05.272   586   586 W tool_service: type=1400 audit(0.0:45560): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:06.272   586   586 W tool_service: type=1400 audit(0.0:45561): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:06.272   586   586 W tool_service: type=1400 audit(0.0:45562): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:07.272   586   586 W tool_service: type=1400 audit(0.0:45563): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:07.272   586   586 W tool_service: type=1400 audit(0.0:45564): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:08.272   586   586 W tool_service: type=1400 audit(0.0:45565): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:08.272   586   586 W tool_service: type=1400 audit(0.0:45566): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:09.276   586   586 W tool_service: type=1400 audit(0.0:45567): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:09.276   586   586 W tool_service: type=1400 audit(0.0:45568): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:10.280   586   586 W tool_service: type=1400 audit(0.0:45569): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:10.280   586   586 W tool_service: type=1400 audit(0.0:45570): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:11.280   586   586 W tool_service: type=1400 audit(0.0:45571): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:11.280   586   586 W tool_service: type=1400 audit(0.0:45572): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:12.280   586   586 W tool_service: type=1400 audit(0.0:45573): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:12.280   586   586 W tool_service: type=1400 audit(0.0:45574): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:13.284   586   586 W tool_service: type=1400 audit(0.0:45575): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:13.284   586   586 W tool_service: type=1400 audit(0.0:45576): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:14.288   586   586 W tool_service: type=1400 audit(0.0:45577): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:14.288   586   586 W tool_service: type=1400 audit(0.0:45578): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:15.288   586   586 W tool_service: type=1400 audit(0.0:45579): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:15.288   586   586 W tool_service: type=1400 audit(0.0:45580): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:16.292   586   586 W tool_service: type=1400 audit(0.0:45581): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:16.292   586   586 W tool_service: type=1400 audit(0.0:45582): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:16.536   586   586 W tool_service: type=1400 audit(0.0:45583): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:16.540   586   586 W tool_service: type=1400 audit(0.0:45584): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:17.292   586   586 W tool_service: type=1400 audit(0.0:45585): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:17.292   586   586 W tool_service: type=1400 audit(0.0:45586): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:18.292   586   586 W tool_service: type=1400 audit(0.0:45587): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:18.292   586   586 W tool_service: type=1400 audit(0.0:45588): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:19.292   586   586 W tool_service: type=1400 audit(0.0:45589): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:19.292   586   586 W tool_service: type=1400 audit(0.0:45590): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:20.296   586   586 W tool_service: type=1400 audit(0.0:45591): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:20.296   586   586 W tool_service: type=1400 audit(0.0:45592): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:23.368   586   586 W tool_service: type=1400 audit(0.0:45620): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+11-26 01:42:23.368   586   586 W tool_service: type=1400 audit(0.0:45621): avc:  denied  { read } for  name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=203 scontext=u:r:tool_service:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+--- Camera cold start crash & Radio HAL version on old BLU G65L #1 ---
+Starting: Intent { cmp=com.android.camera2/com.android.camera.CameraLauncher }
+11-26 01:42:47.002 31173 31173 D nativeloader: Configuring clns-shared-4 for other apk /system_ext/app/DreamCamera2/DreamCamera2.apk. target_sdk_version=34, uses_libraries=, library_path=/system_ext/app/DreamCamera2/lib/arm64:/system_ext/app/DreamCamera2/DreamCamera2.apk!/lib/arm64-v8a:/system/lib64:/system_ext/lib64, permitted_path=/data:/mnt/expand:/data/user/0/com.android.camera2:/system_ext/app/DreamCamera2:/system/lib64:/system_ext/lib64
+11-26 01:42:47.115 31173 31193 E VendorTagDescriptor: lookupTag: Tag name 'sprdCamFeatureList' does not exist.
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: FATAL EXCEPTION: AsyncTask #1
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: Process: com.android.camera2, PID: 31173
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: java.lang.RuntimeException: An error occurred while executing doInBackground()
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at android.os.AsyncTask$4.done(AsyncTask.java:415)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at java.util.concurrent.FutureTask.finishCompletion(FutureTask.java:381)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at java.util.concurrent.FutureTask.setException(FutureTask.java:250)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at java.util.concurrent.FutureTask.run(FutureTask.java:269)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:1012)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: Caused by: java.lang.IllegalArgumentException: Could not find tag for key 'com.addParameters.sprdCamFeatureList')
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at android.hardware.camera2.impl.CameraMetadataNative.nativeGetTagFromKeyLocal(Native Method)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at android.hardware.camera2.impl.CameraMetadataNative.getBase(CameraMetadataNative.java:596)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at android.hardware.camera2.impl.CameraMetadataNative.get(CameraMetadataNative.java:476)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at android.hardware.camera2.impl.CameraMetadataNative.get(CameraMetadataNative.java:445)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at android.hardware.camera2.CameraCharacteristics.get(CameraCharacteristics.java:299)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at com.android.camera.one.v2.Camera2OneCameraManagerImpl.getSprdFeatureCapabilities(Camera2OneCameraManagerImpl.java:108)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at com.android.camera.util.CameraUtil.initializeCapabilities(CameraUtil.java:2162)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at com.android.camera.util.CameraUtil.initCameraData(CameraUtil.java:2103)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at com.android.camera.app.CameraApp$1.doInBackground(CameraApp.java:68)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at com.android.camera.app.CameraApp$1.doInBackground(CameraApp.java:64)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at android.os.AsyncTask$3.call(AsyncTask.java:394)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	at java.util.concurrent.FutureTask.run(FutureTask.java:264)
+11-26 01:42:47.117 31173 31193 E AndroidRuntime: 	... 3 more

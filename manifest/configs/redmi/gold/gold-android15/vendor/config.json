@@ -19,6 +19,7 @@
     "ro.vendor.aee.enforcing": "default",
     "ro.vendor.boot_security_patch": "2026-02-01",
     "ro.vendor.build.security_patch": "2026-02-01",
+    "ro.vendor.cdh.device.market_name": "Redmi Note 13 5G",
     "ro.vendor.cdh.display.default_refresh_rate": "120",
     "ro.vendor.cdh.display.edid_name": "MTKDEV",
     "ro.vendor.cdh.display.edid_pnp": "MTK",
@@ -165,6 +166,21 @@
     {
       "from": "official",
       "source": "etc/public.libraries.txt"
+    },
+    {
+      "from": "official",
+      "mode": "replace",
+      "source": "etc/audio_param"
+    },
+    {
+      "from": "official",
+      "source": "etc/audio_param/AudioParamOptions_vext.xml",
+      "target": "etc/audio_param/AudioParamOptions_mgvi.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/audio_param/AudioParamOptions_vext.xml",
+      "target": "etc/audio_param/AudioParamOptions.xml"
     }
   ],
   "note": "build-prop-sets 里 abilist/abilist32/abilist64、ro.hwui.use_vulkan、ro.hw_timeout_multiplier 五条是云机相对厂商原件的本地改动（2026-11-03 从 vendor/build.prop 副本迁入）：abilist 锁纯 arm64-v8a、abilist32 置空，否则派生全局 abilist32 非空，framework 会硬连不存在的 32 位 zygote（证据 evidence/gold/issue-vendor-buildprop-props、issue-zygote-secondary-missing）；ro.hwui.use_vulkan=false 因 guest 无可用 Vulkan ICD，hwui 走 Vulkan 后端会 abort（同证据，popsicle 沿用此结论）；ro.hw_timeout_multiplier=10 放宽 Watchdog 30s 硬超时（实测一次 IO 抖动卡 118s 就会杀掉 system_server），AOSP emulator 产品同样取 10。vendor.files 是本机对 07 步骤 5 的唯一来源（引擎已无内置集合，未声明即空表）：6 个 GPU 身份扫描库 + lib64/libpng.so + etc/{permissions,security,md} 整目录 replace，外加 6 条厂商 media_codecs*.xml（与厂商原件逐字节相同，直接 from=official 取件）。改过的件不进这张表：media_codecs_c2.xml（c2.v4l2.* 三条声明）与 primary_audio_policy_configuration.xml（Remote Submix In）都整份放在机型静态树 vendor/etc 下，由步骤 4 落到装配树、步骤 5 不碰——本表里不要再为它们写条目，写了就会把静态树那份盖掉。要增删档位就改这里。",

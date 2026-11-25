@@ -135,4 +135,20 @@ inline bool AppendVendorDefaultRequest(camera_metadata_t *,
 inline void RegisterVendorExtraServices() {}
 #endif
 
+#if CDH_CAMERA_UNISOC
+void AppendVendorRequestAndResultKeys(std::vector<uint32_t> *requestKeys,
+                                      std::vector<uint32_t> *resultKeys,
+                                      const Note13CameraTarget &target);
+bool AppendVendorResultMetadata(camera_metadata_t *metadata,
+                                const Note13CameraTarget &target);
+#else
+inline void AppendVendorRequestAndResultKeys(std::vector<uint32_t> *,
+                                             std::vector<uint32_t> *,
+                                             const Note13CameraTarget &) {}
+inline bool AppendVendorResultMetadata(camera_metadata_t *,
+                                       const Note13CameraTarget &) {
+  return true;
+}
+#endif
+
 } // namespace cdh::camera

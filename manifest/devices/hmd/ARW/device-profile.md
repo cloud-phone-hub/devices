@@ -2,8 +2,7 @@
 
 - **生成时间**: `2026-11-19T13:50:50+08:00`
 - **ROM Build ID**: `14-QP1A.190711.020-20250620`
-- **分区 Android 版本**: `system=14, system_ext=14, product=14, vendor=13, odm=13, vendor_dlkm=13`
-- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · HMD Crest Max (hmd/ARW · 14-QP1A.190711.020-20250620)`）
+- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · HMD Crest Max (hmd/ARW · 13-QP1A.190711.020-20250620)`）
 
 ---
 
@@ -118,7 +117,7 @@
 - **触控与按键对齐**: touch=`-` · keyboard=`-` · input_identity 外设数=`0` 项
 - **硬件 HAL 变体与开关**: radioVariant=`-` · NFC=`false` · 红外=`false` · 3.5mm=`false` · -
 - **影像规格**: 后置 - | 前置 -
-- **电池与通信**: `0 mAh`（有线 `0W` / 无线 `0W`） · -（Wi-Fi 6=`false`） · BT `-` · 5G=`false` · Widevine `-` (sysId=`-`) · TAC `-` · MAC OUI `[]`
+- **电池与通信**: `0 mAh`（有线 `0W` / 无线 `0W`） · -（Wi-Fi 6=`false`） · BT `-` · 5G=`false` · Widevine `-` (sysId=`-`) · TAC `-` · 基带 `-` · MAC OUI `[]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `0` 项对齐传感器
@@ -134,6 +133,7 @@
 - `board`: `ums9620` | `soc`: `Spreadtrum T770 ()`
 - `densityDpi`: `400` | `egl`: `` | `vulkan`: `` | `abilist`: `arm64-v8a,armeabi-v7a,armeabi`
 - `securityPatch`: `2024-06-05` | `buildDate`: `20250620` | `kernelLine`: `5.15` | `vintfVersion`: `7.0`
+- `partitionAndroidVersions`: `system=14, system_ext=14, product=14, vendor=13, odm=13, vendor_dlkm=13`
 - `uname`: `Linux localhost 5.15.149-android13-8-00010-gc2e0ba41ba85-ab12040008 #1 SMP PREEMPT Tue Jul 2 00:44:45 UTC 2024 aarch64 Toybox`
 - `fingerprint`: `HMD/Arrow_0AIN/ARW:13/QP1A.190711.020/00WW_1_590:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=Arrow_0AIN`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
@@ -142,15 +142,14 @@
 
 ### `vendor/etc` 与 `odm/etc` 硬件配置实测详情
 
-- **Permissions 硬件特性**（共 `75` 项）: 红外=`false` · NFC=`false` · 指纹=`true` · BLE=`true` · Wi-Fi Direct=`true` · Audio LowLatency=`false` · Vulkan Level=`1` (API `1.3`)
-  - 声明的传感器特性 (`6` 项): `accelerometer`, `compass`, `light`, `proximity`, `stepcounter`, `stepdetector`
+- **Permissions 硬件特性**（共 `68` 项）: 红外=`false` · NFC=`false` · 指纹=`true` · BLE=`true` · Wi-Fi Direct=`true` · Audio LowLatency=`false` · Vulkan Level=`1` (API `1.3`)
 - **Sensors 原厂配置**: SubHALs=`[android.hardware.sensors@2.X-sprd_subhal.so]` · 芯片归属=`map[]`
 - **Audio 策略与音效配置**: 模块=`[]` · 采样率=`[]` · 听筒=`false` · 有线耳机路由=`false` · 双麦=`false` · 音效描述符=`15` 项（源: `vendor/etc/audio_effects.xml`）
   - 实测音效清单: `Acoustic Echo Canceler (The Android Open Source Project)`, `Auxiliary Environmental Reverb (NXP Software Ltd.)`, `Auxiliary Preset Reverb (NXP Software Ltd.)`, `Dynamic Bass Boost (NXP Software Ltd.)`, `DynamicsProcessing (The Android Open Source Project)`, `EqualizerBundle (NXP Software Ltd.)`, `Insert Environmental Reverb (NXP Software Ltd.)`, `Insert Preset Reverb (NXP Software Ltd.)`, `Loudness Enhancer (The Android Open Source Project)`, `Multichannel Downmix To Stereo (The Android Open Source Project)`, `Virtualizer (NXP Software Ltd.)`, `Visualizer (The Android Open Source Project)`, `Volume (NXP Software Ltd.)`, `ozo (OEM Audio Effect)`, `ozowidening (OEM Audio Effect)`
 - **Media Codec2 硬编解码配置**: Store实例=`[android.hardware.media.c2@1.1-unisoc-service->default]` · 厂商/杜比组件=`16` 项 (`c2.unisoc.jpeg.decoder`, `c2.unisoc.imaadpcm.decoder`, `c2.unisoc.mp3.decoder`, `c2.unisoc.mpl1.decoder`, `c2.unisoc.mpl2.decoder`, `c2.unisoc.avc.decoder`, `c2.unisoc.hevc.decoder`, `c2.unisoc.mpeg4.decoder`, `c2.unisoc.h263.decoder`, `c2.unisoc.vp8.decoder`, `c2.unisoc.vp9.decoder`, `c2.unisoc.av1.decoder`, `c2.unisoc.jpeg.encoder`, `c2.unisoc.mp3.encoder`, `c2.unisoc.avc.encoder`, `c2.unisoc.hevc.encoder`)
 - **ODM SKU / NFC / Wi-Fi / 影像场景**: NFC芯片=`-` · RSC区域=`[]` · 相机Tuning角色=`[]`
 - **Power 调频/核数控制表**: 各簇最大核数=`[]` · 配置文件=`[vendor/etc/task_profiles.json]`
-- **已扫描解析的 `vendor/etc` & `odm/etc` 配置文件**: 共 `65` 个
+- **已扫描解析的 `vendor/etc` & `odm/etc` 配置文件**: 共 `52` 个
 
 ## 四、DSH 聊天界面回复原文
 

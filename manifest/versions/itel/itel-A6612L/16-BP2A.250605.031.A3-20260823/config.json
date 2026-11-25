@@ -10,6 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "4G_MODEM_22B_W26.24.1_P2",
     "comment": "由 cdh unpack prepare 从 itel-A6612L.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
       "odm": "13",

@@ -2,8 +2,7 @@
 
 - **生成时间**: `2026-11-20T02:32:25+08:00`
 - **ROM Build ID**: `17-BP2A.250605.015-20260923`
-- **分区 Android 版本**: `system=17, system_ext=17, product=17, vendor=16, vendor_dlkm=16, odm_dlkm=16`
-- **DSH 聊天会话 ID**: `session-65f669f7-762e-4a85-9df5-90b5d591a480`（标题：`[02_prepare] 真机规格采集 · oppo/PME110 (17-BP2A.250605.015-20260923)`）
+- **DSH 聊天会话 ID**: `session-65f669f7-762e-4a85-9df5-90b5d591a480`（标题：`[02_prepare] 真机规格采集 · oppo/PME110 (16-BP2A.250605.015-20260923)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
 ---
@@ -202,7 +201,7 @@
 - **触控与按键对齐**: touch=`goodix_ts` · keyboard=`mtk-kpd` · input_identity 外设数=`4` 项
 - **硬件 HAL 变体与开关**: radioVariant=`mtk` · NFC=`true` · 红外=`true` · 3.5mm=`false` · 双扬声器 (立体声)
 - **影像规格**: 后置 200MP + 50MP + 50MP | 前置 50MP
-- **电池与通信**: `7500 mAh`（有线 `80W` / 无线 `50W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `5.4` · 5G=`true` · Widevine `L1` (sysId=`33098`) · TAC `86803405` · MAC OUI `[c8:47:8c 2c:5a:0f]`
+- **电池与通信**: `7500 mAh`（有线 `80W` / 无线 `50W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `5.4` · 5G=`true` · Widevine `L1` (sysId=`33098`) · TAC `86803405` · 基带 `MOLY.NR17.R2.MP2.TC16.PR3.SP.V2.P77` · MAC OUI `[c8:47:8c 2c:5a:0f]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `26` 项对齐传感器
@@ -230,7 +229,9 @@
 - `board`: `mt6993` | `soc`: `Mediatek  ()`
 - `densityDpi`: `480` | `egl`: `mali` | `vulkan`: `mali` | `abilist`: `arm64-v8a`
 - `securityPatch`: `2026-09-01` | `buildDate`: `20260923` | `kernelLine`: `6.12` | `vintfVersion`: `9.0`
+- `partitionAndroidVersions`: `system=17, system_ext=17, product=17, vendor=16, vendor_dlkm=16, odm_dlkm=16`
 - `uname`: `Linux localhost 6.12.69-android16-6-g242e1a07f878-ab15865446-4k #1 SMP PREEMPT Wed Jul 15 11:18:49 UTC 2026 aarch64 Toybox`
+- `basebandVersion`: `MOLY.NR17.R2.MP2.TC16.PR3.SP.V2.P77`（来源: `zip:payload.bin/modem`）
 - `fingerprint`: `oplus/ossi/ossi:16/BP2A.250605.015/1790190130635:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=ossi`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `vda.partitions` (5 个附加分区): `vendor_persist.img->/mnt/vendor/persist`, `protect_f.img->/mnt/vendor/protect_f`, `protect_s.img->/mnt/vendor/protect_s`, `nvdata.img->/mnt/vendor/nvdata`, `nvcfg.img->/mnt/vendor/nvcfg`

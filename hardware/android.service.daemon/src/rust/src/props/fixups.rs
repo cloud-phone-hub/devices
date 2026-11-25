@@ -168,16 +168,46 @@ pub(super) fn sync_vendor_display_and_brand_props() {
     }
 
     let cur_memsize = resetprop::get("ro.vendor.memsize").unwrap_or_default();
-    if !cur_memsize.trim().is_empty() {
+    let cur_ddrsize = resetprop::get("ro.boot.ddrsize").unwrap_or_default();
+    let board_plat = resetprop::get("ro.board.platform").unwrap_or_default();
+    let soc_mfg = resetprop::get("ro.soc.manufacturer").unwrap_or_default();
+    let need_ddrsize = is_unisoc_ddrsize_sync_needed(&cur_ddrsize, &board_plat, &soc_mfg);
+    if !cur_memsize.trim().is_empty() || need_ddrsize {
         if let Ok(meminfo) = std::fs::read_to_string("/proc/meminfo") {
             if let Some(gb) = detect_ram_tier_gb_from_meminfo(&meminfo) {
-                let target = format!("{gb}GB");
-                if cur_memsize.trim() != target {
-                    set_prop("ro.vendor.memsize", &target);
+                if !cur_memsize.trim().is_empty() {
+                    let target = format!("{gb}GB");
+                    if cur_memsize.trim() != target {
+                        set_prop("ro.vendor.memsize", &target);
+                    }
+                }
+                if need_ddrsize {
+                    let target_ddr = format!("{}M", gb * 1024);
+                    if cur_ddrsize.trim() != target_ddr {
+                        set_prop("ro.boot.ddrsize", &target_ddr);
+                    }
                 }
             }
         }
     }
+}
+
+fn is_unisoc_ddrsize_sync_needed(cur_ddrsize: &str, board_plat: &str, soc_mfg: &str) -> bool {
+    let ddr = cur_ddrsize.trim();
+    if !ddr.is_empty() && !ddr.eq_ignore_ascii_case("unconfig") {
+        return true;
+    }
+    let b = board_plat.trim().to_ascii_lowercase();
+    let m = soc_mfg.trim().to_ascii_lowercase();
+    b.starts_with("ums")
+        || b.starts_with("sp9")
+        || b.starts_with("sc9")
+        || b.starts_with("ud7")
+        || b.starts_with("uis")
+        || b.starts_with("sharkl")
+        || b.starts_with("qogir")
+        || m == "unisoc"
+        || m == "spreadtrum"
 }
 
 fn is_syncable_readonly_vendor_key(key: &str) -> bool {
@@ -475,8 +505,13 @@ mod tests {
                 ("ro.vendor.cpufreq".to_string(), "4.3GHz".to_string()),
             ]
         );
+        assert_eq!(detect_ram_tier_gb_from_meminfo("MemTotal:        3872512 kB\n"), Some(4));
         assert_eq!(detect_ram_tier_gb_from_meminfo("MemTotal:        7760724 kB\n"), Some(8));
         assert_eq!(detect_ram_tier_gb_from_meminfo("MemTotal:       15639808 kB\n"), Some(16));
         assert_eq!(detect_ram_tier_gb_from_meminfo("MemTotal:       23592960 kB\n"), Some(24));
+        assert!(is_unisoc_ddrsize_sync_needed("", "ums9230", ""));
+        assert!(is_unisoc_ddrsize_sync_needed("unconfig", "", "Unisoc"));
+        assert!(is_unisoc_ddrsize_sync_needed("4096M", "sun", "Qualcomm"));
+        assert!(!is_unisoc_ddrsize_sync_needed("", "sun", "Qualcomm"));
     }
 }

@@ -10,6 +10,7 @@ $(MODULE_NAME)-objs := \
 	meminfo/meminfo.o \
 	net/ethtool_drvinfo.o \
 	nfc/nfc_sysfs.o \
+	sched/sched_proc.o \
 	thermal/thermal_sysfs.o \
 	time/uptime.o \
 	uts/uts.o

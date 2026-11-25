@@ -9,6 +9,7 @@
 #include <atomic>
 #include <cerrno>
 #include <condition_variable>
+#include <cstdio>
 #include <cstring>
 #include <deque>
 #include <fcntl.h>
@@ -17,12 +18,41 @@
 #include <thread>
 #include <utility>
 
+#ifdef __ANDROID__
+#include <android/log.h>
+#define CDH_RADIO_LOGI(...) \
+  __android_log_print(ANDROID_LOG_INFO, "cdh-radio", __VA_ARGS__)
+#define CDH_RADIO_LOGW(...) \
+  __android_log_print(ANDROID_LOG_WARN, "cdh-radio", __VA_ARGS__)
+#define CDH_RADIO_LOGE(...) \
+  __android_log_print(ANDROID_LOG_ERROR, "cdh-radio", __VA_ARGS__)
+#else
+#define CDH_RADIO_LOGI(...)                               \
+  do {                                                    \
+    std::fprintf(stderr, "[I/cdh-radio] " __VA_ARGS__);   \
+    std::fprintf(stderr, "\n");                           \
+  } while (0)
+#define CDH_RADIO_LOGW(...)                               \
+  do {                                                    \
+    std::fprintf(stderr, "[W/cdh-radio] " __VA_ARGS__);   \
+    std::fprintf(stderr, "\n");                           \
+  } while (0)
+#define CDH_RADIO_LOGE(...)                               \
+  do {                                                    \
+    std::fprintf(stderr, "[E/cdh-radio] " __VA_ARGS__);   \
+    std::fprintf(stderr, "\n");                           \
+  } while (0)
+#endif
+
 namespace cdh::radio {
 namespace {
 
 constexpr std::uint32_t kMagic = 0x4344524d;
 constexpr std::uint16_t kVersion = 1;
 constexpr std::size_t kHeaderSize = 64;
+// Linux hvc_console / tty_port 翻转缓冲上限为 64 KiB，外加 virtio in_vq 预投缓冲，
+// 放宽同步滑窗至 128 KiB 以确保排空启动窗口内全部半截帧与终端回显噪声。
+constexpr std::size_t kMaxResyncDiscard = 128 * 1024;
 constexpr std::uint16_t kTypeBool = 1;
 constexpr std::uint16_t kTypeUint8 = 2;
 constexpr std::uint16_t kTypeUint16 = 3;
@@ -149,10 +179,69 @@ bool WriteFull(int file_descriptor, const std::uint8_t *input, std::size_t size,
   return true;
 }
 
-bool ReadFrame(int file_descriptor, Frame *frame, std::string *error) {
-  std::uint8_t bytes[kHeaderSize] = {};
-  if (!ReadFull(file_descriptor, bytes, sizeof(bytes), error))
-    return false;
+class BufferedChannelReader {
+public:
+  explicit BufferedChannelReader(int file_descriptor)
+      : file_descriptor_(file_descriptor) {}
+
+  bool ReadByte(std::uint8_t *out, std::string *error) {
+    if (offset_ >= length_ && !Refill(error)) {
+      return false;
+    }
+    *out = buffer_[offset_++];
+    return true;
+  }
+
+  bool ReadExact(std::uint8_t *output, std::size_t size, std::string *error) {
+    std::size_t copied = 0;
+    while (copied < size) {
+      if (offset_ < length_) {
+        const std::size_t chunk = std::min(size - copied, length_ - offset_);
+        std::memcpy(output + copied, buffer_ + offset_, chunk);
+        offset_ += chunk;
+        copied += chunk;
+        continue;
+      }
+      if (size - copied >= sizeof(buffer_)) {
+        return ReadFull(file_descriptor_, output + copied, size - copied,
+                        error);
+      }
+      if (!Refill(error)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+private:
+  bool Refill(std::string *error) {
+    while (true) {
+      const ssize_t count =
+          read(file_descriptor_, buffer_, sizeof(buffer_));
+      if (count == 0) {
+        *error = "Radio channel EOF";
+        return false;
+      }
+      if (count < 0) {
+        if (errno == EINTR)
+          continue;
+        *error = std::string("Radio channel read: ") + std::strerror(errno);
+        return false;
+      }
+      offset_ = 0;
+      length_ = static_cast<std::size_t>(count);
+      return true;
+    }
+  }
+
+  int file_descriptor_ = -1;
+  std::uint8_t buffer_[4096] = {};
+  std::size_t offset_ = 0;
+  std::size_t length_ = 0;
+};
+
+bool DecodeFrameHeader(const std::uint8_t *bytes, FrameHeader *header,
+                       std::string *error) {
   if (GetU32(bytes) != kMagic || GetU16(bytes + 4) != kVersion) {
     *error = "Radio frame magic or version mismatch";
     return false;
@@ -166,7 +255,12 @@ bool ReadFrame(int file_descriptor, Frame *frame, std::string *error) {
     *error = "Radio frame header fields are invalid";
     return false;
   }
-  frame->header = FrameHeader{
+  const std::uint32_t payload_length = GetU32(bytes + 60);
+  if (payload_length > kMaxPayloadSize) {
+    *error = "Radio frame payload exceeds 1 MiB";
+    return false;
+  }
+  *header = FrameHeader{
       .kind = static_cast<FrameKind>(kind),
       .flags = 0,
       .status = static_cast<Status>(status),
@@ -176,16 +270,55 @@ bool ReadFrame(int file_descriptor, Frame *frame, std::string *error) {
       .sequence = GetU64(bytes + 36),
       .request_id = GetU64(bytes + 44),
       .deadline_unix_milli = static_cast<std::int64_t>(GetU64(bytes + 52)),
-      .payload_length = GetU32(bytes + 60),
+      .payload_length = payload_length,
   };
-  if (frame->header.payload_length > kMaxPayloadSize) {
-    *error = "Radio frame payload exceeds 1 MiB";
-    return false;
+  return true;
+}
+
+bool ReadFrameResync(BufferedChannelReader *reader, Frame *frame,
+                     std::string *error) {
+  std::uint8_t bytes[kHeaderSize] = {};
+  std::size_t filled = 0;
+  std::size_t discarded = 0;
+  while (true) {
+    while (filled < 4) {
+      if (!reader->ReadByte(&bytes[filled], error))
+        return false;
+      ++filled;
+    }
+    if (GetU32(bytes) != kMagic) {
+      std::memmove(bytes, bytes + 1, filled - 1);
+      --filled;
+      ++discarded;
+      if (discarded > kMaxResyncDiscard) {
+        *error = "Radio frame magic or version mismatch";
+        return false;
+      }
+      continue;
+    }
+    while (filled < kHeaderSize) {
+      if (!reader->ReadByte(&bytes[filled], error))
+        return false;
+      ++filled;
+    }
+    if (!DecodeFrameHeader(bytes, &frame->header, error)) {
+      std::memmove(bytes, bytes + 1, kHeaderSize - 1);
+      filled = kHeaderSize - 1;
+      ++discarded;
+      if (discarded > kMaxResyncDiscard) {
+        return false;
+      }
+      continue;
+    }
+    if (discarded > 0) {
+      CDH_RADIO_LOGW("resynced Radio channel after discarding %zu bytes",
+                     discarded);
+    }
+    frame->payload.resize(frame->header.payload_length);
+    return frame->payload.empty() ||
+           reader->ReadExact(frame->payload.data(), frame->payload.size(),
+                             error);
   }
-  frame->payload.resize(frame->header.payload_length);
-  return frame->payload.empty() ||
-         ReadFull(file_descriptor, frame->payload.data(), frame->payload.size(),
-                  error);
 }
 
 bool WriteFrame(int file_descriptor, const Frame &frame, std::string *error) {
@@ -471,10 +604,17 @@ bool ConfigureBinaryTTY(int file_descriptor, std::string *error) {
     return false;
   }
   cfmakeraw(&settings);
+  settings.c_iflag &= ~static_cast<tcflag_t>(IXON | IXOFF | IXANY);
+  settings.c_cflag |= static_cast<tcflag_t>(CLOCAL | CREAD);
+  settings.c_cc[VMIN] = 1;
+  settings.c_cc[VTIME] = 0;
   if (tcsetattr(file_descriptor, TCSANOW, &settings) < 0) {
     *error = std::string("configure Radio TTY: ") + std::strerror(errno);
     return false;
   }
+  // 解除 open -> tcsetattr 竞态窗口内 N_TTY 可能触发的软流控停滞，并丢弃已按规范模式变形的积压字节
+  (void)tcflow(file_descriptor, TCOON | TCION);
+  (void)tcflush(file_descriptor, TCIOFLUSH);
   return true;
 }
 
@@ -724,13 +864,16 @@ private:
   };
 
   void ReaderLoop() {
+    const int initial_fd = file_descriptor_.load();
+    if (initial_fd < 0)
+      return;
+    BufferedChannelReader reader(initial_fd);
     while (true) {
-      const int descriptor = file_descriptor_.load();
-      if (descriptor < 0)
+      if (file_descriptor_.load() < 0)
         return;
       Frame frame;
       std::string error;
-      if (!ReadFrame(descriptor, &frame, &error)) {
+      if (!ReadFrameResync(&reader, &frame, &error)) {
         Push(QueueItem{.frame = std::nullopt, .error = std::move(error)});
         return;
       }
@@ -756,8 +899,21 @@ private:
         SetStopped(item.error);
         return;
       }
+      bool is_ready = false;
+      {
+        std::lock_guard<std::mutex> status_lock(status_mutex_);
+        is_ready = ready_;
+      }
       std::string error;
       if (!HandleFrame(*item.frame, &error)) {
+        // 握手完成前若读到切 raw 前变形残留的半帧/坏载荷 HELLO，仅丢弃本帧等待下一拍(250ms)重传，
+        // 绝不关闭 /dev/hvc4（Linux hvc_console 在高负载下 close 会永久锁死 tty_port 翻转缓冲）。
+        if (!is_ready && item.frame->header.kind == FrameKind::kHello &&
+            error.find("Radio channel ") != 0) {
+          CDH_RADIO_LOGW("ignore corrupted pre-ready hello frame: %s",
+                         error.c_str());
+          continue;
+        }
         SetStopped(error);
         return;
       }
@@ -885,6 +1041,11 @@ private:
       sequence_ = frame.header.sequence;
       ready_ = true;
     }
+    CDH_RADIO_LOGI("Radio channel ready: session=%llu boot=%llu gen=%llu seq=%llu",
+                   static_cast<unsigned long long>(frame.header.session_id),
+                   static_cast<unsigned long long>(frame.header.boot_generation),
+                   static_cast<unsigned long long>(frame.header.provider_generation),
+                   static_cast<unsigned long long>(frame.header.sequence));
     store->NotifyCurrent();
     status_cv_.notify_all();
     return true;
@@ -1063,13 +1224,18 @@ private:
   }
 
   void SetStopped(const std::string &error) {
+    bool should_log = false;
     {
       std::lock_guard<std::mutex> lock(status_mutex_);
+      should_log = !stopping_ && !error.empty();
       if (!error.empty())
         last_error_ = error;
       ready_ = false;
       running_ = false;
       stopping_ = true;
+    }
+    if (should_log) {
+      CDH_RADIO_LOGE("Radio channel stopped: %s", error.c_str());
     }
     CloseFileDescriptor();
     FailPending(Status::kRadioUnavailable);

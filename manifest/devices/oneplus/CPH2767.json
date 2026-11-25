@@ -20,6 +20,7 @@
     512000
   ],
   "extra": {
+    "basebandVersion": "MPSS.DE.9.0-02004.5-KAANAPALI_GEN_PACK-1",
     "board": "canoe",
     "hasReadme": true,
     "hostHvc": {

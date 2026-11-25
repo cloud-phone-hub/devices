@@ -10,14 +10,15 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MOLY.NR17.R2.MP1.TC16.PR2.SP.V1.P41",
     "comment": "由 cdh unpack prepare 从 811_sign_RMX6688_11_A_OTA_0380_all_Qt92xR_10010111.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
+      "odm_dlkm": "15",
+      "product": "15",
       "system": "15",
       "system_ext": "15",
-      "product": "15",
       "vendor": "15",
-      "vendor_dlkm": "15",
-      "odm_dlkm": "15"
+      "vendor_dlkm": "15"
     }
   },
   "updatedAt": "2026-11-06 02:47:41"

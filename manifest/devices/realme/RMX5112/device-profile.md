@@ -2,8 +2,7 @@
 
 - **生成时间**: `2026-11-19T11:29:52+08:00`
 - **ROM Build ID**: `15-TP1A.220905.001-20251025`
-- **分区 Android 版本**: `system=15, system_ext=15, product=15, vendor=13, vendor_dlkm=13, odm_dlkm=13`
-- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · realme/RMX5112 (15-TP1A.220905.001-20251025)`）
+- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · realme/RMX5112 (13-TP1A.220905.001-20251025)`）
 
 ---
 
@@ -101,7 +100,7 @@
 - **触控与按键对齐**: touch=`-` · keyboard=`-` · input_identity 外设数=`0` 项
 - **硬件 HAL 变体与开关**: radioVariant=`-` · NFC=`false` · 红外=`false` · 3.5mm=`false` · -
 - **影像规格**: 后置 - | 前置 -
-- **电池与通信**: `0 mAh`（有线 `0W` / 无线 `0W`） · -（Wi-Fi 6=`false`） · BT `-` · 5G=`false` · Widevine `-` (sysId=`-`) · TAC `-` · MAC OUI `[]`
+- **电池与通信**: `0 mAh`（有线 `0W` / 无线 `0W`） · -（Wi-Fi 6=`false`） · BT `-` · 5G=`false` · Widevine `-` (sysId=`-`) · TAC `-` · 基带 `MOLY.NR17.R1.MP5.TC16.PR1.SP.V1.P138` · MAC OUI `[]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `0` 项对齐传感器
@@ -117,7 +116,9 @@
 - `board`: `mt6835` | `soc`: `Mediatek MT6835 ()`
 - `densityDpi`: `480` | `egl`: `meow` | `vulkan`: `mali` | `abilist`: `arm64-v8a,armeabi-v7a,armeabi`
 - `securityPatch`: `2025-10-01` | `buildDate`: `20251025` | `kernelLine`: `5.15` | `vintfVersion`: `7.0`
+- `partitionAndroidVersions`: `system=15, system_ext=15, product=15, vendor=13, vendor_dlkm=13, odm_dlkm=13`
 - `uname`: `Linux localhost 5.15.167-android13-8-o-g84fe88aa4569 #1 SMP PREEMPT Fri Jul 18 03:44:06 UTC 2025 aarch64 Toybox`
+- `basebandVersion`: `MOLY.NR17.R1.MP5.TC16.PR1.SP.V1.P138`（来源: `zip:payload.bin/md1img`）
 - `fingerprint`: `oplus/ossi/ossi:13/TP1A.220905.001/1761392757639:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=ossi`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `thermal.zones` (20 个温区): `soc_max`, `cpu_big1`, `cpu_big2`, `cpu_big3`, `cpu_big4`, `cpu_little1`, `cpu_little2`, `cpu_little3`, `cpu_little4`, `gpu2`, `gpu1`, `soc1`, `soc2`, `soc3`, `soc4`, `md1`, `md2`, `md3`, `md4`, `consys`

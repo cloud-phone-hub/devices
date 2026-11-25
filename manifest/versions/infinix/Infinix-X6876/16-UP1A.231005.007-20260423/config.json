@@ -10,6 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MOLY.NR17.R1.MP5.RC.MP.V51.2.P10",
     "comment": "由 cdh unpack prepare 从 IN_X6876_A16_OPPJ_201350016_full.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
       "odm": "14",

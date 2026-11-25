@@ -1,5 +1,6 @@
 {
   "build-prop-sets": {
+    "gsm.version.baseband": "4G_MODEM_22B_W25.24.3_P5",
     "persist.radio.multisim.config": "dsds",
     "ro.bionic.2nd_arch": "",
     "ro.bionic.2nd_cpu_variant": "",
@@ -12,10 +13,12 @@
     "ro.opengles.version": "196608",
     "ro.soc.manufacturer": "Unisoc",
     "ro.soc.model": "UMS9230T",
+    "ro.surface_flinger.has_HDR_display": "false",
     "ro.vendor.boot_security_patch": "2026-03-05",
     "ro.vendor.build.security_patch": "2026-03-05",
-    "ro.vendor.cdh.display.edid_name": "QCMDEV",
-    "ro.vendor.cdh.display.edid_pnp": "QCM",
+    "ro.vendor.cdh.device.market_name": "ZTE Blade V70 (Z2459)",
+    "ro.vendor.cdh.display.edid_name": "SPRDEV",
+    "ro.vendor.cdh.display.edid_pnp": "SPR",
     "ro.vendor.cdh.display.edid_product_id": "64515",
     "ro.vendor.cdh.display.edid_week": "42",
     "ro.vendor.cdh.display.edid_year": "2024",

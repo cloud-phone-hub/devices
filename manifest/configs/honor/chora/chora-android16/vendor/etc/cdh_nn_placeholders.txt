@@ -7,9 +7,15 @@ vendor.honor.hardware.biometrics.fingerprint.IFingerprint/default
 vendor.honor.hardware.biometrics.hwfacerecognize.IBiometricsFaceRecognize/default
 vendor.honor.hardware.bluetoothex.IHonorBluetoothInterface/default
 vendor.honor.hardware.camera.cfgsvr.IHwCamCfgSvr/default
+vendor.honor.hardware.camera.vircamera.IVirCameraChannel/virtualcamera.register
 vendor.honor.hardware.camera.vircamera.IVirCameraChannel/virtualcamera.streamchange
+vendor.honor.hardware.camera.vircamera.IVirCameraTranslator/virtualcamera.translator
 vendor.honor.hardware.hncall.IHnCall/slot1
 vendor.honor.hardware.hncall.IHnCall/slot2
+vendor.honor.hardware.hnchipsrvhertz.IHnChipSrvHertz/hnchipsrv_hertz
+vendor.honor.hardware.hnchipsrvlog.IHnChipSrvLog/hnchipsrv_log
+vendor.honor.hardware.hnchipsrvsat.IHnChipSrvSat/hnchipsrv_sat
+vendor.honor.hardware.hnchipsrvssn.IHnChipSrvSsn/hnchipsrv_ssn
 vendor.honor.hardware.hnradio.IRadio/slot1
 vendor.honor.hardware.hnradio.IRadio/slot2
 vendor.honor.hardware.hnsimradio.IHnsimradio/slot1
@@ -17,6 +23,7 @@ vendor.honor.hardware.hnsimradio.IHnsimradio/slot2
 vendor.honor.hardware.honorantitheft.IHonorAntiTheft/default
 vendor.honor.hardware.honorsigntool.ISignTool/default
 vendor.honor.hardware.hwdisplay.IDisplay/default
+vendor.honor.hardware.hwfactoryinterface.IHwFactoryInterface/hwfactoryinterface_hal
 vendor.honor.hardware.hwfs.IHwfs/default
 vendor.honor.hardware.hwhiview.IHwHiviewInterface/default
 vendor.honor.hardware.hwsched.ISchedAidlInterface/default

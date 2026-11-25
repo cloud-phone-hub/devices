@@ -2,8 +2,7 @@
 
 - **生成时间**: `2026-11-19T13:02:23+08:00`
 - **ROM Build ID**: `14-TP1A.220624.014-20260324`
-- **分区 Android 版本**: `system=14, system_ext=14, product=14, vendor=13, odm=13, vendor_dlkm=13`
-- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · ZTE Blade V70 (Z2459) (nubia/P616F05 · 14-TP1A.220624.014-20260324)`）
+- **DSH 聊天会话 ID**: `measured-only`（标题：`[02_prepare] 真机规格采集 · ZTE Blade V70 (Z2459) (nubia/P616F05 · 13-TP1A.220624.014-20260324)`）
 
 ---
 
@@ -101,7 +100,7 @@
 - **触控与按键对齐**: touch=`-` · keyboard=`-` · input_identity 外设数=`0` 项
 - **硬件 HAL 变体与开关**: radioVariant=`-` · NFC=`false` · 红外=`false` · 3.5mm=`false` · -
 - **影像规格**: 后置 - | 前置 -
-- **电池与通信**: `0 mAh`（有线 `0W` / 无线 `0W`） · -（Wi-Fi 6=`false`） · BT `-` · 5G=`false` · Widevine `-` (sysId=`-`) · TAC `-` · MAC OUI `[]`
+- **电池与通信**: `0 mAh`（有线 `0W` / 无线 `0W`） · -（Wi-Fi 6=`false`） · BT `-` · 5G=`false` · Widevine `-` (sysId=`-`) · TAC `-` · 基带 `4G_MODEM_22B_W25.24.3_P5` · MAC OUI `[]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `0` 项对齐传感器
@@ -117,7 +116,9 @@
 - `board`: `ums9230` | `soc`: `Spreadtrum UMS9230T ()`
 - `densityDpi`: `320` | `egl`: `` | `vulkan`: `` | `abilist`: `arm64-v8a,armeabi-v7a,armeabi`
 - `securityPatch`: `2026-03-05` | `buildDate`: `20260324` | `kernelLine`: `5.15` | `vintfVersion`: `7.0`
+- `partitionAndroidVersions`: `system=14, system_ext=14, product=14, vendor=13, odm=13, vendor_dlkm=13`
 - `uname`: `Linux localhost 5.15.189-android13-8-00013-gaa2747a3794a-ab14413887 #1 SMP PREEMPT Mon Nov 10 02:47:23 UTC 2025 aarch64 Toybox`
+- `basebandVersion`: `4G_MODEM_22B_W25.24.3_P5`（来源: `zip:GEN_NEEA_P616F05V1.0.0B12_DL.pac/Modem_LTE(SC9600_qogirl6_pubcp_modem.bin)`）
 - `fingerprint`: `nubia/P616F05_1/P616F05:13/TP1A.220624.014/20260325.014552:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=P616F05_1`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `thermal.zones` (18 个温区): `soc-thmzone`, `cputop0-tzone0`, `ank0-tzone1`, `ank1-thmzone`, `ank2-thmzone`, `prometheus7-thmzone`, `cputop1-thmzone`, `gpu-thmzone`, `ank3-thmzone`, `ank4-thmzone`, `ank5-thmzone`, `prometheus6-thmzone`, `skin-thmzone`, `osctsen-thmzone`, `outtsen-thmzone`, `board-thmzone`, `pa-thmzone`, `chg-thmzone`

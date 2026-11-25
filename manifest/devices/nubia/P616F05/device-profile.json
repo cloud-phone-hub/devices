@@ -18,6 +18,14 @@
     "socManufacturer": "Spreadtrum",
     "socModel": "UMS9230T",
     "androidVersion": "13",
+    "partitionAndroidVersions": {
+      "odm": "13",
+      "product": "14",
+      "system": "14",
+      "system_ext": "14",
+      "vendor": "13",
+      "vendor_dlkm": "13"
+    },
     "osVersion": "14-TP1A.220624.014-20260324",
     "securityPatch": "2026-03-05",
     "buildDate": "20260324",
@@ -25,6 +33,8 @@
     "hardwareHwcomposer": "unisoc",
     "frpPst": "/dev/block/by-name/persist",
     "radioMultisim": "dsds",
+    "basebandVersion": "4G_MODEM_22B_W25.24.3_P5",
+    "basebandSource": "zip:GEN_NEEA_P616F05V1.0.0B12_DL.pac/Modem_LTE(SC9600_qogirl6_pubcp_modem.bin)",
     "cpuAbiList": "arm64-v8a,armeabi-v7a,armeabi",
     "fingerprint": "nubia/P616F05_1/P616F05:13/TP1A.220624.014/20260325.014552:user/release-keys",
     "kernelUname": "Linux localhost 5.15.189-android13-8-00013-gaa2747a3794a-ab14413887 #1 SMP PREEMPT Mon Nov 10 02:47:23 UTC 2025 aarch64 Toybox",
@@ -739,14 +749,6 @@
         "vendor/etc/wifi/wpa_supplicant.conf",
         "vendor/etc/wifi/wpa_supplicant_overlay.conf"
       ]
-    },
-    "partitionAndroidVersions": {
-      "system": "14",
-      "system_ext": "14",
-      "product": "14",
-      "vendor": "13",
-      "odm": "13",
-      "vendor_dlkm": "13"
     }
   },
   "manifestAligned": {
@@ -866,7 +868,9 @@
     },
     "peripherals": {},
     "camera": {},
-    "batteryAndConnectivity": {},
+    "batteryAndConnectivity": {
+      "basebandVersion": "4G_MODEM_22B_W25.24.3_P5"
+    },
     "inputAlignment": {
       "touch": {},
       "keyboard": {},

@@ -1,5 +1,6 @@
 {
   "build-prop-sets": {
+    "gsm.version.baseband": "4G_MODEM_22B_W24.24.7_P0.2",
     "persist.radio.multisim.config": "dsds",
     "ro.bionic.2nd_arch": "",
     "ro.bionic.2nd_cpu_variant": "",
@@ -11,8 +12,10 @@
     "ro.hwui.use_vulkan": "false",
     "ro.soc.manufacturer": "Unisoc",
     "ro.soc.model": "SC9863A",
+    "ro.surface_flinger.has_HDR_display": "false",
     "ro.vendor.boot_security_patch": "2024-12-05",
     "ro.vendor.build.security_patch": "2024-12-05",
+    "ro.vendor.cdh.device.market_name": "Symphony MAX 10",
     "ro.vendor.cdh.display.default_refresh_rate": "60",
     "ro.vendor.cdh.display.edid_name": "ili9881c",
     "ro.vendor.cdh.display.edid_pnp": "SPR",

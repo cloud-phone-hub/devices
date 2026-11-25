@@ -400,5 +400,13 @@
     ],
     "scaling-readable": false,
     "transition-latency": 1000
+  },
+  "display": {
+    "refresh-rates": [
+      60,
+      90,
+      120,
+      144
+    ]
   }
 }
