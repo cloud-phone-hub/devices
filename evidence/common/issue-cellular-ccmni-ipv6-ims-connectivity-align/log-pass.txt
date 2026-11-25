@@ -1,0 +1,102 @@
+=== 1. 宿主与客机单元测试及构建校验 ===
+[qemu/backend/modem-host-controller] go test ./...
+ok  modem-host-controller/config
+ok  modem-host-controller/control
+ok  modem-host-controller/logging
+ok  modem-host-controller/model       (含 TestConcurrentImsAndDefaultPDNOnSameSlot)
+ok  modem-host-controller/protocol
+ok  modem-host-controller/server
+ok  modem-host-controller/simulated   (含 TestImsAndDefaultCoexistAndCarrierIPv6, TestDataOff)
+
+[qemu/backend/net-host-service] go test ./...
+ok  cdh/net-host-service/gw           4.434s (含 TestCarrierDNSAndAAAA)
+
+[devices/hardware/android.hardware.radio] C++ data_policy_test
+PASS: data_policy_test
+
+[gold 15-OS3.0.11.0.VNQCNXM patch.img]
+Path: out/devices/dist/redmi/gold/15-OS3.0.11.0.VNQCNXM/patch.img
+SHA-256: cabecc8b9597a68e83a6bc852f2695c2d65723dd8085937aedaed6837be090cc
+e2fsck: clean, 988/988 files verified
+
+=== 2. 云机 #1 冷启动自动双网就绪 + 蜂窝双 PDN 并发切换 + 下线干净回收实测 ===
+1. Cold-restarting gold_15-OS3.0.11.0.VNQCNXM #1 ...
+Boot completed in 30.5s! SELinux=Enforcing
+Both WIFI (wlan0) and IMS (ccmni0) auto-connected & validated in +10s!
+11-25 16:04:33.438  3069  3403 I CphImsNetAgent: IMS network connected on subId=1: 101
+
+--- 真机 (fmvwkrheonugvgjb) vs 云机 #1 (127.0.0.1:5911) 稳态 NetworkAgentInfo 对照 ---
+[REAL]
+  NetworkAgentInfo{network{100}  handle{432902426637}  ni{MOBILE[NR] CONNECTED extra: ims} Score(Policies : EVER_EVALUATED&IS_UNMETERED&EVER_VALIDATED&IS_VALIDATED ; KeepConnected : 0)  created 32573 firstValidated 32606 lastValidated 32606  lp{{InterfaceName: ccmni0 LinkAddresses: [ 240e:573:e90:3fd2:18ea:9ab8:fe97:f086/64 ] DnsAddresses: [ /240e:1c:200::1,/240e:1c:200::2 ] PcscfAddresses: [ /240e:67:e000:9d::b,/240e:67:e000:44::4 ] Domains: null MTU: 1400 Routes: [ ::/0 -> :: ccmni0 mtu 1400,240e:573:e90:3fd2::/64 -> :: ccmni0 mtu 0 ]}}  nc{[ Transports: CELLULAR Capabilities: IMS&NOT_METERED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED&MMTEL&NOT_BANDWIDTH_CONSTRAINED Specifier: <TelephonyNetworkSpecifier [mSubId = 1]> SubscriptionIds: {1} UnderlyingNetworks: Null]}}
+      NetworkRequest [ REQUEST id=123, [ Transports: CELLULAR Capabilities: IMS&TRUSTED&NOT_VPN&NOT_BANDWIDTH_CONSTRAINED Forbidden: LOCAL_NETWORK Specifier: <TelephonyNetworkSpecifier [mSubId = 1]> Uid: 1001 RequestorUid: 1001 RequestorPkg: com.mediatek.ims UnderlyingNetworks: Null] ]
+
+[CLOUD #1]
+  NetworkAgentInfo{network{101}  handle{437197393933}  ni{MOBILE[LTE] CONNECTED extra: ims} Score(Policies : EVER_EVALUATED&IS_UNMETERED&EVER_VALIDATED&IS_VALIDATED ; KeepConnected : 0)  created 30147 firstValidated 30174 lastValidated 30174  lp{{InterfaceName: ccmni0 LinkAddresses: [ 2408:8456:2adc:9030:21d3:780b:f2f4:b9b6/64 ] DnsAddresses: [ /2408:8888::8,/2408:8899::8 ] PcscfAddresses: [ /2408:8000:9000::1,/2408:8000:9000::2 ] Domains: null MTU: 1400 Routes: [ ::/0 -> :: ccmni0 mtu 1400,2408:8456:2adc:9030::/64 -> :: ccmni0 mtu 0 ]}}  nc{[ Transports: CELLULAR Capabilities: IMS&NOT_METERED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED&MMTEL&NOT_BANDWIDTH_CONSTRAINED Specifier: <TelephonyNetworkSpecifier [mSubId = 1]> SubscriptionIds: {1} UnderlyingNetworks: Null]}}
+      NetworkRequest [ REQUEST id=111, [ Transports: CELLULAR Capabilities: IMS&TRUSTED&NOT_VPN&NOT_BANDWIDTH_CONSTRAINED Forbidden: LOCAL_NETWORK Specifier: <TelephonyNetworkSpecifier [mSubId = 1]> Uid: 1001 RequestorUid: 1001 RequestorPkg: com.mediatek.ims UnderlyingNetworks: Null] ]
+  NetworkAgentInfo{network{104}  handle{450082295821}  ni{WIFI CONNECTED extra: } Score(Policies : TRANSPORT_PRIMARY&EVER_EVALUATED&IS_UNMETERED&EVER_VALIDATED&IS_VALIDATED ; KeepConnected : 0)  lp{{InterfaceName: wlan0 LinkAddresses: [ fe80::883a:1fff:fe05:a649/64,192.168.1.100/24 ] DnsAddresses: [ /192.168.1.1 ] Domains: null MTU: 0}}}
+
+--- 切换纯蜂窝双 PDN 并发模式 (svc data enable && cmd wifi set-wifi-enabled disabled) ---
+Concurrent ccmni0 (IMS) + ccmni1 (3gnet) BOTH VALIDATED in 2s!
+  NetworkAgentInfo{network{101}  ni{MOBILE[LTE] CONNECTED extra: ims}  lp{{InterfaceName: ccmni0 LinkAddresses: [ 2408:8456:2adc:9030:21d3:780b:f2f4:b9b6/64 ] DnsAddresses: [ /2408:8888::8,/2408:8899::8 ] PcscfAddresses: [ /2408:8000:9000::1,/2408:8000:9000::2 ] MTU: 1400}}}
+  NetworkAgentInfo{network{103}  ni{MOBILE[LTE] CONNECTED extra: 3gnet} created 36894 firstValidated 37206  lp{{InterfaceName: ccmni1 LinkAddresses: [ 100.64.155.15/24,2408:8456:2adc:9031:21d3:790b:f2f4:bb69/64 ] DnsAddresses: [ /221.5.88.88,/221.5.203.98,/2408:8888::8,/2408:8899::8 ] MTU: 1400 Routes: [ 0.0.0.0/0 -> 100.64.155.2 ccmni1 mtu 1400,::/0 -> :: ccmni1 mtu 1400,100.64.155.0/24 -> 0.0.0.0 ccmni1 mtu 0,2408:8456:2adc:9031::/64 -> :: ccmni1 mtu 0 ]}}  nc{[ Transports: CELLULAR Capabilities: SUPL&XCAP&INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED&NOT_BANDWIDTH_CONSTRAINED ]}}
+
+--- 切回 Wi-Fi ON + Mobile Data OFF 后 ccmni1 干净清空地址 ---
+19: ccmni0: <BROADCAST,NOARP,UP,LOWER_UP> mtu 1400 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet6 2408:8456:2adc:9030:21d3:780b:f2f4:b9b6/64 scope global nodad
+    inet6 fe80::21d3:780b:f2f4:b9b6/64 scope link nodad
+6: ccmni1: <BROADCAST,MULTICAST> mtu 1400 qdisc pfifo_fast state DOWN group default qlen 1000
+    link/ether c2:36:b4:12:34:58 brd ff:ff:ff:ff:ff:ff
+
+=== 3. device-checker 在线双机对拍终验 (run-00405, run-00406) ===
+[compare_align.py --run run-00405 --domain network]
+exit=0, diff_network level counts: {'state': 51} (identity=0, capability=0, availability=0, fatal: 2 -> 0)
+
+[network.ifaces]
+  ec519c7d513a3ad3 (真机): count=4 -> dummy0(1500,up), wlan0(1500,up), lo(65536,up), ccmni0(1400,up, [fe80::18ea:9ab8:fe97:f086%ccmni0, 240e:573:e90:3fd2:18ea:9ab8:fe97:f086])
+  4c17e53fbaef35ca-cloud (云机 #1): count=4 -> dummy0(1500,up), wlan0(1500,up), lo(65536,up), ccmni0(1400,up, [fe80::21d3:780b:f2f4:b9b6%ccmni0, 2408:8456:2adc:9030:21d3:780b:f2f4:b9b6])
+
+[ultimate.* (run-00406)]
+  ultimate.location_network: real_hits=[] cloud_hits=[] cloud_only=[] (27/27 clean)
+  ultimate.cloud_emulator:   cloud_only=[] (25/25 aligned)
+  ultimate.root_selinux:     cloud_only=[] (42/42 aligned)
+
+[aligner_xiaomi_gold.all (run-00406)]
+  ec519c7d513a3ad3:       30/32, G1=True, G2=True, G3=True, G4=True
+  4c17e53fbaef35ca-cloud: 31/32, G1=True, G2=True, G3=True, G4=True
+
+=== 4. 宿主网关 IPv6/DNS64/NAT64 + 国际卡解锁 + 广电/美区卡实机终验 (patch.img d44f963bcbc9...) ===
+[单元测试复核]
+ok  github.com/cloud-phone-hub/cloud-phone-hub/qemu/backend/net-host-service/gw  4.303s (含 NDP/ICMPv6/DNSv6/NAT64 TCP 204)
+ok  github.com/cloud-phone-hub/cloud-phone-hub/qemu/backend/modem-host-controller/model (含 TestBroadnetAndInternationalSIMIdentity)
+ok  github.com/cloud-phone-hub/cloud-phone-hub/qemu/backend/modem-host-controller/simulated 3.180s (含 TestBroadnetAndUSCarriers)
+ok  cloud-phone-hub/agent/modules/daemon/... (全 9 包通过)
+cph-apns-preset.xml valid, total entries: 139
+
+[实测 A：美国 T-Mobile 预设 (us-dsds-esim, PLMN=310260, CountryISO=us, 自动切换 mSubId=2)]
+gsm.sim.operator.numeric = 310260
+gsm.operator.alpha       = T-Mobile,
+gsm.operator.iso-country = us,us
+Active default network: 102
+  NetworkAgentInfo{network{101} ni{MOBILE[LTE] CONNECTED extra: ims} created 31630 firstValidated 31690 lp{{InterfaceName: ccmni0 LinkAddresses: [ 2607:fb90:4eb1:4928:570b:2465:7801:3b71/64 ] DnsAddresses: [ /2607:fb90:1800::1,/2607:fb90:1800::2 ] PcscfAddresses: [ /2607:fc20:1000::1,/2607:fc20:1000::2 ] MTU: 1400}} nc{[ Transports: CELLULAR Capabilities: IMS&NOT_METERED&TRUSTED&NOT_VPN&VALIDATED&MMTEL Specifier: <TelephonyNetworkSpecifier [mSubId = 2]> ]}}
+  NetworkAgentInfo{network{102} ni{MOBILE[LTE] CONNECTED extra: epc.tmobile.com} created 38427 firstValidated 38753 lp{{InterfaceName: ccmni1 LinkAddresses: [ 100.64.155.15/24,2607:fb90:4eb1:4929:570b:2365:7801:39be/64 ] DnsAddresses: [ /8.8.8.8,/8.8.4.4,/2607:fb90:1800::1,/2607:fb90:1800::2 ] MTU: 1400 Routes: [ 0.0.0.0/0 -> 100.64.155.2 ccmni1 mtu 1400,::/0 -> fe80::2 ccmni1 mtu 1400 ]}}}
+PING 2400:3200::1: 2 packets transmitted, 2 received, 0% packet loss, rtt avg = 0.221 ms
+PING 2001:4860:4860::8888: 2 packets transmitted, 2 received, 0% packet loss, rtt avg = 0.239 ms
+HTTP www.baidu.com:80             -> HTTP/1.1 200 OK (Content-Length: 17143)
+HTTP www.gstatic.com:80/generate_204 -> HTTP/1.1 204 No Content
+IPv6 Literal TCP [2400:3200::1]:80 -> HTTP/1.1 404 Not Found (Alibaba IPv6 HTTP server reached directly)
+
+[实测 B：中国广电预设 (cn-cbn-single, PLMN=46015, CountryISO=cn, 自动切换 mSubId=3)]
+gsm.sim.operator.numeric = 46015
+gsm.operator.alpha       = 中国广电,
+gsm.operator.iso-country = cn,cn
+Active default network: 101
+  NetworkAgentInfo{network{100} ni{MOBILE[LTE] CONNECTED extra: ims} created 31330 firstValidated 31359 lp{{InterfaceName: ccmni0 LinkAddresses: [ 2409:8c20:daa9:955c:8e3b:8e65:ee43:9713/64 ] DnsAddresses: [ /2409:8c00::1,/2409:8c00::2 ] PcscfAddresses: [ /2409:8c00:9000::1,/2409:8c00:9000::2 ] MTU: 1400}}}
+  NetworkAgentInfo{network{101} ni{MOBILE[LTE] CONNECTED extra: cbnet} created 37890 firstValidated 38206 lp{{InterfaceName: ccmni1 LinkAddresses: [ 100.64.155.15/24,2409:8c20:daa9:955d:8e3b:8d65:ee43:9560/64 ] DnsAddresses: [ /117.50.10.10,/221.179.155.161,/2409:8c00::1,/2409:8c00::2 ] MTU: 1400 Routes: [ 0.0.0.0/0 -> 100.64.155.2 ccmni1 mtu 1400,::/0 -> fe80::2 ccmni1 mtu 1400 ]}}}
+PING 223.5.5.5:    2 packets transmitted, 2 received, 0% packet loss, rtt avg = 0.300 ms
+PING 2400:3200::1: 2 packets transmitted, 2 received, 0% packet loss, rtt avg = 0.343 ms
+HTTP www.baidu.com:80             -> HTTP/1.1 200 OK
+HTTP www.gstatic.com:80/generate_204 -> HTTP/1.1 204 No Content
+IPv6 Literal TCP [2400:3200::1]:80 -> HTTP/1.1 404 Not Found
+
+[实测 C：恢复默认中国联通稳态 (cn-dsds-esim, PLMN=46001, uid=1001 零告警)]
+11-25 17:38:53.708  3055  3330 I CphImsNetAgent: IMS network connected on subId=1: 101

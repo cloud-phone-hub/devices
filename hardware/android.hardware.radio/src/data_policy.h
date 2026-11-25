@@ -14,6 +14,8 @@ inline constexpr std::int64_t kRetryNever =
 class DataPolicy {
 public:
   bool SupportsDefault(std::int32_t apn_types) const;
+  bool SupportsApnTypes(std::int32_t apn_types) const;
+  bool IsPureImsApn(std::int32_t apn_types) const;
   std::int32_t NextCID();
 
 private:

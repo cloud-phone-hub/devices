@@ -16,6 +16,21 @@
 (allow system_app_{{vers}} sysfs_thermal_{{vers}} (file (read getattr open)))
 (allow system_app_{{vers}} sysfs_thermal_{{vers}} (lnk_file (read getattr)))
 
-;; ---- 3) SurfaceFlinger 属性与缺失私有服务静默（perf2/servicetracker 规则已迁入 android.hardware.power@qti 变体） ----
+;; ---- 3) perf2 HAL (hal_sensors_default) binder 双向调用、composer3 / SurfaceFlinger / system_server / platform_app 服务绑定与高频缺失硬件审计静默 ----
+(allow domain hal_sensors_default (binder (call transfer)))
+(allow hal_sensors_default domain (binder (call transfer)))
+(allow hal_graphics_composer_default vendor_default_prop_{{vers}} (file (open read getattr map)))
 (allow surfaceflinger_{{vers}} vendor_default_prop_{{vers}} (file (open read getattr map)))
+(allow hal_neuralnetworks_default hal_touchfeature_xiaomi_service (service_manager (add find)))
+(allow system_server_{{vers}} vendor_hal_displayfeature_xiaomi_service (service_manager (find)))
+(allow platform_app_{{vers}} sysfs_thermal_{{vers}} (dir (open read getattr search)))
 (dontaudit domain default_android_service_{{vers}} (service_manager (find)))
+(dontaudit platform_app_{{vers}} hal_mtdservice_service (service_manager (find)))
+(dontaudit cameraserver_{{vers}} cameraserver_{{vers}} (capability (fowner)))
+(dontaudit platform_app_{{vers}} proc_max_map_count_{{vers}} (file (open read getattr)))
+(dontaudit domain vendor_dpmtcm_socket_{{vers}} (sock_file (write)))
+(dontaudit audioserver_{{vers}} vendor_audio_prop (file (open read getattr map)))
+(dontaudit audioserver_{{vers}} vendor_default_prop_{{vers}} (file (open read getattr map)))
+(dontaudit pioneer system_prop_{{vers}} (file (open read getattr map)))
+(dontaudit pioneer default_prop_{{vers}} (file (open read getattr map)))
+(dontaudit pioneer kmsg_device_{{vers}} (chr_file (open write getattr)))

@@ -1,0 +1,15 @@
+#!/system/bin/sh
+# 常驻蜂窝 IMS 承载网守护启动脚本（对齐真机插卡后 ccmni0 常驻运营商 IPv6 + IMS/MMTEL 网络）。
+set -u
+
+JAR="/vendor/etc/cph-ims-netmgr.jar"
+if [ ! -r "${JAR}" ]; then
+    exit 0
+fi
+
+while [ "$(/system/bin/getprop sys.boot_completed)" != "1" ]; do
+    /system/bin/sleep 2
+done
+
+export CLASSPATH="${JAR}"
+exec /system/bin/app_process /system/bin --nice-name=com.mediatek.ims.netagent com.cdh.ims.ImsNetAgent

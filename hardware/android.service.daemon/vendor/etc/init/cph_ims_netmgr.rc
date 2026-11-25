@@ -1,0 +1,12 @@
+# 常驻蜂窝 IMS 承载网守护：sys.boot_completed=1 后以 radio(1001) 身份向 ConnectivityService
+# 维护 TRANSPORT_CELLULAR + NET_CAPABILITY_IMS 请求，驱动原厂 DataNetworkController 拉起
+# apn="ims"（ccmni0 运营商 /64 IPv6 + DNS + P-CSCF），对齐真机 Wi-Fi + IMS 双网络视图。
+service vendor.cph_ims_netmgr /system/bin/sh /vendor/bin/cph-ims-netmgr
+    class late_start
+    user radio
+    group radio system inet
+    seclabel u:r:pioneer:s0
+    disabled
+
+on property:sys.boot_completed=1
+    start vendor.cph_ims_netmgr

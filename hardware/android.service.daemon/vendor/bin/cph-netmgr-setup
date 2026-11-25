@@ -29,7 +29,7 @@ configure)
     mgmt_src=""
     for dev in /sys/class/net/*; do
         name="${dev##*/}"
-        case "${name}" in mgmt0|ccmni0|ccmni2|lo|dummy0) continue ;; esac
+        case "${name}" in mgmt0|ccmni0|ccmni1|ccmni2|lo|dummy0) continue ;; esac
         if [ "$(cat "${dev}/address" 2>/dev/null)" = "52:54:00:12:34:56" ]; then
             mgmt_src="${name}"
             break
@@ -43,12 +43,12 @@ configure)
     fi
     ;;
 fingerprint)
-    # 1) net2 真网卡（默认 MAC c2:36:b4:12:34:58，兼容旧宿主 52:54:00:12:34:58）改名 ccmni2，mtu 1400 对齐 gold；
-    #    关闭 IPv6 SLAAC/RA 避免接收 QEMU SLIRP 的 fec0::/64 路由广播，并保持初始 DOWN（对齐真机 Wi-Fi 优先时无蜂窝激活态）。
+    # 1) net2 真蜂窝承载网卡（默认 MAC c2:36:b4:12:34:58，兼容旧宿主 52:54:00:12:34:58）改名 ccmni1，mtu 1400；
+    #    关闭内核自动 SLAAC/RA 与 EUI-64 link-local（addr_gen_mode=1），交由 RadioData::setupDataCall 按运营商动态配置。
     ccmni_src=""
     for dev in /sys/class/net/*; do
         name="${dev##*/}"
-        case "${name}" in ccmni2|mgmt0|lo|dummy0) continue ;; esac
+        case "${name}" in ccmni1|mgmt0|lo|dummy0) continue ;; esac
         case "$(cat "${dev}/address" 2>/dev/null)" in
             c2:36:b4:12:34:58|52:54:00:12:34:58)
                 ccmni_src="${name}"
@@ -58,32 +58,38 @@ fingerprint)
     done
     if [ -n "${ccmni_src}" ]; then
         /system/bin/ip link set "${ccmni_src}" down
-        /system/bin/ip link set "${ccmni_src}" name ccmni2
+        if [ -d /sys/class/net/ccmni1 ] && [ "${ccmni_src}" != "ccmni1" ]; then
+            /system/bin/ip link del ccmni1 2>/dev/null || true
+        fi
+        /system/bin/ip link set "${ccmni_src}" name ccmni1
     fi
-    if [ -d /proc/sys/net/ipv6/conf/ccmni2 ]; then
-        printf '0' > /proc/sys/net/ipv6/conf/ccmni2/accept_ra 2>/dev/null || true
-        printf '0' > /proc/sys/net/ipv6/conf/ccmni2/autoconf 2>/dev/null || true
+    if [ -d /proc/sys/net/ipv6/conf/ccmni1 ]; then
+        printf '0' > /proc/sys/net/ipv6/conf/ccmni1/accept_ra 2>/dev/null || true
+        printf '0' > /proc/sys/net/ipv6/conf/ccmni1/autoconf 2>/dev/null || true
+        printf '1' > /proc/sys/net/ipv6/conf/ccmni1/addr_gen_mode 2>/dev/null || true
     fi
-    /system/bin/ip -6 addr flush scope site dev ccmni2 2>/dev/null || true
-    /system/bin/ip link set ccmni2 mtu 1400 down || true
+    /system/bin/ip addr flush dev ccmni1 2>/dev/null || true
+    /system/bin/ip link set ccmni1 mtu 1400 down || true
     # 2) dummy0：gold 常驻，up 后自带 fe80 link-local
     if [ ! -d /sys/class/net/dummy0 ]; then
         /system/bin/ip link add dummy0 type dummy
     fi
     /system/bin/ip link set dummy0 up
-    # 3) ccmni0：gold 的 MTK 数据口占位（Wi-Fi 激活无蜂窝 DataCall 时保持 DOWN，不注入硬编码 240e:: IPv6）
+    # 3) ccmni0：常驻 IMS 承载口（addr_gen_mode=1 禁用 ff:fe EUI-64，由 RadioData::setupDataCall(ims) 拉起并写入运营商 IPv6）
     if [ ! -d /sys/class/net/ccmni0 ]; then
         /system/bin/ip link add ccmni0 type dummy
     fi
-    /system/bin/ip -6 addr flush dev ccmni0 2>/dev/null || true
+    if [ -d /proc/sys/net/ipv6/conf/ccmni0 ]; then
+        printf '0' > /proc/sys/net/ipv6/conf/ccmni0/accept_ra 2>/dev/null || true
+        printf '0' > /proc/sys/net/ipv6/conf/ccmni0/autoconf 2>/dev/null || true
+        printf '1' > /proc/sys/net/ipv6/conf/ccmni0/addr_gen_mode 2>/dev/null || true
+    fi
+    /system/bin/ip addr flush dev ccmni0 2>/dev/null || true
     /system/bin/ip link set ccmni0 mtu 1400 down || true
-    # 4) ccmni1 / ccmni3..ccmni20：gold 的 MTK 数据口全集（真机 ip link 可见
-    #    ccmni0..ccmni20 共 21 个）。ccmni2 是上面改名的真实承载网卡，跳过；
-    #    其余按 gold 造 dummy 占位：默认 DOWN、mtu 1500、NOARP（gold 数据未激活
-    #    时的形态）。幂等：已存在则跳过。
+    # 4) ccmni2..ccmni20（及无 net2 时兜底 ccmni1）：对齐 MTK 真机 ccmni0..ccmni20 共 21 个接口。
     index=1
     while [ "${index}" -le 20 ]; do
-        if [ "${index}" != "2" ] && [ ! -d "/sys/class/net/ccmni${index}" ]; then
+        if [ ! -d "/sys/class/net/ccmni${index}" ]; then
             /system/bin/ip link add "ccmni${index}" type dummy
         fi
         index=$((index + 1))
@@ -101,6 +107,10 @@ fingerprint)
         /system/bin/ip link set wlan1 down || true
         /system/bin/ip link set wlan1 address 76:39:89:0b:24:65 || true
         /system/bin/ip link set wlan1 name p2p0 || true
+    fi
+    if [ ! -d /sys/class/net/p2p1 ]; then
+        /system/bin/ip link add p2p1 address 02:ed:c8:65:f6:20 type dummy 2>/dev/null || true
+        /system/bin/ip link set p2p1 mtu 1500 down 2>/dev/null || true
     fi
     ;;
 *)

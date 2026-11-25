@@ -1,0 +1,6 @@
+;; cdh：composer3 AIDL HAL 读取显示定制属性（ro.vendor.cdh.display.*）授权。
+;;
+;; CdhDisplayConfig.cpp 在服务启动时读取 ro.vendor.cdh.display.{refresh_rates,
+;; default_refresh_rate,wide_color_gamut,xdpi,ydpi,edid_*}，这些属性落在
+;; vendor_default_prop，基底 vendor 策略默认未向 hal_graphics_composer_default 开放。
+(allow hal_graphics_composer_default vendor_default_prop_{{vers}} (file (open read getattr map)))

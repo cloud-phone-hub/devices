@@ -1,0 +1,45 @@
+=== [PRE-FIX] Xiaomi 17 Pro Max #1 (127.0.0.1:5927) NFC 状态 ===
+$ adb -s 127.0.0.1:5927 shell 'service check nfc; service check android.hardware.nfc.INfc/default'
+Service nfc: not found
+Service android.hardware.nfc.INfc/default: not found
+
+$ adb -s 127.0.0.1:5927 shell 'pm list features | grep -i nfc || echo "(empty)"'
+(empty)
+
+$ adb -s 127.0.0.1:5927 shell 'dumpsys nfc | head -n 20'
+Can't find service: nfc
+
+$ adb -s 127.0.0.1:5927 shell 'ls -laZ /dev/hvc11 /dev/nq-nci /system/app/XMNfcNci/'
+ls: /dev/nq-nci: No such file or directory
+crw-rw-rw- 1 system system u:object_r:console_device:s0  229,  11 1970-01-01 08:00 /dev/hvc11
+/system/app/XMNfcNci:
+-rw-r--r-- 1 root root u:object_r:system_file:s0  14188897 2009-01-01 08:00 XMNfcNci.apk
+
+=== [ROOT CAUSE 1] device-profile.json 因未探测独立 odm_a.img 误记 hasNfc=false ===
+"permissions": {
+  "hasConsumerIr": false,
+  "hasNfc": false,
+  "hasFingerprint": true
+}
+// 实际在官方独立 odm_a.img:/etc/ 与 /etc/permissions/ 中完整包含：
+// - etc/libnfc-nci.conf (8819 B), etc/libnfc-nxp.conf (21046 B), etc/libnfc-nxp_RF.conf (14542 B)
+// - etc/permissions/android.hardware.nfc{,.hce,.hcef,.uicc,.ese}.xml, com.android.nfc_extras.xml
+
+=== [ROOT CAUSE 2] XMNfcNci.apk NfcBootCompletedReceiver & NfcApplication 字节码门控 ===
+[12545c] com.android.nfc.NfcBootCompletedReceiver.onReceive:(Landroid/content/Context;Landroid/content/Intent;)V
+0010: const-string v0, "android.hardware.nfc.any"
+0012: invoke-virtual {v4, v0}, Landroid/content/pm/PackageManager;.hasSystemFeature:(Ljava/lang/String;)Z
+0015: move-result v0
+0016: const/4 v1, #int 2 // COMPONENT_ENABLED_STATE_DISABLED
+0017: if-nez v0, 0022
+001e: invoke-virtual {v4, v2, v1, v3}, Landroid/content/pm/PackageManager;.setApplicationEnabledSetting:(Ljava/lang/String;II)V
+0021: return-void
+
+[124068] com.android.nfc.NfcApplication.onCreate:()V
+00a4: new-instance v1, Ljava/io/File;
+00a6: const-string v2, "/dev/nq-nci"
+00a8: invoke-direct {v1, v2}, Ljava/io/File;.<init>:(Ljava/lang/String;)V
+00ab: invoke-virtual {v1}, Ljava/io/File;.exists:()Z
+00ae: move-result v1
+00af: if-eqz v1, 00d1 // /dev/nq-nci 不存在时直接跳至 return-void，跳过 new NfcService(...)
+00c1: new-instance v0, Lcom/android/nfc/NfcService;

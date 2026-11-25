@@ -22,6 +22,7 @@
     "ro.soc.model": "SM8850",
     "ro.surface_flinger.supports_background_blur": "0",
     "ro.surface_flinger.use_content_detection_for_refresh_rate": "false",
+    "ro.telephony.iwlan_operation_mode": "legacy",
     "ro.vendor.audio.dolby.dax.support": "false",
     "ro.vendor.audio.dolby.surround.enable": "false",
     "ro.vendor.audio.dolby.vision.support": "false",

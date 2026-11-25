@@ -4,14 +4,14 @@
  *   1. /sys/class/nfc/nfc_support（只读 sysfs）：
  *      三星 One UI SecNfc（NfcUtil#isKernelDriverExist）在启动前硬检该路径，
  *      缺失则拒绝触发 NFC 引导。
- *   2. /dev/pn544（只读杂项字符设备）与 /sys/nfc/nfc_chip_type（只读 sysfs）：
- *      荣耀 MagicOS NfcNci（NfcApplication#onCreate）硬检
- *      new File(SystemProperties.get("nfc.node", "/dev/pn544")).exists()，
- *      缺失则跳过 new NfcService(...)；随后 HnVendorAdapter 读 /sys/nfc/nfc_chip_type
- *      决定加载哪套 JNI 库（返回 "sn220u" 时走 NativeNfcManagerSnxxx ->
- *      /system/lib64/libnfc_nci_jni_snxxx.so -> 标准 AIDL android.hardware.nfc.INfc/default；
- *      缺失则回退到不存在的 libnfc_nci_jni.so 导致反复崩溃）。
- *      AOSP plat_file_contexts 已为 /dev/pn544 内置 u:object_r:nfc_device:s0 标签。
+ *   2. /dev/pn544 与 /dev/nq-nci（只读杂项字符设备）及 /sys/nfc/nfc_chip_type（只读 sysfs）：
+ *      - 荣耀 MagicOS NfcNci（NfcApplication#onCreate）硬检
+ *        new File(SystemProperties.get("nfc.node", "/dev/pn544")).exists()；
+ *      - 小米澎湃 OS XMNfcNci（NfcApplication#onCreate）硬检
+ *        new File("/dev/nq-nci").exists()；
+ *      缺失对应节点则直接 return 跳过 new NfcService(...)。
+ *      随后 HnVendorAdapter 读 /sys/nfc/nfc_chip_type 决定加载哪套 JNI 库（返回 "sn220u"）。
+ *      AOSP / vendor file_contexts 为 /dev/pn544 与 /dev/nq-nci 绑定 u:object_r:nfc_device:s0。
  *   由 cdh_device_info 在加载期按需注册，供云机虚拟 NFC HAL 正常启用。
  */
 #define pr_fmt(fmt) "cdh_device_info_nfc: " fmt
@@ -30,6 +30,7 @@
 static struct class *cdh_nfc_class;
 static struct kobject *cdh_nfc_kobj;
 static bool cdh_nfc_pn544_registered;
+static bool cdh_nfc_nq_nci_registered;
 
 static const struct file_operations cdh_nfc_pn544_fops = {
 	.owner = THIS_MODULE,
@@ -38,6 +39,13 @@ static const struct file_operations cdh_nfc_pn544_fops = {
 static struct miscdevice cdh_nfc_pn544_miscdev = {
 	.minor = MISC_DYNAMIC_MINOR,
 	.name = "pn544",
+	.fops = &cdh_nfc_pn544_fops,
+	.mode = 0444,
+};
+
+static struct miscdevice cdh_nfc_nq_nci_miscdev = {
+	.minor = MISC_DYNAMIC_MINOR,
+	.name = "nq-nci",
 	.fops = &cdh_nfc_pn544_fops,
 	.mode = 0444,
 };
@@ -115,11 +123,24 @@ int cdh_nfc_sysfs_init(void)
 		cdh_nfc_pn544_registered = true;
 		pr_info("registered /dev/pn544\n");
 	}
+
+	ret = misc_register(&cdh_nfc_nq_nci_miscdev);
+	if (ret) {
+		pr_warn("misc_register(nq-nci) failed (%d), skip virtual /dev/nq-nci\n",
+			ret);
+	} else {
+		cdh_nfc_nq_nci_registered = true;
+		pr_info("registered /dev/nq-nci\n");
+	}
 	return 0;
 }
 
 void cdh_nfc_sysfs_exit(void)
 {
+	if (cdh_nfc_nq_nci_registered) {
+		misc_deregister(&cdh_nfc_nq_nci_miscdev);
+		cdh_nfc_nq_nci_registered = false;
+	}
 	if (cdh_nfc_pn544_registered) {
 		misc_deregister(&cdh_nfc_pn544_miscdev);
 		cdh_nfc_pn544_registered = false;

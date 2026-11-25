@@ -45,7 +45,7 @@ fn find_mgmt_iface_in_main_ns() -> Option<String> {
     let entries = std::fs::read_dir("/sys/class/net").ok()?;
     for entry in entries.flatten() {
         let name = entry.file_name().to_string_lossy().into_owned();
-        if matches!(name.as_str(), "lo" | "dummy0" | "ccmni0" | "ccmni2") {
+        if matches!(name.as_str(), "lo" | "dummy0" | "ccmni0" | "ccmni1" | "ccmni2") {
             continue;
         }
         let addr_path = entry.path().join("address");

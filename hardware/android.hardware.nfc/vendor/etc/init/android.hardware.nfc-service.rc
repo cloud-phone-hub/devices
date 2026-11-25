@@ -1,7 +1,11 @@
 # engine/vendor 自研 nfc HAL（宿主通道直通）：通过 /dev/hvc11 与宿主虚拟 NCI 2.0
 # NFCC 收发原始 NCI 帧，实现完整 NFC 开关与虚拟卡片模拟。
+# 同时在 post-fs-data 兜底创建 /dev/nq-nci（若 cdh_device_info.ko 已注册字符设备则 EEXIST 忽略），
+# 满足小米澎湃 OS XMNfcNci NfcApplication.onCreate() 对 new File("/dev/nq-nci").exists() 的探针。
 on post-fs-data
     chmod 0666 /dev/hvc11
+    symlink /dev/null /dev/nq-nci
+    restorecon /dev/nq-nci
 
 service vendor.nfc-default /vendor/bin/hw/android.hardware.nfc-service
     class hal

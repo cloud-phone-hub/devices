@@ -21,7 +21,7 @@ namespace cdh_wifi {
 #endif
 
 constexpr char kScanModelPath[] = CDH_WIFI_SCAN_MODEL_PATH;
-constexpr size_t kMaximumAccessPoints = 8;
+constexpr size_t kMaximumAccessPoints = 32;
 constexpr size_t kMaximumProfileBytes = 4096;
 constexpr size_t kMaximumCachedScans = 64;
 

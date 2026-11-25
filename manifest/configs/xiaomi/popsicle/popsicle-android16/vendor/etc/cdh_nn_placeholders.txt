@@ -73,4 +73,5 @@ vendor.xiaomi.hardware.quickcamera.IQuickCameraService/default
 vendor.xiaomi.hardware.swap.ISwap/default
 vendor.xiaomi.hardware.uniperf.IUniperf/default
 vendor.xiaomi.hardware.videoservice.IVideoService/default
+vendor.xiaomi.hw.touchfeature.ITouchFeature/default
 vendor.xiaomi.modem.qms.IMiQms/default

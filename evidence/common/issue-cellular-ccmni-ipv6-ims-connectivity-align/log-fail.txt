@@ -1,0 +1,44 @@
+=== 1. 修复前 compare_align.py (aligner.network_full, 真机 ec519c7d513a3ad3 vs 云机 4c17e53fbaef35ca-cloud) ===
+fatal = 2 (capability = 2):
+  PRE #1: {
+    "level": "capability",
+    "path": "interfaces[name=ccmni0]",
+    "base": {
+      "addresses": [
+        {"host": "fe80::18ea:9ab8:fe97:f086%ccmni0", "loopback": false},
+        {"host": "240e:573:e90:3fd2:18ea:9ab8:fe97:f086", "loopback": false}
+      ],
+      "displayName": "ccmni0",
+      "loopback": false,
+      "mac": null,
+      "mtu": 1400,
+      "name": "ccmni0",
+      "pointToPoint": false,
+      "up": true,
+      "virtual": false
+    },
+    "target": "<缺>"
+  }
+  PRE #2: {
+    "level": "capability",
+    "path": "interfaces[name=ccmni2]",
+    "base": "<缺>",
+    "target": {
+      "addresses": [
+        {"host": "100.64.155.15", "loopback": false}
+      ],
+      "displayName": "ccmni2",
+      "loopback": false,
+      "mac": null,
+      "mtu": 1400,
+      "name": "ccmni2",
+      "pointToPoint": false,
+      "up": false,
+      "virtual": false
+    }
+  }
+
+=== 2. 修复前云机 #1 (127.0.0.1:5911) dumpsys connectivity 与 ip addr 缺陷现场 ===
+- 仅存在 1 条 WIFI NetworkAgentInfo，缺失真机常驻的 MOBILE[ims] (ccmni0, IPv6 + PcscfAddresses + com.mediatek.ims RequestorPkg) 网络；
+- ccmni2 在 deactivateDataCall 后虽处于 state DOWN，但残留 inet 100.64.155.15/24 未清空，被 Java NetworkInterface.getNetworkInterfaces() 直接枚举暴露；
+- 蜂窝上网 DataCall 仅支持单栈 IPv4 且返回私有网关 100.64.155.2 作为 DNS，不支持 ccmni0 (IMS) 与 ccmni1 (Default) 双 PDN 并发。

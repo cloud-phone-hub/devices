@@ -361,6 +361,8 @@ bool DecodeDataCall(View payload, DataCall *data_call, std::string *error) {
       output = &data_call->dns_servers;
     } else if (record.tag == 6) {
       output = &data_call->gateways;
+    } else if (record.tag == 8) {
+      output = &data_call->pcscf_addresses;
     } else {
       continue;
     }
@@ -579,9 +581,13 @@ bool ValidateSnapshot(const Snapshot &snapshot, std::string *error) {
   }
   if (snapshot.sim.state == SimState::kReady) {
     const Identity &identity = snapshot.sim.identity;
-    if (identity.country_code != "86" ||
-        identity.national_number.size() != 11 ||
+    if (identity.country_code.empty() || identity.country_code.size() > 3 ||
+        identity.country_code.front() < '1' ||
+        identity.country_code.front() > '9' || !Digits(identity.country_code) ||
+        identity.national_number.size() < 7 ||
+        identity.national_number.size() > 14 ||
         !Digits(identity.national_number) ||
+        !ValidE164(identity.e164) ||
         identity.e164 !=
             "+" + identity.country_code + identity.national_number ||
         identity.imsi.size() != 15 || !Digits(identity.imsi) ||

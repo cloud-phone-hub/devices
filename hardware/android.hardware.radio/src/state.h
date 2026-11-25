@@ -147,6 +147,7 @@ struct DataCall {
   std::vector<std::string> addresses;
   std::vector<std::string> dns_servers;
   std::vector<std::string> gateways;
+  std::vector<std::string> pcscf_addresses;
   std::int32_t mtu = 0;
 };
 

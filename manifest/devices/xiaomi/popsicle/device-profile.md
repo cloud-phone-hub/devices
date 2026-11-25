@@ -201,7 +201,7 @@
 
 ### `vendor/etc` 与 `odm/etc` 硬件配置实测详情
 
-- **Permissions 硬件特性**（共 `90` 项）: 红外=`false` · NFC=`false` · 指纹=`true` · BLE=`true` · Wi-Fi Direct=`true` · Audio LowLatency=`true` · Vulkan Level=`1` (API `1.4`)
+- **Permissions 硬件特性**（共 `96` 项）: 红外=`false` · NFC=`true` · 指纹=`true` · BLE=`true` · Wi-Fi Direct=`true` · Audio LowLatency=`true` · Vulkan Level=`1` (API `1.4`)
   - 声明的传感器特性 (`2` 项): `accelerometer`, `compass`
   - 区域/SKU 差异权限: `sku_alor=[android.hardware.sensor.accelerometer, android.hardware.sensor.compass, android.hardware.sensor.dynamic.head_tracker, android.hardware.sensor.gyroscope, android.hardware.sensor.light, android.hardware.sensor.proximity, android.hardware.sensor.stepcounter, android.hardware.sensor.stepdetector]；sku_canoe=[android.hardware.sensor.accelerometer, android.hardware.sensor.compass, android.hardware.sensor.dynamic.head_tracker, android.hardware.sensor.gyroscope, android.hardware.sensor.light, android.hardware.sensor.proximity, android.hardware.sensor.stepcounter, android.hardware.sensor.stepdetector]；sku_whale=[android.hardware.sensor.accelerometer, android.hardware.sensor.ambient_temperature, android.hardware.sensor.barometer, android.hardware.sensor.compass, android.hardware.sensor.dynamic.head_tracker, android.hardware.sensor.gyroscope, android.hardware.sensor.hifi_sensors, android.hardware.sensor.light, android.hardware.sensor.proximity, android.hardware.sensor.relative_humidity, android.hardware.sensor.stepcounter, android.hardware.sensor.stepdetector]`
 - **Sensors 原厂配置**: SubHALs=`[sensors.qsh.so sensors.dynamic_sensor_hal.so sensors.touch.detect.so vl53l8.hal@2.0.so sensors.ultrasoundproximity.so]` · 芯片归属=`map[]`

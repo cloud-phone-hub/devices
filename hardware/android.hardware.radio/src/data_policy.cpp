@@ -3,9 +3,21 @@
 
 namespace cdh::radio {
 
+namespace {
+constexpr std::int32_t kDefaultAPN = 1; // ApnType::DEFAULT (1 << 0)
+constexpr std::int32_t kImsAPN = 64;    // ApnType::IMS     (1 << 6)
+} // namespace
+
 bool DataPolicy::SupportsDefault(std::int32_t apn_types) const {
-  constexpr std::int32_t kDefaultAPN = 1;
   return (apn_types & kDefaultAPN) != 0;
+}
+
+bool DataPolicy::SupportsApnTypes(std::int32_t apn_types) const {
+  return (apn_types & (kDefaultAPN | kImsAPN)) != 0;
+}
+
+bool DataPolicy::IsPureImsApn(std::int32_t apn_types) const {
+  return (apn_types & kImsAPN) != 0 && (apn_types & kDefaultAPN) == 0;
 }
 
 std::int32_t DataPolicy::NextCID() {

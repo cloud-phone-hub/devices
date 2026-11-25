@@ -1,0 +1,71 @@
+=== [1] com.miui.gallery Impeller Vulkan 缺 VK_KHR_external_fence_fd 闪退与 keep_msaa 告警 ===
+11-25 16:15:21.902 13804 13804 W libc    : Access denied finding property "ro.vendor.cdh.vulkan.keep_msaa"
+11-25 16:15:21.902 13804 13804 W libc    : Access denied finding property "ro.vendor.cdh.vulkan.keep_msaa"
+11-25 16:15:21.902 13804 13804 W libc    : Access denied finding property "ro.vendor.cdh.vulkan.keep_msaa"
+11-25 16:15:21.902 13804 13804 W libc    : Access denied finding property "ro.vendor.cdh.vulkan.keep_msaa"
+11-25 16:15:21.902 13804 13804 W libc    : Access denied finding property "ro.vendor.cdh.vulkan.keep_msaa"
+11-25 16:15:21.902 13804 13804 W libc    : Access denied finding property "ro.vendor.cdh.vulkan.keep_msaa"
+11-25 16:15:21.902 13804 13804 W libc    : Access denied finding property "ro.vendor.cdh.vulkan.keep_msaa"
+11-25 16:15:21.902 13804 13804 W libc    : Access denied finding property "ro.vendor.cdh.vulkan.keep_msaa"
+11-25 16:15:21.902 13804 13804 W libc    : Access denied finding property "ro.vendor.cdh.vulkan.keep_msaa"
+11-25 16:15:21.902 13804 13804 E flutter : [ERROR:flutter/impeller/renderer/backend/vulkan/capabilities_vk.cc(285)] Impeller validation: Device does not support required Android extension: VK_KHR_external_fence_fd
+11-25 16:15:21.902 13804 13804 E flutter : [ERROR:flutter/impeller/renderer/backend/vulkan/capabilities_vk.cc(310)] Impeller validation: Device not suitable since required extensions are not supported.
+11-25 16:15:21.902 13804 13804 E flutter : [ERROR:flutter/impeller/renderer/backend/vulkan/capabilities_vk.cc(393)] Impeller validation: Device doesn't support the required queues.
+11-25 16:15:21.902 13804 13804 E flutter : [ERROR:flutter/impeller/renderer/backend/vulkan/context_vk.cc(292)] Impeller validation: No valid Vulkan device found.
+11-25 16:15:21.902 13804 13804 I flutter : [IMPORTANT:flutter/impeller/renderer/backend/vulkan/context_vk.cc(146)] DestroyThreadLocalPools begin
+11-25 16:15:21.902 13804 13804 I flutter : [IMPORTANT:flutter/impeller/renderer/backend/vulkan/context_vk.cc(148)] DestroyThreadLocalPools end
+11-25 16:15:21.903 13804 13804 I flutter : [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(70)] Using the Impeller rendering backend (Vulkan).
+11-25 16:15:21.909 13804 13804 E hyper_gallery_app: <om.miui.gallery-hyper_os_flutter_backend::flutter_scene:290>: Create engine failed, just finish
+11-25 16:15:22.985 13804 13804 W hyper_gallery_app: <om.miui.gallery-hyper_os_flutter_backend::flutter_scene:324>: Just finished in on_create, so skip on_destroy
+
+=== [2] ITouchFeature/default 1Hz ctl.interface_start 轮询刷屏 ===
+pre_fix_qemu.log count: 20063
+pre_fix_logcat.txt count: 25187
+11-25 16:15:23.149   251   251 I servicemanager: Caller(pid=648,uid=1000,sid=u:r:surfaceflinger:s0) Since 'vendor.xiaomi.hw.touchfeature.ITouchFeature/default' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+11-25 16:15:23.150     1     1 E init    : Control message: Could not find 'aidl/vendor.xiaomi.hw.touchfeature.ITouchFeature/default' for ctl.interface_start from pid: 251 (/system/bin/servicemanager)
+11-25 16:15:23.151 31970 31970 I servicemanager: Caller(pid=648,uid=1000,sid=u:r:surfaceflinger:s0) Tried to start aidl service vendor.xiaomi.hw.touchfeature.ITouchFeature/default as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+11-25 16:15:24.130   648   708 W ServiceManagerCppClient: Waited one second for vendor.xiaomi.hw.touchfeature.ITouchFeature/default (is service started? Number of threads started in the threadpool: 5. Are binder threads started and available?)
+11-25 16:15:24.151   251   251 I servicemanager: Caller(pid=648,uid=1000,sid=u:r:surfaceflinger:s0) Since 'vendor.xiaomi.hw.touchfeature.ITouchFeature/default' could not be found trying to start it as a lazy AIDL service. (if it's not configured to be a lazy service, it may be stuck starting or still starting).
+11-25 16:15:24.153   251 31974 W libc    : Unable to set property "ctl.interface_start" to "aidl/vendor.xiaomi.hw.touchfeature.ITouchFeature/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-25 16:15:24.165     1     1 E init    : Control message: Could not find 'aidl/vendor.xiaomi.hw.touchfeature.ITouchFeature/default' for ctl.interface_start from pid: 251 (/system/bin/servicemanager)
+11-25 16:15:24.174 31974 31974 I servicemanager: Caller(pid=648,uid=1000,sid=u:r:surfaceflinger:s0) Tried to start aidl service vendor.xiaomi.hw.touchfeature.ITouchFeature/default as a lazy service, but was unable to. Usually this happens when a service is not installed, but if the service is intended to be used as a lazy service, then it may be configured incorrectly.
+
+=== [3] HWC3 getLuts failed 与 Choreographer 未来帧告警 ===
+getLuts failed count: 1096
+11-25 16:15:23.234   648   711 E HWComposer: getLuts: getLuts failed for display 4632256312697818880: UNSUPPORTED (8)
+11-25 16:15:23.800   648   711 E HwcComposer: getLuts failed Status(-8, EX_SERVICE_SPECIFIC): '8: '
+11-25 16:15:23.800   648   711 E HWComposer: getLuts: getLuts failed for display 4632256312697818880: UNSUPPORTED (8)
+11-25 16:15:24.001   648   711 E HwcComposer: getLuts failed Status(-8, EX_SERVICE_SPECIFIC): '8: '
+11-25 16:15:24.001   648   711 E HWComposer: getLuts: getLuts failed for display 4632256312697818880: UNSUPPORTED (8)
+Choreographer in the future count: 17
+11-25 15:42:45.870  1910  2237 W Choreographer: Frame time is 0.259332 ms in the future!  Check that graphics HAL is generating vsync timestamps using the correct timebase.
+11-25 15:42:47.817  1910  2237 W Choreographer: Frame time is 0.139745 ms in the future!  Check that graphics HAL is generating vsync timestamps using the correct timebase.
+11-25 15:42:50.936  1352  1352 W Choreographer: Frame time is 0.128089 ms in the future!  Check that graphics HAL is generating vsync timestamps using the correct timebase.
+11-25 15:42:50.936   702   804 W Choreographer: Frame time is 0.132172 ms in the future!  Check that graphics HAL is generating vsync timestamps using the correct timebase.
+11-25 15:52:00.050  1910  1910 W Choreographer: Frame time is 0.046829 ms in the future!  Check that graphics HAL is generating vsync timestamps using the correct timebase.
+
+=== [4] .qtidataservices (vendor.qti.iwlan) UnsatisfiedLinkError 与高频 SELinux AVC ===
+11-25 16:30:53.786  1841  2958 E AndroidRuntime: FATAL EXCEPTION: QualifiedNetworksService
+11-25 16:30:53.786  1841  2958 E AndroidRuntime: Process: .qtidataservices, PID: 1841
+11-25 16:30:53.786  1841  2958 E AndroidRuntime: java.lang.UnsatisfiedLinkError: No implementation found for void vendor.qti.iwlan.JniHelper.getAllQualifiedNetworks(int, int) (tried Java_vendor_qti_iwlan_JniHelper_getAllQualifiedNetworks and Java_vendor_qti_iwlan_JniHelper_getAllQualifiedNetworks__II) - is the library loaded, e.g. System.loadLibrary?
+11-25 16:30:53.786  1841  2958 E AndroidRuntime: 	at vendor.qti.iwlan.JniHelper.getAllQualifiedNetworks(Native Method)
+11-25 16:30:53.786  1841  2958 E AndroidRuntime: 	at vendor.qti.iwlan.IWlanProxy.getAllQualifiedNetworks(IWlanProxy.java:499)
+11-25 16:30:53.786  1841  2958 E AndroidRuntime: 	at vendor.qti.iwlan.QualifiedNetworksServiceImpl$NetworkAvailabilityProviderImpl.<init>(QualifiedNetworksServiceImpl.java:80)
+11-25 16:30:53.786  1841  2958 E AndroidRuntime: 	at vendor.qti.iwlan.QualifiedNetworksServiceImpl.onCreateNetworkAvailabilityProvider(QualifiedNetworksServiceImpl.java:157)
+11-25 16:30:53.786  1841  2958 E AndroidRuntime: 	at android.telephony.data.QualifiedNetworksService$QualifiedNetworksServiceHandler.handleMessage(QualifiedNetworksService.java:354)
+11-25 16:30:53.786  1841  2958 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:114)
+--
+11-25 16:30:54.180  3009  3048 E AndroidRuntime: FATAL EXCEPTION: QualifiedNetworksService
+11-25 16:30:54.180  3009  3048 E AndroidRuntime: Process: .qtidataservices, PID: 3009
+pre_fix hal_mtdservice_service avc count: 20022
+pre_fix fowner avc count: 299
+pre_fix vendor_dpmtcm_socket avc count: 111
+[ 6720.707023][  T251] SELinux: avc:  denied  { find } for pid=3081 uid=6110 name=vendor.xiaomi.hardware.aidl.mtdservice.IMTService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:hal_mtdservice_service:s0 tclass=service_manager permissive=0
+[ 6720.720846][  T251] SELinux: avc:  denied  { find } for pid=3081 uid=6110 name=vendor.xiaomi.hardware.aidl.mtdservice.IMTService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:hal_mtdservice_service:s0 tclass=service_manager permissive=0
+[ 6720.723291][  T251] SELinux: avc:  denied  { find } for pid=3081 uid=6110 name=vendor.xiaomi.hardware.aidl.mtdservice.IMTService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:hal_mtdservice_service:s0 tclass=service_manager permissive=0
+[ 6721.709272][  T251] SELinux: avc:  denied  { find } for pid=3081 uid=6110 name=vendor.xiaomi.hardware.aidl.mtdservice.IMTService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:hal_mtdservice_service:s0 tclass=service_manager permissive=0
+[ 6721.723964][  T251] SELinux: avc:  denied  { find } for pid=3081 uid=6110 name=vendor.xiaomi.hardware.aidl.mtdservice.IMTService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:hal_mtdservice_service:s0 tclass=service_manager permissive=0
+[ 6721.725502][  T251] SELinux: avc:  denied  { find } for pid=3081 uid=6110 name=vendor.xiaomi.hardware.aidl.mtdservice.IMTService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:hal_mtdservice_service:s0 tclass=service_manager permissive=0
+[ 6722.712572][  T251] SELinux: avc:  denied  { find } for pid=3081 uid=6110 name=vendor.xiaomi.hardware.aidl.mtdservice.IMTService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:hal_mtdservice_service:s0 tclass=service_manager permissive=0
+[ 6722.727344][  T251] SELinux: avc:  denied  { find } for pid=3081 uid=6110 name=vendor.xiaomi.hardware.aidl.mtdservice.IMTService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:hal_mtdservice_service:s0 tclass=service_manager permissive=0
+[ 6722.728751][  T251] SELinux: avc:  denied  { find } for pid=3081 uid=6110 name=vendor.xiaomi.hardware.aidl.mtdservice.IMTService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:hal_mtdservice_service:s0 tclass=service_manager permissive=0

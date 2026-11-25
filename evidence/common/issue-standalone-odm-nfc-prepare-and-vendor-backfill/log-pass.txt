@@ -1,0 +1,74 @@
+=== [1] 02_prepare 与 09_build_vendor 单元测试全绿 ===
+$ cd agent/modules/pipeline && go test -v -run 'TestEnrichPermissionsFromStandaloneOdmImgAndSKUIsolation|TestScanVendorConnectivityIncludesOdmNfcConfs|TestExtractMeasuredVendorEtcConfigsAndTemplates' ./stages/02_prepare
+=== RUN   TestEnrichPermissionsFromStandaloneOdmImgAndSKUIsolation
+--- PASS: TestEnrichPermissionsFromStandaloneOdmImgAndSKUIsolation (0.33s)
+=== RUN   TestScanVendorConnectivityIncludesOdmNfcConfs
+--- PASS: TestScanVendorConnectivityIncludesOdmNfcConfs (0.00s)
+=== RUN   TestExtractMeasuredVendorEtcConfigsAndTemplates
+--- PASS: TestExtractMeasuredVendorEtcConfigsAndTemplates (0.01s)
+PASS
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	1.187s
+
+$ cd agent/modules/pipeline && go test -v -run 'TestBackfillOfficialNfcConfigsAndPermissionsFromStandaloneOdm|TestEnsureEnabledModulePermissionsSynthesizesNfcFallback|TestHonorNfcVariantDeclarativeCompatAndVintfSynthesis' ./stages/09_build_vendor
+=== RUN   TestHonorNfcVariantDeclarativeCompatAndVintfSynthesis
+--- PASS: TestHonorNfcVariantDeclarativeCompatAndVintfSynthesis (0.00s)
+=== RUN   TestBackfillOfficialNfcConfigsAndPermissionsFromStandaloneOdm
+--- PASS: TestBackfillOfficialNfcConfigsAndPermissionsFromStandaloneOdm (0.14s)
+=== RUN   TestEnsureEnabledModulePermissionsSynthesizesNfcFallback
+--- PASS: TestEnsureEnabledModulePermissionsSynthesizesNfcFallback (0.00s)
+PASS
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	0.406s
+
+=== [2] Xiaomi 17 Pro Max #1 (popsicle_16-OS3.0.319.0.WPBCNXM, patch.img 37bf65da0334) 42s 零干预冷启验收 ===
+=== Cold boot completed in 42s ===
+=== [COLD BOOT PASS] /dev/nq-nci & /dev/hvc11 ===
+crw-rw-rw- 1 system system u:object_r:console_device:s0  229,  11 2026-11-25 17:37 /dev/hvc11
+lrwxrwxrwx 1 root   root   u:object_r:nfc_device:s0             9 1970-01-01 08:00 /dev/nq-nci -> /dev/null
+
+=== [COLD BOOT PASS] ps -A | grep nfc ===
+nfc            642     1   10930604   6596 0                   0 S android.hardware.nfc-service
+nfc           6789   595   15947640 177876 0                   0 S com.miui.tsmclient
+nfc           7902   595   15801728 174848 0                   0 S com.android.nfc
+
+=== [COLD BOOT PASS] service check ===
+Service android.hardware.nfc.INfc/default: found
+Service nfc: found
+
+=== [COLD BOOT PASS] pm list features | grep -i nfc ===
+feature:android.hardware.nfc
+feature:android.hardware.nfc.any
+feature:android.hardware.nfc.ese
+feature:android.hardware.nfc.hce
+feature:android.hardware.nfc.hcef
+feature:android.hardware.nfc.uicc
+
+=== [COLD BOOT PASS] dumpsys nfc (head) ===
+mState=on
+mAlwaysOnState=off
+mScreenState=ON_UNLOCKED
+mIsSecureNfcEnabled=false
+mIsReaderOptionEnabled=true
+mIsAlwaysOnSupported=true
+SnoopLogMode=FILTERED
+VendorDebugEnabled=false
+mIsPowerSavingModeEnabled=false
+mIsObserveModeSupported=false
+mIsObserveModeEnabled=false
+listenTech=0xf
+pollTech=0x2f
+mTechMask: default
+mEnableLPD: true
+mEnableReader: false
+mEnableHostRouting: true
+
+Registered HCE services for current user:
+User 机主
+    ComponentInfo{com.android.nfc/com.android.nfc.cardemulation.SIMWalletDummyService} (Description: SIM卡钱包) (UID: 1027)
+    ComponentInfo{com.android.nfc/com.android.nfc.cardemulation.ESEWalletDummyService} (Description: 小米钱包) (UID: 1027)
+
+=== [3] 虚拟 NFC 刷卡 (tap) 与移卡 (remove) 全链路实测 ===
+$ curl -sS -X POST "http://127.0.0.1:9050/api/daemon/nfc/tap?nodeId=local&spec=popsicle_16-OS3.0.319.0.WPBCNXM&index=1" -d '{}'
+{"ok":true,"status":{"connected":true,"initialized":true,"discovering":true,"cardPresent":true,"cardUid":"04112233445566","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":90,"txResponses":138,"apduCount":0,"recentCmds":["mt=0,gid=01,oid=00,len=3","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=3","mt=0,gid=01,oid=00,len=6","mt=1,gid=02,oid=01,len=2","mt=1,gid=02,oid=01,len=2","mt=0,gid=01,oid=00,len=3","mt=1,gid=00,oid=03,len=2","mt=1,gid=00,oid=02,len=4","mt=1,gid=0f,oid=0c,len=1","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=16","mt=1,gid=00,oid=02,len=5","mt=1,gid=01,oid=03,len=13","mt=1,gid=01,oid=06,len=1","mt=1,gid=00,oid=02,len=28","mt=1,gid=01,oid=01,len=68","mt=1,gid=01,oid=03,len=7","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=03,len=15","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=03,len=11"]}}
+
+$ curl -sS -X POST "http://127.0.0.1:9050/api/daemon/nfc/remove?nodeId=local&spec=popsicle_16-OS3.0.319.0.WPBCNXM&index=1" -d '{}'
+{"ok":true,"status":{"connected":true,"initialized":true,"discovering":true,"cardPresent":false,"rxCommands":90,"txResponses":139,"apduCount":0,...}}

@@ -78,6 +78,12 @@ ndk::ScopedAStatus CdhComposerCallback::onSeamlessPossible(int64_t display) {
 ndk::ScopedAStatus CdhComposerCallback::onVsync(int64_t display,
                                                 int64_t timestamp,
                                                 int32_t vsync_period_nanos) {
+  // 钳制软件 VSync 时间戳不超过当前 CLOCK_MONOTONIC，消除虚拟 DRM vblank 微小相位超前引发的
+  // Choreographer "Frame time is 0.1~0.2 ms in the future!" 告警。
+  const int64_t now = NowMonotonicNs();
+  if (timestamp > now) {
+    timestamp = now;
+  }
   if (auto owner = owner_.lock()) {
     vsync_period_nanos =
         owner->OverrideVsyncPeriodIfPhysical(display, vsync_period_nanos);
@@ -804,7 +810,16 @@ ndk::ScopedAStatus CdhComposerClient::getMaxLayerPictureProfiles(
 ndk::ScopedAStatus CdhComposerClient::getLuts(
     int64_t display, const std::vector<Buffer>& buffers,
     std::vector<Luts>* out_luts) {
-  return inner_->getLuts(display, buffers, out_luts);
+  auto st = inner_->getLuts(display, buffers, out_luts);
+  if (!st.isOk() &&
+      st.getExceptionCode() == EX_SERVICE_SPECIFIC &&
+      st.getServiceSpecificError() == IComposerClient::EX_UNSUPPORTED) {
+    if (out_luts != nullptr) {
+      out_luts->clear();
+    }
+    return ndk::ScopedAStatus::ok();
+  }
+  return st;
 }
 
 ::ndk::SpAIBinder CdhComposerClient::createBinder() {
