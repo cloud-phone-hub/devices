@@ -1,0 +1,34 @@
+{
+  "id": 46,
+  "official": "Motorola",
+  "brand": "motorola",
+  "model": "arcfox",
+  "device": "arcfox",
+  "platform": "pineapple",
+  "resolution": "1080x2400",
+  "inch": "72x160",
+  "density": 420,
+  "smp": 8,
+  "memory": [
+    8192
+  ],
+  "storage": [
+    128000,
+    256000
+  ],
+  "extra": {
+    "board": "pineapple",
+    "hostHvc": {
+      "host-hvc-adbkey": "hvc2",
+      "host-hvc-bluetooth": "hvc5",
+      "host-hvc-daemon": "hvc7",
+      "host-hvc-haptic": "hvc6",
+      "host-hvc-keymint": "hvc3",
+      "host-hvc-radio": "hvc4",
+      "host-hvc-wifi": "hvc9",
+      "host-hvc-wifi-data": "hvc10"
+    },
+    "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
+  },
+  "updatedAt": "2026-11-24T14:21:53Z"
+}

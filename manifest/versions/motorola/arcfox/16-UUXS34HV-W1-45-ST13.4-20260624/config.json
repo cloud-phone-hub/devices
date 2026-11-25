@@ -1,0 +1,26 @@
+{
+  "id": 56,
+  "buildId": "16-UUXS34HV-W1-45-ST13.4-20260624",
+  "deviceId": 46,
+  "configId": 80,
+  "osVersion": "16-UUXS34HV-W1-45-ST13.4-20260624",
+  "buildDate": "20260624",
+  "securityPatch": "2026-07-01",
+  "factoryTgz": "ARCFOX_RETAIL_16_W1UXS36H.72-45-10-10-5_subsidy-DEFAULT_regulatory-DEFAULT_cid50_CFC.xml.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "comment": "由 pipeline prepare 从 ARCFOX_RETAIL_16_W1UXS36H.72-45-10-10-5_subsidy-DEFAULT_regulatory-DEFAULT_cid50_CFC.xml.zip (vendor/build.prop) 自动生成。",
+    "osVersion": "16-UUXS34HV-W1-45-ST13.4-20260624",
+    "partitionAndroidVersions": {
+      "odm": "14",
+      "product": "16",
+      "system": "16",
+      "system_ext": "16",
+      "vendor": "14",
+      "vendor_dlkm": "14"
+    },
+    "securityPatch": "2026-07-01"
+  },
+  "updatedAt": "2026-11-24T14:21:54Z"
+}

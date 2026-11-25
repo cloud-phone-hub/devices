@@ -1,0 +1,24 @@
+{
+  "build-prop-sets": {
+    "ro.bionic.2nd_arch": "",
+    "ro.bionic.2nd_cpu_variant": "",
+    "ro.hardware.egl": "mesa",
+    "ro.hardware.gralloc": "minigbm",
+    "ro.hardware.vulkan": "virtio",
+    "ro.hwui.use_vulkan": "false",
+    "ro.vendor.product.cpu.abilist": "arm64-v8a",
+    "ro.vendor.product.cpu.abilist32": "",
+    "ro.vendor.product.cpu.abilist64": "arm64-v8a",
+    "ro.zygote": "zygote64"
+  },
+  "build-prop-unsets": [
+    "ro.crypto.metadata_init_delete_all_keys.enabled",
+    "ro.frp.pst",
+    "ro.gfx.driver.0",
+    "ro.gfx.driver.1",
+    "ro.vndk.lite"
+  ],
+  "files": [],
+  "lib64-backfills": [],
+  "selinux-labels": {}
+}

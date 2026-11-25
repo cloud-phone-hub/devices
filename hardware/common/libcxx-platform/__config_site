@@ -4,6 +4,15 @@
 
 #define _LIBCPP_ABI_VERSION 1
 #define _LIBCPP_ABI_NAMESPACE __1
+
+#if defined(__clang_major__) && __clang_major__ < 20
+// NDK r28 (Clang 19) libc++ 采用 #ifdef 存在性判断，不可把关闭项定义为 0。
+#define _LIBCPP_HAS_NO_VENDOR_AVAILABILITY_ANNOTATIONS
+#define _LIBCPP_HAS_NO_TIME_ZONE_DATABASE
+#define _LIBCPP_PSTL_CPU_BACKEND_THREAD
+#define _LIBCPP_HARDENING_MODE_DEFAULT 2
+#else
+// NDK r29+ (Clang 20+) libc++ 采用 0/1 布尔宏格式。
 #define _LIBCPP_ABI_FORCE_ITANIUM 0
 #define _LIBCPP_ABI_FORCE_MICROSOFT 0
 #define _LIBCPP_HAS_THREADS 1
@@ -24,5 +33,6 @@
 #define _LIBCPP_INSTRUMENTED_WITH_ASAN 0
 #define _LIBCPP_PSTL_BACKEND_STD_THREAD
 #define _LIBCPP_HARDENING_MODE_DEFAULT 2
+#endif
 
 #endif

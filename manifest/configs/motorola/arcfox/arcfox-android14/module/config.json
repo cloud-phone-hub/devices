@@ -1,0 +1,66 @@
+{
+  "external": [
+    "cdh_redirect",
+    "device_info",
+    "input_identity",
+    "kernelsu",
+    "virtio_media"
+  ],
+  "redirect": [
+    {
+      "from": "/vendor/etc",
+      "to": "/mnt/vendorpatch/vendor/etc",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/bin",
+      "to": "/mnt/vendorpatch/vendor/bin",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/lib",
+      "to": "/mnt/vendorpatch/vendor/lib",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/lib64",
+      "to": "/mnt/vendorpatch/vendor/lib64",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/build.prop",
+      "to": "/mnt/vendorpatch/vendor/build.prop",
+      "type": "file"
+    },
+    {
+      "from": "/vendor/ueventd.rc",
+      "to": "/mnt/vendorpatch/vendor/ueventd.rc",
+      "type": "file"
+    },
+    {
+      "from": "/vendor_dlkm/lib",
+      "to": "/mnt/vendorpatch/vendor_dlkm/lib",
+      "type": "dir"
+    },
+    {
+      "from": "/odm",
+      "to": "/odm",
+      "type": "file"
+    },
+    {
+      "from": "/odm",
+      "to": "/mnt/vendorpatch/odm",
+      "type": "dir"
+    },
+    {
+      "from": "/system/lib/modules",
+      "to": "/mnt/vendorpatch/vendor_dlkm/lib/modules",
+      "type": "dir"
+    },
+    {
+      "from": "/system/bin/update_verifier",
+      "to": "/mnt/vendorpatch/system/bin/update_verifier",
+      "type": "file"
+    }
+  ]
+}
