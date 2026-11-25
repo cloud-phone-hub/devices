@@ -1,6 +1,6 @@
 # asusai2501：ASUS Zenfone 12 Ultra / ROG Phone 9（`asus/ASUSAI2501` / 高通 SM8750 `sun` / Android 15）
 
-2 条机型条目：#260 记录 `asus/ASUSAI2501`（`15-AQ3A.240829.003-20250122`，`lineage-22.2` + `kernel 6.6`）因实际固件为 `ZWWAI2501`（Zenfone 产品线）导致 `SurfaceFlinger` `RefreshRateSelector` 按 `zf(1)` 仅放行 `{60, 120, 144}` Hz，收口刷新率为 `60,120,144` 完成冷启动闭环；#293 记录该官方内测固件自带 `ro.vendor.asus.beta=1` 触发 `ImsWatermarkService` 全屏 IMEI 防泄密水印遮挡所有应用，通过 `cdh_redirect` 屏蔽 `/system/priv-app/ImsWatermarkService` 彻底清除。
+2 条机型专属条目（跨机型 `02_prepare` 硬件/市场名/动态内存对齐及 `slsservice` 空桩 `RescueParty` 自动重启闭环见 `common` 组 #333 [`../common/issue-asusai2501-rescueparty-and-prepare-profile-align/solution.md`](../common/issue-asusai2501-rescueparty-and-prepare-profile-align/solution.md)）：#260 记录 `asus/ASUSAI2501`（`15-AQ3A.240829.003-20250122`，`lineage-22.2` + `kernel 6.6`）因实际固件为 `ZWWAI2501`（Zenfone 产品线）导致 `SurfaceFlinger` `RefreshRateSelector` 按 `zf(1)` 仅放行 `{60, 120, 144}` Hz，收口刷新率为 `60,120,144` 完成冷启动闭环；#293 记录该官方内测固件自带 `ro.vendor.asus.beta=1` 触发 `ImsWatermarkService` 全屏 IMEI 防泄密水印遮挡所有应用，通过 `cdh_redirect` 屏蔽 `/system/priv-app/ImsWatermarkService` 彻底清除。
 
 ## 条目
 

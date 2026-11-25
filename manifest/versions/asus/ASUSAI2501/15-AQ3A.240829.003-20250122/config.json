@@ -10,13 +10,14 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MPSS.DE.7.0-02099.3-PAKALA_GEN_PACK-1.89941.2.94413.2",
     "comment": "由 cdh unpack prepare 从 R2-Asus-ROG-Phone-9-Pro-AI2501.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
+      "odm": "15",
+      "product": "15",
       "system": "15",
       "system_ext": "15",
-      "product": "15",
       "vendor": "15",
-      "odm": "15",
       "vendor_dlkm": "15"
     }
   },

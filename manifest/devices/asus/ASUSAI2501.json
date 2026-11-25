@@ -18,6 +18,7 @@
     1024000
   ],
   "extra": {
+    "basebandVersion": "MPSS.DE.7.0-02099.3-PAKALA_GEN_PACK-1.89941.2.94413.2",
     "board": "sun",
     "hostHvc": {
       "host-hvc-adbkey": "hvc2",

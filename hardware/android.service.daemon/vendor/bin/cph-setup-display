@@ -248,9 +248,15 @@ sync_bt_name_once() {
     fi
 }
 
-bt_default_name="$(getprop bluetooth.device.default_name)"
+bt_default_name="$(getprop ro.vendor.cdh.device.market_name)"
 if [ -z "$bt_default_name" ]; then
     bt_default_name="$(getprop ro.product.marketname)"
+fi
+if [ -z "$bt_default_name" ]; then
+    bt_default_name="$(getprop ro.vendor.asus.product.mkt_name)"
+fi
+if [ -z "$bt_default_name" ]; then
+    bt_default_name="$(getprop bluetooth.device.default_name)"
 fi
 if [ -z "$bt_default_name" ]; then
     bt_default_name="$(getprop ro.product.model)"
@@ -262,7 +268,7 @@ if [ -n "$bt_default_name" ]; then
         settings put secure bluetooth_name "$bt_default_name" 2>/dev/null || true
     fi
     cur_glb_dev="$(settings get global device_name 2>/dev/null)"
-    if [ -z "$cur_glb_dev" ] || [ "$cur_glb_dev" = "null" ]; then
+    if [ -z "$cur_glb_dev" ] || [ "$cur_glb_dev" = "null" ] || [ "$cur_glb_dev" = "$model_prop" ]; then
         settings put global device_name "$bt_default_name" 2>/dev/null || true
     fi
     bt_dump="$(dumpsys bluetooth_manager 2>/dev/null | head -n 12)"

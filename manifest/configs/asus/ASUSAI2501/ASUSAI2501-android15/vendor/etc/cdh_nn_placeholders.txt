@@ -3,8 +3,6 @@ vendor.asus.hardware.asuskey.IAsuskey/default
 vendor.asus.hardware.auralight2.IAuralight2/default
 vendor.asus.hardware.miniled.IMiniled/default
 vendor.asus.hardware.vibratorctl.IVibratorctl/default
-vendor.asus.network.rttutil.INetworkRttUtil/default
-vendor.asus.network.sla.ISlaService/default
 vendor.asus.wifi.hostapd.IAsusHostapd/default
 vendor.qti.ImsRtpService.IRTPService/ImsRtpService
 vendor.qti.MemHal.IMemHal/default

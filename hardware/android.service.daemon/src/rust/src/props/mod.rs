@@ -44,6 +44,7 @@ use writer::set_prop;
 pub fn apply() {
     let p = profile::resolve();
     scrub::scrub_early_virtual_props(&p);
+    fixups::sync_vendor_display_and_brand_props();
     fixups::ensure_boot_security_props();
     fixups::ensure_bootimage_fingerprint_props();
     fixups::ensure_telephony_and_locale_defaults();

@@ -18,6 +18,13 @@
 
 #include "cdh_device_info.h"
 
+#define CDH_GOLD_8GB_MEMTOTAL_KB	7760724UL
+#define CDH_SWAP_TOTAL_KB		6291452UL
+#define CDH_GOLD_8GB_COMMIT_LIMIT_KB	10171812UL
+#define CDH_CMA_TOTAL_KB		344064UL
+#define CDH_VMALLOC_TOTAL_KB		257687552UL
+#define CDH_MIN_USED_HEADROOM_KB	262144UL
+
 struct cdh_meminfo_target {
 	const char *name;
 	unsigned long kb;
@@ -25,11 +32,11 @@ struct cdh_meminfo_target {
 };
 
 static const struct cdh_meminfo_target cdh_meminfo_targets[] = {
-	{ "MemTotal:", 7760724, true },
-	{ "SwapTotal:", 6291452, false },
-	{ "CommitLimit:", 10171812, false },
-	{ "CmaTotal:", 344064, false },
-	{ "VmallocTotal:", 257687552, false },
+	{ "MemTotal:", CDH_GOLD_8GB_MEMTOTAL_KB, true },
+	{ "SwapTotal:", CDH_SWAP_TOTAL_KB, false },
+	{ "CommitLimit:", CDH_GOLD_8GB_COMMIT_LIMIT_KB, false },
+	{ "CmaTotal:", CDH_CMA_TOTAL_KB, false },
+	{ "VmallocTotal:", CDH_VMALLOC_TOTAL_KB, false },
 };
 
 static bool cdh_meminfo_proc_registered;
@@ -40,15 +47,52 @@ static unsigned long cdh_kb_to_pages(unsigned long kb)
 	return kb >> (PAGE_SHIFT - 10);
 }
 
-static const struct cdh_meminfo_target *cdh_meminfo_target(const char *name)
+static unsigned long cdh_pages_to_kb(unsigned long pages)
 {
+	return pages << (PAGE_SHIFT - 10);
+}
+
+/*
+ * 按 QEMU 实际分配的物理内存容量动态推导真机可见 MemTotal：
+ *   - 8GB 档（原始可用页 6.5GiB ~ 9.0GiB）严格保持 gold 真机实测值 7760724 kB；
+ *   - 其它档位（如 4GB / 6GB / 12GB / 16GB / 24GB）按同比例扣除 SoC 固件保留页
+ *     （约 4.6% 额外扣减，使 16GB 实例落在 ~15640000 kB），避免将 16GB/24GB 实例
+ *     错压成 8GB 并消除 MemAvailable > MemTotal 的容量倒挂异常。
+ */
+static unsigned long cdh_resolve_target_memtotal_kb(unsigned long raw_kb)
+{
+	if (raw_kb == 0)
+		return CDH_GOLD_8GB_MEMTOTAL_KB;
+	if (raw_kb >= 6815744UL && raw_kb <= 9437184UL)
+		return CDH_GOLD_8GB_MEMTOTAL_KB;
+	return (raw_kb * CDH_GOLD_8GB_MEMTOTAL_KB / 8130560UL) & ~3UL;
+}
+
+static unsigned long cdh_meminfo_read_line_kb(struct seq_file *m, const char *name)
+{
+	size_t name_len = strlen(name);
 	size_t i;
 
-	for (i = 0; i < ARRAY_SIZE(cdh_meminfo_targets); i++) {
-		if (!strcmp(cdh_meminfo_targets[i].name, name))
-			return &cdh_meminfo_targets[i];
+	for (i = 0; i + name_len < m->count; i++) {
+		unsigned long val = 0;
+		bool found_digit = false;
+		size_t p;
+
+		if (i > 0 && m->buf[i - 1] != '\n')
+			continue;
+		if (memcmp(m->buf + i, name, name_len) != 0)
+			continue;
+		p = i + name_len;
+		while (p < m->count && m->buf[p] == ' ')
+			p++;
+		while (p < m->count && m->buf[p] >= '0' && m->buf[p] <= '9') {
+			val = val * 10 + (unsigned long)(m->buf[p] - '0');
+			found_digit = true;
+			p++;
+		}
+		return found_digit ? val : 0;
 	}
-	return NULL;
+	return 0;
 }
 
 static bool cdh_meminfo_replace_line(struct seq_file *m, const char *name, unsigned long kb)
@@ -87,28 +131,52 @@ static bool cdh_meminfo_replace_line(struct seq_file *m, const char *name, unsig
 static void cdh_si_meminfo_adjust(void *data, unsigned long *totalram,
 					 unsigned long *freeram)
 {
-	const struct cdh_meminfo_target *target;
+	unsigned long raw_kb;
+	unsigned long target_kb;
+	unsigned long max_free_pages;
 
 	if (!totalram)
 		return;
-	target = cdh_meminfo_target("MemTotal:");
-	if (!target)
-		return;
-	*totalram = cdh_kb_to_pages(target->kb);
-	if (freeram && *freeram > *totalram)
-		*freeram = *totalram;
+	raw_kb = cdh_pages_to_kb(*totalram);
+	target_kb = cdh_resolve_target_memtotal_kb(raw_kb);
+	*totalram = cdh_kb_to_pages(target_kb);
+	if (freeram) {
+		max_free_pages = *totalram;
+		if (target_kb > CDH_MIN_USED_HEADROOM_KB)
+			max_free_pages = cdh_kb_to_pages(target_kb - CDH_MIN_USED_HEADROOM_KB);
+		if (*freeram > max_free_pages)
+			*freeram = max_free_pages;
+	}
 }
 
 static void cdh_meminfo_proc_show(void *data, struct seq_file *m)
 {
+	unsigned long mem_total_kb = cdh_meminfo_read_line_kb(m, "MemTotal:");
+	unsigned long mem_avail_kb = cdh_meminfo_read_line_kb(m, "MemAvailable:");
+	unsigned long mem_free_kb = cdh_meminfo_read_line_kb(m, "MemFree:");
 	size_t i;
+
+	if (mem_total_kb == 0)
+		mem_total_kb = CDH_GOLD_8GB_MEMTOTAL_KB;
+
+	if (mem_total_kb > CDH_MIN_USED_HEADROOM_KB) {
+		unsigned long cap_avail = mem_total_kb - CDH_MIN_USED_HEADROOM_KB;
+
+		if (mem_avail_kb > cap_avail)
+			cdh_meminfo_replace_line(m, "MemAvailable:", cap_avail);
+		if (mem_free_kb > cap_avail)
+			cdh_meminfo_replace_line(m, "MemFree:", cap_avail);
+	}
 
 	for (i = 0; i < ARRAY_SIZE(cdh_meminfo_targets); i++) {
 		const struct cdh_meminfo_target *target = &cdh_meminfo_targets[i];
+		unsigned long kb = target->kb;
 
 		if (target->si_meminfo)
 			continue;
-		cdh_meminfo_replace_line(m, target->name, target->kb);
+		if (!strcmp(target->name, "CommitLimit:") && mem_total_kb != CDH_GOLD_8GB_MEMTOTAL_KB)
+			kb = (mem_total_kb / 2) + CDH_SWAP_TOTAL_KB;
+		cdh_meminfo_replace_line(m, target->name, kb);
 	}
 }
 

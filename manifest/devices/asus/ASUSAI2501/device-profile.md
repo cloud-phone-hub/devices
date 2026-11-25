@@ -2,7 +2,6 @@
 
 - **生成时间**: `2026-11-18T23:26:40+08:00`
 - **ROM Build ID**: `15-AQ3A.240829.003-20250122`
-- **分区 Android 版本**: `system=15, system_ext=15, product=15, vendor=15, odm=15, vendor_dlkm=15`
 - **DSH 聊天会话 ID**: `session-ec6007d4-5a65-444b-98b0-478a13c8535d`（标题：`[02_prepare] 真机规格采集 · ASUS ROG Phone 9 Pro (asus/ASUSAI2501 · 15-AQ3A.240829.003-20250122)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
@@ -164,7 +163,7 @@
 </details>
 
 ### 2. 显示面板、GPU 与图形栈（`gpu_id.cfg` / `buildVendor` 对标 `gold`）
-- **面板类型与刷新率**: LTPO AMOLED · 刷新率 `[60 90 120 144 165 185] Hz`（默认 `120 Hz`） · 广色域 `true` · EDID `ASU` (`ASUSAI2501`, product=`9473`, year=`2024`W`45`)
+- **面板类型与刷新率**: LTPO AMOLED · 刷新率 `[60 120 144] Hz`（默认 `120 Hz`） · 广色域 `true` · EDID `ASU` (`ASUSAI2501`, product=`9473`, year=`2024`W`45`)
 - **OpenGL ES**: `Qualcomm` / `Adreno 830` / `OpenGL ES 3.2 V@0767.0 (GIT@09d2b1f, I8e4d3c2b1, 1730224123) (Date:10/29/24)`
   - GL 驱动扩展: `GL_QCOM_alpha_test,GL_QCOM_binning_control,GL_QCOM_driver_control,GL_QCOM_perfmon_global_mode,GL_QCOM_extended_get,GL_QCOM_extended_get2,GL_QCOM_tiled_rendering,GL_QCOM_writeonly_rendering,GL_QCOM_motion_estimation,GL_QCOM_frame_extrapolation,GL_QCOM_render_shared,GL_QCOM_shader_framebuffer_fetch_rate,GL_QCOM_YUV_texture_gather,GL_QCOM_texture_foveated,GL_QCOM_shading_rate,GL_QCOM_memory_extension` GL_EXT_color_buffer_float,GL_EXT_disjoint_timer_query,GL_EXT_texture_filter_anisotropic,GL_EXT_texture_norm16,GL_KHR_blend_equation_advanced,GL_KHR_debug,GL_KHR_parallel_shader_compile,GL_KHR_robust_buffer_access_behavior,GL_KHR_texture_compression_astc_hdr,GL_OES_texture_compression_astc,GL_OVR_multiview2
 - **Vulkan**: `ro.hardware.vulkan=adreno` · VendorID `0x5143` · DeviceID `0x51430008` · API `1.3` (`0x00403116`) · DriverID `7` (`0x8033e000`)
@@ -174,7 +173,7 @@
 - **触控与按键对齐**: touch=`synaptics_tcm` · keyboard=`gpio-keys` · input_identity 外设数=`3` 项
 - **硬件 HAL 变体与开关**: radioVariant=`default` · NFC=`true` · 红外=`false` · 3.5mm=`true` · 立体声双扬声器 (前置)
 - **影像规格**: 后置 50MP 主摄 + 32MP 3x 长焦 + 13MP 超广角 | 前置 32MP
-- **电池与通信**: `5800 mAh`（有线 `65W` / 无线 `15W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `5.4` · 5G=`true` · Widevine `L1` (sysId=`22827`) · TAC `35847123` · MAC OUI `[04:d4:c4 2c:fd:a1 50:eb:f6]`
+- **电池与通信**: `5800 mAh`（有线 `65W` / 无线 `15W`） · Wi-Fi 7 (802.11be)（Wi-Fi 6=`true`） · BT `5.4` · 5G=`true` · Widevine `L1` (sysId=`22827`) · TAC `35847123` · 基带 `MPSS.DE.7.0-02099.3-PAKALA_GEN_PACK-1.89941.2.94413.2` · MAC OUI `[04:d4:c4 2c:fd:a1 50:eb:f6]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `20` 项对齐传感器
@@ -204,11 +203,13 @@
 - `board`: `sun` | `soc`: `QTI  ()`
 - `densityDpi`: `0` | `egl`: `adreno` | `vulkan`: `adreno` | `abilist`: `arm64-v8a`
 - `securityPatch`: `2025-01-05` | `buildDate`: `20250122` | `kernelLine`: `6.6` | `vintfVersion`: `-`
+- `partitionAndroidVersions`: `system=15, system_ext=15, product=15, vendor=15, odm=15, vendor_dlkm=15`
 - `uname`: `Linux localhost 6.6.30-android15-8-g865edf73c264-ab12256205-4k #1 SMP PREEMPT Wed Aug 21 01:08:31 UTC 2024 aarch64 Toybox`
+- `basebandVersion`: `MPSS.DE.7.0-02099.3-PAKALA_GEN_PACK-1.89941.2.94413.2`（来源: `zip:payload.bin/modem`）
 - `fingerprint`: `asus/ZWWAI2501/ASUSAI2501:15/AQ3A.240829.003/35.1810.1810.243-0:user/release-keys`
 - `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=ZWWAI2501`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `vda.partitions` (1 个附加分区): `vendor_persist.img->/mnt/vendor/persist`
-- `vintfPlaceholders`: radio=`26` 项 · audio=`1` 项 · gnss=`1` 项 · nn=`69` 项
+- `vintfPlaceholders`: radio=`26` 项 · audio=`1` 项 · gnss=`1` 项 · nn=`67` 项
 
 ### `vendor/etc` 与 `odm/etc` 硬件配置实测详情
 

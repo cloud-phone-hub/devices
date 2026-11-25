@@ -1,0 +1,37 @@
+=== 1. RescueParty Warm Reboot in qemu.log (before fix) ===
+init: Received sys.powerctl='reboot,RescueParty' from pid: 622 (system_server)
+init: Clear action queue and start shutdown trigger
+ro.boot.bootreason=reboot,rescueparty
+
+=== 2. 10Hz Persistent Crash Loop in logcat -b crash (before fix) ===
+AndroidRuntime: FATAL EXCEPTION: main
+AndroidRuntime: Process: .slss, PID: 2814
+AndroidRuntime: java.lang.RuntimeException: Unable to create service com.asus.slsservice.SLSService: java.lang.IllegalStateException: android.os.RemoteException: Method registerCallback is unimplemented.
+AndroidRuntime: 	at android.app.ActivityThread.handleCreateService(ActivityThread.java:4664)
+AndroidRuntime: Caused by: java.lang.IllegalStateException: android.os.RemoteException: Method registerCallback is unimplemented.
+AndroidRuntime: 	at com.asus.slsservice.SLSService.registerNetworkRttUtilCallback(SLSService.java:152)
+AndroidRuntime: 	at com.asus.slsservice.SLSService.onCreate(SLSService.java:98)
+
+Zygote  : selinux_android_setcontext(2918, 0, "platform:privapp:targetSdkVersion=35:complete", ".cacertservice") failed
+libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 3102 (main), pid 3102 (main)
+
+AndroidRuntime: Process: .qtidataservices
+AndroidRuntime: java.lang.UnsatisfiedLinkError: dlopen failed: library "libWlanServiceJni.so" not found
+
+=== 3. Misaligned Properties & Inverted /proc/meminfo (before fix) ===
+[bluetooth.device.default_name]: [ASUSAI2501]
+[ro.product.model]: [ASUSAI2501]
+[ro.vendor.asus.beta]: [1]
+[ro.vendor.build.asus.sku]: [ZWW]
+[ro.vendor.build.asus.version]: [35.1810.1810.243]
+ro.vendor.cpufreq = (empty)
+ro.vendor.memsize = (empty)
+ro.vendor.build.csc.version = (empty)
+ro.vendor.config.idcode = (empty)
+settings get global device_name = ASUSAI2501
+
+/proc/meminfo:
+MemTotal:        7760724 kB
+MemFree:         2814208 kB
+MemAvailable:   11344948 kB
+CommitLimit:    10171812 kB

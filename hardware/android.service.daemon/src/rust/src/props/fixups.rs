@@ -144,6 +144,101 @@ pub(super) fn vendor_build_prop_value(key: &str) -> Option<String> {
     None
 }
 
+/// 同步 /vendor/build.prop（叠加 /odm/etc/build.prop）中声明的只读硬件/品牌展示属性：
+/// 1) Android init 先加载 /system、/product 再加载 /vendor，若官方系统分区预置了只读键
+///    （如华硕内测底包预置 `ro.vendor.asus.beta=1`、`ro.vendor.build.asus.sku=ZWW`），
+///    或某属性受厂商私有上下文限制（如 `vendor_asus_sp_system_prop` 仅允许 `/vendor/bin/sp`
+///    写入而拒绝 `vendor_init`），`/vendor/build.prop` 中的键值会被静默跳过；
+///    此处通过 `set_prop`（`resetprop::set_direct`）对齐至清单落盘值；
+/// 2) 若机型声明了 `ro.vendor.memsize`（如华硕 About phone 内存展示键），按当前实例
+///    `/proc/meminfo` 的真实 `MemTotal` 吸附标准物理容量档位（如 16GB / 24GB），保证多 SKU
+///    切换内存启动时无需重打镜像即展示准确容量。
+pub(super) fn sync_vendor_display_and_brand_props() {
+    let mut merged: Vec<(String, String)> = Vec::new();
+    for path in ["/vendor/build.prop", "/odm/etc/build.prop", "/odm/build.prop"] {
+        if let Ok(text) = std::fs::read_to_string(path) {
+            collect_syncable_ro_props(&text, &mut merged);
+        }
+    }
+    for (key, val) in &merged {
+        let cur = resetprop::get(key).unwrap_or_default();
+        if cur != *val {
+            set_prop(key, val);
+        }
+    }
+
+    let cur_memsize = resetprop::get("ro.vendor.memsize").unwrap_or_default();
+    if !cur_memsize.trim().is_empty() {
+        if let Ok(meminfo) = std::fs::read_to_string("/proc/meminfo") {
+            if let Some(gb) = detect_ram_tier_gb_from_meminfo(&meminfo) {
+                let target = format!("{gb}GB");
+                if cur_memsize.trim() != target {
+                    set_prop("ro.vendor.memsize", &target);
+                }
+            }
+        }
+    }
+}
+
+fn is_syncable_readonly_vendor_key(key: &str) -> bool {
+    key.starts_with("ro.vendor.cdh.")
+        || key.starts_with("ro.vendor.asus.")
+        || key.starts_with("ro.vendor.build.asus.")
+        || key.starts_with("ro.vendor.build.csc.")
+        || key.starts_with("ro.vendor.config.")
+        || key.starts_with("ro.vendor.atd.")
+        || key == "ro.vendor.cpufreq"
+        || key == "ro.vendor.memsize"
+        || key.starts_with("ro.soc.")
+        || key.starts_with("ro.vendor.soc.")
+}
+
+fn collect_syncable_ro_props(content: &str, out: &mut Vec<(String, String)>) {
+    for raw_line in content.lines() {
+        let line = raw_line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let Some((raw_k, raw_v)) = line.split_once('=') else {
+            continue;
+        };
+        let key = raw_k.trim();
+        if !is_syncable_readonly_vendor_key(key) {
+            continue;
+        }
+        let val = raw_v.trim().to_string();
+        if let Some(existing) = out.iter_mut().find(|(k, _)| k == key) {
+            existing.1 = val;
+        } else {
+            out.push((key.to_string(), val));
+        }
+    }
+}
+
+fn detect_ram_tier_gb_from_meminfo(meminfo: &str) -> Option<u32> {
+    for line in meminfo.lines() {
+        let trimmed = line.trim();
+        let Some(rest) = trimmed.strip_prefix("MemTotal:") else {
+            continue;
+        };
+        let kb_str = rest.split_whitespace().next()?;
+        let kb: u64 = kb_str.parse().ok()?;
+        if kb < 512 * 1024 {
+            return None;
+        }
+        const TIERS_GB: &[u32] = &[2, 3, 4, 6, 8, 10, 12, 16, 18, 24, 32, 48, 64];
+        for &tier in TIERS_GB {
+            let tier_kb = (tier as u64) * 1024 * 1024;
+            // 真机 MemTotal 因保留内存略小于标称颗粒容量，留 4% 上浮容差防止微小超出跳档
+            if kb <= tier_kb + (tier_kb / 25) {
+                return Some(tier);
+            }
+        }
+        return Some(((kb + (1024 * 1024 - 1)) / (1024 * 1024)) as u32);
+    }
+    None
+}
+
 /// 兜底设置蓝牙默认适配器名称（bluetooth.device.default_name）：
 /// 是否执行由档案决定（MIUI/HyperOS 与 Google Pixel 真机都不定义该属性，
 /// 适配器名称由 Settings.Secure.bluetooth_name 承载，设了反而暴露独有属性）。
@@ -151,22 +246,30 @@ pub(super) fn ensure_bluetooth_default_name(p: &DeviceProfile) {
     if !p.bluetooth_default_name {
         return;
     }
-    if !resetprop::get("bluetooth.device.default_name")
+    let cur_bt = resetprop::get("bluetooth.device.default_name")
         .unwrap_or_default()
         .trim()
-        .is_empty()
-    {
+        .to_string();
+    let model_code = resetprop::get("ro.product.model")
+        .unwrap_or_default()
+        .trim()
+        .to_string();
+    if !cur_bt.is_empty() && cur_bt != model_code {
         return;
     }
     for candidate in [
         "ro.product.marketname",
         "ro.product.vendor.marketname",
+        "ro.vendor.cdh.device.market_name",
+        "ro.vendor.asus.product.mkt_name",
         "ro.product.model",
     ] {
         let val = resetprop::get(candidate).unwrap_or_default();
         let trimmed = val.trim();
         if !trimmed.is_empty() {
-            set_prop("bluetooth.device.default_name", trimmed);
+            if cur_bt != trimmed {
+                set_prop("bluetooth.device.default_name", trimmed);
+            }
             return;
         }
     }
@@ -351,5 +454,29 @@ mod tests {
         assert_eq!(w_last % 2, 0);
         assert_eq!(b_last, w_last + 1);
         assert!(derive_oem_mac_pair("bad-oui", "123").is_none());
+    }
+
+    #[test]
+    fn syncable_props_and_ram_tier_detection() {
+        let mut props = Vec::new();
+        collect_syncable_ro_props(
+            "ro.vendor.asus.beta=1\nro.vendor.build.asus.sku=ZWW\nro.product.model=KEEP\n",
+            &mut props,
+        );
+        collect_syncable_ro_props(
+            "ro.vendor.asus.beta=0\nro.vendor.build.asus.sku=WW\nro.vendor.cpufreq=4.3GHz\n",
+            &mut props,
+        );
+        assert_eq!(
+            props,
+            vec![
+                ("ro.vendor.asus.beta".to_string(), "0".to_string()),
+                ("ro.vendor.build.asus.sku".to_string(), "WW".to_string()),
+                ("ro.vendor.cpufreq".to_string(), "4.3GHz".to_string()),
+            ]
+        );
+        assert_eq!(detect_ram_tier_gb_from_meminfo("MemTotal:        7760724 kB\n"), Some(8));
+        assert_eq!(detect_ram_tier_gb_from_meminfo("MemTotal:       15639808 kB\n"), Some(16));
+        assert_eq!(detect_ram_tier_gb_from_meminfo("MemTotal:       23592960 kB\n"), Some(24));
     }
 }

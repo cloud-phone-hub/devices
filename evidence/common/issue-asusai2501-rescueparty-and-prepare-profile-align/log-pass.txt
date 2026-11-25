@@ -1,0 +1,60 @@
+=== 1. Unit Tests ===
+=== RUN   TestAsusProfileAlignmentAndCrashPrevention
+--- PASS: TestAsusProfileAlignmentAndCrashPrevention (0.02s)
+PASS
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	2.275s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	0.886s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/13_pack_vda	1.810s
+
+=== 2. Pipeline apply-profile & 13-stage build summary ===
+==> [apply-profile] 已同步机型真机档案到 manifest:
+  - devices/manifest/devices/asus/ASUSAI2501/device-profile.json
+  - devices/manifest/devices/asus/ASUSAI2501/device-profile.md
+  [ok] 已对齐设备表 devices/manifest/devices/asus/ASUSAI2501.json（extra.basebandVersion=MPSS.DE.7.0-02099.3-PAKALA_GEN_PACK-1.89941.2.94413.2）
+  [ok] 已对齐配置模版 devices/manifest/configs/asus/ASUSAI2501/ASUSAI2501-android15:
+       - module/config.json: 收口 redirect 规则（清理 vbmeta_a=false，补齐 /system/lib/modules=true，补齐兼容规则=1，重排=true，共 16 条）
+       - module/config.json: 对齐 display.refresh-rates=[60 120 144]
+       - vendor/config.json: 同步 11 项真机属性（SoC / Display / GPU / Vulkan / DRM / Radio）
+       - hardware/config.json: android.hardware.radio.variant=qti
+       - vendor/config.json: vintf-version=8.0
+       - vendor/etc: 生成/对齐 2 个真机 HAL 配置文件 (etc/cdh_nn_placeholders.txt, etc/media_codecs_c2.xml)
+==> [步骤 13.7] 发布盘集（patch.img / data.qcow2 / device.json）
+    [ok] patch.img -> out/devices/dist/asus/ASUSAI2501/15-AQ3A.240829.003-20250122/patch.img（384.0 MiB，sha256 94e69567f476）
+    [ok] device.json（id=ASUSAI2501_15-AQ3A.240829.003-20250122，1122 B）
+    产物: out/devices/dist/asus/ASUSAI2501/15-AQ3A.240829.003-20250122（vda.img 13.00 GiB，recipe vda-568af1a10ef6）
+
+=== 3. Live Guest Verification (ASUS ROG Phone 9 Pro #1, 16GB+512GB, ADB 127.0.0.1:5911) ===
+ro.vendor.cpufreq                    = 4.3GHz
+ro.vendor.memsize                    = 16GB
+ro.vendor.build.csc.version          = WW_AI2501_35.1810.1810.243
+ro.vendor.build.asus.sku             = WW
+ro.vendor.config.idcode              = 3B
+ro.vendor.asus.beta                  = 0
+ro.vendor.asus.product.mkt_name      = ASUS ROG Phone 9 Pro
+ro.vendor.cdh.device.market_name     = ASUS ROG Phone 9 Pro
+bluetooth.device.default_name        = ASUS ROG Phone 9 Pro
+gsm.version.baseband                 = MPSS.DE.7.0-02099.3-PAKALA_GEN_PACK-1.89941.2.94413.2
+ro.boot.bootreason                   = reboot,factory_reset
+ro.telephony.iwlan_operation_mode    = legacy
+global.device_name                   = ASUS ROG Phone 9 Pro
+secure.bluetooth_name                = ASUS ROG Phone 9 Pro
+
+=== 4. /proc/meminfo & /vendor/app ===
+MemTotal:       15594256 kB
+MemFree:         2956736 kB
+MemAvailable:   11978220 kB
+Buffers:            9324 kB
+Cached:          9665372 kB
+SwapCached:            0 kB
+Active:          4173928 kB
+Inactive:        7524508 kB
+SwapTotal:       6291452 kB
+CommitLimit:    14088580 kB
+VmallocTotal:   257687552 kB
+CmaTotal:         344064 kB
+/vendor/app: empty directory (0 entries)
+
+=== 5. Continuous Uptime & Zero RescueParty ===
+/proc/uptime: 402.66 1930.01
+ro.boot.bootreason: reboot,factory_reset
+.slss / .cacertservice / .qtidataservices crashes: 0
