@@ -1,0 +1,85 @@
+=== [FAIL 1] /proc/meminfo & /proc/swaps & zram0 ===
+MemTotal:       11662200 kB
+MemAvailable:    8216768 kB
+SwapTotal:       6291452 kB
+SwapFree:              0 kB
+swaps:
+Filename				Type		Size		Used		Priority
+zram0 disksize=0
+=== [FAIL 2] YouTube software decode (c2.android.avc.decoder / media.swcodec) & missing media_codecs_mediatek_audio.xml ===
+-rw-r--r-- 1 root root  3435 2009-01-01 08:00 /vendor/etc/media_codecs.xml
+-rw-r--r-- 1 root root  1362 2009-01-01 08:00 /vendor/etc/media_codecs_c2.xml
+-rw-r--r-- 1 root root  4831 2009-01-01 08:00 /vendor/etc/media_codecs_google_audio.xml
+-rw-r--r-- 1 root root 10130 2009-01-01 08:00 /vendor/etc/media_codecs_performance.xml
+Tasks: 399 total,   1 running, 398 sleeping,   0 stopped,   0 zombie
+  Mem:    11388M total,    10832M used,      556M free,       10M buffers
+ Swap:     6143M total,     6143M used,        0M free,     8162M cached
+800%cpu   8%user   0%nice   8%sys 777%idle   0%iow   8%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+ 1311 u0_a142      20   0  19G 446M 286M S  7.6   3.9   0:28.81 com.android.systemui
+  666 system       -3   0  11G  50M  31M S  3.8   0.4   3:15.44 surfaceflinger
+18461 shell        20   0  10G 5.5M 4.4M R  0.0   0.0   0:00.01 top -b -n 1 -m 10
+18458 shell        20   0  10G 3.8M 3.1M S  0.0   0.0   0:00.00 sh -c ls -la /vendor/etc/media_codecs*; top -b -n 1 -m 10; logcat -d | grep -E "Created component.*avc|VideoTrack.*board-thmzone" | tail -n 10
+18452 root         20   0  10G 3.8M 3.1M S  0.0   0.0   0:00.00 sleep 30
+18448 root         20   0  10G 3.9M 3.2M S  0.0   0.0   0:00.00 sleep 2
+17222 root         20   0    0    0    0 I  0.0   0.0   0:00.06 [kworker/u16:0-events_unbound]
+16078 u0_a124      20   0  16G 161M  98M S  0.0   1.4   0:00.48 com.transsion.globalsearch
+15868 u0_a107      20   0  16G 142M  80M S  0.0   1.2   0:00.18 com.transsion.aicore.main
+15473 root         20   0    0    0    0 I  0.0   0.0   0:01.22 [kworker/u16:3-phy0]
+=== [FAIL 3] BOOTPROF / AVSync / INvram / IGpuService / wifiaware / unlabeled tranfs ===
+drwxr-xr-x 2 root root u:object_r:unlabeled:s0  27 2009-01-01 08:00 /tranfs
+11-26 19:00:41.313   740   771 E SystemServiceRegistry: 	at android.os.Binder.shellCommand(Binder.java:1167)
+11-26 19:00:41.313   740   771 E SystemServiceRegistry: 	at android.os.Binder.onTransact(Binder.java:969)
+11-26 19:00:41.313   740   771 E SystemServiceRegistry: 	at android.net.wifi.IWifiManager$Stub.onTransact(IWifiManager.java:3829)
+11-26 19:00:41.313   740   771 E SystemServiceRegistry: 	at android.os.Binder.execTransactInternal(Binder.java:1451)
+11-26 19:00:41.313   740   771 E SystemServiceRegistry: 	at android.os.Binder.execTransact(Binder.java:1381)
+11-26 19:00:41.313   740   771 E SystemServiceRegistry: Manager wrapper not available: wifiaware
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: No service published for: wifiaware
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: wifiaware
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: 	at android.os.ServiceManager.getServiceOrThrow(ServiceManager.java:203)
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: 	at android.app.SystemServiceRegistry$152.createService(SystemServiceRegistry.java:2349)
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: 	at android.app.SystemServiceRegistry$CachedServiceFetcher.getService(SystemServiceRegistry.java:2461)
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: 	at android.app.SystemServiceRegistry.getSystemService(SystemServiceRegistry.java:2035)
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: 	at android.app.ContextImpl.getSystemService(ContextImpl.java:2479)
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: 	at android.content.ContextWrapper.getSystemService(ContextWrapper.java:964)
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: 	at android.content.Context.getSystemService(Context.java:4630)
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: 	at com.android.server.wifi.WifiShellCommand.<init>(WifiShellCommand.java:519)
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: 	at com.android.server.wifi.WifiInjector.makeWifiShellCommand(WifiInjector.java:870)
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: 	at com.android.server.wifi.WifiServiceImpl.handleShellCommand(WifiServiceImpl.java:6211)
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: 	at android.os.Binder.onShellCommand(Binder.java:1220)
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: 	at android.os.Binder.shellCommand(Binder.java:1167)
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: 	at android.os.Binder.onTransact(Binder.java:969)
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: 	at android.net.wifi.IWifiManager$Stub.onTransact(IWifiManager.java:3829)
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: 	at android.os.Binder.execTransactInternal(Binder.java:1451)
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: 	at android.os.Binder.execTransact(Binder.java:1381)
+11-26 19:00:41.318   740   771 E SystemServiceRegistry: Manager wrapper not available: wifiaware
+[ 2150.803813] [  T309] type=1400 audit(1795690787.324:84005): avc:  denied  { read } for  comm="SystemStateMana" name="thermal" dev="sysfs" ino=2406 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+[ 2154.809306] [  T309] type=1400 audit(1795690791.332:84008): avc:  denied  { read } for  comm="SystemStateMana" name="thermal" dev="sysfs" ino=2406 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+[ 2158.810762] [  T309] type=1400 audit(1795690795.332:85112): avc:  denied  { read } for  comm="SystemStateMana" name="thermal" dev="sysfs" ino=2406 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+[ 2162.813123] [  T309] type=1400 audit(1795690799.336:85115): avc:  denied  { read } for  comm="SystemStateMana" name="thermal" dev="sysfs" ino=2406 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+[ 2163.681979] [  T309] type=1400 audit(1795690800.200:85117): avc:  denied  { read } for  comm="binder:379_6" name="name" dev="sysfs" ino=8313 scontext=u:r:system_suspend:s0 tcontext=u:object_r:sysfs:s0 tclass=file permissive=0
+[ 2163.686334] [  T309] type=1400 audit(1795690800.200:85118): avc:  denied  { read } for  comm="binder:379_6" name="active_count" dev="sysfs" ino=8314 scontext=u:r:system_suspend:s0 tcontext=u:object_r:sysfs:s0 tclass=file permissive=0
+[ 2163.688924] [  T309] type=1400 audit(1795690800.200:85119): avc:  denied  { read } for  comm="binder:379_6" name="last_change_ms" dev="sysfs" ino=8321 scontext=u:r:system_suspend:s0 tcontext=u:object_r:sysfs:s0 tclass=file permissive=0
+[ 2163.708148] [  T309] type=1400 audit(1795690800.200:85120): avc:  denied  { read } for  comm="binder:379_6" name="max_time_ms" dev="sysfs" ino=8320 scontext=u:r:system_suspend:s0 tcontext=u:object_r:sysfs:s0 tclass=file permissive=0
+[ 2163.715872] [  T309] type=1400 audit(1795690800.200:85121): avc:  denied  { read } for  comm="binder:379_6" name="total_time_ms" dev="sysfs" ino=8319 scontext=u:r:system_suspend:s0 tcontext=u:object_r:sysfs:s0 tclass=file permissive=0
+[ 2166.817881] [  T309] type=1400 audit(1795690803.336:86439): avc:  denied  { read } for  comm="SystemStateMana" name="thermal" dev="sysfs" ino=2406 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+[ 2170.823499] [  T309] type=1400 audit(1795690807.344:86440): avc:  denied  { read } for  comm="SystemStateMana" name="thermal" dev="sysfs" ino=2406 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+[ 2174.828795] [  T309] type=1400 audit(1795690811.348:87785): avc:  denied  { read } for  comm="SystemStateMana" name="thermal" dev="sysfs" ino=2406 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+[ 2178.834368] [  T309] type=1400 audit(1795690815.352:87791): avc:  denied  { read } for  comm="SystemStateMana" name="thermal" dev="sysfs" ino=2406 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+[ 2180.676759] [  T309] type=1400 audit(1795690817.196:87792): avc:  denied  { search } for  comm="StucklogoHandle" name="tranfs" dev="dm-3" ino=256 scontext=u:r:stucklogo:s0 tcontext=u:object_r:unlabeled:s0 tclass=dir permissive=0 trawcon="u:object_r:tranfs_file:s0"
+[ 2182.839925] [  T309] type=1400 audit(1795690819.360:88891): avc:  denied  { read } for  comm="SystemStateMana" name="thermal" dev="sysfs" ino=2406 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+[ 2186.844909] [  T309] type=1400 audit(1795690823.368:88892): avc:  denied  { read } for  comm="SystemStateMana" name="thermal" dev="sysfs" ino=2406 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+[ 2190.846649] [  T309] type=1400 audit(1795690827.368:90009): avc:  denied  { read } for  comm="SystemStateMana" name="thermal" dev="sysfs" ino=2406 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+[ 2194.851093] [  T309] type=1400 audit(1795690831.372:90013): avc:  denied  { read } for  comm="SystemStateMana" name="thermal" dev="sysfs" ino=2406 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+[ 2198.856786] [  T309] type=1400 audit(1795690835.380:91105): avc:  denied  { read } for  comm="SystemStateMana" name="thermal" dev="sysfs" ino=2406 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+[ 2202.862258] [  T309] type=1400 audit(1795690839.380:91108): avc:  denied  { read } for  comm="SystemStateMana" name="thermal" dev="sysfs" ino=2406 scontext=u:r:system_app:s0 tcontext=u:object_r:sysfs_thermal:s0 tclass=dir permissive=0
+=== [FAIL 4] Host qemu.log cgl-headless per-frame spam ===
+  109131 12679519 /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/Infinix-X6876_16-UP1A.231005.007-20260423/1/qemu.log
+qemu-system-aarch64: cgl-headless 大帧 1080x2436: blit=0.4 read=2.1 flush=0.0 update=0.0 end=0.0 总=2.6 ms
+[ 2206.842705][  T309] type=1400 audit(1795690843.364:92743): avc:  denied  { getattr } for  comm="top" path="/proc/3052" dev="proc" ino=41518 scontext=u:r:pioneer:s0 tcontext=u:r:permissioncontroller_app:s0:c23,c257,c512,c768 tclass=dir permissive=1
+[ 2206.845772][  T309] type=1400 audit(1795690843.364:92744): avc:  denied  { search } for  comm="top" name="3052" dev="proc" ino=41518 scontext=u:r:pioneer:s0 tcontext=u:r:permissioncontroller_app:s0:c23,c257,c512,c768 tclass=dir permissive=1
+[ 2206.850021][  T309] type=1400 audit(1795690843.364:92745): avc:  denied  { read } for  comm="top" name="stat" dev="proc" ino=89923 scontext=u:r:pioneer:s0 tcontext=u:r:untrusted_app:s0:c247,c256,c512,c768 tclass=file permissive=1
+[ 2206.852348][  T309] type=1400 audit(1795690843.364:92746): avc:  denied  { open } for  comm="top" path="/proc/7412/stat" dev="proc" ino=89923 scontext=u:r:pioneer:s0 tcontext=u:r:untrusted_app:s0:c247,c256,c512,c768 tclass=file permissive=1
+[ 2206.852355][  T306] logd: logdr: UID=2000 GID=2000 PID=18462 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns
+[ 2206.852923][  T309] type=1400 audit(1795690843.364:92747): avc:  denied  { getattr } for  comm="top" path="/proc/7816" dev="proc" ino=92610 scontext=u:r:pioneer:s0 tcontext=u:r:untrusted_app:s0:c255,c256,c512,c768 tclass=dir permissive=1
+[ 2207.129389][  T306] logd: logdr: UID=2000 GID=2000 PID=18469 n tail=0 logMask=99 pid=0 start=0ns deadline=0ns

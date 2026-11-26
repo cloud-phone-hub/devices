@@ -1,0 +1,153 @@
+=== [PASS 1] SELinux, ZRAM, meminfo, bootprof, tranfs, Codec2 prop ===
+SELinux=Enforcing
+media.c2.hal.selection=aidl
+persist.vendor.vilte_support=0 viwifi=0
+MemTotal:       11662200 kB
+MemAvailable:    8843108 kB
+SwapTotal:       6291452 kB
+SwapFree:        6291452 kB
+Filename				Type		Size		Used		Priority
+/dev/block/zram0                        partition	6291452		0		-2
+zram0 comp_algorithm: lzo lzo-rle [lz4] zstd  disksize=6442450944
+-rw-rw-rw- 1 root root u:object_r:proc_bootprof:s0   0 2026-11-26 20:36 /proc/bootprof
+drwxr-xr-x 2 root root u:object_r:tranfs_file:s0    27 2009-01-01 08:00 /tranfs
+=== [PASS 2] dumpsys media.player (MediaCodecList right after cold boot) ===
+  Decoder "c2.v4l2.avc.decoder" supports
+    aliases: []
+    attributes: 0xa: [
+      encoder: 0,
+      vendor: 1,
+      software-only: 0,
+      hw-accelerated: 1 ]
+    owner: "codec2::default"
+    hal name: "c2.v4l2.avc.decoder"
+    rank: 128
+    profile/levels: [
+          1/65536 (Baseline/5.2),
+      65536/65536 (ConstrainedBaseline/5.2),
+          2/65536 (Main/5.2),
+          8/65536 (High/5.2) ]
+    colors: [
+      0x7f000789 (Surface),
+      0x7f420888 (YUV420Flexible),
+      0x13 (YUV420Planar),
+      0x15 (YUV420SemiPlanar),
+      0x14 (YUV420PackedPlanar),
+--
+  Decoder "c2.v4l2.hevc.decoder" supports
+    aliases: []
+    attributes: 0xa: [
+      encoder: 0,
+      vendor: 1,
+      software-only: 0,
+      hw-accelerated: 1 ]
+    owner: "codec2::default"
+    hal name: "c2.v4l2.hevc.decoder"
+    rank: 128
+    profile/levels: [
+          1/16777216 (Main/Main 6.2) ]
+    colors: [
+      0x7f000789 (Surface),
+      0x7f420888 (YUV420Flexible),
+      0x13 (YUV420Planar),
+      0x15 (YUV420SemiPlanar),
+      0x14 (YUV420PackedPlanar),
+      0x27 (YUV420PackedSemiPlanar) ]
+    details: AMessage(what = 0x00000000) = {
+        string alignment = "2x2"
+--- media_codecs.xml & media_codecs_c2.xml ---
+-rw-r--r-- 1 root root  3380 2009-01-01 08:00 /vendor/etc/media_codecs.xml
+-rw-r--r-- 1 root root  2788 2009-01-01 08:00 /vendor/etc/media_codecs_c2.xml
+-rw-r--r-- 1 root root  4831 2009-01-01 08:00 /vendor/etc/media_codecs_google_audio.xml
+-rw-r--r-- 1 root root 10130 2009-01-01 08:00 /vendor/etc/media_codecs_performance.xml
+=== [PASS 3] YouTube Hardware Decoding Verification (Cold Boot) ===
+11-26 20:36:14.636  5622  6616 I Codec2Client: Available Codec2 services: "default" "default1" "default9" "software"
+11-26 20:36:14.657  5622  6616 I CCodec  : Created component [c2.v4l2.avc.decoder] for [c2.v4l2.avc.decoder]
+11-26 20:36:14.663  5622  5991 I VideoTrack: pkgName:com.google.android.youtube ,name=c2.v4l2.avc.decoder
+11-26 20:36:14.685   646  6643 I V4L2Decoder: Input queue memory=2 sizeimage=2097152 buffers=16
+11-26 20:36:14.702   646  6643 I V4L2Decoder: Need 6 output buffers with CAPTURE refill low watermark 2. coded size: 16x16, visible rect: (0,0) 16x16
+11-26 20:36:14.718  5622  5991 W YT.codecreuse: Codec created: c2.v4l2.avc.decoder. Cacheable true. InitReason CODEC_INIT_REASON_FIRST_PLAYBACK. Cache size 0
+11-26 20:36:14.723   646  6643 I V4L2Decoder: Set state Idle => Decoding
+11-26 20:36:14.893   646  6643 I V4L2Decoder: Need 25 output buffers with CAPTURE refill low watermark 2. coded size: 1080x1920, visible rect: (0,0) 1080x1920
+11-26 20:36:14.949   646  6643 I V4L2Decoder: DRC sync-filled 2 CAPTURE buffers (free=23 queued=2)
+--- Top CPU during YouTube V4L2 hardware playback ---
+Tasks: 408 total,   1 running, 407 sleeping,   0 stopped,   0 zombie
+  Mem:    11388M total,     6541M used,     4847M free,        8M buffers
+ Swap:     6143M total,        0M used,     6143M free,     4014M cached
+800%cpu   7%user  10%nice  28%sys 721%idle   0%iow  31%irq   3%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+ 4235 u0_a209      20   0  18G 272M 168M S 20.6   2.3   0:00.77 com.transsion.personalizedService.xos
+  646 media        20   0  11G  23M  12M S 10.3   0.2   0:00.96 android.hardware.media.c2@1.2-service-v4l2-64
+ 7163 shell        20   0  10G 5.5M 4.4M R  6.8   0.0   0:00.03 top -b -n 1
+  664 system       -3   0  11G  47M  31M S  6.8   0.4   0:04.26 surfaceflinger
+  289 logd         18  -2  10G 8.5M 5.1M S  6.8   0.0   0:04.07 logd
+ 5622 u0_a256       0 -20  25G 433M 254M S  3.4   3.8   0:04.46 com.google.android.youtube
+ 4760 root         20   0    0    0    0 S  3.4   0.0   0:01.09 [cdh-wifi-tx]
+--- media.swcodec vs c2@1.2-service-v4l2-64 ---
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  646 media        20   0  11G  17M  12M S 16.0   0.1   0:00.99 android.hardware.media.c2@1.2-service-v4l2-64
+ 5622 u0_a256       0 -20  25G 433M 254M S  4.0   3.8   0:04.48 com.google.android.youtube
+ 7169 shell        20   0  10G 3.8M 3.1M S  0.0   0.0   0:00.00 grep -E c2@1\.2-service-v4l2|media\.swcodec|youtube|PID
+ 7065 shell        20   0  10G 3.7M 3.0M S  0.0   0.0   0:00.00 sh -c ?logcat -d | grep -E "Available Codec2|Created component.*c2\.v4l2|VideoTrack.*c2\.v4l2|V4L2Decoder|YT\.codecreuse" | tail -n 30?echo "--- Top CPU during YouTube V4L2 hardware playback ---"?top -b -n 1 | head -n 12?echo "--- media.swcodec vs c2@1.2-service-v4l2-64 ---"?top -b -n 1 | grep -E "c2@1\.2-service-v4l2|media\.swcodec|youtube|PID"
+  787 mediacodec   20   0  11G  45M  38M S  0.0   0.3   0:00.19 media.swcodec oid.media.swcodec/bin/mediaswcodec
+=== [PASS 4] Launcher Smoothness, Idle CPU, Error/Audit Counts, 5 Subsystems ===
+Total frames rendered: 1296
+Janky frames: 1 (0.08%)
+Janky frames (legacy): 110 (8.49%)
+50th percentile: 6ms
+90th percentile: 10ms
+95th percentile: 12ms
+99th percentile: 17ms
+Number Missed Vsync: 0
+50th gpu percentile: 4ms
+90th gpu percentile: 7ms
+95th gpu percentile: 8ms
+99th gpu percentile: 11ms
+--- Idle CPU ---
+Tasks: 407 total,   1 running, 406 sleeping,   0 stopped,   0 zombie
+  Mem:    11388M total,     6336M used,     5052M free,        8M buffers
+ Swap:     6143M total,        0M used,     6143M free,     4095M cached
+800%cpu   7%user   0%nice  11%sys 770%idle   0%iow  11%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  289 logd         18  -2  10G 8.8M 5.1M S  7.4   0.0   0:04.39 logd
+ 7488 shell        20   0  10G 5.5M 4.5M R  3.7   0.0   0:00.02 top -b -n 1 -m 10
+ 1230 u0_a230      20   0  18G 404M 309M S  3.7   3.5   0:03.82 com.google.android.gms.persistent
+ 1229 u0_a141      10 -10  19G 308M 182M S  3.7   2.7   0:06.33 com.transsion.launcher3
+  822 system       18  -2  26G 582M 384M S  3.7   5.1   0:22.38 system_server
+  664 system       -3   0  11G  50M  31M S  3.7   0.4   0:06.31 surfaceflinger
+ 7463 root         20   0  10G 3.8M 3.1M S  0.0   0.0   0:00.00 sleep 2
+ 7327 system       20   0  17G 136M  71M S  0.0   1.1   0:00.07 com.transsion.multiwindow
+ 7310 root          0 -20  17G  71M 8.9M S  0.0   0.6   0:00.00 usap64
+ 7172 shell        20   0  10G 3.8M 3.0M S  0.0   0.0   0:00.01 sh -c ?am force-stop com.google.android.youtube?input keyevent KEYCODE_HOME?sleep 3?dumpsys gfxinfo com.transsion.launcher3 reset >/dev/null?for i in 1 2 3 4 5; do?  input swipe 900 1200 180 1200 180?  sleep 0.4?  input swipe 180 1200 900 1200 180?  sleep 0.4?done?dumpsys gfxinfo com.transsion.launcher3 | grep -E "Total frames rendered|Janky frames|50th|90th|95th|99th|Missed Vsync"?sleep 4?echo "--- Idle CPU ---"?top -b -n 1 -m 10?echo "--- Error & SELinux denial counts ---"?echo "E_BOOTPROF=$(logcat -b all -d | grep -c "E BOOTPROF" || true)"?echo "E_STUCKLOGO_bootprof=$(logcat -b all -d | grep -c "parseBootProf open /proc/bootprof failed" || true)"?echo "E_AVSync=$(logcat -b all -d | grep -c "AVSync" || true)"?echo "E_media_codecs_audio_missing=$(logcat -b all -d | grep -c "media_codecs_mediatek_audio.xml" || true)"?echo "V4L2_per_frame_QBUF_spam=$(logcat -b all -d | grep -c "QBUF to input queue" || true)"?echo "avc_tranfs=$(logcat -b all -d | grep "avc:  denied" | grep -c "tranfs_file" || true)"?echo "avc_bootprof=$(logcat -b all -d | grep "avc:  denied" | grep -c "proc_bootprof" || true)"?echo "avc_sysfs_thermal=$(logcat -b all -d | grep "avc:  denied" | grep -c "sysfs_thermal" || true)"?echo "--- Subsystems quick check ---"?ip -br addr show wlan0?ip -br addr show ccmni0?ip -br addr show ccmni1?ping -c 2 -W 2 223.5.5.5?dumpsys bluetooth_manager | grep -E "enabled:|state:|Bluetooth crashed" | head -n 5?service check nfc
+--- Error & SELinux denial counts ---
+E_BOOTPROF=0
+E_STUCKLOGO_bootprof=0
+E_AVSync=0
+E_media_codecs_audio_missing=0
+V4L2_per_frame_QBUF_spam=0
+avc_tranfs=0
+avc_bootprof=0
+avc_sysfs_thermal=0
+--- Subsystems quick check ---
+wlan0            UP             192.168.20.100/24 fe80::904e:e4ff:fe8b:64cd/64 
+ccmni0           UNKNOWN        2408:8456:b633:7b2a:42ec:f430:9c20:c0ee/64 fe80::42ec:f430:9c20:c0ee/64 
+ccmni1           UP             100.64.155.15/24 2408:8456:b633:7b2b:42ec:f530:9c20:c2a1/64 fe80::42ec:f530:9c20:c2a1/64 
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=0.413 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=0.830 ms
+
+--- 223.5.5.5 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1018ms
+rtt min/avg/max/mdev = 0.413/0.621/0.830/0.209 ms
+  enabled: true
+  state: ON
+  time since enabled: 00:00:38.128
+Bluetooth crashed 0 times
+connection_manager state:
+Service nfc: found
+=== [PASS 5] Host qemu.log size & cgl-headless check ===
+    5339  667017 /Volumes/work/cloud-phone-hub/out/core/daemon/runtime/Infinix-X6876_16-UP1A.231005.007-20260423/1/qemu.log
+cgl_frame_spam=0
+[2J[01;01H[=3h[2J[01;01H[2J[01;01H[=3h[2J[01;01Hqemu-system-aarch64: cgl-headless flush #1: rect=0,0 1080x2436 surface=1080x2436 backing=1080x2436 y0top=1
+qemu-system-aarch64: cgl-headless flush #2: rect=0,0 1080x2436 surface=1080x2436 backing=1080x2436 y0top=1
+qemu-system-aarch64: cgl-headless flush #3: rect=280,1154 520x128 surface=1080x2436 backing=1080x2436 y0top=1

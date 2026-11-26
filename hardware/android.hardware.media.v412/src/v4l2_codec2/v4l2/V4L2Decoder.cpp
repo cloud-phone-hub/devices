@@ -577,7 +577,7 @@ void V4L2Decoder::pumpDecodeRequest() {
         mDecodeRequests.pop();
 
         const int32_t bitstreamId = request.buffer->id;
-        ALOGI("QBUF to input queue, bitstreamId=%d", bitstreamId);
+        ALOGV("QBUF to input queue, bitstreamId=%d", bitstreamId);
         if (mPendingDecodes.find(bitstreamId) != mPendingDecodes.end()) {
             ALOGE("Input bitstream ID %d is already queued.", bitstreamId);
             onError();
@@ -766,7 +766,7 @@ void V4L2Decoder::serviceDeviceTask(bool event) {
             ALOGW("INPUT DQBUF v4l2Id=%zu missing bitstream map, fallback tv_sec=%d", v4l2InputId,
                   id);
         }
-        ALOGI("DQBUF from input queue, v4l2Id=%zu bitstreamId=%d", v4l2InputId, id);
+        ALOGV("DQBUF from input queue, v4l2Id=%zu bitstreamId=%d", v4l2InputId, id);
         auto it = mPendingDecodes.find(id);
         if (it == mPendingDecodes.end()) {
             ALOGW("Callback is already abandoned for bitstreamId=%d", id);
@@ -794,7 +794,7 @@ void V4L2Decoder::serviceDeviceTask(bool event) {
         const int32_t bitstreamId = static_cast<int32_t>(dequeuedBuffer->getTimeStamp().tv_sec);
         const size_t bytesUsed = dequeuedBuffer->getPlaneBytesUsed(0);
         const bool isLast = dequeuedBuffer->isLast();
-        ALOGI("DQBUF from output queue, bufferId=%zu, bitstreamId=%d, bytesused=%zu, isLast=%d",
+        ALOGV("DQBUF from output queue, bufferId=%zu, bitstreamId=%d, bytesused=%zu, isLast=%d",
               bufferId, bitstreamId, bytesUsed, isLast);
 
         // Get the corresponding VideoFrame of the dequeued buffer.
@@ -822,7 +822,7 @@ void V4L2Decoder::serviceDeviceTask(bool event) {
             } else {
                 mOutputUserPtrStorageByV4L2Id.erase(bufferId);
             }
-            ALOGI("Send output frame(bitstreamId=%d) to client", bitstreamId);
+            ALOGV("Send output frame(bitstreamId=%d) to client", bitstreamId);
             frame->setBitstreamId(bitstreamId);
             frame->setVisibleRect(mVisibleRect);
             // Keep mBlockIdToV4L2Id for the session so the same GraphicBlock can
@@ -836,9 +836,9 @@ void V4L2Decoder::serviceDeviceTask(bool event) {
                     break;
                 }
             }
-            ALOGI("Calling mOutputCb for bitstreamId=%d", bitstreamId);
+            ALOGV("Calling mOutputCb for bitstreamId=%d", bitstreamId);
             mOutputCb.Run(std::move(frame));
-            ALOGI("Returned from mOutputCb for bitstreamId=%d", bitstreamId);
+            ALOGV("Returned from mOutputCb for bitstreamId=%d", bitstreamId);
         } else {
             mOutputUserPtrStorageByV4L2Id.erase(bufferId);
             // Workaround(b/168750131): If the buffer is not enqueued before the next drain is done,
@@ -1081,7 +1081,7 @@ bool V4L2Decoder::copyUserPtrStagingToFrame(VideoFrame* frame,
         return false;
     }
 
-    ALOGI("Copied USERPTR CAPTURE staging to YV12 graphic %dx%d format=%s", width, height,
+    ALOGV("Copied USERPTR CAPTURE staging to YV12 graphic %dx%d format=%s", width, height,
           fourccToString(fmt.fmt.pix_mp.pixelformat).c_str());
     return true;
 }
@@ -1245,7 +1245,7 @@ void V4L2Decoder::onVideoFrameReady(
                 }
             }
             mBlockIdToV4L2Id.emplace(blockId, v4l2BufferId);
-            ALOGI("%s(): Remapped free V4L2 CAPTURE slot %zu to new blockId=%u", __func__,
+            ALOGV("%s(): Remapped free V4L2 CAPTURE slot %zu to new blockId=%u", __func__,
                   v4l2BufferId, blockId);
             outputBuffer = std::move(freeBuffer);
             break;
@@ -1262,7 +1262,7 @@ void V4L2Decoder::onVideoFrameReady(
     }
 
     uint32_t v4l2Id = outputBuffer->bufferId();
-    ALOGI("QBUF to output queue, blockId=%u, V4L2Id=%u", blockId, v4l2Id);
+    ALOGV("QBUF to output queue, blockId=%u, V4L2Id=%u", blockId, v4l2Id);
 
     if (!queueOutputBuffer(std::move(*outputBuffer), frame.get())) {
         ALOGE("%s(): Failed to QBUF to output queue, blockId=%u, V4L2Id=%u", __func__, blockId,

@@ -38,3 +38,31 @@
 (allow {{pick:halclientdomain}} proc_ged (file (ioctl read write getattr lock append map open)))
 (allowx {{pick:halclientdomain}} proc_ged (ioctl file ((range 0x6700 0x67ff))))
 ;; @end
+
+;; MTK /proc/bootprof 启动与进程事件记录节点（device_info/sched_proc.c 注册）：
+;; MTK system_server（ProcessList.handleProcessStartedLocked -> MtkSystemServerImpl.addBootEvent）
+;; 在每次拉起应用/服务进程时都会打开 /proc/bootprof 写入事件；补齐独立 proc_bootprof 类型与读写授权，
+;; 消除每次进程启动在 AMS 锁路径上抛出的 20 行 FileNotFoundException（E/BOOTPROF）堆栈。
+;; @when-not-contains (genfscon proc "/bootprof"
+;; @ensure-type proc_bootprof
+(typeattributeset {{pick:fs_type}} (proc_bootprof))
+(typeattributeset {{pick:proc_type}} (proc_bootprof))
+(genfscon proc "/bootprof" (u object_r proc_bootprof ((s0) (s0))))
+;; @end
+;; @when-declared proc_bootprof
+(allow {{pick:init}} proc_bootprof (file (ioctl read write getattr lock append map open)))
+(allow {{pick:vendor_init}} proc_bootprof (file (ioctl read write getattr lock append map open)))
+(allow {{pick:system_server}} proc_bootprof (file (ioctl read write getattr lock append map open)))
+(allow {{pick:surfaceflinger}} proc_bootprof (file (ioctl read write getattr lock append map open)))
+(allow {{pick:bootanim}} proc_bootprof (file (ioctl read write getattr lock append map open)))
+(allow {{pick:mtkbootanimation}} proc_bootprof (file (ioctl read write getattr lock append map open)))
+(allow {{pick:zygote}} proc_bootprof (file (ioctl read write getattr lock append map open)))
+(allow {{pick:platform_app}} proc_bootprof (file (ioctl read write getattr lock append map open)))
+(allow {{pick:priv_app}} proc_bootprof (file (ioctl read write getattr lock append map open)))
+(allow {{pick:system_app}} proc_bootprof (file (ioctl read write getattr lock append map open)))
+(allow {{pick:vold}} proc_bootprof (file (ioctl read write getattr lock append map open)))
+(allow {{pick:halserverdomain}} proc_bootprof (file (ioctl read write getattr lock append map open)))
+;; @end
+;; @when-declared stucklogo proc_bootprof
+(allow stucklogo proc_bootprof (file (ioctl read getattr lock map open)))
+;; @end

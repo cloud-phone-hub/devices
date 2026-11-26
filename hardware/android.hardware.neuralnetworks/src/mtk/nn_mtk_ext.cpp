@@ -22,6 +22,10 @@ constexpr const char* kTranTzServiceDescriptor =
     "vendor.transsion.hardware.camera.tzservice.ITZService";
 constexpr const char* kTranTzServiceInterfaceHash =
     "0000000000000000000000000000000000000000";
+constexpr const char* kMtkNvramDescriptor =
+    "vendor.mediatek.hardware.nvram.INvram";
+constexpr const char* kMtkNvramInterfaceHash =
+    "0000000000000000000000000000000000000000";
 
 // MTK Android 16 SurfaceFlinger / libcomposer_ext 连接 IComposerExt/default：
 // syncPerform op=1 (checkOpCodeMax) 返回 err=0 与 int64_t(1)，其余 op>1 返回 -ENOSYS (-38)。
@@ -141,6 +145,55 @@ binder_status_t OnTranTzServiceTransact(AIBinder* /*binder*/,
   return STATUS_UNKNOWN_TRANSACTION;
 }
 
+// MTK INvram AIDL 兼容应答桩（system_server MtkSecurityHelper / radio 查询 proinfo/nvram）：
+//   code 1（readFileByName）与 code 4（getNvramData）返回空 String("")；
+//   code 2（readFileByNamevec）返回长度 0 的空 byte[]（int32(0)）；
+//   code 3 / 5..8（writeFileByNamevec 等）返回 int8/int32(0)。
+binder_status_t OnMtkNvramTransact(AIBinder* /*binder*/,
+                                   transaction_code_t code,
+                                   const AParcel* /*in*/,
+                                   AParcel* out) {
+  if (out == nullptr) {
+    return STATUS_OK;
+  }
+  ndk::ScopedAStatus ok = ndk::ScopedAStatus::ok();
+  if (code == FIRST_CALL_TRANSACTION + 0 ||
+      code == FIRST_CALL_TRANSACTION + 3) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeString(out, "", 0);
+    return STATUS_OK;
+  }
+  if (code >= FIRST_CALL_TRANSACTION + 1 &&
+      code <= FIRST_CALL_TRANSACTION + 7) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeInt32(out, 0);
+    return STATUS_OK;
+  }
+  if (code == 0xffffff) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeInt32(out, 1);
+    return STATUS_OK;
+  }
+  if (code == 0xfffffe) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeString(out, kMtkNvramInterfaceHash, 40);
+    return STATUS_OK;
+  }
+  return STATUS_UNKNOWN_TRANSACTION;
+}
+
 }  // namespace
 
 AIBinder_Class_onTransact ResolveVendorPlaceholderTransact(
@@ -150,6 +203,9 @@ AIBinder_Class_onTransact ResolveVendorPlaceholderTransact(
   }
   if (descriptor == kTranTzServiceDescriptor) {
     return OnTranTzServiceTransact;
+  }
+  if (descriptor == kMtkNvramDescriptor) {
+    return OnMtkNvramTransact;
   }
   return nullptr;
 }

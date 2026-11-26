@@ -109,6 +109,14 @@
 (allow surfaceflinger_{{vers}} pioneer (fifo_file (read write getattr)))
 (allow surfaceflinger_{{vers}} pioneer (binder (call transfer)))
 (allow surfaceflinger_{{vers}} pioneer (unix_stream_socket (getattr getopt ioctl read setopt shutdown write)))
+(allow mediaserver_{{vers}} pioneer (fd (use)))
+(allow mediaserver_{{vers}} pioneer (fifo_file (read write getattr)))
+(allow mediaserver_{{vers}} pioneer (binder (call transfer)))
+(allow mediaserver_{{vers}} pioneer (unix_stream_socket (getattr getopt ioctl read setopt shutdown write)))
+(allow mediametrics_{{vers}} pioneer (fd (use)))
+(allow mediametrics_{{vers}} pioneer (fifo_file (read write getattr)))
+(allow mediametrics_{{vers}} pioneer (binder (call transfer)))
+(allow mediametrics_{{vers}} pioneer (unix_stream_socket (getattr getopt ioctl read setopt shutdown write)))
 
 ;; ---- pioneer 网络 socket 基础授权（lineage 基底未展开 net_domain）----
 ;; engine 的 vendor_sepolicy.cil 基底取自 lineage（与 plat_pub_versioned.cil 同源，

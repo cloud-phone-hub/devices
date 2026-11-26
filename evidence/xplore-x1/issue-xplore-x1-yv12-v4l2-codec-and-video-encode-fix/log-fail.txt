@@ -1,0 +1,55 @@
+# Blackview XPLORE_X1 (#1, ADB 127.0.0.1:5911) 修前取证日志 (2026-11-26)
+
+## 1. 现象与修前像素定量测量 (home-fail.png)
+- 实例: `XPLORE_X1_15-AP3A.240905.015.A2-20251126` #1 (`1080x2460`, Android 15 / Doke OS 5 / MT6877)
+- 旧运行态 `out/devices/dist/blackview/XPLORE_X1/15-AP3A.240905.015.A2-20251126/patch.img`:
+  mtime = `2026-11-23 09:37`（早于 `2026-11-26 01:35` 的 `02_prepare` 对齐及 `#328` `YV12` 步幅修复）
+- 桌面动态壁纸原片: `/system/etc/VideoWallpaperScene01.mp4`
+  `h264 (Main), yuv420p(tv, bt709), 1080x2460, 60 fps`（原片为深宝石蓝黑色几何水晶）
+- 修前桌面实屏像素统计 (`1080x2460` RGB24):
+  `BEFORE (fail): top_RGB=(84.0, 54.0, 47.3) bot_RGB=(45.6, 201.2, 51.9) y1229->1230_jump=(13.2, 13.6, 13.1) neon_green_bot=30.63%`
+  （上半屏色度步幅错位呈红橙色，屏幕正中 y=1230 出现水平硬断层，下半屏 UV 读到全 0x00 爆刺眼荧光绿）
+
+## 2. /dev/video* 节点权限缺失与顶层 media_codecs.xml 悬空 Include
+```text
+$ adb -s 127.0.0.1:5911 shell ls -laZ /dev/video*
+crw------- 1 root root u:object_r:video_device:s0 81, 0 1970-01-01 08:00 /dev/video0
+crw------- 1 root root u:object_r:video_device:s0 81, 1 1970-01-01 08:00 /dev/video1
+```
+- 官方 `/vendor/etc/media_codecs.xml` 含两行悬空引用（原厂 `/vendor/etc` 下并无此二文件，且未引用 `media_codecs_c2.xml`）：
+```xml
+<MediaCodecs>
+    <Include href="media_codecs_mediatek_audio.xml" />
+    <Settings>
+        <Setting name="max-video-encoder-input-buffers" value="10" />
+    </Settings>
+    <Include href="media_codecs_google_audio.xml" />
+</MediaCodecs>
+```
+  导致 `MediaCodecsXmlParser` 在首个不存在的 `media_codecs_mediatek_audio.xml` 处提前报错中止。
+
+## 3. 02_prepare 静态树配置缺陷（修前）
+- `XPLORE_X1-android15/vendor/etc/media_codecs_c2.xml` 被 31 行仅含 `c2.v4l2.*` 的最小模板覆盖，丢失原厂 544 行 `media_codecs_c2.xml` 中 21 个 `c2.mtk.*` 组件声明；
+- `c2.v4l2.avc.encoder` 尺寸上限写死 `max="1920x1088"` 且无 `can-swap-width-height`，无法覆盖竖屏 `1080x2460` 录屏；
+- `XPLORE_X1-android15/vendor/etc/media_config.xml` 将全部 22 个假 store 组件设为 `rank="1"`（极性反置，高于 `c2.v4l2.*` 的 `128` 与 AOSP 软编解码的 `256/512`），且 `codec2_store_service.cpp` 将 `video/hevc` encoder 误映射到不存在的 `c2.v4l2.hevc.encoder`。
+
+## 4. 修前视频编码实测（软编卡顿与相机降级 VGA）
+- `screenrecord --time-limit 3 /data/local/tmp/sr_before.mp4`:
+  回退软编 `c2.android.avc.encoder`，3 秒仅编码出 `nb_frames=3`（约 1 fps）；
+- 原生相机 `com.mediatek.camera` 录像 (`VID_20261126_183620 (1).mp4`):
+  因缺硬件编码器 FHD 能力声明，强制降级为 VGA 软编：
+```text
+codec_name=h264
+profile=Constrained Baseline
+width=640
+height=480
+avg_frame_rate=4230000/141299
+bit_rate=162492
+nb_frames=94
+```
+
+## 5. /proc/ged 刷屏报错（旧 vendor_dlkm 模块）
+```text
+E GED     : Failed to open /proc/ged, err=2
+E BufferQueueProducer: [SurfaceView[com.doke.livepicker...]] [onQueue]: ged queue fail
+```

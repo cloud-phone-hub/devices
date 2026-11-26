@@ -981,9 +981,6 @@ private:
         if (target->mediaType == "video/avc") {
           return "c2.v4l2.avc.encoder";
         }
-        if (target->mediaType == "video/hevc") {
-          return "c2.v4l2.hevc.encoder";
-        }
         if (target->mediaType == "video/x-vnd.on2.vp8") {
           return "c2.v4l2.vp8.encoder";
         }

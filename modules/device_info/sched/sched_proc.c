@@ -44,6 +44,7 @@ static struct proc_dir_entry *cdh_vip_ioctl;
 static struct proc_dir_entry *cdh_fas_dir;
 static struct proc_dir_entry *cdh_fas_ioctl;
 static struct proc_dir_entry *cdh_ged_entry;
+static struct proc_dir_entry *cdh_bootprof_entry;
 
 static int cdh_sched_proc_open(struct inode *inode, struct file *file)
 {
@@ -158,11 +159,21 @@ int cdh_sched_proc_init(void)
 	else
 		pr_info("registered /proc/ged\n");
 
+	cdh_bootprof_entry = proc_create("bootprof", 0666, NULL, &cdh_sched_proc_ops);
+	if (!cdh_bootprof_entry)
+		pr_warn("proc_create(/proc/bootprof) failed\n");
+	else
+		pr_info("registered /proc/bootprof\n");
+
 	return 0;
 }
 
 void cdh_sched_proc_exit(void)
 {
+	if (cdh_bootprof_entry) {
+		proc_remove(cdh_bootprof_entry);
+		cdh_bootprof_entry = NULL;
+	}
 	if (cdh_ged_entry) {
 		proc_remove(cdh_ged_entry);
 		cdh_ged_entry = NULL;

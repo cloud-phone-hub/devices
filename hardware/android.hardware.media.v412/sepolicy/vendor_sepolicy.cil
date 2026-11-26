@@ -15,3 +15,6 @@
 ;; 同域的媒体模块 android.hardware.media/sepolicy/ 已补 (allow mediacodec
 ;; vendor_file (file (read getattr map open execute)))，本文件不重复。
 (allow mediacodec same_process_hal_file_{{vers}} (file (read getattr map open execute)))
+;; V4L2DecodeComponent / V4L2EncodeComponent 可选读取未声明的 ro.vendor.v4l2_codec2.*，
+;; 静默回退默认值 -1 / false 时的 default_prop 审计噪声（不授予权限以严格遵守 neverallow）。
+(dontaudit mediacodec default_prop_{{vers}} (file (read getattr map open)))

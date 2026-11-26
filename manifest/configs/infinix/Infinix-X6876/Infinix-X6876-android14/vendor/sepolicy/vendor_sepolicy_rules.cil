@@ -55,3 +55,71 @@
 ;; @when-declared mtk_hal_audio_service
 (dontaudit {{pick:bluetooth}} mtk_hal_audio_service (service_manager (find)))
 ;; @end
+
+;; 根分区 /tranfs 目录原始 xattr 为 u:object_r:tranfs_file:s0；补齐 tranfs_file 类型声明与
+;; 空目录只读权限，防止内核将其降级为 unlabeled:s0 引发 lmkd/keystore/zygote/system_app 连锁拒绝。
+;; @ensure-type tranfs_file
+(typeattributeset {{pick:file_type}} (tranfs_file))
+(allow domain tranfs_file (dir (ioctl read getattr lock open search)))
+
+;; system_server（MtkSecurityHelper）与 radio 访问 INvram/ILbs 占位服务（由 hal_neuralnetworks_default 承载），
+;; 消除 ServiceManager.isDeclared 抛出的 SecurityException 堆栈与串口 SELinux 审计风暴。
+;; @when-declared mtk_hal_nvramagent_service hal_neuralnetworks_default
+(allow {{pick:system_server}} mtk_hal_nvramagent_service (service_manager (find)))
+(allow {{pick:radio}} mtk_hal_nvramagent_service (service_manager (find)))
+(allow {{pick:system_server}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:system_server}} (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:system_server}} (fd (use)))
+(allow {{pick:radio}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:radio}} (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:radio}} (fd (use)))
+;; @end
+;; @when-declared mtk_hal_lbs_service hal_neuralnetworks_default
+(allow {{pick:system_server}} mtk_hal_lbs_service (service_manager (find)))
+;; @end
+
+;; 静默无物理硬件/私域服务探测的高频审计噪声（严守平台 neverallow，不授予特权访问，仅切断 auditd/串口风暴）：
+;; 1) 视频播放 MediaCodec_loop / system_app 轮询 sysfs_thermal 导致的 audit: rate limit exceeded；
+;; 2) surfaceflinger / system_server / bluetooth / radio 探测 MTK gpuserv / mbrain / mtkpower / vendor 内部属性。
+(dontaudit {{pick:untrusted_app_all}} {{pick:sysfs_thermal}} (dir (ioctl read getattr lock open search)))
+(dontaudit {{pick:system_app}} {{pick:sysfs_thermal}} (dir (ioctl read getattr lock open search)))
+(dontaudit {{pick:audioserver}} {{pick:default_android_hwservice}} (hwservice_manager (find)))
+(dontaudit {{pick:surfaceflinger}} {{pick:default_android_hwservice}} (hwservice_manager (find)))
+(dontaudit {{pick:bluetooth}} {{pick:default_android_hwservice}} (hwservice_manager (find)))
+(dontaudit {{pick:system_server}} {{pick:default_android_hwservice}} (hwservice_manager (find)))
+(dontaudit {{pick:radio}} {{pick:default_android_hwservice}} (hwservice_manager (find)))
+(dontaudit {{pick:radio}} {{pick:loop_device}} (blk_file (getattr)))
+(dontaudit {{pick:radio}} {{pick:dm_device}} (blk_file (getattr)))
+(dontaudit {{pick:radio}} {{pick:vd_device}} (blk_file (getattr)))
+(dontaudit {{pick:audioserver}} {{pick:vendor_default_prop}} (file (read getattr map open)))
+(dontaudit {{pick:lmkd}} {{pick:vendor_default_prop}} (file (read getattr map open)))
+(dontaudit {{pick:zygote}} {{pick:vendor_default_prop}} (file (read getattr map open)))
+(dontaudit {{pick:artd}} {{pick:vendor_default_prop}} (file (read getattr map open)))
+(dontaudit {{pick:logd}} {{pick:bluetooth_prop}} (file (read getattr map open)))
+;; @when-declared mtk_hal_gpuserv_service
+(dontaudit {{pick:system_server}} mtk_hal_gpuserv_service (service_manager (find)))
+;; @end
+;; @when-declared mtk_hal_mbrain_service
+(dontaudit {{pick:platform_app}} mtk_hal_mbrain_service (service_manager (find)))
+(dontaudit {{pick:untrusted_app_all}} mtk_hal_mbrain_service (service_manager (find)))
+;; @end
+;; @when-declared vendor_kswapd0_bind_enable_prop
+(dontaudit {{pick:system_server}} vendor_kswapd0_bind_enable_prop (file (read getattr map open)))
+;; @end
+;; @when-declared tneengine
+(dontaudit tneengine {{pick:default_android_hwservice}} (hwservice_manager (find)))
+;; @end
+;; @when-declared hal_tranfac_service tranfac_app
+(dontaudit tranfac_app hal_tranfac_service (service_manager (find)))
+;; @end
+;; @when-declared vendor_trancare_prop
+(dontaudit {{pick:system_app}} vendor_trancare_prop (file (read getattr map open)))
+(dontaudit {{pick:priv_app}} vendor_trancare_prop (file (read getattr map open)))
+;; @end
+;; @when-declared vendor_transched_support_prop
+(dontaudit {{pick:system_app}} vendor_transched_support_prop (file (read getattr map open)))
+(dontaudit {{pick:platform_app}} vendor_transched_support_prop (file (read getattr map open)))
+;; @end
+;; @when-declared transsion_vendor_prop
+(dontaudit {{pick:keystore}} transsion_vendor_prop (file (read getattr map open)))
+;; @end

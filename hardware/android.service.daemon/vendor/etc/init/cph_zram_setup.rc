@@ -1,0 +1,12 @@
+# 云机 ZRAM 交换分区幂等初始化：on boot 阶段激活 6 GiB /dev/block/zram0。
+service vendor.cph_zram_setup /system/bin/sh /vendor/bin/cph-zram-setup
+    class core
+    user root
+    group root system
+    seclabel u:r:pioneer:s0
+    capabilities SYS_ADMIN DAC_OVERRIDE
+    oneshot
+    disabled
+
+on boot
+    start vendor.cph_zram_setup

@@ -1,0 +1,81 @@
+# Blackview XPLORE_X1 (#1, ADB 127.0.0.1:5911) 修后验证日志 (2026-11-26)
+
+## 1. 冷启动、SELinux、V4L2 设备权限与 /proc/ged 状态
+- 新版 `patch.img`: `402653184` 字节，`sha256 3ee1160e3616`（973 条目，`e2fsck` 零错误）
+```text
+Boot completed at poll 14! (48s cold boot)
+ 20:20:28 up 0 min,  0 users,  load average: 2.27, 0.58, 0.19
+Enforcing
+sys.boot_completed=1
+crw-rw---- 1 media camera u:object_r:video_device:s0  81,   0 1970-01-01 08:00 /dev/video0
+crw-rw---- 1 media camera u:object_r:video_device:s0  81,   1 1970-01-01 08:00 /dev/video1
+-rw-rw-rw- 1 root  root   u:object_r:proc_ged:s0            0 2026-11-26 20:20 /proc/ged
+ged_open_fail_count=0
+am_crash_count=0
+```
+
+## 2. 桌面动态壁纸 (1080x2460 H.264 60fps) V4L2 硬件解码与像素实测
+```text
+11-26 20:21:05.267   594  1349 I V4L2Decoder: QBUF to output queue, blockId=68, V4L2Id=0
+11-26 20:21:05.270   594  1349 I V4L2Decoder: DQBUF from output queue, bufferId=0, bitstreamId=161, bytesused=3985200, isLast=0
+11-26 20:21:05.282   594  1349 I V4L2Decoder: Copied USERPTR CAPTURE staging to YV12 graphic 1080x2460 format=NV12
+11-26 20:21:05.283   594  1349 I V4L2Decoder: Send output frame(bitstreamId=161) to client
+11-26 20:21:05.297   722  1333 D MediaCodec: [0xb400007ad0af2010] [c2.v4l2.avc.decoder] release
+```
+- 修前 vs 修后桌面截图 (`1080x2460`) 全幅像素对比:
+```text
+BEFORE (fail): top_RGB=(84.0, 54.0, 47.3) bot_RGB=(45.6, 201.2, 51.9) y1229->1230_jump=(13.2, 13.6, 13.1) neon_green_bot=30.63%
+AFTER  (pass): top_RGB=(46.0, 60.8, 88.4) bot_RGB=(93.5, 104.3, 124.7) y1229->1230_jump=(2.1, 0.6, 1.4) neon_green_bot=0.00%
+```
+
+## 3. 运行态 MediaCodecList(ALL_CODECS) 实测
+```text
+c2.v4l2.avc.decoder encoder=false hw=true type=video/avc w=[2, 4096] h=[2, 4096] 1080x2460@60=true
+c2.v4l2.avc.encoder encoder=true hw=true type=video/avc w=[32, 4096] h=[32, 4096] 1080x2460@60=true
+c2.v4l2.hevc.decoder encoder=false hw=true type=video/hevc w=[2, 4096] h=[2, 4096] 1080x2460@60=true
+c2.mtk.avc.decoder encoder=false hw=true type=video/avc w=[64, 4096] h=[64, 4096] 1080x2460@60=true
+c2.mtk.avc.encoder encoder=true hw=true type=video/avc w=[128, 3840] h=[128, 3840] 1080x2460@60=false
+c2.mtk.hevc.encoder encoder=true hw=true type=video/hevc w=[128, 3840] h=[128, 3840] 1080x2460@60=true
+SUMMARY total=97 c2.v4l2=3 c2.mtk=21
+```
+
+## 4. 竖屏 1080x2460 screenrecord 硬件编码实测 (VideoToolbox 后端)
+```text
+11-26 20:22:10.679  5080  5084 I CCodec  : Created component [c2.v4l2.avc.encoder]
+11-26 20:22:10.705   594  5090 I V4L2Encoder: Created V4L2 input buffers using V4L2_MEMORY_MMAP
+11-26 20:22:10.709   594  5090 I V4L2Encoder: Created V4L2 output buffers using V4L2_MEMORY_MMAP
+11-26 20:22:10.712  5080  5084 I CCodecBufferChannel: [c2.v4l2.avc.encoder#541] Created output block pool with allocatorID 16 => poolID 18 - OK
+--- ffprobe ---
+codec_name=h264
+profile=Baseline
+width=1080
+height=2460
+r_frame_rate=90000/1
+avg_frame_rate=1365000/23311  (~58.56 fps)
+bit_rate=8482179
+nb_frames=91
+```
+
+## 5. 原生相机 com.mediatek.camera FHD 1920x1080 硬件编码录像实测
+- 相机切换 Video 模式后顶部显示 `FHD`（提示 `Resolution FHD 60FPS added`），点击录制命中 `c2.v4l2.avc.encoder`：
+```text
+11-26 20:28:13.501   722  6239 I CCodec  : Created component [c2.v4l2.avc.encoder]
+11-26 20:28:13.507   594  6241 I V4L2Encoder: Created V4L2 input buffers using V4L2_MEMORY_MMAP
+11-26 20:28:13.508   594  6241 I V4L2Encoder: Created V4L2 output buffers using V4L2_MEMORY_MMAP
+11-26 20:28:13.509   722  6239 I CCodecBufferChannel: [c2.v4l2.avc.encoder#563] Created output block pool with allocatorID 16 => poolID 20 - OK
+11-26 20:28:13.646  4487  4487 E CamAp_VideoUI: [updateUIState] mUIState = STATE_PRE_RECORDING new state = STATE_RECORDING
+--- ffprobe (/sdcard/DCIM/Camera/VID_20261126_202813.mp4) ---
+codec_name=h264
+profile=Baseline
+width=1920
+height=1080
+avg_frame_rate=6862500/276383  (~24.83 fps)
+bit_rate=219209
+nb_frames=305
+```
+
+## 6. 单元测试回归
+```text
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	2.713s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	2.734s
+```

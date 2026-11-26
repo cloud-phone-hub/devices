@@ -154,6 +154,10 @@ static void cdh_meminfo_proc_show(void *data, struct seq_file *m)
 	unsigned long mem_total_kb = cdh_meminfo_read_line_kb(m, "MemTotal:");
 	unsigned long mem_avail_kb = cdh_meminfo_read_line_kb(m, "MemAvailable:");
 	unsigned long mem_free_kb = cdh_meminfo_read_line_kb(m, "MemFree:");
+	unsigned long raw_swap_total_kb = cdh_meminfo_read_line_kb(m, "SwapTotal:");
+	unsigned long raw_swap_free_kb = cdh_meminfo_read_line_kb(m, "SwapFree:");
+	unsigned long swap_used_kb = 0;
+	unsigned long target_swap_free_kb;
 	size_t i;
 
 	if (mem_total_kb == 0)
@@ -168,6 +172,11 @@ static void cdh_meminfo_proc_show(void *data, struct seq_file *m)
 			cdh_meminfo_replace_line(m, "MemFree:", cap_avail);
 	}
 
+	if (raw_swap_total_kb > raw_swap_free_kb)
+		swap_used_kb = raw_swap_total_kb - raw_swap_free_kb;
+	target_swap_free_kb = (CDH_SWAP_TOTAL_KB > swap_used_kb) ?
+			      (CDH_SWAP_TOTAL_KB - swap_used_kb) : 0;
+
 	for (i = 0; i < ARRAY_SIZE(cdh_meminfo_targets); i++) {
 		const struct cdh_meminfo_target *target = &cdh_meminfo_targets[i];
 		unsigned long kb = target->kb;
@@ -178,6 +187,7 @@ static void cdh_meminfo_proc_show(void *data, struct seq_file *m)
 			kb = (mem_total_kb / 2) + CDH_SWAP_TOTAL_KB;
 		cdh_meminfo_replace_line(m, target->name, kb);
 	}
+	cdh_meminfo_replace_line(m, "SwapFree:", target_swap_free_kb);
 }
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 0)
