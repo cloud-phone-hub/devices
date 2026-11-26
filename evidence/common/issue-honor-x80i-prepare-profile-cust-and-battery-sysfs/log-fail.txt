@@ -1,0 +1,45 @@
+=== 1. 修复前 manifest/devices/honor/HNLNA-M/device-profile.json 为 measured-only 半成品占位 ===
+{
+  "protocol": "cph-device-profile/v1",
+  "generatedAt": "2026-11-19T13:12:08+08:00",
+  "buildId": "16-TP1A.220624.014-20260422",
+  "vendor": "honor",
+  "device": "HNLNA-M",
+  "chatSession": {
+    "sessionId": "measured-only",
+    "title": "[02_prepare] 真机规格采集 · Honor X80i 5G (honor/HNLNA-M · 13-TP1A.220624.014-20260422)",
+    "reusedLiveWeb": false
+  },
+  "firmwareMeasured": {
+    "modelCode": "k6835v2_64",
+    "densityDpi": 480,
+    "bootCmdline": [
+      "androidboot.product.hardware.sku=vext_k6835v2_64",
+      "androidboot.secureboot=1",
+      "androidboot.slot=a",
+      "androidboot.veritymode.managed=yes"
+    ]
+  },
+  "manifestAligned": {
+    "resolution": "1080x2400",
+    "inch": "70x155",
+    "density": 480
+  },
+  "rawReply": "CDH_PREPARE_MEASURED_ONLY=1"
+}
+
+=== 2. 修复前 Honor X80i 5G #1「关于手机」异常状态 ===
+- 物理分辨率: 1080x2400（与「荣耀绿洲护眼屏: 2600 x 1200」不符）
+- 电池: 未知（/sys/class/power_supply/battery/charge_full_design 不存在）
+- 型号: unknown（boot cmdline 缺失 devmodel=LNA-AN10 vendorcountry=all/cn，libhwcust_init 未激活定制树）
+- 基带版本: 未知（嵌套包 File/ROM/dload/update_sd_base.zip!image/md1img.img 未提取）
+- cpufreq: /vendor_dlkm/lib/modules/cdh_device_info.cpufreq 缺失
+
+=== 3. 无门控注册 /dev/pn544 引发 com.android.nfc 循环崩溃与 90.8s RescueParty 软重启 ===
+11-26 12:42:50.141   925  1114 I mtkpower_client: [PowerHal_Wrap_notifyAppState] com.android.nfc/com.android.nfc pid=3668 activityId:3668 state:3
+11-26 12:42:50.224   925  1114 I mtkpower_client: [PowerHal_Wrap_notifyAppState] com.android.nfc/com.android.nfc pid=4015 activityId:4015 state:3
+11-26 12:42:50.355   925  1453 I mtkpower_client: [PowerHal_Wrap_notifyAppState] com.android.nfc/com.android.nfc pid=4080 activityId:4080 state:3
+[   90.826374][    T1] [BOOTTRACE][I] handle boot error: sys.powerctl=reboot,RescueParty from system_server
+[   99.305109][    T1] reboot: Restarting system with command 'RescueParty'
+CrashRecovery Events:
+  2026-11-26T12:33:12.569356: Finished rescue level WARM_REBOOT for package com.android.nfc

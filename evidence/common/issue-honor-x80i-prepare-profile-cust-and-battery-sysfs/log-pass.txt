@@ -1,0 +1,48 @@
+=== 1. 02_prepare 单元测试与 5.15 内核模块重编校验 ===
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	2.617s
+[ok] cdh_device_info.ko: 86 个符号版本一致
+[ok] 模块构建完成: out/devices/kernel/5.15/modules（13 个 .ko）
+
+=== 2. pipeline device apply-profile HNLNA-M --overwrite 输出 ===
+==> [apply-profile] 已同步机型真机档案到 manifest:
+  - devices/manifest/devices/honor/HNLNA-M/device-profile.json
+  - devices/manifest/devices/honor/HNLNA-M/device-profile.md
+  [ok] 已对齐设备表 devices/manifest/devices/honor/HNLNA-M.json（display=1200x2600 (70x152mm)；density=520）
+  [ok] 已对齐配置模版 devices/manifest/configs/honor/HNLNA-M/HNLNA-M-android13:
+       - module/config.json: 写入 cpufreq（2 个簇，共 41 个频点档位）
+       - module/config.json: 对齐 input（touch=goodix_ts [19200x41600], keyboard=mtk-kpd）
+       - module/config.json: AI 对标 gold 对齐 input_identity（4 个外设节点）
+       - module/config.json: 写入 thermal.zones（20 个温区，来源: DTB 实测 + AI 校准）
+       - module/config.json: 对齐 redirect 规则（共 18 条，含 7 条实测 maps 规则）
+       - module/config.json: 对齐 display.refresh-rates=[60 90 120]
+       - vendor/config.json: 同步真机属性（SoC / Display / GPU / Vulkan / DRM / Radio）
+       - hardware/config.json: 新增 android.hardware.ir；移除 android.hardware.nfc
+       - vendor/config.json: 写入 16 项官方固件实测 files（库/权限/编解码配置）
+       - vendor/etc: 生成/对齐真机 HAL 配置文件 (etc/battery_config.xml, etc/sensors_config.xml)
+       - vendor_boot/config.json: cmdline=6项 (含 devmodel=LNA-AN10, vendorcountry=all/cn)
+       - vda/config.json: data-size=115016171520, partitions=5项
+
+=== 3. 内核启动日志（libhwcust_init 定制树激活 + 虚拟电池 + NFC 存在性门控） ===
+[    7.581574][    T1] libhwcust_init: vendor_country=all/cn
+[    7.605572][    T1] libhwcust_init: get product name from oeminfo: LNA-AN10
+[    7.619823][    T1] libhwcust_init: product_path=/product_h/hn_oem/LNA-AN10
+[   10.438708][  T284] cdh_device_info_cpufreq: created 2 cpufreq policies (/mnt/vendorpatch/vendor_dlkm/lib/modules/cdh_device_info.cpufreq) under /sys/devices/system/cpu/cpufreq
+[   10.455112][  T284] cdh_device_info_thermal: registered 20/20 thermal zones (/mnt/vendorpatch/vendor_dlkm/lib/modules/cdh_device_info.thermal)
+[   10.462631][  T284] cdh_device_info_nfc: nfc HAL service absent, skip virtual nfc nodes
+[   10.468890][  T284] cdh_device_info_bat: loaded battery spec from /mnt/vendorpatch/vendor/etc/battery_config.xml: design_uah=7000000
+[   10.480991][  T284] cdh_device_info_bat: registered /sys/class/power_supply/battery (design_uah=7000000)
+
+=== 4. 纯净首次冷启动 >135s 零重启直达完整桌面与运行态复核 ===
+topResumedActivity=ActivityRecord{124063820 u0 com.hihonor.android.launcher/.unihome.UniHomeLauncher t10}
+uptime: 135.81 643.96
+wm_size: Physical size: 1200x2600
+ro.product.model: LNA-AN00
+persist.cust_service.done: true
+gsm.version.baseband: MOLY.NR17.R2.TC36.PR1.SP.V1.0.3.P107,MOLY.NR17.R2.TC36.PR1.SP.V1.0.3.P107
+unified_device_name: 荣耀X80i
+battery_charge_full_design: 7000000
+battery_label: -r--r--r-- 1 root root u:object_r:sysfs_power:s0 4096 /sys/class/power_supply/battery/charge_full_design
+policy0_freqs: 2000000 1900000 1800000 1700000 1600000 1500000 1450000 1400000 1350000 1300000 1250000 1200000 1150000 1100000 1050000 1000000 950000 900000 850000 800000 750000 700000 650000
+policy6_freqs: 2400000 2300000 2200000 2100000 2000000 1900000 1800000 1700000 1600000 1500000 1400000 1300000 1200000 1100000 1000000 900000 800000 700000
+pn544_exists: ls: /dev/pn544: No such file or directory
+am_crash_events: (empty, 0 crashes)

@@ -137,6 +137,11 @@ for hn_guide_pkg in com.hihonor.hnstartupguide com.huawei.hwstartupguide; do
             fi
         fi
         if [ "$hn_guide_active" = "1" ]; then
+            # 首启时 UniHomeLauncher 在 device_provisioned=0 阶段已被预创建并处于 OOBE 纯壁纸遮罩态
+            # （隐藏全部桌面卡片/图标与状态栏）；置位完成标志并解锁后重启一次桌面进程以立即渲染完整图标首屏。
+            cmd window dismiss-keyguard 2>/dev/null || true
+            am force-stop com.hihonor.android.launcher 2>/dev/null || true
+            am force-stop com.huawei.android.launcher 2>/dev/null || true
             am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null 2>&1 || true
         fi
     fi
