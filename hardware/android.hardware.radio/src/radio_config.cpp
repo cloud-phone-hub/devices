@@ -114,7 +114,7 @@ public:
         .maxActiveInternetData = 1,
         .isInternetLingeringSupported = false,
         .logicalModemIds = std::move(logical_modem_ids),
-#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 15
         .maxActiveVoice = 1,
 #endif
     };
@@ -169,7 +169,7 @@ public:
           ToSimSlotStatus(snapshot));
       if (!status.isOk())
         return status;
-#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 15
       return indication->onSimultaneousCallingSupportChanged({0});
 #endif
     }

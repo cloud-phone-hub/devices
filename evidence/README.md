@@ -29,7 +29,7 @@
 | `nx809j/` | REDMAGIC 11 Pro（`redmagic/NX809J` / 骁龙 SM8850 `canoe` / Android 16，lineage-23.2 + kernel 6.12.81） | 1 | #267 | [nx809j/README.md](nx809j/README.md) |
 | `asteroids/` | Nothing Phone (3a)（`nothing/Asteroids` / 骁龙 SM7635 `volcano` / GRF vendor=14，system=15/16，kernel 6.1） | 2 | #268、#270 | [asteroids/README.md](asteroids/README.md) |
 | `aito/` | Motorola Razr 2024（`motorola/aito` / MediaTek `mt6878` / GRF vendor=14，system=16，kernel 6.1） | 1 | #271 | [aito/README.md](aito/README.md) |
-| `x6876/` | Infinix X6876（`infinix/Infinix-X6876` / MediaTek `mt6878` / GRF vendor=14，system=16，kernel 6.1） | 1 | #273 | [x6876/README.md](x6876/README.md) |
+| `x6876/` | Infinix X6876（`infinix/Infinix-X6876` / MediaTek `mt6878` / GRF vendor=14，system=16，kernel 6.1） | 2 | #273、#345 | [x6876/README.md](x6876/README.md) |
 | `xplore-x1/` | Blackview XPLORE X1（`blackview/XPLORE_X1` / Doke OS 5 / MT6877 / Android 15，lineage-22.2 + kernel 6.6） | 1 | #296 | [xplore-x1/README.md](xplore-x1/README.md) |
 | `g1130/` | BLU G65L（`blu/G1130` / Unisoc UMS9230T / GRF vendor=13，system=14，lineage-20.0 + kernel 5.15） | 3 | #297、#336、#337 | [g1130/README.md](g1130/README.md) |
 | `arw/` | HMD Crest Max（`hmd/ARW` / Unisoc UMS9620 / GRF vendor=13，system=14，lineage-20.0 + kernel 5.15） | 2 | #304、#339 | [arw/README.md](arw/README.md) |

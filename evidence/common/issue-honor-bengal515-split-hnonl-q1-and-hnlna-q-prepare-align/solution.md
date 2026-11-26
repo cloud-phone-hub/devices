@@ -20,6 +20,8 @@
    - 分辨率/DPI 停留在默认 `1080×2400 @ 440dpi`，无 `cdh_device_info.cpufreq`、无虚拟电池 `/sys/class/power_supply/battery/charge_full_design`、无基带版本，`media_config.xml` 残留 MTK 模板。
 3. **拆分后 `HNONL-Q1` 首次冷启 `system_server` 陷入 BootPhase 550 NPE 崩溃循环**：
    - AI 采集为 `HNONL-Q1` 生成的 `vendor/etc/light_config.xml` 仅含 `BACKLIGHT / NOTIFICATIONS / ATTENTION`，缺失 `BATTERY` 逻辑灯，导致 MagicOS `HwBatteryService$HwLed.setLightColorImpl()` 对 `null` 调 `LogicalLight.setColor()` 连续 NPE。
+4. **`HNLNA-Q`（海外 GMS 版 HONOR X8d）首次冷启进入纯壁纸桌面、无任何卡片与应用图标**：
+   - `UniHomeLauncher` View 树内已加载全部小组件与图标，但 `cph-setup-display` 在 `[65.8s]` 刚进入 `boot_completed=1` 时过早重启 Launcher，彼时海外 GMS 向导 `com.google.android.setupwizard` / `com.aura.oobe.honor` 尚未禁用，且后半段电话进程重启（MCC/MNC 配置变更）、共享存储主题包挂载及末尾 `dismiss-keyguard` 均未完成，导致 `DragLayer` 的 `MultiValueAlpha` 被锁在 `0.0` 全透明遮罩态。
 
 ---
 
@@ -56,7 +58,8 @@
 2. **拆分清单入库与 `apply-profile --recollect --overwrite` 全量对齐**：
    - 将 `devices/manifest/{devices,configs,versions}/honor/bengal_515*` 拆分为 `honor/HNONL-Q1`（`id=12`, `configId=79`, `versionId=17`, `16-TKQ1.240227.001-20260922`）与 `honor/HNLNA-Q`（`id=47`, `configId=81`, `versionId=16`, `16-TKQ1.240227.001-20260708`）；
    - 执行两台机型完整 `pipeline device apply-profile <dev> --recollect --overwrite`，校准两份 `battery_config.xml`（`8000000` / `7000000` µAh）、`HNONL-Q1` `persist.radio.multisim.config=ss`、Widevine `system_id=27176` 与 `light_config.xml`。
-3. **双机型本地盘集重编刷新与旧残留清理**（严守 `AGENTS.md §8`）：
+3. **双机型本地盘集重编刷新、海外荣耀首启桌面刷新时序闭环与旧残留清理**（严守 `AGENTS.md §8`）：
+   - 更新 `devices/hardware/android.service.daemon/vendor/bin/cph-setup-display`：首启禁用海外版并存的 `com.google.android.setupwizard` 与 `com.aura.oobe.honor`，并将 `UniHomeLauncher` 重启刷新收口至脚本末尾电话进程重启、存储挂载及最终 `dismiss-keyguard` 落定之后；
    - 保留原厂 `vda.img` 内只读 `super` 分区零改动，仅经 `mcopy` 向 EFI `refind.conf` 主 `options` 分别注入 `devmodel=ONL-L09 vendorcountry=def/meafnaf` 与 `devmodel=LNA-L32 vendorcountry=def/meafnaf`；
    - 完整重跑 `07_build_odm -> 08_build_hardware -> 09_build_vendor -> 10_build_vendor_dlkm -> 11_build_patch` 生成两份新版 `patch.img` 与 `device.json`，清理旧 `bengal_515` 盘集、构建目录与运行态实例。
 

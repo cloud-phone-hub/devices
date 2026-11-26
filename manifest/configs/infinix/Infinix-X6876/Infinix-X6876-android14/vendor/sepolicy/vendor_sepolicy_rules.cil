@@ -30,3 +30,28 @@
 (allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_configs_file}} (file (read getattr map open)))
 (allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_configs_file}} (lnk_file (read getattr open)))
 ;; @end
+
+;; 传音相机 TZServiceProxy 访问 ITZService/default（由 hal_neuralnetworks_default 承载）
+;; @when-declared tran_tzservice_binder_service hal_neuralnetworks_default
+(allow {{pick:platform_app}} tran_tzservice_binder_service (service_manager (find)))
+(allow {{pick:priv_app}} tran_tzservice_binder_service (service_manager (find)))
+(allow {{pick:system_app}} tran_tzservice_binder_service (service_manager (find)))
+(allow {{pick:cameraserver}} tran_tzservice_binder_service (service_manager (find)))
+(allow {{pick:platform_app}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:platform_app}} (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:platform_app}} (fd (use)))
+(allow {{pick:priv_app}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:priv_app}} (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:priv_app}} (fd (use)))
+(allow {{pick:system_app}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:system_app}} (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:system_app}} (fd (use)))
+(allow {{pick:cameraserver}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:cameraserver}} (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:cameraserver}} (fd (use)))
+;; @end
+
+;; 静默蓝牙探测 MTK 私有蓝牙音频扩展服务的无关审计日志（云机走标准 AOSP Bluetooth Audio HAL）
+;; @when-declared mtk_hal_audio_service
+(dontaudit {{pick:bluetooth}} mtk_hal_audio_service (service_manager (find)))
+;; @end

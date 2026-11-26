@@ -273,7 +273,7 @@ public:
           const auto type = aidl_radio::RadioIndicationType::UNSOLICITED;
           indication->radioStateChanged(type,
                                         ToRadioState(snapshot.modem.power));
-#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 15
           const auto identity = DeviceIdentityFromSnapshot(snapshot, this->slot());
           if (identity.has_value())
             indication->onImeiMappingChanged(type, identity->imei_info);
@@ -464,7 +464,7 @@ public:
     status = indication->rilConnected(type);
     if (!status.isOk())
       return status;
-#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 14
+#if !defined(CDH_ANDROID_VERSION) || CDH_ANDROID_VERSION >= 15
     const auto identity = DeviceIdentityFromSnapshot(snapshot, slot());
     if (identity.has_value())
       return indication->onImeiMappingChanged(type, identity->imei_info);

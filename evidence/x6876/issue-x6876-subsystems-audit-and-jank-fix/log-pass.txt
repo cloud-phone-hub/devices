@@ -1,0 +1,74 @@
+=== [1] 冷启动状态与设备节点 / SELinux 校验 ===
+sys.boot_completed = 1
+init.svc.bootanim = stopped
+getenforce = Enforcing
+crw-rw-rw- 1 system system u:object_r:console_device:s0  229,  11 /dev/hvc11
+crw-rw-rw- 1 system system u:object_r:console_device:s0  229,  12 /dev/hvc12
+crw-rw---- 1 media  camera u:object_r:video_device:s0     81,   0 /dev/video0
+crw-rw---- 1 media  camera u:object_r:video_device:s0     81,   1 /dev/video1
+-rw-rw-rw- 1 root   root   u:object_r:proc_ged:s0               0 /proc/ged
+[    4.614837][  T303] cdh_device_info_sched: registered /proc/ged
+[   59.138907][   T50] cdh-wifi: /dev/hvc10 已打开（raw）
+
+=== [2] 错误与 SELinux 拒绝计数全量归零 ===
+count[Failed to open /proc/ged] = 0
+count[ged queue fail] = 0
+count[ged acquire fail] = 0
+count[ged dequeue fail] = 0
+count[proc_ged] = 0
+count[hal_2_1_verifier] = 0
+count[tran_tzservice_binder_service] = 0
+cdh_redirect forward count = 0
+
+=== [3] Wi-Fi 5GHz 关联与外网验证 ===
+Wi-Fi is enabled
+mWifiInfo SSID: "CRH-FreeWiFi-13B-6A8", BSSID: 00:24:14:45:3d:e6, IP: /192.168.20.100, Security type: 0, Supplicant state: COMPLETED, Frequency: 5200MHz, Link speed: 12Mbps
+16: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 state UP
+    inet 192.168.20.100/24 brd 192.168.20.255 scope global wlan0
+PING 223.5.5.5 (223.5.5.5) from 192.168.20.100 wlan0: 3 packets transmitted, 3 received, 0% packet loss, rtt min/avg/max = 0.286/0.562/0.868 ms
+network: wifi+host-vpn validated: True (backend: socks5://127.0.0.1:59653)
+
+=== [4] 蓝牙常驻开启与虚拟对端 ===
+Bluetooth Status
+  enabled: true
+  state: ON
+  name: Infinix X6876
+Bluetooth crashed 0 times
+bluetooth: True ON peers: ['CDH-Headset-Pro', 'CDH-Speaker-Mini', 'CDH-Watch-S3']
+
+=== [5] NFC 服务、特性与刷卡读写闭环 ===
+feature:android.hardware.nfc
+feature:android.hardware.nfc.any
+feature:android.hardware.nfc.hce
+Service nfc: found
+Service android.hardware.nfc.INfc/default: found
+mState=on
+tap -> {"ok":true,"status":{"connected":true,"initialized":true,"discovering":true,"cardPresent":true,"cardUid":"04112233445566","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":51,"txResponses":78}}
+remove -> {"ok":true,"status":{"connected":true,"initialized":true,"discovering":true,"cardPresent":false,"rxCommands":51,"txResponses":79}}
+
+=== [6] 相机前后摄拍照、MP4 视频录制与空闲 CDCM_PAUSE ===
+Activity: com.transsion.camera/.app.CameraActivity TotalTime: 417ms
+-rw-rw---- 1 u0_a269 media_rw 8.1K 2026-11-26 17:31 IMG_20261126_173131_240.jpg (后置拍照)
+-rw-rw---- 1 u0_a269 media_rw  16K 2026-11-26 17:35 IMG_20261126_173508_275.jpg (前置拍照)
+-rw-rw---- 2 u0_a269 media_rw 706K 2026-11-26 17:39 VID_20261126_173931.mp4     (视频录制 duration=4366ms)
+I cdh_camera_video: camera session idle, sent CDCM_PAUSE on /dev/hvc12
+Camera idle framesSent check: F1=535 -> after 3s F2=535 (delta=0)
+
+=== [7] Radio 双卡、双 PDN（ccmni0 IMS + ccmni1 数据）与纯蜂窝外网 ===
+gsm.sim.state = LOADED,ABSENT
+gsm.operator.alpha = 中国联通,
+gsm.network.type = LTE,Unknown
+baseband = MOLY.NR17.R1.MP5.RC.MP.V51.2.P10
+19: ccmni0: <BROADCAST,NOARP,UP,LOWER_UP> inet6 2408:8456:b633:7b2a:42ec:f430:9c20:c0ee/64 (IMS VALIDATED)
+6: ccmni1: <BROADCAST,MULTICAST,UP,LOWER_UP> link/ether c2:36:b4:12:34:58 inet 100.64.155.15/24 (CELLULAR 3gnet VALIDATED)
+Wi-Fi 关闭下纯蜂窝 ping 223.5.5.5: 3 packets transmitted, 3 received, 0% packet loss, rtt min/avg/max = 0.729/0.864/1.009 ms
+
+=== [8] 桌面静置 CPU 与连续 10 次滑动流畅度 ===
+800%cpu  12%user   0%nice  27%sys 719%idle   0%iow  38%irq   4%sirq   0%host
+QuickstepLauncher 10-swipe gfxinfo:
+Total frames rendered: 1336
+Janky frames: 0 (0.00%)
+Number Missed Vsync: 0
+Number Slow UI thread: 0
+Number Frame deadline missed: 0
+50th percentile: 6ms | 90th percentile: 10ms | 95th percentile: 11ms | 99th percentile: 17ms

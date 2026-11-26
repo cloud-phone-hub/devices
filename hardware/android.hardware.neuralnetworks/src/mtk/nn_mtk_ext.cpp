@@ -1,4 +1,4 @@
-// android.hardware.neuralnetworks 的 mtk 变体（MTK IComposerExt 协议兼容）。
+// android.hardware.neuralnetworks 的 mtk 变体（MTK IComposerExt 与传音 ITZService 协议兼容）。
 // 只在 --variant mtk（-DCDH_NN_MTK=1）时编入。
 #include "nn_vendor_ext.h"
 
@@ -18,6 +18,10 @@ constexpr const char* kComposerExtDescriptor =
     "vendor.mediatek.hardware.composer_ext.IComposerExt";
 constexpr const char* kComposerExtInterfaceHash =
     "022c728d211f6b275911cb0602f6641afdd275d6";
+constexpr const char* kTranTzServiceDescriptor =
+    "vendor.transsion.hardware.camera.tzservice.ITZService";
+constexpr const char* kTranTzServiceInterfaceHash =
+    "0000000000000000000000000000000000000000";
 
 // MTK Android 16 SurfaceFlinger / libcomposer_ext 连接 IComposerExt/default：
 // syncPerform op=1 (checkOpCodeMax) 返回 err=0 与 int64_t(1)，其余 op>1 返回 -ENOSYS (-38)。
@@ -96,12 +100,56 @@ binder_status_t OnComposerExtTransact(AIBinder* /*binder*/,
   return STATUS_UNKNOWN_TRANSACTION;
 }
 
+// 传音 MTK 相机（com.transsion.camera TZServiceProxy）连接 ITZService/default：
+//   code 1..6（setTZCaptureCallback / setTZCaptureJpegCallback / setTZCapConfig /
+//              setPhoneWorkingState / setMappingInfo / setAppIOOperationStart）返回 int32(0)；
+//   code 7（getOffPeakModeSupportCfg）返回长度 0 的空 int[]（int32(0)）；
+// 避免 getService 返回 null 或 STATUS_UNKNOWN_TRANSACTION 导致 UI 主线程每次操作阻塞 500ms。
+binder_status_t OnTranTzServiceTransact(AIBinder* /*binder*/,
+                                        transaction_code_t code,
+                                        const AParcel* /*in*/,
+                                        AParcel* out) {
+  if (out == nullptr) {
+    return STATUS_OK;
+  }
+  ndk::ScopedAStatus ok = ndk::ScopedAStatus::ok();
+  if (code >= FIRST_CALL_TRANSACTION + 0 &&
+      code <= FIRST_CALL_TRANSACTION + 6) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeInt32(out, 0);
+    return STATUS_OK;
+  }
+  if (code == 0xffffff) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeInt32(out, 1);
+    return STATUS_OK;
+  }
+  if (code == 0xfffffe) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeString(out, kTranTzServiceInterfaceHash, 40);
+    return STATUS_OK;
+  }
+  return STATUS_UNKNOWN_TRANSACTION;
+}
+
 }  // namespace
 
 AIBinder_Class_onTransact ResolveVendorPlaceholderTransact(
     const std::string& descriptor) {
   if (descriptor == kComposerExtDescriptor) {
     return OnComposerExtTransact;
+  }
+  if (descriptor == kTranTzServiceDescriptor) {
+    return OnTranTzServiceTransact;
   }
   return nullptr;
 }

@@ -1,0 +1,43 @@
+=== [1] 修复前蓝牙无限断言崩溃循环（750+ 次 SIGABRT） ===
+F libc    : [1126/155812.419:FATAL:client.cc(8109)] Assert failed: std::move(hal_2_1_verifier).Run(). Initialize, LE Audio Client requires Bluetooth Audio HAL V2.1 at least. Either disable LE Audio Profile, or update your HAL
+Bluetooth Status
+  enabled: false
+  state: OFF
+Bluetooth crashed 754 times
+
+=== [2] 修复前 NFC 服务与特性全部缺失 ===
+Service nfc: not found
+Service android.hardware.nfc.INfc/default: found
+(pm list features | grep -i nfc -> 空)
+package:com.android.nfc (disabled)
+
+=== [3] 修复前 Radio 蜂窝网卡错位（ccmni1 为 dummy 黑洞，关 Wi-Fi 100% 丢包） ===
+ip: can't find device 'ccmni0'
+6: ccmni2: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether c2:36:b4:12:34:58 brd ff:ff:ff:ff:ff:ff
+18: ccmni1: <BROADCAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default qlen 1000
+    dummy
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+--- 223.5.5.5 ping statistics (Wi-Fi disabled) ---
+3 packets transmitted, 0 received, 100% packet loss
+
+=== [4] 修复前相机 TZServiceProxy SELinux 拒绝 + NPE + 主线程 500ms 阻塞 + V4L2 0600 ===
+crw------- 1 root root u:object_r:video_device:s0 81, 0 /dev/video0
+crw------- 1 root root u:object_r:video_device:s0 81, 1 /dev/video1
+E SELinux : avc:  denied  { find } for pid=14822 uid=10145 name=vendor.transsion.hardware.camera.tzservice.ITZService/default scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:tran_tzservice_binder_service:s0 tclass=service_manager permissive=0
+E CamAp_TZService: getService fail: java.lang.NullPointerException: Attempt to invoke interface method 'void android.os.IBinder.linkToDeath(android.os.IBinder$DeathRecipient, int)' on a null object reference
+W CamAp_TZServiceProxy: createTZAidlService timeout 500ms
+camera hostStatus: framesSent=16060+ (后台持续发帧无 CDCM_PAUSE)
+
+=== [5] 修复前 /proc/ged 与 cdh_redirect 日志风暴及高 CPU / 高掉帧 ===
+E GED     : Failed to open /proc/ged! (No such file or directory)
+E [onQueue]: ged queue fail
+E [onAcquire]: ged acquire fail
+E [onDequeue]: ged dequeue fail
+cdh_redirect: forward /mnt/vendorpatch/vendor/...
+800%cpu  98%user  22%nice 132%sys 534%idle
+  41.3% system_server
+  31.0% com.transsion.succ
+  20.6% logcat
+  10.3% logd
+QuickstepLauncher Janky frames (legacy): 39.97%

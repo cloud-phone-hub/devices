@@ -94,20 +94,29 @@ if pm path com.hmdglobal.app.setupwizardext >/dev/null 2>&1; then
     fi
 fi
 
-# 荣耀 MagicOS / 华为机型（如 Honor X80i 5G HNLNA-M）首启由 com.hihonor.hnstartupguide
-# （或 com.huawei.hwstartupguide）拦截 HOME 任务；其 BaseActivity.onCreate -> OOBEUtils.Y1(false)
-# 会在向导存活期间将 device_provisioned 与 user_setup_complete 覆写回 0，且进入 EmbeddingActivity
-# 或拉起荣耀账号 OOBE 登录页（com.hihonor.id）后不会自动退出。先禁用并停止向导包，再对齐
-# HnStartupGuide.finishWizard() 标准标志位并切回桌面。
+# 荣耀 MagicOS / 华为机型（如 Honor X80i 5G HNLNA-M、HONOR X8d HNLNA-Q）首启由 com.hihonor.hnstartupguide
+# （或 com.huawei.hwstartupguide，海外版并存 com.google.android.setupwizard / com.aura.oobe.honor）拦截 HOME 任务；
+# 其 BaseActivity.onCreate -> OOBEUtils.Y1(false) 会在向导存活期间将 device_provisioned 与 user_setup_complete
+# 覆写回 0，且进入 EmbeddingActivity 或拉起荣耀账号 OOBE 登录页（com.hihonor.id）后不会自动退出。
+# 先禁用并停止向导包，再对齐 HnStartupGuide.finishWizard() 标准标志位，并在脚本收尾解锁落定后刷新桌面。
+hn_need_launcher_refresh=0
 for hn_guide_pkg in com.hihonor.hnstartupguide com.huawei.hwstartupguide; do
     if pm path "$hn_guide_pkg" >/dev/null 2>&1; then
         hn_guide_active=0
         if [ "$was_provisioned" != "1" ] || [ -n "$(pidof "$hn_guide_pkg")" ]; then
             hn_guide_active=1
+            hn_need_launcher_refresh=1
         fi
         am force-stop "$hn_guide_pkg" 2>/dev/null || true
         pm disable "$hn_guide_pkg" 2>/dev/null || true
         am force-stop "$hn_guide_pkg" 2>/dev/null || true
+        for hn_ovs_oobe in com.google.android.setupwizard com.aura.oobe.honor; do
+            if pm path "$hn_ovs_oobe" >/dev/null 2>&1; then
+                am force-stop "$hn_ovs_oobe" 2>/dev/null || true
+                pm disable "$hn_ovs_oobe" 2>/dev/null || true
+                am force-stop "$hn_ovs_oobe" 2>/dev/null || true
+            fi
+        done
         if [ "$hn_guide_active" = "1" ]; then
             am force-stop com.hihonor.id 2>/dev/null || true
             am force-stop com.huawei.hwid 2>/dev/null || true
@@ -354,4 +363,13 @@ pm disable com.miui.bugreport 2>/dev/null || true
 am force-stop com.android.provision 2>/dev/null || true
 # 解锁兜底（非按键；已解锁时为无副作用 no-op）
 cmd window dismiss-keyguard 2>/dev/null
+if [ "$hn_need_launcher_refresh" = "1" ]; then
+    # 待电话进程重启（MCC/MNC 配置变更）、共享存储挂载（主题包就绪）及最终 dismiss-keyguard 落定后，
+    # 再重启一次 UniHomeLauncher，防止早期过渡态把 DragLayer MultiValueAlpha 锁死在 0.0 纯壁纸遮罩。
+    sleep 2
+    cmd window dismiss-keyguard 2>/dev/null || true
+    am force-stop com.hihonor.android.launcher 2>/dev/null || true
+    am force-stop com.huawei.android.launcher 2>/dev/null || true
+    am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null 2>&1 || true
+fi
 exit 0

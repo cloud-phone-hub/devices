@@ -1,0 +1,40 @@
+;; MTK /proc/ged 图形扩展与帧感知节点（device_info/sched_proc.c 注册）：
+;; 当基底 vendor_sepolicy.cil 未声明 proc_ged 与 (genfscon proc "/ged" ...) 时自动补齐，
+;; 防止 /proc/ged 回落默认 proc 标签触发 untrusted_app_all neverallow 拒绝；同时补齐
+;; 0x6700..0x67ff（'g' 魔数 GED_BRIDGE_PACKAGE）allowx 扩展 ioctl 权限，消除 auditd 刷屏。
+;; @when-not-contains (genfscon proc "/ged"
+;; @ensure-type proc_ged
+(typeattributeset {{pick:fs_type}} (proc_ged))
+(typeattributeset {{pick:proc_type}} (proc_ged))
+(genfscon proc "/ged" (u object_r proc_ged ((s0) (s0))))
+;; @end
+;; @when-declared proc_ged
+(allow {{pick:surfaceflinger}} proc_ged (file (ioctl read write getattr lock append map open)))
+(allowx {{pick:surfaceflinger}} proc_ged (ioctl file ((range 0x6700 0x67ff))))
+(allow {{pick:cameraserver}} proc_ged (file (ioctl read write getattr lock append map open)))
+(allowx {{pick:cameraserver}} proc_ged (ioctl file ((range 0x6700 0x67ff))))
+(allow {{pick:mediaserver}} proc_ged (file (ioctl read write getattr lock append map open)))
+(allowx {{pick:mediaserver}} proc_ged (ioctl file ((range 0x6700 0x67ff))))
+(allow {{pick:mediaswcodec}} proc_ged (file (ioctl read write getattr lock append map open)))
+(allowx {{pick:mediaswcodec}} proc_ged (ioctl file ((range 0x6700 0x67ff))))
+(allow {{pick:mediacodec}} proc_ged (file (ioctl read write getattr lock append map open)))
+(allowx {{pick:mediacodec}} proc_ged (ioctl file ((range 0x6700 0x67ff))))
+(allow {{pick:system_server}} proc_ged (file (ioctl read write getattr lock append map open)))
+(allowx {{pick:system_server}} proc_ged (ioctl file ((range 0x6700 0x67ff))))
+(allow {{pick:bootanim}} proc_ged (file (ioctl read write getattr lock append map open)))
+(allowx {{pick:bootanim}} proc_ged (ioctl file ((range 0x6700 0x67ff))))
+(allow {{pick:mtkbootanimation}} proc_ged (file (ioctl read write getattr lock append map open)))
+(allowx {{pick:mtkbootanimation}} proc_ged (ioctl file ((range 0x6700 0x67ff))))
+(allow {{pick:platform_app}} proc_ged (file (ioctl read write getattr lock append map open)))
+(allowx {{pick:platform_app}} proc_ged (ioctl file ((range 0x6700 0x67ff))))
+(allow {{pick:priv_app}} proc_ged (file (ioctl read write getattr lock append map open)))
+(allowx {{pick:priv_app}} proc_ged (ioctl file ((range 0x6700 0x67ff))))
+(allow {{pick:system_app}} proc_ged (file (ioctl read write getattr lock append map open)))
+(allowx {{pick:system_app}} proc_ged (ioctl file ((range 0x6700 0x67ff))))
+(allow {{pick:untrusted_app_all}} proc_ged (file (ioctl read write getattr lock append map open)))
+(allowx {{pick:untrusted_app_all}} proc_ged (ioctl file ((range 0x6700 0x67ff))))
+(allow {{pick:halserverdomain}} proc_ged (file (ioctl read write getattr lock append map open)))
+(allowx {{pick:halserverdomain}} proc_ged (ioctl file ((range 0x6700 0x67ff))))
+(allow {{pick:halclientdomain}} proc_ged (file (ioctl read write getattr lock append map open)))
+(allowx {{pick:halclientdomain}} proc_ged (ioctl file ((range 0x6700 0x67ff))))
+;; @end
