@@ -20,10 +20,12 @@
 #include <linux/err.h>
 #include <linux/fs.h>
 #include <linux/kernel.h>
+#include <linux/kernel_read_file.h>
 #include <linux/kobject.h>
 #include <linux/miscdevice.h>
 #include <linux/sysfs.h>
 #include <linux/version.h>
+#include <linux/vmalloc.h>
 
 #include "cdh_device_info.h"
 
@@ -31,6 +33,27 @@ static struct class *cdh_nfc_class;
 static struct kobject *cdh_nfc_kobj;
 static bool cdh_nfc_pn544_registered;
 static bool cdh_nfc_nq_nci_registered;
+
+static bool cdh_nfc_hal_present(void)
+{
+	static const char * const rc_paths[] = {
+		"/mnt/vendorpatch/vendor/etc/init/android.hardware.nfc-service.rc",
+		"/vendor/etc/init/android.hardware.nfc-service.rc",
+	};
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(rc_paths); i++) {
+		void *buf = NULL;
+		size_t size = 0;
+		int rc = kernel_read_file_from_path(rc_paths[i], 0, &buf, 16384,
+						    &size, READING_POLICY);
+		if (buf)
+			vfree(buf);
+		if (rc >= 0 && size > 0)
+			return true;
+	}
+	return false;
+}
 
 static const struct file_operations cdh_nfc_pn544_fops = {
 	.owner = THIS_MODULE,
@@ -80,6 +103,11 @@ static CLASS_ATTR_RO(nfc_support);
 int cdh_nfc_sysfs_init(void)
 {
 	int ret;
+
+	if (!cdh_nfc_hal_present()) {
+		pr_info("nfc HAL service absent, skip virtual nfc nodes\n");
+		return 0;
+	}
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 4, 0)
 	cdh_nfc_class = class_create("nfc");

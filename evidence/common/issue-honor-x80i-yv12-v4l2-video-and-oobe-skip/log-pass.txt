@@ -1,0 +1,42 @@
+=== [验证 1] 09_build_vendor 单元测试与 patch.img 完整性核验 ===
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	1.337s
+e2fsck -fn patch.img -> rc: 0
+Final patch.img sha256: 1234513afa1ececd
+[verified] /vendor/bin/hw/android.hardware.graphics.allocator-V1-service.minigbm (124128 B) -> security.selinux (50) = "u:object_r:hal_graphics_allocator_default_exec:s0\000"
+[verified] /vendor/lib64/hw/mapper.mediatek.so (245320 B) -> security.selinux (36) = "u:object_r:same_process_hal_file:s0\000"
+[verified] /vendor/lib64/hw/gralloc.default.so (14240 B) -> security.selinux (36) = "u:object_r:same_process_hal_file:s0\000"
+[verified] /vendor/etc/media_codecs_c2.xml (1362 B) -> security.selinux (34) = "u:object_r:vendor_configs_file:s0\000"
+[verified] /vendor/etc/media_codecs.xml (3435 B) -> security.selinux (34) = "u:object_r:vendor_configs_file:s0\000"
+[verified] /vendor/etc/ueventd.rc (403 B) -> security.selinux (34) = "u:object_r:vendor_configs_file:s0\000"
+[verified] /vendor/bin/cph-setup-display (16701 B) -> security.selinux (26) = "u:object_r:vendor_file:s0\000"
+[verified] /vendor/etc/init/cph_disable_provision.rc (1069 B) -> security.selinux (34) = "u:object_r:vendor_configs_file:s0\000"
+
+=== [验证 2] Honor X80i 5G #1 零干预冷启自动跳过引导与 /dev/video* 权限就位 ===
+[38.8s] Boot & AutoProvision complete: bc=1 ap=stopped
+crw-rw---- 1 media camera u:object_r:video_device:s0  81,   0 1970-01-01 08:00 /dev/video0
+crw-rw---- 1 media camera u:object_r:video_device:s0  81,   1 1970-01-01 08:00 /dev/video1
+      topResumedActivity=ActivityRecord{4929472 u0 com.hihonor.android.launcher/.unihome.UniHomeLauncher t2}
+  mCurrentFocus=Window{df88ceb u0 com.hihonor.android.launcher/com.hihonor.android.launcher.unihome.UniHomeLauncher}
+device_provisioned=1
+user_setup_complete=1
+oobe_statement_agreed=1
+oobe_process_alive_state=0
+buildversionrelease=LNA-AN10 10.0.0.126(C00E122)
+package:com.hihonor.hnstartupguide (disabled)
+
+=== [验证 3] 欢迎页 1080x1080 H.264 视频 V4L2 硬件解码与像素连续性实测 (见 hello-pass.png) ===
+11-26 11:29:38.236   736  7358 I CCodec  : Created component [c2.v4l2.avc.decoder] for [c2.v4l2.avc.decoder]
+11-26 11:29:38.268   736  7358 I CCodec  :   int32_t width = 1080
+11-26 11:29:38.268   736  7358 I CCodec  :   int32_t height = 1080
+11-26 11:29:38.280  7289  7372 I V4L2Decoder: Input queue memory=2 sizeimage=2097152 buffers=16
+11-26 11:29:38.292  7289  7372 I V4L2Decoder: Need 6 output buffers with CAPTURE refill low watermark 2. coded size: 16x16, visible rect: (0,0) 16x16
+11-26 11:29:38.310  7289  7372 I V4L2Decoder: Set state Idle => Decoding
+11-26 11:29:38.310  7289  7372 I V4L2Decoder: QBUF to input queue, bitstreamId=0
+11-26 11:29:38.315  7289  7372 I V4L2Decoder: QBUF to input queue, bitstreamId=1
+
+V4L2 REAL HW decode screencap mean: 244.34743814300413
+top(300,100):  [252 241 223]
+mid1(1195,100): [254 252 253]
+mid2(1205,100): [254 252 253]
+bot(1800,100):  [250 246 255]
+y=1199->1200 jump: 0.04

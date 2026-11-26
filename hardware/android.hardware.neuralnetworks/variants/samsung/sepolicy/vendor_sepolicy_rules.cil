@@ -4,5 +4,6 @@
 (typeattributeset service_manager_type (vendor_hal_diaghal_service))
 (allow hal_neuralnetworks_default vendor_hal_diaghal_service (service_manager (add find)))
 (allow domain vendor_hal_diaghal_service (service_manager (find)))
+(allow {{pick:system_server}} hal_hyper_service (service_manager (find)))
 (allow {{pick:system_server}} hal_neuralnetworks_default (binder (call transfer)))
 (allow hal_neuralnetworks_default {{pick:system_server}} (binder (call transfer)))

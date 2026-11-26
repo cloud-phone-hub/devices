@@ -5,18 +5,21 @@
   "model": "Honor X80i 5G",
   "device": "HNLNA-M",
   "platform": "mtk",
-  "resolution": "1080x2400",
-  "inch": "70x155",
-  "density": 480,
+  "resolution": "1200x2600",
+  "inch": "70x152",
+  "density": 520,
   "smp": 8,
   "memory": [
-    8192
+    8192,
+    12288
   ],
   "storage": [
     128000,
-    256000
+    256000,
+    512000
   ],
   "extra": {
+    "basebandVersion": "MOLY.NR17.R2.TC36.PR1.SP.V1.0.3.P107",
     "board": "mt6835",
     "hostHvc": {
       "host-hvc-adbkey": "hvc2",
@@ -28,6 +31,12 @@
       "host-hvc-wifi": "hvc9",
       "host-hvc-wifi-data": "hvc10"
     },
+    "skuCombinations": [
+      "8GB+128GB",
+      "8GB+256GB",
+      "12GB+256GB",
+      "12GB+512GB"
+    ],
     "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
   },
   "updatedAt": "2026-11-05T04:33:32Z"

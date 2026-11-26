@@ -1,0 +1,10 @@
+;; cdh #341：cdh_device_info 注册的虚拟电池节点 /sys/class/power_supply/battery
+;; （实体路径 /sys/devices/virtual/power_supply/battery）。
+;; AOSP plat_sepolicy 对 coredomain 读普通 sysfs 与 sysfs_batteryinfo 均设 neverallow，
+;; 而荣耀 MagicOS Settings（system_app）直接读 /sys/class/power_supply/battery/charge_full_design 展示电池容量；
+;; 标记为公有类型 sysfs_power 并授权 system_app 只读访问，避开全部 neverallow。
+(genfscon sysfs "/devices/virtual/power_supply/battery" (u object_r sysfs_power ((s0) (s0))))
+(genfscon sysfs "/class/power_supply/battery" (u object_r sysfs_power ((s0) (s0))))
+(allow system_app_{{vers}} sysfs_power_{{vers}} (dir (ioctl read getattr lock open watch watch_reads search)))
+(allow system_app_{{vers}} sysfs_power_{{vers}} (file (ioctl read getattr lock map open watch watch_reads)))
+(allow system_app_{{vers}} sysfs_power_{{vers}} (lnk_file (ioctl read getattr lock map open watch watch_reads)))

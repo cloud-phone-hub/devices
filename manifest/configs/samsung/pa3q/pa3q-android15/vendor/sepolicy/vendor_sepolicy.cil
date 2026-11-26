@@ -487,3 +487,11 @@
 (allow scs locale_prop (property_service (set)))
 (allow scs locale_prop (file (read getattr map open)))
 
+;; ---- 十六、三星 HyPer 调频服务（ISehHyPer/default）允许 system_server 查找（取自官方 vendor_sepolicy.cil）----
+;; neuralnetworks@samsung 已注册 vendor.samsung.hardware.hyper.ISehHyPer/default（hal_hyper_service），
+;; 补齐 system_server 的 service_manager find 与 binder 授权，消除启动及每次触控刷屏 HYPER_NATIVE_INTF: HyPerHalVersion is NULL。
+(allow system_server hal_hyper_service (service_manager (find)))
+(allow system_server hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default system_server (binder (call transfer)))
+
+

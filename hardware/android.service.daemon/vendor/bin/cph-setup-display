@@ -122,6 +122,20 @@ for hn_guide_pkg in com.hihonor.hnstartupguide com.huawei.hwstartupguide; do
         if [ -n "$hn_disp_ver" ]; then
             settings put secure buildversionrelease "$hn_disp_ver" 2>/dev/null || true
         fi
+        # 共包 devmodel（如 LNA-AN10）激活 /product_h/hn_oem/<devmodel>/prop/local.prop 后可能将
+        # ro.config.marketing_name 覆盖为共包别名，而荣耀 DeviceNameController 优先读取
+        # Settings.Global.unified_device_name；首启未自定义名称时固定为基础机型营销名（如 荣耀X80i）。
+        cur_hn_uname="$(settings get global unified_device_name 2>/dev/null)"
+        if [ -z "$cur_hn_uname" ] || [ "$cur_hn_uname" = "null" ]; then
+            base_hn_mkt=""
+            if [ -r /product_h/etc/prop/local.prop ]; then
+                base_hn_mkt="$(sed -n 's/^ro\.config\.marketing_name=//p' /product_h/etc/prop/local.prop | tail -n 1 | tr -d '\r')"
+            fi
+            [ -z "$base_hn_mkt" ] && base_hn_mkt="$(getprop ro.config.marketing_name)"
+            if [ -n "$base_hn_mkt" ]; then
+                settings put global unified_device_name "$base_hn_mkt" 2>/dev/null || true
+            fi
+        fi
         if [ "$hn_guide_active" = "1" ]; then
             am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null 2>&1 || true
         fi

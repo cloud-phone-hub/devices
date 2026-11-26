@@ -17,14 +17,14 @@
     "tablet": false,
     "touch": {
       "abs-to-mt": true,
-      "abs-x-max": 17280,
+      "abs-x-max": 19200,
       "abs-xy": true,
-      "abs-y-max": 38400,
-      "bus": 2,
+      "abs-y-max": 41600,
+      "bus": 24,
       "mt-pressure": false,
       "mt-slots": 10,
       "name": "goodix_ts",
-      "product": 1,
+      "product": 267,
       "touch-keys": [
         116,
         143,
@@ -61,9 +61,9 @@
           "KEY_RIGHT",
           "KEY_DOWN"
         ],
-        "name": "uinput-fpc",
-        "product": 2184,
-        "vendor": 1638,
+        "name": "uinput-goodix",
+        "product": 0,
+        "vendor": 0,
         "version": 0
       },
       {
@@ -74,7 +74,7 @@
         "msc": [
           "MSC_SCAN"
         ],
-        "name": "fpc_irq@fingerprint"
+        "name": "goodix_fp_irq"
       },
       {
         "bus": 25,
@@ -302,6 +302,113 @@
         "jitter-mc": 140,
         "type": "consys"
       }
+    ]
+  },
+  "cpufreq": {
+    "available-governors": [
+      "sugov_ext",
+      "schedutil",
+      "performance",
+      "powersave",
+      "conservative"
+    ],
+    "bogo-mips": "26.00",
+    "driver": "mt-cpufreq",
+    "governor": "sugov_ext",
+    "package-per-cluster": false,
+    "policies": [
+      {
+        "available-frequencies": [
+          2000000,
+          1900000,
+          1800000,
+          1700000,
+          1600000,
+          1500000,
+          1450000,
+          1400000,
+          1350000,
+          1300000,
+          1250000,
+          1200000,
+          1150000,
+          1100000,
+          1050000,
+          1000000,
+          950000,
+          900000,
+          850000,
+          800000,
+          750000,
+          700000,
+          650000
+        ],
+        "capacity": 383,
+        "cpus": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "cur-freq": 650000,
+        "implementer": "0x41",
+        "max-freq": 2000000,
+        "midr": "0x00000000412fd050",
+        "min-freq": 650000,
+        "part": "0xd05",
+        "policy": 0,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 2
+      },
+      {
+        "available-frequencies": [
+          2400000,
+          2300000,
+          2200000,
+          2100000,
+          2000000,
+          1900000,
+          1800000,
+          1700000,
+          1600000,
+          1500000,
+          1400000,
+          1300000,
+          1200000,
+          1100000,
+          1000000,
+          900000,
+          800000,
+          700000
+        ],
+        "capacity": 1024,
+        "cpus": [
+          6,
+          7
+        ],
+        "cur-freq": 1000000,
+        "implementer": "0x41",
+        "max-freq": 2400000,
+        "midr": "0x00000000414fd0b0",
+        "min-freq": 700000,
+        "part": "0xd0b",
+        "policy": 6,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 4
+      }
+    ],
+    "scaling-readable": false,
+    "transition-latency": 1000
+  },
+  "display": {
+    "refresh-rates": [
+      60,
+      90,
+      120
     ]
   }
 }

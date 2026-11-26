@@ -177,6 +177,32 @@
       "target": "etc/permissions/android.software.vulkan.deqp.level.xml"
     },
     {
+      "mode": "delete",
+      "note": "macOS cgl-headless 仅暴露 VirGL（CAPSET 22），保留 vulkan.mali.so / vulkan.virtio.so 会使 Chromium（三星浏览器与负一屏/生活助手 WebView）绕过 PackageManager 直接 dlopen libvulkan.so 启用 Adreno 830 Vulkan+AHB 路径，触发 Chrome_InProcGp 100% CPU 死循环自旋、打满 6 GiB Swap 并导致三星浏览器 7s GPU 通道超时闪退；剔除后统一回退成熟的 OpenGL ES（libEGL_meow -> libGLESv2_mesa）。",
+      "optional": true,
+      "target": "lib64/hw/vulkan.mali.so"
+    },
+    {
+      "mode": "delete",
+      "optional": true,
+      "target": "lib64/hw/vulkan.virtio.so"
+    },
+    {
+      "mode": "delete",
+      "optional": true,
+      "target": "lib64/hw/vulkan.pastel.so"
+    },
+    {
+      "mode": "delete",
+      "optional": true,
+      "target": "lib/hw/vulkan.virtio.so"
+    },
+    {
+      "mode": "delete",
+      "optional": true,
+      "target": "lib/hw/vulkan.pastel.so"
+    },
+    {
       "from": "official",
       "note": "音效注册表（三星定制名）。根因：本机 system 是官方三星 Android 16，/system/lib64/libeffectsconfig.so 的字符串实测只有 `audio_effects_sec.xml` 与 `/vendor/etc/audio/sku_`，没有 AOSP 的 `audio_effects.xml` —— 即 EffectsConfig 的默认搜索名被三星改成了 audio_effects_sec.xml。而 07 的 vendor 树是 lineage-23.2 基底（只带 `audio_effects_config.xml`）+ 自研 HAL 覆盖，这个文件从未存在，于是 audioserver 每次建输出流都走 AudioPolicyEffects::addOutputSessionEffects → EffectsConfig::loadFromXml 失败 → LOG_ALWAYS_FATAL abort（tombstone abort message 原文 'Failed to load XML effect configuration'，栈 #03 AudioPolicyEffects::addOutputSessionEffects+740），init 再按 rc 的 onrestart 连带 SIGKILL vendor.audio-hal-aidl 与 vendor.audio-effect-hal-aidl，三者长期 restarting。\n\n实测（2026-10-31，运行态用 init mount namespace 内 tmpfs 覆盖 /vendor/etc 补件）：只补这份 XML（0644 + restorecon，官方 vendor 4687 B、引用 libbundlewrapper/libreverbwrapper/libvisualizer/libdownmix/libldnhncr/libdynproc/libeffectproxy 等）后，audioserver 从连续 100+ 次 abort 变为单实例存活 90s+，audioserver / vendor.audio-hal-aidl / vendor.audio-effect-hal-aidl 三个服务同时 running，crash buffer 无新增 F 行。XML 里缺失的三星私有库（libmysound/libmyspace/libaudiosaplus_sec/libswdap/libplaybackrecorder 等）只影响对应 effect 的创建，不阻塞加载。\n\n权限：官方原件 0644；root shell 的 umask 是 077，构建/拷贝链路若忽略权限会得到 0600，audioserver（uid 1041）读不了，症状与缺失文件完全相同（'Could not parse ... any of the default locations'）—— 装配段按官方权限落盘即可。",
       "source": "etc/audio_effects_sec.xml"

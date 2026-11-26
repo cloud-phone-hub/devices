@@ -1,0 +1,60 @@
+=== [POST-FIX] SELinux & Vulkan Driver Files ===
+Enforcing
+(no vulkan*.so in /vendor/lib*/hw)
+
+=== [POST-FIX] Running Chromium/WebView Processes (sbrowser / spage / sreminder) ===
+u0_a55        5459 18822156 242664 S com.samsung.android.app.spage
+u0_a212       7997 36362824 441736 S com.sec.android.app.sbrowser
+u0_i9000      9563 281401388 245368 S com.sec.android.app.sbrowser:sandboxed_process0:org.chromium.content.app.SandboxedProcessServiceSe
+u0_a212       9655 35269940 262496 S com.sec.android.app.sbrowser:privileged_process0
+u0_a307       9753 18635196 267460 S com.samsung.android.app.sreminder
+u0_i9001      9918 281397304 289984 S com.sec.android.app.sbrowser:sandboxed_process0:org.chromium.content.app.SandboxedProcessServiceSe
+
+=== [POST-FIX] Guest Settled Idle CPU Top ===
+Threads: 3822 total,   1 running, 3821 sleeping,   0 stopped,   0 zombie
+  Mem:    11387M total,     9893M used,     1494M free,       14M buffers
+ Swap:     6143M total,     6143M used,        0M free,     7062M cached
+800%cpu  17%user   0%nice  14%sys 760%idle   0%iow   7%irq   2%sirq   0%host
+  TID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ THREAD          PROCESS
+14838 shell        20   0  10G 8.4M 4.7M R 16.6   0.0   0:00.16 top             top
+ 7997 u0_a212      20   0  35G 431M 265M S  2.3   3.7   0:06.33 id.app.sbrowser com.sec.android.app.sbrowser
+ 3261 system       20   0  27G 579M 356M S  2.3   5.0   0:01.30 binder:715_D    system_server
+ 2686 system       20   0  27G 579M 356M S  2.3   5.0   0:01.09 binder:715_9    system_server
+ 2336 system       20   0  27G 579M 356M S  2.3   5.0   0:00.16 WifiConnectivit system_server
+ 2235 system       20   0  27G 579M 356M S  2.3   5.0   0:02.23 audioserver_lif system_server
+  921 system       -3  -8  11G 196M  34M S  2.3   1.7   0:01.32 TimerDispatch   surfaceflinger
+  312 root         20   0    0    0    0 S  2.3   0.0   0:00.69 khvcd           [khvcd]
+14845 u0_a153      20   0  17G 132M  74M S  0.0   1.1   0:00.00 Thread-3        com.mobiletools.systemhelper
+14843 u0_a153      20   0  17G 132M  74M S  0.0   1.1   0:00.00 SharedPreferenc com.mobiletools.systemhelper
+14842 root         20   0  10G 5.2M 4.7M S  0.0   0.0   0:00.00 sleep           sleep
+14840 u0_a153      29   9  17G 132M  74M S  0.0   1.1   0:00.00 Profile Saver   com.mobiletools.systemhelper
+
+=== [POST-FIX] Error Counters & Verification ===
+cdh_vulkan_takeover_count=0
+gpu_channel_timeout_count=0
+sbrowser_crash_count=0
+hal_hyper_avc_count=0
+HYPER_NATIVE_INTF_err_count=0
+pong_warn_count=0
+
+=== [POST-FIX] Chromium / SBrowser GPU Channel Established via GLES ===
+11-26 12:32:13.298   857   857 I SurfaceFlinger: destroyed 555325b SurfaceView[com.sec.android.app.sbrowser/com.sec.android.app.sbrowser.SBrowserMainActivity]@0#287 form LifecycleManager
+11-26 12:32:13.298   857   857 I SurfaceFlinger: id=283 onLayerDestroyed from LayerHierarchyBuilder(RequestedLayerState{com.sec.android.app.sbrowser/com.sec.android.app.sbrowser.SBrowserMainActivity$_7997#283 !handle})
+11-26 12:32:13.298   857   857 I SurfaceFlinger: id=289 onLayerDestroyed from LayerHierarchyBuilder(RequestedLayerState{Background for 555325b SurfaceView[com.sec.android.app.sbrowser/com.sec.android.app.sbrowser.SBrowserMainActivity]@0#289 !handle z=-2147483648})
+11-26 12:32:13.298   857   857 I SurfaceFlinger: id=288 onLayerDestroyed from LayerHierarchyBuilder(RequestedLayerState{555325b SurfaceView[com.sec.android.app.sbrowser/com.sec.android.app.sbrowser.SBrowserMainActivity]@0(BLAST)#288 !handle})
+11-26 12:32:13.298   857   857 I SurfaceFlinger: id=287 onLayerDestroyed from LayerHierarchyBuilder(RequestedLayerState{555325b SurfaceView[com.sec.android.app.sbrowser/com.sec.android.app.sbrowser.SBrowserMainActivity]@0#287 !handle z=-1})
+11-26 12:32:13.298   857   857 I SurfaceFlinger: id=283 Destroyed com.sec.android.app.sbrowser/com.sec.android.app.sbrowser.SBrowserMainActivity$_7997#283
+11-26 12:32:13.298   857   857 I SurfaceFlinger: id=289 Destroyed Background for 555325b SurfaceView[com.sec.android.app.sbrowser/com.sec.android.app.sbrowser.SBrowserMainActivity]@0#289
+11-26 12:32:13.298   857   857 I SurfaceFlinger: id=288 Destroyed 555325b SurfaceView[com.sec.android.app.sbrowser/com.sec.android.app.sbrowser.SBrowserMainActivity]@0(BLAST)#288
+11-26 12:32:13.298   857   857 I SurfaceFlinger: id=287 Destroyed 555325b SurfaceView[com.sec.android.app.sbrowser/com.sec.android.app.sbrowser.SBrowserMainActivity]@0#287
+11-26 12:32:13.329  7997  7997 W si__MultiInstanceManager: Activity not visible:com.sec.android.app.sbrowser.SBrowserMainActivity
+11-26 12:32:13.334  7997  7997 I SV[82232799 SBrowserMainActivity]: onWindowVisibilityChanged(8) false android.view.SurfaceView{4e6c5df V.E...... ......I. 0,0-0,0} of VRI[SBrowserMainActivity]@6d4a9f2
+11-26 12:32:13.334  7997  7997 I SV[89469531 SBrowserMainActivity]: onWindowVisibilityChanged(8) false android.view.SurfaceView{555325b V.E...... ......ID 0,0-1440,3120} of VRI[SBrowserMainActivity]@6d4a9f2
+11-26 12:32:13.334  7997  7997 I SV[89469531 SBrowserMainActivity]: releaseSurfaces: viewRoot = VRI[SBrowserMainActivity]@6d4a9f2
+11-26 12:32:13.334  7997  7997 I viewroot_draw_event: [VRI[SBrowserMainActivity]@6d4a9f2,applyTransactionOnDraw applyImmediately]
+11-26 12:32:13.334   715  2373 I WindowManager: Relayout Window{6c6d493 u0 com.sec.android.app.sbrowser/com.sec.android.app.sbrowser.SBrowserMainActivity}: viewVisibility=8 req=1440x3120 ty=1 d0
+11-26 12:32:13.335  7997  7997 I VRI[SBrowserMainActivity]@6d4a9f2: Relayout returned: old=(0,0,1440,3120) new=(0,0,1440,3120) relayoutAsync=false req=(1440,3120)8 dur=1 res=0x0 s={false 0x0} ch=false seqId=0
+11-26 12:32:13.335  7997  7997 I SV[89469531 SBrowserMainActivity]: releaseSurfaces: viewRoot = VRI[SBrowserMainActivity]@6d4a9f2
+11-26 12:32:13.335  7997  7997 I viewroot_draw_event: [VRI[SBrowserMainActivity]@6d4a9f2,applyTransactionOnDraw applyImmediately]
+11-26 12:32:23.381  3049  3049 I HoneySpace.HotseatAdapter: findCloseTarget : 72, ComponentInfo{com.sec.android.app.sbrowser/com.sec.android.app.sbrowser.SBrowserMainActivity}
+11-26 12:32:23.382  3049  3049 I HoneySpace.AppCloseAnimationDelegate: findTargetView found:Value(view=com.honeyspace.ui.common.iconview.IconContainer{561afe6 VFE...CL. ........ 668,0-1002,380 #7f0a0340 app:id/icon_container} visibility:0, alpha:1.0, , containerScaleX:1.0, containerScaleY:1.0, containerWidth:334, containerHeight:380, x=2, y=0, component=ComponentInfo{com.sec.android.app.sbrowser/com.sec.android.app.sbrowser.SBrowserMainActivity}, isTargetShortcut=false), com.honeyspace.ui.common.iconview.IconContainer{561afe6 VFE...CL. ........ 668,0-1002,380 #7f0a0340 app:id/icon_container} visibility:0, alpha:1.0, , containerScaleX:1.0, containerScaleY:1.0, containerWidth:334, containerHeight:380, x=2, y=0

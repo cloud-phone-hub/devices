@@ -29,6 +29,10 @@
 #define CDH_DEFAULT_THERMAL_PATH "/vendor_dlkm/lib/modules/cdh_device_info.thermal"
 #define CDH_PATCH_THERMAL_PATH   "/mnt/vendorpatch/vendor_dlkm/lib/modules/cdh_device_info.thermal"
 
+/* 默认虚拟电池配置文件位置（与 android.hardware.health-service 共用同一份真机口径配置）。 */
+#define CDH_DEFAULT_BATTERY_XML_PATH "/vendor/etc/battery_config.xml"
+#define CDH_PATCH_BATTERY_XML_PATH   "/mnt/vendorpatch/vendor/etc/battery_config.xml"
+
 #define CDH_CPU_CORES_MAX 8
 
 struct cdh_cpu_core_spec {
@@ -82,6 +86,9 @@ void cdh_ethtool_exit(void);
 
 int cdh_nfc_sysfs_init(void);
 void cdh_nfc_sysfs_exit(void);
+
+int cdh_battery_sysfs_init(void);
+void cdh_battery_sysfs_exit(void);
 
 int cdh_sched_proc_init(void);
 void cdh_sched_proc_exit(void);

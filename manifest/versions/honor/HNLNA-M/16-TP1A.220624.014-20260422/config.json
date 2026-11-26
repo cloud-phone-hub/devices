@@ -10,6 +10,7 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "MOLY.NR17.R2.TC36.PR1.SP.V1.0.3.P107",
     "comment": "由 cdh unpack prepare 从 Huawei-Honor-X80i-5G-LNA-AN10.zip (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
       "odm": "13",

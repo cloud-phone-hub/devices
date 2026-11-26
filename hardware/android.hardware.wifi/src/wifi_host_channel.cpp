@@ -278,6 +278,9 @@ void HostChannel::handleFrame(const std::string &frame) {
     sendJson("{\"type\":\"pong\"}");
     return;
   }
+  if (type == "pong") {
+    return;
+  }
   __android_log_print(ANDROID_LOG_WARN, kLogTag,
                       "unknown host frame type=%s", type.c_str());
 }
