@@ -26,6 +26,14 @@ constexpr const char* kMtkNvramDescriptor =
     "vendor.mediatek.hardware.nvram.INvram";
 constexpr const char* kMtkNvramInterfaceHash =
     "0000000000000000000000000000000000000000";
+constexpr const char* kMtkPowerApplistDescriptor =
+    "vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist";
+constexpr const char* kMtkPowerApplistInterfaceHash =
+    "f2fe2189a9da42ccf608e55da9420bad2fa42c81";
+constexpr const char* kMtkPowerServiceDescriptor =
+    "vendor.mediatek.hardware.mtkpower.IMtkPowerService";
+constexpr const char* kMtkPowerServiceInterfaceHash =
+    "a484177ceab5bb684c14f2e87cf686ac32b6757c";
 
 // MTK Android 16 SurfaceFlinger / libcomposer_ext 连接 IComposerExt/default：
 // syncPerform op=1 (checkOpCodeMax) 返回 err=0 与 int64_t(1)，其余 op>1 返回 -ENOSYS (-38)。
@@ -194,6 +202,95 @@ binder_status_t OnMtkNvramTransact(AIBinder* /*binder*/,
   return STATUS_UNKNOWN_TRANSACTION;
 }
 
+// MTK IMtkpower_applist V3 AIDL 兼容应答桩（system_server PowerHalWrapper 焦点切换调用）：
+//   code 1..3（notifyAppState / notifyAppStateInfo / setSysInfo）：void 返回 STATUS_OK；
+//   code 4（getSysInfo）：返回空 String("")；
+//   getInterfaceVersion=3, getInterfaceHash=f2fe2189a9da42ccf608e55da9420bad2fa42c81。
+binder_status_t OnMtkPowerApplistTransact(AIBinder* /*binder*/,
+                                          transaction_code_t code,
+                                          const AParcel* /*in*/,
+                                          AParcel* out) {
+  if (out == nullptr) {
+    return STATUS_OK;
+  }
+  ndk::ScopedAStatus ok = ndk::ScopedAStatus::ok();
+  if (code >= FIRST_CALL_TRANSACTION + 0 &&
+      code <= FIRST_CALL_TRANSACTION + 2) {
+    return AParcel_writeStatusHeader(out, ok.get());
+  }
+  if (code == FIRST_CALL_TRANSACTION + 3) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeString(out, "", 0);
+    return STATUS_OK;
+  }
+  if (code == 0xffffff) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeInt32(out, 3);
+    return STATUS_OK;
+  }
+  if (code == 0xfffffe) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeString(out, kMtkPowerApplistInterfaceHash, 40);
+    return STATUS_OK;
+  }
+  return STATUS_UNKNOWN_TRANSACTION;
+}
+
+// MTK IMtkPowerService V3 AIDL 兼容应答桩（libpowerhalwrap / libmtkperf_client 性能锁与场景提示）：
+//   code +2/+4/+5/+10（perfLockRelease / mtkCusPowerHint / mtkPowerHint / setSysInfoAsync）：void；
+//   其余 code +0..+13（perfCusLockHint / perfLockAcquire / querySysInfo 等）：返回 int32(0)；
+//   getInterfaceVersion=3, getInterfaceHash=a484177ceab5bb684c14f2e87cf686ac32b6757c。
+binder_status_t OnMtkPowerServiceTransact(AIBinder* /*binder*/,
+                                          transaction_code_t code,
+                                          const AParcel* /*in*/,
+                                          AParcel* out) {
+  if (out == nullptr) {
+    return STATUS_OK;
+  }
+  ndk::ScopedAStatus ok = ndk::ScopedAStatus::ok();
+  if (code == FIRST_CALL_TRANSACTION + 2 ||
+      code == FIRST_CALL_TRANSACTION + 4 ||
+      code == FIRST_CALL_TRANSACTION + 5 ||
+      code == FIRST_CALL_TRANSACTION + 10) {
+    return AParcel_writeStatusHeader(out, ok.get());
+  }
+  if (code >= FIRST_CALL_TRANSACTION + 0 &&
+      code <= FIRST_CALL_TRANSACTION + 13) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeInt32(out, 0);
+    return STATUS_OK;
+  }
+  if (code == 0xffffff) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeInt32(out, 3);
+    return STATUS_OK;
+  }
+  if (code == 0xfffffe) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    if (st != STATUS_OK) {
+      return st;
+    }
+    AParcel_writeString(out, kMtkPowerServiceInterfaceHash, 40);
+    return STATUS_OK;
+  }
+  return STATUS_UNKNOWN_TRANSACTION;
+}
+
 }  // namespace
 
 AIBinder_Class_onTransact ResolveVendorPlaceholderTransact(
@@ -206,6 +303,12 @@ AIBinder_Class_onTransact ResolveVendorPlaceholderTransact(
   }
   if (descriptor == kMtkNvramDescriptor) {
     return OnMtkNvramTransact;
+  }
+  if (descriptor == kMtkPowerApplistDescriptor) {
+    return OnMtkPowerApplistTransact;
+  }
+  if (descriptor == kMtkPowerServiceDescriptor) {
+    return OnMtkPowerServiceTransact;
   }
   return nullptr;
 }

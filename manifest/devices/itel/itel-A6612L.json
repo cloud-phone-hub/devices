@@ -5,16 +5,17 @@
   "model": "itel A6612L",
   "device": "itel-A6612L",
   "platform": "unisoc",
-  "resolution": "1080x2400",
-  "inch": "70x155",
+  "resolution": "720x1612",
+  "inch": "68x153",
   "density": 320,
   "smp": 8,
   "memory": [
-    8192
+    3072,
+    4096
   ],
   "storage": [
-    128000,
-    256000
+    64000,
+    128000
   ],
   "extra": {
     "basebandVersion": "4G_MODEM_22B_W26.24.1_P2",
@@ -29,6 +30,11 @@
       "host-hvc-wifi": "hvc9",
       "host-hvc-wifi-data": "hvc10"
     },
+    "skuCombinations": [
+      "3GB+64GB",
+      "4GB+64GB",
+      "4GB+128GB"
+    ],
     "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
   },
   "updatedAt": "2026-11-05T04:33:32Z"

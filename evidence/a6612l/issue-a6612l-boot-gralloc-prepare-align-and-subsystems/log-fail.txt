@@ -1,0 +1,137 @@
+=== [BEFORE FIX] Old Instance #1 Restarting Services & Unaligned Props ===
+[gsm.version.ril-impl]: [android reference-ril 1.0]
+[init.svc.audioserver]: [restarting]
+[init.svc.cameraserver]: [restarting]
+[init.svc.netd]: [restarting]
+[init.svc.slogmodem]: [running]
+[init.svc.srmi_proxyd]: [restarting]
+[init.svc.surfaceflinger]: [restarting]
+[init.svc.tool_service]: [running]
+[init.svc.vendor.audio-hal]: [restarting]
+[init.svc.wificond]: [restarting]
+[init.svc.ylog]: [running]
+[init.svc.zygote]: [restarting]
+[ro.product.device]: [itel-A6612L]
+[ro.product.model]: [itel A6612L]
+
+=== [BEFORE FIX] SurfaceFlinger Crash Loop & sphal mapper.minigbm.so Symbol Failure ===
+11-26 14:57:15.864 20149 20149 F DEBUG   :       #09 pc 0000000000374368  /system/bin/surfaceflinger (android::SurfaceFlinger::processDisplayAdded(android::wp<android::IBinder> const&, android::DisplayDeviceState const&)+824) (BuildId: eb258ffa2835b72bbddf070ca33eead3)
+11-26 14:57:15.864 20149 20149 F DEBUG   :       #10 pc 0000000000470608  /system/bin/surfaceflinger (android::SurfaceFlinger::init()+1544) (BuildId: eb258ffa2835b72bbddf070ca33eead3)
+11-26 14:57:15.864 20149 20149 F DEBUG   :       #11 pc 00000000004b0ebc  /system/bin/surfaceflinger (main+316) (BuildId: eb258ffa2835b72bbddf070ca33eead3)
+11-26 14:57:15.864 20149 20149 F DEBUG   :       #12 pc 0000000000095b78  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: 904ee40bd352e72a457d9e50e03cd1ea)
+11-26 14:57:20.861 20298 20298 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 20298 (surfaceflinger), pid 20298 (surfaceflinger)
+11-26 14:57:20.882 20310 20310 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+11-26 14:57:20.882 20310 20310 F DEBUG   : Build fingerprint: 'itel/A6612L-OP64/itel-A6612L:16/BP2A.250605.031.A3/A6612L_260822V4:user/release-keys'
+11-26 14:57:20.882 20310 20310 F DEBUG   : Revision: '0'
+11-26 14:57:20.882 20310 20310 F DEBUG   : ABI: 'arm64'
+11-26 14:57:20.882 20310 20310 F DEBUG   : Timestamp: 2026-11-26 14:57:20.867277096+0100
+11-26 14:57:20.882 20310 20310 F DEBUG   : Process uptime: 1s
+11-26 14:57:20.882 20310 20310 F DEBUG   : Cmdline: /system/bin/surfaceflinger
+11-26 14:57:20.882 20310 20310 F DEBUG   : pid: 20298, tid: 20298, name: surfaceflinger  >>> /system/bin/surfaceflinger <<<
+11-26 14:57:20.882 20310 20310 F DEBUG   : uid: 1000
+11-26 14:57:20.882 20310 20310 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+11-26 14:57:20.882 20310 20310 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+11-26 14:57:20.882 20310 20310 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+11-26 14:57:20.882 20310 20310 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+11-26 14:57:20.882 20310 20310 F DEBUG   :     x0  0000000000000000  x1  0000000000004f4a  x2  0000000000000006  x3  0000007fdf4a4d70
+11-26 14:57:20.882 20310 20310 F DEBUG   :     x4  0000000000000010  x5  0000000000000010  x6  0000000000000010  x7  7f7f7f7f7f7f7f7f
+11-26 14:57:20.882 20310 20310 F DEBUG   :     x8  00000000000000f0  x9  27027406b2775496  x10 0000000000000001  x11 0000007387b1f140
+11-26 14:57:20.882 20310 20310 F DEBUG   :     x12 000000006b083ac0  x13 000000007fffffff  x14 0000000000035b36  x15 00000003345c12c8
+11-26 14:57:20.882 20310 20310 F DEBUG   :     x16 0000007387b8ca80  x17 0000007387b72d00  x18 000000738cb44000  x19 0000000000004f4a
+11-26 14:57:20.882 20310 20310 F DEBUG   :     x20 0000000000004f4a  x21 00000000ffffffff  x22 0000000000000001  x23 0000000000000960
+11-26 14:57:20.882 20310 20310 F DEBUG   :     x24 0000000000000438  x25 b4000072efa39e00  x26 000000738bf68e40  x27 0000000000001b00
+11-26 14:57:20.882 20310 20310 F DEBUG   :     x28 0000000000000001  x29 0000007fdf4a4df0
+11-26 14:57:20.882 20310 20310 F DEBUG   :     lr  0000007387b08958  sp  0000007fdf4a4d70  pc  0000007387b0897c  pst 0000000000000000
+11-26 14:57:20.882 20310 20310 F DEBUG   : 13 total frames
+11-26 14:57:20.882 20310 20310 F DEBUG   : backtrace:
+11-26 14:57:20.882 20310 20310 F DEBUG   :       #00 pc 000000000009c97c  /apex/com.android.runtime/lib64/bionic/libc.so (abort+156) (BuildId: 904ee40bd352e72a457d9e50e03cd1ea)
+11-26 14:57:20.882 20310 20310 F DEBUG   :       #01 pc 000000000000c91c  /system/lib64/liblog.so (__android_log_default_aborter+12) (BuildId: 8e90124f1a755bc13b4399733ba86547)
+11-26 14:57:20.882 20310 20310 F DEBUG   :       #02 pc 000000000000ca70  /system/lib64/liblog.so (__android_log_assert+288) (BuildId: 8e90124f1a755bc13b4399733ba86547)
+11-26 14:57:20.882 20310 20310 F DEBUG   :       #03 pc 000000000002f698  /system/lib64/libui.so (android::GraphicBufferMapper::GraphicBufferMapper()+360) (BuildId: e61f20a2a96da6bb83a4400773e958bc)
+11-26 14:57:20.882 20310 20310 F DEBUG   :       #04 pc 000000000002f518  /system/lib64/libui.so (android::Singleton<android::GraphicBufferMapper>::getInstance()+88) (BuildId: e61f20a2a96da6bb83a4400773e958bc)
+11-26 14:57:20.882 20310 20310 F DEBUG   :       #05 pc 000000000003139c  /system/lib64/libui.so (android::GraphicBuffer::GraphicBuffer()+108) (BuildId: e61f20a2a96da6bb83a4400773e958bc)
+11-26 14:57:20.882 20310 20310 F DEBUG   :       #06 pc 0000000000031714  /system/lib64/libui.so (android::GraphicBuffer::GraphicBuffer(unsigned int, unsigned int, int, unsigned int, unsigned long, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>)+68) (BuildId: e61f20a2a96da6bb83a4400773e958bc)
+11-26 14:57:20.882 20310 20310 F DEBUG   :       #07 pc 00000000000d93ec  /system/lib64/libgui.so (android::BufferQueueProducer::allocateBuffers(unsigned int, unsigned int, int, unsigned long)+396) (BuildId: 72f316f29579c04869a5ee3d4f3e6af9)
+11-26 14:57:20.882 20310 20310 F DEBUG   :       #08 pc 0000000000374ec0  /system/bin/surfaceflinger (android::SurfaceFlinger::setupNewDisplayDeviceInternal(android::wp<android::IBinder> const&, std::__1::shared_ptr<android::compositionengine::Display>, android::DisplayDeviceState const&, android::sp<android::compositionengine::DisplaySurface> const&, android::sp<android::IGraphicBufferProducer> const&)+576) (BuildId: eb258ffa2835b72bbddf070ca33eead3)
+11-26 14:57:20.882 20310 20310 F DEBUG   :       #09 pc 0000000000374368  /system/bin/surfaceflinger (android::SurfaceFlinger::processDisplayAdded(android::wp<android::IBinder> const&, android::DisplayDeviceState const&)+824) (BuildId: eb258ffa2835b72bbddf070ca33eead3)
+11-26 14:57:20.882 20310 20310 F DEBUG   :       #10 pc 0000000000470608  /system/bin/surfaceflinger (android::SurfaceFlinger::init()+1544) (BuildId: eb258ffa2835b72bbddf070ca33eead3)
+11-26 14:57:20.882 20310 20310 F DEBUG   :       #11 pc 00000000004b0ebc  /system/bin/surfaceflinger (main+316) (BuildId: eb258ffa2835b72bbddf070ca33eead3)
+11-26 14:57:20.882 20310 20310 F DEBUG   :       #12 pc 0000000000095b78  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: 904ee40bd352e72a457d9e50e03cd1ea)
+11-26 14:57:25.843 20456 20456 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 20456 (surfaceflinger), pid 20456 (surfaceflinger)
+11-26 14:57:25.867 20468 20468 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+11-26 14:57:25.867 20468 20468 F DEBUG   : Build fingerprint: 'itel/A6612L-OP64/itel-A6612L:16/BP2A.250605.031.A3/A6612L_260822V4:user/release-keys'
+11-26 14:57:25.867 20468 20468 F DEBUG   : Revision: '0'
+11-26 14:57:25.867 20468 20468 F DEBUG   : ABI: 'arm64'
+11-26 14:57:25.867 20468 20468 F DEBUG   : Timestamp: 2026-11-26 14:57:25.852179849+0100
+11-26 14:57:25.867 20468 20468 F DEBUG   : Process uptime: 1s
+11-26 14:57:25.867 20468 20468 F DEBUG   : Cmdline: /system/bin/surfaceflinger
+11-26 14:57:25.867 20468 20468 F DEBUG   : pid: 20456, tid: 20456, name: surfaceflinger  >>> /system/bin/surfaceflinger <<<
+11-26 14:57:25.867 20468 20468 F DEBUG   : uid: 1000
+11-26 14:57:25.867 20468 20468 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+11-26 14:57:25.867 20468 20468 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+11-26 14:57:25.867 20468 20468 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+11-26 14:57:25.867 20468 20468 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+11-26 14:57:25.867 20468 20468 F DEBUG   :     x0  0000000000000000  x1  0000000000004fe8  x2  0000000000000006  x3  0000007ffc81b650
+11-26 14:57:25.867 20468 20468 F DEBUG   :     x4  0000000000000010  x5  0000000000000010  x6  0000000000000010  x7  7f7f7f7f7f7f7f7f
+11-26 14:57:25.867 20468 20468 F DEBUG   :     x8  00000000000000f0  x9  008d18e60f57909e  x10 0000000000000001  x11 00000073c795c140
+11-26 14:57:25.867 20468 20468 F DEBUG   :     x12 000000006b083ac5  x13 000000007fffffff  x14 000000000003626c  x15 000000033b7c85cc
+11-26 14:57:25.867 20468 20468 F DEBUG   :     x16 00000073c79c9a80  x17 00000073c79afd00  x18 00000073caa5c000  x19 0000000000004fe8
+11-26 14:57:25.867 20468 20468 F DEBUG   :     x20 0000000000004fe8  x21 00000000ffffffff  x22 0000000000000001  x23 0000000000000960
+11-26 14:57:25.867 20468 20468 F DEBUG   :     x24 0000000000000438  x25 b400007333a6ae00  x26 00000073ca035e40  x27 0000000000001b00
+11-26 14:57:25.867 20468 20468 F DEBUG   :     x28 0000000000000001  x29 0000007ffc81b6d0
+11-26 14:57:25.867 20468 20468 F DEBUG   :     lr  00000073c7945958  sp  0000007ffc81b650  pc  00000073c794597c  pst 0000000000000000
+11-26 14:57:25.867 20468 20468 F DEBUG   : 13 total frames
+11-26 14:57:25.867 20468 20468 F DEBUG   : backtrace:
+11-26 14:57:25.867 20468 20468 F DEBUG   :       #00 pc 000000000009c97c  /apex/com.android.runtime/lib64/bionic/libc.so (abort+156) (BuildId: 904ee40bd352e72a457d9e50e03cd1ea)
+11-26 14:57:25.867 20468 20468 F DEBUG   :       #01 pc 000000000000c91c  /system/lib64/liblog.so (__android_log_default_aborter+12) (BuildId: 8e90124f1a755bc13b4399733ba86547)
+11-26 14:57:25.867 20468 20468 F DEBUG   :       #02 pc 000000000000ca70  /system/lib64/liblog.so (__android_log_assert+288) (BuildId: 8e90124f1a755bc13b4399733ba86547)
+11-26 14:57:25.867 20468 20468 F DEBUG   :       #03 pc 000000000002f698  /system/lib64/libui.so (android::GraphicBufferMapper::GraphicBufferMapper()+360) (BuildId: e61f20a2a96da6bb83a4400773e958bc)
+11-26 14:57:25.867 20468 20468 F DEBUG   :       #04 pc 000000000002f518  /system/lib64/libui.so (android::Singleton<android::GraphicBufferMapper>::getInstance()+88) (BuildId: e61f20a2a96da6bb83a4400773e958bc)
+11-26 14:57:25.867 20468 20468 F DEBUG   :       #05 pc 000000000003139c  /system/lib64/libui.so (android::GraphicBuffer::GraphicBuffer()+108) (BuildId: e61f20a2a96da6bb83a4400773e958bc)
+11-26 14:57:25.867 20468 20468 F DEBUG   :       #06 pc 0000000000031714  /system/lib64/libui.so (android::GraphicBuffer::GraphicBuffer(unsigned int, unsigned int, int, unsigned int, unsigned long, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>)+68) (BuildId: e61f20a2a96da6bb83a4400773e958bc)
+11-26 14:57:25.867 20468 20468 F DEBUG   :       #07 pc 00000000000d93ec  /system/lib64/libgui.so (android::BufferQueueProducer::allocateBuffers(unsigned int, unsigned int, int, unsigned long)+396) (BuildId: 72f316f29579c04869a5ee3d4f3e6af9)
+11-26 14:57:25.867 20468 20468 F DEBUG   :       #08 pc 0000000000374ec0  /system/bin/surfaceflinger (android::SurfaceFlinger::setupNewDisplayDeviceInternal(android::wp<android::IBinder> const&, std::__1::shared_ptr<android::compositionengine::Display>, android::DisplayDeviceState const&, android::sp<android::compositionengine::DisplaySurface> const&, android::sp<android::IGraphicBufferProducer> const&)+576) (BuildId: eb258ffa2835b72bbddf070ca33eead3)
+11-26 14:57:25.867 20468 20468 F DEBUG   :       #09 pc 0000000000374368  /system/bin/surfaceflinger (android::SurfaceFlinger::processDisplayAdded(android::wp<android::IBinder> const&, android::DisplayDeviceState const&)+824) (BuildId: eb258ffa2835b72bbddf070ca33eead3)
+11-26 14:57:25.867 20468 20468 F DEBUG   :       #10 pc 0000000000470608  /system/bin/surfaceflinger (android::SurfaceFlinger::init()+1544) (BuildId: eb258ffa2835b72bbddf070ca33eead3)
+11-26 14:57:25.867 20468 20468 F DEBUG   :       #11 pc 00000000004b0ebc  /system/bin/surfaceflinger (main+316) (BuildId: eb258ffa2835b72bbddf070ca33eead3)
+11-26 14:57:25.867 20468 20468 F DEBUG   :       #12 pc 0000000000095b78  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+120) (BuildId: 904ee40bd352e72a457d9e50e03cd1ea)
+11-26 14:57:00.813 19658 19658 F GraphicBufferMapper: gralloc-mapper is missing
+11-26 14:57:00.833 19669 19669 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+11-26 14:57:02.546 19677 19677 E vndksupport: Could not load /vendor/lib64/hw/android.hardware.graphics.mapper@4.0-impl.so from sphal namespace: dlopen failed: cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/lib64/hw/mapper.minigbm.so"....
+11-26 14:57:02.546 19677 19677 E HidlServiceManagement: Failed to dlopen android.hardware.graphics.mapper@4.0-impl.so: unknown error
+11-26 14:57:02.718 19711 19711 E HidlServiceManagement: Service android.frameworks.stats@1.0::IStats/default must be in VINTF manifest in order to register/get.
+11-26 14:57:05.817 19815 19815 E vndksupport: Could not load /vendor/lib64/hw/android.hardware.graphics.mapper@4.0-impl.so from sphal namespace: dlopen failed: cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/lib64/hw/mapper.minigbm.so"....
+11-26 14:57:05.817 19815 19815 E HidlServiceManagement: Failed to dlopen android.hardware.graphics.mapper@4.0-impl.so: unknown error
+11-26 14:57:05.818 19815 19815 F GraphicBufferMapper: gralloc-mapper is missing
+11-26 14:57:05.840 19827 19827 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+11-26 14:57:07.579 19835 19835 E vndksupport: Could not load /vendor/lib64/hw/android.hardware.graphics.mapper@4.0-impl.so from sphal namespace: dlopen failed: cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/lib64/hw/mapper.minigbm.so"....
+11-26 14:57:07.579 19835 19835 E HidlServiceManagement: Failed to dlopen android.hardware.graphics.mapper@4.0-impl.so: unknown error
+11-26 14:57:07.758 19869 19869 E HidlServiceManagement: Service android.frameworks.stats@1.0::IStats/default must be in VINTF manifest in order to register/get.
+11-26 14:57:10.825 19975 19975 E vndksupport: Could not load /vendor/lib64/hw/android.hardware.graphics.mapper@4.0-impl.so from sphal namespace: dlopen failed: cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/lib64/hw/mapper.minigbm.so"....
+11-26 14:57:10.825 19975 19975 E HidlServiceManagement: Failed to dlopen android.hardware.graphics.mapper@4.0-impl.so: unknown error
+11-26 14:57:10.825 19975 19975 F GraphicBufferMapper: gralloc-mapper is missing
+11-26 14:57:10.847 19987 19987 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+11-26 14:57:12.606 19998 19998 E vndksupport: Could not load /vendor/lib64/hw/android.hardware.graphics.mapper@4.0-impl.so from sphal namespace: dlopen failed: cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/lib64/hw/mapper.minigbm.so"....
+11-26 14:57:12.606 19998 19998 E HidlServiceManagement: Failed to dlopen android.hardware.graphics.mapper@4.0-impl.so: unknown error
+11-26 14:57:12.784 20033 20033 E HidlServiceManagement: Service android.frameworks.stats@1.0::IStats/default must be in VINTF manifest in order to register/get.
+11-26 14:57:15.835 20137 20137 E vndksupport: Could not load /vendor/lib64/hw/android.hardware.graphics.mapper@4.0-impl.so from sphal namespace: dlopen failed: cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/lib64/hw/mapper.minigbm.so"....
+11-26 14:57:15.835 20137 20137 E HidlServiceManagement: Failed to dlopen android.hardware.graphics.mapper@4.0-impl.so: unknown error
+11-26 14:57:15.836 20137 20137 F GraphicBufferMapper: gralloc-mapper is missing
+11-26 14:57:15.864 20149 20149 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+11-26 14:57:17.606 20157 20157 E vndksupport: Could not load /vendor/lib64/hw/android.hardware.graphics.mapper@4.0-impl.so from sphal namespace: dlopen failed: cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/lib64/hw/mapper.minigbm.so"....
+11-26 14:57:17.606 20157 20157 E HidlServiceManagement: Failed to dlopen android.hardware.graphics.mapper@4.0-impl.so: unknown error
+11-26 14:57:17.790 20191 20191 E HidlServiceManagement: Service android.frameworks.stats@1.0::IStats/default must be in VINTF manifest in order to register/get.
+11-26 14:57:20.860 20298 20298 E vndksupport: Could not load /vendor/lib64/hw/android.hardware.graphics.mapper@4.0-impl.so from sphal namespace: dlopen failed: cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/lib64/hw/mapper.minigbm.so"....
+11-26 14:57:20.860 20298 20298 E HidlServiceManagement: Failed to dlopen android.hardware.graphics.mapper@4.0-impl.so: unknown error
+11-26 14:57:20.861 20298 20298 F GraphicBufferMapper: gralloc-mapper is missing
+11-26 14:57:20.882 20310 20310 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+11-26 14:57:22.584 20318 20318 E vndksupport: Could not load /vendor/lib64/hw/android.hardware.graphics.mapper@4.0-impl.so from sphal namespace: dlopen failed: cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/lib64/hw/mapper.minigbm.so"....
+11-26 14:57:22.584 20318 20318 E HidlServiceManagement: Failed to dlopen android.hardware.graphics.mapper@4.0-impl.so: unknown error
+11-26 14:57:22.730 20352 20352 E HidlServiceManagement: Service android.frameworks.stats@1.0::IStats/default must be in VINTF manifest in order to register/get.
+11-26 14:57:25.842 20456 20456 E vndksupport: Could not load /vendor/lib64/hw/android.hardware.graphics.mapper@4.0-impl.so from sphal namespace: dlopen failed: cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/lib64/hw/mapper.minigbm.so"....
+11-26 14:57:25.842 20456 20456 E HidlServiceManagement: Failed to dlopen android.hardware.graphics.mapper@4.0-impl.so: unknown error
+11-26 14:57:25.843 20456 20456 F GraphicBufferMapper: gralloc-mapper is missing
+11-26 14:57:25.867 20468 20468 F DEBUG   : Abort message: 'gralloc-mapper is missing'
+11-26 14:57:27.797 20481 20481 E vndksupport: Could not load /vendor/lib64/hw/android.hardware.graphics.mapper@4.0-impl.so from sphal namespace: dlopen failed: cannot locate symbol "_ZNSt3__122__libcpp_verbose_abortEPKcz" referenced by "/vendor/lib64/hw/mapper.minigbm.so"....
+11-26 14:57:27.797 20481 20481 E HidlServiceManagement: Failed to dlopen android.hardware.graphics.mapper@4.0-impl.so: unknown error
+11-26 14:57:28.193 20518 20518 E HidlServiceManagement: Service android.frameworks.stats@1.0::IStats/default must be in VINTF manifest in order to register/get.

@@ -1,0 +1,218 @@
+=== 0. SYSTEM & DEVICE ALIGNMENT ===
+boot_completed=1 bootanim=stopped selinux=Enforcing
+brand=itel model=itel A6612L device=itel-A6612L marketname=
+soc=Unisoc/SC9863A board=sp9863a
+android_sys=16 sdk=36 vndk=33
+baseband=4G_MODEM_22B_W26.24.1_P2,4G_MODEM_22B_W26.24.1_P2
+uname=5.15.197-android13-8-00005-g2d8ad9139b89-ab15063902
+Physical size: 720x1612
+Physical density: 320
+--- restarting services ---
+NONE
+--- anr & tombstones ---
+--- media & gralloc & core daemons ---
+Service media.player: found
+Service SurfaceFlinger: found
+bluetooth      502     1 0 22:29:21 ?     00:00:00 android.hardware.bluetooth@1.1-service.btlinux
+system         551     1 6 22:29:22 ?     00:00:21 surfaceflinger
+media          641     1 0 22:29:22 ?     00:00:00 mediaserver
+wifi          8498     1 0 22:31:05 ?     00:00:00 wpa_supplicant -O/data/vendor/wifi/wpa/sockets -dd -g@android:wpa_wlan0
+bluetooth     9603   470 0 22:31:42 ?     00:00:00 com.android.bluetooth
+
+=== 1. WIFI TEST ===
+--- Host WiFi APs Count & Connected Scenario ---
+scenario= hotel_hospitality count= 16 first_ap= {'ssid': 'JiHotel-9F-WiFi-E9', 'bssid': '78:8a:20:4a:29:98', 'channel': 36, 'security': 'open', 'ipSubnet': '192.168.20.0/24', 'rssiBase': -39, 'backend': 'socks5://127.0.0.1:65217'}
+--- cmd wifi status ---
+Wifi is enabled
+Wifi scanning is only available when wifi is enabled
+==== Primary ClientModeManager instance ====
+Wifi is connected to "JiHotel-9F-WiFi-E9"
+WifiInfo: SSID: "JiHotel-9F-WiFi-E9", BSSID: 78:8a:20:4a:29:98, MAC: <none>, IP: /192.168.20.100, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -34, Link speed: 48Mbps, Tx Link speed: 48Mbps, Max Supported Tx Link speed: 54Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: 54Mbps, Frequency: 5180MHz, Net ID: 0, Metered hint: false, score: 100, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"JiHotel-9F-WiFi-E9"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+successfulTxPackets: 10
+successfulTxPacketsPerSecond: 0.0
+retriedTxPackets: 0
+retriedTxPacketsPerSecond: 0.0
+lostTxPackets: 0
+lostTxPacketsPerSecond: 0.0
+successfulRxPackets: 10
+successfulRxPacketsPerSecond: 0.0
+--- cmd wifi list-scan-results ---
+    BSSID              Frequency      RSSI           Age(sec)     SSID                                 Flags
+  04:95:e6:ef:af:88       2462        -72            267.842    Tenda_EFAF88                      [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  38:e1:aa:c2:0c:21       5240        -77            267.842    CU_rrgd_5G                        [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  38:e1:aa:c2:0c:20       2412        -62            267.842    CU_rrgd                           [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  f0:9f:c2:76:a2:bd       2437        -35            267.842    JiHotel-Room909                   [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  f0:9f:c2:76:a2:bc       5220        -50            267.842    JiHotel-Room909-5G                [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  78:8a:20:4a:29:98       5180        -41            267.842    JiHotel-9F-WiFi-E9                [ESS]
+  00:1a:a9:0d:df:a8       5765        -62            267.842    Room-809-E9-5G                    [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  f0:18:98:70:f5:50       2462        -81            267.842    Coco-iPhone13-F5                  [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  94:b4:0f:6c:47:98       5765        -46            267.842    Room-911-E9-5G                    [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  f8:72:ea:37:43:76       2462        -59            267.842    Room-907-E9                       [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  78:8a:20:8e:dd:1e       2462        -55            267.842    Room-913-E9                       [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  70:a8:e3:59:7f:52       2412        -77            267.842    CU_udtu                           [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  78:8a:20:4a:29:9b       2462        -70            267.842    JiHotel-Staff-E9                  [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  78:8a:20:4a:29:9a       5785        -71            267.842    JiHotel-9F-Conf-5G                [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  f8:72:ea:4b:c8:bc       5785        -62            267.842    Room-910-E9-5G                    [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+  c0:61:18:29:af:9c       2462        -86            267.842    Netcore_AF9C                      [WPA2-PSK-CCMP-128][RSN-PSK-CCMP-128][ESS]
+--- wlan0 ip ---
+16: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    inet 192.168.20.100/24 brd 192.168.20.255 scope global dynamic wlan0
+       valid_lft 3336sec preferred_lft 3336sec
+--- ping via wlan0 ---
+PING 223.5.5.5 (223.5.5.5) from 192.168.20.100 wlan0: 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=0.854 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=0.449 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=0.334 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2044ms
+rtt min/avg/max/mdev = 0.334/0.545/0.854/0.224 ms
+
+=== 2. RADIO / CELLULAR TEST ===
+--- SIM & Operator Props ---
+gsm.sim.state=LOADED,ABSENT
+gsm.operator.alpha=中国联通,
+gsm.operator.numeric=46001,
+gsm.network.type=LTE,Unknown
+gsm.version.ril-impl=sprd-ril
+--- telephony.registry ---
+    mServiceState={mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE), mChannelNumber=1650, duplexMode()=1, mCellBandwidths=[20000], mOperatorAlphaLong=中国联通, mOperatorAlphaShort=中国联通, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=14(LTE), getRilDataRadioTechnology=14(LTE), mCssIndicator=unsupported, mNetworkId=-1, mSystemId=-1, mCdmaRoamingIndicator=-1, mCdmaDefaultRoamingIndicator=-1, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=NOT_REG_OR_SEARCHING networkRegistrationState=NOT_REG_OR_SEARCHING roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[VOICE,SMS,EMERGENCY,DATA] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[VOICE,SMS,VIDEO] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=VoiceSpecificRegistrationInfo { mCssSupported=false mRoamingIndicator=0 mSystemIsInPrl=0 mDefaultRoamingIndicator=0} dataSpecificInfo=null nrState=**** rRplmn=46001 isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[DATA,MMS] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 16 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 null } nrState=**** rRplmn=46001 isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=中国联通, mOperatorAlphaShortRaw=中国联通, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false, mIsUsingNonTerrestrialNetwork=false}
+    mDataConnectionState=2
+    mServiceState={mVoiceRegState=1(OUT_OF_SERVICE), mDataRegState=1(OUT_OF_SERVICE), mChannelNumber=1650, duplexMode()=0, mCellBandwidths=[20000], mOperatorAlphaLong=, mOperatorAlphaShort=, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=0(Unknown), getRilDataRadioTechnology=0(Unknown), mCssIndicator=unsupported, mNetworkId=-1, mSystemId=-1, mCdmaRoamingIndicator=-1, mCdmaDefaultRoamingIndicator=-1, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=NOT_REG_OR_SEARCHING networkRegistrationState=NOT_REG_OR_SEARCHING roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[VOICE,SMS,EMERGENCY,DATA] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=null mMnc=null mAlphaLong= mAlphaShort= mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=VoiceSpecificRegistrationInfo { mCssSupported=false mRoamingIndicator=0 mSystemIsInPrl=0 mDefaultRoamingIndicator=0} dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=null mMnc=null mAlphaLong= mAlphaShort= mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 16 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 null } nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=, mOperatorAlphaShortRaw=, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false, mIsUsingNonTerrestrialNetwork=false}
+    mDataConnectionState=-1
+--- ccmni interfaces ---
+19: ccmni0: <BROADCAST,NOARP,UP,LOWER_UP> mtu 1400 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/ether 1e:a0:36:42:ae:37 brd ff:ff:ff:ff:ff:ff
+    inet6 2408:8456:30:b52b:c31d:715:ed74:5fdf/64 scope global nodad 
+       valid_lft forever preferred_lft forever
+    inet6 fe80::c31d:715:ed74:5fdf/64 scope link nodad 
+       valid_lft forever preferred_lft forever
+6: ccmni1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether c2:36:b4:12:34:58 brd ff:ff:ff:ff:ff:ff
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+       valid_lft forever preferred_lft forever
+    inet6 2408:8456:30:b52a:c31d:615:ed74:5e2c/64 scope global nodad 
+       valid_lft forever preferred_lft forever
+    inet6 fe80::c31d:615:ed74:5e2c/64 scope link nodad 
+       valid_lft forever preferred_lft forever
+--- Pure Cellular Data Ping (temporarily disabling Wi-Fi) ---
+[routes when wifi disabled]
+100.64.155.0/24 dev ccmni1 proto kernel scope link src 100.64.155.15 
+0:	from all lookup local 
+10000:	from all fwmark 0xc0000/0xd0000 lookup legacy_system 
+11000:	from all iif lo oif dummy0 uidrange 0-0 lookup dummy0 
+11000:	from all iif lo oif ccmni0 uidrange 0-0 lookup ccmni0 
+11000:	from all iif lo oif ccmni1 uidrange 0-0 lookup ccmni1 
+15040:	from all fwmark 0x10066/0x1ffff iif lo uidrange 10138-10138 lookup ccmni1 
+15040:	from all fwmark 0x10066/0x1ffff iif lo uidrange 10133-10133 lookup ccmni1 
+15040:	from all fwmark 0x10066/0x1ffff iif lo uidrange 10151-10151 lookup ccmni1 
+15040:	from all fwmark 0x10066/0x1ffff iif lo uidrange 10155-10155 lookup ccmni1 
+15040:	from all fwmark 0x10066/0x1ffff iif lo uidrange 10167-10167 lookup ccmni1 
+16000:	from all fwmark 0x10063/0x1ffff iif lo lookup local_network 
+16000:	from all fwmark 0xd0067/0xdffff iif lo lookup ccmni0 
+16000:	from all fwmark 0x10066/0x1ffff iif lo lookup ccmni1 
+17000:	from all iif lo oif dummy0 lookup dummy0 
+17000:	from all fwmark 0xc0000/0xc0000 iif lo oif ccmni0 lookup ccmni0 
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=0.400 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=0.205 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=0.295 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2045ms
+rtt min/avg/max/mdev = 0.205/0.300/0.400/0.079 ms
+--- Wi-Fi Reconnected Check ---
+Wifi is enabled
+Wifi is connected to "JiHotel-9F-WiFi-E9"
+WifiInfo: SSID: "JiHotel-9F-WiFi-E9", BSSID: 78:8a:20:4a:29:98, MAC: <none>, IP: /192.168.20.100, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -34, Link speed: 6Mbps, Tx Link speed: 6Mbps, Max Supported Tx Link speed: 54Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: 54Mbps, Frequency: 5180MHz, Net ID: 0, Metered hint: false, score: 100, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"JiHotel-9F-WiFi-E9"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+    inet 192.168.20.100/24 brd 192.168.20.255 scope global dynamic wlan0
+
+=== 3. BLUETOOTH TEST ===
+--- Host Bluetooth Peers API ---
+{"peers":[{"address":"C4:8E:8F:21:10:01","name":"CDH-Headset-Pro","classOfDevice":2360324,"rssi":-46,"classic":true,"ble":true},{"address":"C4:8E:8F:21:10:02","name":"CDH-Speaker-Mini","classOfDevice":2360340,"rssi":-54,"classic":true,"ble":true},{"address":"C4:8E:8F:21:10:03","name":"CDH-Watch-S3","classOfDevice":1796,"rssi":-61,"classic":true,"ble":true}]}
+
+--- dumpsys bluetooth_manager ---
+Bluetooth Status
+  enabled: true
+  state: ON
+  address: XX:XX:XX:XX:00:00
+  name: itel A6612L
+  time since enabled: 00:04:03.934
+
+Enable log:
+  11-26 22:29:41.646 	Package [android] requested to [Enable]. 	Reason is APPLICATION_REQUEST
+  11-26 22:29:49.269 	Package [android] requested to [Disable]. 	Reason is APPLICATION_REQUEST
+  11-26 22:29:53.387 	Package [android] requested to [Enable]. 	Reason is APPLICATION_REQUEST
+  11-26 22:29:59.429 	Package [android] requested to [Disable]. 	Reason is APPLICATION_REQUEST
+  11-26 22:31:42.515 	Package [com.android.settings] requested to [Enable]. 	Reason is APPLICATION_REQUEST
+
+Bluetooth crashed 0 times
+
+Number of Ble app registered: 0
+
+BluetoothManagerService:
+  mEnable:true
+  mQuietEnable:false
+  mEnableExternal:true
+  mQuietEnableExternal:false
+
+🚩Flag dump:
+	[■]: a2dp_cleanup_on_remove_device
+	[ ]: a2dp_ignore_started_when_responder
+	[ ]: a2dp_lhdc_api
+	[■]: a2dp_sm_ignore_connect_events_in_connecting_state
+	[ ]: a2dp_variable_aac_capability
+	[ ]: a2dp_version14
+	[ ]: abs_volume_sdp_conflict
+	[ ]: adapter_suspend_mgmt
+	[ ]: adm_remove_handling_wired
+	[■]: advertise_thread
+	[■]: aics_api
+	[■]: allow_free_last_scn
+	[■]: allow_gatt_connect_from_the_apps_without_making_leaudio_device_active
+	[■]: allow_switching_hid_and_hogp
+	[■]: android_os_identifier
+	[■]: associate_browse_l2cap_request_with_active_control_channel
+	[■]: auto_connect_on_multiple_hfp_when_no_a2dp_device
+	[ ]: auto_transport_pairing
+	[■]: av_stream_reconfigure_fix
+	[■]: avdt_handle_signaling_on_peer_failure
+Failed to write while dumping service bluetooth_manager: Broken pipe
+--- bluetooth hal & hvc5 ---
+crw-rw-rw- 1 system system u:object_r:console_device:s0  229,   5 2026-11-26 22:31 /dev/hvc5
+
+=== 4. NFC TEST ===
+404 page not found
+
+HTTP_CODE=404
+--- Guest NFC Feature & Service ---
+pm_features_nfc=NONE
+Service nfc: not found
+nfc_permission_xml=NONE
+nfc_dev_nodes=NONE
+
+=== 5. WINDOW FOCUS & SCREENSHOT ===
+before_focus:   mCurrentFocus=Window{2557391 u0 com.android.settings/com.android.settings.Settings}, [type=1, isChildWindow=false]-[Surface(name=*Title#547)/@0xe6ec904]   mFocusedApp=ActivityRecord{156740982 u0 com.android.settings/.Settings t5 d0} 
+after_home_focus:   mCurrentFocus=Window{a141cbf u0 com.android.launcher3/com.android.launcher3.Launcher3QuickStepGo}, [type=1, isChildWindow=false]-[Surface(name=*Title#552)/@0xf6d4f69]   mFocusedApp=ActivityRecord{243269205 u0 com.android.launcher3/.Launcher3QuickStepGo t4 d0} 
+-rw-r--r--@ 1 cuimingqiang  staff   1.2M Nov 26 22:35 /Users/cuimingqiang/.gemini/antigravity/brain/ad7d9fe8-68ad-4a01-a2ca-bc133c622f04/scratch/pass-home.png
+
+=== 6. CPUFREQ, FINGERPRINT, MEMORY & BLUETOOTH ADAPTER DETAILS ===
+fingerprint=itel/A6612L-OP64/itel-A6612L:16/BP2A.250605.031.A3/A6612L_260822V4:user/release-keys
+cpu_driver=sprd-cpufreq
+cpu_gov=sprd-dm
+cpu_freqs=1600000 1500000 1400000 1300000 1200000 1100000 1000000 960000 900000 864000 800000 768000 
+MemTotal:        3809724 kB
+/dev/block/dm-45 113G 816M  111G   1% /data/user/0
+AdapterProperties
+  Name: itel A6612L
+  Address: XX:XX:XX:XX:00:00
+  ConnectionState: STATE_DISCONNECTED
+  State: ON
+  MaxConnectedAudioDevices: 3
+  A2dpOffloadEnabled: false
+  Discovering: false
+  DiscoveryEndMs: 1795703506077
+  Bonded devices:
+
+ScanMode: SCAN_MODE_CONNECTABLE
+Scan Mode Changes:

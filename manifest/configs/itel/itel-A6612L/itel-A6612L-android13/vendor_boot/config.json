@@ -4,7 +4,7 @@
     "androidboot.secureboot=1",
     "androidboot.slot=a",
     "androidboot.veritymode.managed=yes",
-    "androidboot.ddrsize=8192M"
+    "androidboot.ddrsize=3072M"
   ],
   "fstab": "sp9863a"
 }

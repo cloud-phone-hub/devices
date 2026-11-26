@@ -3,7 +3,6 @@
     "ro.bionic.2nd_arch": "",
     "ro.bionic.2nd_cpu_variant": "",
     "ro.hardware.gralloc": "minigbm",
-    "ro.hardware.vulkan": "virtio",
     "ro.zygote": "zygote64"
   },
   "build-prop-unsets": [

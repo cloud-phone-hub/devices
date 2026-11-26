@@ -30,3 +30,106 @@
 (allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_configs_file}} (file (read getattr map open)))
 (allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_configs_file}} (lnk_file (read getattr open)))
 ;; @end
+
+;; 放行跨分区客户端查询并调用由 hal_neuralnetworks_default 承载的 MTK / Blackview 占位服务，
+;; 根治焦点切换等待 IMtkpower_applist/default 每次同步阻塞 5008ms 及跨进程 SecurityException。
+;; @when-declared hal_neuralnetworks_default
+(allow {{pick:system_server}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:system_server}} (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:system_server}} (fd (use)))
+(allow {{pick:surfaceflinger}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:surfaceflinger}} (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:surfaceflinger}} (fd (use)))
+(allow {{pick:audioserver}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:audioserver}} (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:audioserver}} (fd (use)))
+(allow {{pick:cameraserver}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:cameraserver}} (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:cameraserver}} (fd (use)))
+(allow {{pick:radio}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:radio}} (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:radio}} (fd (use)))
+(allow {{pick:platform_app}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:platform_app}} (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:platform_app}} (fd (use)))
+(allow {{pick:priv_app}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:priv_app}} (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:priv_app}} (fd (use)))
+(allow {{pick:system_app}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:system_app}} (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:system_app}} (fd (use)))
+;; @end
+
+;; @when-declared mtk_hal_applist_service hal_neuralnetworks_default
+(allow {{pick:system_server}} mtk_hal_applist_service (service_manager (find)))
+;; @end
+
+;; @when-declared mtk_hal_power_service hal_neuralnetworks_default
+(allow {{pick:system_server}} mtk_hal_power_service (service_manager (find)))
+(allow {{pick:surfaceflinger}} mtk_hal_power_service (service_manager (find)))
+(allow {{pick:audioserver}} mtk_hal_power_service (service_manager (find)))
+(allow {{pick:cameraserver}} mtk_hal_power_service (service_manager (find)))
+(allow {{pick:radio}} mtk_hal_power_service (service_manager (find)))
+(allow {{pick:platform_app}} mtk_hal_power_service (service_manager (find)))
+(allow {{pick:priv_app}} mtk_hal_power_service (service_manager (find)))
+(allow {{pick:system_app}} mtk_hal_power_service (service_manager (find)))
+;; @end
+
+;; @when-declared mtk_hal_composer_ext_service hal_neuralnetworks_default
+(allow {{pick:surfaceflinger}} mtk_hal_composer_ext_service (service_manager (find)))
+;; @end
+
+;; @when-declared mtk_hal_nvramagent_service hal_neuralnetworks_default
+(allow {{pick:system_server}} mtk_hal_nvramagent_service (service_manager (find)))
+(allow {{pick:radio}} mtk_hal_nvramagent_service (service_manager (find)))
+;; @end
+
+;; @when-declared mtk_hal_lbs_service hal_neuralnetworks_default
+(allow {{pick:system_server}} mtk_hal_lbs_service (service_manager (find)))
+(allow {{pick:radio}} mtk_hal_lbs_service (service_manager (find)))
+;; @end
+
+;; @when-declared mtk_hal_bgs_service hal_neuralnetworks_default
+(allow {{pick:cameraserver}} mtk_hal_bgs_service (service_manager (find)))
+(allow {{pick:platform_app}} mtk_hal_bgs_service (service_manager (find)))
+(allow {{pick:priv_app}} mtk_hal_bgs_service (service_manager (find)))
+;; @end
+
+;; @when-declared mtk_hal_mms_service hal_neuralnetworks_default
+(allow {{pick:system_server}} mtk_hal_mms_service (service_manager (find)))
+(allow {{pick:surfaceflinger}} mtk_hal_mms_service (service_manager (find)))
+(allow {{pick:platform_app}} mtk_hal_mms_service (service_manager (find)))
+(allow {{pick:priv_app}} mtk_hal_mms_service (service_manager (find)))
+;; @end
+
+;; @when-declared hal_blackview_service hal_neuralnetworks_default
+(allow {{pick:system_server}} hal_blackview_service (service_manager (find)))
+(allow {{pick:platform_app}} hal_blackview_service (service_manager (find)))
+(allow {{pick:priv_app}} hal_blackview_service (service_manager (find)))
+(allow {{pick:system_app}} hal_blackview_service (service_manager (find)))
+;; @end
+
+;; 静默无物理硬件/私域服务探测的高频审计噪声（严守 AOSP neverallow，仅切断 auditd/串口风暴）：
+;; @when-declared mtk_hal_audio_service
+(dontaudit {{pick:bluetooth}} mtk_hal_audio_service (service_manager (find)))
+;; @end
+;; @when-declared mtk_hal_mbrain_service
+(dontaudit {{pick:platform_app}} mtk_hal_mbrain_service (service_manager (find)))
+(dontaudit {{pick:priv_app}} mtk_hal_mbrain_service (service_manager (find)))
+(dontaudit {{pick:system_app}} mtk_hal_mbrain_service (service_manager (find)))
+(dontaudit {{pick:untrusted_app_all}} mtk_hal_mbrain_service (service_manager (find)))
+;; @end
+;; @when-declared netdiag
+(dontaudit netdiag {{pick:vendor_default_prop}} (file (read getattr map open)))
+;; @end
+(dontaudit {{pick:untrusted_app_all}} {{pick:sysfs_thermal}} (dir (ioctl read getattr lock open search)))
+(dontaudit {{pick:system_app}} {{pick:sysfs_thermal}} (dir (ioctl read getattr lock open search)))
+(dontaudit {{pick:audioserver}} {{pick:default_android_hwservice}} (hwservice_manager (find)))
+(dontaudit {{pick:surfaceflinger}} {{pick:default_android_hwservice}} (hwservice_manager (find)))
+(dontaudit {{pick:bluetooth}} {{pick:default_android_hwservice}} (hwservice_manager (find)))
+(dontaudit {{pick:system_server}} {{pick:default_android_hwservice}} (hwservice_manager (find)))
+(dontaudit {{pick:radio}} {{pick:default_android_hwservice}} (hwservice_manager (find)))
+(dontaudit {{pick:audioserver}} {{pick:vendor_default_prop}} (file (read getattr map open)))
+(dontaudit {{pick:lmkd}} {{pick:vendor_default_prop}} (file (read getattr map open)))
+(dontaudit {{pick:zygote}} {{pick:vendor_default_prop}} (file (read getattr map open)))
+(dontaudit {{pick:artd}} {{pick:vendor_default_prop}} (file (read getattr map open)))

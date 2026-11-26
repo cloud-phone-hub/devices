@@ -26,7 +26,7 @@
     },
     {
       "android.hardware.gpu": {
-        "variant": "default",
+        "variant": "pastel",
         "version": "1.0"
       }
     },
