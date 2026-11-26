@@ -1,0 +1,44 @@
+=== 1. 单测通过 ===
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	1.163s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	(cached)
+
+=== 2. daemon 镜像列表 ===
+HNLNA-M_16-TP1A.220624.014-20260422 | Honor X80i 5G | 1200x2600 | 16
+HNLNA-Q_16-TKQ1.240227.001-20260708 | HONOR X8d | 1080x2392 | 16
+HNONL-Q1_16-TKQ1.240227.001-20260922 | HONOR Pad X7b | 1200x1920 | 16
+
+=== 3. HONOR X8d #1 (honor/HNLNA-Q, 127.0.0.1:5911) 实机验收 ===
+127.0.0.1:5911         device product:LNA-LX2 model:LNA_LX2 device:HNLNA-Q
+boot_completed=1 uptime=415.60 2232.29 system_server_pid=880 am_crash_count=0
+Physical size: 1080x2392
+Physical density: 480
+  ro.product.model=LNA-LX2
+  ro.product.device=HNLNA-Q
+  ro.config.marketing_name=HONOR X8d
+  ro.build.display.id=LNA-L32 10.0.0.179(C185E9R201P2)
+  ro.build.fingerprint=HONOR/LNA-LX2/HNLNA-Q:16/HONORLNA-L32/10.0.0.179C185E9R201P2:user/release-keys
+  gsm.version.baseband=MPSS.JO.2.0.c1-00013-STD.PROD-1,MPSS.JO.2.0.c1-00013-STD.PROD-1
+  ro.soc.model=Snapdragon 6s 4G Gen 2
+  persist.radio.multisim.config=dsds
+  policy0: cpus=0 1 2 3 freqs=18 (300000..1900800)
+  policy4: cpus=4 5 6 7 freqs=21 (300000..2400000)
+  battery_design_uah=7000000
+  thermal_zones=7
+
+=== 4. HONOR Pad X7b #1 (honor/HNONL-Q1, 127.0.0.1:5919) 实机验收 ===
+127.0.0.1:5919         device product:ONL-L09 model:ONL_L09 device:HNONL-Q1
+boot_completed=1 uptime=100.61 419.45 system_server_pid=844 am_crash_count=0
+Physical size: 1200x1920
+Physical density: 280
+  ro.product.model=ONL-L09
+  ro.product.device=HNONL-Q1
+  ro.config.marketing_name=HONOR Pad X7b
+  ro.build.display.id=ONL-L09 10.0.0.129(C185E1R102P1)
+  ro.build.fingerprint=HONOR/ONL-L09/HNONL-Q1:16/HONORONL-L09/10.0.0.129C185E1R102P1:user/release-keys
+  gsm.version.baseband=MPSS.DE.3.1.c1-00032-BENGAL_GEN_PACK-1.439843.1.447712.2
+  ro.soc.model=Snapdragon 685 4G Mobile Platform
+  persist.radio.multisim.config=ss
+  policy0: cpus=0 1 2 3 freqs=15 (300000..1900800)
+  policy4: cpus=4 5 6 7 freqs=19 (300000..2803200)
+  battery_design_uah=8000000
+  thermal_zones=9

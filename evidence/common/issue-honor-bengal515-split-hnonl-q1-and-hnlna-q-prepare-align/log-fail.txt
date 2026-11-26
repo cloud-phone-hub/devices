@@ -1,0 +1,23 @@
+=== 1. 拆分前原 Honor Pad X7b #1 (bengal_515_16-TKQ1.240227.001-20260708, 127.0.0.1:5911) 实测 ===
+Physical size: 1080x2400
+Physical density: 440
+[ro.build.display.id]: [LNA-L32 10.0.0.179(C185E9)]
+[ro.build.fingerprint]: [HONOR//HNLNA-Q:16/BP2A.250605.031.A2/10.0.0.179C185E9preload format error.:user/release-keys]
+[ro.config.cpu_info_display]: [SM6225Pro]
+[ro.config.marketing_name]: [LNAL]
+[ro.product.device]: [HNLNA-Q]
+[ro.product.vendor.device]: [bengal_515]
+[ro.sf.lcd_density]: [440]
+cat: /sys/class/power_supply/battery/charge_full_design: No such file or directory
+/sys/devices/system/cpu/cpufreq: policy0 policy6 (缺 cdh_device_info.cpufreq)
+qemu.log:
+[    5.344154][    T1] libhwcust_init: can not get OEMINFO_TMP_VENDORCOUNTRY
+devices/manifest/devices/honor/bengal_515/device-profile.json:
+  "sessionId": "measured-only", "rawReply": "CDH_PREPARE_MEASURED_ONLY=1"
+
+=== 2. 拆分后 HNONL-Q1 首启因 light_config.xml 缺 BATTERY 逻辑灯触发 system_server 崩溃循环 ===
+11-26 07:22:42.347 12705 12705 E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: main
+11-26 07:22:42.347 12705 12705 E AndroidRuntime: java.lang.RuntimeException: Failed to boot service com.android.server.HwBatteryService: onBootPhase threw an exception during phase 550
+11-26 07:22:42.347 12705 12705 E AndroidRuntime: Caused by: java.lang.NullPointerException: Attempt to invoke virtual method 'void com.android.server.lights.LogicalLight.setColor(int)' on a null object reference
+11-26 07:22:42.347 12705 12705 E AndroidRuntime: 	at com.android.server.HwBatteryService$HwLed.setLightColorImpl(HwBatteryService.java:1550)
+11-26 07:22:42.347 12705 12705 E AndroidRuntime: 	at com.android.server.HwBatteryService.onBootPhase(HwBatteryService.java:1382)
