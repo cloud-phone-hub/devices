@@ -12,3 +12,8 @@
 #
 # 类型与授权见同目录 vendor_sepolicy.cil（(type napproxyd_socket) 等 5 行）。
 /dev/socket/napproxyd          u:object_r:napproxyd_socket:s0
+
+# 三星 ThemeCenter 目录标签（取自官方 vendor_file_contexts 第 925/1246/1271 行）
+/data/overlays(/.*)?                   u:object_r:themecenter_data_file:s0
+/data/overlays/jsonfiles(/.*)?         u:object_r:themecenter_sensitive_data_file:s0
+/data/overlays/preferences(/.*)?       u:object_r:themecenter_sensitive_data_file:s0

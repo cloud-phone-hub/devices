@@ -1,0 +1,149 @@
+=== 1. Mobile Network / SemRIL ISehRadio* Failures (before fix) ===
+11-26 06:56:10.578  2669  2669 D SEM_RILJ: SehRadio HAL version of SEH_RADIO: -1.-1 [PHONE0]
+11-26 06:56:10.611  2669  2669 D SehRadioNetworkProxy: AIDL initialized mHalVersion=-1.-1
+11-26 06:56:10.611  2669  2669 E SEM_RILJ: getSehRadioServiceProxy: serviceProxy == null [PHONE0]
+11-26 06:56:10.611  2669  2669 D SEM_RILJ: SehRadio HAL version of SEH_NETWORK: -1.-1 [PHONE0]
+11-26 06:56:10.623  2669  2669 D SehRadioDataProxy: AIDL initialized mHalVersion=-1.-1
+11-26 06:56:10.624  2669  2669 E SEM_RILJ: getSehRadioServiceProxy: serviceProxy == null [PHONE0]
+11-26 06:56:10.624  2669  2669 D SEM_RILJ: SehRadio HAL version of SEH_DATA: -1.-1 [PHONE0]
+11-26 06:56:10.635  2669  2669 D SehRadioSimProxy: AIDL initialized mHalVersion=-1.-1
+11-26 06:56:10.635  2669  2669 E SEM_RILJ: getSehRadioServiceProxy: serviceProxy == null [PHONE0]
+11-26 06:56:10.635  2669  2669 D SEM_RILJ: SehRadio HAL version of SEH_SIM: -1.-1 [PHONE0]
+11-26 06:56:10.652  2669  2669 D SehRadioMessagingProxy: AIDL initialized mHalVersion=-1.-1
+11-26 06:56:10.652  2669  2669 E SEM_RILJ: getSehRadioServiceProxy: serviceProxy == null [PHONE0]
+11-26 06:56:10.652  2669  2669 D SEM_RILJ: SehRadio HAL version of SEH_MESSAGING: -1.-1 [PHONE0]
+11-26 06:56:10.819  2669  2669 D SATELLITE_RILJ: SatelliteRIL: Constructor [SATPHONE]
+11-26 06:56:10.829  2669  2669 D SehRadioSatelliteProxy: setAidl: setting HAL version to version = 2.0
+11-26 06:56:10.829  2669  2669 D SehRadioSatelliteProxy: AIDL initialized mHalVersion=2.0
+11-26 06:56:10.830  2669  2669 E SATELLITE_RILJ: SehRadioSatelliteProxy: failed to linkToDeath() or setResponseFunction() [SATPHONE]
+11-26 06:56:10.830  2669  2669 E SATELLITE_RILJ: getSehRadioSatelliteProxy: mSehRadioSatelliteProxy == null [SATPHONE]
+11-26 06:56:10.969  2669  2669 D SehRadioNetworkProxy: AIDL initialized mHalVersion=-1.-1
+11-26 06:56:10.969  2669  2669 E SEM_RILJ: getSehRadioServiceProxy: serviceProxy == null [PHONE0]
+11-26 06:56:11.114  2669  2669 D UiccController: Received EVENT_RADIO_AVAILABLE/EVENT_RADIO_ON, calling getIccCardStatus
+11-26 06:56:11.132  2669  2669 D SehRadioSimProxy: AIDL initialized mHalVersion=-1.-1
+11-26 06:56:11.133  2669  2669 E SEM_RILJ: getSehRadioServiceProxy: serviceProxy == null [PHONE0]
+11-26 06:56:11.152  2669  2669 D SehRadioNetworkProxy: AIDL initialized mHalVersion=-1.-1
+11-26 06:56:11.152  2669  2669 E SEM_RILJ: getSehRadioServiceProxy: serviceProxy == null [PHONE0]
+11-26 06:56:11.175  2669  2669 D SehRadioNetworkProxy: AIDL initialized mHalVersion=-1.-1
+11-26 06:56:11.176  2669  2669 E SEM_RILJ: getSehRadioServiceProxy: serviceProxy == null [PHONE0]
+11-26 06:56:11.344  2669  2669 D SehRadioNetworkProxy: AIDL initialized mHalVersion=-1.-1
+11-26 06:56:11.345  2669  2669 E SEM_RILJ: getSehRadioServiceProxy: serviceProxy == null [PHONE0]
+11-26 06:56:11.391  2669  2669 D SehRadioNetworkProxy: AIDL initialized mHalVersion=-1.-1
+
+=== 2. Bluetooth ISehBluetooth Deadlock & Interface Storm (before fix) ===
+
+*** SERVICE 'bluetooth_manager' DUMP TIMEOUT (10000ms) EXPIRED ***
+
+
+*** SERVICE 'bluetooth_manager' DUMP TIMEOUT (10000ms) EXPIRED ***
+
+11-26 06:56:51.088   715  1379 I HidlServiceManagement: Trying to get transport of vendor.samsung.hardware.bluetooth@2.0::ISehBluetooth/default without hwservicemanager
+11-26 06:56:51.088   715  1379 E BluetoothSystemServer: BluetoothManagerService: Exception getting ISehBluetooth service: 
+11-26 06:56:51.088   715  1379 E BluetoothSystemServer: 	at vendor.samsung.hardware.bluetooth.V2_0.ISehBluetooth.getService(ISehBluetooth.java:78)
+11-26 06:56:51.088   715  1379 E BluetoothSystemServer: 	at vendor.samsung.hardware.bluetooth.V2_0.ISehBluetooth.getService(ISehBluetooth.java:88)
+11-26 06:56:51.165   266 10373 W libc    : Unable to set property "ctl.interface_start" to "aidl/vendor.samsung.hardware.bluetooth.ISehBluetooth/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:51.203   266 10373 W libc    : Unable to set property "ctl.interface_start" to "aidl/vendor.samsung.hardware.bluetooth.ISehBluetooth/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:51.334   266 10373 W libc    : Unable to set property "ctl.interface_start" to "aidl/vendor.samsung.hardware.bluetooth.ISehBluetooth/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:52.116   715  1379 W libbinder.ServiceManagerCppClient: Waited one second for vendor.samsung.hardware.bluetooth.ISehBluetooth/default (is service started? Number of threads started in the threadpool: 32. Are binder threads started and available?)
+11-26 06:56:52.167   266 10547 W libc    : Unable to set property "ctl.interface_start" to "aidl/vendor.samsung.hardware.bluetooth.ISehBluetooth/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:52.188   266 10547 W libc    : Unable to set property "ctl.interface_start" to "aidl/vendor.samsung.hardware.bluetooth.ISehBluetooth/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:52.204   266 10547 W libc    : Unable to set property "ctl.interface_start" to "aidl/vendor.samsung.hardware.bluetooth.ISehBluetooth/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:53.137   715  1379 W libbinder.ServiceManagerCppClient: Waited one second for vendor.samsung.hardware.bluetooth.ISehBluetooth/default (is service started? Number of threads started in the threadpool: 32. Are binder threads started and available?)
+11-26 06:56:53.166   266 10807 W libc    : Unable to set property "ctl.interface_start" to "aidl/vendor.samsung.hardware.bluetooth.ISehBluetooth/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:53.182   266 10807 W libc    : Unable to set property "ctl.interface_start" to "aidl/vendor.samsung.hardware.bluetooth.ISehBluetooth/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:53.198   266 10807 W libc    : Unable to set property "ctl.interface_start" to "aidl/vendor.samsung.hardware.bluetooth.ISehBluetooth/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:54.154   715  1379 W libbinder.ServiceManagerCppClient: Waited one second for vendor.samsung.hardware.bluetooth.ISehBluetooth/default (is service started? Number of threads started in the threadpool: 32. Are binder threads started and available?)
+11-26 06:56:54.215   266 10931 W libc    : Unable to set property "ctl.interface_start" to "aidl/vendor.samsung.hardware.bluetooth.ISehBluetooth/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:54.230   266 10931 W libc    : Unable to set property "ctl.interface_start" to "aidl/vendor.samsung.hardware.bluetooth.ISehBluetooth/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:54.251   266 10931 W libc    : Unable to set property "ctl.interface_start" to "aidl/vendor.samsung.hardware.bluetooth.ISehBluetooth/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:55.178   715  1379 W libbinder.ServiceManagerCppClient: Waited one second for vendor.samsung.hardware.bluetooth.ISehBluetooth/default (is service started? Number of threads started in the threadpool: 32. Are binder threads started and available?)
+
+=== 3. Keystore2 Panic, Vold StrongBox -68 Storm, Moneta & Dumpstate Storm, AICoreCHN & ThemeCenter Crashes (before fix) ===
+11-26 06:56:27.846  5891  5891 E AndroidRuntime: FATAL EXCEPTION: main
+11-26 06:56:27.846  5891  5891 E AndroidRuntime: Process: com.samsung.android.smartsuggestions:moneta, PID: 5891
+11-26 06:56:27.846  5891  5891 E AndroidRuntime: java.lang.RuntimeException: Unable to get provider com.samsung.android.moneta.app.MonetaInitializationProvider
+11-26 06:56:27.846  5891  5891 E AndroidRuntime: 	at android.app.ActivityThread.installProvider(ActivityThread.java:9990)
+11-26 06:56:27.846  5891  5891 E AndroidRuntime: 	at android.app.ActivityThread.installContentProviders(ActivityThread.java:9467)
+11-26 06:56:27.846  5891  5891 E AndroidRuntime: 	at android.app.ActivityThread.handleBindApplication(ActivityThread.java:9089)
+11-26 06:56:27.846  5891  5891 E AndroidRuntime: 	at android.app.ActivityThread.-$$Nest$mhandleBindApplication(Unknown Source:0)
+11-26 06:56:27.846  5891  5891 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:3016)
+11-26 06:56:27.846  5891  5891 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:132)
+11-26 06:56:27.846  5891  5891 E AndroidRuntime: 	at android.os.Looper.dispatchMessage(Looper.java:358)
+11-26 06:56:27.846  5891  5891 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:288)
+11-26 06:56:27.846  5891  5891 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:392)
+11-26 06:56:27.846  5891  5891 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:10346)
+11-26 06:56:27.846  5891  5891 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+--
+11-26 06:56:38.866  7287  7287 E AndroidRuntime: FATAL EXCEPTION: main
+11-26 06:56:38.866  7287  7287 E AndroidRuntime: Process: com.samsung.android.smartsuggestions:moneta, PID: 7287
+11-26 06:56:38.866  7287  7287 E AndroidRuntime: java.lang.RuntimeException: Unable to get provider com.samsung.android.moneta.app.MonetaInitializationProvider
+11-26 06:56:38.866  7287  7287 E AndroidRuntime: 	at android.app.ActivityThread.installProvider(ActivityThread.java:9990)
+11-26 06:56:38.866  7287  7287 E AndroidRuntime: 	at android.app.ActivityThread.installContentProviders(ActivityThread.java:9467)
+---
+11-26 06:58:05.239 15959 15986 E AndroidRuntime: FATAL EXCEPTION: SmpCtrThread
+11-26 06:58:05.239 15959 15986 E AndroidRuntime: Process: com.samsung.android.offline.languagemodel.chn, PID: 15959
+11-26 06:58:05.239 15959 15986 E AndroidRuntime: java.lang.NoClassDefFoundError: Failed resolution of: Lcom/google/android/gms/common/GoogleApiAvailability;
+11-26 06:58:05.239 15959 15986 E AndroidRuntime: 	at K1.d.c(Unknown Source:7)
+11-26 06:58:05.239 15959 15986 E AndroidRuntime: 	at C1.b.g0(Unknown Source:778)
+11-26 06:58:05.239 15959 15986 E AndroidRuntime: 	at O1.e.handleMessage(Unknown Source:415)
+11-26 06:58:05.239 15959 15986 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:132)
+11-26 06:58:05.239 15959 15986 E AndroidRuntime: 	at android.os.Looper.dispatchMessage(Looper.java:358)
+11-26 06:58:05.239 15959 15986 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:288)
+11-26 06:58:05.239 15959 15986 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:392)
+11-26 06:58:05.239 15959 15986 E AndroidRuntime: 	at android.os.HandlerThread.run(HandlerThread.java:139)
+11-26 06:58:05.239 15959 15986 E AndroidRuntime: Caused by: java.lang.ClassNotFoundException: com.google.android.gms.common.GoogleApiAvailability
+11-26 06:58:05.239 15959 15986 E AndroidRuntime: 	... 8 more
+11-26 06:58:11.573 16036 16036 E AndroidRuntime: FATAL EXCEPTION: main
+--
+11-26 06:58:25.846 17722 17747 E AndroidRuntime: FATAL EXCEPTION: SmpCtrThread
+11-26 06:58:25.846 17722 17747 E AndroidRuntime: Process: com.samsung.android.offline.languagemodel.chn, PID: 17722
+11-26 06:58:25.846 17722 17747 E AndroidRuntime: java.lang.NoClassDefFoundError: Failed resolution of: Lcom/google/android/gms/common/GoogleApiAvailability;
+11-26 06:58:25.846 17722 17747 E AndroidRuntime: 	at K1.d.c(Unknown Source:7)
+11-26 06:58:25.846 17722 17747 E AndroidRuntime: 	at C1.b.g0(Unknown Source:778)
+---
+---
+11-26 06:55:53.526  2161  2218 E AndroidRuntime: FATAL EXCEPTION: Thread-2
+11-26 06:55:53.526  2161  2218 E AndroidRuntime: Process: com.samsung.android.themecenter, PID: 2161
+11-26 06:55:53.526  2161  2218 E AndroidRuntime: java.lang.IllegalStateException: openDatabase must be called before calling this method
+11-26 06:55:53.526  2161  2218 E AndroidRuntime: 	at com.samsung.android.thememanager.ThemeDatabase.getComponentPackages(ThemeDatabase.java:153)
+11-26 06:55:53.526  2161  2218 E AndroidRuntime: 	at com.samsung.android.thememanager.ThemeManager.getInstalledComponentList(ThemeManager.java:294)
+11-26 06:55:53.526  2161  2218 E AndroidRuntime: 	at com.samsung.android.thememanager.ThemeComponentStats.getInstalledComponents(ThemeComponentStats.java:7)
+11-26 06:55:53.526  2161  2218 E AndroidRuntime: 	at com.samsung.android.thememanager.ThemeComponentStats.checkAtBootFOrInitialization(ThemeComponentStats.java:110)
+11-26 06:55:53.526  2161  2218 E AndroidRuntime: 	at com.samsung.android.thememanager.ThemeManager$9.handleMessage(ThemeManager.java:110)
+11-26 06:55:53.526  2161  2218 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:132)
+11-26 06:55:53.526  2161  2218 E AndroidRuntime: 	at android.os.Looper.dispatchMessage(Looper.java:358)
+11-26 06:55:53.526  2161  2218 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:288)
+11-26 06:55:53.526  2161  2218 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:392)
+11-26 06:55:53.526  2161  2218 E AndroidRuntime: 	at com.samsung.android.thememanager.ThemeManager.run(ThemeManager.java:179)
+11-26 06:55:53.526  2161  2218 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:1564)
+---
+11-26 06:56:12.946   715  3707 D BootReceiver: No dumpstate files found in /cache/log
+11-26 06:56:20.043   386   391 E keystore2: SehKeyMintExtension must be present: system/security/keystore2/src/globals.rs:633: In get_keymint_extension.
+11-26 06:56:30.636   715  3580 W libbinder.ServiceManagerCppClient: Waited one second for android.hardware.uwb.IUwb/default (is service started? Number of threads started in the threadpool: 32. Are binder threads started and available?)
+11-26 06:56:30.687   266  7129 W libc    : Unable to set property "ctl.interface_start" to "aidl/android.hardware.uwb.IUwb/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:30.696   266  7129 W libc    : Unable to set property "ctl.interface_start" to "aidl/android.hardware.uwb.IUwb/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:30.708   266  7129 W libc    : Unable to set property "ctl.interface_start" to "aidl/android.hardware.uwb.IUwb/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:31.676   715  3580 W libbinder.ServiceManagerCppClient: Waited one second for android.hardware.uwb.IUwb/default (is service started? Number of threads started in the threadpool: 32. Are binder threads started and available?)
+11-26 06:56:31.801   266  7251 W libc    : Unable to set property "ctl.interface_start" to "aidl/android.hardware.uwb.IUwb/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:31.811   266  7251 W libc    : Unable to set property "ctl.interface_start" to "aidl/android.hardware.uwb.IUwb/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:31.824   266  7251 W libc    : Unable to set property "ctl.interface_start" to "aidl/android.hardware.uwb.IUwb/default": PROP_ERROR_HANDLE_CONTROL_MESSAGE (0x20)
+11-26 06:56:32.015  7218  7218 I dumpstate: current cpu usage: 144
+11-26 06:56:32.015  7218  7218 E dumpstate: Error opening file descriptor for /sys/class/sec/sec-thermistor/temperature: No such file or directory
+11-26 06:56:32.015  7218  7218 W dumpstate: Fail to read from fd: /sys/class/sec/sec-thermistor/temperature
+11-26 06:56:32.015  7218  7218 E dumpstate: Error opening file descriptor for /sys/devices/platform/sec-thermistor/temperature: No such file or directory
+11-26 06:56:32.015  7218  7218 W dumpstate: Fail to read from fd: /sys/devices/platform/sec-thermistor/temperature
+11-26 06:56:32.015  7218  7218 E dumpstate: Error opening file descriptor for /sys/class/sec/sec-ap-thermistor/temperature: No such file or directory
+11-26 06:56:32.015  7218  7218 W dumpstate: Fail to read from fd: /sys/class/sec/sec-ap-thermistor/temperature
+11-26 06:56:32.015  7218  7218 I dumpstate: current ap temp: 0
+11-26 06:56:32.018  7218  7218 I dumpstate: do_vibrate: 0 stream_to_socket: 0 progress_updates_to_socket: 0 do_screenshot: 0 multi_display_screenshot: 0 is_remote_mode: 0 show_header_only: 0 telephony_only: 0 wifi_only: 0 do_progress_updates: 0 fd: -1 bugreport_mode: BUGREPORT_A_ERROR limited_only: 0 args: /system/bin/dumpstate -M -d -z
+11-26 06:56:32.018  7218  7218 I dumpstate: sec_mode : 1 dump_flags : 2139973260, booting_delay : 0 booting_enospc : 0 sys_rescue : 0 sys_error : 0 sys_native : 0 sys_watchdog : 0 app_error : 1 app_native : 0 app_anr : 0 light_level : 0 enospc : 0 by_key : 0
+11-26 06:56:32.018  7218  7218 I dumpstate: shutdown_broadcast: 0, shutdown_delay: 0
+11-26 06:56:32.018  7218  7218 I dumpstate: svcagent: 0
+11-26 06:56:32.018  7218  7218 D dumpstate: dumpstate calling_uid = 0 ; calling package =  
+11-26 06:56:32.018  7218  7218 D dumpstate: Loading stats from /data/log/dumpstate-stats.txt
+11-26 06:56:32.018  7218  7218 I dumpstate: Average max progress: 490 in 1 runs; estimated max: 490
+11-26 06:56:32.038  7218  7218 D dumpstate: Wake lock acquired.
+11-26 06:56:32.038  7218  7218 I dumpstate: Running on strict-run mode, which has shorter timeouts (to disable, call 'setprop dumpstate.strict_run false')
+11-26 06:56:32.038  7218  7218 I dumpstate: dumpstate info: id=2, args='/system/bin/dumpstate -M -d -z', bugreport_mode= BUGREPORT_A_ERROR bugreport format version: 2.0
+11-26 06:56:32.038  7218  7218 D dumpstate: Bugreport dir: [/data/log] Base name: [dumpstate_app_error] Suffix: [] Log path: [/data/log/dumpstate_app_error.txt] Temporary path: [/data/log/dumpstate_app_error.tmp] Screenshot path: []
+11-26 06:56:32.038  7218  7218 D dumpstate: Creating initial .zip file (/data/log/dumpstate_app_error_temp.zip)

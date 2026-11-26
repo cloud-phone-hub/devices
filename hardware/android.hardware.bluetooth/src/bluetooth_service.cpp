@@ -16,6 +16,9 @@
 
 #include <android/binder_ibinder.h>
 #include <android/binder_status.h>
+#if CDH_BLUETOOTH_SAMSUNG
+#include "samsung/bt_samsung_ext.h"
+#endif
 
 extern "C" {
 void ABinderProcess_setThreadPoolMaxThreadCount(uint32_t numThreads);
@@ -411,6 +414,9 @@ int main() {
   if (registerAsService(service, kServiceName) != STATUS_OK) {
     return 2;
   }
+#if CDH_BLUETOOTH_SAMSUNG
+  cdh::bluetooth::RegisterSamsungBluetooth();
+#endif
   ABinderProcess_joinThreadPool();
   return 0;
 }

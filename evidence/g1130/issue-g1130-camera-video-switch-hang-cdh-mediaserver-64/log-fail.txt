@@ -1,0 +1,23 @@
+=== 1. 修前切换 Photo -> Video 死等 media.player 现场 ===
+$ adb -s 127.0.0.1:5911 shell file /system/bin/mediaserver
+/system/bin/mediaserver: ELF 32-bit LSB shared object, ARM, EABI5 version 1 (SYSV), dynamically linked, interpreter /system/bin/linker
+
+$ adb -s 127.0.0.1:5911 shell 'service check media.player'
+Service media.player: not found
+
+# 点击 Video 模式后，DreamCamera2 工作线程卡死在 new MediaRecorder() -> getMediaPlayerService()：
+11-26 06:58:14.212  5968  6012 I CAM_VideoModule: prepareMediaRecorder when init
+11-26 06:58:14.212  5968  6012 I CAM_VideoModule: prepareMediaRecorder begin
+11-26 06:58:15.214  5968  6012 W ServiceManagerCppClient: Waiting for service 'media.player' on '/dev/binder'...
+11-26 06:58:16.215  5968  6012 W ServiceManagerCppClient: Waiting for service 'media.player' on '/dev/binder'...
+11-26 06:58:17.216  5968  6012 W ServiceManagerCppClient: Waiting for service 'media.player' on '/dev/binder'...
+# 界面永久停留在高斯模糊遮罩页（见 before-video-stuck.png）
+
+=== 2. 未设 debug.stagefright.c2inputsurface=-1 时回退不存在的 32 位 IOmx 触发 CCodec 空指针崩溃 ===
+11-26 07:37:18.864   200   200 I hwservicemanager: getTransport: Cannot find entry android.hardware.media.omx@1.0::IOmx/default in either framework or device VINTF manifest.
+11-26 07:37:18.864 12014 12068 E OMXClient: Cannot obtain IOmx service.
+11-26 07:37:18.864 12014 12068 E MediaCodec: Failed to connect to OMX to create persistent input surface.
+11-26 07:37:18.864 12014 12068 E CAM_VideoModule: prepareMediaRecorder end but recordingSurface is null
+11-26 07:37:19.153 17661 17661 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000
+11-26 07:37:19.153 17661 17661 F DEBUG   : Cause: null pointer dereference
+11-26 07:37:19.153 17661 17661 F DEBUG   :       #00 pc 0000000000051224  /system/lib64/libsfplugin_ccodec.so (android::CCodec::createInputSurface()+148)

@@ -128,7 +128,7 @@
       {
         "type": "file",
         "from": "/system/bin/mediaserver",
-        "to": "/mnt/vendorpatch/system/bin/mediaserver"
+        "to": "/mnt/vendorpatch/vendor/bin/hw/cdh-mediaserver"
       },
       {
         "type": "file",

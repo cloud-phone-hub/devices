@@ -365,3 +365,57 @@
 (allow hal_drm_widevine debugfs_tracing_{{vers}} (file (write)))
 (allow hal_drm_widevine mnt_vendor_file_{{vers}} (dir (search)))
 (allow hal_drm_widevine block_device_{{vers}} (dir (search)))
+
+;; ---- 十二、三星 IMS 服务（com.sec.imsservice，system_app 域）调用 ISehRadioChannel ----
+(allow system_app hal_radio_default (binder (call transfer)))
+(allow hal_radio_default system_app (binder (call transfer)))
+
+;; ---- 十三、三星 ThemeCenter (/data/overlays) 与 OMR 分区目录授权（取自官方 vendor_sepolicy.cil）----
+;; 1) 官方将 /data/overlays 归入 vendor_file_contexts 的 themecenter_data_file；
+;;    缺失时 /data/overlays 退化为 system_data_file，ThemeManagerService (system_app)
+;;    调 FileUtils.setPermissions 建 preferences 子目录报 EACCES。
+(type themecenter_data_file)
+(roletype object_r themecenter_data_file)
+(type themecenter_sensitive_data_file)
+(roletype object_r themecenter_sensitive_data_file)
+(typeattributeset file_type (themecenter_data_file themecenter_sensitive_data_file))
+(typeattributeset data_file_type (themecenter_data_file themecenter_sensitive_data_file))
+(allow init themecenter_data_file (dir (ioctl read write create getattr setattr lock relabelfrom relabelto rename open watch watch_reads add_name remove_name reparent search rmdir)))
+(allow init themecenter_sensitive_data_file (dir (ioctl read write create getattr setattr lock relabelfrom relabelto rename open watch watch_reads add_name remove_name reparent search rmdir)))
+(allow system_server themecenter_data_file (dir (ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir)))
+(allow system_server themecenter_data_file (file (ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads)))
+(allow system_server themecenter_sensitive_data_file (dir (ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir)))
+(allow system_server themecenter_sensitive_data_file (file (ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads)))
+(allow system_app themecenter_data_file (dir (ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir)))
+(allow system_app themecenter_data_file (file (ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads)))
+(allow system_app themecenter_sensitive_data_file (dir (ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir)))
+(allow system_app themecenter_sensitive_data_file (file (ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads)))
+(allow appdomain themecenter_data_file (dir (ioctl read getattr lock open watch watch_reads search)))
+(allow appdomain themecenter_data_file (file (ioctl read getattr lock map open watch watch_reads)))
+(allow idmap themecenter_data_file (dir (ioctl read getattr lock open watch watch_reads search)))
+(allow idmap themecenter_data_file (file (ioctl read getattr lock map open watch watch_reads)))
+(allow zygote themecenter_data_file (dir (ioctl read getattr lock open watch watch_reads search)))
+(allow zygote themecenter_data_file (file (ioctl read getattr lock map open watch watch_reads)))
+(typetransition system_app themecenter_data_file dir "preferences" themecenter_sensitive_data_file)
+(typetransition system_app themecenter_data_file dir "jsonfiles" themecenter_sensitive_data_file)
+
+;; 2) BootAnimation / SystemUIBg (platform_app) / priv_app / system_server 访问 /omr（官方第 6965/8207/8394/17009 行）
+(allow bootanim omr_file (dir (ioctl read getattr lock open watch watch_reads search)))
+(allow bootanim omr_file (file (ioctl read getattr lock map open watch watch_reads)))
+(allow platform_app omr_file (dir (ioctl read getattr lock open watch watch_reads search)))
+(allow platform_app omr_file (file (ioctl read write getattr lock append map open watch watch_reads)))
+(allow priv_app omr_file (dir (ioctl read getattr lock open watch watch_reads search)))
+(allow priv_app omr_file (file (ioctl read getattr lock map open watch watch_reads)))
+(allow system_app omr_file (dir (ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir)))
+(allow system_app omr_file (file (ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads)))
+(allow system_server omr_file (dir (ioctl read write create getattr setattr lock rename open watch watch_reads add_name remove_name reparent search rmdir)))
+(allow system_server omr_file (file (ioctl read write create getattr setattr lock append map unlink rename open watch watch_reads)))
+
+;; 3) com.samsung.aasaservice (aasa_service_app) 查找 app_api_service（官方第 9918/9927 行）
+;;    缺失时 ActivityThread.attach 拿不到 IActivityManager 直接抛 NPE 崩溃。
+(allow aasa_service_app app_api_service (service_manager (find)))
+(allow aasa_service_app asks_service (service_manager (find)))
+(allow aasa_service_app radio_service (service_manager (find)))
+
+
+

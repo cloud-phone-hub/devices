@@ -1,0 +1,30 @@
+# CDH：Samsung Galaxy S25 Ultra (pa3q) vendor/etc/ueventd.rc
+#
+# 说明：lineage-22.2 基座的 /vendor/etc/ueventd.rc 不含 `import /vendor/etc/ueventd.${ro.hardware}.rc`，
+# ueventd 冷启动仅解析 /system/etc/ueventd.rc -> /vendor/etc/ueventd.rc -> /odm/etc/ueventd.rc，
+# 故必须同名覆盖 /vendor/etc/ueventd.rc（而非另建 ueventd.qcom.rc）。
+
+firmware_directories /vendor/firmware_mnt
+
+# Graphics (Mesa / virtio-gpu)
+/dev/dri/card*       0666    system  graphics
+/dev/dri/controlD*   0660    system  graphics
+/dev/dri/renderD*    0666    system  graphics
+
+# ION
+/dev/ion             0664    system  system
+
+# V4L2 硬件编解码节点（virtio-media）：
+# android.hardware.media.c2@1.2-service-v4l2-64 以 user media 运行，
+# 缺省 0600 root:root 会导致 V4L2Device open(/dev/video*) EACCES，10-bit HEVC 动态壁纸黑屏。
+/dev/media*          0660    media   camera
+/dev/v4l-subdev*     0660    media   camera
+/dev/video*          0660    media   camera
+
+# Serial / virtio-console (keymint hvc3, radio hvc4, bt hvc5, daemon hvc7, wifi hvc9/10)
+/dev/hvc*            0666    system  system
+/dev/ttyAMA*         0666    system  system
+/dev/ttyS*           0666    system  system
+
+# FRP persistent data block (misc partition vda3 -> /dev/block/bootdevice/by-name/frp)
+/dev/block/vda3      0660    root    system

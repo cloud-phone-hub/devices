@@ -1,0 +1,11 @@
+service vendor.bluetooth-default /vendor/bin/hw/android.hardware.bluetooth-service
+    class hal
+    user bluetooth
+    group bluetooth
+    seclabel u:r:hal_bluetooth_default:s0
+    interface aidl android.hardware.bluetooth.IBluetoothHci/default
+    interface aidl vendor.samsung.hardware.bluetooth.ISehBluetooth/default
+    disabled
+
+on post-fs-data
+    start vendor.bluetooth-default

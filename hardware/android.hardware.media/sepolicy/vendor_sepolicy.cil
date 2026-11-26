@@ -35,3 +35,8 @@
 
 ;; 服务运行时 dlopen /vendor/lib64 下的 codec2 插件（标签 vendor_file）。
 (allow mediacodec vendor_file (file (read getattr map open execute)))
+
+;; ---- 3) 64 位 cdh-mediaserver 路径穿过 /mnt/vendorpatch/vendor/bin/hw 的目录搜索授权 ----
+(allow init_{{vers}} mnt_vendor_file_{{vers}} (dir (search)))
+(allow mediaserver_{{vers}} mnt_vendor_file_{{vers}} (dir (search)))
+(allow mediaserver_{{vers}} vendor_file (dir (search)))

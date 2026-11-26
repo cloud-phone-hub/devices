@@ -122,7 +122,8 @@
     {
       "images": ["system_a.img", "system.img"],
       "relPaths": ["system/bin/mediaserver", "bin/mediaserver"],
-      "fromAbs": "/system/bin/mediaserver"
+      "fromAbs": "/system/bin/mediaserver",
+      "toAbs": "/mnt/vendorpatch/vendor/bin/hw/cdh-mediaserver"
     },
     {
       "images": ["system_ext_a.img", "system_ext.img"],

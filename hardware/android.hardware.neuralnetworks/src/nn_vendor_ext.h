@@ -18,7 +18,7 @@ void AIBinder_Class_disableInterfaceTokenHeader(AIBinder_Class* clazz);
 
 namespace cdh::nn {
 
-#if CDH_NN_MTK || CDH_NN_HONOR || CDH_NN_VIVO || CDH_NN_NOTHING
+#if CDH_NN_MTK || CDH_NN_HONOR || CDH_NN_VIVO || CDH_NN_NOTHING || CDH_NN_SAMSUNG
 AIBinder_Class_onTransact ResolveVendorPlaceholderTransact(
     const std::string& descriptor);
 #else

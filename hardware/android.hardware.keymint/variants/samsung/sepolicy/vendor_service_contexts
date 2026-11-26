@@ -1,0 +1,3 @@
+# android.hardware.keymint@samsung 变体服务上下文：
+# keystore2 请求 vendor.samsung.hardware.keymint.ISehKeyMintExtension/default，必须显式归入 hal_keymint_service。
+vendor.samsung.hardware.keymint.ISehKeyMintExtension/default  u:object_r:hal_keymint_service:s0

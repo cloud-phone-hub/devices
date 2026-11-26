@@ -1,0 +1,8 @@
+;; android.hardware.neuralnetworks@samsung 变体声明式 SELinux 规则：
+;; 兼容骁龙三星机型同进程注册 vendor.qti.diaghal.Idiag/default 及三星 ISehHyPer/default。
+;; @ensure-type vendor_hal_diaghal_service
+(typeattributeset service_manager_type (vendor_hal_diaghal_service))
+(allow hal_neuralnetworks_default vendor_hal_diaghal_service (service_manager (add find)))
+(allow domain vendor_hal_diaghal_service (service_manager (find)))
+(allow {{pick:system_server}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default {{pick:system_server}} (binder (call transfer)))

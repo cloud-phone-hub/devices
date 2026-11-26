@@ -1,5 +1,6 @@
 {
   "build-prop-sets": {
+    "debug.stagefright.c2inputsurface": "-1",
     "gsm.version.baseband": "4G_MODEM_22B_W26.02.5_P2",
     "gsm.version.ril-impl": "sprd-ril",
     "persist.radio.multisim.config": "dsds",

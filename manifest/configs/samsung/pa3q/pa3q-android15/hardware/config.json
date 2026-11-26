@@ -20,7 +20,7 @@
     },
     {
       "android.hardware.bluetooth": {
-        "variant": "default",
+        "variant": "samsung",
         "version": "1.0"
       }
     },
@@ -68,7 +68,7 @@
     },
     {
       "android.hardware.keymint": {
-        "variant": "default",
+        "variant": "samsung",
         "version": "1.0"
       }
     },
@@ -116,7 +116,7 @@
     },
     {
       "android.hardware.radio": {
-        "variant": "qti",
+        "variant": "samsung",
         "version": "1.0"
       }
     },
@@ -188,7 +188,7 @@
     },
     {
       "android.hardware.neuralnetworks": {
-        "variant": "qti",
+        "variant": "samsung",
         "version": "1.0"
       }
     }

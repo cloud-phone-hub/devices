@@ -21,10 +21,13 @@
 #define VIRTIO_MEDIA_LAST_QUEUE (V4L2_BUF_TYPE_META_OUTPUT)
 
 /*
- * Size of the per-session virtio shadow and event buffers. 16K should be
- * enough to contain everything we need.
+ * Size of the per-session virtio shadow and event buffers.
+ * 2K+/4K V4L2 Decode (e.g. 1440x3120 10-bit HEVC) allocates 8 MiB USERPTR
+ * bitstream buffers (~2048 pages * 16B = 32 KiB of virtio_media_sg_entry),
+ * exceeding the upstream 16 KiB default and failing VIDIOC_QBUF with -ENOMEM.
+ * 128 KiB (order-5 kzalloc) covers up to 32 MiB of scattered USERPTR pages.
  */
-#define VIRTIO_SHADOW_BUF_SIZE 0x4000
+#define VIRTIO_SHADOW_BUF_SIZE 0x20000
 
 /**
  * struct virtio_media_buffer - Current state of a buffer.

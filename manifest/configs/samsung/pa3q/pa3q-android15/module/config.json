@@ -327,6 +327,21 @@
       "type": "dir"
     },
     {
+      "from": "/system/priv-app/AICoreCHN",
+      "to": "/mnt/vendorpatch/system/priv-app/AICoreCHN",
+      "type": "dir"
+    },
+    {
+      "from": "/system/priv-app/SemanticSearchCore",
+      "to": "/mnt/vendorpatch/system/priv-app/SemanticSearchCore",
+      "type": "dir"
+    },
+    {
+      "from": "/system/priv-app/SamsungSmartSuggestions",
+      "to": "/mnt/vendorpatch/system/priv-app/SamsungSmartSuggestions",
+      "type": "dir"
+    },
+    {
       "from": "/system/bin/ss_conn_daemon2",
       "to": "/mnt/vendorpatch/system/bin/ss_conn_daemon2",
       "type": "file"

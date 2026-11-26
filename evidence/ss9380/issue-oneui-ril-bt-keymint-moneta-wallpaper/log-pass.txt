@@ -1,0 +1,135 @@
+=== 1. Cold-Boot System, SELinux & Device Node Permissions (Zero Manual Fix) ===
+boot_completed=1 getenforce=Enforcing country=China
+Linux localhost 6.6.98-android15-8-p5a696e2-abogkiS9380ZCSDCZH1-4k #1 SMP PREEMPT Wed Aug 12 09:09:58 UTC 2026 aarch64 Toybox
+crw-rw---- 1 media camera u:object_r:video_device:s0  81,   0 1970-01-01 08:00 /dev/video0
+crw-rw---- 1 media camera u:object_r:video_device:s0  81,   1 1970-01-01 08:00 /dev/video1
+drwxr-xr-x 19 system system u:object_r:themecenter_data_file:s0            3452 2026-11-26 09:11 /data/overlays
+drwxr-xr-x  2 system system u:object_r:themecenter_sensitive_data_file:s0  3452 2026-11-26 09:11 /data/overlays/preferences
+
+=== 2. Samsung Vendor Extension HAL Services (VINTF / ServiceManager) ===
+422	vendor.samsung.hardware.bluetooth.ISehBluetooth/default: [vendor.samsung.hardware.bluetooth.ISehBluetooth]
+424	vendor.samsung.hardware.hyper.ISehHyPer/default: [vendor.samsung.hardware.hyper.ISehHyPer]
+426	vendor.samsung.hardware.keymint.ISehKeyMintExtension/default: [vendor.samsung.hardware.keymint.ISehKeyMintExtension]
+431	vendor.samsung.hardware.radio.bridge.ISehRadioBridge/slot1: [vendor.samsung.hardware.radio.bridge.ISehRadioBridge]
+432	vendor.samsung.hardware.radio.bridge.ISehRadioBridge/slot2: [vendor.samsung.hardware.radio.bridge.ISehRadioBridge]
+433	vendor.samsung.hardware.radio.channel.ISehRadioChannel/epdgd: [vendor.samsung.hardware.radio.channel.ISehRadioChannel]
+434	vendor.samsung.hardware.radio.channel.ISehRadioChannel/epdgd2: [vendor.samsung.hardware.radio.channel.ISehRadioChannel]
+435	vendor.samsung.hardware.radio.channel.ISehRadioChannel/imsd: [vendor.samsung.hardware.radio.channel.ISehRadioChannel]
+436	vendor.samsung.hardware.radio.channel.ISehRadioChannel/imsd2: [vendor.samsung.hardware.radio.channel.ISehRadioChannel]
+437	vendor.samsung.hardware.radio.data.ISehRadioData/slot1: [vendor.samsung.hardware.radio.data.ISehRadioData]
+438	vendor.samsung.hardware.radio.data.ISehRadioData/slot2: [vendor.samsung.hardware.radio.data.ISehRadioData]
+439	vendor.samsung.hardware.radio.messaging.ISehRadioMessaging/slot1: [vendor.samsung.hardware.radio.messaging.ISehRadioMessaging]
+440	vendor.samsung.hardware.radio.messaging.ISehRadioMessaging/slot2: [vendor.samsung.hardware.radio.messaging.ISehRadioMessaging]
+441	vendor.samsung.hardware.radio.network.ISehRadioNetwork/slot1: [vendor.samsung.hardware.radio.network.ISehRadioNetwork]
+442	vendor.samsung.hardware.radio.network.ISehRadioNetwork/slot2: [vendor.samsung.hardware.radio.network.ISehRadioNetwork]
+443	vendor.samsung.hardware.radio.satellite.ISehRadioSatellite/default: [vendor.samsung.hardware.radio.satellite.ISehRadioSatellite]
+444	vendor.samsung.hardware.radio.sim.ISehRadioSim/slot1: [vendor.samsung.hardware.radio.sim.ISehRadioSim]
+445	vendor.samsung.hardware.radio.sim.ISehRadioSim/slot2: [vendor.samsung.hardware.radio.sim.ISehRadioSim]
+Service vendor.samsung.hardware.keymint.ISehKeyMintExtension/default: found
+Service vendor.samsung.hardware.bluetooth.ISehBluetooth/default: found
+Service vendor.samsung.hardware.hyper.ISehHyPer/default: found
+
+=== 3. 10-bit HEVC Live Wallpaper & V4L2 Hardware Decode (128 KiB Shadow Buf) ===
+  mCurrentFocus=Window{3641923 u0 com.sec.android.app.launcher/com.sec.android.app.launcher.activities.LauncherActivity}
+  mFocusedApp=ActivityRecord{241691554 u0 com.sec.android.app.launcher/.activities.LauncherActivity t7}
+  mLastWallpaper connection com.android.server.wallpaper.WallpaperManagerService$WallpaperConnection@bb6097e:
+    mInfo.component=ComponentInfo{com.samsung.android.wallpaper.live/com.samsung.android.wallpaper.live.infinity.InfinityWallpaper}
+     mDisplayId=0
+     mToken=android.os.Binder@231689d
+     mEngine=android.service.wallpaper.IWallpaperEngine$Stub$Proxy@5e9d12e
+    mService=android.service.wallpaper.IWallpaperService$Stub$Proxy@5e4b478
+    mLastDiedTime=-296646
+11-26 09:12:10.429  3131  3292 I ResipMediaHandler: isMediaH265VideoCodecSupported: encoders: null, isMediaH265VideoCodecSupported: decoders: c2.v4l2.hevc.decoder, isMediaH265LVideoCodecSupported: encoders: null, isMediaH265LVideoCodecSupported: decoders: c2.v4l2.hevc.decoder
+11-26 09:12:11.082  2981  3666 I CCodec  : allocate(c2.v4l2.hevc.decoder)
+11-26 09:12:11.135  2981  3666 I CCodec  : Created component [c2.v4l2.hevc.decoder] for [c2.v4l2.hevc.decoder]
+11-26 09:12:11.136  2981  3666 I CCodec  : [c2.v4l2.hevc.decoder] state->set(ALLOCATED)
+11-26 09:12:11.140  2981  3666 I CCodec  : [c2.v4l2.hevc.decoder] config->initialize() : 0
+11-26 09:12:11.140  2981  3666 I CCodec  : [c2.v4l2.hevc.decoder] config->queryConfiguration()
+11-26 09:12:11.140  2981  3666 I CCodec  : [c2.v4l2.hevc.decoder] mCallback->onComponentAllocated() IN
+11-26 09:12:11.140  2981  3666 I CCodec  : [c2.v4l2.hevc.decoder] mCallback->onComponentAllocated() OUT
+11-26 09:12:11.141  2981  3665 I MediaCodec: [c2.v4l2.hevc.decoder] setting surface generation to 3052545
+11-26 09:12:11.160  2981  3665 I CCodec  : [c2.v4l2.hevc.decoder] state->set(STARTING)
+11-26 09:12:11.165   903  3685 I V4L2Decoder: Input queue memory=2 sizeimage=8388608 buffers=4
+11-26 09:12:11.170   903  3685 I V4L2Decoder: Need 6 output buffers with CAPTURE refill low watermark 2. coded size: 16x16, visible rect: (0,0) 16x16
+11-26 09:12:11.174  2981  3666 I CCodecBufferChannel: [c2.v4l2.hevc.decoder#993] start: max output delay 23
+11-26 09:12:11.175  2981  3666 I CCodecBufferChannel: [c2.v4l2.hevc.decoder#993] Created output block pool with allocatorID 18 => poolID 17 - OK
+11-26 09:12:11.175  2981  3666 I CCodec  : [c2.v4l2.hevc.decoder] state->set(RUNNING)
+11-26 09:12:11.176  2981  3666 I CCodecBufferChannel: [c2.v4l2.hevc.decoder#993] 7 initial input buffers available
+11-26 09:12:11.176  1549  3248 I ResourceManagerService: getMediaResourceInfo (PID : 2981, clientID : -5476376615080417856, non-secure-codec/hw-video-codec:[]:1, 1440x3120 (fps:120) - sw codec : no, encoder : no componentName = c2.v4l2.hevc.decoder bitrate = 17000000)
+11-26 09:12:11.177   903  3685 I V4L2Decoder: Set state Idle => Decoding
+virtio_media_dmesg_errors=0
+
+=== 4. SemRIL ISehRadio*, SIM LOADED, 4-Bar Signal & Dual Network (ccmni1 + wlan0) ===
+[gsm.network.type]: [LTE]
+[gsm.operator.alpha]: [中国联通]
+[gsm.sim.state]: [LOADED]
+6: ccmni1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc pfifo_fast state UP group default qlen 1000
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+       valid_lft forever preferred_lft forever
+16: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    inet 192.168.1.100/24 brd 192.168.1.255 scope global dynamic wlan0
+       valid_lft 3597sec preferred_lft 3597sec
+    mServiceState={mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE), mChannelNumber=1650, duplexMode()=1, mCellBandwidths=[20000], mOperatorAlphaLong=中国联通, mOperatorAlphaShort=中国联通, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=14(LTE), getRilDataRadioTechnology=14(LTE), mCssIndicator=unsupported, NonCellular=false, Snap=0, PsOnly=false, OptRadioTech=0, MsimSubmode=0, IsVoiceCallAvailable=true, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=IWLAN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[VOICE,SMS,VIDEO] cellIdentity=CellIdentityLte:{ mCi=[****] mPci=[****] mTac=[****] mEarfcn=[****] mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=VoiceSpecificRegistrationInfo { mCssSupported=false mRoamingIndicator=0 mSystemIsInPrl=0 mDefaultRoamingIndicator=0} dataSpecificInfo=null nrState=**** rRplmn=46001 isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[DATA,MMS] cellIdentity=CellIdentityLte:{ mCi=[****] mPci=[****] mTac=[****] mEarfcn=[****] mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 16 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 null } nrState=**** rRplmn=46001 isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=中国联通, mOperatorAlphaShortRaw=中国联通, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false, mIsUsingNonTerrestrialNetwork=false}
+    mDataConnectionState=2
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_radio.txt:11-26 09:12:10.697  3169  3169 D SEM_RILJ: SehRadio HAL version of SEH_RADIO: -1.-1 [PHONE0]
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_radio.txt:11-26 09:12:10.703  3169  3169 D SehRadioNetworkProxy: AIDL initialized mHalVersion=3.0
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_radio.txt:11-26 09:12:10.703  3169  3169 D SEM_RILJ: SehRadio HAL version of SEH_NETWORK: 3.0 [PHONE0]
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_radio.txt:11-26 09:12:10.706  3169  3169 D SehRadioDataProxy: AIDL initialized mHalVersion=3.1
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_radio.txt:11-26 09:12:10.706  3169  3169 D SEM_RILJ: SehRadio HAL version of SEH_DATA: 3.1 [PHONE0]
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_radio.txt:11-26 09:12:10.714  3169  3169 D SehRadioSimProxy: AIDL initialized mHalVersion=3.0
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_radio.txt:11-26 09:12:10.714  3169  3169 D SEM_RILJ: SehRadio HAL version of SEH_SIM: 3.0 [PHONE0]
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_radio.txt:11-26 09:12:10.718  3169  3169 D SehRadioMessagingProxy: AIDL initialized mHalVersion=3.0
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_radio.txt:11-26 09:12:10.718  3169  3169 D SEM_RILJ: SehRadio HAL version of SEH_MESSAGING: 3.0 [PHONE0]
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_radio.txt:11-26 09:12:10.834  3169  3169 D SehRadioSatelliteProxy: setAidl: setting HAL version to version = 2.0
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_radio.txt:11-26 09:12:10.834  3169  3169 D SehRadioSatelliteProxy: AIDL initialized mHalVersion=2.0
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_logcat.txt:11-26 09:12:10.697  3169  3169 I HidlServiceManagement: Trying to get transport of vendor.samsung.hardware.radio@2.2::ISehRadio/slot1 without hwservicemanager
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_logcat.txt:11-26 09:12:10.697  3169  3169 I HidlServiceManagement: Trying to get transport of vendor.samsung.hardware.radio@2.1::ISehRadio/slot1 without hwservicemanager
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_logcat.txt:11-26 09:12:10.697  3169  3169 I HidlServiceManagement: Trying to get transport of vendor.samsung.hardware.radio@2.0::ISehRadio/slot1 without hwservicemanager
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_logcat.txt:11-26 09:13:02.658   654   654 I adbd    : adbd service requested 'shell,v2,TERM=dumb,raw:service list | grep -E 'ISehRadio|ISehBluetooth|ISehKeyMint|ISehHyPer|ISehHealth''
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_logcat.txt:11-26 09:13:02.755 11951 11951 W libbinder.BackendUnifiedServiceManager: Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: vendor.samsung.hardware.radio.bridge.ISehRadioBridge/slot1
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_logcat.txt:11-26 09:13:02.755 11951 11951 W libbinder.BackendUnifiedServiceManager: Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: vendor.samsung.hardware.radio.bridge.ISehRadioBridge/slot2
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_logcat.txt:11-26 09:13:02.755 11951 11951 W libbinder.BackendUnifiedServiceManager: Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: vendor.samsung.hardware.radio.channel.ISehRadioChannel/epdgd
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_logcat.txt:11-26 09:13:02.755 11951 11951 W libbinder.BackendUnifiedServiceManager: Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: vendor.samsung.hardware.radio.channel.ISehRadioChannel/epdgd2
+/Volumes/work/cloud-phone-hub/out/devices/tmp/ss9380-issue-338-staging/final/raw_logcat.txt:11-26 09:13:02.755 11951 11951 W libbinder.BackendUnifiedServiceManager: Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: vendor.samsung.hardware.radio.channel.ISehRadioChannel/imsd
+
+=== 5. Bluetooth ISehBluetooth Instant Enable & Peripheral Scan ===
+Bluetooth Status
+  enabled: true
+  state: ON
+  address: XX:XX:XX:XX:00:00
+  name: Samsung Galaxy S25 Ultra
+  time since enabled: 1m 36.755892s
+
+Enable log:
+  11-26 01:12:09.995 	Package [android] requested to [Enable]. 	Reason is SYSTEM_BOOT
+  11-26 01:12:11.976 	Package [android] requested to [Enable]. 	Reason is APPLICATION_REQUEST
+  11-26 01:12:16.186 	Package [android] requested to [Disable]. 	Reason is APPLICATION_REQUEST
+  11-26 01:13:44.544 	Package [android] requested to [Enable]. 	Reason is APPLICATION_REQUEST
+  11-26 01:13:53.789 	Package [android] requested to [Enable]. 	Reason is APPLICATION_REQUEST
+
+Bluetooth crashed 0 times
+
+Ble app registered: {android, com.samsung.android.beaconmanager, com.samsung.android.mcfserver}
+
+BluetoothManagerService:
+  mEnable:true
+  mQuietEnable:false
+  mEnableExternal:true
+  mQuietEnableExternal:false
+
+🚩Flag dump:
+	[ ]: a2dp_adjust_sbc_bitpool
+
+=== 6. Crash, Storm & SELinux Audit Counters (adbd echo excluded) ===
+keystore2_panic_cnt=0
+vold_secdiscard_storm_cnt=13
+hyper_fail_cnt=0
+bt_ctl_interface_start_storm_cnt=0
+uwb_ctl_interface_start_storm_cnt=0
+dumpstate_run_cnt=0
+omr_avc_denied_cnt=0
+video_avc_denied_cnt=0
+themecenter_avc_denied_cnt=0
+aasa_avc_denied_cnt=0
+crash_buffer_lines=0
+--- logcat -b crash -d ---

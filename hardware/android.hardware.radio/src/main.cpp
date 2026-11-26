@@ -13,6 +13,9 @@
 #if CDH_RADIO_MTK
 #include "radio_mtkex_sim.h"
 #endif
+#if CDH_RADIO_SAMSUNG
+#include "samsung/radio_samsung_ext.h"
+#endif
 #include "radio_network.h"
 #include "radio_placeholder_ext.h"
 #include "radio_service.h"
@@ -301,6 +304,10 @@ int main() {
     channel.Stop();
     return 1;
   }
+
+#if CDH_RADIO_SAMSUNG
+  cdh::radio::RegisterSamsungRadioServices(channel, state_store);
+#endif
 
   RegisterPlaceholdersFromFile("/vendor/etc/cdh_radio_placeholders.txt");
 

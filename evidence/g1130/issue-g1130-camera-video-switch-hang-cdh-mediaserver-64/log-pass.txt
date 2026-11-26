@@ -1,0 +1,71 @@
+=== 1. Go 单元测试 ===
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	1.919s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/08_build_hardware	1.438s
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	(cached)
+ok  	cloud-phone-hub/agent/modules/pipeline/internal/halcore/halbuild	3.310s
+
+=== 2. BLU G65L #1 冷启动属性与 64 位 cdh-mediaserver 注册校验 ===
+patch.img sha256: aea1ebe2018b5ee1b46efefaa371be142e274abd548ccb3e3f15f5d1f489a6aa
+=== boot_completed=1 at 38s ===
+enforce=[Enforcing] c2inputsurface=[-1] ddrsize=[4096M] baseband=[4G_MODEM_22B_W26.02.5_P2,4G_MODEM_22B_W26.02.5_P2] sim=[LOADED,ABSENT]
+u:r:cameraserver:s0            cameraserver   529     1   11460872  28608 0                   0 S cameraserver
+u:r:mediaserver:s0             media          538     1   11391760  23996 0                   0 S mediaserver
+162	media.player: [android.media.IMediaPlayerService]
+
+=== 3. DreamCamera2 连续 5 轮 Photo <-> Video 往返切换 + 4.71s MP4 录制 + 切回 Photo 拍照压测 ===
+Starting: Intent { cmp=com.android.camera2/com.android.camera.CameraLauncher }
+Status: ok
+LaunchState: COLD
+Activity: com.android.camera2/com.android.camera.CameraActivity
+TotalTime: 266
+WaitTime: 270
+Complete
+Initial PIDs (cameraserver mediaserver camera2): 529 538 29635
+Round 1 PIDs: 529 538 29635
+Round 2 PIDs: 529 538 29635
+Round 3 PIDs: 529 538 29635
+Round 4 PIDs: 529 538 29635
+Round 5 PIDs: 529 538 29635
+=== Switch to Video & Record 4.5s MP4 ===
+=== Switch back to Photo & Snap JPEG ===
+Final PIDs: 529 538 29635
+
+=== /sdcard/DCIM/Camera ===
+total 280K
+-rwxrwx--- 1 u0_a195 media_rw  16K 2026-11-26 08:07 IMG_20261126_080754.jpg
+-rwxrwx--- 2 u0_a195 media_rw 259K 2026-11-26 08:07 VID_20261126_080747.mp4
+
+=== cdh-mediaserver logcat ===
+11-26 08:07:16.069   538  6302 I cdh-mediaserver: recorder bound persistent input surface ps=0xb400007e34e57140
+11-26 08:07:16.079   538  6302 I cdh-mediaserver: recorder prepared (persistent): video/avc 720x480@30fps br=4000000
+11-26 08:07:23.792   538  6302 I cdh-mediaserver: recorder bound persistent input surface ps=0xb400007e34e4b380
+11-26 08:07:23.823   538  6302 I cdh-mediaserver: recorder prepared (persistent): video/avc 720x480@30fps br=4000000
+11-26 08:07:31.479   538  6302 I cdh-mediaserver: recorder bound persistent input surface ps=0xb400007e34e58c10
+11-26 08:07:31.491   538  6302 I cdh-mediaserver: recorder prepared (persistent): video/avc 720x480@30fps br=4000000
+11-26 08:07:39.173   538  6302 I cdh-mediaserver: recorder bound persistent input surface ps=0xb400007e34e4cd00
+11-26 08:07:39.184   538  6302 I cdh-mediaserver: recorder prepared (persistent): video/avc 720x480@30fps br=4000000
+11-26 08:07:42.926   538  6302 I cdh-mediaserver: recorder bound persistent input surface ps=0xb400007e34e4c430
+11-26 08:07:42.978   538   540 I cdh-mediaserver: recorder prepared (persistent): video/avc 720x480@30fps br=4000000
+11-26 08:07:43.043   538   540 I cdh-mediaserver: recorder started (codecStarted=1 muxer=0xb400007dd4e4b730)
+11-26 08:07:47.763   538   540 I cdh-mediaserver: recorder stopped cleanly
+
+=== Waiting for media.player count ===
+0
+=== Crash buffer ===
+(empty)
+=== ANR count ===
+0
+=== mediaserver AVC count ===
+0
+
+=== 4. 导出 MP4 视频容器与 H.264 码流 ffprobe 校验 ===
+verified_video.mp4: ISO Media, MP4 v2 [ISO 14496-14] (264935 bytes)
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'VID_20261126_080747.mp4':
+  Metadata:
+    major_brand     : mp42
+    compatible_brands: isommp42
+    com.android.version: 14
+  Duration: 00:00:04.71, start: 0.000000, bitrate: 449 kb/s
+  Stream #0:0[0x1](eng): Video: h264 (Constrained Baseline) (avc1 / 0x31637661), yuvj420p(pc, bt709/bt709/iec61966-2-1, progressive), 720x480, 444 kb/s, 32.69 fps, 33 tbr, 90k tbn (default)
+    Side data:
+      Display Matrix: rotation of -90.00 degrees

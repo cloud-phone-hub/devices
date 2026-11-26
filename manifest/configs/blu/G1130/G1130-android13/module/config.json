@@ -87,6 +87,11 @@
       "type": "dir"
     },
     {
+      "from": "/system/bin/mediaserver",
+      "to": "/mnt/vendorpatch/vendor/bin/hw/cdh-mediaserver",
+      "type": "file"
+    },
+    {
       "from": "/vendor/bin",
       "to": "/mnt/vendorpatch/vendor/bin",
       "type": "dir"
@@ -139,11 +144,6 @@
     {
       "from": "/system/bin/drmserver",
       "to": "/mnt/vendorpatch/system/bin/drmserver",
-      "type": "file"
-    },
-    {
-      "from": "/system/bin/mediaserver",
-      "to": "/mnt/vendorpatch/system/bin/mediaserver",
       "type": "file"
     },
     {
