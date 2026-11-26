@@ -1,5 +1,6 @@
 {
   "build-prop-sets": {
+    "gsm.version.baseband": "MPSS.DE.3.1.7-00544.2-SKYROS_GEN_PACK-2.155179.122",
     "persist.radio.multisim.config": "dsds",
     "persist.sys.chr.chipsettype": "1",
     "ro.hardware.egl": "mesa",
@@ -8,7 +9,7 @@
     "ro.hw_timeout_multiplier": "10",
     "ro.hwui.use_vulkan": "false",
     "ro.soc.manufacturer": "Qualcomm",
-    "ro.soc.model": "SM6375-AC",
+    "ro.soc.model": "SM6850",
     "ro.vendor.boot_security_patch": "2026-07-01",
     "ro.vendor.build.security_patch": "2026-07-01",
     "ro.vendor.cdh.device.market_name": "Honor 400 Lite",
@@ -20,14 +21,14 @@
     "ro.vendor.cdh.display.edid_year": "2025",
     "ro.vendor.cdh.display.refresh_rates": "60,90,120",
     "ro.vendor.cdh.display.wide_color_gamut": "true",
-    "ro.vendor.cdh.display.xdpi": "450.2",
-    "ro.vendor.cdh.display.ydpi": "450.2",
+    "ro.vendor.cdh.display.xdpi": "451.5",
+    "ro.vendor.cdh.display.ydpi": "448.2",
     "ro.vendor.cdh.gpu.gl_extra_exts": "GL_QCOM_texture_foveated_subsampled_layout,GL_QCOM_shading_rate,GL_QCOM_frame_extrapolation,GL_QCOM_motion_estimation",
     "ro.vendor.cdh.gpu.gl_extra_exts2": "GL_EXT_texture_filter_anisotropic,GL_EXT_color_buffer_half_float,GL_EXT_sRGB_write_control",
-    "ro.vendor.cdh.gpu.gl_renderer": "Adreno (TM) 619",
+    "ro.vendor.cdh.gpu.gl_renderer": "Adreno (TM) 810",
     "ro.vendor.cdh.gpu.gl_sl_version": "OpenGL ES GLSL ES 3.20",
     "ro.vendor.cdh.gpu.gl_vendor": "Qualcomm",
-    "ro.vendor.cdh.gpu.gl_version": "OpenGL ES 3.2 V@0762.0 (GIT@a41c9d3e7b, I8f7e6d5c4b) (Date:07/14/26)",
+    "ro.vendor.cdh.gpu.gl_version": "OpenGL ES 3.2 V@0817.0 (GIT@50d6c2424b, I8f7e6d5c4b) (Date:06/25/26)",
     "ro.vendor.cdh.gpu.max_combined_texture_image_units": "96",
     "ro.vendor.cdh.gpu.max_cube_map_texture_size": "16384",
     "ro.vendor.cdh.gpu.max_renderbuffer_size": "16384",
@@ -35,17 +36,17 @@
     "ro.vendor.cdh.gpu.max_texture_size": "16384",
     "ro.vendor.cdh.gpu.max_vertex_attribs": "32",
     "ro.vendor.cdh.oem.mac_oui": "00:9a:cd",
-    "ro.vendor.cdh.vulkan.api_version": "0x00403116",
-    "ro.vendor.cdh.vulkan.conformance": "1.3.9.0",
-    "ro.vendor.cdh.vulkan.device_id": "0x06010000",
+    "ro.vendor.cdh.vulkan.api_version": "0x00404000",
+    "ro.vendor.cdh.vulkan.conformance": "1.4.1.0",
+    "ro.vendor.cdh.vulkan.device_id": "0x44030000",
     "ro.vendor.cdh.vulkan.device_type": "1",
     "ro.vendor.cdh.vulkan.device_uuid": "6b1f0c9d47a2e3589c04b7d1ea5f2c86",
     "ro.vendor.cdh.vulkan.driver_id": "11",
-    "ro.vendor.cdh.vulkan.driver_info": "Adreno (TM) 619, Driver: 615.0, Date: 07/14/26",
-    "ro.vendor.cdh.vulkan.driver_name": "Adreno (TM) 619",
+    "ro.vendor.cdh.vulkan.driver_info": "Adreno (TM) 810, Driver: 817.0, Date: 06/25/26",
+    "ro.vendor.cdh.vulkan.driver_name": "Adreno (TM) 810",
     "ro.vendor.cdh.vulkan.driver_uuid": "a3d59e0c1b748f26d5c93a0e7b41628d",
-    "ro.vendor.cdh.vulkan.driver_version": "0x2001e800",
-    "ro.vendor.cdh.vulkan.name": "Adreno (TM) 619",
+    "ro.vendor.cdh.vulkan.driver_version": "0x20033100",
+    "ro.vendor.cdh.vulkan.name": "Adreno (TM) 810",
     "ro.vendor.cdh.vulkan.pipeline_uuid": "0f8c2b64d9137ae5c40b6d29f8317ac5",
     "ro.vendor.cdh.vulkan.vendor_id": "0x5143",
     "ro.vendor.cdh.wifi.disable_he": "1",
@@ -61,9 +62,9 @@
     "ro.vendor.radio.imei.tac": "86796106",
     "ro.vendor.radio.meid.prefix": "99002158",
     "ro.vendor.soc.manufacturer": "Qualcomm",
-    "ro.vendor.soc.model": "SM6375-AC",
-    "ro.vendor.soc.model.external_name": "SM6375-AC",
-    "ro.vendor.soc.model.part_name": "SM6375-AC",
+    "ro.vendor.soc.model": "SM6850",
+    "ro.vendor.soc.model.external_name": "SM6850",
+    "ro.vendor.soc.model.part_name": "SM6850",
     "ro.vendor.soc.model_ready": "1",
     "ro.zygote": "zygote64"
   },
@@ -166,37 +167,6 @@
     {
       "from": "official",
       "source": "etc/public.libraries.txt"
-    },
-    {
-      "from": "official",
-      "mode": "add",
-      "note": "荣耀 MagicOS system_server (FilteredPreloadAppManager) 与 cust_init 启动时强依赖 vendor.honor.hardware.hwfactoryinterface.IHwFactoryInterface/hwfactoryinterface_hal AIDL 服务；缺席会回退 HIDL 并在无 hwservicemanager 时抛未捕获 NoSuchElementException 导致 system_server 循环崩溃。",
-      "source": "bin/hw/vendor.honor.hardware.hwfactoryinterface-service",
-      "target": "bin/hw/vendor.honor.hardware.hwfactoryinterface-service"
-    },
-    {
-      "from": "official",
-      "mode": "add",
-      "source": "lib64/libc_secshared.so",
-      "target": "lib64/libc_secshared.so"
-    },
-    {
-      "from": "official",
-      "mode": "add",
-      "source": "lib64/vendor.honor.hardware.hwfactoryinterface-V1-ndk.so",
-      "target": "lib64/vendor.honor.hardware.hwfactoryinterface-V1-ndk.so"
-    },
-    {
-      "from": "official",
-      "mode": "add",
-      "source": "etc/init/vendor.honor.hardware.hwfactoryinterface-service.rc",
-      "target": "etc/init/vendor.honor.hardware.hwfactoryinterface-service.rc"
-    },
-    {
-      "from": "official",
-      "mode": "add",
-      "source": "etc/vintf/manifest/vendor.honor.hardware.hwfactoryinterface-service.xml",
-      "target": "etc/vintf/manifest/vendor.honor.hardware.hwfactoryinterface-service.xml"
     },
     {
       "from": "official",

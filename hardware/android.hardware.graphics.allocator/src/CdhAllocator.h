@@ -6,8 +6,10 @@
 #include <string>
 #include <unistd.h>
 #include <utility>
+#include <vector>
 
 #include <android-base/properties.h>
+#include <gralloctypes/Gralloc4.h>
 
 #include "cros_gralloc/aidl/Allocator.h"
 #include "cros_gralloc/cros_gralloc_handle.h"
@@ -17,12 +19,93 @@ namespace aidl::android::hardware::graphics::allocator::cdh {
 
 // CdhAllocator 继承上游 Minigbm AIDL Allocator，完整复用缓冲区分配（allocate / allocate2）、
 // 格式能力查询（isSupported）与实时调度继承（createBinder -> AIBinder_setInheritRt），
-// 仅覆写 getIMapperLibrarySuffix()：优先读取系统属性 ro.hardware.gralloc（若存在），
-// 未配置时直接枚举 /vendor/lib64/hw/mapper.<suffix>.so 自动识别当前机型的 IMapper SP-HAL 库后缀
-// （如 mediatek / qti / pixel，回退 minigbm），无需在 vendor/build.prop 注入额外属性。
+// 为 V1 allocate 与 V2 allocate2 同步提供 VirGL 硬件标志剥离及 RAW10/RAW12/NV21 阶梯兜底，
+// 并覆写 getIMapperLibrarySuffix() 自动识别 /vendor/lib64/hw/mapper.<suffix>.so。
 class CdhAllocator : public aidl::android::hardware::graphics::allocator::impl::Allocator {
  public:
   CdhAllocator() = default;
+
+  ndk::ScopedAStatus allocate(
+      const std::vector<uint8_t>& descriptor,
+      int32_t count,
+      ::aidl::android::hardware::graphics::allocator::AllocationResult* outResult) override {
+    auto status =
+        aidl::android::hardware::graphics::allocator::impl::Allocator::allocate(
+            descriptor, count, outResult);
+    if (status.isOk()) {
+      return status;
+    }
+
+    using BufferDescriptorInfoV4 =
+        ::android::hardware::graphics::mapper::V4_0::IMapper::BufferDescriptorInfo;
+    BufferDescriptorInfoV4 descV4;
+    ::android::hardware::hidl_vec<uint8_t> hidlDesc(descriptor);
+    if (::android::gralloc4::decodeBufferDescriptorInfo(hidlDesc, &descV4) != 0) {
+      return status;
+    }
+
+    auto tryAllocateV4 = [&](const BufferDescriptorInfoV4& cand) -> ndk::ScopedAStatus {
+      ::android::hardware::hidl_vec<uint8_t> encoded;
+      if (::android::gralloc4::encodeBufferDescriptorInfo(cand, &encoded) != 0) {
+        return ndk::ScopedAStatus::fromStatus(STATUS_BAD_VALUE);
+      }
+      std::vector<uint8_t> reencoded(encoded.begin(), encoded.end());
+      return aidl::android::hardware::graphics::allocator::impl::Allocator::allocate(
+          reencoded, count, outResult);
+    };
+
+    const uint64_t origUsage = descV4.usage;
+    if ((origUsage & kStripPass1) != 0) {
+      auto relaxed = descV4;
+      uint64_t u1 = origUsage & ~kStripPass1;
+      if (u1 == 0) {
+        u1 = 0x33ULL;
+      }
+      relaxed.usage = u1;
+      auto st1 = tryAllocateV4(relaxed);
+      if (st1.isOk()) {
+        return st1;
+      }
+    }
+    if ((origUsage & ~0x33ULL) != 0) {
+      auto cpuOnly = descV4;
+      cpuOnly.usage = 0x33ULL;
+      auto st2 = tryAllocateV4(cpuOnly);
+      if (st2.isOk()) {
+        return st2;
+      }
+    }
+    const int32_t fmt = static_cast<int32_t>(descV4.format);
+    if (fmt == 37 || fmt == 36 || fmt == 38) {
+      auto asRaw16 = descV4;
+      asRaw16.format = static_cast<decltype(asRaw16.format)>(32);
+      asRaw16.usage = 0x33ULL;
+      auto st3 = tryAllocateV4(asRaw16);
+      if (st3.isOk() && outResult != nullptr) {
+        PatchRaw16Result(outResult, fmt);
+        return st3;
+      }
+    }
+    if (fmt == 17) {
+      const uint64_t nv21Usages[] = {
+          origUsage,
+          (origUsage & ~kStripPass1) != 0 ? (origUsage & ~kStripPass1) : 0x133ULL,
+          0x133ULL,
+          0x33ULL,
+      };
+      for (uint64_t tryUsage : nv21Usages) {
+        auto asYuv = descV4;
+        asYuv.format = static_cast<decltype(asYuv.format)>(35);
+        asYuv.usage = tryUsage;
+        auto st4 = tryAllocateV4(asYuv);
+        if (st4.isOk() && outResult != nullptr) {
+          PatchNv21Result(outResult);
+          return st4;
+        }
+      }
+    }
+    return status;
+  }
 
 #if !defined(ANDROID_API_LEVEL) || ANDROID_API_LEVEL >= 34
   ndk::ScopedAStatus allocate2(
@@ -39,13 +122,6 @@ class CdhAllocator : public aidl::android::hardware::graphics::allocator::impl::
     // 且叠加 CPU_WRITE_OFTEN 的 YCbCr_420_888 组合会拒绝分配（如 GoogleCamera YUV 流
     // usage=0x10133）；按阶梯剥离非必需直通位重试，保证 Camera/Media 缓冲正常分配。
     const uint64_t origUsage = static_cast<uint64_t>(descriptor.usage);
-    static constexpr uint64_t kStripPass1 =
-        (1ULL << 16) |  // VIDEO_ENCODER
-        (1ULL << 17) |  // CAMERA_OUTPUT
-        (1ULL << 18) |  // CAMERA_INPUT
-        (1ULL << 22) |  // VIDEO_DECODER
-        (1ULL << 23) |  // SENSOR_DIRECT_DATA
-        (1ULL << 24);   // GPU_DATA_BUFFER
     if ((origUsage & kStripPass1) != 0) {
       auto relaxed = descriptor;
       uint64_t u1 = origUsage & ~kStripPass1;
@@ -91,62 +167,13 @@ class CdhAllocator : public aidl::android::hardware::graphics::allocator::impl::
           aidl::android::hardware::graphics::allocator::impl::Allocator::allocate2(
               asRaw16, count, outResult);
       if (st3.isOk() && outResult != nullptr) {
-        constexpr size_t kStrides0DataIdx =
-            (offsetof(struct cros_gralloc_handle, strides[0]) -
-             offsetof(struct cros_gralloc_handle, fds[0])) /
-            sizeof(int32_t);
-        constexpr size_t kMagicDataIdx =
-            (offsetof(struct cros_gralloc_handle, magic) -
-             offsetof(struct cros_gralloc_handle, fds[0])) /
-            sizeof(int32_t);
-        constexpr size_t kPixelStrideDataIdx =
-            (offsetof(struct cros_gralloc_handle, pixel_stride) -
-             offsetof(struct cros_gralloc_handle, fds[0])) /
-            sizeof(int32_t);
-        constexpr size_t kDroidFmtDataIdx =
-            (offsetof(struct cros_gralloc_handle, droid_format) -
-             offsetof(struct cros_gralloc_handle, fds[0])) /
-            sizeof(int32_t);
-        int32_t byteStrideOut = 0;
-        for (auto& nh : outResult->buffers) {
-          const size_t nFds = nh.fds.size();
-          if (nFds <= kStrides0DataIdx && nFds <= kMagicDataIdx &&
-              nFds <= kPixelStrideDataIdx && nFds <= kDroidFmtDataIdx) {
-            const size_t strides0Idx = kStrides0DataIdx - nFds;
-            const size_t magicIdx = kMagicDataIdx - nFds;
-            const size_t pixelStrideIdx = kPixelStrideDataIdx - nFds;
-            const size_t fmtIdx = kDroidFmtDataIdx - nFds;
-            if (strides0Idx < nh.ints.size() && magicIdx < nh.ints.size() &&
-                pixelStrideIdx < nh.ints.size() && fmtIdx < nh.ints.size() &&
-                static_cast<uint32_t>(nh.ints[magicIdx]) == cros_gralloc_magic &&
-                nh.ints[fmtIdx] == 32) {
-              nh.ints[fmtIdx] = fmt;
-              // Android ImageReader 对 RAW10/RAW12/RAW_OPAQUE 要求 stride 单位为字节
-              // （如 RAW10 要求 stride >= width * 10 / 8 且为 16 的倍数）；底层 R16 BO 的
-              // strides[0] 为 >= width*2 字节（64B 对齐），与 pixel_stride/outResult->stride
-              // 同步后既通过 validateBufferSize 又满足 ImageReader 字节步长断言。
-              const int32_t byteStride = nh.ints[strides0Idx];
-              if (byteStride > 0) {
-                nh.ints[pixelStrideIdx] = byteStride;
-                byteStrideOut = byteStride;
-              }
-            }
-          }
-        }
-        if (byteStrideOut > 0) {
-          outResult->stride = byteStrideOut;
-        }
+        PatchRaw16Result(outResult, fmt);
         return st3;
       }
     }
     // 第四级兜底：minigbm cros_gralloc_convert_format 未映射
-    // HAL_PIXEL_FORMAT_YCrCb_420_SP (17 = 0x11, NV21)，导致三星 One UI
-    // Core2SurfaceUtil.nativeProduceFrameWithYuv420 等直接向 SurfaceView 分配 NV21
-    // GraphicBuffer 时失败。VirGL 下 HAL_PIXEL_FORMAT_YCbCr_420_888 (35) 底层分配
-    // 2-plane DRM_FORMAT_NV12（与 NV21 的 plane/stride/offset/total_size 布局完全一致）；
-    // 分配后仅将 handle 的 droid_format 回写为 17 满足框架 validateBufferSize，
-    // 保留底层 DRM_FORMAT_NV12 使 Mesa EGL / SurfaceFlinger 正确按 2-plane YUV 纹理采样
-    // （避免改写为 DRM_FORMAT_NV21 导致 Mesa 退化为单平面采样出现黄绿与 1/3 UV 条纹）。
+    // HAL_PIXEL_FORMAT_YCrCb_420_SP (17 = 0x11, NV21)，用 HAL_PIXEL_FORMAT_YCbCr_420_888 (35)
+    // 分配 2-plane DRM_FORMAT_NV12 并回写 droid_format=17。
     if (fmt == 17) {
       const uint64_t nv21Usages[] = {
           origUsage,
@@ -165,26 +192,7 @@ class CdhAllocator : public aidl::android::hardware::graphics::allocator::impl::
             aidl::android::hardware::graphics::allocator::impl::Allocator::allocate2(
                 asYuv, count, outResult);
         if (st4.isOk() && outResult != nullptr) {
-          constexpr size_t kMagicDataIdx =
-              (offsetof(struct cros_gralloc_handle, magic) -
-               offsetof(struct cros_gralloc_handle, fds[0])) /
-              sizeof(int32_t);
-          constexpr size_t kDroidFmtDataIdx =
-              (offsetof(struct cros_gralloc_handle, droid_format) -
-               offsetof(struct cros_gralloc_handle, fds[0])) /
-              sizeof(int32_t);
-          for (auto& nh : outResult->buffers) {
-            const size_t nFds = nh.fds.size();
-            if (nFds <= kMagicDataIdx && nFds <= kDroidFmtDataIdx) {
-              const size_t magicIdx = kMagicDataIdx - nFds;
-              const size_t droidFmtIdx = kDroidFmtDataIdx - nFds;
-              if (magicIdx < nh.ints.size() && droidFmtIdx < nh.ints.size() &&
-                  static_cast<uint32_t>(nh.ints[magicIdx]) == cros_gralloc_magic &&
-                  nh.ints[droidFmtIdx] == 35) {
-                nh.ints[droidFmtIdx] = 17;
-              }
-            }
-          }
+          PatchNv21Result(outResult);
           return st4;
         }
       }
@@ -202,8 +210,6 @@ class CdhAllocator : public aidl::android::hardware::graphics::allocator::impl::
       return status;
     }
     const uint64_t origUsage = static_cast<uint64_t>(descriptor.usage);
-    static constexpr uint64_t kStripPass1 =
-        (1ULL << 16) | (1ULL << 17) | (1ULL << 18) | (1ULL << 22) | (1ULL << 23) | (1ULL << 24);
     if ((origUsage & kStripPass1) != 0) {
       auto relaxed = descriptor;
       uint64_t u1 = origUsage & ~kStripPass1;
@@ -262,6 +268,83 @@ class CdhAllocator : public aidl::android::hardware::graphics::allocator::impl::
 #endif
 
  private:
+  static constexpr uint64_t kStripPass1 =
+      (1ULL << 16) |  // VIDEO_ENCODER
+      (1ULL << 17) |  // CAMERA_OUTPUT
+      (1ULL << 18) |  // CAMERA_INPUT
+      (1ULL << 22) |  // VIDEO_DECODER
+      (1ULL << 23) |  // SENSOR_DIRECT_DATA
+      (1ULL << 24);   // GPU_DATA_BUFFER
+
+  static void PatchRaw16Result(
+      ::aidl::android::hardware::graphics::allocator::AllocationResult* outResult,
+      int32_t fmt) {
+    constexpr size_t kStrides0DataIdx =
+        (offsetof(struct cros_gralloc_handle, strides[0]) -
+         offsetof(struct cros_gralloc_handle, fds[0])) /
+        sizeof(int32_t);
+    constexpr size_t kMagicDataIdx =
+        (offsetof(struct cros_gralloc_handle, magic) -
+         offsetof(struct cros_gralloc_handle, fds[0])) /
+        sizeof(int32_t);
+    constexpr size_t kPixelStrideDataIdx =
+        (offsetof(struct cros_gralloc_handle, pixel_stride) -
+         offsetof(struct cros_gralloc_handle, fds[0])) /
+        sizeof(int32_t);
+    constexpr size_t kDroidFmtDataIdx =
+        (offsetof(struct cros_gralloc_handle, droid_format) -
+         offsetof(struct cros_gralloc_handle, fds[0])) /
+        sizeof(int32_t);
+    int32_t byteStrideOut = 0;
+    for (auto& nh : outResult->buffers) {
+      const size_t nFds = nh.fds.size();
+      if (nFds <= kStrides0DataIdx && nFds <= kMagicDataIdx &&
+          nFds <= kPixelStrideDataIdx && nFds <= kDroidFmtDataIdx) {
+        const size_t strides0Idx = kStrides0DataIdx - nFds;
+        const size_t magicIdx = kMagicDataIdx - nFds;
+        const size_t pixelStrideIdx = kPixelStrideDataIdx - nFds;
+        const size_t fmtIdx = kDroidFmtDataIdx - nFds;
+        if (strides0Idx < nh.ints.size() && magicIdx < nh.ints.size() &&
+            pixelStrideIdx < nh.ints.size() && fmtIdx < nh.ints.size() &&
+            static_cast<uint32_t>(nh.ints[magicIdx]) == cros_gralloc_magic &&
+            nh.ints[fmtIdx] == 32) {
+          nh.ints[fmtIdx] = fmt;
+          const int32_t byteStride = nh.ints[strides0Idx];
+          if (byteStride > 0) {
+            nh.ints[pixelStrideIdx] = byteStride;
+            byteStrideOut = byteStride;
+          }
+        }
+      }
+    }
+    if (byteStrideOut > 0) {
+      outResult->stride = byteStrideOut;
+    }
+  }
+
+  static void PatchNv21Result(
+      ::aidl::android::hardware::graphics::allocator::AllocationResult* outResult) {
+    constexpr size_t kMagicDataIdx =
+        (offsetof(struct cros_gralloc_handle, magic) -
+         offsetof(struct cros_gralloc_handle, fds[0])) /
+        sizeof(int32_t);
+    constexpr size_t kDroidFmtDataIdx =
+        (offsetof(struct cros_gralloc_handle, droid_format) -
+         offsetof(struct cros_gralloc_handle, fds[0])) /
+        sizeof(int32_t);
+    for (auto& nh : outResult->buffers) {
+      const size_t nFds = nh.fds.size();
+      if (nFds <= kMagicDataIdx && nFds <= kDroidFmtDataIdx) {
+        const size_t magicIdx = kMagicDataIdx - nFds;
+        const size_t droidFmtIdx = kDroidFmtDataIdx - nFds;
+        if (magicIdx < nh.ints.size() && droidFmtIdx < nh.ints.size() &&
+            static_cast<uint32_t>(nh.ints[magicIdx]) == cros_gralloc_magic &&
+            nh.ints[droidFmtIdx] == 35) {
+          nh.ints[droidFmtIdx] = 17;
+        }
+      }
+    }
+  }
   static bool MapperLibExists(const std::string& suffix) {
     if (suffix.empty()) {
       return false;

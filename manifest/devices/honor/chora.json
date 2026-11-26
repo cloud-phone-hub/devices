@@ -18,6 +18,7 @@
     256000
   ],
   "extra": {
+    "basebandVersion": "MPSS.DE.3.1.7-00544.2-SKYROS_GEN_PACK-2.155179.122",
     "board": "chora",
     "cmdline": [
       "vendorcountry=def/meafnaf",

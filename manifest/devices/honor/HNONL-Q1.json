@@ -1,0 +1,49 @@
+{
+  "id": 12,
+  "official": "荣耀",
+  "brand": "honor",
+  "model": "HONOR Pad X7b",
+  "device": "HNONL-Q1",
+  "platform": "qcom",
+  "resolution": "1200x1920",
+  "inch": "136x218",
+  "density": 280,
+  "smp": 8,
+  "memory": [
+    4096,
+    8192
+  ],
+  "storage": [
+    128000,
+    256000
+  ],
+  "extra": {
+    "basebandVersion": "MPSS.DE.3.1.c1-00032-BENGAL_GEN_PACK-1.439843.1.447712.2",
+    "board": "bengal",
+    "cmdline": [
+      "vendorcountry=def/meafnaf",
+      "devmodel=ONL-L09",
+      "androidboot.product.hardware.sku=bengal_515",
+      "androidboot.secureboot=1",
+      "androidboot.slot=a",
+      "androidboot.veritymode.managed=yes"
+    ],
+    "hostHvc": {
+      "host-hvc-adbkey": "hvc2",
+      "host-hvc-bluetooth": "hvc5",
+      "host-hvc-daemon": "hvc7",
+      "host-hvc-haptic": "hvc6",
+      "host-hvc-keymint": "hvc3",
+      "host-hvc-radio": "hvc4",
+      "host-hvc-wifi": "hvc9",
+      "host-hvc-wifi-data": "hvc10"
+    },
+    "skuCombinations": [
+      "4GB+128GB",
+      "8GB+128GB",
+      "8GB+256GB"
+    ],
+    "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
+  },
+  "updatedAt": "2026-11-05T04:33:32Z"
+}

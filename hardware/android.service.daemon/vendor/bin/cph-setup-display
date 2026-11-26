@@ -125,14 +125,26 @@ for hn_guide_pkg in com.hihonor.hnstartupguide com.huawei.hwstartupguide; do
         # 共包 devmodel（如 LNA-AN10）激活 /product_h/hn_oem/<devmodel>/prop/local.prop 后可能将
         # ro.config.marketing_name 覆盖为共包别名，而荣耀 DeviceNameController 优先读取
         # Settings.Global.unified_device_name；首启未自定义名称时固定为基础机型营销名（如 荣耀X80i）。
+        # 注意：海外版机型（如 BSN-NX1）在 /product_h/etc/prop/local.prop 中将 ro.config.marketing_name
+        # 写为内部板级代号（如 BSN，与 ro.build.product 相同），此时须跳过该工程代号并优先采用已对齐的
+        # ro.vendor.cdh.device.market_name（如 Honor 400 Lite）。
         cur_hn_uname="$(settings get global unified_device_name 2>/dev/null)"
-        if [ -z "$cur_hn_uname" ] || [ "$cur_hn_uname" = "null" ]; then
+        hn_build_prod=""
+        if [ -r /product_h/etc/prop/local.prop ]; then
+            hn_build_prod="$(sed -n 's/^ro\.build\.product=//p' /product_h/etc/prop/local.prop | tail -n 1 | tr -d '\r')"
+        fi
+        [ -z "$hn_build_prod" ] && hn_build_prod="$(getprop ro.build.product)"
+        if [ -z "$cur_hn_uname" ] || [ "$cur_hn_uname" = "null" ] || { [ -n "$hn_build_prod" ] && [ "$cur_hn_uname" = "$hn_build_prod" ]; }; then
             base_hn_mkt=""
             if [ -r /product_h/etc/prop/local.prop ]; then
                 base_hn_mkt="$(sed -n 's/^ro\.config\.marketing_name=//p' /product_h/etc/prop/local.prop | tail -n 1 | tr -d '\r')"
             fi
+            if [ -n "$base_hn_mkt" ] && [ -n "$hn_build_prod" ] && [ "$base_hn_mkt" = "$hn_build_prod" ]; then
+                base_hn_mkt=""
+            fi
+            [ -z "$base_hn_mkt" ] && base_hn_mkt="$(getprop ro.vendor.cdh.device.market_name)"
             [ -z "$base_hn_mkt" ] && base_hn_mkt="$(getprop ro.config.marketing_name)"
-            if [ -n "$base_hn_mkt" ]; then
+            if [ -n "$base_hn_mkt" ] && [ "$base_hn_mkt" != "$hn_build_prod" ]; then
                 settings put global unified_device_name "$base_hn_mkt" 2>/dev/null || true
             fi
         fi

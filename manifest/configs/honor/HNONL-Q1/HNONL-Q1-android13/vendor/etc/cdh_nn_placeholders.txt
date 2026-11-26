@@ -1,0 +1,15 @@
+vendor.honor.hardware.hnchipsrvhertz.IHnChipSrvHertz/hnchipsrv_hertz
+vendor.honor.hardware.hnchipsrvlog.IHnChipSrvLog/hnchipsrv_log
+vendor.honor.hardware.hnchipsrvsat.IHnChipSrvSat/hnchipsrv_sat
+vendor.honor.hardware.hnradio.IRadio/slot1
+vendor.honor.hardware.hnradio.IRadio/slot2
+vendor.honor.hardware.hwhiview.IHwHiviewInterface/default
+vendor.honor.hardware.mdlogservice.IMdLogService/default
+vendor.honor.hardware.radio_radar.IRadioRadar/slot1
+vendor.honor.hardware.radio_radar.IRadioRadar/slot2
+vendor.honor.hardware.remotesim.IRemoteSim/slot1
+vendor.honor.hardware.remotesim.IRemoteSim/slot2
+vendor.honor.hardware.wifi.supplicant.ISupplicantHonor/default
+vendor.qti.data.txpwrservice.ITxPwrService/default
+vendor.qti.hardware.data.connectionfactory.IFactory/slot0
+vendor.qti.hardware.data.connectionfactory.IFactory/slot1

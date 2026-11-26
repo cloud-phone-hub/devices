@@ -1,5 +1,5 @@
 {
-  "fstab": "qcom",
+  "fstab": "chora",
   "cmdline": [
     "vendorcountry=def/meafnaf",
     "devmodel=BSN-N31",

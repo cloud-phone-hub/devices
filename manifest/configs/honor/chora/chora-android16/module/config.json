@@ -141,11 +141,6 @@
       "type": "file"
     },
     {
-      "from": "/vendor/app",
-      "to": "/mnt/vendorpatch/vendor/app",
-      "type": "dir"
-    },
-    {
       "from": "/vendor/lib64/libunwindstack.so",
       "to": "/mnt/vendorpatch/vendor/lib64/libui.so",
       "type": "maps"
@@ -154,6 +149,11 @@
       "from": "/vendor/lib64/liblzma.so",
       "to": "/mnt/vendorpatch/vendor/lib64/android.hardware.graphics.allocator@4.0.so",
       "type": "maps"
+    },
+    {
+      "from": "/vendor/app",
+      "to": "/mnt/vendorpatch/vendor/app",
+      "type": "dir"
     }
   ],
   "cpufreq": {
@@ -173,85 +173,73 @@
     "policies": [
       {
         "available-frequencies": [
+          2016000,
           1900800,
           1804800,
           1708800,
-          1612800,
-          1516800,
+          1555200,
           1401600,
-          1305600,
-          1209600,
+          1286400,
           1113600,
-          1036800,
-          940800,
-          844800,
-          787200,
-          710400,
+          960000,
+          806400,
           652800,
-          595200,
-          518400,
-          403200,
-          300000
+          499200
         ],
-        "capacity": 868,
+        "capacity": 549,
         "cpus": [
           0,
           1,
           2,
-          3,
-          4,
-          5
+          3
         ],
         "cur-freq": 1113600,
         "implementer": "0x41",
-        "max-freq": 1900800,
-        "midr": "0x00000000411fd050",
-        "min-freq": 300000,
-        "part": "0xd05",
+        "max-freq": 2016000,
+        "midr": "0x00000000411fd801",
+        "min-freq": 499200,
+        "part": "0xd80",
         "policy": 0,
         "revidr": "0x0000000000000000",
-        "revision": 0,
-        "variant": 2
+        "revision": 1,
+        "variant": 1
       },
       {
         "available-frequencies": [
-          2208000,
-          2112000,
-          2016000,
-          1920000,
-          1804800,
-          1708800,
-          1612800,
-          1516800,
-          1401600,
-          1305600,
-          1209600,
-          1113600,
-          1036800,
-          940800,
-          844800,
-          787200,
-          710400,
+          2611200,
+          2457600,
+          2304000,
+          2150400,
+          2035200,
+          1900800,
+          1785600,
+          1651200,
+          1497600,
+          1363200,
+          1228800,
+          1056000,
+          960000,
+          806400,
           652800,
-          518400,
-          403200,
-          300000
+          499200
         ],
         "capacity": 1024,
         "cpus": [
+          4,
+          5,
           6,
           7
         ],
-        "cur-freq": 1209600,
+        "cur-freq": 1363200,
         "implementer": "0x41",
-        "max-freq": 2208000,
-        "midr": "0x00000000414fd0b0",
-        "min-freq": 300000,
-        "part": "0xd0b",
-        "policy": 6,
+        "max-freq": 2611200,
+        "midr": "0x00000000411fd801",
+        "min-freq": 499200,
+        "part": "0xd80",
+        "policy": 4,
         "revidr": "0x0000000000000000",
-        "revision": 0,
-        "variant": 4
+        "revision": 1,
+        "variant": 1
       }
     ],
     "scaling-readable": true,
@@ -268,9 +256,9 @@
     "tablet": false,
     "touch": {
       "abs-to-mt": true,
-      "abs-x-max": 17280,
+      "abs-x-max": 20480,
       "abs-xy": true,
-      "abs-y-max": 38592,
+      "abs-y-max": 44608,
       "bus": 24,
       "mt-pressure": true,
       "mt-slots": 10,

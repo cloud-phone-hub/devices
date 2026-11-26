@@ -1,0 +1,24 @@
+{
+  "id": 16,
+  "buildId": "16-TKQ1.240227.001-20260708",
+  "deviceId": 47,
+  "configId": 81,
+  "osVersion": "16-TKQ1.240227.001-20260708",
+  "buildDate": "20260708",
+  "securityPatch": "2026-07-01",
+  "factoryTgz": "Huawei-P60-LNA-L32.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "basebandVersion": "MPSS.JO.2.0.c1-00013-STD.PROD-1",
+    "comment": "由 cdh unpack prepare 从 Huawei-P60-LNA-L32.zip (vendor/build.prop) 自动生成。",
+    "partitionAndroidVersions": {
+      "product": "16",
+      "system": "16",
+      "system_ext": "16",
+      "vendor": "13",
+      "vendor_dlkm": "13"
+    }
+  },
+  "updatedAt": "2026-11-20T22:56:48Z"
+}

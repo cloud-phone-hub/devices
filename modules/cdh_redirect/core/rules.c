@@ -114,6 +114,31 @@ enum cdh_sphal_tier {
 #define CDH_VMA_FLAG_CARRIER	BIT(1)
 #define CDH_VMA_FLAG_GFX_FW	BIT(2)
 
+/*
+ * 提取 hw/<leaf> 或 hw/<board>/<leaf>（如 MTK hw/mt6835/android.hardware.graphics.mapper@4.0-impl-mediatek.so）
+ * 的末级库文件名；非单层板级子目录或含 "." / ".." 时返回 NULL。
+ */
+static const char *cdh_extract_hw_leaf(const char *sub)
+{
+	const char *rel;
+	const char *slash;
+
+	if (strncmp(sub, "hw/", 3) != 0)
+		return NULL;
+	rel = sub + 3;
+	if (!rel[0])
+		return NULL;
+	slash = strchr(rel, '/');
+	if (!slash)
+		return rel;
+	if (slash == rel ||
+	    (rel[0] == '.' && (slash - rel == 1 || (slash - rel == 2 && rel[1] == '.'))))
+		return NULL;
+	if (!slash[1] || strchr(slash + 1, '/'))
+		return NULL;
+	return slash + 1;
+}
+
 /* 按路径与当前系统调用 ABI 分类 SP-HAL 库级别（纯载体内部 vs 原厂同名入口/标准库回退）。 */
 static enum cdh_sphal_tier cdh_classify_sphal_lib(const char *buf)
 {
@@ -148,6 +173,7 @@ static enum cdh_sphal_tier cdh_classify_sphal_lib(const char *buf)
 		"libz.so",
 	};
 	const char *sub;
+	const char *hw_leaf;
 	bool is_64;
 	size_t i;
 
@@ -193,9 +219,11 @@ static enum cdh_sphal_tier cdh_classify_sphal_lib(const char *buf)
 	if (!strcmp(sub, "egl/gpu_id.cfg"))
 		return CDH_SPHAL_CFG;
 
+	hw_leaf = cdh_extract_hw_leaf(sub);
+
 	/* Tier A：纯载体 Mesa/Virtio 及其独有的 libui/allocator@2..4 传递依赖（超图官方无这些库）。 */
-	if (!strcmp(sub, "hw/vulkan.virtio.so") ||
-	    !strcmp(sub, "hw/vulkan.pastel.so") ||
+	if ((hw_leaf && (!strcmp(hw_leaf, "vulkan.virtio.so") ||
+			 !strcmp(hw_leaf, "vulkan.pastel.so"))) ||
 	    !strcmp(sub, "egl/libEGL_mesa.so") ||
 	    !strcmp(sub, "egl/libGLESv1_CM_mesa.so") ||
 	    !strcmp(sub, "egl/libGLESv2_mesa.so") ||
@@ -209,10 +237,10 @@ static enum cdh_sphal_tier cdh_classify_sphal_lib(const char *buf)
 
 	if (!strcmp(sub, "hw") ||
 	    !strcmp(sub, "hw/") ||
-	    !strncmp(sub, "hw/mapper.", 10) ||
-	    !strncmp(sub, "hw/android.hardware.graphics.mapper@", 36) ||
-	    !strncmp(sub, "hw/gralloc.", 11) ||
-	    !strncmp(sub, "hw/vulkan.", 10) ||
+	    (hw_leaf && (!strncmp(hw_leaf, "mapper.", 7) ||
+			 !strncmp(hw_leaf, "android.hardware.graphics.mapper@", 33) ||
+			 !strncmp(hw_leaf, "gralloc.", 8) ||
+			 !strncmp(hw_leaf, "vulkan.", 7))) ||
 	    !strncmp(sub, "egl/libEGL_", 11) ||
 	    !strncmp(sub, "egl/libGLES", 11))
 		return CDH_SPHAL_TIER_B;
@@ -252,9 +280,11 @@ static bool cdh_path_is_gfx_framework(const char *p)
 		"libgui.so",
 		"libhwui.so",
 		"libgraphicsenv.so",
+		"libnativedisplay.so",
 		"libhardware.so",
 		"libvndksupport.so",
 		"libhidlbase.so",
+		"libhidltransport.so",
 		"android.hardware.graphics.mapper@2.0.so",
 		"android.hardware.graphics.mapper@2.1.so",
 		"android.hardware.graphics.mapper@3.0.so",
@@ -267,6 +297,8 @@ static bool cdh_path_is_gfx_framework(const char *p)
 	    strncmp(p, "/system/lib/", 12) != 0 &&
 	    strncmp(p, "/system_ext/lib64/", 18) != 0 &&
 	    strncmp(p, "/system_ext/lib/", 16) != 0 &&
+	    strncmp(p, "/vendor/lib64/", 14) != 0 &&
+	    strncmp(p, "/vendor/lib/", 12) != 0 &&
 	    strncmp(p, "/apex/com.android.vndk.", 23) != 0)
 		return false;
 

@@ -1,4 +1,0 @@
-# Honor MagicOS AIDL hwfactoryinterface 服务上下文（供 system_server checkService 查询）
-# @when-file bin/hw/vendor.honor.hardware.hwfactoryinterface-service | bin/hw/vendor.honor.hardware.hwfactoryinterface@1.1-service
-vendor.honor.hardware.hwfactoryinterface.IHwFactoryInterface/hwfactoryinterface_hal u:object_r:hal_hwfactoryinterface_service:s0
-# @end

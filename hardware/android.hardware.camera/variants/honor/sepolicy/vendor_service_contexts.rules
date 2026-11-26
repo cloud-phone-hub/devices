@@ -1,0 +1,4 @@
+# camera@honor 变体服务上下文：将 IHwCameraResourceService/default 映射至 hal_camResource_aidl_service
+# @when-any-declared hal_camResource_aidl hal_camResource_aidl_client
+vendor.honor.hardware.camera.camResource.IHwCameraResourceService/default u:object_r:hal_camResource_aidl_service:s0
+# @end

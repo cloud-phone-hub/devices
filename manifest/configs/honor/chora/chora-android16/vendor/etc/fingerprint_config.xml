@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  chora（Honor 400 Lite / BSN-NX1）虚拟屏下光学指纹硬件规格配置：
+  - sensor-type="udfps_optical"：屏下光学指纹（对应 FingerprintSensorType::UNDER_DISPLAY_OPTICAL）
+  - strength="strong"：Class 3 强生物特征（对应 SensorStrength::STRONG）
+  - max-enrollments="5"：MagicOS 标准上限 5 枚指纹
+  - enrolled-ids=""：与未录入模板的 framework 初始状态一致，消除 HidlToAidlSensorAdapter 死循环重试
+-->
+<fingerprint-config
+    sensor-id="0"
+    sensor-type="udfps_optical"
+    strength="strong"
+    max-enrollments="5"
+    enrolled-ids=""
+    authenticator-id="0"
+    loc-x="640"
+    loc-y="2420"
+    loc-radius="95"/>

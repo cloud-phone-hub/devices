@@ -1,0 +1,13 @@
+{
+  "build-prop-sets": {
+    "ro.bionic.2nd_arch": "",
+    "ro.bionic.2nd_cpu_variant": ""
+  },
+  "build-prop-unsets": [
+    "ro.frp.pst",
+    "ro.gfx.driver.0",
+    "ro.gfx.driver.1",
+    "ro.vndk.lite",
+    "ro.crypto.metadata_init_delete_all_keys.enabled"
+  ]
+}

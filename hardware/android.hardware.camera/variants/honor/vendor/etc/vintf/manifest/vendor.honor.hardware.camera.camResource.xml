@@ -1,0 +1,12 @@
+<manifest version="1.0" type="device">
+  <!-- camera@honor 变体 VINTF 声明：声明 vendor.honor.hardware.camera.camResource AIDL 服务，
+       供荣耀 MagicOS HwServiceHost 通过 AIDL 通道绑定，避免回落 HIDL 超时崩溃。 -->
+  <hal format="aidl">
+    <name>vendor.honor.hardware.camera.camResource</name>
+    <version>1</version>
+    <interface>
+      <name>IHwCameraResourceService</name>
+      <instance>default</instance>
+    </interface>
+  </hal>
+</manifest>

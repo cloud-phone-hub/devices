@@ -1,0 +1,32 @@
+=== 1. 修复前：抖音 /proc/5521/maps 穿透加载原厂 fd:06 ARM Mali Mapper ===
+65f7245000-65f726d000 r--p 00000000 fd:06 8905112 /vendor/lib64/hw/mt6835/android.hardware.graphics.mapper@4.0-impl-mediatek.so
+6d1be45000-6d1be57000 r--p 00000000 fe:20 1701    /vendor/lib64/hw/mapper.mediatek.so
+
+=== 2. 修复前：抖音 RenderThread 报错、YUV DRI 纹理导入失败与崩溃日志 ===
+D [IMapper]: #00 pc 0002ab6c /vendor/lib64/hw/mt6835/android.hardware.graphics.mapper@4.0-impl-mediatek.so (arm::mapper::common::get+172)
+D [IMapper]: #01 pc 000289c0 /vendor/lib64/hw/mt6835/android.hardware.graphics.mapper@4.0-impl-mediatek.so (arm::mapper::GrallocMapper::get+128)
+D [IMapper]: #02 pc 00019ff4 /vendor/lib64/android.hardware.graphics.mapper@4.0.so (BsMapper::get+160)
+D [IMapper]: #03 pc 00030520 /vendor/lib64/mt6835/libdpframework.so
+W EGL-MAIN: failed to create DRI image from FD
+E droid.ugc.aweme: @get: Buffer: 0x6ed6569a70 has not been registered with Gralloc
+Abort message: 'frameworks/base/libs/hwui/AutoBackendTextureRelease.cpp Invalid GrBackendTexture. Width==576, height==1024, protected==0'
+Abort message: 'gralloc-mapper is missing' (douyin pid=4760, com.hihonor.camera pid=17639/25768, com.hihonor.hiboard pid=16665)
+vrend_resource_create: 2D Texture size components (61440, 1) exceeds supported value (16384)
+E HWUI: ShaderCache::load value buffer allocate failed after tried 3 times
+/proc/cdh_redirect: sphal_blocked: 1048
+
+=== 3. 修复前：荣耀相机每 5 秒 HwServiceHost SIGABRT 循环重启 ===
+11-26 14:14:56.241 19038 19251 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 19251 (SessionDeamonTh), pid 19038 (HwServiceHost)
+11-26 14:14:56.270 19358 19358 F DEBUG   : Cmdline: /system/bin/HwServiceHost mtk6761 MRD
+11-26 14:14:56.270 19358 19358 F DEBUG   : Abort message: 'failed to get hidl service'
+11-26 14:14:56.270 19358 19358 F DEBUG   :       #03 pc 000000000001f348  /system/bin/HwServiceHost (com::hihonor::servicehost::HidlCPlatformAdapterImpl::InitHidlIntf()+1332)
+11-26 14:14:56.270 19358 19358 F DEBUG   :       #04 pc 00000000000237a4  /system/bin/HwServiceHost (com::hihonor::servicehost::CPlatformAdapter::getImpl()+460)
+11-26 14:14:56.270 19358 19358 F DEBUG   :       #05 pc 0000000000023598  /system/bin/HwServiceHost (non-virtual thunk to com::hihonor::servicehost::CPlatformAdapter::jpegOpenClient(int)+20)
+11-26 14:14:56.276 19179 19316 E ServiceHostGlobalSession: servicehost died!
+11-26 14:14:56.276 19179 19316 E f       : ServiceHost death error
+
+dumpsys media.camera:
+  11-26 14:12:15 : DISCONNECT device 0 client for package com.hihonor.camera (PID 14497)
+  11-26 14:12:15 : DIED client(s) with PID 823, reason: (Binder died unexpectedly)
+  11-26 14:12:10 : CONNECT device 0 client for package com.hihonor.camera (PID 14497)
+  Device status: UNCONFIGURED (No output streams configured)

@@ -1,0 +1,18 @@
+{
+  "build-prop-sets": {
+    "persist.radio.multisim.config": "ss",
+    "ro.bionic.2nd_arch": "",
+    "ro.bionic.2nd_cpu_variant": "",
+    "ro.hardware.gralloc": "minigbm",
+    "ro.sf.lcd_density": "280",
+    "ro.surface_flinger.supports_background_blur": "0",
+    "ro.zygote": "zygote64"
+  },
+  "build-prop-unsets": [
+    "ro.crypto.metadata_init_delete_all_keys.enabled",
+    "ro.frp.pst",
+    "ro.gfx.driver.0",
+    "ro.gfx.driver.1",
+    "ro.vndk.lite"
+  ]
+}

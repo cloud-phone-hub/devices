@@ -1,0 +1,12 @@
+# Honor MagicOS AIDL hwfactoryinterface 服务上下文（供 system_server checkService 查询）
+# @when-file bin/hw/vendor.honor.hardware.hwfactoryinterface-service | bin/hw/vendor.honor.hardware.hwfactoryinterface@1.1-service
+vendor.honor.hardware.hwfactoryinterface.IHwFactoryInterface/hwfactoryinterface_hal u:object_r:hal_hwfactoryinterface_service:s0
+# @end
+
+# Honor MagicOS 私有 NFC AIDL 服务上下文（配合 neuralnetworks@honor 协议桩）
+# @when-declared hal_nxpnfc_service
+vendor.honor.hardware.nxpnfc.INxpNfc/default u:object_r:hal_nxpnfc_service:s0
+# @end
+# @when-declared hal_hnnfc_service
+vendor.honor.hardware.nfc.IHnNfc/default u:object_r:hal_hnnfc_service:s0
+# @end

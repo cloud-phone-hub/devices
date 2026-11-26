@@ -7,6 +7,12 @@
       }
     },
     {
+      "android.hardware.biometrics": {
+        "variant": "fingerprint-only",
+        "version": "1.0"
+      }
+    },
+    {
       "android.hardware.bluetooth": {
         "variant": "default",
         "version": "1.0"

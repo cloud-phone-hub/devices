@@ -1,0 +1,24 @@
+{
+  "id": 17,
+  "buildId": "16-TKQ1.240227.001-20260922",
+  "deviceId": 12,
+  "configId": 79,
+  "osVersion": "16-TKQ1.240227.001-20260922",
+  "buildDate": "20260922",
+  "securityPatch": "2026-09-01",
+  "factoryTgz": "Huawei-Honor-Pad-X7b-ONL-W09.zip",
+  "factoryDir": "",
+  "overrides": {},
+  "extra": {
+    "basebandVersion": "MPSS.DE.3.1.c1-00032-BENGAL_GEN_PACK-1.439843.1.447712.2",
+    "comment": "由 cdh unpack prepare 从 Huawei-Honor-Pad-X7b-ONL-W09.zip (vendor/build.prop) 自动生成。",
+    "partitionAndroidVersions": {
+      "product": "16",
+      "system": "16",
+      "system_ext": "16",
+      "vendor": "13",
+      "vendor_dlkm": "13"
+    }
+  },
+  "updatedAt": "2026-11-20T23:12:14Z"
+}

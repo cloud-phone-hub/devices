@@ -1,0 +1,33 @@
+=== 1. 单元测试、编译与策略校验 ===
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/09_build_vendor	0.878s
+[ok] android.hardware.graphics.allocator 构建完成 -> /Volumes/work/cloud-phone-hub/out/devices/vendor/android13
+[ok] android.hardware.graphics.allocator 构建完成 -> /Volumes/work/cloud-phone-hub/out/devices/vendor/android16
+[ok] android.hardware.camera 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/out/devices/vendor/android13/honor/bin/hw
+[ok] android.hardware.camera 构建完成：codegen + 编译 + 链接 -> /Volumes/work/cloud-phone-hub/out/devices/vendor/android15/honor/bin/hw
+[ok] cdh_redirect.ko: 64 个符号版本一致
+SECILC_OK (zero neverallow violations)
+e2fsck -fn patch.img: 1827/98304 文件，0 errors
+
+=== 2. 修复后：抖音进程 /proc/12386/maps（原厂 fd:06 Mali Mapper 彻底清零） ===
+7b5afe6000-7b5afe7000 r--p 00000000 fe:20 1696                           /vendor/lib64/hw/gralloc.common.so
+7c5fbc7000-7c5fbd6000 r--p 00000000 fe:20 1651                           /vendor/lib64/android.hardware.graphics.mapper@4.0.so
+7c5fe03000-7c5fe15000 r--p 00000000 fe:20 1701                           /vendor/lib64/hw/mapper.mediatek.so
+7c5fecd000-7c5fed5000 r--p 00000000 fe:20 1735                           /vendor/lib64/libgralloctypes.so
+Douyin graphics/DRI/ShaderCache/gralloc-mapper errors: 0
+
+=== 3. 修复后：荣耀相机服务在线与实时出流验证 ===
+Service vendor.honor.hardware.camera.camResource.IHwCameraResourceService/default: found
+Service android.hardware.camera.provider.ICameraProvider/internal/0: found
+com.hihonor.camera PID: 11782 (alive)
+HwServiceHost PID: 830 (boot PID, 0 crashes)
+Active Camera Clients:
+  (Camera ID: 0, Cost: 50, PID: 11782, Score: 0, State: 2, Client Package Name: com.hihonor.camera)
+CameraDeviceClient[0]:
+  Request ID counter: 6
+  Current output stream/surface IDs:
+    Stream 1 Surface 0
+    Stream 0 Surface 0
+  Latest received frame:
+    Dumping camera metadata array: 65 / 65 entries, 504 / 504 bytes of extra data.
+daemon /api/daemon/camera/status:
+  {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":189,"framesDropped":0}

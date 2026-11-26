@@ -1,0 +1,230 @@
+{
+  "build-prop-sets": {
+    "gsm.version.baseband": "MPSS.JO.2.0.c1-00013-STD.PROD-1",
+    "gsm.version.ril-impl": "Qualcomm RIL 1.0",
+    "persist.radio.multisim.config": "dsds",
+    "persist.sys.chr.chipsettype": "1",
+    "ro.hardware.egl": "mesa",
+    "ro.hardware.vulkan": "adreno",
+    "ro.hw_timeout_multiplier": "10",
+    "ro.hwui.use_vulkan": "false",
+    "ro.soc.manufacturer": "Qualcomm",
+    "ro.soc.model": "Snapdragon 6s 4G Gen 2",
+    "ro.vendor.boot_security_patch": "2026-07-01",
+    "ro.vendor.build.security_patch": "2026-07-01",
+    "ro.vendor.cdh.device.market_name": "HONOR X8d",
+    "ro.vendor.cdh.display.default_refresh_rate": "120",
+    "ro.vendor.cdh.display.edid_name": "BOE_AMOLED",
+    "ro.vendor.cdh.display.edid_pnp": "BOE",
+    "ro.vendor.cdh.display.edid_product_id": "4482",
+    "ro.vendor.cdh.display.edid_week": "12",
+    "ro.vendor.cdh.display.edid_year": "2026",
+    "ro.vendor.cdh.display.refresh_rates": "60,90,120",
+    "ro.vendor.cdh.display.wide_color_gamut": "true",
+    "ro.vendor.cdh.display.xdpi": "393.56",
+    "ro.vendor.cdh.display.ydpi": "393.44",
+    "ro.vendor.cdh.gpu.gl_extra_exts": "GL_AMD_compressed_ATC_texture,GL_AMD_performance_monitor,GL_AMD_program_binary_Z400,GL_QCOM_alpha_test,GL_QCOM_binning_control,GL_QCOM_driver_control,GL_QCOM_extended_get,GL_QCOM_extended_get2,GL_QCOM_tiled_rendering,GL_QCOM_writeonly_rendering",
+    "ro.vendor.cdh.gpu.gl_extra_exts2": "GL_QCOM_frame_extrapolation,GL_QCOM_framebuffer_foveated,GL_QCOM_motion_estimation,GL_QCOM_perfmon_global_mode,GL_QCOM_texture_foveated,GL_KHR_debug,GL_KHR_no_error,GL_KHR_texture_compression_astc_ldr,GL_OES_depth24,GL_OES_depth32,GL_OES_texture_float_linear,GL_OES_texture_half_float_linear",
+    "ro.vendor.cdh.gpu.gl_renderer": "Adreno (TM) 610",
+    "ro.vendor.cdh.gpu.gl_sl_version": "OpenGL ES GLSL ES 3.20",
+    "ro.vendor.cdh.gpu.gl_vendor": "Qualcomm",
+    "ro.vendor.cdh.gpu.gl_version": "OpenGL ES 3.2 V@0676.0 (GIT@b1e0f2f, I6a1c1d0e8f, 1719325104) (Date:06/25/24)",
+    "ro.vendor.cdh.gpu.max_combined_texture_image_units": "96",
+    "ro.vendor.cdh.gpu.max_cube_map_texture_size": "16384",
+    "ro.vendor.cdh.gpu.max_renderbuffer_size": "16384",
+    "ro.vendor.cdh.gpu.max_texture_image_units": "16",
+    "ro.vendor.cdh.gpu.max_texture_size": "16384",
+    "ro.vendor.cdh.gpu.max_vertex_attribs": "32",
+    "ro.vendor.cdh.oem.mac_oui": "f4:8c:50",
+    "ro.vendor.cdh.vulkan.api_version": "0x00401000",
+    "ro.vendor.cdh.vulkan.conformance": "1.1.0.0",
+    "ro.vendor.cdh.vulkan.device_id": "0x06010000",
+    "ro.vendor.cdh.vulkan.device_type": "1",
+    "ro.vendor.cdh.vulkan.device_uuid": "3f2a9c1e7b6d4f8a90c2e5b7d1a4f602",
+    "ro.vendor.cdh.vulkan.driver_id": "8",
+    "ro.vendor.cdh.vulkan.driver_info": "Adreno (TM) 610",
+    "ro.vendor.cdh.vulkan.driver_name": "Adreno (TM) 610",
+    "ro.vendor.cdh.vulkan.driver_uuid": "8c14b7d29e3f5061a8b2c4d6e8f0a1b3",
+    "ro.vendor.cdh.vulkan.driver_version": "0x1c0a7000",
+    "ro.vendor.cdh.vulkan.name": "Adreno (TM) 610",
+    "ro.vendor.cdh.vulkan.pipeline_uuid": "a1b2c3d4e5f60718293a4b5c6d7e8f90",
+    "ro.vendor.cdh.vulkan.vendor_id": "0x5143",
+    "ro.vendor.cdh.wifi.disable_he": "1",
+    "ro.vendor.drm.widevine.oem_crypto_api_version": "18",
+    "ro.vendor.drm.widevine.security_level": "L3",
+    "ro.vendor.drm.widevine.system_id": "27175",
+    "ro.vendor.drm.widevine.version": "18.0.0",
+    "ro.vendor.product.cpu.abilist": "arm64-v8a",
+    "ro.vendor.product.cpu.abilist32": "",
+    "ro.vendor.product.cpu.abilist64": "arm64-v8a",
+    "ro.vendor.radio.imei.svn": "01",
+    "ro.vendor.radio.imei.tac": "86956006",
+    "ro.vendor.radio.meid.prefix": "99002158",
+    "ro.vendor.soc.manufacturer": "Qualcomm",
+    "ro.vendor.soc.model": "Snapdragon 6s 4G Gen 2",
+    "ro.vendor.soc.model.external_name": "SM6225-AD",
+    "ro.vendor.soc.model.part_name": "SM6225-AD",
+    "ro.vendor.soc.model_ready": "1"
+  },
+  "build-prop-unsets": [],
+  "files": [
+    {
+      "from": "official",
+      "mode": "replace",
+      "source": "etc/permissions"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_bengal_v1.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_c2_audio.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_audio.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_c2.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_c2_audio.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_c2_video.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_telephony.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_video.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_google_video_le.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_khaje_iot.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_khaje_v0.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_performance_bengal_v1.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_performance_khaje_iot.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_performance_khaje_v0.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/media_codecs_vendor_audio.xml"
+    },
+    {
+      "from": "official",
+      "source": "etc/public.libraries.txt"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "bin/hw/vendor.honor.hardware.hwfactoryinterface-service"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "etc/init/vendor.honor.hardware.hwfactoryinterface-service.rc"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "etc/vintf/manifest/vendor.honor.hardware.hwfactoryinterface-service.xml"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "bin/hw/vendor.honor.hardware.hwfactoryinterface@1.1-service"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "etc/init/vendor.honor.hardware.hwfactoryinterface@1.1-service.rc"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "etc/vintf/manifest/vendor.honor.hardware.hwfactoryinterface@1.1-service.xml"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libc_secshared.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/vendor.honor.hardware.hwfactoryinterface-V1-ndk.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/vendor.honor.hardware.hwfactoryinterface@1.0.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/vendor.honor.hardware.hwfactoryinterface@1.1.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/honor.system.hardware.hwfactorynormalcomm@1.0.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libhidltransport.so"
+    },
+    {
+      "from": "official",
+      "mode": "add",
+      "optional": true,
+      "source": "lib64/libhwbinder.so"
+    }
+  ],
+  "lib64-backfills": [],
+  "selinux-labels": {
+    "lib64/egl/libEGL_mesa.so": "u:object_r:same_process_hal_file:s0",
+    "lib64/egl/libGLESv1_CM_mesa.so": "u:object_r:same_process_hal_file:s0",
+    "lib64/egl/libGLESv2_mesa.so": "u:object_r:same_process_hal_file:s0"
+  },
+  "vintf-version": "7.0"
+}

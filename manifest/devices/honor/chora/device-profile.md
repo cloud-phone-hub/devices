@@ -2,7 +2,6 @@
 
 - **生成时间**: `2026-11-19T03:18:31+08:00`
 - **ROM Build ID**: `16-BQ2A.250913.001-BP2A.250605.031.A3-20260804`
-- **分区 Android 版本**: `system=16, system_ext=16, product=16, vendor=16, vendor_dlkm=16`
 - **DSH 聊天会话 ID**: `session-b83bd195-025b-48b6-9cec-e7eafc7204e1`（标题：`[02_prepare] 真机规格采集 · Honor 400 Lite (honor/chora · 16-BQ2A.250913.001-BP2A.250605.031.A3-20260804)`）
 - **采集模型路由**: `cdh-maas / deepseek-v4.1-flash-1017`（复用在线 DSH Web: `true`）
 
@@ -14,12 +13,12 @@
 | --- | --- | --- |
 | `official` | `荣耀` | 厂商集团 |
 | `brand` | `honor` | 子品牌标识 |
-| `model` | `Honor 400 Lite` | 商业上市机型名 （型号代码: `ABR-LX1`, `Honor 400 Lite 5G`） |
+| `model` | `Honor 400 Lite` | 商业上市机型名 （型号代码: `BSN-NX1`, `BSN-N31`, `HONOR X9e Pro`） |
 | `device` | `chora` | 设备代号 |
 | `platform` / `board` | `qcom` / `chora` | 芯片平台 / 主板代号 |
-| `resolution` | `1080x2412` | 屏幕物理像素分辨率 |
-| `inch` | `70x155` | 屏幕可视物理宽×高 mm（对角线 `6.70"`） |
-| `density` | `440` | Android 逻辑密度 dpi（物理 PPI `394`，xdpi `394.20` / ydpi `394.60`） |
+| `resolution` | `1280x2788` | 屏幕物理像素分辨率 |
+| `inch` | `72x158` | 屏幕可视物理宽×高 mm（对角线 `6.81"`） |
+| `density` | `560` | Android 逻辑密度 dpi（物理 PPI `450`，xdpi `451.50` / ydpi `448.20`） |
 | `smp` | `8` | CPU 核心总数 |
 | `memory` | `[8192 12288]` | 全系发售内存档位 MB（8G / 12G，LPDDR4X） |
 | `storage` | `[128000 256000]` | 全系发售存储档位（128G / 256G，UFS 2.2） |
@@ -29,18 +28,18 @@
 ## 二、真机深层硬件对齐画像（参考 `redmi/gold` 标准）
 
 ### 1. SoC 与 CPU 簇全量频点表（`cdh_cpufreq` / `module/config.json` 对齐）
-- **SoC 芯片**: Qualcomm Snapdragon 6s Gen 3 (`SM6375-AC` SM6375-AC, 6nm)
-- **CPU 拓扑**: `6x Cortex-A55 @ 1.90GHz + 2x Cortex-A78 @ 2.20GHz`（驱动: `qcom-cpufreq-hw`，调速器: `schedutil`，可选调速器: `[schedutil performance powersave ondemand conservative interactive userspace]`，BogoMIPS: `38.40`）
+- **SoC 芯片**: Qualcomm Snapdragon 6 Gen 5 (`SM6850` SM6850, 4nm)
+- **CPU 拓扑**: `4x Kryo Efficiency @ 2.02GHz + 4x Kryo Performance @ 2.61GHz`（驱动: `qcom-cpufreq-hw`，调速器: `schedutil`，可选调速器: `[schedutil performance powersave ondemand conservative interactive userspace]`，BogoMIPS: `38.40`）
 
 | 策略簇 | 核心列表 | 微架构 | Part / MIDR | 容量权重 | 最小 / 驻留 / 最大 (kHz) | 频点档数 |
 | --- | --- | --- | --- | --- | --- | --- |
-| policy0 | `[0 1 2 3 4 5]` | Cortex-A55 | `0xd05` (`0x00000000411fd050`) | `868` | `300000 / 1113600 / 1900800` | `19 档` |
-| policy6 | `[6 7]` | Cortex-A78 | `0xd0b` (`0x00000000414fd0b0`) | `1024` | `300000 / 1209600 / 2208000` | `21 档` |
+| policy0 | `[0 1 2 3]` | Kryo Efficiency | `0xd80` (`0x00000000411fd801`) | `549` | `499200 / 1113600 / 2016000` | `12 档` |
+| policy4 | `[4 5 6 7]` | Kryo Performance | `0xd80` (`0x00000000411fd801`) | `1024` | `499200 / 1363200 / 2611200` | `16 档` |
 
-- **`policy0` (`Cortex-A55`, cpus `[0 1 2 3 4 5]`) 全量 `available-frequencies` (19 档, kHz)**:
-  `[1900800 1804800 1708800 1612800 1516800 1401600 1305600 1209600 1113600 1036800 940800 844800 787200 710400 652800 595200 518400 403200 300000]`
-- **`policy6` (`Cortex-A78`, cpus `[6 7]`) 全量 `available-frequencies` (21 档, kHz)**:
-  `[2208000 2112000 2016000 1920000 1804800 1708800 1612800 1516800 1401600 1305600 1209600 1113600 1036800 940800 844800 787200 710400 652800 518400 403200 300000]`
+- **`policy0` (`Kryo Efficiency`, cpus `[0 1 2 3]`) 全量 `available-frequencies` (12 档, kHz)**:
+  `[2016000 1900800 1804800 1708800 1555200 1401600 1286400 1113600 960000 806400 652800 499200]`
+- **`policy4` (`Kryo Performance`, cpus `[4 5 6 7]`) 全量 `available-frequencies` (16 档, kHz)**:
+  `[2611200 2457600 2304000 2150400 2035200 1900800 1785600 1651200 1497600 1363200 1228800 1056000 960000 806400 652800 499200]`
 
 <details>
 <summary>可直接用于 <code>module/config.json</code> 的 <code>cpufreq</code> 完整配置片段</summary>
@@ -70,80 +69,68 @@
           0,
           1,
           2,
-          3,
-          4,
-          5
+          3
         ],
-        "min-freq": 300000,
-        "max-freq": 1900800,
+        "min-freq": 499200,
+        "max-freq": 2016000,
         "cur-freq": 1113600,
         "available-frequencies": [
+          2016000,
           1900800,
           1804800,
           1708800,
-          1612800,
-          1516800,
+          1555200,
           1401600,
-          1305600,
-          1209600,
+          1286400,
           1113600,
-          1036800,
-          940800,
-          844800,
-          787200,
-          710400,
+          960000,
+          806400,
           652800,
-          595200,
-          518400,
-          403200,
-          300000
+          499200
         ],
         "implementer": "0x41",
-        "variant": 2,
-        "part": "0xd05",
-        "revision": 0,
-        "capacity": 868,
-        "midr": "0x00000000411fd050",
+        "variant": 1,
+        "part": "0xd80",
+        "revision": 1,
+        "capacity": 549,
+        "midr": "0x00000000411fd801",
         "revidr": "0x0000000000000000"
       },
       {
-        "policy": 6,
+        "policy": 4,
         "cpus": [
+          4,
+          5,
           6,
           7
         ],
-        "min-freq": 300000,
-        "max-freq": 2208000,
-        "cur-freq": 1209600,
+        "min-freq": 499200,
+        "max-freq": 2611200,
+        "cur-freq": 1363200,
         "available-frequencies": [
-          2208000,
-          2112000,
-          2016000,
-          1920000,
-          1804800,
-          1708800,
-          1612800,
-          1516800,
-          1401600,
-          1305600,
-          1209600,
-          1113600,
-          1036800,
-          940800,
-          844800,
-          787200,
-          710400,
+          2611200,
+          2457600,
+          2304000,
+          2150400,
+          2035200,
+          1900800,
+          1785600,
+          1651200,
+          1497600,
+          1363200,
+          1228800,
+          1056000,
+          960000,
+          806400,
           652800,
-          518400,
-          403200,
-          300000
+          499200
         ],
         "implementer": "0x41",
-        "variant": 4,
-        "part": "0xd0b",
-        "revision": 0,
+        "variant": 1,
+        "part": "0xd80",
+        "revision": 1,
         "capacity": 1024,
-        "midr": "0x00000000414fd0b0",
+        "midr": "0x00000000411fd801",
         "revidr": "0x0000000000000000"
       }
     ]
@@ -154,20 +141,20 @@
 
 ### 2. 显示面板、GPU 与图形栈（`gpu_id.cfg` / `buildVendor` 对标 `gold`）
 - **面板类型与刷新率**: AMOLED · 刷新率 `[60 90 120] Hz`（默认 `120 Hz`） · 广色域 `true` · EDID `BOE` (`BOE0A1F`, product=`2591`, year=`2025`W`18`)
-- **OpenGL ES**: `Qualcomm` / `Adreno (TM) 619` / `OpenGL ES 3.2 V@0762.0 (GIT@a41c9d3e7b, I8f7e6d5c4b) (Date:07/14/26)`
+- **OpenGL ES**: `Qualcomm` / `Adreno (TM) 810` / `OpenGL ES 3.2 V@0817.0 (GIT@50d6c2424b, I8f7e6d5c4b) (Date:06/25/26)`
   - GL 驱动扩展: `GL_QCOM_texture_foveated_subsampled_layout,GL_QCOM_shading_rate,GL_QCOM_frame_extrapolation,GL_QCOM_motion_estimation` GL_EXT_texture_filter_anisotropic,GL_EXT_color_buffer_half_float,GL_EXT_disjoint_timer_query,GL_EXT_sRGB_write_control
-- **Vulkan**: `ro.hardware.vulkan=adreno` · VendorID `0x5143` · DeviceID `0x06010000` · API `1.3` (`0x00403116`) · DriverID `11` (`0x2001e800`)
+- **Vulkan**: `ro.hardware.vulkan=adreno` · VendorID `0x5143` · DeviceID `0x44030000` · API `1.4` (`0x00404000`) · DriverID `11` (`0x20033100`)
 
 ### 3. 触控、指纹、外设与输入节点对齐（`module/config.json` & `hardware/config.json` 对标 `gold`）
-- **指纹方案**: 侧边电容指纹 (Goodix)
+- **指纹方案**: 屏下光学指纹 (Goodix)
 - **触控与按键对齐**: touch=`fts_ts` · keyboard=`qcom-pmic-keys` · input_identity 外设数=`4` 项
 - **硬件 HAL 变体与开关**: radioVariant=`default` · NFC=`true` · 红外=`false` · 3.5mm=`false` · 单扬声器
 - **影像规格**: 后置 108MP + 5MP + 2MP | 前置 16MP
-- **电池与通信**: `5230 mAh`（有线 `35W` / 无线 `0W`） · Wi-Fi 5 (802.11ac)（Wi-Fi 6=`false`） · BT `5.2` · 5G=`true` · Widevine `L1` (sysId=`20982`) · TAC `86796106` · MAC OUI `[00:9a:cd f4:9f:f3]`
+- **电池与通信**: `11000 mAh`（有线 `40W` / 无线 `0W`） · Wi-Fi 5 (802.11ac)（Wi-Fi 6=`false`） · BT `5.2` · 5G=`true` · Widevine `L1` (sysId=`20982`) · TAC `86796106` · 基带 `MPSS.DE.3.1.7-00544.2-SKYROS_GEN_PACK-2.155179.122` · MAC OUI `[00:9a:cd f4:9f:f3]`
 
 ### 4. `vendor/etc/*_config.xml` 虚拟 HAL AI 对齐清单（对标 `gold-android15/vendor/etc`）
 - **`sensors_config.xml`**: 共 `20` 项对齐传感器
-- **`battery_config.xml`**: `Li-poly` · 容量 `5230 mAh` · 满电/充电电压 `4470 / 4530 mV`
+- **`battery_config.xml`**: `Li-poly` · 容量 `11000 mAh` · 满电/充电电压 `4540 / 4600 mV`
 - **`thermal_config.xml`**: 皮肤基温 `30.512 ℃` · 温区传感器 `7` 项 · Cooling=`devfreq-5000000.qcom,kgsl-3d0`
 - **`gnss_config.xml`**: systemInfo=`QCOM_GNSS_default` · yearOfHw=`2025` · L5=`false`
 - **`vibrator_config.xml` & `light_config.xml`**: 马达 `Z-axis linear` (cap=`0`, effects=`[CLICK DOUBLE_CLICK TICK HEAVY_CLICK TEXTURE_TICK]`) · 逻辑灯 `8` 项
@@ -185,13 +172,15 @@
 
 ## 三、官方固件包解包实测对账（`build.prop` + `boot.img` + `VINTF` + `DTB` + `fstab` + `vendor/etc`）
 
-- `marketName`: `` | `modelCode`: `` | `manufacturer`: `QUALCOMM`
-- `board`: `chora` | `soc`: `QTI  ()`
-- `densityDpi`: `0` | `egl`: `adreno` | `vulkan`: `adreno` | `abilist`: `arm64-v8a`
+- `marketName`: `` | `modelCode`: `BSN-NX1` | `manufacturer`: `QUALCOMM`
+- `board`: `chora` | `soc`: `QTI SM6850 (SM6850)`
+- `densityDpi`: `560` | `egl`: `adreno` | `vulkan`: `adreno` | `abilist`: `arm64-v8a`
 - `securityPatch`: `2026-07-01` | `buildDate`: `20260804` | `kernelLine`: `6.12` | `vintfVersion`: `-`
+- `partitionAndroidVersions`: `system=16, system_ext=16, product=16, vendor=16, vendor_dlkm=16`
 - `uname`: `Linux localhost 6.12.58-android16-6-g50d6c2424b3a-ab15726793-4k #1 SMP PREEMPT Thu Jun 25 17:10:04 UTC 2026 aarch64 Toybox`
+- `basebandVersion`: `MPSS.DE.3.1.7-00544.2-SKYROS_GEN_PACK-2.155179.122`（来源: `zip:Software/dload/update_sd_base.zip!image/NON-HLOS.bin`）
 - `fingerprint`: `qti/chora/chora:16/BQ2A.250913.001-BP2A.250605.031.A3/eng.root:user/release-keys`
-- `vendor_boot.cmdline` (4 项): `androidboot.product.hardware.sku=chora`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
+- `vendor_boot.cmdline` (6 项): `vendorcountry=def/meafnaf`, `devmodel=BSN-N31`, `androidboot.product.hardware.sku=BSN-N31`, `androidboot.secureboot=1`, `androidboot.slot=a`, `androidboot.veritymode.managed=yes`
 - `vda.partitions` (1 个附加分区): `vendor_persist.img->/mnt/vendor/persist`
 - `vintfPlaceholders`: radio=`13` 项 · audio=`1` 项 · gnss=`2` 项 · nn=`94` 项
 
@@ -204,7 +193,7 @@
 - **Audio 策略与音效配置**: 模块=`[primary a2dp usb]` · 采样率=`[48000]` · 听筒=`true` · 有线耳机路由=`false` · 双麦=`true` · 音效描述符=`0` 项（源: `-`）
 - **Media Codec2 硬编解码配置**: Store实例=`[vendor.qti.media.c2@1.0-service->default]` · 厂商/杜比组件=`14` 项 (`c2.qti.avc.decoder`, `c2.qti.avc.decoder.low_latency`, `c2.qti.avc.decoder.secure`, `c2.qti.hevc.decoder`, `c2.qti.hevc.decoder.low_latency`, `c2.qti.hevc.decoder.secure`, `c2.qti.vp9.decoder`, `c2.qti.vp9.decoder.low_latency`, `c2.qti.vp9.decoder.secure`, `c2.qti.avc.encoder`, `c2.qti.hevc.encoder`, `c2.qti.hevc.encoder.hdr`, `c2.qti.hevc.encoder.cq`, `c2.qti.heic.encoder`)
 - **GNSS 定位配置**: 源文件=`vendor/etc/gps.conf` · 版本=`-` · 模式=`-` · L1Only=`false` · L5配置=`false`
-- **ODM SKU / NFC / Wi-Fi / 影像场景**: NFC芯片=`STMicroelectronics ST21NFC` · RSC区域=`[]` · 相机Tuning角色=`[]`
+- **ODM SKU / NFC / Wi-Fi / 影像场景**: NFC芯片=`NXP SN220U` · RSC区域=`[]` · 相机Tuning角色=`[]`
 - **已扫描解析的 `vendor/etc` & `odm/etc` 配置文件**: 共 `281` 个
 
 ## 四、DSH 聊天界面回复原文

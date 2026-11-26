@@ -1,0 +1,19 @@
+;; camera@honor 变体条件 SELinux 规则：
+;; 允许 hal_camera_default 注册 vendor.honor.hardware.camera.camResource.IHwCameraResourceService/default，
+;; 并放行 hwservicehost / platform_app / priv_app 查找并调用该 AIDL 服务，避免 HwServiceHost 回落 HIDL 崩溃拖死荣耀相机。
+;; @when-any-declared hal_camResource_aidl hal_camResource_aidl_client
+;; @ensure-type hal_camResource_aidl_service
+;; @when-not-declared hal_camResource_aidl_service_{{vers}}
+(typeattributeset service_manager_type (hal_camResource_aidl_service))
+(typeattributeset hal_service_type (hal_camResource_aidl_service))
+(typeattributeset vendor_service (hal_camResource_aidl_service))
+;; @end
+(typeattributeset hal_camResource_aidl (hal_camera_default))
+(typeattributeset hal_camResource_aidl_server (hal_camera_default))
+(allow hal_camera_default {{pick:hal_camResource_aidl_service}} (service_manager (add find)))
+(allow hal_camResource_aidl_client {{pick:hal_camResource_aidl_service}} (service_manager (find)))
+(allow hal_camResource_aidl_client hal_camera_default (binder (call transfer)))
+(allow hal_camera_default hal_camResource_aidl_client (binder (call transfer)))
+(allow hal_camResource_aidl_client hal_camera_default (fd (use)))
+(allow hal_camera_default hal_camResource_aidl_client (fd (use)))
+;; @end

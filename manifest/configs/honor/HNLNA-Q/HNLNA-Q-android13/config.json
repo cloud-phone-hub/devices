@@ -1,0 +1,15 @@
+{
+  "id": 81,
+  "deviceId": 47,
+  "name": "HNLNA-Q-android13",
+  "androidVersion": "13",
+  "systemAndroidVersions": [
+    "16"
+  ],
+  "vendorAndroidVersion": "13",
+  "lineageVersion": "lineage-20.0",
+  "extra": {
+    "versionRelation": "system=A16 (云机 buildId 前缀) + vendor=A13 -\u003e lineage-20.0（GRF 跨代：按 vendor 版本选定 Lineage 底包）"
+  },
+  "updatedAt": "2026-11-06T05:37:49Z"
+}

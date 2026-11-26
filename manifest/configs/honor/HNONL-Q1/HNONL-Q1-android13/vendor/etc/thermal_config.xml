@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thermal-config skin-name="SKIN" skin-celsius="29.531" model-maximum-celsius="50"
+                model-heating-seconds="20" model-cooling-seconds="45" model-sample-interval-ms="1000">
+    <sensor id="0" name="CPU" value="30.512"
+            thresholds="nan;nan;nan;85;90;95;100"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="1" name="GPU" value="30.112"
+            thresholds="nan;nan;nan;85;90;95;100"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="2" name="BATTERY" value="27.5"
+            thresholds="nan;nan;nan;50;55;59;60"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="3" name="SKIN" value="29.531"
+            thresholds="nan;43;45;50;70;80;90"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="5" name="POWER_AMPLIFIER" value="28.9"
+            thresholds="nan;nan;nan;68;90;100;110"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <sensor id="13" name="SOC" value="30.512"
+            thresholds="nan;nan;nan;85;90;95;100"
+            shutdown="nan;nan;nan;nan;nan;nan;nan"/>
+    <cooling id="3" name="devfreq-5000000.qcom,kgsl-3d0" value="0"/>
+</thermal-config>

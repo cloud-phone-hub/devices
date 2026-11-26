@@ -3,7 +3,6 @@ vendor.honor.hardware.activity_recognition.IActivityRecognition/default
 vendor.honor.hardware.airenderlaunch.IAiRenderLaunch/default
 vendor.honor.hardware.audioremote.IAudioRemoteConnect/default
 vendor.honor.hardware.audioremote.IAudioRemoteConnect/virtualmodem
-vendor.honor.hardware.biometrics.fingerprint.IFingerprint/default
 vendor.honor.hardware.biometrics.hwfacerecognize.IBiometricsFaceRecognize/default
 vendor.honor.hardware.bluetoothex.IHonorBluetoothInterface/default
 vendor.honor.hardware.camera.cfgsvr.IHwCamCfgSvr/default
@@ -23,7 +22,6 @@ vendor.honor.hardware.hnsimradio.IHnsimradio/slot2
 vendor.honor.hardware.honorantitheft.IHonorAntiTheft/default
 vendor.honor.hardware.honorsigntool.ISignTool/default
 vendor.honor.hardware.hwdisplay.IDisplay/default
-vendor.honor.hardware.hwfactoryinterface.IHwFactoryInterface/hwfactoryinterface_hal
 vendor.honor.hardware.hwfs.IHwfs/default
 vendor.honor.hardware.hwhiview.IHwHiviewInterface/default
 vendor.honor.hardware.hwsched.ISchedAidlInterface/default
@@ -37,6 +35,8 @@ vendor.honor.hardware.libteec.ILibteecGlobal/default
 vendor.honor.hardware.light.ILight/default
 vendor.honor.hardware.mdlogservice.IMdLogService/default
 vendor.honor.hardware.motion.IMotion/default
+vendor.honor.hardware.nfc.IHnNfc/default
+vendor.honor.hardware.nxpnfc.INxpNfc/default
 vendor.honor.hardware.power.IHWPower/default
 vendor.honor.hardware.radio_radar.IRadioRadar/slot1
 vendor.honor.hardware.radio_radar.IRadioRadar/slot2

@@ -1,0 +1,87 @@
+=== BEFORE FIX: Honor 400 Lite #1 (127.0.0.1:5919) ===
+BSN-NX1
+SM6375-AC
+
+null
+ls: /proc/vip: No such file or directory
+ls: /proc/fas: No such file or directory
+crw------- 1 root root 81,   0 1970-01-01 08:00 /dev/video0
+crw------- 1 root root 81,   1 1970-01-01 08:00 /dev/video1
+
+/sys/class/power_supply:
+total 0
+drwxr-xr-x  2 root root 0 1970-01-01 08:00 .
+drwxr-xr-x 82 root root 0 1970-01-01 08:00 ..
+Current Battery Service state:
+  AC powered: true
+  USB powered: false
+  Wireless powered: false
+  Dock powered: false
+  Max charging current: 0
+ Time when the latest updated value of the Max charging current was sent via battery changed broadcast: +26s807ms
+  Max charging voltage: 0
+  Charge counter: 5169
+  status: 5
+  health: 2
+  present: true
+  level: 100
+  scale: 100
+  voltage: 4469
+ Time when the latest updated value of the voltage was sent via battery changed broadcast: +57m49s228ms
+ The last voltage value sent via the battery changed broadcast: 4471
+  temperature: 340
+  technology: Li-poly
+  Charging state: 0
+ccmni2           DOWN           
+wlan0            UP             192.168.20.100/24 fe80::48d1:d3ff:fee9:b5a0/64 
+ccmni0           DOWN           
+ccmni1           DOWN           
+ccmni3           DOWN           
+ccmni4           DOWN           
+ccmni5           DOWN           
+ccmni6           DOWN           
+ccmni7           DOWN           
+ccmni8           DOWN           
+ccmni9           DOWN           
+ccmni10          DOWN           
+ccmni11          DOWN           
+ccmni12          DOWN           
+ccmni13          DOWN           
+ccmni14          DOWN           
+ccmni15          DOWN           
+ccmni16          DOWN           
+ccmni17          DOWN           
+ccmni18          DOWN           
+ccmni19          DOWN           
+ccmni20          DOWN           
+No result found.
+Tasks: 371 total,   4 running, 367 sleeping,   0 stopped,   0 zombie
+  Mem:  7760724K total,  7545388K used,   215336K free,    13320K buffers
+ Swap:  6291452K total,  6291452K used,        0K free,  4208252K cached
+800%cpu  33%user   3%nice  57%sys 643%idle   0%iow  63%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  793 system       18  -2  25G 494M 295M S 46.6   6.5  39:40.64 system_server
+ 3535 system       20   0  18G 176M 113M S 10.0   2.3   0:24.70 com.hihonor.hiview
+  257 system       20   0  12G 6.7M 5.0M R 10.0   0.0   5:02.52 servicemanager
+  593 system       20   0  12G  11M 8.3M S  6.6   0.1   4:19.40 android.hardware.camera-service
+  252 logd         30  10  12G  10M 5.4M S  6.6   0.1   4:18.39 logd
+ 7528 u0_a135      10 -10  20G 369M 213M R  3.3   4.8   0:24.63 com.hihonor.android.launcher
+ 3553 radio        20   0  19G 219M 142M S  3.3   2.8   0:19.67 com.android.phone
+25010 shell        20   0  12G 5.3M 4.6M S  0.0   0.0   0:00.00 head -n 15
+25009 shell        20   0  12G 5.6M 4.6M R  0.0   0.0   0:00.05 top -b -n 1
+25007 root         20   0  12G 5.3M 4.6M S  0.0   0.0   0:00.00 sleep 2
+11-26 14:10:55.923   793  3154 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSensorAdapter.$r8$lambda$_toid13zVMkSRwqCP8-3Hj046VU(HidlToAidlSensorAdapter.java:0)
+11-26 14:10:55.923   793  3154 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.HidlToAidlSensorAdapter$$ExternalSyntheticLambda3.get(R8$$SyntheticClass:0)
+11-26 14:10:55.923   793  3154 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.HalClientMonitor.getFreshDaemon(HalClientMonitor.java:71)
+11-26 14:10:55.923   793  3154 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.FingerprintUpdateActiveUserClient.startHalOperation(FingerprintUpdateActiveUserClient.java:156)
+11-26 14:10:55.923   793  3154 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.fingerprint.hidl.FingerprintUpdateActiveUserClient.start(FingerprintUpdateActiveUserClient.java:119)
+11-26 14:10:55.923   793  3154 W HidlToAidlSensorAdapter: 	at com.hihonor.server.fingerprint.FingerprintServiceEx$BiometricSchedulerEx.checkCurrentUserAndStartNextOperation(FingerprintServiceEx.java:865)
+11-26 14:10:55.923   793  3154 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.BiometricScheduler$UserSwitchClientCallback.lambda$onClientFinished$0(BiometricScheduler.java:191)
+11-26 14:10:55.923   793  3154 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.BiometricScheduler$UserSwitchClientCallback.$r8$lambda$9uToF41kHgR_T4eWN0T0wXyfa5w(BiometricScheduler.java:0)
+11-26 14:10:55.923   793  3154 W HidlToAidlSensorAdapter: 	at com.android.server.biometrics.sensors.BiometricScheduler$UserSwitchClientCallback$$ExternalSyntheticLambda0.run(R8$$SyntheticClass:0)
+11-26 14:10:55.923   793  3154 W HidlToAidlSensorAdapter: 	at android.os.Handler.handleCallback(Handler.java:1039)
+11-26 14:10:55.923   793  3154 W HidlToAidlSensorAdapter: 	at android.os.Handler.dispatchMessage(Handler.java:117)
+11-26 14:10:55.923   793  3154 W HidlToAidlSensorAdapter: 	at android.os.Looper.loopOnce(Looper.java:263)
+11-26 14:10:55.923   793  3154 W HidlToAidlSensorAdapter: 	at android.os.Looper.loop(Looper.java:360)
+11-26 14:10:55.923   793  3154 W HidlToAidlSensorAdapter: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+11-26 14:10:55.923   793  3154 W HidlToAidlSensorAdapter: Fingerprint HAL not available
