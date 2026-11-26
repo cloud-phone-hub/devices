@@ -34,8 +34,8 @@
           "KEY_DOWN"
         ],
         "name": "uinput-fpc",
-        "product": 2184,
-        "vendor": 1638,
+        "product": 0,
+        "vendor": 0,
         "version": 0
       },
       {
@@ -52,11 +52,9 @@
         "bus": 25,
         "keys": [
           "KEY_PLAYPAUSE",
-          "BTN_1",
-          "BTN_2",
           "KEY_VOICECOMMAND"
         ],
-        "name": "ums9620-snd-card Headset Jack",
+        "name": "sprdphone Headset Jack",
         "phys": "ALSA",
         "switches": [
           "SW_HEADPHONE_INSERT",
@@ -71,13 +69,13 @@
           "KEY_VOLUMEUP",
           "KEY_POWER"
         ],
-        "name": "pmic_resin",
+        "name": "sprd-pmic-keys",
         "product": 1,
         "vendor": 1,
         "version": 1
       }
     ],
-    "goodix_fp": true,
+    "goodix_fp": false,
     "touch_major": true
   },
   "redirect": [
@@ -85,6 +83,11 @@
       "from": "/vendor/etc",
       "to": "/mnt/vendorpatch/vendor/etc",
       "type": "dir"
+    },
+    {
+      "from": "/system/bin/mediaserver",
+      "to": "/mnt/vendorpatch/vendor/bin/hw/cdh-mediaserver",
+      "type": "file"
     },
     {
       "from": "/vendor/bin",
@@ -142,11 +145,6 @@
       "type": "file"
     },
     {
-      "from": "/system/bin/mediaserver",
-      "to": "/mnt/vendorpatch/system/bin/mediaserver",
-      "type": "file"
-    },
-    {
       "from": "/system_ext/bin/remotedisplay",
       "to": "/mnt/vendorpatch/system_ext/bin/remotedisplay",
       "type": "file"
@@ -181,9 +179,9 @@
     "keyboard": {
       "bus": 25,
       "name": "gpio-keys",
-      "product": 0,
-      "vendor": 0,
-      "version": 0
+      "product": 1,
+      "vendor": 1,
+      "version": 1
     },
     "tablet": false,
     "touch": {
@@ -191,8 +189,8 @@
       "abs-x-max": 17280,
       "abs-xy": true,
       "abs-y-max": 38400,
-      "bus": 2,
-      "mt-pressure": false,
+      "bus": 24,
+      "mt-pressure": true,
       "mt-slots": 10,
       "name": "focaltech_ats",
       "product": 1,
@@ -362,6 +360,120 @@
         "jitter-mc": 140,
         "type": "chg-thmzone"
       }
+    ]
+  },
+  "cpufreq": {
+    "available-governors": [
+      "sprd_sugov",
+      "ondemand",
+      "performance",
+      "powersave",
+      "userspace"
+    ],
+    "bogo-mips": "26.00",
+    "driver": "sprd-cpufreq",
+    "governor": "sprd_sugov",
+    "package-per-cluster": false,
+    "policies": [
+      {
+        "available-frequencies": [
+          2002000,
+          1846000,
+          1703000,
+          1560000,
+          1404000,
+          1228800,
+          1105000,
+          936000,
+          768000,
+          614400
+        ],
+        "capacity": 417,
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "cur-freq": 936000,
+        "implementer": "0x41",
+        "max-freq": 2002000,
+        "midr": "0x00000000412fd050",
+        "min-freq": 614400,
+        "part": "0xd05",
+        "policy": 0,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 2
+      },
+      {
+        "available-frequencies": [
+          2210000,
+          2041000,
+          1872000,
+          1703000,
+          1536000,
+          1378000,
+          1228800,
+          1105000,
+          936000,
+          768000,
+          614400
+        ],
+        "capacity": 1022,
+        "cpus": [
+          4,
+          5,
+          6
+        ],
+        "cur-freq": 1228800,
+        "implementer": "0x41",
+        "max-freq": 2210000,
+        "midr": "0x00000000412fd0b0",
+        "min-freq": 614400,
+        "part": "0xd0b",
+        "policy": 4,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 2
+      },
+      {
+        "available-frequencies": [
+          2548000,
+          2457000,
+          2366000,
+          2262000,
+          2132000,
+          2002000,
+          1820000,
+          1536000,
+          1228800,
+          768000,
+          614400
+        ],
+        "capacity": 1024,
+        "cpus": [
+          7
+        ],
+        "cur-freq": 1536000,
+        "implementer": "0x41",
+        "max-freq": 2548000,
+        "midr": "0x00000000412fd0b0",
+        "min-freq": 614400,
+        "part": "0xd0b",
+        "policy": 7,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 2
+      }
+    ],
+    "scaling-readable": true,
+    "transition-latency": 1000
+  },
+  "display": {
+    "refresh-rates": [
+      60,
+      120
     ]
   }
 }

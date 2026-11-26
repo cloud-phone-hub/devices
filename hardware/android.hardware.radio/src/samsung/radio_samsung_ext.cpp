@@ -23,6 +23,7 @@
 #include <android/binder_parcel.h>
 #include <android/binder_status.h>
 #include <android/log.h>
+#include <sys/system_properties.h>
 
 #include <atomic>
 #include <cstdint>
@@ -355,6 +356,27 @@ void WriteSehCardStatus(AParcel *p, const std::optional<Snapshot> &snapshot,
   card.Finish();
 }
 
+// 同步三星 OneUI SecSettings 判定 SIM 在位与“移动网络”菜单可见性所需的系统属性：
+//   - ril.ICC_TYPE0 / ril.ICC_TYPE1："2"=USIM，"0"=无卡（SecSimFeatureProviderImpl.getEnabledSimCnt）
+//   - gsm.sim.currentcardstatus：槽位状态逗号串，"3"=就绪，"9"=空/未知（SecMobileNetworkPreferenceController）
+void SyncSamsungSimProperties(int32_t slot, bool ready) {
+  if (slot < 0 || slot >= 2) {
+    return;
+  }
+  static std::mutex prop_mu;
+  static bool slot_ready[2] = {false, false};
+  std::lock_guard<std::mutex> lock(prop_mu);
+  slot_ready[slot] = ready;
+
+  const char *icc_prop = (slot == 0) ? "ril.ICC_TYPE0" : "ril.ICC_TYPE1";
+  __system_property_set(icc_prop, ready ? "2" : "0");
+
+  char card_status[8];
+  std::snprintf(card_status, sizeof(card_status), "%c,%c",
+                slot_ready[0] ? '3' : '9', slot_ready[1] ? '3' : '9');
+  __system_property_set("gsm.sim.currentcardstatus", card_status);
+}
+
 struct SehSimService : private RadioServiceState {
   CallbackPair cbs;
   std::atomic_bool card_power_up{true};
@@ -365,14 +387,21 @@ struct SehSimService : private RadioServiceState {
         observer(state_store, [this](const Snapshot &) { NotifyReady(); }) {
     cbs.resp_class = GetOrDefineRemoteCallbackClass(kSehSimRespDesc);
     cbs.ind_class = GetOrDefineRemoteCallbackClass(kSehSimIndDesc);
+    SyncPropsFromSnapshot(SnapshotState());
   }
 
   std::optional<Snapshot> CurrentSlotSnapshot() const { return SnapshotState(); }
   int32_t SlotId() const { return slot(); }
 
+  bool SyncPropsFromSnapshot(const std::optional<Snapshot> &snap) const {
+    const bool ready =
+        snap.has_value() && snap->sim.present && card_power_up.load();
+    SyncSamsungSimProperties(slot(), ready);
+    return ready;
+  }
+
   void NotifyReady() {
-    const auto snap = SnapshotState();
-    if (!snap.has_value() || !snap->sim.present || !card_power_up.load()) {
+    if (!SyncPropsFromSnapshot(SnapshotState())) {
       return;
     }
     // Ind TX 1: simPhonebookReadyIndication(int type)
@@ -413,6 +442,7 @@ binder_status_t OnSehSimTransact(AIBinder *binder, transaction_code_t code,
   switch (code) {
     case 1: {  // getIccCardStatus(int serial) -> Resp TX 1
       const auto snap = svc->CurrentSlotSnapshot();
+      svc->SyncPropsFromSnapshot(snap);
       const int32_t err =
           snap.has_value() ? kErrorNone : kErrorRadioNotAvailable;
       SendOnewayCallback(svc->cbs.AcquireResp(), 1, [&](AParcel *p) {
@@ -436,6 +466,7 @@ binder_status_t OnSehSimTransact(AIBinder *binder, transaction_code_t code,
       int32_t mode = 1;
       if (AParcel_readInt32(in, &mode) == STATUS_OK) {
         svc->card_power_up.store(mode != 0);
+        svc->SyncPropsFromSnapshot(svc->CurrentSlotSnapshot());
       }
       ReplyWithTail(&svc->cbs, 5, serial, kErrorNone, TailKind::kNone);
       return ReturnOkIfSync(out);

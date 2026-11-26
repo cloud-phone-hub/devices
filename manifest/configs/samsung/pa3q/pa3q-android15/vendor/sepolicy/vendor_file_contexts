@@ -17,3 +17,7 @@
 /data/overlays(/.*)?                   u:object_r:themecenter_data_file:s0
 /data/overlays/jsonfiles(/.*)?         u:object_r:themecenter_sensitive_data_file:s0
 /data/overlays/preferences(/.*)?       u:object_r:themecenter_sensitive_data_file:s0
+
+# 三星 PDP（Preloaded-Data Preservation）目录标签（取自官方 vendor_file_contexts）
+/data/pdp_bkup(/.*)?                   u:object_r:pdp_data_file:s0
+/cache/pdp_bkup(/.*)?                  u:object_r:cache_pdp_file:s0

@@ -15,3 +15,7 @@ firmware_directories /vendor/firmware_mnt
 
 # FRP 承载块设备（misc 分区软链为 /dev/block/bootdevice/by-name/frp，供 PersistentDataBlockService 以 system 读写）
 /dev/block/vda3	0660	root	system
+
+# V4L2 Codec2 (virtio-media)
+/dev/video*	0660	media	camera
+/dev/media*	0660	media	camera

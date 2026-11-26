@@ -345,6 +345,16 @@
       "from": "/system/bin/ss_conn_daemon2",
       "to": "/mnt/vendorpatch/system/bin/ss_conn_daemon2",
       "type": "file"
+    },
+    {
+      "from": "/system/carrier/preload",
+      "to": "/oem/preload",
+      "type": "dir"
+    },
+    {
+      "from": "/prism/etc/carriers/CHC/sysconfig/chn_preload_package_list.xml",
+      "to": "/mnt/vendorpatch/vendor/etc/chn_preload_package_list.xml",
+      "type": "file"
     }
   ],
   "thermal": {

@@ -1,0 +1,222 @@
+=== [POST-FIX] SELinux & Partition Mounts ===
+Enforcing
+/dev/block/vdc on /mnt/vendorpatch type ext4 (ro,seclabel,relatime)
+/dev/block/vda13 on /prism type ext4 (ro,seclabel,relatime)
+/dev/block/vda14 on /optics type ext4 (ro,seclabel,relatime)
+/dev/block/vda15 on /omr type ext4 (rw,seclabel,nosuid,nodev,noatime,noauto_da_alloc)
+/dev/block/vda16 on /oem type ext4 (ro,seclabel,relatime)
+
+=== [POST-FIX] SIM & CSC Properties ===
+gsm.sim.state=[LOADED,ABSENT]
+gsm.operator.alpha=[中国联通,]
+ril.ICC_TYPE0=[2]
+ril.ICC_TYPE1=[0]
+gsm.sim.currentcardstatus=[3,9]
+persist.radio.multisim.config=[dsds]
+ro.csc.sales_code=[CHC]
+ro.csc.country_code=[China]
+mdc.sys.omc_etcpath=[/prism/etc/carriers/CHC]
+persist.sys.omc_etcpath=[/prism/etc/carriers/CHC]
+persist.sys.omc_path=[/optics/configs/carriers/CHC/conf]
+persist.sys.omc_respath=[/omr/res]
+persist.sys.omc_root=[/prism/etc/carriers]
+persist.sys.omc_support=[true]
+persist.sys.locale=[zh-CN]
+
+=== [POST-FIX] scs & HoneySpace.DataParser China Workspace Layout Logs ===
+[   65.696182] [    T1] init: processing action (ro.persistent_properties.ready=true) from (/system/etc/init/scs.rc:14)
+[   65.699082] [    T1] init: starting service 'scs'...
+[   65.728124] [    T1] init: Service 'scs' (pid 984) exited with status 0 waiting took 0.026000 seconds
+11-26 11:27:52.212   984   984 D scs     : [setDmRwProperties] persist : true
+11-26 11:27:52.212   984   984 D scs     : [makeFirstBootCompletedFlag] firstBootCheck file is created : S9380CHCDCZH1
+11-26 11:27:52.212   984   984 D scs     : [setCustomerLocale] last persist.sys.locale : zh-CN
+11-26 11:27:52.225   984   984 D scs     : [setDmRwProperties] persist properties set : True
+11-26 11:27:52.230   984   984 D scs     : [startScsState] stopped : done
+11-26 11:28:16.400   721  2370 I SemCscParser: csc region: CHN
+11-26 11:28:29.055  3145  4776 I HoneySpace.DataParser: fillDefaultData - mode:HOME_ONLY, frontMode:NONE, postPositionOnly: false
+11-26 11:28:29.443  3145  4776 I HoneySpace.DataParser: getFilePath - omcPath : /prism/etc/carriers/CHC/default_workspace_homeonly.xml
+11-26 11:28:29.443  3145  4776 I HoneySpace.DataParser: getFilePath - omcPath : /prism/etc/carriers/CHC/default_application_order.xml
+11-26 11:28:29.445  3145  4776 I HoneySpace.DataParser: setHomeGridInfo cols : 4 rows : 6, MAIN
+11-26 11:28:29.447  3145  4776 I HoneySpace.DataParser: parseAppWidget : com.sec.android.daemonapp/.appwidget.WeatherForecastWidget, 0, 2, 2, 2
+11-26 11:28:29.509  3145  4776 I HoneySpace.DataParser: parseAppWidget : com.sec.android.app.shealth/com.samsung.android.app.shealth.tracker.dailyactivity.widget.DaWidgetReceiver, 2, 3, 2, 1
+11-26 11:28:29.546  3145  4776 I HoneySpace.DataParser: parseAppWidget : com.samsung.android.app.searchwidget/.ui.SearchWidget, 0, 4, 4, 1
+11-26 11:28:29.589  3145  4776 I HoneySpace.DataParser: parseWorkspaceFavorite : com.sec.android.app.samsungapps/.SamsungAppsMainActivity, 0, 5
+11-26 11:28:29.590  3145  4776 I HoneySpace.DataParser: parseWorkspaceFavorite : com.sec.android.gallery3d/com.samsung.android.gallery.app.activity.GalleryActivity, 1, 5
+11-26 11:28:29.590  3145  4776 I HoneySpace.DataParser: parseWorkspaceFavorite : com.samsung.android.themestore/.activity.Launcher, 2, 5
+11-26 11:28:29.590  3145  4776 I HoneySpace.DataParser: parseWorkspaceFavorite : com.samsung.android.app.sreminder/.SReminderActivity, 3, 5
+CscParser_ENOENT_count=0
+scs_avc_count=0
+crash_count=0
+
+=== [POST-FIX] Samsung PDP First-Boot Preload Execution (qemu.log) ===
+[   44.109857][    T1] init: [PDP] init_user0 trigger postfsdata_done
+[   64.198207][    T1] init: [PDP]  -- Start B&R Function [prepare_fbe] mode ------------------------------
+[   64.199842][    T1] init: [PDP]!CheckDir  :   /d /p /setupwiz_fin  is not Exist [ X ]
+[   64.201393][    T1] init: [PDP] onFirstBoot(), this is the first booting  Or  SUW is not finished yet
+[   64.202921][    T1] init: [PDP] PrepareToSaveDmesg(), /c Log= 0, /e log= 0
+[   64.204199][    T1] init: [PDP]  /d /p folder is not exist, so create it
+[   64.207874][    T1] init: [PDP] mkdir done:   /data/pdp_bkup/, 740, system
+[   64.209158][    T1] init: [PDP]!CheckFILE :   /d /p /apps_apks.zip  is Not Exist [ X ]
+[   64.210413][    T1] init: [PDP]   - End of B&R PDP --
+[   64.211661][    T1] init: [PDP]  -- Start B&R Function [restore] mode ------------------------------
+[   64.214078][    T1] init: [PDP]!CheckFILE :   /c /p /pdp_bkup.tar.zip  is Not Exist [ X ]
+[   64.216532][    T1] init: [PDP]!Restore : No bkup file (/c /p /pdp_____.t__.z__)
+[   64.218599][    T1] init: [PDP]   - End of B&R PDP --
+[   64.219762][    T1] init: [PDP]  -- Start Sub Function [papps_cp] mode ------------------------------
+[   64.221901][    T1] init: [PDP]!CheckDir  :   /d /p /setupwiz_fin  is not Exist [ X ]
+[   64.227215][    T1] init: [PDP]!CheckDir  :   /d /p /fin_papps_cp  is not Exist [ X ]
+[   64.229375][    T1] init: [PDP]!CheckDir  :   /d /p /papps_cp_done  is not Exist [ X ]
+[   64.230630][    T1] init: [PDP] CheckDir  :   /s /preload  is available [ O ]
+[   64.231789][    T1] init: [PDP] Start preload-apps copy
+[   64.233824][    T1] init: [PDP] apks size before preload-app copy : 0
+[   64.236299][    T1] init: [PDP] execute a sh process with a script= /system/etc/pdp_papps_copy.sh
+[   64.237848][    T1] init: starting service 'exec 16 (/system/bin/sh /system/etc/pdp_papps_copy.sh)'...
+[   64.258506][    T1] init: ... started service 'exec 16 (/system/bin/sh /system/etc/pdp_papps_copy.sh)' has pid 957
+[   64.259953][    T1] init: SVC_EXEC service 'exec 16 (/system/bin/sh /system/etc/pdp_papps_copy.sh)' pid 957 (uid 1000 gid 1000+0 context default) started; waiting...
+[   64.261335][  T957] [PDP] [pdp_pap__c_p_.sh] there is a /sys /pre folder
+[   64.262886][  T957] [PDP] [pdp_pap__c_p_.sh]  size info for each files under /sys /pre :
+[   64.265057][    T1] init: [PDP] execute: success 
+[   64.293337][  T957] [PDP] [pdp_pap__c_p_.sh]  copy files and folders existing in the /s /p to the /d /a
+[   64.798905][  T957] [PDP] [pdp_pap__c_p_.sh]  decompress each *.gz files that exist in the /d /a /APP using gzip
+[   64.800641][  T957] [PDP] [pdp_pap__c_p_.sh]  ------------------------------------------------------------------
+[   64.811578][  T957] [PDP] [pdp_pap__c_p_.sh]  decompress *.gz files at /data/app/CustomizedSogouIME
+[   64.974922][  T957] [PDP] [pdp_pap__c_p_.sh]  decompress *.gz files at /data/app/GoogleCalendarSyncAdapter
+[   65.001714][  T957] [PDP] [pdp_pap__c_p_.sh]  decompress *.gz files at /data/app/PhotoEditor_AIFull
+[   65.274645][    T1] init: [PDP] waiting for fsh_papps_cp_done, waited time = 1 sec.
+[   65.286663][  T957] [PDP] [pdp_pap__c_p_.sh]  decompress *.gz files at /data/app/SAssistant_downloadable
+[   65.700633][  T957] [PDP] [pdp_pap__c_p_.sh]  decompress *.gz files at /data/app/SamsungMagnifier3
+[   65.722511][  T957] [PDP] [pdp_pap__c_p_.sh]  decompress *.gz files at /data/app/SamsungPayStub
+[   65.752495][  T957] [PDP] [pdp_pap__c_p_.sh]  decompress *.gz files at /data/app/SamsungWeather
+[   65.896007][  T957] [PDP] [pdp_pap__c_p_.sh]  decompress *.gz files at /data/app/SearchWidgetAPP
+[   66.040919][  T957] [PDP] [pdp_pap__c_p_.sh]  decompress *.gz files at /data/app/SmartSwitchAgent
+[   66.066550][  T957] [PDP] [pdp_pap__c_p_.sh]  decompress *.gz files at /data/app/SmartSwitchStub
+[   66.076458][  T957] [PDP] [pdp_pap__c_p_.sh]  decompress *.gz files at /data/app/ThemeStore
+[   66.151791][  T957] [PDP] [pdp_pap__c_p_.sh]  decompress *.gz files at /data/app/VideoEditorLite_Dream_N
+[   66.262815][  T957] [PDP] [pdp_pap__c_p_.sh]  decompress *.gz files at /data/app/VideoTrimmer
+[   66.286179][    T1] init: [PDP] waiting for fsh_papps_cp_done, waited time = 2 sec.
+[   66.295617][  T957] [PDP] [pdp_pap__c_p_.sh]  decompress *.gz files at /data/app/VisionIntelligence3.7
+[   66.376088][  T957] [PDP] [pdp_pap__c_p_.sh] there is a /sys /car /pre folder
+[   66.377358][  T957] [PDP] [pdp_pap__c_p_.sh]  size info for each files under /sys /car /pre :
+[   66.383269][  T957] [PDP] [pdp_pap__c_p_.sh] legacy file copy routine
+[   66.384347][  T957] [PDP] [pdp_pap__c_p_.sh]  copy apks from /sys /car /pre /* to /da /ap
+[   67.290714][    T1] init: [PDP] waiting for fsh_papps_cp_done, waited time = 3 sec.
+[   68.300462][    T1] init: [PDP] waiting for fsh_papps_cp_done, waited time = 4 sec.
+[   68.431703][  T957] [PDP] [pdp_pap__c_p_.sh]  done
+[   69.757022][    T1] init: [PDP] sync() to flush the file cache: finish
+[   69.758709][    T1] init: [PDP] mkdir done:   /data/pdp_bkup/fin_papps_cp, 740, system
+[   69.760112][    T1] init: [PDP] apks size after  preload-app copy : 2286994917
+[   69.761965][    T1] init: [PDP] preload-app apks size : 2286994917
+[   69.763341][    T1] init: [PDP]!CheckFILE :   /c /p /pdp_bkup.log  is Not Exist [ X ]
+[   69.766301][    T1] init: [PDP]   - End of Sub PDP --
+[   69.791507][    T1] init: Service 'exec 16 (/system/bin/sh /system/etc/pdp_papps_copy.sh)' (pid 957) exited with status 0 waiting took 5.551000 seconds
+[   69.792909][    T1] init: Sending SIGKILL to service 'exec 16 (/system/bin/sh /system/etc/pdp_papps_copy.sh)' (pid 957) process group...
+[   69.806699][    T1] init: [PDP]  -- Start B&R Function [chk_apk] mode ------------------------------
+[   69.812142][    T1] init: [PDP] checkApksSize(), no preceding P.FBE or RESTORE operation. just return
+[   69.813338][    T1] init: [PDP]   - End of B&R PDP --
+[   69.814287][    T1] init: [PDP]  -- Start B&R Function [backup] mode ------------------------------
+[   69.841575][    T1] init: [PDP]  VUP Eqp: 0, St: 0
+[   69.843719][    T1] init: [PDP]  VDN Eqp: 4, St: 0
+[   69.845033][    T1] init: [PDP]  PWR Eqp: 0, St: 0
+[   69.845957][    T1] init: [PDP]! Error, Required Keys are not Presented, Power: 0, Vol Down: 4, VolUp: 0
+[   69.847122][    T1] init: [PDP] keys press status code: 24 - error OR unknown key press state
+[   69.848236][    T1] init: [PDP]   - End of B&R PDP --
+[   69.849225][    T1] init: [PDP]  -- Start B&R Function [selinux_label] mode ------------------------------
+[   69.850494][    T1] init: [PDP]!CheckDir  :   /d /p /setupwiz_fin  is not Exist [ X ]
+[   69.851626][    T1] init: [PDP] call restorecon for all the sub oat dirs and files under /d /a
+[   69.862121][    T1] init: [PDP] mkdir done:   /data/pdp_bkup/fin_restorecon, 740, system
+[   69.863765][    T1] init: [PDP]   - End of B&R PDP --
+[   93.537248][    T1] init: [PDP]  -- Start B&R Function [result] mode ------------------------------
+[   93.553480][    T1] init: [PDP] bkup file size ( for IMEI PGM ) : 0
+[   93.567833][    T1] init: [PDP]   - End of B&R PDP --
+[  132.270686][    T1] init: [PDP]  -- Start B&R Function [remove] mode ------------------------------
+[  132.275766][    T1] init: [PDP]!CheckDir  :   /d /p /setupwiz_fin  is not Exist [ X ]
+[  132.281638][    T1] init: [PDP] CheckDir  :   /d /pdp_bkup  is available [ O ]
+[  132.290156][    T1] init: [PDP] mkdir done:   /data/pdp_bkup/setupwiz_fin/, 740, system
+[  132.298339][    T1] init: [PDP]!/e path is not accessible,  not mounted yet ? 
+[  132.303232][    T1] init: [PDP]!CheckDir  :   /d /p /sys_bkup_on  is not Exist [ X ]
+[  132.309263][    T1] init: [PDP]!CheckDir  :   /d /p /man_bkup_on  is not Exist [ X ]
+[  132.312830][    T1] init: [PDP] Remove file : /d /p /pdp_b___.t__.z__
+[  132.316184][    T1] init: [PDP]!/e path is not accessible,  not mounted yet ? 
+[  132.320615][    T1] init: [PDP]!CheckDir  :   /d /p /pdp_at_suw  is not Exist [ X ]
+[  132.329207][    T1] init: [PDP] bkup file size ( for IMEI PGM ) : 0
+[  132.333421][    T1] init: [PDP]!CheckFILE :   /c /p /pdp_bkup.log  is Not Exist [ X ]
+[  132.342026][    T1] init: [PDP]   - End of B&R PDP --
+[  132.371693][    T1] init: [PDP]  -- Start B&R Function [suw_finish] mode ------------------------------
+[  132.378883][    T1] init: [PDP] CheckDir  :   /d /p /setupwiz_fin  is available [ O ]
+[  132.385468][    T1] init: [PDP]   - End of B&R PDP --
+
+=== [POST-FIX] Installed Preload Apps in /data/app (pm list packages -f) ===
+package:/data/app/AvatarEmojiSticker/AvatarEmojiSticker.apk=com.sec.android.mimage.avatarstickers
+package:/data/app/BGMProvider/BGMProvider.apk=com.sec.android.app.ve.vebgm
+package:/data/app/BaiduNetdiskStub/BaiduNetdiskStub.apk=com.baidu.netdisk.samsung
+package:/data/app/ClockPackage/ClockPackage.apk=com.sec.android.app.clockpackage
+package:/data/app/CustomizedSogouIME/CustomizedSogouIME.apk=com.sohu.inputmethod.sogou.samsung
+package:/data/app/GameHome_CHN/GameHome_CHN.apk=com.samsung.android.game.gamehome
+package:/data/app/GearManager/GearManager.apk=com.samsung.android.app.watchmanager
+package:/data/app/GoogleCalendarSyncAdapter/GoogleCalendarSyncAdapter.apk=com.google.android.syncadapters.calendar
+package:/data/app/KidsHome/KidsHome.apk=com.sec.android.app.kidshome
+package:/data/app/MSOutlook_Samsung/MSOutlook_Samsung.apk=com.microsoft.office.outlook
+package:/data/app/Notes40_Removable/Notes40_Removable.apk=com.samsung.android.app.notes
+package:/data/app/OfficeMobile_SamsungStubChina/OfficeMobile_SamsungStubChina.apk=com.microsoft.office.officehub
+package:/data/app/PhotoEditor_AIFull/PhotoEditor_AIFull.apk=com.sec.android.mimage.photoretouching
+package:/data/app/SAssistant_downloadable/SAssistant_downloadable.apk=com.samsung.android.app.sreminder
+package:/data/app/SHealth6PAR/SHealth6PAR.apk=com.sec.android.app.shealth
+package:/data/app/SMarket/SMarket.apk=com.jv.samsungeshop
+package:/data/app/SReading/SReading.apk=com.mci.smagazine
+package:/data/app/SWSportPlugin/SWSportPlugin.apk=com.samsung.android.swsportplugin
+package:/data/app/SamsungCalendar/SamsungCalendar.apk=com.samsung.android.calendar
+package:/data/app/SamsungDataStore/SamsungDataStore.apk=com.samsung.android.globalroaming
+package:/data/app/SamsungFind/SamsungFind.apk=com.samsung.android.app.find
+package:/data/app/SamsungFlowV3_Removable/SamsungFlowV3_Removable.apk=com.samsung.android.galaxycontinuity
+package:/data/app/SamsungMagnifier3/SamsungMagnifier3.apk=com.sec.android.app.magnifier
+package:/data/app/SamsungMembers_CHN_P_Removable/SamsungMembers_CHN_P_Removable.apk=com.samsung.android.voc
+package:/data/app/SamsungPayStub/SamsungPayStub.apk=com.samsung.android.spay
+package:/data/app/SamsungWeather/SamsungWeather.apk=com.sec.android.daemonapp
+package:/data/app/SearchWidgetAPP/SearchWidgetAPP.apk=com.samsung.android.app.searchwidget
+package:/data/app/SecCalculator_R/SecCalculator_R.apk=com.sec.android.app.popupcalculator
+package:/data/app/SmartReminder/SmartReminder.apk=com.samsung.android.app.reminder
+package:/data/app/SmartSwitchAgent/SmartSwitchAgent.apk=com.sec.android.easyMover.Agent
+package:/data/app/SmartSwitchStub/SmartSwitchStub.apk=com.sec.android.easyMover
+package:/data/app/SmartThings/SmartThings.apk=com.samsung.android.oneconnect
+package:/data/app/ThemeStore/ThemeStore.apk=com.samsung.android.themestore
+package:/data/app/Tips/Tips.apk=com.samsung.android.app.tips
+package:/data/app/VideoEditorLite_Dream_N/VideoEditorLite_Dream_N.apk=com.sec.android.app.vepreload
+package:/data/app/VideoTrimmer/VideoTrimmer.apk=com.samsung.app.newtrim
+package:/data/app/VisionIntelligence3.7/VisionIntelligence3.7.apk=com.samsung.android.visionintelligence
+package:/data/app/VoiceNote_5.0/VoiceNote_5.0.apk=com.sec.android.app.voicenote
+package:/data/app/WpsOfficeStub/WpsOfficeStub.apk=cn.wps.moffice_eng
+package:/data/app/~~ehrhcHJ8okIWO1z39KtiLQ==/com.samsung.android.scs-A2TlxphdGd2O3JMVZTsJ8g==/SamsungCoreServices.apk=com.samsung.android.scs
+
+=== [POST-FIX] SecSettings ConnectionsUtils Logs (adbd filtered) ===
+11-26 10:54:19.819  3447  3447 D ConnectionsUtils: isHideAdvancedCalling: Exception 
+11-26 10:54:19.819  3447  3447 E ConnectionsUtils: Unknown component: ComponentInfo{com.samsung.advancedcalling/com.samsung.advancedcalling.VzwAdvancedCalling}
+11-26 10:54:19.819  3447  3447 D ConnectionsUtils: isHideAdvancedCalling: isEnabled = true
+11-26 10:54:19.852  3447  3447 D SecSimFeatureProvider: isMultiSim : dsds
+11-26 10:54:19.852  3447  3447 D SecSimFeatureProvider: isMultiSim : dsds
+11-26 10:54:19.947  3447  3447 D ConnectionsUtils: isHideMobileNetworks: isEnabled = true
+11-26 10:54:19.947  3447  3447 D ConnectionsUtils: for mobile_networks -> phoneType: 1
+11-26 10:54:19.947  3447  3447 D SecSimFeatureProvider: getTelephonyProperty : 0 : 2
+11-26 10:54:19.947  3447  3447 D SecSimFeatureProvider: getTelephonyProperty : 1 : 0
+11-26 10:54:19.947  3447  3447 D SecSimFeatureProvider: getEnabledSimCnt : 1
+11-26 10:54:19.947  3447  3447 D ConnectionsUtils: isNoSIM : 1
+11-26 10:54:19.947  3447  3447 D SecSimFeatureProvider: isMultiSim : dsds
+11-26 10:54:19.984  3447  3447 D SecSimFeatureProvider: isMultiSim : dsds
+11-26 10:54:19.984  3447  3447 D SecSimFeatureProvider: getTelephonyProperty : 0 : 2
+11-26 10:54:19.984  3447  3447 D SecSimFeatureProvider: getTelephonyProperty : 1 : 0
+11-26 10:54:19.984  3447  3447 D SecSimFeatureProvider: getEnabledSimCnt : 1
+11-26 10:54:19.997  3447  3447 D ConnectionsUtils: isHideMobileNetworks: isEnabled = true
+11-26 10:54:19.997  3447  3447 D ConnectionsUtils: for mobile_networks -> phoneType: 1
+11-26 10:54:19.997  3447  3447 D SecSimFeatureProvider: getTelephonyProperty : 0 : 2
+11-26 10:54:19.997  3447  3447 D SecSimFeatureProvider: getTelephonyProperty : 1 : 0
+11-26 10:54:19.997  3447  3447 D SecSimFeatureProvider: getEnabledSimCnt : 1
+11-26 10:54:19.997  3447  3447 D ConnectionsUtils: isNoSIM : 1
+11-26 10:54:19.997  3447  3447 D SecSimFeatureProvider: isMultiSim : dsds
+11-26 10:54:20.000  3447  3447 D SecSimFeatureProvider: isMultiSim : dsds
+11-26 10:54:20.298  3447  3447 D SecSimFeatureProvider: getTelephonyProperty : 0 : 2
+11-26 10:54:20.298  3447  3447 D SecSimFeatureProvider: getTelephonyProperty : 1 : 0
+11-26 10:54:20.298  3447  3447 D SecSimFeatureProvider: getEnabledSimCnt : 1
+11-26 10:54:22.395  3447  3447 D SecSimFeatureProvider: getTelephonyProperty : 0 : 2
+11-26 10:54:22.395  3447  3447 D SecSimFeatureProvider: getTelephonyProperty : 1 : 0
+11-26 10:54:22.395  3447  3447 D SecSimFeatureProvider: getEnabledSimCnt : 1
+
+=== [POST-FIX] Crash Buffer (adbd filtered) ===

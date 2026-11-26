@@ -13,6 +13,38 @@
       "options": "noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc",
       "size": 33554432,
       "uid": 1000
+    },
+    {
+      "flags": "wait,first_stage_mount,nofail",
+      "fstype": "ext4",
+      "image": "prism.img",
+      "mount": "/prism",
+      "name": "prism",
+      "options": "ro"
+    },
+    {
+      "flags": "wait,first_stage_mount,nofail",
+      "fstype": "ext4",
+      "image": "optics.img",
+      "mount": "/optics",
+      "name": "optics",
+      "options": "ro"
+    },
+    {
+      "flags": "wait,first_stage_mount,nofail",
+      "fstype": "ext4",
+      "image": "omr.img",
+      "mount": "/omr",
+      "name": "omr",
+      "options": "noatime,nosuid,nodev,noauto_da_alloc"
+    },
+    {
+      "flags": "wait,first_stage_mount,nofail",
+      "fstype": "ext4",
+      "image": "samsung_preload.img",
+      "mount": "/oem",
+      "name": "samsung_preload",
+      "options": "ro"
     }
   ]
 }

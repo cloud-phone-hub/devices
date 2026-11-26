@@ -10,13 +10,14 @@
   "factoryDir": "",
   "overrides": {},
   "extra": {
+    "basebandVersion": "5G_MODEM_V2_23B_W24.26.4_P11",
     "comment": "由 cdh unpack prepare 从 Hmd-Crest-Max.rar (vendor/build.prop) 自动生成。",
     "partitionAndroidVersions": {
+      "odm": "13",
+      "product": "14",
       "system": "14",
       "system_ext": "14",
-      "product": "14",
       "vendor": "13",
-      "odm": "13",
       "vendor_dlkm": "13"
     }
   },

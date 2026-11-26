@@ -4,6 +4,11 @@
     "vendor_dlkm_a.img"
   ],
   "official": [
-    "super.img"
+    "super.img",
+    "vendor_boot.img",
+    "prism.img",
+    "optics.img",
+    "omr.img",
+    "samsung_preload.img:userdata.img"
   ]
 }

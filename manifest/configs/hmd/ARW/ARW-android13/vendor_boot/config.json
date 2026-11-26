@@ -1,12 +1,14 @@
 {
   "fstab": "ums9620",
   "cmdline": [
-    "androidboot.board_device=ARP",
     "androidboot.product.hardware.sku=Arrow_0AIN",
-    "androidboot.product.model.display=TA-1635",
     "androidboot.secureboot=1",
     "androidboot.slot=a",
     "androidboot.veritymode.managed=yes",
-    "androidboot.ddrsize=8192M"
+    "androidboot.board_device=ARP",
+    "androidboot.product.model.display=TA-1635",
+    "androidboot.ddrsize=8192M",
+    "androidboot.skuid=100WW",
+    "androidboot.nfc_support=0"
   ]
 }

@@ -1,0 +1,51 @@
+=== 1. 修前 OneImage 属性与 mt-cpufreq 6+2 假拓扑快照（2026-11-26 09:58）===
+[debug.stagefright.ccodec_delayed_params]: [true]
+[gsm.version.baseband]: [5G_MODEM_V2_23B_W24.26.4_P11,5G_MODEM_V2_23B_W24.26.4_P11]
+[ro.boot.board_device]: [ARP]
+[ro.boot.ddrsize]: [8192M]
+[ro.boot.hardware]: [ums9620]
+[ro.boot.product.hardware.sku]: [Arrow_0AIN]
+[ro.boot.product.model.display]: [TA-1635]
+[ro.product.board]: [Arrow]
+[ro.product.brand]: [HMD]
+[ro.product.device]: [ARW]
+[ro.product.model]: [HMD CREST]
+[ro.product.model.display]: [TA-1635]
+[ro.product.name]: [Arrow_0AIN]
+[ro.soc.manufacturer]: [Unisoc]
+[ro.soc.model]: [T770]
+
+==> /sys/devices/system/cpu/cpufreq/policy0/related_cpus <==
+0 1 2 3 4 5
+==> /sys/devices/system/cpu/cpufreq/policy0/scaling_available_frequencies <==
+2000000 1916000 1812000 1750000 1645000 1500000 1393000 1287000 1128000 1048000 968000 862000 756000 703000 650000 500000 
+==> /sys/devices/system/cpu/cpufreq/policy0/scaling_available_governors <==
+sugov_ext conservative powersave performance schedutil 
+==> /sys/devices/system/cpu/cpufreq/policy0/scaling_driver <==
+mt-cpufreq
+
+==> /sys/devices/system/cpu/cpufreq/policy6/related_cpus <==
+6 7
+==> /sys/devices/system/cpu/cpufreq/policy6/scaling_available_frequencies <==
+2400000 2306000 2203000 2118000 1993000 1837000 1650000 1534000 1418000 1274000 1129000 1042000 985000 898000 840000 725000 
+==> /sys/devices/system/cpu/cpufreq/policy6/scaling_driver <==
+mt-cpufreq
+
+=== 2. 修前原生相机进入 VIDEO_CAPTURE 录像模式无限死等 media.player（2026-11-26 10:00）===
+Starting: Intent { act=android.media.action.VIDEO_CAPTURE cmp=com.hmdglobal.app.camera/.CameraActivity }
+11-26 10:00:23.958  9439  9439 D nativeloader: Configuring clns-shared-4 for other apk /system/framework/com.android.ozoaudio.lib.jar. target_sdk_version=33, uses_libraries=ALL, library_path=/system/priv-app/HMDCamera/lib/arm64:/system/priv-app/HMDCamera/HMDCamera.apk!/lib/arm64-v8a:/system/lib64:/system_ext/lib64
+11-26 10:00:23.964  9439  9439 D nativeloader: Configuring clns-shared-5 for other apk /system/priv-app/HMDCamera/HMDCamera.apk. target_sdk_version=33, uses_libraries=libOpenCL.so, library_path=/system/priv-app/HMDCamera/lib/arm64:/system/priv-app/HMDCamera/HMDCamera.apk!/lib/arm64-v8a:/system/lib64:/system_ext/lib64
+11-26 10:00:24.113  9439 15707 I ServiceManagerCppClient: Waiting for service 'media.player' on '/dev/binder'...
+11-26 10:00:24.270  9439 15734 I ServiceManagerCppClient: Waiting for service 'media.player' on '/dev/binder'...
+11-26 10:00:25.480  4128  8460 W ServiceManagerCppClient: Service media.player didn't start. Returning NULL
+11-26 10:00:25.983  4128  8460 I ServiceManagerCppClient: Waiting for service 'media.player' on '/dev/binder'...
+11-26 10:00:27.401  2796  6221 W ServiceManagerCppClient: Service media.player didn't start. Returning NULL
+11-26 10:00:27.901  2796  6221 I ServiceManagerCppClient: Waiting for service 'media.player' on '/dev/binder'...
+
+=== 3. 单删 writable-base.qcow2 保留旧 writable-data.qcow2 触发 FBE 密钥失配重启（2026-11-26 10:30）===
+[    3.281569][    T1] init: [libfs_mgr] fs_mgr_mount_all(): /dev/block/vda4 is wiped and /metadata ext4 is formattable. Format it.
+[    4.515239][    T1] init: Calling: /system/bin/vdc cryptfs mountFstab /dev/block/vdb /data 
+[    4.527123][  T201] vold: No key found in /metadata/vold/metadata_encryption/key
+[    4.528219][  T201] vold: read_key failed in mountFstab
+[    4.528979][  T288] vdc: Command: cryptfs mountFstab /dev/block/vdb /data  Failed: Status(-8, EX_SERVICE_SPECIFIC): '0: '
+[    6.423374][    T1] init: Exec service failed, status 25: Rebooting into recovery, reason: init_user0_failed

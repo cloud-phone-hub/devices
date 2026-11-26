@@ -1,0 +1,81 @@
+=== [PRE-FIX] SIM & CSC Properties ===
+gsm.sim.state=[LOADED]
+ril.ICC_TYPE0=[]
+ril.ICC_TYPE1=[]
+gsm.sim.currentcardstatus=[]
+persist.radio.multisim.config=[]
+ro.csc.sales_code=[]
+mdc.sys.omc_etcpath=[]
+
+=== [PRE-FIX] Partition Mounts (/prism /optics /omr /oem) ===
+(no prism/optics/omr/oem mounted)
+
+=== [PRE-FIX] SecSettings ConnectionsUtils /PrePackageInstaller Logs ===
+11-26 09:36:17.011   363  8942 I keystore2: system/security/keystore2/src/security_level.rs:785 - In generate_key. AppUid(10048), Some("com.samsung.android.service.aircommand_scspcipher_no96tulcje"), r#TRUSTED_ENVIRONMENT
+11-26 09:36:17.011   363  8942 I keystore2: system/security/keystore2/src/database.rs:2522 - In store_new_key "com.samsung.android.service.aircommand_scspcipher_no96tulcje", uid=10048, cert=false, cert_chain=false rebound=false
+11-26 10:15:09.474 21783 21783 I [scsettingv2][2.0.27.0]: onCreate: 
+11-26 10:15:09.549 21783 21807 D ScspUtils: saveAllResources: uri = content://com.android.bluetooth.files/external/data/user_de/0/com.android.bluetooth/files/scsp/8.5.0/com.android.settings/all/icon.zip
+11-26 10:15:09.583 21783 21783 D SecSimFeatureProvider: isMultiSim : 
+11-26 10:15:09.583 21783 21783 D SecSimFeatureProvider: isMultiSim : 
+11-26 10:15:09.584 21783 21783 D ConnectionsUtils: isHideAdvancedCalling: Exception 
+11-26 10:15:09.584 21783 21783 E ConnectionsUtils: Unknown component: ComponentInfo{com.samsung.advancedcalling/com.samsung.advancedcalling.VzwAdvancedCalling}
+11-26 10:15:09.584 21783 21783 D ConnectionsUtils: isHideAdvancedCalling: isEnabled = true
+11-26 10:15:09.584 21783 21783 D ConnectionsUtils: isHideAdvancedCalling: Exception 
+11-26 10:15:09.584 21783 21783 E ConnectionsUtils: Unknown component: ComponentInfo{com.samsung.advancedcalling/com.samsung.advancedcalling.VzwAdvancedCalling}
+11-26 10:15:09.584 21783 21783 D ConnectionsUtils: isHideAdvancedCalling: isEnabled = true
+11-26 10:15:09.606 21783 21783 D ConnectionsUtils: isHideMobileNetworks: isEnabled = true
+11-26 10:15:09.606 21783 21783 D ConnectionsUtils: for mobile_networks -> phoneType: 1
+11-26 10:15:09.606 21783 21783 D SecSimFeatureProvider: getTelephonyProperty : 0 : 0
+11-26 10:15:09.606 21783 21783 D SecSimFeatureProvider: getTelephonyProperty : 1 : 0
+11-26 10:15:09.606 21783 21783 D SecSimFeatureProvider: getEnabledSimCnt : 0
+11-26 10:15:09.606 21783 21783 D ConnectionsUtils: isNoSIM : 0
+11-26 10:15:09.606 21783 21783 D ConnectionsUtils: isHideMobileNetworks: return true
+11-26 10:15:09.606 21783 21783 I SecMobileNetworkPreferenceController: remove mobile network by HideMobildeNetwork
+11-26 10:15:09.606 21783 21783 D ConnectionsUtils: isHideMobileNetworks: isEnabled = true
+11-26 10:15:09.606 21783 21783 D ConnectionsUtils: for mobile_networks -> phoneType: 1
+11-26 10:15:09.606 21783 21783 D SecSimFeatureProvider: getTelephonyProperty : 0 : 0
+11-26 10:15:09.606 21783 21783 D SecSimFeatureProvider: getTelephonyProperty : 1 : 0
+11-26 10:15:09.606 21783 21783 D SecSimFeatureProvider: getEnabledSimCnt : 0
+11-26 10:15:09.606 21783 21783 D ConnectionsUtils: isNoSIM : 0
+11-26 10:15:09.607 21783 21783 D ConnectionsUtils: isHideMobileNetworks: return true
+11-26 10:15:09.607 21783 21783 I SecMobileNetworkPreferenceController: remove mobile network by HideMobildeNetwork
+11-26 10:15:09.649 21783 21783 D ConnectionsUtils: isHideMobileNetworks: isEnabled = true
+11-26 10:15:09.649 21783 21783 D ConnectionsUtils: for mobile_networks -> phoneType: 1
+11-26 10:15:09.649 21783 21783 D SecSimFeatureProvider: getTelephonyProperty : 0 : 0
+11-26 10:15:09.649 21783 21783 D SecSimFeatureProvider: getTelephonyProperty : 1 : 0
+11-26 10:15:09.649 21783 21783 D SecSimFeatureProvider: getEnabledSimCnt : 0
+11-26 10:15:09.649 21783 21783 D ConnectionsUtils: isNoSIM : 0
+11-26 10:15:09.649 21783 21783 D ConnectionsUtils: isHideMobileNetworks: return true
+11-26 10:15:09.649 21783 21783 I SecMobileNetworkPreferenceController: remove mobile network by HideMobildeNetwork
+11-26 10:15:09.676 21783 21783 D SecSimFeatureProvider: isMultiSim : 
+11-26 10:15:09.676 21783 21783 D SecSimFeatureProvider: getTelephonyProperty : 0 : 0
+11-26 10:15:09.676 21783 21783 D SecSimFeatureProvider: getTelephonyProperty : 1 : 0
+11-26 10:15:09.676 21783 21783 D SecSimFeatureProvider: getEnabledSimCnt : 0
+
+=== [PRE-FIX] Missing Samsung Built-in Packages ===
+MISSING: com.sec.android.app.clockpackage
+MISSING: com.sec.android.app.popupcalculator
+MISSING: com.samsung.android.calendar
+MISSING: com.samsung.android.app.notes
+MISSING: com.sec.android.app.voicenote
+MISSING: com.sec.android.app.shealth
+MISSING: com.samsung.android.oneconnect
+MISSING: com.samsung.android.voc
+MISSING: com.samsung.android.game.gamehome
+MISSING: com.samsung.android.app.reminder
+
+=== [PRE-FIX ROUND 2] scs SELinux Denials, Empty persist.sys.omc_* & CscParser Fallback ===
+[ro.csc.sales_code]: [CHC]
+[mdc.sys.omc_etcpath]: [/prism/etc/carriers/CHC]
+[ro.persistent_properties.ready]: [true]
+(persist.sys.omc_etcpath / persist.sys.omc_path / persist.sys.omc_respath / persist.sys.omc_support all unset)
+
+[   63.329893] [    T1] init: processing action (ro.persistent_properties.ready=true) from (/system/etc/init/scs.rc:14)
+[   63.332229] [    T1] init: starting service 'scs'...
+[   63.338655] [   T66] audit: type=1400 audit(1795662642.900:313): avc:  denied  { search } for  pid=932 comm="scs" name="efs" dev="dm-0" ino=762 scontext=u:r:scs:s0 tcontext=u:object_r:efs_file:s0 tclass=dir permissive=0
+[   63.346542] [   T66] audit: type=1400 audit(1795662642.900:315): avc:  denied  { read } for  pid=932 comm="scs" name="u:object_r:persistent_properties_ready_prop:s0" dev="tmpfs" ino=361 scontext=u:r:scs:s0 tcontext=u:object_r:persistent_properties_ready_prop:s0 tclass=file permissive=0
+01-01 08:00:07.053   309   309 D scs     : [setDmRwProperties] persist properties set : False
+11-26 11:10:49.423  1598  1672 E CscParser: FileNotFoundException!! /system/csc/customer.xml: open failed: ENOENT (No such file or directory)
+11-26 11:10:49.861  1468  2439 E CscParser: [m(CscParser.java:159)] update(): /system/csc/customer.xml file not exist
+11-26 11:10:51.701  2107  2172 I HoneySpace.DataParser: fillDefaultData - mode:HOME_ONLY, frontMode:NONE, postPositionOnly: false
+

@@ -1,0 +1,18 @@
+firmware_directories /vendor/firmware_mnt
+
+# Graphics
+/dev/dri/card0		0660	system	graphics
+/dev/dri/controlD64	0660	system	graphics
+/dev/dri/renderD128	0666	system	graphics
+
+# ION
+/dev/ion	0664	system	system
+
+# Serial console
+/dev/hvc*	0666	system	system
+/dev/ttyAMA*	0666	system	system
+/dev/ttyS*	0666	system	system
+
+# V4L2 Codec2 (virtio-media)
+/dev/video*	0660	media	camera
+/dev/media*	0660	media	camera

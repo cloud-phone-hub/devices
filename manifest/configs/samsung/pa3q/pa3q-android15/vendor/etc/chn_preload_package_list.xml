@@ -1,0 +1,75 @@
+<preloadpackages>
+    <!-- Add apk (If APK is not installed currently) -->
+    <add-apk>
+    </add-apk>
+
+    <!-- Delete app (Must use package name to detect package) -->
+    <remove-package>
+    </remove-package>
+
+    <!-- Add apk once (if apk was not installed by PreloadInstaller, then install apk at once) -->
+    <install-once-apk>
+        <!-- /system/preload 原厂预装包 -->
+        <apk name="CustomizedSogouIME.apk"/>
+        <apk name="GoogleCalendarSyncAdapter.apk"/>
+        <apk name="PhotoEditor_AIFull.apk"/>
+        <apk name="SAssistant_downloadable.apk"/>
+        <apk name="SamsungMagnifier3.apk"/>
+        <apk name="SamsungPayStub.apk"/>
+        <apk name="SamsungWeather.apk"/>
+        <apk name="SearchWidgetAPP.apk"/>
+        <apk name="SmartSwitchAgent.apk"/>
+        <apk name="ThemeStore.apk"/>
+        <apk name="VideoEditorLite_Dream_N.apk"/>
+        <apk name="VideoTrimmer.apk"/>
+        <!-- userdata.img PDP 衍生预装包 (/oem -> /system/preloadFactoryResetOnly) -->
+        <apk name="AvatarEmojiSticker.apk"/>
+        <apk name="BGMProvider.apk"/>
+        <apk name="BaiduNetdiskStub.apk"/>
+        <apk name="ClockPackage.apk"/>
+        <apk name="GameHome_CHN.apk"/>
+        <apk name="GearManager.apk"/>
+        <apk name="KidsHome.apk"/>
+        <apk name="MSOutlook_Samsung.apk"/>
+        <apk name="Notes40_Removable.apk"/>
+        <apk name="OfficeMobile_SamsungStubChina.apk"/>
+        <apk name="SHealth6PAR.apk"/>
+        <apk name="SMarket.apk"/>
+        <apk name="SReading.apk"/>
+        <apk name="SWSportPlugin.apk"/>
+        <apk name="SamsungCalendar.apk"/>
+        <apk name="SamsungDataStore.apk"/>
+        <apk name="SamsungDotCom.apk"/>
+        <apk name="SamsungFind.apk"/>
+        <apk name="SamsungFlowV3_Removable.apk"/>
+        <apk name="SamsungMembers_CHN_P_Removable.apk"/>
+        <apk name="SecCalculator_R.apk"/>
+        <apk name="SmartReminder.apk"/>
+        <apk name="SmartSwitch.apk"/>
+        <apk name="SmartThings.apk"/>
+        <apk name="Tips.apk"/>
+        <apk name="VoiceNote_5.0.apk"/>
+        <apk name="WpsOfficeStub.apk"/>
+    </install-once-apk>
+
+    <!-- Reinstall apk only when current apk is installed -->
+    <update-apk>
+        <apk name="AutoDoodle.apk"/>
+        <apk name="AvatarEmojiSticker.apk"/>
+        <apk name="CustomizedSogouIME.apk"/>
+        <apk name="DictDiotekForSec.apk"/>
+        <apk name="GoogleCalendarSyncAdapter.apk"/>
+        <apk name="PhotoEditor_AIFull.apk"/>
+        <apk name="SAssistant_downloadable.apk"/>
+        <apk name="SamsungMagnifier3.apk"/>
+        <apk name="SamsungWeather.apk"/>
+        <apk name="SearchWidgetAPP.apk"/>
+        <apk name="SmartSwitchAgent.apk"/>
+        <apk name="SmartSwitchStub.apk"/>
+        <apk name="ThemeStore.apk"/>
+        <apk name="VideoEditorLite_Dream_N.apk"/>
+        <apk name="VideoTrimmer.apk"/>
+        <apk name="VisionIntelligence3.7.apk"/>
+        <apk name="SamsungPayStub.apk"/>
+    </update-apk>
+</preloadpackages>

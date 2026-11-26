@@ -1,17 +1,22 @@
 # headless 云机：跳过首次激活 + 显示/电源防呆（全程不注入按键）。
 # vendor.auto_provision 写设置（含重试等 SettingsProvider 就绪）；vendor.keep_awake 仅低频
 # dismiss-keyguard 兜底（已解锁时 no-op，无输入副作用）。
+# 必须带 disabled：否则 init 在 class_start main（~18-33s，system_server/SettingsProvider
+# 尚未就绪）即提前拉起，既会空耗重试，又会与 OEM 开机向导（如荣耀 HnStartupGuide）初始化
+# 发生写入竞态，甚至在 boot_completed 触发时因 already running 被忽略。
 service vendor.auto_provision /system/bin/sh /vendor/bin/cph-setup-display
     class main
     user root
     group root
     oneshot
+    disabled
     seclabel u:r:pioneer:s0
 
 service vendor.keep_awake /system/bin/sh -c "while true; do cmd window dismiss-keyguard 2>/dev/null; sleep 30; done"
     class main
     user root
     group root
+    disabled
     seclabel u:r:pioneer:s0
 
 on property:sys.boot_completed=1

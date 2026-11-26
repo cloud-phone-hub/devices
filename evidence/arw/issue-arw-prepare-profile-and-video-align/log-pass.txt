@@ -1,0 +1,106 @@
+=== 1. 02_prepare 单元测试与构建发布（2026-11-26）===
+$ go -C agent/modules/pipeline vet ./stages/02_prepare/
+$ go -C agent/modules/pipeline test -count=1 ./stages/02_prepare/
+ok  	cloud-phone-hub/agent/modules/pipeline/stages/02_prepare	1.102s
+
+$ pipeline device build -from build_boot -skip build_hardware ARW
+    [ok] patch.img -> out/devices/dist/hmd/ARW/14-QP1A.190711.020-20250620/patch.img（384.0 MiB，sha256 6d6d4ceea8fb）
+    [ok] device.json（id=ARW_14-QP1A.190711.020-20250620）-> out/devices/dist/hmd/ARW/14-QP1A.190711.020-20250620/device.json
+    缓存配方: vda-d3c50f63b408
+
+=== 2. HMD Crest Max #1 实机引导、OneImage 身份与三丛集调频验收（2026-11-26 10:34）===
+=== BOOT_COMPLETED=1 in 59s ===
+getenforce: Enforcing
+uname -r: 5.15.149-android13-8-00010-gc2e0ba41ba85-ab12040008
+Build fingerprint: 'HMD/ArrowPro_0AWW/ARP:14/QP1A.190711.020/00WW_1_590:user/release-keys'
+
+ro.product.brand = HMD
+ro.product.manufacturer = HMD Global
+ro.product.model = HMD CREST MAX
+ro.product.device = ARP
+ro.product.name = ArrowPro_0AWW
+ro.product.odm.model = HMD CREST MAX
+ro.product.odm.device = ARP
+ro.product.odm.name = ArrowPro_0AWW
+ro.product.system.model = HMD CREST MAX
+ro.product.model.display = TA-1635
+ro.boot.board_device = ARP
+ro.boot.skuid = 100WW
+ro.boot.nfc_support = 0
+ro.boot.ddrsize = 8192M
+gsm.version.baseband = 5G_MODEM_V2_23B_W24.26.4_P11,5G_MODEM_V2_23B_W24.26.4_P11
+ro.vendor.cdh.display.refresh_rates = 60,120
+debug.stagefright.c2inputsurface = -1
+gsm.sim.state = LOADED,ABSENT
+gsm.operator.alpha = 中国联通,
+gsm.network.type = LTE,Unknown
+
+--- /sys/devices/system/cpu/cpufreq/policy0 ---
+driver: sprd-cpufreq
+governor: sprd_sugov
+related_cpus: 0 1 2 3
+freqs: 2002000 1846000 1703000 1560000 1404000 1228800 1105000 936000 768000 614400
+CPU 0..3 part: 0xd05
+
+--- /sys/devices/system/cpu/cpufreq/policy4 ---
+driver: sprd-cpufreq
+governor: sprd_sugov
+related_cpus: 4 5 6
+freqs: 2210000 2041000 1872000 1703000 1536000 1378000 1228800 1105000 936000 768000 614400
+CPU 4..6 part: 0xd0b
+
+--- /sys/devices/system/cpu/cpufreq/policy7 ---
+driver: sprd-cpufreq
+governor: sprd_sugov
+related_cpus: 7
+freqs: 2548000 2457000 2366000 2262000 2132000 2002000 1820000 1536000 1228800 768000 614400
+CPU 7 part: 0xd0b
+
+=== 3. 显示刷新率、传感器、GNSS、触控与双网连通 ===
+DisplayModeRecord{mMode={id=1, width=1080, height=2400, fps=60.000004, alternativeRefreshRates=[120.00001], supportedHdrTypes=[]}}
+DisplayModeRecord{mMode={id=2, width=1080, height=2400, fps=120.00001, alternativeRefreshRates=[60.000004], supportedHdrTypes=[]}}
+mDefaultModeByDisplay: 0 -> {id=2, width=1080, height=2400, fps=120.00001}
+
+Sensor List: 19 hardware/Unisoc sensors (bmi323_acc, mmc5603, bmi323_gyro, stk3338_l, stk3338_p, ORIENTATION, GRAVITY, LINEARACCEL, ROTATION_VECTOR, UNCALI_MAG, GAME_ROTATION_VECTOR, UNCALI_GYRO, SIGNIFICANT_MOTION, STEP_DETECTOR, STEP_COUNTER, GEOMAGNETIC_ROTATION_VECTOR, TILT_DETECTOR, DEVICE_ORIENTATION, UNCALI_ACC)
+GNSS Hardware Model Name: SPRD_GNSS_default
+
+6: focaltech_ats
+  Classes: KEYBOARD | TOUCH | TOUCH_MT
+  Identifier: bus=0x0018, vendor=0x27c6, product=0x0001, version=0x0100
+  ConfigurationFile: /vendor/usr/idc/focaltech_ats.idc
+
+6: ccmni1: inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+16: wlan0: inet 192.168.10.100/24 brd 192.168.10.255 scope global wlan0 (SSID "FutureSoft-27F-Guest", 5240MHz, COMPLETED)
+
+=== 4. media.player 服务与原生相机拍照 + 1080p 录像落盘实测（2026-11-26 10:40 ~ 10:41）===
+Service media.player: found
+165	media.player: [android.media.IMediaPlayerService]
+
+Starting: Intent { act=android.media.action.VIDEO_CAPTURE }
+Status: ok
+Activity: com.hmdglobal.app.camera/.CameraActivity
+WaitTime: 46
+Complete
+
+=== DCIM CAMERA FILES ===
+total 708K
+-rwxrwx--- 1 u0_a173 media_rw 282K 2026-11-26 10:40 IMG_20261126_104048_HDR.jpg
+-rwxrwx--- 2 u0_a173 media_rw 420K 2026-11-26 10:41 VID_20261126_104142.mp4
+
+=== ffprobe VID_20261126_104142.mp4 ===
+codec_name=h264
+profile=Constrained Baseline
+codec_tag_string=avc1
+width=1920
+height=1080
+pix_fmt=yuvj420p
+duration=5.688411
+nb_frames=175
+size=429766
+probe_score=100
+
+=== PROCESSES & ANR CHECK ===
+cameraserver   561     1 1 10:33:35 ?     00:00:03 cameraserver
+media          571     1 0 10:33:35 ?     00:00:00 mediaserver
+u0_a65       13305   425 6 10:38:35 ?     00:00:12 com.hmdglobal.app.camera
+/data/anr: 0 files

@@ -94,6 +94,40 @@ if pm path com.hmdglobal.app.setupwizardext >/dev/null 2>&1; then
     fi
 fi
 
+# 荣耀 MagicOS / 华为机型（如 Honor X80i 5G HNLNA-M）首启由 com.hihonor.hnstartupguide
+# （或 com.huawei.hwstartupguide）拦截 HOME 任务；其 BaseActivity.onCreate -> OOBEUtils.Y1(false)
+# 会在向导存活期间将 device_provisioned 与 user_setup_complete 覆写回 0，且进入 EmbeddingActivity
+# 或拉起荣耀账号 OOBE 登录页（com.hihonor.id）后不会自动退出。先禁用并停止向导包，再对齐
+# HnStartupGuide.finishWizard() 标准标志位并切回桌面。
+for hn_guide_pkg in com.hihonor.hnstartupguide com.huawei.hwstartupguide; do
+    if pm path "$hn_guide_pkg" >/dev/null 2>&1; then
+        hn_guide_active=0
+        if [ "$was_provisioned" != "1" ] || [ -n "$(pidof "$hn_guide_pkg")" ]; then
+            hn_guide_active=1
+        fi
+        am force-stop "$hn_guide_pkg" 2>/dev/null || true
+        pm disable "$hn_guide_pkg" 2>/dev/null || true
+        am force-stop "$hn_guide_pkg" 2>/dev/null || true
+        if [ "$hn_guide_active" = "1" ]; then
+            am force-stop com.hihonor.id 2>/dev/null || true
+            am force-stop com.huawei.hwid 2>/dev/null || true
+        fi
+        settings put secure user_setup_complete 1 2>/dev/null || true
+        settings put global device_provisioned 1 2>/dev/null || true
+        settings put global oobe_statement_agreed 1 2>/dev/null || true
+        settings put secure oobe_process_alive_state 0 2>/dev/null || true
+        settings put system ota_service_updated 0 2>/dev/null || true
+        hn_disp_ver="$(getprop ro.honor.build.display.id)"
+        [ -z "$hn_disp_ver" ] && hn_disp_ver="$(getprop ro.build.display.id)"
+        if [ -n "$hn_disp_ver" ]; then
+            settings put secure buildversionrelease "$hn_disp_ver" 2>/dev/null || true
+        fi
+        if [ "$hn_guide_active" = "1" ]; then
+            am start -a android.intent.action.MAIN -c android.intent.category.HOME >/dev/null 2>&1 || true
+        fi
+    fi
+done
+
 # ---- OPPO/ColorOS 屏幕分辨率档位（先例 devices/oppo/findx9-16）----
 # ColorOS 的 secure 键 oplus_customize_screen_resolution_adjust：0=智能、1=高分辨率、
 # 2=低分辨率，出厂默认 2。真机「低档」映射到面板的第二档物理分辨率；云机模式表来自
