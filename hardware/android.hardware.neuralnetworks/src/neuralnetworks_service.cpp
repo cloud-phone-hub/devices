@@ -11,9 +11,11 @@
 
 #include <android/binder_ibinder.h>
 #include <android/binder_manager.h>
+#include <android/binder_parcel.h>
 #include <android/binder_process.h>
 #include <android/binder_status.h>
 #include <android/log.h>
+#include <unistd.h>
 
 #include <aidl/android/hardware/neuralnetworks/BnDevice.h>
 #include <aidl/android/hardware/neuralnetworks/BufferDesc.h>
@@ -27,6 +29,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <map>
 #include <memory>
 #include <string>
@@ -142,6 +145,109 @@ binder_status_t OnPlaceholderTransact(AIBinder* /*binder*/,
   return STATUS_UNKNOWN_TRANSACTION;
 }
 
+// 通用 NXP / ColorOS NFC 扩展 AIDL 占位应答（跨 qti/mtk/default 变体生效）：
+//   1. vendor.oplus.hardware.nfc.IOplusNfc：
+//      - TX 1: byte getChipVersion() -> 默认返回 2（NXP SN100/SN220，欧加主流方案；高通 vendor 常残留公版 libnfc-hal-st.conf 模板，不可据此误判 ST）；
+//        仅当显式存在 /vendor/etc/cph_nfc_chip_st 标记时返回 5（ST54/ST21）；
+//      - TX 2: int initialize() -> 0。
+//   2. vendor.nxp.nxpnfc_aidl.INxpNfc：
+//      - TX 1: String getVendorParam(String) -> ""（避免 SN100HalHelper::halGetProperty 对 NULL 调 strlen 触发 SIGSEGV）；
+//      - TX 2..4: resetEse / setNxpTransitConfig / setVendorParam -> true。
+//   3. vendor.nxp.nxpnfc_pnaidl.INxpNfc：
+//      - TX 1: byte[] ioctl(long, byte[]) -> 0x1020 零字节数组。
+binder_status_t OnOplusNfcTransact(AIBinder* /*binder*/,
+                                   transaction_code_t code,
+                                   const AParcel* /*in*/,
+                                   AParcel* out) {
+  if (out == nullptr) return STATUS_BAD_VALUE;
+  ndk::ScopedAStatus ok = ndk::ScopedAStatus::ok();
+  if (code == FIRST_CALL_TRANSACTION + 0) {
+    int8_t chip = 2;
+    if (access("/vendor/etc/cph_nfc_chip_st", R_OK) == 0) {
+      chip = 5;
+    }
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    return st != STATUS_OK ? st : AParcel_writeByte(out, chip);
+  }
+  if (code == FIRST_CALL_TRANSACTION + 1) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    return st != STATUS_OK ? st : AParcel_writeInt32(out, 0);
+  }
+  if (code == 0xffffff) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    return st != STATUS_OK ? st : AParcel_writeInt32(out, 1);
+  }
+  if (code == 0xfffffe) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    return st != STATUS_OK ? st : AParcel_writeString(out, "", 0);
+  }
+  return STATUS_UNKNOWN_TRANSACTION;
+}
+
+binder_status_t OnNxpNfcAidlTransact(AIBinder* /*binder*/,
+                                     transaction_code_t code,
+                                     const AParcel* /*in*/,
+                                     AParcel* out) {
+  if (out == nullptr) return STATUS_BAD_VALUE;
+  ndk::ScopedAStatus ok = ndk::ScopedAStatus::ok();
+  if (code == FIRST_CALL_TRANSACTION + 0) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    return st != STATUS_OK ? st : AParcel_writeString(out, "", 0);
+  }
+  if (code >= FIRST_CALL_TRANSACTION + 1 && code <= FIRST_CALL_TRANSACTION + 3) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    return st != STATUS_OK ? st : AParcel_writeBool(out, true);
+  }
+  if (code == 0xffffff) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    return st != STATUS_OK ? st : AParcel_writeInt32(out, 1);
+  }
+  if (code == 0xfffffe) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    return st != STATUS_OK ? st : AParcel_writeString(out, "", 0);
+  }
+  return STATUS_UNKNOWN_TRANSACTION;
+}
+
+binder_status_t OnNxpNfcPnAidlTransact(AIBinder* /*binder*/,
+                                       transaction_code_t code,
+                                       const AParcel* /*in*/,
+                                       AParcel* out) {
+  if (out == nullptr) return STATUS_BAD_VALUE;
+  ndk::ScopedAStatus ok = ndk::ScopedAStatus::ok();
+  if (code == FIRST_CALL_TRANSACTION + 0) {
+    std::vector<int8_t> resp(0x1020, 0);
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    return st != STATUS_OK ? st
+                           : AParcel_writeByteArray(
+                                 out, resp.data(),
+                                 static_cast<int32_t>(resp.size()));
+  }
+  if (code == 0xffffff) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    return st != STATUS_OK ? st : AParcel_writeInt32(out, 1);
+  }
+  if (code == 0xfffffe) {
+    binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+    return st != STATUS_OK ? st : AParcel_writeString(out, "", 0);
+  }
+  return STATUS_UNKNOWN_TRANSACTION;
+}
+
+AIBinder_Class_onTransact ResolveCommonPlaceholderTransact(
+    const std::string& descriptor) {
+  if (descriptor == "vendor.oplus.hardware.nfc.IOplusNfc") {
+    return OnOplusNfcTransact;
+  }
+  if (descriptor == "vendor.nxp.nxpnfc_aidl.INxpNfc") {
+    return OnNxpNfcAidlTransact;
+  }
+  if (descriptor == "vendor.nxp.nxpnfc_pnaidl.INxpNfc") {
+    return OnNxpNfcPnAidlTransact;
+  }
+  return nullptr;
+}
+
 std::string TrimWhitespace(const std::string& input) {
   const std::string::size_type first = input.find_first_not_of(" \t\r\n");
   if (first == std::string::npos) {
@@ -179,13 +285,24 @@ int RegisterPlaceholdersFromFile(const char* path) {
     if (descriptor.empty()) {
       continue;
     }
+    // vendor.oplus.hardware.charger.ICharger 由 health@oplus 的 CdhOplusCharger
+    // 注册真实应答实现（抑制 notifycode=-1 导致的 80% 充电保护弹窗并上报真机电池容量）；
+    // 此处跳过空桩抢注，同时保留 VINTF XML 声明供 health@oplus 探测版本。
+    if (descriptor == "vendor.oplus.hardware.charger.ICharger") {
+      continue;
+    }
     auto it = class_cache.find(descriptor);
     if (it == class_cache.end()) {
       it = class_cache.emplace(descriptor, nullptr).first;
-      const AIBinder_Class_onTransact custom_fn =
+      const AIBinder_Class_onTransact vendor_fn =
           cdh::nn::ResolveVendorPlaceholderTransact(descriptor);
+      const AIBinder_Class_onTransact common_fn =
+          vendor_fn != nullptr ? nullptr
+                               : ResolveCommonPlaceholderTransact(descriptor);
       const AIBinder_Class_onTransact transact_fn =
-          custom_fn != nullptr ? custom_fn : OnPlaceholderTransact;
+          vendor_fn != nullptr
+              ? vendor_fn
+              : (common_fn != nullptr ? common_fn : OnPlaceholderTransact);
       it->second = AIBinder_Class_define(
           it->first.c_str(), OnPlaceholderCreate, OnPlaceholderDestroy,
           transact_fn);
@@ -196,7 +313,7 @@ int RegisterPlaceholdersFromFile(const char* path) {
         class_cache.erase(it);
         continue;
       }
-      if (custom_fn == nullptr) {
+      if (vendor_fn == nullptr) {
         AIBinder_Class_disableInterfaceTokenHeader(it->second);
       }
     }

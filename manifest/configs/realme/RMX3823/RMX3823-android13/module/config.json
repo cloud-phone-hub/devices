@@ -174,7 +174,6 @@
     "cdh_redirect",
     "device_info",
     "input_identity",
-    "kernelsu",
     "virtio_media"
   ],
   "input": {
@@ -329,6 +328,16 @@
     {
       "from": "/system/lib/modules",
       "to": "/mnt/vendorpatch/vendor_dlkm/lib/modules",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/app",
+      "to": "/mnt/vendorpatch/vendor/app",
+      "type": "dir"
+    },
+    {
+      "from": "/system_ext/app/workloadclassifier",
+      "to": "/mnt/vendorpatch/system_ext/app/workloadclassifier",
       "type": "dir"
     },
     {

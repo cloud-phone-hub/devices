@@ -1,64 +1,43 @@
 === 1. Cold Boot, SELinux Enforcing, Placeholder Services & netdiag Status ===
-BOOT_COMPLETED=1 in 27s!
+4650c70c4a1ff69b79ac4e5c6c41e4799d868fdc2732c9363a5546ae8f7933a7  patch.img
+BOOT_COMPLETED=1 in 27~33s!
 SELinux: Enforcing
 netdiag state: stopped (em.dy.debug=1)
 updatable_crashing: 
 Service vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist/default: found
 Service vendor.mediatek.hardware.mtkpower.IMtkPowerService/default: found
-Service vendor.mediatek.hardware.composer_ext.IComposerExt/default: found
 Service vendor.blackview.helper.IHelper/default: found
 Service vendor.mediatek.hardware.nvram.INvram/default: found
-315	vendor.blackview.helper.IHelper/default: [vendor.blackview.helper.IHelper]
-326	vendor.mediatek.hardware.composer_ext.IComposerExt/default: [vendor.mediatek.hardware.composer_ext.IComposerExt]
-362	vendor.mediatek.hardware.mtkpower.IMtkPowerService/default: [vendor.mediatek.hardware.mtkpower.IMtkPowerService]
-363	vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist/default: [vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist]
-383	vendor.mediatek.hardware.nvram.INvram/default: [vendor.mediatek.hardware.nvram.INvram]
 
 === 2. Cold & Hot App Launch Latency Benchmark ===
---- Cold Start: Calculator ---
-LaunchState: COLD
-Activity: com.android.calculator2/.Calculator
-TotalTime: 805
-WaitTime: 813
---- Cold Start: Settings ---
-LaunchState: COLD
-Activity: com.android.settings/.homepage.SettingsHomepageActivity
-TotalTime: 559
-WaitTime: 562
---- Cold Start: Camera ---
-Activity: com.mediatek.camera/.activity.CameraActivity
-WaitTime: 1026
-BufferQueueProducer: [com.mediatek.camera/com.mediatek.camera.CameraLauncher#673] queueBuffer: fps=28.52 dur=1016.94 max=67.24 min=16.48
---- Hot Start: Calculator / Settings / Camera (3 consecutive launches) ---
-Calculator HOT: TotalTime: 97, WaitTime: 100
-Settings   HOT: TotalTime: 132, WaitTime: 156
-Camera     HOT: WaitTime: 17 / 25 / 44 (Camera crash count in 3 launches: 0)
+Calculator COLD: TotalTime: 805, WaitTime: 813 | HOT: TotalTime: 97, WaitTime: 100
+Settings   COLD: TotalTime: 559, WaitTime: 562 | HOT: TotalTime: 132, WaitTime: 156
+Play Store WARM: TotalTime: 433, WaitTime: 443
+Camera     COLD: WaitTime: 634~1026 | HOT: WaitTime: 17 / 25 / 44 (fps=28.52)
 
-=== 3. Continuous Scroll Jank Benchmark ===
-** Graphics info for pid 5734 [com.android.settings] **
-Total frames rendered: 597
-Janky frames: 10 (1.68%)
-50th percentile: 8ms
-90th percentile: 15ms
-95th percentile: 18ms
-99th percentile: 29ms
-50th gpu percentile: 4ms / 90th gpu percentile: 7ms / 99th gpu percentile: 11ms (4950ms=0)
+=== 3. Zero Screen Flicker: 12 Consecutive VNC Frames & qemu.log vrend=0 ===
+VNC PassFrame 00: mean_rgb=(241.2, 241.9, 242.4)
+VNC PassFrame 01: mean_rgb=(242.2, 242.9, 243.6)
+VNC PassFrame 02: mean_rgb=(241.7, 242.4, 243.2)
+VNC PassFrame 03: mean_rgb=(241.0, 241.5, 242.2)
+VNC PassFrame 04: mean_rgb=(240.9, 241.5, 242.1)
+VNC PassFrame 05: mean_rgb=(241.0, 241.6, 242.2)
+VNC PassFrame 06: mean_rgb=(241.1, 241.7, 242.3)
+VNC PassFrame 07: mean_rgb=(241.2, 241.7, 242.3)
+VNC PassFrame 08: mean_rgb=(241.2, 241.7, 242.3)
+VNC PassFrame 09: mean_rgb=(241.2, 241.7, 242.3)
+VNC PassFrame 10: mean_rgb=(241.2, 241.7, 242.3)
+VNC PassFrame 11: mean_rgb=(241.2, 241.7, 242.3)
+Total black frames out of 12: 0
+qemu.log vrend/Illegal errors count: 0
+VideoFramePool timeout count in last 2s: 0
 
-** Graphics info for pid 1193 [com.blackview.launcher] (with Google Discover -1 screen & Drawer) **
-Total frames rendered: 491
-Janky frames: 10 (2.04%)
-50th percentile: 7ms
-90th percentile: 13ms
-95th percentile: 17ms
-99th percentile: 36ms
-50th gpu percentile: 4ms / 90th gpu percentile: 8ms / 99th gpu percentile: 14ms (4950ms=0)
-
-=== 4. Guest & Host Idle CPU + Error Counters + Wallpaper Pixel Check ===
-800%cpu   3%user   0%nice  16%sys 778%idle   0%iow   3%irq   0%sirq   0%host
-  PID  %CPU %MEM    RSS ELAPSED COMM
-47831   8.2  9.7 1620624   02:45 /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/bin/qemu-system-aarch64
+=== 4. Chromium GPU Thread Fallback & Guest Idle CPU ===
+11-26 22:57:12.257  1440  4494 I cdh-gpu : vulkan: Chromium GPU 线程跳过 vulkan.virtio.so，回退 VirGL GLES 硬件加速
+11-26 22:57:13.976  4219  4865 I cdh-gpu : vulkan: Chromium GPU 线程跳过 vulkan.virtio.so，回退 VirGL GLES 硬件加速
+Threads: 3463 total,   1 running, 3462 sleeping,   0 stopped,   0 zombie
+800%cpu  12%user   0%nice  21%sys 761%idle   0%iow   3%irq   3%sirq   0%host
 Waiting for mtkpower_applist: 0
 Slow dispatch >5000ms: 0
 BLASTSyncEngine timeout: 0
-Access denied vulkan.base: 0
 PNG 1080x2460 (color_type=6): neon_green=0.00%, sapphire_blue=32.35%

@@ -138,6 +138,46 @@ static void cdh_fixup_yv12_bo_layout(struct bo *bo) {
   cdh_notify_virgl_yv12_layout(bo, y_stride, c_stride, u_offset, v_offset);
 }
 
+// 3. FLEX_YCbCr_420_888 纹理采样平面提升（drv_resolve_format_and_use_flags，Android 13+）：
+//    上游 virtgpu_virgl 在 3D 模式下将 DRM_FORMAT_FLEX_YCbCr_420_888 固定解析为 2-plane
+//    DRM_FORMAT_NV12，但在无 host-gbm 的宿主（如 macOS CGL）上，宿主 virglrenderer 仅对
+//    3-plane DRM_FORMAT_YVU420_ANDROID（LINEAR 且不含 CAMERA_WRITE/SCANOUT）建立
+//    aux_plane_gl_id[0..2] 色度辅助纹理，导致 ImageReader(YUV_420_888 + GPU_SAMPLED_IMAGE)
+//    经 OES 外部纹理渲染时 UV 采样全 0（画面呈绿/青色）。
+//    Flexible YUV420 消费端/生产端均通过 lockYCbCr/planes 动态读取 3 平面指针与步幅，
+//    故对非编解码用途的纹理采样请求解析为 DRM_FORMAT_YVU420_ANDROID + BO_USE_LINEAR，
+//    随后由 cdh_fixup_yv12_bo_layout 同步 Guest/Host 步幅契约，实现零侵入真彩色渲染。
+extern "C" void __real_drv_resolve_format_and_use_flags(
+    struct driver *drv, uint32_t format, uint64_t use_flags,
+    uint32_t *out_format, uint64_t *out_use_flags);
+
+extern "C" void __wrap_drv_resolve_format_and_use_flags(
+    struct driver *drv, uint32_t format, uint64_t use_flags,
+    uint32_t *out_format, uint64_t *out_use_flags) {
+  __real_drv_resolve_format_and_use_flags(drv, format, use_flags, out_format,
+                                          out_use_flags);
+  if (drv == nullptr || drv->backend == nullptr ||
+      drv->backend->name == nullptr ||
+      strcmp(drv->backend->name, "virtgpu_virgl") != 0 ||
+      out_format == nullptr || out_use_flags == nullptr) {
+    return;
+  }
+  if (format == DRM_FORMAT_FLEX_YCbCr_420_888 &&
+      *out_format == DRM_FORMAT_NV12 &&
+      (use_flags & BO_USE_TEXTURE) != 0 &&
+      (use_flags & (BO_USE_HW_VIDEO_DECODER | BO_USE_HW_VIDEO_ENCODER)) == 0) {
+    const uint64_t cand_flags =
+        (*out_use_flags &
+         ~(BO_USE_SCANOUT | BO_USE_CAMERA_WRITE | BO_USE_CAMERA_READ)) |
+        BO_USE_LINEAR;
+    if (drv_get_combination(drv, DRM_FORMAT_YVU420_ANDROID, cand_flags) !=
+        nullptr) {
+      *out_format = DRM_FORMAT_YVU420_ANDROID;
+      *out_use_flags = cand_flags;
+    }
+  }
+}
+
 extern "C" struct bo *__real_drv_bo_create(struct driver *drv, uint32_t width,
                                            uint32_t height, uint32_t format,
                                            uint64_t use_flags);

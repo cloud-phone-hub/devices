@@ -1,0 +1,249 @@
+================ PART 1: CORE / NET / BT / NFC ================
+--- CORE HEALTH ---
+getenforce: Enforcing
+uname: Linux localhost 5.15.167-android13-8-o-01142-g18bd462653c5 #1 SMP PREEMPT Fri Sep 12 08:36:21 UTC 2025 aarch64 Toybox
+hardware: qcom / board=kalama / market=真我GT5 240W / en=realme GT5 240W / cdh_market=realme GT5 240W
+restarting_count: 0
+kernelsu_lsmod: NONE
+lsmod:
+Module                  Size  Used by
+zram                   45056  2 
+zsmalloc               40960  1 zram
+virtio_console         36864  0 
+mac80211_hwsim         90112  0 
+mac80211              946176  1 mac80211_hwsim
+cfg80211              987136  2 mac80211_hwsim,mac80211
+rfkill                 36864  1 cfg80211
+cdh_media              49152  0 
+cdh_input_identity     20480  0 
+cdh_device_info        86016  0 
+cdh_redirect          155648  0 
+meminfo:
+MemTotal:       11658380 kB
+MemFree:          327132 kB
+MemAvailable:    8168536 kB
+SwapTotal:       6291452 kB
+SwapFree:        6289404 kB
+swaps:
+Filename				Type		Size		Used		Priority
+/dev/block/zram0                        partition	6291452		2048		-2
+wm_size_density:
+Physical size: 1240x2772
+Physical density: 560
+battery:
+Current OPLUS Battery Service state:
+  Charger voltage : 0
+  Battery current : 0
+  ChargerTechnology: 0
+  ChargeFastCharger: false
+  PlugType: 0
+  UpdatesStopped: false
+  UsbHwStatus: 0
+  BatteryHwStatus: 0
+  HwStatusIsSet: 1
+  BatteryIcStatus: 0
+  IcStatusIsSet: 1
+
+  mUsbStatus: 0
+  PhoneTemp: 0
+  ThermalFeatureOn: false
+Current Battery Service state:
+  AC powered: false
+  USB powered: false
+  Wireless powered: false
+  Dock powered: false
+  Max charging current: 0
+  Max charging voltage: 0
+  Charge counter: 3922917
+  status: 3
+  health: 2
+  present: true
+  level: 85
+  scale: 100
+  voltage: 4479
+  temperature: 295
+  technology: Li-poly
+  Charging state: 0
+  Charging policy: 0
+battery_sysfs:
+/sys/class/power_supply/battery/charge_full_design=4600000
+/sys/class/power_supply/battery/capacity=100
+/sys/class/power_supply/battery/status=Full
+/sys/class/power_supply/battery/voltage_now=4480000
+cph_setup_check:
+ls: /data/user/0/com.oplus.camera/files/odm/etc/camera/config/: Permission denied
+workloadclassifier_check:
+NONE_ENABLED
+--- BLUETOOTH ---
+BluetoothShellCommand: Exec enable
+enable: Success
+  enabled: false
+  state: OFF
+  address: XX:XX:XX:XX:00:00
+  name: 真我GT5 240W
+Bluetooth crashed 0 times
+connection_manager state:
+shim::legacy::bta::dm  current bta_dm_discovery_state:BTA_DM_DISCOVER_IDLE
+shim::legacy::bta::dm  current bta_dm_search_state:BTA_DM_SEARCH_IDLE
+    le_connectability_state: "ConnectabilityState::DISARMED",
+      manufacturer_name: 224,
+      offloaded_resolution_of_private_address: 0,
+--- WIFI ---
+Wi-Fi is enabled
+mWifiInfo SSID: <unknown ssid>, BSSID: <none>, MAC: <none>, IP: null, Security type: -1, Supplicant state: DISCONNECTED, Wi-Fi standard: unknown, RSSI: -127, Link speed: -1Mbps, Tx Link speed: -1Mbps, Max Supported Tx Link speed: -1Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: -1Mbps, Frequency: -1MHz, Net ID: -1, Metered hint: false, score: 0, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 0, Trusted: false, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none><none>MLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+ID: 1 SSID: "Huazhu-23F-WiFi-90" PROVIDER-NAME: null BSSID: null FQDN: null HOME-PROVIDER-NETWORK: false PRIO: 0 HIDDEN: false PMF: false CarrierId: -1 SubscriptionId: -1 SubscriptionGroup: null Currently Connected: false User Selected: false
+mPerId={1=ID: 1 SSID: "Huazhu-23F-WiFi-90" PROVIDER-NAME: null BSSID: null FQDN: null HOME-PROVIDER-NETWORK: false PRIO: 0 HIDDEN: false PMF: false CarrierId: -1 SubscriptionId: -1 SubscriptionGroup: null Currently Connected: false User Selected: false
+mPerIDForCurrentUser={1=ID: 1 SSID: "Huazhu-23F-WiFi-90" PROVIDER-NAME: null BSSID: null FQDN: null HOME-PROVIDER-NETWORK: false PRIO: 0 HIDDEN: false PMF: false CarrierId: -1 SubscriptionId: -1 SubscriptionGroup: null Currently Connected: false User Selected: false
+mScanResultMatchInfoMapForCurrentUser={ScanResultMatchInfo: SSID: "Huazhu-23F-WiFi-90", from scan result: false, SecurityParams List:Security Parameters:
+=ID: 1 SSID: "Huazhu-23F-WiFi-90" PROVIDER-NAME: null BSSID: null FQDN: null HOME-PROVIDER-NETWORK: false PRIO: 0 HIDDEN: false PMF: false CarrierId: -1 SubscriptionId: -1 SubscriptionGroup: null Currently Connected: false User Selected: false
+--- CELLULAR (Wi-Fi OFF -> pure ccmni1) ---
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 127.0.0.1/8 scope host lo
+6: ccmni1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc pfifo_fast state UP group default qlen 1000
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+    mServiceState={mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE), mChannelNumber=1650, duplexMode()=1, mCellBandwidths=[20000], mOperatorAlphaLong=中国联通, mOperatorAlphaShort=中国联通, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=14(LTE), getRilDataRadioTechnology=14(LTE), mCssIndicator=unsupported, mNetworkId=-1, mSystemId=-1, mCdmaRoamingIndicator=-1, mCdmaDefaultRoamingIndicator=-1, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[VOICE,SMS,VIDEO] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=VoiceSpecificRegistrationInfo { mCssSupported=false mRoamingIndicator=0 mSystemIsInPrl=0 mDefaultRoamingIndicator=0} dataSpecificInfo=null nrState=**** rRplmn=46001 isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[DATA,MMS] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 16 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 null } nrState=**** rRplmn=46001 isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=中国联通, mOperatorAlphaShortRaw=中国联通, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataActivity=3
+    mDataConnectionState=2
+    mServiceState={mVoiceRegState=1(OUT_OF_SERVICE), mDataRegState=1(OUT_OF_SERVICE), mChannelNumber=1650, duplexMode()=0, mCellBandwidths=[20000], mOperatorAlphaLong=, mOperatorAlphaShort=, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=0(Unknown), getRilDataRadioTechnology=0(Unknown), mCssIndicator=unsupported, mNetworkId=-1, mSystemId=-1, mCdmaRoamingIndicator=-1, mCdmaDefaultRoamingIndicator=-1, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=null mMnc=null mAlphaLong= mAlphaShort= mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=VoiceSpecificRegistrationInfo { mCssSupported=false mRoamingIndicator=0 mSystemIsInPrl=0 mDefaultRoamingIndicator=0} dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=null mMnc=null mAlphaLong= mAlphaShort= mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 16 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 null } nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=, mOperatorAlphaShortRaw=, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataActivity=0
+    mDataConnectionState=-1
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=0.204 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=0.239 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=0.203 ms
+64 bytes from 223.5.5.5: icmp_seq=4 ttl=64 time=0.258 ms
+
+--- 223.5.5.5 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3051ms
+rtt min/avg/max/mdev = 0.203/0.226/0.258/0.023 ms
+--- NFC ---
+mState=on
+mScreenState=ON_UNLOCKED
+--- NFC TAP API ---
+{"error":"非法的设备 ID 或序号:\"\"/\"\""}
+
+--- CRASH CHECK ---
+
+================ PART 2: BT RECHECK / NFC TAP / WIFI ================
+=== BLUETOOTH RECHECK ===
+BluetoothShellCommand: Exec enable
+enable: Success
+  enabled: true
+  state: ON
+  address: XX:XX:XX:XX:00:00
+  name: 真我GT5 240W
+  time since enabled: 00:00:05.012
+Bluetooth crashed 0 times
+connection_manager state:
+shim::legacy::bta::dm  current bta_dm_discovery_state:BTA_DM_DISCOVER_IDLE
+shim::legacy::bta::dm  current bta_dm_search_state:BTA_DM_SEARCH_IDLE
+    le_connectability_state: "ConnectabilityState::DISARMED",
+      manufacturer_name: 224,
+      offloaded_resolution_of_private_address: 0,
+=== NFC TAP ===
+{"ok":true,"status":{"connected":true,"initialized":true,"discovering":true,"cardPresent":true,"cardUid":"04112233445566","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":67,"txResponses":85,"apduCount":0,"recentCmds":["mt=1,gid=01,oid=01,len=7","mt=1,gid=01,oid=03,len=7","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=03,len=7","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=03,len=17","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=09,len=1","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=03,len=11","mt=1,gid=01,oid=06,len=1","mt=1,gid=00,oid=02,len=5","mt=1,gid=0f,oid=21,len=0","mt=1,gid=01,oid=03,len=11","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=03,len=17","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4"]}}
+
+=== WIFI CHECK ===
+Wi-Fi is enabled
+mWifiInfo SSID: <unknown ssid>, BSSID: <none>, MAC: <none>, IP: null, Security type: -1, Supplicant state: SCANNING, Wi-Fi standard: unknown, RSSI: -127, Link speed: -1Mbps, Tx Link speed: -1Mbps, Max Supported Tx Link speed: -1Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: -1Mbps, Frequency: -1MHz, Net ID: -1, Metered hint: false, score: 0, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 0, Trusted: false, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none><none>MLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+mWifiInfo SSID: <unknown ssid>, BSSID: <none>, MAC: 02:00:00:00:00:00, IP: null, Security type: -1, Supplicant state: DISCONNECTED, Wi-Fi standard: unknown, RSSI: -127, Link speed: -1Mbps, Tx Link speed: -1Mbps, Max Supported Tx Link speed: -1Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: -1Mbps, Frequency: -1MHz, Net ID: -1, Metered hint: false, score: 0, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 0, Trusted: false, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none><none>MLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+    BSSID              Frequency      RSSI           Age(sec)     SSID                                 Flags
+  24:de:c6:e1:e4:e2       5180        -37              6.023    Huazhu-23F-WiFi-90                [ESS]
+  d0:17:69:ba:f1:c6       5200        -71              6.023    Mate60Pro_3944                    [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  24:de:c6:e1:e4:e5       2437        -78              6.023    Huazhu-Staff-90                   [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  24:de:c6:e1:e4:e4       5765        -72              6.023    Huazhu-23F-Conf-5G                [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  cc:81:da:f7:3d:60       2412        -73              6.023    ChinaUnicom-3D60                  [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  00:24:14:c1:b9:2e       5240        -61              6.023    Room-2207-90-5G                   [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  38:91:d5:98:cf:56       2437        -65              6.023    Room-2311-90                      [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  38:91:d5:ad:2e:d6       5785        -67              6.023    Room-2308-90-5G                   [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+=== RESTORE CELLULAR CHECK ===
+6: ccmni1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc pfifo_fast state UP group default qlen 1000
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+       valid_lft forever preferred_lft forever
+=== CAMERA: GRANT PERMS & LAUNCH OPLUS CAMERA ===
+Starting: Intent { cmp=com.oplus.camera/.Camera }
+--- Check camera UI hierarchy & dismiss any first-run dialog ---
+parse err: no element found: line 1, column 0
+
+================ PART 3: CAMERA / VIDEO / CDCM_PAUSE / TOP ================
+=== 1. Rear photo capture ===
+total 272
+-rwxrwx--- 1 u0_a288 media_rw 276798 2026-11-27 16:34 IMG20261127163405.jpg
+=== 2. Switch to front camera, capture preview & front photo ===
+total 384
+-rwxrwx--- 1 u0_a288 media_rw 276798 2026-11-27 16:34 IMG20261127163405.jpg
+-rwxrwx--- 1 u0_a288 media_rw 112738 2026-11-27 16:34 IMG20261127163415.jpg
+=== 3. Switch back to rear, switch to VIDEO mode & record 6s ===
+total 1248
+-rwxrwx--- 1 u0_a288 media_rw 276798 2026-11-27 16:34 IMG20261127163405.jpg
+-rwxrwx--- 1 u0_a288 media_rw 112738 2026-11-27 16:34 IMG20261127163415.jpg
+-rwxrwx--- 2 u0_a288 media_rw 882925 2026-11-27 16:34 VID20261127163426.mp4
+=== 4. Pull captured photos & inspect video ===
+JPGs: /sdcard/DCIM/Camera/IMG20261127163415.jpg
+/sdcard/DCIM/Camera/IMG20261127163405.jpg
+MP4: /sdcard/DCIM/Camera/VID20261127163426.mp4
+[STREAM]
+codec_name=h264
+width=1920
+height=1080
+r_frame_rate=90000/1
+[SIDE_DATA]
+[/SIDE_DATA]
+[/STREAM]
+[FORMAT]
+duration=7.140878
+size=882925
+[/FORMAT]
+=== 5. Gallery photo view ===
+Starting: Intent { act=android.intent.action.VIEW dat=file:///... typ=image/jpeg cmp=com.coloros.gallery3d/com.oplus.gallery.photo_page.PhotoActivity }
+=== 6. Video playback & decoder stats ===
+Starting: Intent { act=android.intent.action.VIEW dat=file:///... typ=video/mp4 }
+--- decoder logcat ---
+11-27 16:34:42.794 15547 15580 W libc    : Access denied finding property "vendor.mesa.ignore.discard.framebuffer"
+=== 7. Return HOME -> verify CDCM_PAUSE & host framesSent freeze ===
+camera/status T1: {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":784,"framesDropped":0}
+camera/status T2: {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":784,"framesDropped":0}
+--- CDCM_PAUSE log ---
+=== 8. Final BT uptime, top idle, restarting=0, crash check ===
+restarting_count: 0
+bt_status:
+  enabled: true
+  state: ON
+  name: 真我GT5 240W
+  time since enabled: 00:04:56.010
+Bluetooth crashed 0 times
+connection_manager state:
+shim::legacy::bta::dm  current bta_dm_discovery_state:BTA_DM_DISCOVER_IDLE
+shim::legacy::bta::dm  current bta_dm_search_state:BTA_DM_SEARCH_IDLE
+    le_connectability_state: "ConnectabilityState::DISARMED",
+      manufacturer_name: 224,
+top_idle:
+Tasks: 389 total,   1 running, 388 sleeping,   0 stopped,   0 zombie
+  Mem:    11385M total,    10518M used,      866M free,        6M buffers
+ Swap:     6143M total,       33M used,     6110M free,     7613M cached
+800%cpu   0%user   0%nice   4%sys 796%idle   0%iow   0%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+15784 shell        20   0 2.0G 6.0M 5.1M R  3.8   0.0   0:00.01 top -n 1 -b
+   34 root         20   0    0    0    0 S  3.8   0.0   0:00.19 [ksoftirqd/2]
+15783 shell        20   0 2.1G 5.5M 4.7M S  0.0   0.0   0:00.00 head -n 15
+15782 shell        20   0 2.1G 5.5M 4.7M S  0.0   0.0   0:00.00 timeout 8 top -n 1 -b
+15772 shell        20   0 2.0G 3.8M 3.2M S  0.0   0.0   0:00.00 sh -c ?    echo "restarting_count: $(getprop | grep "init\.svc\." | grep -c restarting)"?    echo "bt_status:"?    timeout 5 dumpsys bluetooth_manager | grep -E "enabled:|state:|name:|time since enabled:|Bluetooth crashed" | head -n 10?    echo "top_idle:"?    timeout 8 top -n 1 -b | head -n 15?    echo "crash_log:"?    timeout 5 logcat -d -b crash 2>/dev/null | tail -n 20
+15771 root         20   0 2.0G 5.5M 4.7M S  0.0   0.0   0:00.00 sleep 2
+15711 root         20   0 2.0G 5.5M 4.8M S  0.0   0.0   0:00.00 sleep 30
+15671 artd         20   0 2.1G  14M  12M S  0.0   0.1   0:00.01 artd
+15549 root          0 -20    0    0    0 I  0.0   0.0   0:00.00 [kworker/u17:3-blk_crypto_wq]
+15548 root          0 -20    0    0    0 I  0.0   0.0   0:00.00 [kworker/u17:2-f2fs_post_read_wq]
+crash_log:
+
+================ PART 4: CDCM_PAUSE & DECODER METRICS ================
+{"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":884,"framesDropped":0}
+
+{"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":884,"framesDropped":0}
+
+11-27 16:36:12.844   604 13333 I cdh_camera_video: camera session idle, sent CDCM_PAUSE on /dev/hvc12
+  649: {codec, (11-27 16:36:00.560), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.bitrate=3939840, android.media.mediacodec.bitrate_mode=VBR, android.media.mediacodec.codec=c2.android.avc.encoder, android.media.mediacodec.codec-max-input-size=0, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.component-color-format=2130708361, android.media.mediacodec.config-color-range=0, android.media.mediacodec.config-color-standard=0, android.media.mediacodec.config-color-transfer=0, android.media.mediacodec.encoder=1, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=-7340285630703730680, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=23, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operating-rate=3.000000e+01, android.media.mediacodec.operation-mode=1, android.media.mediacodec.original.bitrate=192000, android.media.mediacodec.output-surface=1, android.media.mediacodec.priority=0, android.media.mediacodec.profile=65536, android.media.mediacodec.resolution-change-count=0, android.media.mediacodec.rotation-degrees=0, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.shaped=6, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=0, android.media.mediacodec.video-qp-b-max=51, android.media.mediacodec.video-qp-i-max=45, android.media.mediacodec.video-qp-p-max=48, android.media.mediacodec.width=1920)}
+  652: {codec, (11-27 16:36:04.501), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.bitrate=3939840, android.media.mediacodec.bitrate_mode=VBR, android.media.mediacodec.codec=c2.android.avc.encoder, android.media.mediacodec.codec-max-input-size=0, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.component-color-format=2130708361, android.media.mediacodec.config-color-range=0, android.media.mediacodec.config-color-standard=0, android.media.mediacodec.config-color-transfer=0, android.media.mediacodec.encoder=1, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=-7340285630703730679, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=19, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operating-rate=3.000000e+01, android.media.mediacodec.operation-mode=1, android.media.mediacodec.original.bitrate=192000, android.media.mediacodec.output-surface=1, android.media.mediacodec.priority=0, android.media.mediacodec.profile=65536, android.media.mediacodec.resolution-change-count=0, android.media.mediacodec.rotation-degrees=0, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.shaped=6, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=0, android.media.mediacodec.video-qp-b-max=51, android.media.mediacodec.video-qp-i-max=45, android.media.mediacodec.video-qp-p-max=48, android.media.mediacodec.width=1920)}
+  659: {codec, (11-27 16:37:32.614), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.bitrate=3939840, android.media.mediacodec.bitrate_mode=VBR, android.media.mediacodec.codec=c2.android.avc.encoder, android.media.mediacodec.codec-max-input-size=0, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.component-color-format=2130708361, android.media.mediacodec.config-color-range=0, android.media.mediacodec.config-color-standard=0, android.media.mediacodec.config-color-transfer=0, android.media.mediacodec.encoder=1, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=-7340285630703730678, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=21, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operating-rate=3.000000e+01, android.media.mediacodec.operation-mode=1, android.media.mediacodec.original.bitrate=192000, android.media.mediacodec.output-surface=1, android.media.mediacodec.priority=0, android.media.mediacodec.profile=65536, android.media.mediacodec.resolution-change-count=0, android.media.mediacodec.rotation-degrees=0, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.shaped=6, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=0, android.media.mediacodec.video-qp-b-max=51, android.media.mediacodec.video-qp-i-max=45, android.media.mediacodec.video-qp-p-max=48, android.media.mediacodec.width=1920)}
+  660: {codec, (11-27 16:37:33.290), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.codec=c2.android.avc.decoder, android.media.mediacodec.codec-max-input-size=2097152, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.component-color-format=2135033992, android.media.mediacodec.config-color-range=2, android.media.mediacodec.config-color-standard=1, android.media.mediacodec.config-color-transfer=2, android.media.mediacodec.encoder=0, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=-7340285630703730677, android.media.mediacodec.latency.unknown=1, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=327, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.output-surface=1, android.media.mediacodec.parsed-color-range=1, android.media.mediacodec.parsed-color-standard=1, android.media.mediacodec.parsed-color-transfer=2, android.media.mediacodec.pixel-format=842094169, android.media.mediacodec.profile=65536, android.media.mediacodec.resolution-change-count=1, android.media.mediacodec.rotation-degrees=90, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=14442, android.media.mediacodec.width=1920)}
+  671: {codec, (11-27 16:37:33.827), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.codec=c2.android.avc.decoder, android.media.mediacodec.codec-max-input-size=2097152, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.component-color-format=2135033992, android.media.mediacodec.config-color-range=2, android.media.mediacodec.config-color-standard=1, android.media.mediacodec.config-color-transfer=2, android.media.mediacodec.encoder=0, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=-7340285630703730676, android.media.mediacodec.latency.avg=83947, android.media.mediacodec.latency.max=116390, android.media.mediacodec.latency.min=52964, android.media.mediacodec.latency.n=19, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=506, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.output-surface=1, android.media.mediacodec.parsed-color-range=1, android.media.mediacodec.parsed-color-standard=1, android.media.mediacodec.parsed-color-transfer=2, android.media.mediacodec.pixel-format=842094169, android.media.mediacodec.profile=65536, android.media.mediacodec.resolution-change-count=1, android.media.mediacodec.rotation-degrees=90, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=25142, android.media.mediacodec.width=1920)}
+  673: {codec, (11-27 16:37:40.315), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.bitrate=3939840, android.media.mediacodec.bitrate_mode=VBR, android.media.mediacodec.codec=c2.android.avc.encoder, android.media.mediacodec.codec-max-input-size=0, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.component-color-format=2130708361, android.media.mediacodec.config-color-range=0, android.media.mediacodec.config-color-standard=0, android.media.mediacodec.config-color-transfer=0, android.media.mediacodec.encoder=1, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=-7340285630703730675, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=13, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operating-rate=3.000000e+01, android.media.mediacodec.operation-mode=1, android.media.mediacodec.original.bitrate=192000, android.media.mediacodec.output-surface=1, android.media.mediacodec.priority=0, android.media.mediacodec.profile=65536, android.media.mediacodec.resolution-change-count=0, android.media.mediacodec.rotation-degrees=0, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.shaped=6, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=0, android.media.mediacodec.video-qp-b-max=51, android.media.mediacodec.video-qp-i-max=45, android.media.mediacodec.video-qp-p-max=48, android.media.mediacodec.width=1920)}

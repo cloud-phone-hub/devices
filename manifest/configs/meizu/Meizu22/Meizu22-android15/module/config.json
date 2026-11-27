@@ -284,14 +284,14 @@
       "type": "dir"
     },
     {
-      "from": "/odm/etc/build.prop",
-      "to": "/mnt/vendorpatch/odm/etc/build.prop",
+      "from": "/odm",
+      "to": "/odm",
       "type": "file"
     },
     {
-      "from": "/odm/etc/selinux/odm_sepolicy.cil",
-      "to": "/mnt/vendorpatch/odm/etc/selinux/odm_sepolicy.cil",
-      "type": "file"
+      "from": "/odm",
+      "to": "/mnt/vendorpatch/odm",
+      "type": "dir"
     },
     {
       "from": "/system/lib/modules",
@@ -299,14 +299,24 @@
       "type": "dir"
     },
     {
-      "from": "/odm/etc/selinux/precompiled_sepolicy",
-      "to": "/mnt/vendorpatch/odm/etc/selinux/precompiled_sepolicy",
-      "type": "file"
-    },
-    {
       "from": "/system/bin/update_verifier",
       "to": "/mnt/vendorpatch/system/bin/update_verifier",
       "type": "file"
+    },
+    {
+      "from": "/vendor/lib64/libunwindstack.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/libui.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/lib64/liblzma.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/android.hardware.graphics.allocator@4.0.so",
+      "type": "maps"
+    },
+    {
+      "from": "/vendor/app",
+      "to": "/mnt/vendorpatch/vendor/app",
+      "type": "dir"
     }
   ],
   "thermal": {

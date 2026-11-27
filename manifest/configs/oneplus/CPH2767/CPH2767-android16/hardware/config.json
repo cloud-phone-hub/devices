@@ -127,6 +127,12 @@
       }
     },
     {
+      "android.hardware.graphics.composer3": {
+        "variant": "default",
+        "version": "3.0"
+      }
+    },
+    {
       "android.hardware.radio": {
         "variant": "qti",
         "version": "1.0"

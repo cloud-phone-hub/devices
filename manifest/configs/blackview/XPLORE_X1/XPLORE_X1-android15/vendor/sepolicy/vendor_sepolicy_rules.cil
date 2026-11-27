@@ -75,8 +75,8 @@
 (allow {{pick:system_app}} mtk_hal_power_service (service_manager (find)))
 ;; @end
 
-;; @when-declared mtk_hal_composer_ext_service hal_neuralnetworks_default
-(allow {{pick:surfaceflinger}} mtk_hal_composer_ext_service (service_manager (find)))
+;; @when-declared mtk_hal_composer_ext_service
+(dontaudit {{pick:surfaceflinger}} mtk_hal_composer_ext_service (service_manager (find)))
 ;; @end
 
 ;; @when-declared mtk_hal_nvramagent_service hal_neuralnetworks_default

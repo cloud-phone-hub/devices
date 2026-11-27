@@ -1,5 +1,6 @@
 vendor.dolby.dvs.IDvs/default
 vendor.nxp.nxpnfc_aidl.INxpNfc/default
+vendor.nxp.nxpnfc_pnaidl.INxpNfc/default
 vendor.oplus.hardware.binaural_record.IBinauralRecordProviderFactory/default
 vendor.oplus.hardware.biometrics.fingerprintpay.IFingerprintPay/default
 vendor.oplus.hardware.camera.aon.IAONService/default

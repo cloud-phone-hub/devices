@@ -17,11 +17,8 @@ Complete
 11-26 21:19:33.099   749   794 W ServiceManagerCppClient: Service vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist/default didn't start. Returning NULL
 11-26 21:19:33.099   749   794 E mtkpower_client: Couldn't load mtkpower applist service
 11-26 21:19:33.109   749   794 W Looper  : Slow dispatch took 5030ms android.ui h=com.android.server.policy.PhoneWindowManager$PolicyHandler c=com.android.server.policy.PhoneWindowManager$DisplayHomeButtonHandler$$ExternalSyntheticLambda0@7cb748f m=0
-11-26 21:19:33.109   749   794 W Looper  : Slow delivery took 5030ms android.ui h=com.android.server.policy.PhoneWindowManager$PolicyHandler c=null m=26
-11-26 21:19:33.115   749  3999 I mtkpower_client: [PowerHal_Wrap_notifyAppState] com.blackview.launcher/com.android.searchlauncher.SearchLauncher pid=1245 activityId:7651584 state:1
 11-26 21:19:33.115   749  3999 I ServiceManagerCppClient: Waiting for service 'vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist/default' on '/dev/binder'...
 11-26 21:19:38.121   749  3999 W ServiceManagerCppClient: Service vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist/default didn't start. Returning NULL
-11-26 21:19:38.121   749  3999 E mtkpower_client: Couldn't load mtkpower applist service
 11-26 21:19:38.122   749   796 W BLASTSyncEngine: Sync group 38 timeout
 
 === 2. Pre-fix Placeholder SELinux add Denials ===
@@ -29,12 +26,18 @@ Service vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist/default: not
 Service vendor.mediatek.hardware.mtkpower.IMtkPowerService/default: not found
 11-26 20:19:56.950   230   230 I auditd  : avc:  denied  { add } for pid=598 uid=1000 name=vendor.blackview.helper.IHelper/default scontext=u:r:hal_neuralnetworks_default:s0 tcontext=u:object_r:hal_blackview_service:s0 tclass=service_manager permissive=0
 11-26 20:19:56.951   230   230 I auditd  : avc:  denied  { add } for pid=598 uid=1000 name=vendor.mediatek.hardware.aee.IAee/AEE scontext=u:r:hal_neuralnetworks_default:s0 tcontext=u:object_r:mtk_hal_aee_service:s0 tclass=service_manager permissive=0
-11-26 20:19:57.009   230   230 I auditd  : avc:  denied  { add } for pid=598 uid=1000 name=vendor.mediatek.hardware.composer_ext.IComposerExt/default scontext=u:r:hal_neuralnetworks_default:s0 tcontext=u:object_r:mtk_hal_composer_ext_service:s0 tclass=service_manager permissive=0
 
-=== 3. Pre-fix Host QEMU 107.5% CPU, Venus Spin & netdiag Crash Loop ===
+=== 3. Pre-fix Host QEMU 107.5% CPU, Venus Chrome_InProcGp Spin & netdiag Crash Loop ===
 cuimingqiang     36413 107.5  3.3 422209008 548464   ??  R     8:19PM  25:52.87 /Volumes/work/cloud-phone-hub/out/qemu/dist/darwin/bin/qemu-system-aarch64 ...
-11-26 21:19:58.800 17306 17436 W libc    : Access denied finding property "ro.vendor.cdh.vulkan.base"
+ 4890 u0_a151      16  -4  34G 499M 334M R 93.9   6.5   0:14.15 Chrome_InProcGp com.google.android.gms
+ 5003 u0_a108      16  -4  34G 315M 200M R 87.8   4.1   0:12.90 Chrome_InProcGp com.blackview.wallpaper
 [init.svc.netdiag]: [restarting]
 [sys.init.updatable_crashing_process_name]: [netdiag]
-[ 5644.378845] [  T229] type=1400 audit(1795701231.325:252831): avc:  denied  { create } for  comm="init" name="netdiag" scontext=u:r:init:s0 tcontext=u:object_r:socket_device:s0 tclass=sock_file permissive=0
-[ 5644.415308] [  T229] type=1400 audit(1795701231.361:252832): avc:  denied  { read } for  comm="netdiag" name="u:object_r:vendor_default_prop:s0" dev="tmpfs" ino=494 scontext=u:r:netdiag:s0 tcontext=u:object_r:vendor_default_prop:s0 tclass=file permissive=0
+
+=== 4. Intermediate Regression When Mixing vulkan.pastel.so with VirGL SurfaceFlinger (Screen Flicker) ===
+vrend_decode_create_sampler_view: context error reported 4 "surfaceflinger" Illegal resource 3001
+context 4 failed to dispatch CREATE_OBJECT: 22
+vrend_decode_ctx_submit_cmd: context error reported 4 "surfaceflinger" Illegal command buffer 394753
+AnimFrame 00: mean_rgb=(188.0, 177.5, 173.4)
+AnimFrame 01: mean_rgb=(155.2, 156.2, 154.3)
+AnimFrame 07: mean_rgb=(0.0, 0.0, 0.0)

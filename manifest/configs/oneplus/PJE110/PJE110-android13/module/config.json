@@ -17,9 +17,9 @@
     "tablet": false,
     "touch": {
       "abs-to-mt": true,
-      "abs-x-max": 17280,
+      "abs-x-max": 20224,
       "abs-xy": true,
-      "abs-y-max": 38400,
+      "abs-y-max": 44480,
       "bus": 2,
       "mt-pressure": false,
       "mt-slots": 10,
@@ -33,6 +33,13 @@
       "vendor": 10182,
       "version": 256
     }
+  },
+  "display": {
+    "refresh-rates": [
+      60,
+      90,
+      120
+    ]
   },
   "input_identity": {
     "aligns": [
@@ -127,6 +134,16 @@
     {
       "from": "/vendor/lib64",
       "to": "/mnt/vendorpatch/vendor/lib64",
+      "type": "dir"
+    },
+    {
+      "from": "/vendor/app",
+      "to": "/mnt/vendorpatch/vendor/app",
+      "type": "dir"
+    },
+    {
+      "from": "/system_ext/app/workloadclassifier",
+      "to": "/mnt/vendorpatch/system_ext/app/workloadclassifier",
       "type": "dir"
     },
     {

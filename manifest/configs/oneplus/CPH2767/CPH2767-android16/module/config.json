@@ -111,6 +111,11 @@
   },
   "redirect": [
     {
+      "from": "/system_ext/lib64/libUahPerf_Jni.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/libUahPerf_Jni_cph.so",
+      "type": "file"
+    },
+    {
       "from": "/vendor/etc",
       "to": "/mnt/vendorpatch/vendor/etc",
       "type": "dir"
@@ -174,11 +179,6 @@
       "from": "/system/bin/update_verifier",
       "to": "/mnt/vendorpatch/system/bin/update_verifier",
       "type": "file"
-    },
-    {
-      "from": "/system/priv-app/NfcNci",
-      "to": "/mnt/vendorpatch/system/priv-app/NfcNci",
-      "type": "dir"
     }
   ],
   "cpufreq": {

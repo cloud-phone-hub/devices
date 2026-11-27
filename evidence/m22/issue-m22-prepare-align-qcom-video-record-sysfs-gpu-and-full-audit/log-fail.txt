@@ -1,0 +1,121 @@
+=== MEIZU 22 #1 BEFORE FIX SNAPSHOT ===
+Thu Nov 26 23:32:13 CST 2026
+1
+Enforcing
+Physical size: 1080x2400
+Physical density: 440
+MemTotal:        7760724 kB
+MemFree:          273024 kB
+MemAvailable:    8195872 kB
+Buffers:            9504 kB
+Cached:          8455444 kB
+SwapCached:            0 kB
+SwapTotal:       6291452 kB
+SwapFree:              0 kB
+Filename				Type		Size		Used		Priority
+total 0
+drwxr-xr-x  2 root root 0 2026-11-26 23:17 .
+drwxr-xr-x 80 root root 0 1970-01-01 08:00 ..
+Tasks: 408 total,   1 running, 407 sleeping,   0 stopped,   0 zombie
+  Mem:  7760724K total,  7483272K used,   277452K free,     9504K buffers
+ Swap:  6291452K total,  6291452K used,        0K free,  8455444K cached
+800%cpu   8%user   0%nice   8%sys 776%idle   0%iow   8%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+21364 root         20   0    0    0    0 I  4.0   0.0   0:00.28 [kworker/u16:2-events_unbound]
+  854 system       20   0  10G 7.0M 5.3M S  4.0   0.0   1:09.11 android.hardware.camera-service
+21620 shell        20   0  10G 5.0M 4.1M R  0.0   0.0   0:00.01 top -b -n 1 -m 10
+21603 shell        20   0  10G 3.5M 2.9M S  0.0   0.0   0:00.00 sh -c ?echo "=== MEIZU 22 #1 BEFORE FIX SNAPSHOT ==="?date?getprop sys.boot_completed?getenforce?wm size?wm density?head -n 6 /proc/meminfo?grep -E "SwapTotal|SwapFree" /proc/meminfo?cat /proc/swaps?ls -la /sys/class/power_supply/?top -b -n 1 -m 10?echo "--- CRASHES ---"?logcat -b crash -d | tail -n 35?echo "--- QDGRALLOC & COMPOSER ---"?logcat -d | grep -E "qdgralloc|createGraphicBuffer|CompositionEngine: map unknown|SmartSwapConfiger" | tail -n 30?echo "--- SELINUX DENIED (permissive=0) ---"?logcat -d | grep "avc:  denied" | grep "permissive=0" | tail -n 20
+21602 root         20   0  10G 4.9M 4.3M S  0.0   0.0   0:00.00 sleep 2
+21440 root         20   0  10G 4.9M 4.3M S  0.0   0.0   0:00.00 sleep 30
+20305 root          0 -20    0    0    0 I  0.0   0.0   0:00.00 [kworker/u17:1-f2fs_post_read_wq]
+20238 root          0 -20    0    0    0 I  0.0   0.0   0:00.01 [kworker/u17:0-f2fs_post_read_wq]
+20236 u0_a251      20   0  16G 406M 320M S  0.0   5.3   0:02.16 com.ss.android.ugc.aweme
+20233 root         20   0    0    0    0 I  0.0   0.0   0:00.00 [kworker/0:2]
+--- CRASHES ---
+11-26 23:06:25.553  7691  7757 E AndroidRuntime: Process: .qtidataservices, PID: 7691
+11-26 23:06:25.553  7691  7757 E AndroidRuntime: java.lang.UnsatisfiedLinkError: No implementation found for void vendor.qti.iwlan.JniHelper.getAllQualifiedNetworks(int, int) (tried Java_vendor_qti_iwlan_JniHelper_getAllQualifiedNetworks and Java_vendor_qti_iwlan_JniHelper_getAllQualifiedNetworks__II) - is the library loaded, e.g. System.loadLibrary?
+11-26 23:06:25.553  7691  7757 E AndroidRuntime: 	at vendor.qti.iwlan.JniHelper.getAllQualifiedNetworks(Native Method)
+11-26 23:06:25.553  7691  7757 E AndroidRuntime: 	at vendor.qti.iwlan.IWlanProxy.getAllQualifiedNetworks(IWlanProxy.java:486)
+11-26 23:06:25.553  7691  7757 E AndroidRuntime: 	at vendor.qti.iwlan.QualifiedNetworksServiceImpl$NetworkAvailabilityProviderImpl.<init>(QualifiedNetworksServiceImpl.java:80)
+11-26 23:06:25.553  7691  7757 E AndroidRuntime: 	at vendor.qti.iwlan.QualifiedNetworksServiceImpl.onCreateNetworkAvailabilityProvider(QualifiedNetworksServiceImpl.java:157)
+11-26 23:06:25.553  7691  7757 E AndroidRuntime: 	at android.telephony.data.QualifiedNetworksService$QualifiedNetworksServiceHandler.handleMessage(QualifiedNetworksService.java:354)
+11-26 23:06:25.553  7691  7757 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+11-26 23:06:25.553  7691  7757 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:248)
+11-26 23:06:25.553  7691  7757 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:338)
+11-26 23:06:25.553  7691  7757 E AndroidRuntime: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+11-26 23:06:27.357  7790  8045 E AndroidRuntime: FATAL EXCEPTION: QualifiedNetworksService
+11-26 23:06:27.357  7790  8045 E AndroidRuntime: Process: .qtidataservices, PID: 7790
+11-26 23:06:27.357  7790  8045 E AndroidRuntime: java.lang.UnsatisfiedLinkError: No implementation found for void vendor.qti.iwlan.JniHelper.getAllQualifiedNetworks(int, int) (tried Java_vendor_qti_iwlan_JniHelper_getAllQualifiedNetworks and Java_vendor_qti_iwlan_JniHelper_getAllQualifiedNetworks__II) - is the library loaded, e.g. System.loadLibrary?
+11-26 23:06:27.357  7790  8045 E AndroidRuntime: 	at vendor.qti.iwlan.JniHelper.getAllQualifiedNetworks(Native Method)
+11-26 23:06:27.357  7790  8045 E AndroidRuntime: 	at vendor.qti.iwlan.IWlanProxy.getAllQualifiedNetworks(IWlanProxy.java:486)
+11-26 23:06:27.357  7790  8045 E AndroidRuntime: 	at vendor.qti.iwlan.QualifiedNetworksServiceImpl$NetworkAvailabilityProviderImpl.<init>(QualifiedNetworksServiceImpl.java:80)
+11-26 23:06:27.357  7790  8045 E AndroidRuntime: 	at vendor.qti.iwlan.QualifiedNetworksServiceImpl.onCreateNetworkAvailabilityProvider(QualifiedNetworksServiceImpl.java:157)
+11-26 23:06:27.357  7790  8045 E AndroidRuntime: 	at android.telephony.data.QualifiedNetworksService$QualifiedNetworksServiceHandler.handleMessage(QualifiedNetworksService.java:354)
+11-26 23:06:27.357  7790  8045 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+11-26 23:06:27.357  7790  8045 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:248)
+11-26 23:06:27.357  7790  8045 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:338)
+11-26 23:06:27.357  7790  8045 E AndroidRuntime: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+11-26 23:06:28.206  8132  8177 E AndroidRuntime: FATAL EXCEPTION: QualifiedNetworksService
+11-26 23:06:28.206  8132  8177 E AndroidRuntime: Process: .qtidataservices, PID: 8132
+11-26 23:06:28.206  8132  8177 E AndroidRuntime: java.lang.UnsatisfiedLinkError: No implementation found for void vendor.qti.iwlan.JniHelper.getAllQualifiedNetworks(int, int) (tried Java_vendor_qti_iwlan_JniHelper_getAllQualifiedNetworks and Java_vendor_qti_iwlan_JniHelper_getAllQualifiedNetworks__II) - is the library loaded, e.g. System.loadLibrary?
+11-26 23:06:28.206  8132  8177 E AndroidRuntime: 	at vendor.qti.iwlan.JniHelper.getAllQualifiedNetworks(Native Method)
+11-26 23:06:28.206  8132  8177 E AndroidRuntime: 	at vendor.qti.iwlan.IWlanProxy.getAllQualifiedNetworks(IWlanProxy.java:486)
+11-26 23:06:28.206  8132  8177 E AndroidRuntime: 	at vendor.qti.iwlan.QualifiedNetworksServiceImpl$NetworkAvailabilityProviderImpl.<init>(QualifiedNetworksServiceImpl.java:80)
+11-26 23:06:28.206  8132  8177 E AndroidRuntime: 	at vendor.qti.iwlan.QualifiedNetworksServiceImpl.onCreateNetworkAvailabilityProvider(QualifiedNetworksServiceImpl.java:157)
+11-26 23:06:28.206  8132  8177 E AndroidRuntime: 	at android.telephony.data.QualifiedNetworksService$QualifiedNetworksServiceHandler.handleMessage(QualifiedNetworksService.java:354)
+11-26 23:06:28.206  8132  8177 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:110)
+11-26 23:06:28.206  8132  8177 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:248)
+11-26 23:06:28.206  8132  8177 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:338)
+11-26 23:06:28.206  8132  8177 E AndroidRuntime: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+--- QDGRALLOC & COMPOSER ---
+11-26 23:31:43.274   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:31:43.290   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:31:43.306   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:31:43.323   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:31:43.340   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:31:43.357   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:31:43.373   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:31:43.391   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:31:43.418   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:31:43.607   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:31:44.624   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:31:46.290   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:31:46.459   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:31:47.494   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:31:56.979   910   953 E SmartSwapConfiger: configSmartSwap failed!
+11-26 23:31:56.979   910   953 E SmartSwapConfiger: java.lang.RuntimeException: Could not apply smart swap score
+11-26 23:31:56.979   910   953 E SmartSwapConfiger: 	at android.os.Process.configSmartSwapScore(Native Method)
+11-26 23:31:56.979   910   953 E SmartSwapConfiger: 	at com.android.server.am.SmartSwapConfiger.setSmartSwapScore(SmartSwapConfiger.java:133)
+11-26 23:31:56.979   910   953 E SmartSwapConfiger: 	at com.android.server.am.SmartSwapConfiger.updateSmartSwapInternal(SmartSwapConfiger.java:83)
+11-26 23:31:56.979   910   953 E SmartSwapConfiger: 	at com.android.server.am.SmartSwapConfiger.-$$Nest$smupdateSmartSwapInternal(SmartSwapConfiger.java:0)
+11-26 23:31:56.979   910   953 E SmartSwapConfiger: 	at com.android.server.am.SmartSwapConfiger$UpdateSmartSwapRunnable.run(SmartSwapConfiger.java:60)
+11-26 23:31:56.979   910   953 E SmartSwapConfiger: 	at android.os.Handler.handleCallback(Handler.java:995)
+11-26 23:31:56.979   910   953 E SmartSwapConfiger: 	at android.os.Handler.dispatchMessage(Handler.java:103)
+11-26 23:31:56.979   910   953 E SmartSwapConfiger: 	at android.os.Looper.loopOnce(Looper.java:248)
+11-26 23:31:56.979   910   953 E SmartSwapConfiger: 	at android.os.Looper.loop(Looper.java:338)
+11-26 23:31:56.979   910   953 E SmartSwapConfiger: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+11-26 23:32:00.025   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:32:00.046   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:32:00.230   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+11-26 23:32:01.265   906   906 I CompositionEngine: map unknown (BT709 sRGB Full range)/(Unknown RenderIntent 265) to default color mode
+--- SELINUX DENIED (permissive=0) ---
+11-26 23:30:51.936 21023 21023 W ps      : type=1400 audit(0.0:161170): avc:  denied  { getattr } for  path="/proc/2917" dev="proc" ino=35962 scontext=u:r:telemon:s0 tcontext=u:r:vendor_qtelephony:s0:c169,c256,c512,c768 tclass=dir permissive=0
+11-26 23:31:09.956 21133 21133 W ps      : type=1400 audit(0.0:162598): avc:  denied  { getattr } for  path="/proc/2623" dev="proc" ino=28827 scontext=u:r:telemon:s0 tcontext=u:r:platform_app:s0:c512,c768 tclass=dir permissive=0
+11-26 23:31:09.960 21133 21133 W ps      : type=1400 audit(0.0:162599): avc:  denied  { getattr } for  path="/proc/2627" dev="proc" ino=26136 scontext=u:r:telemon:s0 tcontext=u:r:permissioncontroller_app:s0:c201,c256,c512,c768 tclass=dir permissive=0
+11-26 23:31:09.960 21133 21133 W ps      : type=1400 audit(0.0:162600): avc:  denied  { getattr } for  path="/proc/2858" dev="proc" ino=28896 scontext=u:r:telemon:s0 tcontext=u:r:platform_app:s0:c512,c768 tclass=dir permissive=0
+11-26 23:31:09.960 21133 21133 W ps      : type=1400 audit(0.0:162601): avc:  denied  { getattr } for  path="/proc/2882" dev="proc" ino=32862 scontext=u:r:telemon:s0 tcontext=u:r:vendor_qtelephony:s0:c144,c256,c512,c768 tclass=dir permissive=0
+11-26 23:31:09.960 21133 21133 W ps      : type=1400 audit(0.0:162602): avc:  denied  { getattr } for  path="/proc/2917" dev="proc" ino=35962 scontext=u:r:telemon:s0 tcontext=u:r:vendor_qtelephony:s0:c169,c256,c512,c768 tclass=dir permissive=0
+11-26 23:31:27.988 21249 21249 W ps      : type=1400 audit(0.0:163918): avc:  denied  { getattr } for  path="/proc/2623" dev="proc" ino=28827 scontext=u:r:telemon:s0 tcontext=u:r:platform_app:s0:c512,c768 tclass=dir permissive=0
+11-26 23:31:27.988 21249 21249 W ps      : type=1400 audit(0.0:163919): avc:  denied  { getattr } for  path="/proc/2627" dev="proc" ino=26136 scontext=u:r:telemon:s0 tcontext=u:r:permissioncontroller_app:s0:c201,c256,c512,c768 tclass=dir permissive=0
+11-26 23:31:27.988 21249 21249 W ps      : type=1400 audit(0.0:163920): avc:  denied  { getattr } for  path="/proc/2858" dev="proc" ino=28896 scontext=u:r:telemon:s0 tcontext=u:r:platform_app:s0:c512,c768 tclass=dir permissive=0
+11-26 23:31:27.988 21249 21249 W ps      : type=1400 audit(0.0:163921): avc:  denied  { getattr } for  path="/proc/2882" dev="proc" ino=32862 scontext=u:r:telemon:s0 tcontext=u:r:vendor_qtelephony:s0:c144,c256,c512,c768 tclass=dir permissive=0
+11-26 23:31:27.988 21249 21249 W ps      : type=1400 audit(0.0:163922): avc:  denied  { getattr } for  path="/proc/2917" dev="proc" ino=35962 scontext=u:r:telemon:s0 tcontext=u:r:vendor_qtelephony:s0:c169,c256,c512,c768 tclass=dir permissive=0
+11-26 23:31:41.192   910   910 W android.display: type=1400 audit(0.0:165339): avc:  denied  { read } for  name="u:object_r:vendor_display_notch_prop:s0" dev="tmpfs" ino=397 scontext=u:r:system_server:s0 tcontext=u:object_r:vendor_display_notch_prop:s0 tclass=file permissive=0
+11-26 23:31:41.300  2623  2623 W ndroid.systemui: type=1400 audit(0.0:165340): avc:  denied  { read } for  name="u:object_r:bootanim_system_prop:s0" dev="tmpfs" ino=90 scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:bootanim_system_prop:s0 tclass=file permissive=0 app=com.flyme.systemuiex
+11-26 23:31:42.948   910   910 W android.display: type=1400 audit(0.0:165345): avc:  denied  { read } for  name="u:object_r:vendor_display_notch_prop:s0" dev="tmpfs" ino=397 scontext=u:r:system_server:s0 tcontext=u:object_r:vendor_display_notch_prop:s0 tclass=file permissive=0
+11-26 23:31:42.952  2623  2623 W ndroid.systemui: type=1400 audit(0.0:165346): avc:  denied  { read } for  name="u:object_r:bootanim_system_prop:s0" dev="tmpfs" ino=90 scontext=u:r:platform_app:s0:c512,c768 tcontext=u:object_r:bootanim_system_prop:s0 tclass=file permissive=0 app=com.flyme.systemuiex
+11-26 23:32:04.036 21545 21545 W ps      : type=1400 audit(0.0:167956): avc:  denied  { getattr } for  path="/proc/2623" dev="proc" ino=28827 scontext=u:r:telemon:s0 tcontext=u:r:platform_app:s0:c512,c768 tclass=dir permissive=0
+11-26 23:32:04.036 21545 21545 W ps      : type=1400 audit(0.0:167957): avc:  denied  { getattr } for  path="/proc/2627" dev="proc" ino=26136 scontext=u:r:telemon:s0 tcontext=u:r:permissioncontroller_app:s0:c201,c256,c512,c768 tclass=dir permissive=0
+11-26 23:32:04.036 21545 21545 W ps      : type=1400 audit(0.0:167958): avc:  denied  { getattr } for  path="/proc/2858" dev="proc" ino=28896 scontext=u:r:telemon:s0 tcontext=u:r:platform_app:s0:c512,c768 tclass=dir permissive=0
+11-26 23:32:04.036 21545 21545 W ps      : type=1400 audit(0.0:167959): avc:  denied  { getattr } for  path="/proc/2882" dev="proc" ino=32862 scontext=u:r:telemon:s0 tcontext=u:r:vendor_qtelephony:s0:c144,c256,c512,c768 tclass=dir permissive=0
+11-26 23:32:04.036 21545 21545 W ps      : type=1400 audit(0.0:167960): avc:  denied  { getattr } for  path="/proc/2917" dev="proc" ino=35962 scontext=u:r:telemon:s0 tcontext=u:r:vendor_qtelephony:s0:c169,c256,c512,c768 tclass=dir permissive=0

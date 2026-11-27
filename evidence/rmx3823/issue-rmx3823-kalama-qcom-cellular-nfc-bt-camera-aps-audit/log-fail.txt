@@ -1,0 +1,122 @@
+enforce=Enforcing
+uname=Linux localhost 5.15.167-android13-8-o-01142-g18bd462653c5 #1 SMP PREEMPT Fri Sep 12 08:36:21 UTC 2025 aarch64 Toybox
+market_name=
+model=RMX3823 device=RE5C33 brand=realme
+oplus_market=真我GT5 240W
+soc=SM8550-AB baseband=SS.DE.3.0-02177.2-KAILUA_GEN_PACK-2.18776.259,SS.DE.3.0-02177.2-KAILUA_GEN_PACK-2.18776.259
+Physical size: 1240x2772
+Physical density: 560
+		total        used        free      shared     buffers
+Mem:             7578        7224         354         197           7
+-/+ buffers/cache:           7216         361
+Swap:               0           0           0
+MemTotal:        7760724 kB
+MemFree:          358140 kB
+MemAvailable:    8285176 kB
+Buffers:            7396 kB
+Cached:          8848948 kB
+SwapCached:            0 kB
+Filename				Type		Size		Used		Priority
+--- lsmod ---
+Module                  Size  Used by
+zram                   45056  0 
+zsmalloc               40960  1 zram
+virtio_console         36864  0 
+mac80211_hwsim         90112  0 
+mac80211              946176  1 mac80211_hwsim
+cfg80211              987136  2 mac80211_hwsim,mac80211
+rfkill                 36864  1 cfg80211
+cdh_media              49152  0 
+cdh_input_identity     20480  0 
+cdh_device_info        77824  0 
+kernelsu              233472  0 
+cdh_redirect          151552  0 
+--- restarting ---
+0
+--- battery ---
+Current OPLUS Battery Service state:
+  Charger voltage : 0
+  Battery current : 0
+  ChargerTechnology: 0
+  ChargeFastCharger: false
+  PlugType: 1
+  UpdatesStopped: false
+  UsbHwStatus: -1
+  BatteryHwStatus: -1
+  HwStatusIsSet: 1
+  BatteryIcStatus: -1
+  IcStatusIsSet: 1
+
+  mUsbStatus: -1
+  PhoneTemp: 0
+  ThermalFeatureOn: false
+Current Battery Service state:
+  AC powered: true
+  USB powered: false
+  Wireless powered: false
+  Dock powered: false
+  Max charging current: 0
+  Max charging voltage: 0
+  Charge counter: 5194
+  status: 2
+  health: 2
+  present: true
+  level: 100
+  scale: 100
+  voltage: 4456
+  temperature: 350
+  technology: Li-poly
+  Charging state: 0
+  Charging policy: 0
+--- bluetooth ---
+Bluetooth Status
+  enabled: false
+  state: OFF
+  address: XX:XX:XX:XX:00:00
+  name: 真我GT5 240W
+
+Bluetooth never enabled!
+
+Bluetooth crashed 0 times
+
+0 BLE apps registered
+
+BluetoothManagerService:
+  mEnable:false
+  mQuietEnable:false
+  mEnableExternal:false
+  mQuietEnableExternal:false
+
+--- nfc ---
+Can't find service: nfc
+--- cellular-only ping ---
+connect: Network is unreachable
+--- top ---
+Tasks: 415 total,   5 running, 410 sleeping,   0 stopped,   0 zombie
+  Mem:  7760724K total,  7401916K used,   358808K free,     7544K buffers
+ Swap:  6291452K total,  6291452K used,        0K free,  8869124K cached
+800%cpu  32%user   7%nice 143%sys 575%idle   7%iow  36%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  206 system       20   0 2.1G 6.4M 5.1M R 75.0   0.0   0:24.68 servicemanager
+  203 logd         30  10 2.1G 8.1M 5.2M S 28.5   0.1   0:16.53 logd
+  707 system       18  -2  16G 658M 478M S 25.0   8.6   0:43.47 system_server
+  783 media        20   0 2.6G  38M  32M S 17.8   0.5   0:00.95 mediaserver
+ 3181 u0_a123      10 -10 8.1G 254M 127M S 14.2   3.3   0:05.91 com.coloros.bootreg
+  780 mediaex      20   0 2.8G  41M  34M S 14.2   0.5   0:00.98 media.extractor aextractor
+    1 root         20   0 2.2G  15M  11M S 14.2   0.1   0:16.67 init second_stage
+--- camera/qti crash check ---
+01-01 00:01:40.353  4668  4668 I Quality : ActivityThread: createOrUpdateClassLoaderLocked delay 550 com.qualcomm.qti.workloadclassifier 4668
+01-01 00:01:43.328   707   966 W ActivityTaskManager: updateAssetConfigurationForSwitchUser assetSeq = 3; wpc = ProcessRecord{2f4e4d4 4668:com.qualcomm.qti.workloadclassifier/u0a259}
+01-01 00:01:44.117  4668  4668 I ActivityThread: ApplicationInfo updating for com.qualcomm.qti.workloadclassifier, new timestamp: 103041
+11-27 16:09:52.827  4668  4668 E AndroidRuntime: FATAL EXCEPTION: main
+11-27 16:09:52.827  4668  4668 E AndroidRuntime: Process: com.qualcomm.qti.workloadclassifier, PID: 4668
+11-27 16:09:52.827  4668  4668 E AndroidRuntime: 	at com.qualcomm.qti.workloadclassifier.WLCReceiver.onReceive(WLCReceiver.java:25)
+11-27 16:09:52.839   707  3638 W ActivityManager: 4668:com.qualcomm.qti.workloadclassifier set crash due to crashApplicationInner
+11-27 16:09:52.847   707   967 I ActivityManager: Showing crash dialog for package com.qualcomm.qti.workloadclassifier u0
+11-27 16:09:52.902   707  2971 I ActivityManager: Death received, pid = 4668, processName = com.qualcomm.qti.workloadclassifier for thread android.os.BinderProxy@c1f43d8
+11-27 16:09:52.922   707  4739 I ActivityManager: Process com.qualcomm.qti.workloadclassifier (pid 4668) has died: pers PER 
+11-27 16:09:52.922   707  4739 W ActivityManager: Re-adding persistent process ProcessRecord{2f4e4d4 4668:com.qualcomm.qti.workloadclassifier/u0a259}
+11-27 16:09:52.936   707   992 I ActivityManager: Start proc 8327:com.qualcomm.qti.workloadclassifier/u0a259 for restart com.qualcomm.qti.workloadclassifier
+11-27 16:09:56.310   825   899 D gaia:logcompress: [compressExceptionLog:141]LogCompress start compress with exception Info: {"app_list":["com.qualcomm.qti.workloadclassifier"],"collect_path":"/data/persist_log/olc/com.oplus.crashbox/temp_1","error_time":1795766992837,"error_type":"java_crash","file_id":"8f184c00-cf7f-4bae-8205-f3558d5e14b7","log_list":["extras@2026-11-27_16-09-54.txt","java_crash@2026-11-27_16-09-52.txt"],"log_option":383,"log_path":""}
+11-27 16:09:56.324   825   880 D gaia:event: [packJson:129]pack json string(content:{"data":"{\"app_list\":[\"com.qualcomm.qti.workloadclassifier\"],\"collect_path\":\"\",\"error_time\":1795766992837,\"error_type\":\"java_crash\",\"file_id\":\"8f184c00-cf7f-4bae-8205-f3558d5e14b7\",\"log_list\":[\"extras@2026-11-27_16-09-54.txt\",\"java_crash@2026-11-27_16-09-52.txt\"],\"log_option\":383,\"log_path\":\"/data/persist_log/olc/com.oplus.crashbox/anr_crash/java_crash@8f184c00-cf7f-4bae-8205-f3558d5e14b7@RMX3823_11.F.16_2160_202509151710@2026-11-27_16-09-56.zip\"}","eventId":269500417,"isAck":1,"packetId":"1001","resultCode":1,"type":2}) (len:555)
+11-27 16:09:56.325  4564  8613 D gaia-GaiaPacketReader: onReceivePacket , packet data = {"eventId":269500417,"eventTag":"crashbox_collect_log","isAck":1,"packetId":"1001","packetType":2,"rcvMsgInfo":{"data":"{\"app_list\":[\"com.qualcomm.qti.workloadclassifier\"],\"collect_path\":\"\",\"error_time\":1795766992837,\"error_type\":\"java_crash\",\"file_id\":\"8f184c00-cf7f-4bae-8205-f3558d5e14b7\",\"log_list\":[\"extras@2026-11-27_16-09-54.txt\",\"java_crash@2026-11-27_16-09-52.txt\"],\"log_option\":383,\"log_path\":\"/data/persist_log/olc/com.oplus.crashbox/anr_crash/java_crash@8f184c00-cf7f-4bae-8205-f3558d5e14b7@RMX3823_11.F.16_2160_202509151710@2026-11-27_16-09-56.zip\"}","eventId":269500417,"isAck":1,"packetId":"1001","resultCode":1,"type":"2"},"sourceData":[71,65,73,65,123,34,100,97,116,97,34,58,34,123,92,34,97,112,112,95,108,105,115,116,92,34,58,91,92,34,99,111,109,46,113,117,97,108,99,111,109,109,46,113,116,105,46,119,111,114,107,108,111,97,100,99,108,97,115,115,105,102,105,101,114,92,34,93,44,92,34,99,111,108,108,101,99,116,95,112,97,116,104,92,34,58,92,34,92,34,44,92,34,101,114,114,111,114,95,116,105,109,101,92,34,58,49,55,57,53,55,54,54,57,57,50,56,51,55,44,92,34,101,114,114,111,114,95,116,121,112,101,92,34,58,92,34,106,97,118,97,95,99,114,97,115,104,92,34,44,92,34,102,105,108,101,95,105,100,92,34,58,92,34,56,102,49,56,52,99,48,48,45,99,102,55,102,45,52,98,97,101,45,56,50,48,53,45,102,51,53,53,56,100,53,101,49,52,98,55,92,34,44,92,34,108,111,103,95,108,105,115,116,92,34,58,91,92,34,101,120,116,114,97,115,64,50,48,50,54,45,49,49,45,50,55,95,49,54,45,48,57,45,53,52,46,116,120,116,92,34,44,92,34,106,97,118,97,95,99,114,97,115,104,64,50,48,50,54,45,49,49,45,50,55,95,49,54,45,48,57,45,53,50,46,116,120,116,92,34,93,44,92,34,108,111,103,95,111,112,116,105,111,110,92,34,58,51,56,51,44,92,34,108,111,103,95,112,97,116,104,92,34,58,92,34,47,100,97,116,97,47,112,101,114,115,105,115,116,95,108,111,103,47,111,108,99,47,99,111,109,46,111,112,108,117,115,46,99,114,97,115,104,98,111,120,47,97,110,114,95,99,114,97,115,104,47,106,97,118,97,95,99,114,97,115,104,64,56,102,49,56,52,99,48,48,45,99,102,55,102,45,52,98,97,101,45,56,50,48,53,45,102,51,53,53,56,100,53,101,49,52,98,55,64,82,77,88,51,56,50,51,95,49,49,46,70,46,49,54,95,50,49,54,48,95,50,48,50,53,48,57,49,53,49,55,49,48,64,50,48,50,54,45,49,49,45,50,55,95,49,54,45,48,57,45,53,54,46,122,105,112,92,34,125,34,44,34,101,118,101,110,116,73,100,34,58,50,54,57,53,48,48,52,49,55,44,34,105,115,65,99,107,34,58,49,44,34,112,97,99,107,101,116,73,100,34,58,34,49,48,48,49,34,44,34,114,101,115,117,108,116,67,111,100,101,34,58,49,44,34,116,121,112,101,34,58,50,125]}

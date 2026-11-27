@@ -36,6 +36,7 @@ void AIBinder_markVintfStability(AIBinder *binder);
 #include <aidl/android/hardware/camera/device/RequestTemplate.h>
 #include <aidl/android/hardware/camera/device/ShutterMsg.h>
 #include <aidl/android/hardware/camera/device/StreamConfiguration.h>
+#include <aidl/android/hardware/camera/device/StreamType.h>
 #include <aidl/android/hardware/camera/provider/BnCameraProvider.h>
 #include <aidl/android/hardware/camera/provider/CameraIdAndStreamCombination.h>
 #include <aidl/android/hardware/camera/provider/ConcurrentCameraIdCombination.h>
@@ -2012,8 +2013,14 @@ public:
           result.physicalCameraMetadata.push_back(std::move(pm));
         }
       }
-      result.inputBuffer.streamId = -1;
-      result.inputBuffer.bufferId = 0;
+      if (request.inputBuffer.streamId != -1) {
+        result.inputBuffer.streamId = request.inputBuffer.streamId;
+        result.inputBuffer.bufferId = request.inputBuffer.bufferId;
+        result.inputBuffer.status = BufferStatus::OK;
+      } else {
+        result.inputBuffer.streamId = -1;
+        result.inputBuffer.bufferId = 0;
+      }
       result.partialResult = kPartialResultCount;
       results.push_back(std::move(result));
     }
@@ -2090,9 +2097,16 @@ private:
       HalStream hal;
       hal.id = stream.id;
       hal.overrideFormat = static_cast<PixelFormat>(ovFmt);
-      hal.producerUsage =
-          static_cast<BufferUsage>(AHARDWAREBUFFER_USAGE_CPU_WRITE_OFTEN);
-      hal.consumerUsage = BufferUsage(0);
+      if (stream.streamType ==
+          aidl::android::hardware::camera::device::StreamType::INPUT) {
+        hal.producerUsage = BufferUsage(0);
+        hal.consumerUsage =
+            static_cast<BufferUsage>(AHARDWAREBUFFER_USAGE_CPU_READ_OFTEN);
+      } else {
+        hal.producerUsage =
+            static_cast<BufferUsage>(AHARDWAREBUFFER_USAGE_CPU_WRITE_OFTEN);
+        hal.consumerUsage = BufferUsage(0);
+      }
       hal.maxBuffers = 4;
       hal.overrideDataSpace =
           (ovFmt == cdh_camera::kFmtRgba8888 && reqFmt == cdh_camera::kFmtImplDefined)

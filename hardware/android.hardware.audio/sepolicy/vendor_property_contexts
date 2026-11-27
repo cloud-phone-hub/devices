@@ -1,0 +1,7 @@
+# cdh：高通 system_ext (libavenhancements.so / ExtendedSFRecorder) 与 audioserver 在相机录像及录音路径
+# 跨分区读取 vendor.audio.c2.preferred / vendor.audio.hw.aac.encoder / vendor.audio.enable.proxyrecord。
+# Lineage virtio 基底仅将 persist.vendor.audio. 声明为 vendor_internal_property_type，未映射 vendor.audio. 前缀，
+# 导致 vendor.audio.* 落入 default_prop 被 SELinux 拒绝读取，进而令 ExtendedSFRecorder 回退创建不存在的
+# OMX.qcom.audio.encoder.aac，触发 StagefrightRecorder: Failed to create audio encoder 导致录像失败。
+# 映射为平台公共属性 exported_config_prop（vendor_init 可写、全 domain 可读、不触碰 coredomain neverallow）。
+vendor.audio.              u:object_r:exported_config_prop:s0

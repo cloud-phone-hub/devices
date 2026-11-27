@@ -71,13 +71,13 @@
           "KEY_VOLUMEUP",
           "KEY_POWER"
         ],
-        "name": "pmic_resin",
+        "name": "sprd-pmic-keys",
         "product": 1,
         "vendor": 1,
         "version": 1
       }
     ],
-    "goodix_fp": true,
+    "goodix_fp": false,
     "touch_major": true
   },
   "redirect": [
@@ -85,6 +85,11 @@
       "from": "/vendor/etc",
       "to": "/mnt/vendorpatch/vendor/etc",
       "type": "dir"
+    },
+    {
+      "from": "/system/bin/mediaserver",
+      "to": "/mnt/vendorpatch/vendor/bin/hw/cdh-mediaserver",
+      "type": "file"
     },
     {
       "from": "/vendor/bin",
@@ -142,11 +147,6 @@
       "type": "file"
     },
     {
-      "from": "/system/bin/mediaserver",
-      "to": "/mnt/vendorpatch/system/bin/mediaserver",
-      "type": "file"
-    },
-    {
       "from": "/system_ext/bin/remotedisplay",
       "to": "/mnt/vendorpatch/system_ext/bin/remotedisplay",
       "type": "file"
@@ -170,24 +170,39 @@
       "from": "/system_ext/bin/slogmodem",
       "to": "/mnt/vendorpatch/system_ext/bin/slogmodem",
       "type": "file"
+    },
+    {
+      "from": "/system_ext/bin/tool_service",
+      "to": "/mnt/vendorpatch/system_ext/bin/tool_service",
+      "type": "file"
+    },
+    {
+      "from": "/system_ext/bin/sprd_networkcontrol",
+      "to": "/mnt/vendorpatch/system_ext/bin/sprd_networkcontrol",
+      "type": "file"
+    },
+    {
+      "from": "/system_ext/bin/vendorcfgdeamon",
+      "to": "/mnt/vendorpatch/system_ext/bin/vendorcfgdeamon",
+      "type": "file"
     }
   ],
   "input": {
     "keyboard": {
       "bus": 25,
       "name": "gpio-keys",
-      "product": 0,
-      "vendor": 0,
-      "version": 0
+      "product": 1,
+      "vendor": 1,
+      "version": 256
     },
     "tablet": false,
     "touch": {
       "abs-to-mt": true,
-      "abs-x-max": 17280,
+      "abs-x-max": 11520,
       "abs-xy": true,
-      "abs-y-max": 38400,
-      "bus": 2,
-      "mt-pressure": false,
+      "abs-y-max": 25600,
+      "bus": 24,
+      "mt-pressure": true,
       "mt-slots": 10,
       "name": "focaltech_ats",
       "product": 1,
@@ -292,6 +307,97 @@
         "jitter-mc": 140,
         "type": "chg-thmzone"
       }
+    ]
+  },
+  "cpufreq": {
+    "available-governors": [
+      "sprd_interactive",
+      "performance",
+      "powersave",
+      "userspace",
+      "ondemand"
+    ],
+    "bogo-mips": "38.40",
+    "driver": "sprd-cpufreq",
+    "governor": "sprd_interactive",
+    "package-per-cluster": true,
+    "policies": [
+      {
+        "available-frequencies": [
+          1820000,
+          1728000,
+          1632000,
+          1536000,
+          1416000,
+          1320000,
+          1228800,
+          1120000,
+          1024000,
+          921600,
+          819200,
+          691200,
+          614400
+        ],
+        "capacity": 544,
+        "cpus": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "cur-freq": 614400,
+        "implementer": "0x41",
+        "max-freq": 1820000,
+        "midr": "0x00000000412fd050",
+        "min-freq": 614400,
+        "part": "0xd05",
+        "policy": 0,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 2
+      },
+      {
+        "available-frequencies": [
+          2028000,
+          1920000,
+          1820000,
+          1728000,
+          1632000,
+          1536000,
+          1416000,
+          1320000,
+          1228800,
+          1120000,
+          1024000,
+          921600
+        ],
+        "capacity": 1024,
+        "cpus": [
+          6,
+          7
+        ],
+        "cur-freq": 1228800,
+        "implementer": "0x41",
+        "max-freq": 2028000,
+        "midr": "0x00000000410fd0a0",
+        "min-freq": 921600,
+        "part": "0xd0a",
+        "policy": 6,
+        "revidr": "0x0000000000000000",
+        "revision": 0,
+        "variant": 0
+      }
+    ],
+    "scaling-readable": true,
+    "transition-latency": 1000
+  },
+  "display": {
+    "refresh-rates": [
+      60,
+      90,
+      120
     ]
   }
 }

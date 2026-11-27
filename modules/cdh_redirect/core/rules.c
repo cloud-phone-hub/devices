@@ -187,6 +187,15 @@ static enum cdh_sphal_tier cdh_classify_sphal_lib(const char *buf)
 			return CDH_SPHAL_TIER_B;
 		return CDH_SPHAL_NONE;
 	}
+	/* 欧加 ColorOS/OxygenOS/RealmeUI 原生相机通过 android_load_sphal_library("libAlgoProcess.so")
+	 * 依次探测 /odm/lib64 与 /vendor/lib64；仅当载体携带自编 libAlgoProcess.so 且由 linker64 调用时
+	 * 放行重定向（使 /odm/lib64 跳过原厂闭源库，回落至载体 /vendor/lib64/libAlgoProcess.so）。 */
+	if (!strcmp(buf, "/odm/lib64/libAlgoProcess.so") ||
+	    !strcmp(buf, "/vendor/lib64/libAlgoProcess.so")) {
+		if (!in_compat_syscall() && cdh_maps_has_carrier_opencl(CDH_CARRIER_ALGO_PROCESS_64))
+			return CDH_SPHAL_TIER_B;
+		return CDH_SPHAL_NONE;
+	}
 
 	if (strncmp(buf, "/vendor/lib64/", 14) == 0) {
 		if (in_compat_syscall())
@@ -277,6 +286,7 @@ static bool cdh_path_is_gfx_framework(const char *p)
 		"libGLESv3.so",
 		"libvulkan.so",
 		"libui.so",
+		"libaimapper.so",
 		"libgui.so",
 		"libhwui.so",
 		"libgraphicsenv.so",
@@ -327,6 +337,10 @@ struct cdh_linker_vma_entry {
 static struct cdh_linker_vma_entry cdh_linker_cache[CDH_LINKER_CACHE_SIZE];
 static unsigned int cdh_linker_cache_next;
 static DEFINE_SPINLOCK(cdh_linker_cache_lock);
+static atomic_long_t cdh_app64_linker_start = ATOMIC_LONG_INIT(0);
+static atomic_long_t cdh_app64_linker_end = ATOMIC_LONG_INIT(0);
+
+static bool cdh_is_app_process(void);
 
 static void cdh_linker_cache_record(struct mm_struct *mm,
 				    unsigned long vm_start,
@@ -336,6 +350,13 @@ static void cdh_linker_cache_record(struct mm_struct *mm,
 	u64 start_time = current->group_leader ? current->group_leader->start_time : 0;
 	unsigned long flags;
 	unsigned int i;
+
+	if (!in_compat_syscall() && vm_start > 0 && vm_end > vm_start &&
+	    cdh_is_app_process()) {
+		atomic_long_set(&cdh_app64_linker_end, (long)vm_end);
+		smp_wmb();
+		atomic_long_set(&cdh_app64_linker_start, (long)vm_start);
+	}
 
 	spin_lock_irqsave(&cdh_linker_cache_lock, flags);
 	for (i = 0; i < CDH_LINKER_CACHE_SIZE; i++) {
@@ -379,7 +400,24 @@ static bool cdh_linker_cache_hit(struct mm_struct *mm, u64 raw_pc, u64 raw_lr)
 		}
 	}
 	spin_unlock_irqrestore(&cdh_linker_cache_lock, flags);
-	return hit;
+	if (hit)
+		return true;
+
+	/*
+	 * 所有 64 位 Android 应用均由同一 zygote64 fork 而来且不执行 execve，
+	 * 共享恒定的 /apex/com.android.runtime/bin/linker64 VMA 区间；当新 fork 应用
+	 * 高并发 dlopen 尚未写入本进程缓存时可直接无锁命中，消除 mmap_lock 写锁竞争超时。
+	 */
+	if (!in_compat_syscall() && cdh_is_app_process()) {
+		unsigned long s = (unsigned long)atomic_long_read(&cdh_app64_linker_start);
+		unsigned long e;
+
+		smp_rmb();
+		e = (unsigned long)atomic_long_read(&cdh_app64_linker_end);
+		if (s > 0 && e > s && ((pc >= s && pc < e) || (lr >= s && lr < e)))
+			return true;
+	}
+	return false;
 }
 
 static unsigned int cdh_vma_classify_addr(struct mm_struct *mm, u64 raw_addr)
@@ -440,7 +478,7 @@ static bool cdh_sphal_caller_allowed(enum cdh_sphal_tier tier)
 	    cdh_linker_cache_hit(mm, uregs->pc, uregs->regs[30]))
 		return true;
 
-	for (tries = 0; tries < 82; tries++) {
+	for (tries = 0; tries < 232; tries++) {
 		if (mmap_read_trylock(mm))
 			break;
 		if (tries >= 32)
@@ -448,7 +486,7 @@ static bool cdh_sphal_caller_allowed(enum cdh_sphal_tier tier)
 		else
 			cpu_relax();
 	}
-	if (tries == 82) {
+	if (tries == 232) {
 		pr_warn_ratelimited("sphal trylock timeout pid=%d comm=%s tier=%d\n",
 				    task_tgid_nr(current), current->comm, (int)tier);
 		return false;

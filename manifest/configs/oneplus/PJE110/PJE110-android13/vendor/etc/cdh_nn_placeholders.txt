@@ -15,6 +15,8 @@ vendor.oplus.hardware.gameopt.IGameOptHalService/default
 vendor.oplus.hardware.handlefactory.IHandleFactory/default
 vendor.oplus.hardware.location.IOplusLocation/default
 vendor.oplus.hardware.misc.IOplusMisc/default
+vendor.nxp.nxpnfc_aidl.INxpNfc/default
+vendor.nxp.nxpnfc_pnaidl.INxpNfc/default
 vendor.oplus.hardware.nfc.IOplusNfc/default
 vendor.oplus.hardware.nfcExtns.INfcExtns/default
 vendor.oplus.hardware.olc2.IOplusLogCore/default

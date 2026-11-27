@@ -9,3 +9,10 @@
 (allow hal_displaycolorfeature_client hal_displaycolorfeature_server (fd (use)))
 ;; @end
 ;; @end
+
+;; RMX3823 NFC 域查找与调用 neuralnetworks 托管的 NXP/Oplus NFC AIDL 占位服务
+;; @when-declared hal_oplus_nfc_service hal_neuralnetworks_default nfc_{{vers}}
+(allow nfc_{{vers}} hal_oplus_nfc_service (service_manager (find)))
+(allow nfc_{{vers}} hal_neuralnetworks_default (binder (call transfer)))
+(allow hal_neuralnetworks_default nfc_{{vers}} (binder (transfer)))
+;; @end

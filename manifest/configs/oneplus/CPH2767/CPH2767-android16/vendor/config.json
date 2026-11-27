@@ -1,13 +1,16 @@
 {
   "build-prop-sets": {
     "gsm.version.baseband": "MPSS.DE.9.0-02004.5-KAANAPALI_GEN_PACK-1",
+    "media.c2.hal.selection": "aidl",
     "persist.radio.multisim.config": "dsds",
     "ro.hardware.egl": "mesa",
     "ro.hardware.vulkan": "adreno",
     "ro.hw_timeout_multiplier": "10",
     "ro.hwui.use_vulkan": "false",
+    "vendor.audio.c2.preferred": "true",
+    "vendor.audio.hw.aac.encoder": "false",
     "ro.soc.manufacturer": "Qualcomm",
-    "ro.soc.model": "vsoc_arm64",
+    "ro.soc.model": "SM8750",
     "ro.vendor.boot_security_patch": "2026-08-01",
     "ro.vendor.build.security_patch": "2026-08-01",
     "ro.vendor.cdh.device.market_name": "OnePlus 15R",
@@ -143,7 +146,8 @@
   "selinux-labels": {
     "lib64/egl/libEGL_mesa.so": "u:object_r:same_process_hal_file:s0",
     "lib64/egl/libGLESv1_CM_mesa.so": "u:object_r:same_process_hal_file:s0",
-    "lib64/egl/libGLESv2_mesa.so": "u:object_r:same_process_hal_file:s0"
+    "lib64/egl/libGLESv2_mesa.so": "u:object_r:same_process_hal_file:s0",
+    "lib64/libUahPerf_Jni_cph.so": "u:object_r:system_lib_file:s0"
   },
   "vintf-version": "9.0"
 }

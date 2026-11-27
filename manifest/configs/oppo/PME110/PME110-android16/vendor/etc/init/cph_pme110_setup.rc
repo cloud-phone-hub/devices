@@ -1,0 +1,27 @@
+# CDH setup for OPPO Find X9s Pro (PME110):
+# 1. 创建 /data/vendor/nfc 与 /data/nfc 目录，避免 com.android.nfc 首次写入时触发 vendor_data_file AVC；
+# 2. 禁用依赖私有内核 sched_ext/hmbird 扩展的 oplusHmbirdBpfManager，避免每 5s 崩溃重启循环；
+# 3. 解锁/开机后执行 /vendor/bin/cph_pme110_setup.sh 将解密后的 OplusCamera 配置写入应用沙箱。
+on post-fs-data
+    mkdir /data/vendor/nfc 0770 nfc nfc
+    mkdir /data/nfc 0770 nfc nfc
+
+on property:sys.oplus.hmbird.manager.enable=1
+    setprop sys.oplus.hmbird.manager.enable 0
+    stop oplusHmbirdBpfManager
+
+service cph_pme110_setup /system/bin/sh /vendor/bin/cph_pme110_setup.sh
+    class late_start
+    user root
+    group root system
+    seclabel u:r:pioneer:s0
+    oneshot
+    disabled
+
+on property:sys.user.0.ce_available=true
+    start cph_pme110_setup
+
+on property:sys.boot_completed=1
+    setprop sys.oplus.hmbird.manager.enable 0
+    stop oplusHmbirdBpfManager
+    start cph_pme110_setup

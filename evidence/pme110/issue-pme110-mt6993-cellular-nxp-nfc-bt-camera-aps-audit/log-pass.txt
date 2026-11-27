@@ -1,0 +1,406 @@
+================ PME110 PASS VERIFICATION LOG (patch.img sha256: 0e6be9a4c72b4c2d4b6c2fb7eb58b547f1f3aa273d73c84b3e22877a9659b30c) ================
+--- [PART 1: Boot, Enforcing, 12GB Mem, 6GB ZRAM, No KernelSU, restarting=0, 7500mAh Unplugged Battery, 37 Sensors, NFC ON & Tap, Wi-Fi] ---
+=== BASIC & SPECS ===
+enforce=Enforcing
+uname=Linux localhost 6.12.69-android16-6-g242e1a07f878-ab15865446-4k #1 SMP PREEMPT Wed Jul 15 11:18:49 UTC 2026 aarch64 Toybox
+market_name=OPPO Find X9s Pro
+model=PME110 device=OP61C1L1 brand=OPPO
+soc=MT6993 baseband=M_V3_P10,M_V3_P10
+Physical size: 1272x2772
+Physical density: 560
+		total        used        free      shared     buffers
+Mem:            11376       11133         242         180          11
+-/+ buffers/cache:          11121         254
+Swap:            6143           0        6143
+MemTotal:       11649276 kB
+MemFree:          246780 kB
+MemAvailable:    8243544 kB
+Buffers:           12104 kB
+Cached:          8518560 kB
+SwapCached:            0 kB
+Filename				Type		Size		Used		Priority
+/dev/block/zram0                        partition	6291452		0		-2
+--- lsmod ---
+Module                  Size  Used by
+zram                   73728  1 
+zsmalloc               40960  1 zram
+virtio_console         45056  0 
+mac80211_hwsim        110592  0 
+mac80211             1056768  1 mac80211_hwsim
+libarc4                16384  1 mac80211
+cfg80211             1093632  2 mac80211_hwsim,mac80211
+rfkill                 40960  1 cfg80211
+cdh_media              49152  0 
+cdh_input_identity     32768  0 
+cdh_device_info        86016  1 
+cdh_redirect          159744  0 
+--- restarting services ---
+0
+--- hmbird ---
+[init.svc.oplusHmbirdBpfManager]: [stopped]
+[init.svc_debug_pid.oplusHmbirdBpfManager]: []
+[ro.boottime.oplusHmbirdBpfManager]: [78847094619]
+[sys.oplus.hmbird.manager.enable]: [1]
+--- battery ---
+Current OPLUS Battery Service state:
+  Charger voltage : 0
+  Battery current : 0
+  ChargerTechnology: 0
+  ChargeFastCharger: false
+  PlugType: 0
+  UpdatesStopped: false
+  UsbHwStatus: 0
+  BatteryHwStatus: 1
+  HwStatusIsSet: 1
+  BatteryIcStatus: 0
+  IcStatusIsSet: 1
+
+  mUsbStatus: 0
+  PhoneTemp: 0
+  ThermalFeatureOn: true
+Current Battery Service state:
+  AC powered: false
+  USB powered: false
+  Wireless powered: false
+  Dock powered: false
+  Max charging current: 0
+ Time when the latest updated value of the Max charging current was sent via battery changed broadcast: +33s737ms
+  Max charging voltage: 0
+  Charge counter: 6393333
+  status: 3
+  health: 2
+  present: true
+  level: 85
+  scale: 100
+  voltage: 4481
+ Time when the latest updated value of the voltage was sent via battery changed broadcast: +1m8s242ms
+ The last voltage value sent via the battery changed broadcast: 4479
+  temperature: 305
+  technology: Li-ion
+  Charging state: 0
+  Charging policy: 0
+  Capacity level: 4
+--- sensors count ---
+37
+--- bluetooth ---
+--- nfc ---
+mState=on
+mAlwaysOnState=off
+mScreenState=ON_UNLOCKED
+mIsSecureNfcEnabled=false
+mIsReaderOptionEnabled=true
+mIsAlwaysOnSupported=false
+SnoopLogMode=FILTERED
+VendorDebugEnabled=false
+mPowerSavingState=1
+mIsObserveModeSupported=false
+mIsObserveModeEnabled=false
+listenTech=0xf
+pollTech=0x2f
+mTechMask: default
+mEnableLPD: true
+mEnableReader: false
+mEnableHostRouting: true
+
+Registered HCE services for current user: 
+User 机主
+    ComponentInfo{com.heytap.accessory/com.oplus.pantaconnect.discovery.adapter.nfc.IosHostApduService} (Description: null) (UID: 10114)
+    On Host Service
+    Static AID groups:
+    Dynamic AID groups:
+    Settings Activity: null
+    Requires Device Unlock: true
+    Requires Device ScreenOn: true
+    Should Default to Observe Mode: false
+    Auto-Transact Mapping: {}
+    Auto-Transact Patterns: {}
+
+    ComponentInfo{com.heytap.accessory/com.oplus.pantaconnect.discovery.adapter.nfc.OplusHostApduService} (Description: null) (UID: 10114)
+    On Host Service
+    Static AID groups:
+        Category: other(enabled: true)
+Failed to write while dumping service nfc: Broken pipe
+--- wifi ping ---
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=0.685 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=31.1 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=2.06 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+rtt min/avg/max/mdev = 0.685/11.292/31.130/14.038 ms
+--- cellular-only ping (disable wifi) ---
+6: ccmni1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc pfifo_fast state UP group default qlen 1000
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+       valid_lft forever preferred_lft forever
+16: wlan0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default qlen 1000
+    inet 192.168.1.100/24 brd 192.168.1.255 scope global dynamic wlan0
+       valid_lft 3595sec preferred_lft 3595sec
+41: vgate0: <POINTOPOINT,MULTICAST,NOARP,ALLMULTI,PROMISC,DEBUG,DYNAMIC,AUTOMEDIA,PORTSEL,UP,LOWER_UP> mtu 65500 qdisc mq state UNKNOWN group default qlen 500
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=50.5 ms
+64 bytes from 223.5.5.5: icmp_seq=4 ttl=64 time=2.74 ms
+
+--- 223.5.5.5 ping statistics ---
+4 packets transmitted, 2 received, 50% packet loss, time 3041ms
+rtt min/avg/max/mdev = 2.741/26.634/50.528/23.894 ms
+--- idle top ---
+Tasks: 355 total,   5 running, 349 sleeping,   0 stopped,   1 zombie
+  Mem:    11376M total,    10913M used,      462M free,        9M buffers
+ Swap:     6143M total,        0M used,     6143M free,     8226M cached
+800%cpu 238%user  21%nice 307%sys 141%idle  10%iow  79%irq   3%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  691 system       18  -2  16G 767M 465M S 93.1   6.7   0:48.50 system_server
+ 4734 system       20   0 2.1G  10M 9.4M R 79.3   0.0   0:22.92 idmap2d
+ 6124 u0_a162      20   0  12G 267M 145M S 34.4   2.3   0:05.93 com.oplus.pantanal.ums
+11394 u0_a154      20   0  10G 113M  56M S 31.0   0.9   0:00.03 <pre-initialized>
+11300 u0_a138      20   0 9.2G 176M 114M R 31.0   1.5   0:00.11 com.microsoft.appmanager
+ 8381 media        20   0 2.9G  48M  40M S 31.0   0.4   0:00.64 android.hardware.media.c2@1.2-service-v4l2-64
+ 4260 system       20   0 8.8G 301M 224M S 31.0   2.6   0:01.18 com.oplus.notificationmanager
+11050 system       20   0  10G 225M 155M S 20.6   1.9   0:00.46 com.android.settings
+ 3743 u0_a149      10 -10  10G 557M 343M S 20.6   4.8   0:08.66 com.coloros.bootreg
+  264 system        0 -20 2.1G 7.8M 6.5M S 20.6   0.0   0:18.11 servicemanager
+11439 u0_a352      20   0  10G 105M  48M S 17.2   0.9   0:00.02 <pre-initialized>
+ 5108 u0_a314      20   0 9.4G 211M 123M S 13.7   1.8   0:02.63 com.android.providers.media.module
+ 3422 u0_a124      20   0 8.7G 165M  99M S 13.7   1.4   0:01.23 com.oplus.framework.network.drs
+=== NFC TAP API ===
+{"ok":true,"status":{"connected":true,"initialized":true,"discovering":true,"cardPresent":true,"cardUid":"04112233445566","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":70,"txResponses":97,"apduCount":0,"recentCmds":["mt=0,gid=01,oid=00,len=11","mt=0,gid=01,oid=00,len=6","mt=1,gid=02,oid=01,len=2","mt=1,gid=02,oid=01,len=2","mt=0,gid=01,oid=00,len=3","mt=1,gid=00,oid=03,len=2","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=01,oid=01,len=27","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=16","mt=1,gid=00,oid=02,len=5","mt=1,gid=0f,oid=08,len=2","mt=1,gid=0f,oid=21,len=0","mt=1,gid=01,oid=03,len=11","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=01,len=27","mt=1,gid=01,oid=03,len=11","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=01,len=27","mt=1,gid=01,oid=03,len=11","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=03,len=11"]}}
+
+
+--- [PART 2: Cellular-Only ccmni1 0% Loss] ---
+=== BLUETOOTH ===
+ShellCommand: Exec enable
+
+Exception occurred while executing 'enable':
+java.lang.SecurityException: uid 2000 does not have android.permission.UPDATE_APP_OPS_STATS.
+	at android.app.ContextImpl.enforce(ContextImpl.java:2638)
+	at android.app.ContextImpl.enforcePermission(ContextImpl.java:2648)
+	at com.android.server.appop.AppOpsService.verifyIncomingProxyUid(AppOpsService.java:5014)
+	at com.android.server.appop.AppOpsService.noteProxyOperationImpl(AppOpsService.java:3462)
+	at com.android.server.appop.AppOpsService.-$$Nest$mnoteProxyOperationImpl(AppOpsService.java:0)
+	at com.android.server.appop.AppOpsService$CheckOpsDelegateDispatcher.$r8$lambda$q8BbxI-iIBB256_4cFe16ffKxiE(AppOpsService.java:0)
+	at com.android.server.appop.AppOpsService$CheckOpsDelegateDispatcher$$ExternalSyntheticLambda1.apply(D8$$SyntheticClass:0)
+	at com.android.server.policy.AppOpsPolicy.noteProxyOperation(AppOpsPolicy.java:269)
+	at com.android.server.appop.AppOpsService$CheckOpsDelegateDispatcher.noteProxyOperation(AppOpsService.java:8417)
+	at com.android.server.appop.AppOpsService.noteProxyOperationWithState(AppOpsService.java:3445)
+	at android.app.AppOpsManager.noteProxyOpNoThrow(AppOpsManager.java:10499)
+	at com.android.server.pm.permission.PermissionManagerService$PermissionCheckerService.performOpTransaction(PermissionManagerService.java:1738)
+	at com.android.server.pm.permission.PermissionManagerService$PermissionCheckerService.checkRuntimePermission(PermissionManagerService.java:1397)
+	at com.android.server.pm.permission.PermissionManagerService$PermissionCheckerService.checkPermission(PermissionManagerService.java:1238)
+	at com.android.server.pm.permission.PermissionManagerService$PermissionCheckerService.checkPermission(PermissionManagerService.java:1101)
+	at android.permission.PermissionCheckerManager.checkPermission(PermissionCheckerManager.java:136)
+	at android.content.PermissionChecker.checkPermissionForDataDeliveryCommon(PermissionChecker.java:317)
+	at android.content.PermissionChecker.checkPermissionForDataDeliveryFromDataSource(PermissionChecker.java:234)
+	at android.permission.PermissionManager.checkPermissionForDataDeliveryFromDataSource(PermissionManager.java:387)
+	at com.android.server.bluetooth.PermissionChecker.enforceConnect(PermissionChecker.kt:225)
+	at com.android.server.bluetooth.PermissionChecker.userCanToggle(PermissionChecker.kt:142)
+	at com.android.server.bluetooth.PermissionChecker.enableAllowed(PermissionChecker.kt:79)
+	at com.android.server.bluetooth.ServerBinder.enable(ServerBinder.kt:143)
+	at com.android.server.bluetooth.ShellCommand.commands$lambda$1(ShellCommand.kt:53)
+	at com.android.server.bluetooth.ShellCommand$$ExternalSyntheticLambda4.invoke(D8$$SyntheticClass:0)
+	at com.android.server.bluetooth.ShellCommand.onCommand(ShellCommand.kt:136)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at com.android.server.bluetooth.ServerBinder.handleShellCommand(ServerBinder.kt:274)
+	at android.os.Binder.onShellCommand(Binder.java:1158)
+	at android.os.Binder.shellCommand(Binder.java:1105)
+	at android.os.Binder.onTransact(Binder.java:959)
+	at android.bluetooth.IBluetoothManager$Stub.onTransact(IBluetoothManager.java:386)
+	at android.os.Binder.execTransactInternal(Binder.java:1391)
+	at android.os.Binder.execTransact(Binder.java:1340)
+Bluetooth Status:
+  State:         OFF
+  Address:       [address is null]
+  Name:          OPPO Find X9s Pro
+  Inner app:     com.android.bluetooth
+
+Bluetooth never enabled!
+
+Bluetooth crashed 0 times
+
+Ble app registered: {}
+
+BluetoothManagerService:
+  mEnable:false
+  mQuietEnable:false
+  mEnableExternal:false
+  mQuietEnableExternal:false
+
+🚩Flag dump:
+	[ ]: a2dp_adjust_sbc_bitpool
+	[ ]: a2dp_cleanup_on_acl_disconnect
+	[■]: a2dp_clear_pending_status_before_binder_call
+	[■]: a2dp_create_codec_type_from_id_api
+	[■]: a2dp_disconnect_reason_api
+	[■]: a2dp_handle_sa_reconfig_in_native
+	[ ]: a2dp_increase_accept_signalling_timeout
+	[ ]: a2dp_l2cap_collision_coverage
+	[■]: a2dp_ldac_api
+	[■]: a2dp_lhdc_api
+	[ ]: a2dp_offload_user_codec_selection
+	[ ]: a2dp_setconfig_collision_resolution
+	[■]: a2dp_sink_offload
+	[■]: a2dp_skip_discover_after_set_config
+	[■]: a2dp_source_metadata_changed
+	[ ]: adapter_suspend_mgmt
+Failed to write while dumping service bluetooth_manager: Broken pipe
+--- bt crashes ---
+11-27 15:00:56.593   530   530 I adbd    :     logcat -d | grep -iE "FATAL EXCEPTION.*bluetooth|com\.android\.bluetooth.*died|SIGSEGV.*bluetooth" | tail -n 10
+=== CELLULAR-ONLY PING (0% loss) ===
+6: ccmni1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc pfifo_fast state UP group default qlen 1000
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+       valid_lft forever preferred_lft forever
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=0.506 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=0.277 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=0.402 ms
+64 bytes from 223.5.5.5: icmp_seq=4 ttl=64 time=0.316 ms
+64 bytes from 223.5.5.5: icmp_seq=5 ttl=64 time=3.46 ms
+
+--- 223.5.5.5 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4086ms
+rtt min/avg/max/mdev = 0.277/0.993/3.467/1.239 ms
+=== IDLE TOP & RESTARTING ===
+Tasks: 376 total,   2 running, 373 sleeping,   0 stopped,   1 zombie
+  Mem:    11376M total,    11035M used,      340M free,       10M buffers
+ Swap:     6143M total,        0M used,     6143M free,     8138M cached
+800%cpu  43%user   0%nice  89%sys 629%idle   0%iow  39%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+ 4734 system       20   0 2.1G  10M 9.4M R 92.8   0.0   1:45.65 idmap2d
+  256 logd         30  10 2.2G  10M 5.7M S 21.4   0.0   0:15.13 logd
+ 8381 media        20   0 2.9G  49M  40M S 17.8   0.4   0:23.94 android.hardware.media.c2@1.2-service-v4l2-64
+14720 shell        20   0 2.0G 6.4M 5.4M R  3.5   0.0   0:00.03 top -b -n 1
+14721 shell        20   0 2.0G 5.8M 5.3M S  0.0   0.0   0:00.00 head -n 15
+14719 root         20   0 2.0G 5.8M 5.2M S  0.0   0.0   0:00.00 sleep 2
+14675 u0_a337      20   0  10G 203M 138M S  0.0   1.7   0:00.11 com.finshell.wallet:temp
+14672 shell        20   0 2.0G 4.3M 3.6M S  0.0   0.0   0:00.00 sh -c ?    sleep 4?    top -b -n 1 | head -n 15?    echo "restarting_count=$(getprop | grep -E "^\[init\.svc\." | grep -c "\[restarting\]" || true)"?    echo "cph_pme110_setup=$(getprop init.svc.cph_pme110_setup)"
+14648 wifi         20   0 2.2G  12M  11M S  0.0   0.1   0:00.00 wpa_supplicant -O/data/vendor/wifi/wpa/sockets -dd -g@android:wpa_wlan0
+14349 root         20   0 2.0G 5.7M 5.1M S  0.0   0.0   0:00.00 sleep 30
+restarting_count=0
+cph_pme110_setup=stopped
+
+--- [PART 3: OplusCamera Rear/Front Photo (277KB/88KB) + Video (679KB) + c2.v4l2.avc.decoder 1080p 21fps] ---
+=== 1. Dismiss swipe-up tip & capture clean bright camera-rear-preview.png ===
+rear preview status: {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":498,"framesDropped":0}
+=== 2. Capture rear photo ===
+total 3
+drwxrws--- 2 u0_a314 media_rw 3452 2026-11-27 14:59 .RENAME_TMP
+=== 3. Switch to front camera, capture preview & front photo ===
+  Device 0 is closed, no client instance
+  11-27 15:07:09 : Device 1 is open. Client instance dump:
+    Stream[4]: Output
+    Stream[4]: Surface Id: 0
+    Stream[5]: Output
+    Stream[5]: Surface Id: 0
+  Device 2 is closed, no client instance
+  Device 3 is closed, no client instance
+front preview status: {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":577,"framesDropped":0}
+total 91
+drwxrws--- 2 u0_a314 media_rw  3452 2026-11-27 14:59 .RENAME_TMP
+-rwxrwx--- 1 u0_a314 media_rw 88849 2026-11-27 15:07 IMG20261127150709.jpg
+=== 4. Switch to rear + VIDEO mode & record 5s mp4 ===
+total 363
+drwxrws--- 2 u0_a314 media_rw   3452 2026-11-27 14:59 .RENAME_TMP
+-rwxrwx--- 1 u0_a314 media_rw  88849 2026-11-27 15:07 IMG20261127150709.jpg
+-rwxrwx--- 1 u0_a314 media_rw 277108 2026-11-27 15:07 IMG20261127150729.jpg
+=== 5. Return to HOME & verify CDCM_PAUSE freezes framesSent ===
+CDCM_PAUSE check t0: {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":790,"framesDropped":0}
+CDCM_PAUSE check t3: {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":795,"framesDropped":0}
+=== 6. Open captured JPG in Gallery & capture gallery-photo-pass.png ===
+JPG=/sdcard/DCIM/Camera/IMG20261127150709.jpg MP4=
+Starting: Intent { act=android.intent.action.VIEW dat=file:///... typ=image/jpeg }
+=== 7. Play recorded MP4 & capture video-playback-pass.png ===
+=== 8. Open Bluetooth settings & toggle ON ===
+Starting: Intent { act=android.settings.BLUETOOTH_SETTINGS }
+
+--- [PART 4: Bluetooth State ON (Uptime 5m47s, 0 crashes), NFC, CDCM_PAUSE Freeze (487->487), Idle top 97.0% idle] ---
+=== 1. PME110 Health, Bluetooth, NFC, Idle Top ===
+model=PME110 market_name=OPPO Find X9s Pro
+enforce=Enforcing
+restarting_count=0
+--- check cdh_audio_placeholders.txt on device ---
+# PME110 (OPPO Find X9s Pro / ColorOS 17 / Android 17):
+# 禁止通过 soundtrigger3 注册 android.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default 假占位符；
+# Android 17 libbluetooth_jni.so 在检测到该 AIDL 服务存在时会强制调用 openProvider(A2DP_SOFTWARE_ENCODING_DATAPATH)，
+# 收到 EX_UNSUPPORTED_OPERATION 重试 10 次后即触发 SIGABRT 崩溃循环。不注册时蓝牙栈 is_aidl_available=false 平稳运行。
+--- bluetooth_manager ---
+Bluetooth Status:
+  State:         ON
+  Address:       XX:XX:XX:XX:00:00
+  Name:          PME110
+  Inner app:     com.android.bluetooth
+  Uptime:        5m 47.548033s
+
+Enable log:
+  TIMESTAMP          ACTION     REASON               PACKAGE
+  ------------------ ---------- -------------------- -------
+  11-27 15:52:23.959 Enable     SYSTEM_BOOT          android
+
+Bluetooth crashed 0 times
+
+Ble app registered: {}
+
+BluetoothManagerService:
+  mEnable:true
+  mQuietEnable:false
+  mEnableExternal:true
+  mQuietEnableExternal:false
+
+🚩Flag dump:
+	[ ]: a2dp_adjust_sbc_bitpool
+	[ ]: a2dp_cleanup_on_acl_disconnect
+Failed to write while dumping service bluetooth_manager: Broken pipe
+--- nfc ---
+mState=on
+mAlwaysOnState=off
+mScreenState=OFF_LOCKED
+mIsSecureNfcEnabled=false
+mIsReaderOptionEnabled=true
+mIsAlwaysOnSupported=false
+SnoopLogMode=FILTERED
+VendorDebugEnabled=false
+Failed to write while dumping service nfc: Broken pipe
+--- idle top ---
+Tasks: 341 total,   3 running, 337 sleeping,   0 stopped,   1 zombie
+  Mem:    11376M total,    11132M used,      243M free,       10M buffers
+ Swap:     6143M total,        0M used,     6143M free,     8540M cached
+800%cpu  47%user   0%nice  58%sys 605%idle   0%iow  89%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  595 system       20   0 2.2G  11M  10M S 39.4   0.0   0:13.76 android.hardware.camera-service
+ 4577 u0_a169      10 -10  12G 477M 287M S 23.6   4.1   0:19.15 com.oplus.camera
+  632 system       -3  -8 4.1G 224M 108M S 15.7   1.9   0:27.39 surfaceflinger
+12693 shell        20   0 2.1G 5.8M 5.1M R  7.8   0.0   0:00.09 top -b -n 1
+12258 root         20   0    0    0    0 R  7.8   0.0   0:01.65 [kworker/u32:0-events_unbound]
+11355 root         20   0    0    0    0 I  7.8   0.0   0:00.37 [kworker/0:0-events]
+  305 root         20   0    0    0    0 S  7.8   0.0   0:03.97 [khvcd]
+  711 cameraserver 20   0 2.9G  54M  47M S  5.2   0.4   0:02.41 cameraserver
+   14 root         20   0    0    0    0 I  5.2   0.0   0:02.91 [kworker/u32:1-events_unbound]
+  616 system       -3  -4 2.3G  12M  10M S  2.6   0.1   0:02.08 android.hardware.composer.hwc3-service.drm_upstream
+Failed to write while dumping service bluetooth_manager: Broken pipe
+BT_STATE=  State:         ON
+=== 2. Accept Gallery dialog & capture fullscreen gallery-photo-pass.png ===
+Starting: Intent { act=android.intent.action.VIEW dat=file:///... typ=image/jpeg }
+Starting: Intent { act=android.intent.action.VIEW dat=file:///... typ=image/jpeg }
+=== 3. Accept OPPO Video dialog & play VID20261127151006.mp4 ===
+Starting: Intent { act=android.intent.action.VIEW dat=file:///... typ=video/mp4 }
+Starting: Intent { act=android.intent.action.VIEW dat=file:///... typ=video/mp4 }
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+11-27 15:58:36.731   537   537 I adbd    : adbd service requested 'shell,v2,TERM=dumb,raw:logcat -d -t 500 | grep -iE "c2\.v4l2|CCodec|MediaCodec.*avc" | tail -n 15'
+=== 4. Capture clean rear & front camera preview ===
+Starting: Intent { cmp=com.oplus.camera/.Camera }
+Warning: Activity not started, its current task has been brought to the front
+rear status: {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":397,"framesDropped":0}
+  Device 0 is closed, no client instance
+  11-27 15:58:50 : Device 1 is open. Client instance dump:
+    Stream[0]: Output
+    Stream[0]: Surface Id: 0
+    Stream[1]: Output
+    Stream[1]: Surface Id: 0
+  Device 2 is closed, no client instance
+  Device 3 is closed, no client instance
+front status: {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":460,"framesDropped":0}
+CDCM_PAUSE t0: {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":484,"framesDropped":0}
+CDCM_PAUSE t3: {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":487,"framesDropped":0}
+
+CDCM_PAUSE freeze check (t0 vs t4): framesSent 487 -> 487 (0 delta)
+c2.v4l2.avc.decoder [1920*1080] inputFps=21, outputFps=21 renderFps=21, discardFps=0
+Idle top: 800%cpu 8%user 0%nice 5%sys 776%idle (97.0% idle)

@@ -1,6 +1,7 @@
 {
   "build-prop-sets": {
     "gsm.version.baseband": "MPSS.DE.3.0-02177.2-KAILUA_GEN_PACK-2.18776.259",
+    "media.c2.hal.selection": "aidl",
     "persist.radio.multisim.config": "dsds",
     "ro.hardware.egl": "mesa",
     "ro.hardware.vulkan": "adreno",
@@ -10,7 +11,7 @@
     "ro.soc.model": "SM8550-AB",
     "ro.vendor.boot_security_patch": "2025-09-01",
     "ro.vendor.build.security_patch": "2025-09-01",
-    "ro.vendor.cdh.device.market_name": "realme GT5 (150W)",
+    "ro.vendor.cdh.device.market_name": "realme GT5 240W",
     "ro.vendor.cdh.display.default_refresh_rate": "144",
     "ro.vendor.cdh.display.edid_name": "TMA_AMOLED_1P5K",
     "ro.vendor.cdh.display.edid_pnp": "TMA",
@@ -62,7 +63,9 @@
     "ro.vendor.soc.model": "SM8550-AB",
     "ro.vendor.soc.model.external_name": "SM8550-AB",
     "ro.vendor.soc.model.part_name": "SM8550-AB",
-    "ro.vendor.soc.model_ready": "1"
+    "ro.vendor.soc.model_ready": "1",
+    "vendor.audio.c2.preferred": "true",
+    "vendor.audio.hw.aac.encoder": "false"
   },
   "build-prop-unsets": [],
   "files": [

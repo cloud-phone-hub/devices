@@ -7,13 +7,17 @@
  * 服务必须在 system_server 走到 StartSoundTriggerMiddlewareService 之前就位
  * —— 靠 rc 里的 class hal 保证（servicemanager 之后、boot phase 200 之前）。
  */
+#include <android/binder_auto_utils.h>
 #include <android/binder_ibinder.h>
 #include <android/binder_manager.h>
+#include <android/binder_parcel.h>
 #include <android/binder_process.h>
+#include <android/binder_status.h>
 #include <log/log.h>
 
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <map>
 #include <memory>
 #include <string>
@@ -40,6 +44,55 @@ binder_status_t OnPlaceholderTransact(AIBinder* /*binder*/,
                                       transaction_code_t /*code*/,
                                       const AParcel* /*in*/,
                                       AParcel* /*out*/) {
+    return STATUS_UNKNOWN_TRANSACTION;
+}
+
+constexpr const char* kBluetoothAudioProviderFactoryDescriptor =
+        "android.hardware.bluetooth.audio.IBluetoothAudioProviderFactory";
+constexpr const char* kBluetoothAudioProviderFactoryHash =
+        "ac25616dda1c45dc2915d3f5ac82687a1a6f6e46";
+
+// 蓝牙协议栈 libbluetooth_jni.so 在 GetAudioCapabilities 调用
+// IBluetoothAudioProviderFactory::getProviderCapabilities 时，若收到
+// STATUS_UNKNOWN_TRANSACTION (-129) 会触发 bluetooth::log::fatal SIGABRT 循环崩溃；
+// 返回空 AudioCapabilities[] 数组（长度 0）与 openProvider=EX_UNSUPPORTED_OPERATION，
+// 使蓝牙栈平稳回退至系统软件 A2DP/BLE 音频编码管线。
+binder_status_t OnBluetoothAudioProviderFactoryTransact(AIBinder* /*binder*/,
+                                                        transaction_code_t code,
+                                                        const AParcel* /*in*/,
+                                                        AParcel* out) {
+    if (out == nullptr) {
+        return STATUS_BAD_VALUE;
+    }
+    ndk::ScopedAStatus ok = ndk::ScopedAStatus::ok();
+    if (code == FIRST_CALL_TRANSACTION + 0) {
+        // AudioCapabilities[] getProviderCapabilities(in SessionType) -> empty array (len=0)
+        binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+        return st != STATUS_OK ? st : AParcel_writeInt32(out, 0);
+    }
+    if (code == FIRST_CALL_TRANSACTION + 1) {
+        // IBluetoothAudioProvider openProvider(in SessionType) -> unsupported
+        ndk::ScopedAStatus unsup =
+                ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
+        return AParcel_writeStatusHeader(out, unsup.get());
+    }
+    if (code == FIRST_CALL_TRANSACTION + 2) {
+        // @nullable ProviderInfo getProviderInfo(in SessionType) -> null parcelable (0)
+        binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+        return st != STATUS_OK ? st : AParcel_writeInt32(out, 0);
+    }
+    if (code == 0xffffff) {
+        binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+        return st != STATUS_OK ? st : AParcel_writeInt32(out, 4);
+    }
+    if (code == 0xfffffe) {
+        binder_status_t st = AParcel_writeStatusHeader(out, ok.get());
+        return st != STATUS_OK
+                       ? st
+                       : AParcel_writeString(
+                                 out, kBluetoothAudioProviderFactoryHash,
+                                 static_cast<int32_t>(std::strlen(kBluetoothAudioProviderFactoryHash)));
+    }
     return STATUS_UNKNOWN_TRANSACTION;
 }
 
@@ -84,9 +137,13 @@ void RegisterPlaceholdersFromFile(const char* path) {
         auto it = class_cache.find(descriptor);
         if (it == class_cache.end()) {
             it = class_cache.emplace(descriptor, nullptr).first;
+            const AIBinder_Class_onTransact transact_fn =
+                    (descriptor == kBluetoothAudioProviderFactoryDescriptor)
+                            ? OnBluetoothAudioProviderFactoryTransact
+                            : OnPlaceholderTransact;
             it->second = AIBinder_Class_define(
                     it->first.c_str(), OnPlaceholderCreate, OnPlaceholderDestroy,
-                    OnPlaceholderTransact);
+                    transact_fn);
             if (it->second == nullptr) {
                 ALOGW("define placeholder binder class failed: %s",
                       descriptor.c_str());

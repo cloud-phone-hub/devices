@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- OPPO CPH2797 (oppo/CPH2797) AI 对标 gold 真机电池配置 -->
+<!-- OPPO Find X9 (oppo/CPH2797) 真机 7025 mAh (7025000 uAh) 电池配置 -->
 <battery>
-  <identity technology="Li-ion" cycle_count="12" level="100" health="GOOD"
-            capacity_level="FULL" charging_state="INVALID" present="1"/>
-  <charger ac="1" usb="0" wireless="1" dock="0"
+  <identity technology="Li-ion" cycle_count="12" level="85" health="GOOD"
+            capacity_level="HIGH" charging_state="DISCHARGING" present="1"/>
+  <charger ac="0" usb="0" wireless="0" dock="0"
            max_current_ua="0" max_voltage_uv="0"/>
-  <capacity full_uah="7025" counter_min="6960" counter_max="6988"/>
+  <capacity full_uah="7025000" counter_min="5950000" counter_max="6000000"/>
   <cycle full_mv="4480" charge_mv="4530" temperature_full_decic="305"
          temperature_charge_decic="375" current_full_ua="-68000"
          current_charge_ua="-4000000" seconds="600"/>

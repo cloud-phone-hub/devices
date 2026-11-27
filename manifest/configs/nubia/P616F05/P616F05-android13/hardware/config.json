@@ -14,7 +14,7 @@
     },
     {
       "android.hardware.camera": {
-        "variant": "nubia",
+        "variant": "unisoc",
         "version": "1.0"
       }
     },
@@ -122,6 +122,12 @@
     },
     {
       "android.hardware.neuralnetworks": {
+        "variant": "default",
+        "version": "1.0"
+      }
+    },
+    {
+      "android.hardware.nfc": {
         "variant": "default",
         "version": "1.0"
       }

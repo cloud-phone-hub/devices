@@ -166,10 +166,6 @@
     "vendorOfficialFiles": [
       {
         "from": "official",
-        "source": "lib64/libOpenCL.so"
-      },
-      {
-        "from": "official",
         "source": "lib64/libpng.so"
       },
       {
@@ -276,6 +272,10 @@
       {
         "from": "official",
         "source": "etc/public.libraries.txt"
+      },
+      {
+        "from": "official",
+        "source": "etc/vintf/manifest/qtiradio-saidl.xml"
       }
     ],
     "measuredMapsRedirects": [
@@ -288,6 +288,11 @@
         "type": "maps",
         "from": "/vendor/lib64/liblzma.so",
         "to": "/mnt/vendorpatch/vendor/lib64/android.hardware.graphics.allocator@4.0.so"
+      },
+      {
+        "type": "dir",
+        "from": "/vendor/app",
+        "to": "/mnt/vendorpatch/vendor/app"
       }
     ],
     "measuredCpuClusters": [
@@ -946,7 +951,7 @@
         "configFile": "vendor/etc/gps.conf"
       },
       "connectivity": {
-        "nfcChipHint": "STMicroelectronics ST21NFC",
+        "nfcChipHint": "NXP NFC",
         "nfcConfigFiles": [
           "vendor/etc/libnfc-SN220_19_2MHZ.conf",
           "vendor/etc/libnfc-SN220_38_4MHZ.conf",

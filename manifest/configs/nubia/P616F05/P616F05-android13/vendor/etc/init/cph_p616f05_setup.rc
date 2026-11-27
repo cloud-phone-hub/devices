@@ -1,0 +1,11 @@
+# CDH：展锐/中兴原厂售后统计组件 com.android.aftersaleservice.ZStats 在云机环境下因无原厂私有服务权限触发 SELinux denied 崩溃，开机后幂等禁用。
+service cph_p616f05_setup /system/bin/sh -c "pm disable-user --user 0 com.android.aftersaleservice >/dev/null 2>&1"
+    class late_start
+    user root
+    group root system
+    seclabel u:r:pioneer:s0
+    oneshot
+    disabled
+
+on property:sys.boot_completed=1
+    start cph_p616f05_setup

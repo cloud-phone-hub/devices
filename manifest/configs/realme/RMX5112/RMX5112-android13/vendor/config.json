@@ -1,7 +1,9 @@
 {
   "build-prop-sets": {
     "gsm.version.baseband": "MOLY.NR17.R1.MP5.TC16.PR1.SP.V1.P138",
+    "media.c2.hal.selection": "aidl",
     "persist.radio.multisim.config": "dsds",
+    "ro.bluetooth.a2dp_offload.supported": "false",
     "ro.hardware.egl": "mesa",
     "ro.hardware.gatekeeper": "trustonic",
     "ro.hardware.hwcomposer": "mtk_common",
@@ -12,7 +14,9 @@
     "ro.soc.model": "MT6835",
     "ro.vendor.boot_security_patch": "2025-10-01",
     "ro.vendor.build.security_patch": "2025-10-01",
-    "ro.vendor.cdh.device.market_name": "RMX5112",
+    "ro.vendor.cdh.device.market_name": "realme 15T",
+    "ro.vendor.cdh.display.default_refresh_rate": "120",
+    "ro.vendor.cdh.display.refresh_rates": "60,90,120",
     "ro.vendor.cdh.display.edid_name": "MTKDEV",
     "ro.vendor.cdh.display.edid_pnp": "MTK",
     "ro.vendor.cdh.display.edid_product_id": "45630",
@@ -38,7 +42,9 @@
     "ro.vendor.product.cpu.abilist64": "arm64-v8a",
     "ro.vendor.soc.manufacturer": "Mediatek",
     "ro.vendor.soc.model": "MT6835",
-    "ro.vendor.soc.model_ready": "1"
+    "ro.vendor.soc.model_ready": "1",
+    "vendor.audio.c2.preferred": "true",
+    "vendor.audio.hw.aac.encoder": "false"
   },
   "build-prop-unsets": [],
   "files": [

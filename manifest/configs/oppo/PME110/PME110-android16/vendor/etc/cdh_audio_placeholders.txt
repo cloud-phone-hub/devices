@@ -1,1 +1,4 @@
-android.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default
+# PME110 (OPPO Find X9s Pro / ColorOS 17 / Android 17):
+# 禁止通过 soundtrigger3 注册 android.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default 假占位符；
+# Android 17 libbluetooth_jni.so 在检测到该 AIDL 服务存在时会强制调用 openProvider(A2DP_SOFTWARE_ENCODING_DATAPATH)，
+# 收到 EX_UNSUPPORTED_OPERATION 重试 10 次后即触发 SIGABRT 崩溃循环。不注册时蓝牙栈 is_aidl_available=false 平稳运行。

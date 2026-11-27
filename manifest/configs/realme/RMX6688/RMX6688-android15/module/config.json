@@ -3,7 +3,6 @@
     "cdh_redirect",
     "device_info",
     "input_identity",
-    "kernelsu",
     "virtio_media"
   ],
   "input_identity": {
@@ -152,13 +151,13 @@
       "type": "file"
     },
     {
-      "from": "/system_ext/app/NfcNci",
-      "to": "/mnt/vendorpatch/system_ext/app/NfcNci",
-      "type": "dir"
+      "from": "/odm/lib64/libAlgoProcess.so",
+      "to": "/mnt/vendorpatch/vendor/lib64/libAlgoProcess.so",
+      "type": "file"
     },
     {
-      "from": "/product/app/OplusCamera",
-      "to": "/mnt/vendorpatch/product/app/OplusCamera",
+      "from": "/odm/etc/camera/config",
+      "to": "/mnt/vendorpatch/odm/etc/camera/config",
       "type": "dir"
     },
     {

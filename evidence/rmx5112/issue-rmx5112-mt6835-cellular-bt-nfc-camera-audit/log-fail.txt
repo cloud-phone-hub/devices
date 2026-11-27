@@ -1,0 +1,160 @@
+--- PROPS & SPECS ---
+getenforce: Enforcing
+uname: Linux localhost 5.15.167-android13-8-o-g84fe88aa4569 #1 SMP PREEMPT Fri Jul 18 03:44:06 UTC 2025 aarch64 Toybox
+[init.svc.vendor.nfc-default]: [running]
+[init.svc_debug_pid.vendor.nfc-default]: [567]
+[persist.logd.flowctrl.com.oplus.camera.quota.rows]: [3000]
+[persist.nfc.smartcard.recorder.enable]: [true]
+[persist.sys.nfc.aid_overflow]: [true]
+[ro.boottime.vendor.nfc-default]: [20057204051]
+[ro.camera.notify_nfc]: [1]
+[ro.hardware.egl]: [meow]
+[ro.hardware.gatekeeper]: [trustonic]
+[ro.hardware.gralloc]: [common]
+[ro.hardware.hwcomposer]: [mtk_common]
+[ro.hardware.kmsetkey]: [trustonic]
+[ro.hardware.vulkan]: [mali]
+[ro.hardware]: [mt6835]
+[ro.oplus.camera.speechassist]: [true]
+[ro.oplus.camera.video.beauty.switch]: [oplus.switch.video.beauty]
+[ro.oplus.camera.video_beauty.prefix]: [oplus.video.beauty.]
+[ro.oplus.system.camera.name]: [com.oplus.camera]
+[ro.product.board]: [k6835v2_64]
+[ro.product.brand.sub]: [realme]
+[ro.product.brand]: [realme]
+[ro.product.device]: [RE6404L1]
+[ro.product.manufacturer]: [realme]
+[ro.product.model]: [RMX5112]
+[ro.separate.soft]: [25604]
+[ro.soc.manufacturer]: [Mediatek]
+[ro.soc.model]: [MT6835]
+[ro.vendor.oplus.camera.backCamSize]: [50MP+2MP]
+[ro.vendor.oplus.camera.frontCamSize]: [50MP]
+[ro.vendor.oplus.camera.isHasselbladCamera]: [0]
+[ro.vendor.oplus.camera.isSupportExplorer]: [0]
+[ro.vendor.oplus.market.enname]: [realme 15T]
+[ro.vendor.oplus.market.name]: [真我15T]
+[ro.vendor.soc.manufacturer]: [Mediatek]
+[ro.vendor.soc.model]: [MT6835]
+[ro.vendor.soc.model_ready]: [1]
+restarting_count: 0
+lsmod:
+Module                  Size  Used by
+zram                   45056  0 
+zsmalloc               40960  1 zram
+virtio_console         36864  0 
+mac80211_hwsim         90112  0 
+mac80211              946176  1 mac80211_hwsim
+cfg80211              987136  2 mac80211_hwsim,mac80211
+rfkill                 36864  1 cfg80211
+cdh_media              49152  0 
+cdh_input_identity     20480  0 
+cdh_device_info        77824  0 
+kernelsu              233472  0 
+cdh_redirect          151552  0 
+meminfo:
+MemTotal:        7760724 kB
+MemFree:          393112 kB
+MemAvailable:    4912628 kB
+SwapTotal:       6291452 kB
+SwapFree:              0 kB
+swaps:
+Filename				Type		Size		Used		Priority
+wm:
+Physical size: 1080x2400
+Physical density: 480
+Override density: 640
+battery:
+Current OPLUS Battery Service state:
+  Charger voltage : 0
+  Battery current : 0
+  ChargerTechnology: 0
+  ChargeFastCharger: false
+  PlugType: 1
+  UpdatesStopped: false
+  UsbHwStatus: -1
+  BatteryHwStatus: -1
+  HwStatusIsSet: 1
+  BatteryIcStatus: -1
+  IcStatusIsSet: 1
+
+  mUsbStatus: -1
+  PhoneTemp: 0
+  ThermalFeatureOn: false
+Current Battery Service state:
+  AC powered: true
+  USB powered: false
+  Wireless powered: false
+  Dock powered: false
+  Max charging current: 0
+  Max charging voltage: 0
+  Charge counter: 4955
+  status: 2
+  health: 2
+  present: true
+  level: 100
+  scale: 100
+  voltage: 4406
+  temperature: 333
+  technology: Li-poly
+  Charging state: 0
+  Charging policy: 0
+packages_nfc_cam:
+package:com.android.cameraextensions
+package:com.android.nfc
+package:com.oplus.camera
+package:com.oplus.engineercamera
+package:vendor.mediatek.iwlanservice
+--- BLUETOOTH ---
+BluetoothShellCommand: Exec enable
+enable: Success
+  enabled: false
+  state: OFF
+  name: RMX5112
+Bluetooth crashed 1 time
+--- CELLULAR (Wi-Fi OFF) ---
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 127.0.0.1/8 scope host lo
+20: ccmni1: <BROADCAST,NOARP,UP,LOWER_UP> mtu 1400 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+    mServiceState={mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE), mChannelNumber=1650, duplexMode()=1, mCellBandwidths=[20000], mOperatorAlphaLong=中国联通, mOperatorAlphaShort=中国联通, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=14(LTE), getRilDataRadioTechnology=14(LTE), mCssIndicator=unsupported, mNetworkId=-1, mSystemId=-1, mCdmaRoamingIndicator=-1, mCdmaDefaultRoamingIndicator=-1, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=NOT_REG_OR_SEARCHING networkRegistrationState=NOT_REG_OR_SEARCHING roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 0 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 LteVopsSupportInfo :  mVopsSupport = 1 mEmcBearerSupport = 1 } nrState=**** rRplmn=null isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[VOICE,SMS,VIDEO] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=VoiceSpecificRegistrationInfo { mCssSupported=false mRoamingIndicator=0 mSystemIsInPrl=0 mDefaultRoamingIndicator=0} dataSpecificInfo=null nrState=**** rRplmn=46001 isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[DATA,MMS] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 16 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 null } nrState=**** rRplmn=46001 isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=中国联通, mOperatorAlphaShortRaw=中国联通, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataConnectionState=2
+    mServiceState={mVoiceRegState=1(OUT_OF_SERVICE), mDataRegState=1(OUT_OF_SERVICE), mChannelNumber=1650, duplexMode()=0, mCellBandwidths=[20000], mOperatorAlphaLong=null, mOperatorAlphaShort=null, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=0(Unknown), getRilDataRadioTechnology=0(Unknown), mCssIndicator=unsupported, mNetworkId=-1, mSystemId=-1, mCdmaRoamingIndicator=-1, mCdmaDefaultRoamingIndicator=-1, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=NOT_REG_OR_SEARCHING networkRegistrationState=NOT_REG_OR_SEARCHING roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 0 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 LteVopsSupportInfo :  mVopsSupport = 1 mEmcBearerSupport = 1 } nrState=**** rRplmn=null isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=null mMnc=null mAlphaLong=null mAlphaShort=null mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=VoiceSpecificRegistrationInfo { mCssSupported=false mRoamingIndicator=0 mSystemIsInPrl=0 mDefaultRoamingIndicator=0} dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=null mMnc=null mAlphaLong=null mAlphaShort=null mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 16 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 null } nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=, mOperatorAlphaShortRaw=, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataConnectionState=-1
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2030ms
+
+--- NFC ---
+--- CRASHES ---
+11-27 16:45:12.898  8712  8712 F DEBUG   : #14 0x000000786c6aeb23 /apex/com.android.runtime/lib64/bionic/libc.so+0x0000000000097b23'
+11-27 16:45:12.898  8712  8712 F DEBUG   :     x0  0000000000000000  x1  00000000000021fe  x2  0000000000000006  x3  00000076514e2150
+11-27 16:45:12.898  8712  8712 F DEBUG   :     x4  451f5c3731303962  x5  451f5c3731303962  x6  451f5c3731303962  x7  7f7f7f7f7f7f7f7f
+11-27 16:45:12.898  8712  8712 F DEBUG   :     x8  00000000000000f0  x9  000000786c63d438  x10 0000000000000001  x11 000000786c6c2d10
+11-27 16:45:12.898  8712  8712 F DEBUG   :     x12 000000765502cc20  x13 00000076514e2499  x14 0000000000000000  x15 0000000074808f8b
+11-27 16:45:12.898  8712  8712 F DEBUG   :     x16 000000786c72ef08  x17 000000786c716950  x18 0000007650974078  x19 000000000000219f
+11-27 16:45:12.898  8712  8712 F DEBUG   :     x20 00000000000021fe  x21 00000000ffffffff  x22 00000076514e2458  x23 00000076514e2450
+11-27 16:45:12.898  8712  8712 F DEBUG   :     x24 0000000000000005  x25 00000076514e3a80  x26 00000077070e26c0  x27 00000077070e2408
+11-27 16:45:12.898  8712  8712 F DEBUG   :     x28 00000076514e2291  x29 00000076514e21d0
+11-27 16:45:12.898  8712  8712 F DEBUG   :     lr  000000786c6ab018  sp  00000076514e2130  pc  000000786c6ab048  pst 0000000000000000
+11-27 16:45:12.898  8712  8712 F DEBUG   : 18 total frames
+11-27 16:45:12.898  8712  8712 F DEBUG   : backtrace:
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #00 pc 0000000000094048  /apex/com.android.runtime/lib64/bionic/libc.so (abort+168) (BuildId: b963824e1119e1e9ec07440f1ee81f14)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #01 pc 00000000005842b8  /system/lib64/libbluetooth_jni.so (LogReceive::LogRecorder::~LogRecorder()+3256) (BuildId: 754f124f70d01fabdb928a640cb3d9f6)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #02 pc 00000000005851e8  /system/lib64/libbluetooth_jni.so (baseLoggingHandler(int, char const*, int, unsigned long, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)+328) (BuildId: 754f124f70d01fabdb928a640cb3d9f6)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #03 pc 0000000000e1d460  /system/lib64/libbluetooth_jni.so (logging::LogMessage::~LogMessage()+608) (BuildId: 754f124f70d01fabdb928a640cb3d9f6)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #04 pc 0000000000b1c51c  /system/lib64/libbluetooth_jni.so (vendor::mediatek::bluetooth::audio::aidl::BluetoothAudioClientInterface::FetchAudioProvider()+1436) (BuildId: 754f124f70d01fabdb928a640cb3d9f6)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #05 pc 0000000000b1ca24  /system/lib64/libbluetooth_jni.so (vendor::mediatek::bluetooth::audio::aidl::BluetoothAudioSinkClientInterface::BluetoothAudioSinkClientInterface(vendor::mediatek::bluetooth::audio::aidl::IBluetoothSinkTransportInstance*, bluetooth::common::MessageLoopThread*)+260) (BuildId: 754f124f70d01fabdb928a640cb3d9f6)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #06 pc 0000000000b05540  /system/lib64/libbluetooth_jni.so (vendor::mediatek::bluetooth::audio::aidl::a2dp::init(bluetooth::common::MessageLoopThread*)+400) (BuildId: 754f124f70d01fabdb928a640cb3d9f6)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #07 pc 000000000091215c  /system/lib64/libbluetooth_jni.so (btif_a2dp_source_init_delayed()+108) (BuildId: 754f124f70d01fabdb928a640cb3d9f6)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #08 pc 0000000000e20324  /system/lib64/libbluetooth_jni.so (base::debug::TaskAnnotator::RunTask(char const*, base::PendingTask*)+196) (BuildId: 754f124f70d01fabdb928a640cb3d9f6)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #09 pc 0000000000e1f868  /system/lib64/libbluetooth_jni.so (base::MessageLoop::RunTask(base::PendingTask*)+344) (BuildId: 754f124f70d01fabdb928a640cb3d9f6)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #10 pc 0000000000e1fbc0  /system/lib64/libbluetooth_jni.so (base::MessageLoop::DoWork()+512) (BuildId: 754f124f70d01fabdb928a640cb3d9f6)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #11 pc 0000000000e22030  /system/lib64/libbluetooth_jni.so (base::MessagePumpDefault::Run(base::MessagePump::Delegate*)+96) (BuildId: 754f124f70d01fabdb928a640cb3d9f6)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #12 pc 0000000000e356f0  /system/lib64/libbluetooth_jni.so (base::RunLoop::Run()+64) (BuildId: 754f124f70d01fabdb928a640cb3d9f6)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #13 pc 0000000000cddaf0  /system/lib64/libbluetooth_jni.so (bluetooth::common::MessageLoopThread::Run(std::__1::promise<void>)+336) (BuildId: 754f124f70d01fabdb928a640cb3d9f6)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #14 pc 0000000000cdd6a0  /system/lib64/libbluetooth_jni.so (bluetooth::common::MessageLoopThread::RunThread(bluetooth::common::MessageLoopThread*, std::__1::promise<void>)+48) (BuildId: 754f124f70d01fabdb928a640cb3d9f6)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #15 pc 0000000000cde524  /system/lib64/libbluetooth_jni.so (void* std::__1::__thread_proxy[abi:nn180000]<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct>>, void (*)(bluetooth::common::MessageLoopThread*, std::__1::promise<void>), bluetooth::common::MessageLoopThread*, std::__1::promise<void>>>(void*)+84) (BuildId: 754f124f70d01fabdb928a640cb3d9f6)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #16 pc 00000000000a67a4  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+196) (BuildId: b963824e1119e1e9ec07440f1ee81f14)
+11-27 16:45:12.898  8712  8712 F DEBUG   :       #17 pc 0000000000097b20  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: b963824e1119e1e9ec07440f1ee81f14)

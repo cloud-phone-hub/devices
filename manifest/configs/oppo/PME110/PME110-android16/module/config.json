@@ -140,7 +140,6 @@
     "cdh_redirect",
     "device_info",
     "input_identity",
-    "kernelsu",
     "virtio_media"
   ],
   "input": {

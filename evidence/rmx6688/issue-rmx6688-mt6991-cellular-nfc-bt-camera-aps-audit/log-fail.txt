@@ -1,0 +1,153 @@
+--- PROPS & SPECS ---
+getenforce: Enforcing
+uname: Linux localhost 6.6.66-android15-8-gd43086512890-abogki423825152-4k #1 SMP PREEMPT Tue Jun 10 12:12:23 UTC 2025 aarch64 Toybox
+[init.svc.nfc_hal_service.tms.aidl]: [stopped]
+[init.svc.vendor.nfc-default]: [running]
+[init.svc_debug_pid.nfc_hal_service.tms.aidl]: []
+[init.svc_debug_pid.vendor.nfc-default]: [676]
+[persist.logd.flowctrl.com.oplus.camera.quota.rows]: [3000]
+[persist.nfc.smartcard.recorder.enable]: [true]
+[ro.boottime.vendor.nfc-default]: [24763644345]
+[ro.camera.notify_nfc]: [1]
+[ro.hardware.egl]: [meow]
+[ro.hardware.gatekeeper]: [trustonic]
+[ro.hardware.gralloc]: [common]
+[ro.hardware.hwcomposer]: [drm]
+[ro.hardware.kmsetkey]: [trustonic]
+[ro.hardware.vulkan]: [mali]
+[ro.hardware]: [mt6991]
+[ro.oplus.camera.defercap.support]: [1]
+[ro.oplus.camera.facing.front.need.disable.nfc]: [1]
+[ro.oplus.camera.speechassist]: [true]
+[ro.oplus.camera.video.beauty.switch]: [oplus.switch.video.beauty]
+[ro.oplus.camera.video_beauty.prefix]: [oplus.video.beauty.]
+[ro.oplus.nfc.ccc_bmw_hmi_support]: [true]
+[ro.oplus.nfc.current.support]: [true]
+[ro.oplus.nfc.frequency.support]: [true]
+[ro.oplus.nfc.magnetic_wireless_charing]: [true]
+[ro.oplus.nfc.smart_switch_card]: [true]
+[ro.oplus.nfc.support.encryption_card]: [true]
+[ro.oplus.nfc.support.super_card]: [true]
+[ro.oplus.nfc.support.tee]: [true]
+[ro.oplus.nfc.tap_to_share_with_ios]: [true]
+[ro.oplus.nfc.wifi_scan_wakelock]: [true]
+[ro.oplus.system.camera.name]: [com.oplus.camera]
+[ro.product.board]: [k6991v1_64]
+[ro.product.brand.sub]: [realme]
+[ro.product.brand]: [realme]
+[ro.product.device]: [RE602AL1]
+[ro.product.model]: [RMX6688]
+[ro.separate.soft]: [24618]
+[ro.soc.manufacturer]: [Mediatek]
+[ro.soc.model]: [MT6991]
+[ro.vendor.oplus.camera.backCamSize]: [50MP+8MP]
+[ro.vendor.oplus.camera.frontCamSize]: [16MP]
+[ro.vendor.oplus.camera.isHasselbladCamera]: [0]
+[ro.vendor.oplus.market.enname]: [realme GT 7]
+[ro.vendor.oplus.market.name]: [真我GT7]
+[ro.vendor.soc.manufacturer]: [Mediatek]
+[ro.vendor.soc.model.external_name]: [MT6991]
+[ro.vendor.soc.model.part_name]: [MT6991]
+[ro.vendor.soc.model]: [MT6991]
+[ro.vendor.soc.model_ready]: [1]
+restarting_count: 0
+lsmod:
+Module                  Size  Used by
+zram                   49152  0 
+zsmalloc               45056  1 zram
+virtio_console         40960  0 
+mac80211_hwsim        114688  0 
+mac80211             1114112  1 mac80211_hwsim
+libarc4                16384  1 mac80211
+cfg80211             1138688  2 mac80211_hwsim,mac80211
+rfkill                 36864  1 cfg80211
+cdh_media              49152  0 
+cdh_input_identity     16384  0 
+cdh_device_info        73728  1 
+kernelsu              200704  0 
+cdh_redirect          155648  0 
+meminfo:
+MemTotal:        7760724 kB
+MemFree:         1811664 kB
+MemAvailable:    8789264 kB
+SwapTotal:       6291452 kB
+SwapFree:              0 kB
+swaps:
+Filename				Type		Size		Used		Priority
+wm:
+Physical size: 1280x2800
+Physical density: 560
+battery:
+Current OPLUS Battery Service state:
+  Charger voltage : 0
+  Battery current : 0
+  ChargerTechnology: 0
+  ChargeFastCharger: false
+  PlugType: 0
+  UpdatesStopped: false
+  UsbHwStatus: 0
+  BatteryHwStatus: 0
+  HwStatusIsSet: 1
+  BatteryIcStatus: 0
+  IcStatusIsSet: 1
+
+  mUsbStatus: 0
+  PhoneTemp: 0
+  ThermalFeatureOn: true
+Current Battery Service state:
+  AC powered: false
+  USB powered: false
+  Wireless powered: false
+  Dock powered: false
+  Max charging current: 0
+  Max charging voltage: 0
+  Charge counter: 5618600
+  status: 3
+  health: 2
+  present: true
+  level: 78
+  scale: 100
+  voltage: 4149
+  temperature: 295
+  technology: Li-poly
+  Charging state: 0
+  Charging policy: 0
+packages_nfc_cam:
+package:com.android.cameraextensions
+package:com.oplus.engineercamera
+package:vendor.mediatek.iwlanservice
+--- BLUETOOTH ---
+BluetoothShellCommand: Exec enable
+enable: Success
+  enabled: false
+  state: OFF
+  name: RMX6688
+Bluetooth crashed 0 times
+connection_manager state:
+shim::legacy::bta::dm  current bta_dm_discovery_state:BTA_DM_DISCOVER_IDLE
+shim::legacy::bta::dm  current bta_dm_search_state:BTA_DM_SEARCH_IDLE
+    le_connectability_state: "ConnectabilityState::DISARMED",
+      manufacturer_name: 224,
+--- CELLULAR (Wi-Fi OFF) ---
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 127.0.0.1/8 scope host lo
+20: ccmni1: <BROADCAST,NOARP,UP,LOWER_UP> mtu 1400 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+    mServiceState={mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE), mChannelNumber=1650, duplexMode()=1, mCellBandwidths=[20000], mOperatorAlphaLong=中国联通, mOperatorAlphaShort=中国联通, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=14(LTE), getRilDataRadioTechnology=14(LTE), mCssIndicator=unsupported, mNetworkId=-1, mSystemId=-1, mCdmaRoamingIndicator=-1, mCdmaDefaultRoamingIndicator=-1, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=NOT_REG_OR_SEARCHING networkRegistrationState=NOT_REG_OR_SEARCHING roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 0 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 LteVopsSupportInfo :  mVopsSupport = 1 mEmcBearerSupport = 1 } nrState=**** rRplmn=null isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[VOICE,SMS,VIDEO] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=VoiceSpecificRegistrationInfo { mCssSupported=false mRoamingIndicator=0 mSystemIsInPrl=0 mDefaultRoamingIndicator=0} dataSpecificInfo=null nrState=**** rRplmn=46001 isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[DATA,MMS] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 16 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 null } nrState=**** rRplmn=46001 isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=中国联通, mOperatorAlphaShortRaw=中国联通, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataConnectionState=2
+    mServiceState={mVoiceRegState=1(OUT_OF_SERVICE), mDataRegState=1(OUT_OF_SERVICE), mChannelNumber=1650, duplexMode()=0, mCellBandwidths=[20000], mOperatorAlphaLong=null, mOperatorAlphaShort=null, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=0(Unknown), getRilDataRadioTechnology=0(Unknown), mCssIndicator=unsupported, mNetworkId=-1, mSystemId=-1, mCdmaRoamingIndicator=-1, mCdmaDefaultRoamingIndicator=-1, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=NOT_REG_OR_SEARCHING networkRegistrationState=NOT_REG_OR_SEARCHING roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 0 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 LteVopsSupportInfo :  mVopsSupport = 1 mEmcBearerSupport = 1 } nrState=**** rRplmn=null isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=null mMnc=null mAlphaLong=null mAlphaShort=null mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=VoiceSpecificRegistrationInfo { mCssSupported=false mRoamingIndicator=0 mSystemIsInPrl=0 mDefaultRoamingIndicator=0} dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=null mMnc=null mAlphaLong=null mAlphaShort=null mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 16 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 null } nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=, mOperatorAlphaShortRaw=, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataConnectionState=-1
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2051ms
+
+--- NFC ---
+--- CRASHES ---
+--------- beginning of crash
+01-01 08:00:28.348   878   878 I libimsma_adapt: mtk-brm-commit-id:8783a29bae0ae84a456239f3212f27bdafa94c91
+01-01 08:00:28.348   878   878 I libimsma_adapt: mtk-brm-change-id:Iee598bb542f5de895a4b71649fbc79b2d93bc3de
+01-01 08:00:28.348   878   878 I libimsma_adapt: mtk-brm-merge-id:none
+01-01 08:00:28.790   982   982 I emdlogger: mtk-brm-commit-id:04ab5bd912477cf2320dee54df9ac8b535476f2d
+01-01 08:00:28.790   982   982 I emdlogger: mtk-brm-change-id:Ib405363e450403587f3a66bbe5b353966c086aba
+01-01 08:00:28.790   982   982 I emdlogger: mtk-brm-merge-id:none

@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/prctl.h>
 #include <unistd.h>
 
 #include <android/log.h>
@@ -327,6 +328,33 @@ static int cdh_is_process_named(const char *target) {
     return strcmp(buf, target) == 0;
 }
 
+static int cdh_is_chromium_gpu_thread(void) {
+    // 注意：/proc/self/comm 返回进程主线程名（TGID），必须使用 prctl(PR_GET_NAME)
+    // 读取当前调用线程自身的线程名（TID），才能命中应用进程内的 Chrome_InProcGp 线程。
+    char comm[32] = {0};
+    if (prctl(PR_GET_NAME, (unsigned long)comm, 0UL, 0UL, 0UL) == 0) {
+        comm[sizeof(comm) - 1] = '\0';
+        // Chrome_InProcGpu 在 16 字节 TASK_COMM_LEN 下截断为 "Chrome_InProcGp"
+        if (strncmp(comm, "Chrome_InProcGp", 15) == 0 ||
+            strcmp(comm, "CrGpuMain") == 0) {
+            return 1;
+        }
+    }
+    int cfd = open("/proc/self/cmdline", O_RDONLY | O_CLOEXEC);
+    if (cfd >= 0) {
+        char cmd[128];
+        ssize_t n = read(cfd, cmd, sizeof(cmd) - 1);
+        close(cfd);
+        if (n > 0) {
+            cmd[n] = '\0';
+            if (strstr(cmd, ":privileged_process") != NULL) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
 static int cdh_open(const cdh_hw_module_t *module, const char *id,
                     cdh_hw_device_t **device) {
     (void)module;
@@ -356,6 +384,18 @@ static int cdh_open(const cdh_hw_module_t *module, const char *id,
         cdh_is_process_named("com.meizu.media.camera")) {
         __android_log_print(ANDROID_LOG_INFO, CDH_LOG_TAG,
                             "vulkan: com.meizu.media.camera 跳过 %s 以避免 image_thread Venus 自旋死锁",
+                            base_soname);
+        return -ENOENT;
+    }
+    // Chromium / Android System WebView 的 GPU 线程（Chrome_InProcGp / CrGpuMain）在 macOS
+    // 宿主无 VK_KHR_swapchain 的 Mesa Venus (vulkan.virtio.so) 上会在 CreateInstance 陷入
+    // 100% CPU 自旋死循环；而若切至软光栅 vulkan.pastel.so，其产出的非纹理资源又会导致运行在
+    // VirGL GLES 上的 SurfaceFlinger 报 Illegal resource 并引发全屏三缓冲闪屏。仅对 Chromium
+    // GPU 渲染线程返回 -ENOENT 使其干净回退 VirGL GLES 硬件加速，其余线程与指纹检测不受影响。
+    if (strcmp(base_soname, "vulkan.virtio.so") == 0 &&
+        cdh_is_chromium_gpu_thread()) {
+        __android_log_print(ANDROID_LOG_INFO, CDH_LOG_TAG,
+                            "vulkan: Chromium GPU 线程跳过 %s，回退 VirGL GLES 硬件加速",
                             base_soname);
         return -ENOENT;
     }

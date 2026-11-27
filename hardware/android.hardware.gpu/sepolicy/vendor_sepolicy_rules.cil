@@ -1,0 +1,15 @@
+;; cdh：授予 mediaserver 与 mediacodec 读取 virtio-gpu 的 sysfs_gpu（dir / file / lnk_file）。
+;; Lineage virtio 基底策略仅向 appdomain、surfaceflinger、system_server、bootanim 授予了 sysfs_gpu，
+;; 遗漏了 mediaserver：当图库/相册/MediaProvider 调用 MediaMetadataRetriever (FrameCaptureProcessor ->
+;; GLESRenderEngine::create -> eglInitialize -> drmGetDevices2) 提取视频缩略图时，mediaserver 在
+;; /sys/devices/pci0000:00/0000:00:03.0 (sysfs_gpu) 被拒绝 search，触发 "Failed to open any DRM device"
+;; 与 "no suitable EGLConfig found, giving up" SIGABRT 循环崩溃（视频缩略图灰块且拖死 MediaProvider）。
+(allow {{pick:mediaserver}} {{pick:sysfs_gpu}} (dir (ioctl read getattr lock open watch watch_reads search)))
+(allow {{pick:mediaserver}} {{pick:sysfs_gpu}} (file (ioctl read getattr lock map open watch watch_reads)))
+(allow {{pick:mediaserver}} {{pick:sysfs_gpu}} (lnk_file (ioctl read getattr lock map open watch watch_reads)))
+(allow {{pick:mediacodec}} {{pick:sysfs_gpu}} (dir (ioctl read getattr lock open watch watch_reads search)))
+(allow {{pick:mediacodec}} {{pick:sysfs_gpu}} (file (ioctl read getattr lock map open watch watch_reads)))
+(allow {{pick:mediacodec}} {{pick:sysfs_gpu}} (lnk_file (ioctl read getattr lock map open watch watch_reads)))
+;; 静默 Mesa DRI 初始化时可选枚举的 vendor.mesa.* 调试属性，避免每次建 GL 上下文刷 44 行 libc Access denied
+(dontaudit {{pick:mediaserver}} {{pick:vendor_mesa_prop}} (file (ioctl read getattr lock map open)))
+(dontaudit {{pick:mediacodec}} {{pick:vendor_mesa_prop}} (file (ioctl read getattr lock map open)))

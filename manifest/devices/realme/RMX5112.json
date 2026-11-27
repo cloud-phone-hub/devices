@@ -10,11 +10,13 @@
   "density": 480,
   "smp": 8,
   "memory": [
-    8192
+    8192,
+    12288
   ],
   "storage": [
     128000,
-    256000
+    256000,
+    512000
   ],
   "extra": {
     "basebandVersion": "MOLY.NR17.R1.MP5.TC16.PR1.SP.V1.P138",
@@ -25,10 +27,17 @@
       "host-hvc-daemon": "hvc7",
       "host-hvc-haptic": "hvc6",
       "host-hvc-keymint": "hvc3",
+      "host-hvc-nfc": "hvc11",
       "host-hvc-radio": "hvc4",
       "host-hvc-wifi": "hvc9",
       "host-hvc-wifi-data": "hvc10"
     },
+    "skuCombinations": [
+      "8GB+128GB",
+      "8GB+256GB",
+      "12GB+256GB",
+      "12GB+512GB"
+    ],
     "verifiedBootHash": "fe049d35e450d9faf4b26788864f7b5fd5b857276d5271b067ef0e0268acff6f"
   },
   "updatedAt": "2026-11-05T04:33:33Z"

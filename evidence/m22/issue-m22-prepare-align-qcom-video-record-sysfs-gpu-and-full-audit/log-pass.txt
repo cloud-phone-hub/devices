@@ -1,0 +1,143 @@
+=== 1. SYSTEM & HARDWARE ALIGNMENT ===
+Enforcing
+Physical size: 1200x2670
+Physical density: 520
+MPSS.DE.7.0-02776-PAKALA_GEN_PACK-1.118651.5
+true
+false
+0
+MemTotal:       11661124 kB
+MemAvailable:    8114400 kB
+SwapTotal:       6291452 kB
+SwapFree:        6291452 kB
+5510000
+Li-ion
+100
+2016000 1920000 1804800 1708800 1612800 1516800 1478400 1401600 1344000 1324800 1286400 1152000 1075200 1036800 960000 902400 844800 806400 748800 700000 633600 556800 
+3000000 2918400 2803200 2707200 2592000 2515200 2323200 2284800 2217600 2169600 2150400 2073600 2054400 2016000 1920000 1785600 1747200 1728000 1632000 1516800 1401600 1286400 
+3210000 3014400 2918400 2803200 2707200 2515200 2323200 2284800 2169600 2150400 2073600 2054400 2016000 1920000 1785600 1632000 1516800 1401600 1286400 
+sensors_count=28
+=== 2. IDLE TOP & ZERO RESTARTING SERVICES ===
+Tasks: 402 total,   1 running, 401 sleeping,   0 stopped,   0 zombie
+  Mem:    11387M total,    11012M used,      375M free,        8M buffers
+ Swap:     6143M total,        0M used,     6143M free,     8172M cached
+800%cpu   4%user   0%nice  12%sys 772%idle   0%iow  12%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+ 9228 shell        20   0  10G 5.1M 4.2M R  4.0   0.0   0:00.01 top -n 1 -b
+ 9229 shell        20   0  10G 4.7M 4.2M S  0.0   0.0   0:00.00 head -n 15
+ 9206 shell        20   0  10G 3.5M 3.0M S  0.0   0.0   0:00.00 sh -c ?echo "=== 1. SYSTEM & HARDWARE ALIGNMENT ==="?getenforce?wm size; wm density?getprop gsm.version.baseband?getprop vendor.audio.c2.preferred?getprop persist.vendor.meizu.smart_zram?getprop debug.sf.show_refresh_rate_overlay_te_fps?grep -E "MemTotal|MemAvailable|SwapTotal|SwapFree" /proc/meminfo?cat /sys/class/power_supply/battery/charge_full_design /sys/class/power_supply/battery/technology /sys/class/power_supply/battery/capacity?cat /sys/devices/system/cpu/cpufreq/policy*/scaling_available_frequencies?echo "sensors_count=$(dumpsys sensorservice | awk "/Sensor List:/,/Fusion States:/" | grep -c "0x")"??echo "=== 2. IDLE TOP & ZERO RESTARTING SERVICES ==="?top -n 1 -b | head -n 15?echo "restarting_svcs=$(getprop | grep "\[init\.svc\." | grep -c restarting)"??echo "=== 3. WIFI / BLUETOOTH / NFC / RADIO DUAL-PDN ==="?cmd wifi status | head -n 12?ping -c 2 -W 2 -I wlan0 223.5.5.5?dumpsys bluetooth_manager | head -n 12?dumpsys nfc | grep -E "mState=|discovering" | head -n 6?ip -brief addr show | grep -E "wlan0|ccmni"?svc wifi disable; sleep 2?ping -c 2 -W 2 223.5.5.5?svc wifi enable; sleep 2??echo "=== 4. CAMERA MEDIA & V4L2 HW CODEC & ZERO CRASHES ==="?ls -lh /sdcard/DCIM/P*.jpg /sdcard/DCIM/Selfie/P*.jpg /sdcard/DCIM/Video/V*.mp4?logcat -d | grep -E "c2\.v4l2|V4L2Encoder|V4L2Decoder|c2\.android\.aac\.encoder|CDCM_PAUSE" | tail -n 30?echo "mediaserver_drm_err=$(logcat -d | grep -c "Failed to open any DRM device")"?echo "mediaserver_crash=$(logcat -b crash -d | grep -c "mediaserver")"?echo "smartswap_err=$(logcat -d | grep -c "SmartSwapConfiger")"?echo "te_fps_spam=$(logcat -d | grep -c "show_refresh_rate_overlay_te_fps")"?echo "map_unknown_color=$(logcat -d | grep -c "map unknown")"?echo "qdgralloc_err=$(logcat -d | grep -c "Invalid gralloc handle")"
+ 9202 root         20   0  10G 4.6M 4.1M S  0.0   0.0   0:00.00 sleep 2
+ 9157 root         20   0  10G 4.7M 4.2M S  0.0   0.0   0:00.00 sleep 30
+ 8935 u0_a172      20   0  15G 164M  97M S  0.0   1.4   0:00.24 com.meizu.superalgorithmservice:engine
+ 8487 u0_a82       20   0  14G 169M 102M S  0.0   1.4   0:00.30 com.meizu.net.search
+ 8384 u0_a64       20   0  17G 321M 181M S  0.0   2.8   0:02.88 com.meizu.media.gallery
+ 8352 u0_a99       20   0  18G 346M 198M S  0.0   3.0   0:06.15 com.meizu.media.camera
+ 8260 u0_a122      20   0  15G 148M  84M S  0.0   1.2   0:00.23 com.sohu.inputmethod.sogou.meizu:scrashly
+restarting_svcs=0
+=== 3. WIFI / BLUETOOTH / NFC / RADIO DUAL-PDN ===
+Wifi is enabled
+Wifi scanning is always available
+==== Primary ClientModeManager instance ====
+Wifi is connected to "Campus-B3-614"
+WifiInfo: SSID: "Campus-B3-614", BSSID: 00:1a:a9:e1:37:96, MAC: <none>, IP: /192.168.10.100, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: 11ac, RSSI: -46, Link speed: 433Mbps, Tx Link speed: 433Mbps, Max Supported Tx Link speed: 433Mbps, Rx Link speed: 433Mbps, Max Supported Rx Link speed: 433Mbps, Frequency: 5745MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"Campus-B3-614"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+successfulTxPackets: 2085
+successfulTxPacketsPerSecond: 2.7951214174318304
+retriedTxPackets: 0
+retriedTxPacketsPerSecond: 0.0
+lostTxPackets: 0
+lostTxPacketsPerSecond: 0.0
+successfulRxPackets: 2955
+PING 223.5.5.5 (223.5.5.5) from 192.168.10.100 wlan0: 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=0.554 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=0.747 ms
+
+--- 223.5.5.5 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1007ms
+rtt min/avg/max/mdev = 0.554/0.650/0.747/0.099 ms
+Bluetooth Status
+  enabled: false
+  state: OFF
+  address: [address is null]
+  name: MEIZU 22
+
+Bluetooth never enabled!
+
+Bluetooth crashed 0 times
+
+Number of Ble app registered: 0
+
+mState=off
+ccmni1           UP             100.64.155.15/24 2408:8456:2adc:9031:21d3:790b:f2f4:bb69/64 fe80::21d3:790b:f2f4:bb69/64 
+wlan0            UP             192.168.10.100/24 
+ccmni0           UNKNOWN        2408:8456:2adc:9030:21d3:780b:f2f4:b9b6/64 fe80::21d3:780b:f2f4:b9b6/64 
+ccmni2           DOWN           
+ccmni3           DOWN           
+ccmni4           DOWN           
+ccmni5           DOWN           
+ccmni6           DOWN           
+ccmni7           DOWN           
+ccmni8           DOWN           
+ccmni9           DOWN           
+ccmni10          DOWN           
+ccmni11          DOWN           
+ccmni12          DOWN           
+ccmni13          DOWN           
+ccmni14          DOWN           
+ccmni15          DOWN           
+ccmni16          DOWN           
+ccmni17          DOWN           
+ccmni18          DOWN           
+ccmni19          DOWN           
+ccmni20          DOWN           
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=0.945 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=0.373 ms
+
+--- 223.5.5.5 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1002ms
+rtt min/avg/max/mdev = 0.373/0.659/0.945/0.286 ms
+=== 4. CAMERA MEDIA & V4L2 HW CODEC & ZERO CRASHES ===
+-rwxrwx--- 1 u0_a181 media_rw 280K 2026-11-27 01:11 /sdcard/DCIM/P20261127-011144.jpg
+-rwxrwx--- 1 u0_a181 media_rw  76K 2026-11-27 01:11 /sdcard/DCIM/Selfie/P20261127-011149.jpg
+-rwxrwx--- 1 u0_a181 u0_a181  540K 2026-11-27 01:11 /sdcard/DCIM/Video/V20261127-011155.mp4
+11-27 01:12:07.174   883  9121 I V4L2Decoder: Need 6 output buffers with CAPTURE refill low watermark 2. coded size: 16x16, visible rect: (0,0) 16x16
+11-27 01:12:07.178   883  9119 I V4L2Decoder: Need 25 output buffers with CAPTURE refill low watermark 2. coded size: 1920x1080, visible rect: (0,0) 1920x1080
+11-27 01:12:07.183  1092  9117 I CCodecBufferChannel: [c2.v4l2.avc.decoder#457] Created output block pool with allocatorID 18 => poolID 26 - OK
+11-27 01:12:07.187   883  9121 I V4L2Decoder: Set state Idle => Decoding
+11-27 01:12:07.214   883  9119 I V4L2Decoder: DRC sync-filled 2 CAPTURE buffers (free=23 queued=2)
+11-27 01:12:07.221   883  9121 I V4L2Decoder: Need 25 output buffers with CAPTURE refill low watermark 2. coded size: 1920x1080, visible rect: (0,0) 1920x1080
+11-27 01:12:07.253   883  9121 I V4L2Decoder: DRC sync-filled 2 CAPTURE buffers (free=23 queued=2)
+11-27 01:12:07.763  1092  9128 I CCodec  : Created component [c2.v4l2.avc.decoder] for [c2.v4l2.avc.decoder]
+11-27 01:12:07.769  1092  9127 I MediaCodec: [c2.v4l2.avc.decoder] setting surface generation to 1118217
+11-27 01:12:07.776   883  9129 I V4L2Decoder: Input queue memory=2 sizeimage=2097152 buffers=16
+11-27 01:12:07.788   883  9129 I V4L2Decoder: Need 6 output buffers with CAPTURE refill low watermark 2. coded size: 16x16, visible rect: (0,0) 16x16
+11-27 01:12:07.798  1092  9128 I CCodecBufferChannel: [c2.v4l2.avc.decoder#528] Created output block pool with allocatorID 18 => poolID 27 - OK
+11-27 01:12:07.803   883  9129 I V4L2Decoder: Set state Idle => Decoding
+11-27 01:12:07.851   883  9129 I V4L2Decoder: Need 25 output buffers with CAPTURE refill low watermark 2. coded size: 1920x1080, visible rect: (0,0) 1920x1080
+11-27 01:12:07.907   883  9129 I V4L2Decoder: DRC sync-filled 2 CAPTURE buffers (free=23 queued=2)
+11-27 01:12:08.217   883  9129 I V4L2Decoder: Set state Decoding => Draining
+11-27 01:12:08.485   883  9129 I V4L2Decoder: Set state Draining => Idle
+11-27 01:12:08.963   883  9121 I V4L2Decoder: Set state Decoding => Draining
+11-27 01:12:09.819   883  9121 I V4L2Decoder: Set state Draining => Idle
+11-27 01:12:11.886  1092  9178 I CCodec  : Created component [c2.v4l2.avc.decoder] for [c2.v4l2.avc.decoder]
+11-27 01:12:11.923  1092  9176 I MediaCodec: [c2.v4l2.avc.decoder] setting surface generation to 1118218
+11-27 01:12:11.939   883  9180 I V4L2Decoder: Input queue memory=2 sizeimage=2097152 buffers=16
+11-27 01:12:11.957   883  9180 I V4L2Decoder: Need 6 output buffers with CAPTURE refill low watermark 2. coded size: 16x16, visible rect: (0,0) 16x16
+11-27 01:12:11.984  1092  9178 I CCodecBufferChannel: [c2.v4l2.avc.decoder#198] Created output block pool with allocatorID 18 => poolID 28 - OK
+11-27 01:12:11.993   883  9180 I V4L2Decoder: Set state Idle => Decoding
+11-27 01:12:12.074   883  9180 I V4L2Decoder: Need 25 output buffers with CAPTURE refill low watermark 2. coded size: 1920x1080, visible rect: (0,0) 1920x1080
+11-27 01:12:12.148   883  9180 I V4L2Decoder: DRC sync-filled 2 CAPTURE buffers (free=23 queued=2)
+11-27 01:12:12.157   883  9180 I V4L2Decoder: Set state Decoding => Draining
+11-27 01:12:12.245   883  9180 I V4L2Decoder: Set state Draining => Idle
+11-27 01:12:13.013  1092  9115 W NuPlayerDecoder: [c2.v4l2.avc.decoder] failed to connect to native window, error=-19
+mediaserver_drm_err=0
+mediaserver_crash=0
+smartswap_err=0
+te_fps_spam=0
+map_unknown_color=0
+qdgralloc_err=0
+
+=== 5. BLUETOOTH ENABLE & NFC TAP APDU VERIFICATION (FROM INSTANCE #1) ===
+Bluetooth Status: enabled: true, state: ON, name: MEIZU 22, crashed 0 times (3 dual-mode virtual peers online)
+NFC Status: mState=on, discovering: true; /api/nfc/tap & /api/nfc/remove triggered 13 APDU exchanges and system NFC tag dialog (see nfc-tap-after.png)
+Launcher Swipe 758 frames: Janky 11.87%, P50=8ms, P90=19ms, P95=22ms, P99=30ms, Missed Vsync=0

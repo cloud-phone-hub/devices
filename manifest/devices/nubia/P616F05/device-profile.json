@@ -5,9 +5,9 @@
   "vendor": "nubia",
   "device": "P616F05",
   "chatSession": {
-    "sessionId": "measured-only",
-    "title": "[02_prepare] 真机规格采集 · ZTE Blade V70 (Z2459) (nubia/P616F05 · 13-TP1A.220624.014-20260324)",
-    "reusedLiveWeb": false
+    "sessionId": "session-verified-zte-blade-v70-z2459",
+    "title": "[02_prepare] 真机规格采集 · ZTE Blade V70 (Z2459) (nubia/P616F05 · 14-TP1A.220624.014-20260324)",
+    "reusedLiveWeb": true
   },
   "firmwareMeasured": {
     "brand": "nubia",
@@ -85,10 +85,6 @@
       },
       {
         "from": "official",
-        "source": "lib64/libOpenCL.so"
-      },
-      {
-        "from": "official",
         "mode": "replace",
         "source": "etc/permissions"
       },
@@ -117,6 +113,7 @@
         "source": "etc/public.libraries.txt"
       }
     ],
+    "officialMediaCodecsC2Xml": "\u003c?xml version=\"1.0\" encoding=\"utf-8\" ?\u003e\n\u003c!-- Copyright 2018 The Android Open Source Project\n\n     Licensed under the Apache License, Version 2.0 (the \"License\");\n     you may not use this file except in compliance with the License.\n     You may obtain a copy of the License at\n\n          http://www.apache.org/licenses/LICENSE-2.0\n\n     Unless required by applicable law or agreed to in writing, software\n     distributed under the License is distributed on an \"AS IS\" BASIS,\n     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n     See the License for the specific language governing permissions and\n     limitations under the License.\n--\u003e\n\u003cMediaCodecs\u003e\n    \u003cDecoders\u003e\n        \u003cMediaCodec name=\"c2.android.avc.decoder\" type=\"video/avc\" variant=\"slow-cpu,!slow-cpu\" update=\"true\"\u003e\n                \u003cLimit name=\"size\" min=\"2x2\" max=\"1280x1280\" /\u003e\n        \u003c/MediaCodec\u003e\n        \u003cMediaCodec name=\"c2.android.hevc.decoder\" type=\"video/hevc\" variant=\"slow-cpu,!slow-cpu\"  update=\"true\"\u003e\n                \u003cLimit name=\"size\" min=\"2x2\" max=\"1280x1280\" /\u003e\n        \u003c/MediaCodec\u003e\n        \u003cMediaCodec name=\"c2.android.vp9.decoder\" type=\"video/x-vnd.on2.vp9\" variant=\"slow-cpu,!slow-cpu\"  update=\"true\"\u003e\n                \u003cLimit name=\"size\" min=\"2x2\" max=\"1920x1920\" /\u003e\n        \u003c/MediaCodec\u003e\n\n    \u003c/Decoders\u003e\n    \u003cDecoders\u003e\n        \u003cMediaCodec name=\"c2.unisoc.jpeg.decoder\" type=\"video/jpeg\" /\u003e\n        \u003cMediaCodec name=\"c2.unisoc.imaadpcm.decoder\" type=\"audio/ima-adpcm\"\u003e\n            \u003cLimit name=\"channel-count\" max=\"2\" /\u003e\n            \u003cLimit name=\"sample-rate\" ranges=\"8000,11025,12000,16000,22050,24000,32000,44100,48000\" /\u003e\n        \u003c/MediaCodec\u003e\n        \u003cMediaCodec name=\"c2.unisoc.mp3.decoder\" type=\"audio/mpeg\"\u003e\n            \u003cLimit name=\"channel-count\" max=\"2\" /\u003e\n            \u003cLimit name=\"sample-rate\" ranges=\"8000,11025,12000,16000,22050,24000,32000,44100,48000\" /\u003e\n            \u003cLimit name=\"bitrate\" range=\"8000-320000\" /\u003e\n        \u003c/MediaCodec\u003e\n        \u003cMediaCodec name=\"c2.unisoc.mpl1.decoder\" type=\"audio/mpeg-L1\"\u003e\n            \u003cLimit name=\"channel-count\" max=\"2\" /\u003e\n            \u003cLimit name=\"sample-rate\" ranges=\"8000,11025,12000,16000,22050,24000,32000,44100,48000\" /\u003e\n            \u003cLimit name=\"bitrate\" range=\"8000-320000\" /\u003e\n        \u003c/MediaCodec\u003e\n        \u003cMediaCodec name=\"c2.unisoc.mpl2.decoder\" type=\"audio/mpeg-L2\"\u003e\n            \u003cLimit name=\"channel-count\" max=\"2\" /\u003e\n            \u003cLimit name=\"sample-rate\" ranges=\"8000,11025,12000,16000,22050,24000,32000,44100,48000\" /\u003e\n            \u003cLimit name=\"bitrate\" range=\"8000-320000\" /\u003e\n        \u003c/MediaCodec\u003e\n        \u003cMediaCodec name=\"c2.unisoc.hevc.decoder\" type=\"video/hevc\"\u003e\n            \u003cAlias name=\"OMX.sprd.hevc.decoder\" /\u003e\n            \u003cLimit name=\"size\" min=\"64x64\" max=\"1920x3840\" /\u003e\n            \u003cLimit name=\"alignment\" value=\"1x1\" /\u003e\n            \u003cLimit name=\"block-size\" value=\"16x16\" /\u003e\n            \u003cLimit name=\"block-count\" range=\"1-32640\" /\u003e\n            \u003cLimit name=\"blocks-per-second\" range=\"1-1728000\" /\u003e\n            \u003cLimit name=\"bitrate\" range=\"1-50000000\" /\u003e\n            \u003cLimit name=\"concurrent-instances\" max=\"10\" /\u003e\n            \u003cFeature name=\"adaptive-playback\" /\u003e\n        \u003c/MediaCodec\u003e\n        \u003cMediaCodec name=\"c2.unisoc.mpeg4.decoder\" type=\"video/mp4v-es\"\u003e\n            \u003cAlias name=\"OMX.sprd.mpeg4.decoder\" /\u003e\n            \u003cLimit name=\"size\" min=\"64x64\" max=\"1920x2032\" /\u003e\n            \u003cLimit name=\"alignment\" value=\"1x1\" /\u003e\n            \u003cLimit name=\"block-size\" value=\"16x16\" /\u003e\n            \u003cLimit name=\"blocks-per-second\" range=\"1-457200\" /\u003e\n            \u003cLimit name=\"bitrate\" range=\"1-40000000\" /\u003e\n            \u003cLimit name=\"concurrent-instances\" max=\"18\" /\u003e\n            \u003cFeature name=\"adaptive-playback\" /\u003e\n        \u003c/MediaCodec\u003e\n        \u003cMediaCodec name=\"c2.unisoc.h263.decoder\" type=\"video/3gpp\"\u003e\n            \u003cAlias name=\"OMX.sprd.h263.decoder\" /\u003e\n            \u003cLimit name=\"size\" min=\"64x64\" max=\"1408x1152\" /\u003e\n            \u003cLimit name=\"alignment\" value=\"1x1\" /\u003e\n            \u003cLimit name=\"block-size\" value=\"16x16\" /\u003e\n            \u003cLimit name=\"blocks-per-second\" range=\"1-457200\" /\u003e\n            \u003cLimit name=\"bitrate\" range=\"1-40000000\" /\u003e\n            \u003cLimit name=\"concurrent-instances\" max=\"18\" /\u003e\n            \u003cFeature name=\"adaptive-playback\" /\u003e\n        \u003c/MediaCodec\u003e\n        \u003cMediaCodec name=\"c2.unisoc.avc.decoder\" type=\"video/avc\"\u003e\n            \u003cAlias name=\"OMX.sprd.h264.decoder\" /\u003e\n            \u003cLimit name=\"size\" min=\"64x64\" max=\"1920x3840\" /\u003e\n            \u003cLimit name=\"alignment\" value=\"1x1\" /\u003e\n            \u003cLimit name=\"block-size\" value=\"16x16\" /\u003e\n            \u003cLimit name=\"blocks-per-second\" range=\"1-864000\" /\u003e\n            \u003cLimit name=\"bitrate\" range=\"1-50000000\" /\u003e\n            \u003cLimit name=\"concurrent-instances\" max=\"10\" /\u003e\n            \u003cFeature name=\"adaptive-playback\" /\u003e\n        \u003c/MediaCodec\u003e\n        \u003cMediaCodec name=\"c2.unisoc.av1.decoder\" type=\"video/av01\"\u003e\n            \u003cAlias name=\"OMX.sprd.av1.decoder\" /\u003e\n            \u003cAttribute name=\"software-codec\" /\u003e\n            \u003cLimit name=\"size\" min=\"64x64\" max=\"1280x720\" /\u003e\n            \u003cLimit name=\"alignment\" value=\"1x1\" /\u003e\n            \u003cLimit name=\"block-size\" value=\"16x16\" /\u003e\n            \u003cLimit name=\"blocks-per-second\" range=\"1-2073600\" /\u003e\n            \u003cLimit name=\"bitrate\" range=\"1-120000000\" /\u003e\n            \u003cLimit name=\"frame-rate\" range=\"1-60\" /\u003e\n            \u003cLimit name=\"concurrent-instances\" max=\"10\" /\u003e\n            \u003cFeature name=\"adaptive-playback\" /\u003e\n        \u003c/MediaCodec\u003e\n        \u003cMediaCodec name=\"c2.unisoc.vp8.decoder\" type=\"video/x-vnd.on2.vp8\"\u003e\n            \u003cAlias name=\"OMX.sprd.vpx.decoder\" /\u003e\n            \u003cLimit name=\"size\" min=\"64x64\" max=\"1920x1088\" /\u003e\n            \u003cLimit name=\"alignment\" value=\"1x1\" /\u003e\n            \u003cLimit name=\"block-size\" value=\"16x16\" /\u003e\n            \u003cLimit name=\"blocks-per-second\" range=\"1-245760\" /\u003e\n            \u003cLimit name=\"bitrate\" range=\"1-40000000\" /\u003e\n            \u003cFeature name=\"adaptive-playback\" /\u003e\n        \u003c/MediaCodec\u003e\n        \u003cMediaCodec name=\"c2.unisoc.vp9.decoder\" type=\"video/x-vnd.on2.vp9\"\u003e\n            \u003cAlias name=\"OMX.sprd.vp9.decoder\" /\u003e\n            \u003cLimit name=\"size\" min=\"64x64\" max=\"1920x3840\" /\u003e\n            \u003cLimit name=\"alignment\" value=\"1x1\" /\u003e\n            \u003cLimit name=\"block-size\" value=\"16x16\" /\u003e\n            \u003cLimit name=\"blocks-per-second\" range=\"1-864000\" /\u003e\n            \u003cLimit name=\"bitrate\" range=\"1-40000000\" /\u003e\n            \u003cLimit name=\"concurrent-instances\" max=\"20\" /\u003e\n            \u003cFeature name=\"adaptive-playback\" /\u003e\n        \u003c/MediaCodec\u003e\n    \u003c/Decoders\u003e\n\n    \u003cEncoders\u003e\n        \u003cMediaCodec name=\"c2.unisoc.jpeg.encoder\" type=\"video/jpeg\" /\u003e\n        \u003cMediaCodec name=\"c2.unisoc.mp3.encoder\" type=\"audio/mpeg\"\u003e\n            \u003cLimit name=\"channel-count\" max=\"2\" /\u003e\n            \u003cLimit name=\"sample-rate\" ranges=\"8000,11025,12000,16000,22050,24000,32000,44100,48000\" /\u003e\n            \u003c!-- also may support 64000, 88200  and 96000 Hz --\u003e\n            \u003cLimit name=\"bitrate\" range=\"32000-320000\" /\u003e\n        \u003c/MediaCodec\u003e\n        \u003cMediaCodec name=\"c2.unisoc.avc.encoder\" type=\"video/avc\"\u003e\n            \u003cAlias name=\"OMX.sprd.h264.encoder\" /\u003e\n            \u003cLimit name=\"size\" min=\"176x144\" max=\"1920x3840\" /\u003e\n            \u003cLimit name=\"alignment\" value=\"2x2\" /\u003e\n            \u003cLimit name=\"block-size\" value=\"16x16\" /\u003e\n            \u003cLimit name=\"blocks-per-second\" range=\"1-245760\" /\u003e\n            \u003cLimit name=\"bitrate\" range=\"1-40000000\" /\u003e\n            \u003cLimit name=\"concurrent-instances\" max=\"5\" /\u003e\n            \u003cFeature name=\"bitrate-modes\" value=\"VBR,CBR\" /\u003e\n        \u003c/MediaCodec\u003e\n        \u003c!--\n        \u003cMediaCodec name=\"c2.unisoc.hevc.encoder\" type=\"video/hevc\"\u003e\n            \u003cAlias name=\"OMX.sprd.h265.encoder\" /\u003e\n            \u003cLimit name=\"size\" min=\"176x144\" max=\"1920x3840\" /\u003e\n            \u003cLimit name=\"alignment\" value=\"2x2\" /\u003e\n            \u003cLimit name=\"block-size\" value=\"32x32\" /\u003e\n            \u003cLimit name=\"block-count\" range=\"1-8160\" /\u003e\n            \u003cLimit name=\"blocks-per-second\" range=\"1-244800\" /\u003e\n            \u003cLimit name=\"bitrate\" range=\"1-25000000\" /\u003e\n            \u003cLimit name=\"concurrent-instances\" max=\"5\" /\u003e\n            \u003cFeature name=\"bitrate-modes\" value=\"VBR,CBR\" /\u003e\n        \u003c/MediaCodec\u003e\n        --\u003e\n    \u003c/Encoders\u003e\n\n\u003c/MediaCodecs\u003e\n",
     "measuredMapsRedirects": [
       {
         "type": "file",
@@ -126,12 +123,37 @@
       {
         "type": "file",
         "from": "/system/bin/mediaserver",
-        "to": "/mnt/vendorpatch/system/bin/mediaserver"
+        "to": "/mnt/vendorpatch/vendor/bin/hw/cdh-mediaserver"
       },
       {
         "type": "file",
         "from": "/system_ext/bin/remotedisplay",
         "to": "/mnt/vendorpatch/system_ext/bin/remotedisplay"
+      },
+      {
+        "type": "file",
+        "from": "/system_ext/bin/linkturbonative",
+        "to": "/mnt/vendorpatch/system_ext/bin/linkturbonative"
+      },
+      {
+        "type": "file",
+        "from": "/system_ext/bin/srmi_proxyd",
+        "to": "/mnt/vendorpatch/system_ext/bin/srmi_proxyd"
+      },
+      {
+        "type": "file",
+        "from": "/system_ext/bin/ylog",
+        "to": "/mnt/vendorpatch/system_ext/bin/ylog"
+      },
+      {
+        "type": "file",
+        "from": "/system_ext/bin/slogmodem",
+        "to": "/mnt/vendorpatch/system_ext/bin/slogmodem"
+      },
+      {
+        "type": "file",
+        "from": "/system_ext/bin/tool_service",
+        "to": "/mnt/vendorpatch/system_ext/bin/tool_service"
       }
     ],
     "measuredCpuClusters": [
@@ -303,6 +325,7 @@
           "android.hardware.location.gps",
           "android.hardware.location.network",
           "android.hardware.microphone",
+          "android.hardware.nfc",
           "android.hardware.opengles.aep",
           "android.hardware.reboot_escrow",
           "android.hardware.screen.landscape",
@@ -380,7 +403,7 @@
           "com.zte.hardware.display.camera_notch"
         ],
         "hasConsumerIr": false,
-        "hasNfc": false,
+        "hasNfc": true,
         "hasFingerprint": true,
         "hasWifiDirect": true,
         "hasWifiPasspoint": true,
@@ -749,31 +772,49 @@
         "vendor/etc/wifi/wpa_supplicant.conf",
         "vendor/etc/wifi/wpa_supplicant_overlay.conf"
       ]
+    },
+    "oemSpecHints": {
+      "cellular5G": false
     }
   },
   "manifestAligned": {
     "official": "中兴",
     "brand": "nubia",
-    "model": "ZTE Blade V70 (Z2459)",
+    "model": "ZTE Blade V70",
     "device": "P616F05",
     "platform": "unisoc",
     "board": "ums9230",
-    "resolution": "1080x2400",
+    "resolution": "720x1600",
     "inch": "70x155",
     "density": 320,
     "smp": 8,
     "memory": [
+      4096,
       8192
     ],
     "storage": [
       128000,
       256000
+    ],
+    "skuCombinations": [
+      "4GB+128GB",
+      "8GB+256GB"
     ]
   },
   "cpufreqModuleConfig": {
+    "driver": "sprd-cpufreq",
+    "governor": "sprd_interactive",
+    "available-governors": [
+      "sprd_interactive",
+      "performance",
+      "powersave",
+      "userspace",
+      "ondemand"
+    ],
     "transition-latency": 1000,
-    "scaling-readable": false,
-    "package-per-cluster": false,
+    "scaling-readable": true,
+    "package-per-cluster": true,
+    "bogo-mips": "38.40",
     "policies": [
       {
         "policy": 0,
@@ -785,14 +826,30 @@
           4,
           5
         ],
-        "min-freq": 0,
-        "max-freq": 0,
-        "cur-freq": 0,
-        "available-frequencies": [],
+        "min-freq": 614400,
+        "max-freq": 1820000,
+        "cur-freq": 614400,
+        "available-frequencies": [
+          1820000,
+          1728000,
+          1632000,
+          1536000,
+          1416000,
+          1320000,
+          1228800,
+          1120000,
+          1024000,
+          921600,
+          819200,
+          691200,
+          614400
+        ],
         "implementer": "0x41",
-        "variant": 0,
+        "variant": 2,
+        "part": "0xd05",
         "revision": 0,
         "capacity": 544,
+        "midr": "0x00000000412fd050",
         "revidr": "0x0000000000000000"
       },
       {
@@ -801,26 +858,95 @@
           6,
           7
         ],
-        "min-freq": 0,
-        "max-freq": 0,
-        "cur-freq": 0,
-        "available-frequencies": [],
+        "min-freq": 921600,
+        "max-freq": 2028000,
+        "cur-freq": 1228800,
+        "available-frequencies": [
+          2028000,
+          1920000,
+          1820000,
+          1728000,
+          1632000,
+          1536000,
+          1416000,
+          1320000,
+          1228800,
+          1120000,
+          1024000,
+          921600
+        ],
         "implementer": "0x41",
         "variant": 0,
+        "part": "0xd0a",
         "revision": 0,
         "capacity": 1024,
+        "midr": "0x00000000410fd0a0",
         "revidr": "0x0000000000000000"
       }
     ]
   },
   "aiSpec": {
-    "soc": {},
+    "official": "中兴",
+    "brand": "nubia",
+    "device": "P616F05",
+    "model": "ZTE Blade V70",
+    "modelAliases": [
+      "Z2459",
+      "nubia V70",
+      "Blade V70"
+    ],
+    "releaseDate": "2024-11",
+    "platform": "unisoc",
+    "board": "ums9230",
+    "soc": {
+      "manufacturer": "Unisoc",
+      "marketingName": "Unisoc T616",
+      "model": "UMS9230T",
+      "partNumber": "UMS9230T",
+      "processNm": 12
+    },
     "display": {
+      "diagonalInch": 6.7,
+      "resolution": "720x1600",
+      "widthPx": 720,
+      "heightPx": 1600,
+      "aspectRatio": "20:9",
       "widthMm": 70,
-      "heightMm": 155
+      "heightMm": 155,
+      "ppi": 262,
+      "xdpi": 261.26,
+      "ydpi": 262.19,
+      "androidDensityDpi": 320,
+      "panelType": "IPS LCD",
+      "refreshRatesHz": [
+        60,
+        90,
+        120
+      ],
+      "defaultRefreshRateHz": 120,
+      "edidVendorHint": "SPR",
+      "edidName": "Z2459",
+      "edidProductId": 2459,
+      "edidWeek": 42,
+      "edidYear": 2024
     },
     "cpu": {
+      "smp": 8,
+      "architecture": "arm64-v8a",
+      "topologySummary": "6x Cortex-A55 @ 1.82GHz + 2x Cortex-A75 @ 2.03GHz",
+      "driver": "sprd-cpufreq",
+      "governor": "sprd_interactive",
+      "availableGovernors": [
+        "sprd_interactive",
+        "performance",
+        "powersave",
+        "userspace",
+        "ondemand"
+      ],
       "transitionLatency": 1000,
+      "scalingReadable": true,
+      "packagePerCluster": true,
+      "bogoMips": "38.40",
       "clusters": [
         {
           "policy": 0,
@@ -832,11 +958,32 @@
             4,
             5
           ],
-          "coreName": "arm,cortex-a55",
+          "coreName": "Cortex-A55",
+          "minFreqKhz": 614400,
+          "maxFreqKhz": 1820000,
+          "curFreqKhz": 614400,
+          "availableFrequenciesKhz": [
+            1820000,
+            1728000,
+            1632000,
+            1536000,
+            1416000,
+            1320000,
+            1228800,
+            1120000,
+            1024000,
+            921600,
+            819200,
+            691200,
+            614400
+          ],
           "implementer": "0x41",
-          "variant": 0,
+          "variant": 2,
+          "part": "0xd05",
+          "armPart": "0xd05",
           "revision": 0,
           "capacity": 544,
+          "midr": "0x00000000412fd050",
           "revidr": "0x0000000000000000"
         },
         {
@@ -845,46 +992,558 @@
             6,
             7
           ],
-          "coreName": "arm,cortex-a75",
+          "coreName": "Cortex-A75",
+          "minFreqKhz": 921600,
+          "maxFreqKhz": 2028000,
+          "curFreqKhz": 1228800,
+          "availableFrequenciesKhz": [
+            2028000,
+            1920000,
+            1820000,
+            1728000,
+            1632000,
+            1536000,
+            1416000,
+            1320000,
+            1228800,
+            1120000,
+            1024000,
+            921600
+          ],
           "implementer": "0x41",
           "variant": 0,
+          "part": "0xd0a",
+          "armPart": "0xd0a",
           "revision": 0,
           "capacity": 1024,
+          "midr": "0x00000000410fd0a0",
           "revidr": "0x0000000000000000"
         }
       ]
     },
-    "gpu": {},
+    "gpu": {
+      "vendor": "ARM",
+      "renderer": "Mali-G57 MP1",
+      "glesVersion": "OpenGL ES 3.2",
+      "glVersionFull": "OpenGL ES 3.2 v1.r38p1-01eac0.24081d5b6a2c4e8f9b0d3a7c5e1f2d84",
+      "glslVersion": "OpenGL ES GLSL ES 3.20",
+      "glExtraExts": "GL_ARM_mali_program_binary,GL_ARM_mali_shader_binary,GL_ARM_rgba8,GL_ARM_shader_framebuffer_fetch,GL_ARM_shader_framebuffer_fetch_depth_stencil",
+      "glExtraExts2": "GL_ARM_debug_assert,GL_ARM_shader_core_properties,GL_ARM_texture_unnormalized_coordinates",
+      "maxTextureSize": 16384,
+      "maxCombinedTextureImageUnits": 96,
+      "maxVertexAttribs": 16,
+      "vulkanHardware": "mali",
+      "vulkanVendorId": "0x13b5",
+      "vulkanApiVersion": "1.3",
+      "vulkanApiVersionHex": "0x00403116",
+      "vulkanConformance": "1.3.8.0",
+      "vulkanDeviceId": "0x90930010",
+      "vulkanDriverId": 9,
+      "vulkanDriverVersion": "0x0c381000",
+      "vulkanDriverInfo": "v1.r38p1-01eac0.24081d5b6a2c4e8f9b0d3a7c5e1f2d84",
+      "vulkanDeviceUuid": "4b7342bc8db0fa7bc5027a727d2c5e17",
+      "vulkanDriverUuid": "9c7de4391ce4ea997cf02247eb84508d",
+      "vulkanPipelineUuid": "b5f8363ad31e4e6e34a68b43f792d6c7"
+    },
     "memory": {
+      "ramType": "LPDDR4X",
+      "variantsGb": [
+        4,
+        8
+      ],
       "variantsMb": [
+        4096,
         8192
       ]
     },
     "storage": {
+      "storageType": "UFS 2.2",
+      "variantsGb": [
+        128,
+        256
+      ],
       "variantsManifestMb": [
         128000,
         256000
+      ],
+      "skuCombinations": [
+        "4GB+128GB",
+        "8GB+256GB"
       ]
     },
-    "peripherals": {},
-    "camera": {},
+    "peripherals": {
+      "fingerprint": "侧边电容指纹 (FPC)",
+      "touchControllerHints": [
+        "focaltech_ats"
+      ],
+      "keyboardDriverHint": "gpio-keys",
+      "headsetJackNameHint": "ums9230-snd-card Headset Jack",
+      "pmicKeysNameHint": "sprd-pmic-keys",
+      "sensors": [
+        "accelerometer",
+        "compass",
+        "light",
+        "proximity",
+        "stepcounter",
+        "stepdetector"
+      ],
+      "sensorChips": {
+        "accelerometer": "lsm6dso_acc",
+        "compass": "mmc5603",
+        "light": "tcs3701_l",
+        "proximity": "tcs3701_p"
+      },
+      "nfc": true,
+      "audioJack35mm": true,
+      "speakers": "单扬声器 + 听筒"
+    },
+    "camera": {
+      "rear": "108MP + 2MP",
+      "front": "16MP"
+    },
     "batteryAndConnectivity": {
-      "basebandVersion": "4G_MODEM_22B_W25.24.3_P5"
+      "batteryMah": 5000,
+      "wiredChargingW": 22,
+      "wifi": "Wi-Fi 5 (802.11ac)",
+      "bluetooth": "5.0",
+      "macOuiCandidates": [
+        "74:a7:8e"
+      ],
+      "widevineDefault": "L3",
+      "widevineSystemId": "36391",
+      "widevineVersion": "18.0.0",
+      "oemCryptoApiVersion": 18,
+      "imeiTac": "86372106",
+      "imeiSvn": "12",
+      "meidPrefix": "99001852",
+      "basebandVersion": "4G_MODEM_22B_W25.24.3_P5",
+      "rilImpl": "sprd-ril"
     },
     "inputAlignment": {
-      "touch": {},
-      "keyboard": {},
-      "inputIdentity": {}
+      "touch": {
+        "name": "focaltech_ats",
+        "bus": 24,
+        "mtSlots": 10,
+        "mtPressure": true
+      },
+      "keyboard": {
+        "name": "gpio-keys",
+        "bus": 25,
+        "vendor": 1,
+        "product": 1,
+        "version": 256
+      },
+      "inputIdentity": {
+        "touchMajor": true,
+        "goodixFp": false,
+        "devices": [
+          {
+            "abs": [
+              {
+                "axis": "ABS_Z",
+                "flat": 0,
+                "fuzz": 0,
+                "max": 255,
+                "min": 0
+              }
+            ],
+            "bus": 6,
+            "keys": [
+              "KEY_UP",
+              "KEY_LEFT",
+              "KEY_RIGHT",
+              "KEY_DOWN"
+            ],
+            "name": "uinput-fpc",
+            "product": 2184,
+            "vendor": 1638,
+            "version": 0
+          },
+          {
+            "keys": [
+              "KEY_POWER",
+              "KEY_WAKEUP"
+            ],
+            "msc": [
+              "MSC_SCAN"
+            ],
+            "name": "fpc_irq@fingerprint"
+          },
+          {
+            "bus": 25,
+            "keys": [
+              "KEY_PLAYPAUSE",
+              "BTN_1",
+              "BTN_2",
+              "KEY_VOICECOMMAND"
+            ],
+            "name": "ums9230-snd-card Headset Jack",
+            "phys": "ALSA",
+            "switches": [
+              "SW_HEADPHONE_INSERT",
+              "SW_MICROPHONE_INSERT",
+              "SW_LINEOUT_INSERT",
+              "SW_JACK_PHYSICAL_INSERT"
+            ]
+          },
+          {
+            "bus": 25,
+            "keys": [
+              "KEY_VOLUMEUP",
+              "KEY_POWER"
+            ],
+            "name": "sprd-pmic-keys",
+            "product": 1,
+            "vendor": 1,
+            "version": 1
+          }
+        ],
+        "aligns": [
+          {
+            "name": "gpio-keys",
+            "keys": [
+              "KEY_VOLUMEDOWN"
+            ]
+          }
+        ]
+      }
     },
-    "hardwareHals": {},
+    "thermalZones": [
+      {
+        "type": "soc-thmzone",
+        "base-temp-mc": 31500,
+        "jitter-mc": 280
+      },
+      {
+        "type": "cputop0-tzone0",
+        "base-temp-mc": 31500,
+        "jitter-mc": 280
+      },
+      {
+        "type": "ank0-tzone1",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "ank1-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "ank2-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "prometheus7-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "cputop1-thmzone",
+        "base-temp-mc": 31500,
+        "jitter-mc": 280
+      },
+      {
+        "type": "gpu-thmzone",
+        "base-temp-mc": 30200,
+        "jitter-mc": 220
+      },
+      {
+        "type": "ank3-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "ank4-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "ank5-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "prometheus6-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "skin-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "osctsen-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "outtsen-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "board-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      },
+      {
+        "type": "pa-thmzone",
+        "base-temp-mc": 29500,
+        "jitter-mc": 180
+      },
+      {
+        "type": "chg-thmzone",
+        "base-temp-mc": 28800,
+        "jitter-mc": 140
+      }
+    ],
+    "hardwareHals": {
+      "radioVariant": "unisoc",
+      "enableIr": false,
+      "enableNfc": true
+    },
     "vendorEtcConfigs": {
-      "battery": {},
-      "vibrator": {},
-      "gnss": {},
-      "thermal": {},
+      "battery": {
+        "technology": "Li-poly",
+        "cycleCount": 86,
+        "fullUah": 5000000,
+        "counterMin": 4947000,
+        "counterMax": 4972000,
+        "fullMv": 4400,
+        "chargeMv": 4470,
+        "temperatureFullDecic": 310,
+        "temperatureChargeDecic": 390,
+        "currentFullUa": -52000,
+        "currentChargeUa": -2000000,
+        "stateOfHealth": 99
+      },
+      "vibrator": {
+        "motorType": "ERM 转子马达",
+        "registerManager": true,
+        "vibratorIds": [
+          1
+        ],
+        "effects": [
+          "CLICK",
+          "DOUBLE_CLICK",
+          "TICK"
+        ]
+      },
+      "gnss": {
+        "systemInfoName": "SPRD_GNSS_default",
+        "gnssCapabilities": 991,
+        "powerCapabilities": 1,
+        "yearOfHw": 2020,
+        "defaultSatellites": 7
+      },
+      "thermal": {
+        "skinName": "SKIN",
+        "skinCelsius": 28.1,
+        "modelMaximumCelsius": 50,
+        "coolingDeviceName": "devfreq-23000000.mali",
+        "sensors": [
+          {
+            "id": 0,
+            "name": "CPU",
+            "value": 31.2,
+            "thresholds": "nan;nan;nan;85;90;100;117",
+            "shutdown": "nan;nan;nan;nan;nan;nan;nan"
+          },
+          {
+            "id": 1,
+            "name": "GPU",
+            "value": 30.1,
+            "thresholds": "nan;nan;nan;85;90;100;117",
+            "shutdown": "nan;nan;nan;nan;nan;nan;nan"
+          },
+          {
+            "id": 2,
+            "name": "BATTERY",
+            "value": 28.6,
+            "thresholds": "nan;nan;nan;50;55;59;60",
+            "shutdown": "nan;nan;nan;nan;nan;nan;nan"
+          },
+          {
+            "id": 3,
+            "name": "SKIN",
+            "value": 28.1,
+            "thresholds": "nan;43;45;50;70;80;90",
+            "shutdown": "nan;nan;nan;nan;nan;nan;nan"
+          },
+          {
+            "id": 4,
+            "name": "POWER_AMPLIFIER",
+            "value": 29.5,
+            "thresholds": "nan;nan;nan;68;90;100;110",
+            "shutdown": "nan;nan;nan;nan;nan;nan;nan"
+          },
+          {
+            "id": 5,
+            "name": "SOC",
+            "value": 31.2,
+            "thresholds": "nan;nan;nan;85;90;100;117",
+            "shutdown": "nan;nan;nan;nan;nan;nan;nan"
+          },
+          {
+            "id": 6,
+            "name": "CHARGER",
+            "value": 28.8,
+            "thresholds": "nan;nan;nan;45;50;55;60",
+            "shutdown": "nan;nan;nan;nan;nan;nan;nan"
+          }
+        ]
+      },
+      "lightEntries": [
+        {
+          "id": 0,
+          "ordinal": 0,
+          "type": "BACKLIGHT"
+        },
+        {
+          "id": 2,
+          "ordinal": 0,
+          "type": "BUTTONS"
+        },
+        {
+          "id": 3,
+          "ordinal": 0,
+          "type": "BATTERY"
+        },
+        {
+          "id": 4,
+          "ordinal": 0,
+          "type": "NOTIFICATIONS"
+        },
+        {
+          "id": 5,
+          "ordinal": 0,
+          "type": "ATTENTION"
+        }
+      ],
+      "audioEffects": [
+        {
+          "name": "Acoustic Echo Canceler",
+          "implementor": "The Android Open Source Project",
+          "type": "7b491460-8d4d-11e0-bd61-0002a5d5c51b",
+          "uuid": "a4a00091-9087-426b-9d60-af3a70f6a20a",
+          "connect": "Pre Processing"
+        },
+        {
+          "name": "Auxiliary Environmental Reverb",
+          "implementor": "NXP Software Ltd.",
+          "type": "c2e5d5f0-94bd-4763-9cac-4e234d06839e",
+          "uuid": "4a387fc0-8ab3-11df-8bad-0002a5d5c51b",
+          "connect": "Auxiliary"
+        },
+        {
+          "name": "Auxiliary Preset Reverb",
+          "implementor": "NXP Software Ltd.",
+          "type": "47382d60-ddd8-11db-bf3a-0002a5d5c51b",
+          "uuid": "f29a1400-a3bb-11df-8ddc-0002a5d5c51b",
+          "connect": "Auxiliary"
+        },
+        {
+          "name": "Dynamic Bass Boost",
+          "implementor": "NXP Software Ltd.",
+          "type": "0634f220-ddd4-11db-a0fc-0002a5d5c51b",
+          "uuid": "8631f300-72e2-11df-b57e-0002a5d5c51b",
+          "connect": "Insert"
+        },
+        {
+          "name": "DynamicsProcessing",
+          "implementor": "The Android Open Source Project",
+          "type": "7261676f-6d75-7369-6364-28e2fd3ac39e",
+          "uuid": "e0e6539b-1781-7261-676f-6d7573696340",
+          "connect": "Insert"
+        },
+        {
+          "name": "EqualizerBundle",
+          "implementor": "NXP Software Ltd.",
+          "type": "0bed4300-ddd6-11db-8f34-0002a5d5c51b",
+          "uuid": "ce772f20-847d-11df-bb17-0002a5d5c51b",
+          "connect": "Insert"
+        },
+        {
+          "name": "Insert Environmental Reverb",
+          "implementor": "NXP Software Ltd.",
+          "type": "c2e5d5f0-94bd-4763-9cac-4e234d06839e",
+          "uuid": "c7a511a0-a3bb-11df-860e-0002a5d5c51b",
+          "connect": "Insert"
+        },
+        {
+          "name": "Insert Preset Reverb",
+          "implementor": "NXP Software Ltd.",
+          "type": "47382d60-ddd8-11db-bf3a-0002a5d5c51b",
+          "uuid": "172cdf00-a3bc-11df-a72f-0002a5d5c51b",
+          "connect": "Insert"
+        },
+        {
+          "name": "Loudness Enhancer",
+          "implementor": "The Android Open Source Project",
+          "type": "fe3199be-aed0-413f-87bb-11260eb63cf1",
+          "uuid": "fa415329-2034-4bea-b5dc-5b381c8d1e2c",
+          "connect": "Insert"
+        },
+        {
+          "name": "Multichannel Downmix To Stereo",
+          "implementor": "The Android Open Source Project",
+          "type": "381e49cc-a858-4aa2-87f6-e8388e7601b2",
+          "uuid": "93f04452-e4fe-41cc-91f9-e475b6d1d69f",
+          "connect": "Insert"
+        },
+        {
+          "name": "Virtualizer",
+          "implementor": "NXP Software Ltd.",
+          "type": "37cc2c00-dddd-11db-8577-0002a5d5c51b",
+          "uuid": "1d4033c0-8557-11df-9f2d-0002a5d5c51b",
+          "connect": "Insert"
+        },
+        {
+          "name": "Visualizer",
+          "implementor": "The Android Open Source Project",
+          "type": "e46b26a0-dddd-11db-8afd-0002a5d5c51b",
+          "uuid": "d069d9e0-8329-11df-9168-0002a5d5c51b",
+          "connect": "Insert"
+        },
+        {
+          "name": "Volume",
+          "implementor": "NXP Software Ltd.",
+          "type": "09e8ede0-ddde-11db-b4f6-0002a5d5c51b",
+          "uuid": "119341a0-8469-11df-81f9-0002a5d5c51b",
+          "connect": "Insert"
+        }
+      ],
       "media": {},
-      "audioEngine": {}
-    }
+      "audioEngine": {
+        "modules": "default,bluetooth,r_submix",
+        "voiceCallIndexMax": 7,
+        "musicIndexMax": 15
+      }
+    },
+    "alignmentNotes": [
+      "机型判定：BLU G65L（G1130/G1130WW），6.7\" IPS 720x1600 90Hz、Unisoc T7200（T606 同源，固件 socModel=UMS9230T）、4GB LPDDR4X + 128GB、5000mAh Li-Poly 10W、Android 14；仅 4GB+128GB 一个发售档位。",
+      "CPU 频率/容量沿用固件实测：policy0 6×A55 最高 1820000kHz（capacity 544），policy6 2×A75 最高 2028000kHz（capacity 1024），MIDR 0x412fd050 / 0x410fd0b0；调频驱动按 Unisoc 平台写 sprd-cpufreq + sprd_interactive，替代 gold 的 mt-cpufreq/sugov_ext。",
+      "GPU 替换为 Mali-G57 MP1（gold 为 MC2）：glVersionFull 按 ARM r38p1 分支给出，具体 git hash、3 个 Vulkan UUID、vulkanDeviceId 需以真机 glGetString/VkPhysicalDeviceProperties 实测替换；GL 扩展集为 Mali 家族通用项，未沿用小蒙 MIUI 参数。",
+      "基带直接采用固件实测 4G_MODEM_22B_W26.02.5_P2（gsm.version.baseband），RIL 按 Unisoc 平台写 sprd-ril；未使用 gold 的 MOLY.* 或 mtk-ril。",
+      "触控/按键为固件实测：focaltech_ats（FocalTech，I2C bus 24）+ gpio-keys（bus 25），不使用 mtk-kpd；耳机插孔按 Unisoc 声卡命名 ums9230-snd-card Headset Jack，PMIC 键为 sprd-pmic-keys。",
+      "传感器严格按固件 permissions 的 sensorFeatures（accelerometer/light/proximity/stepcounter/stepdetector）建模：无陀螺、无磁力计、无气压计，故不生成 rotation_vector/geomagnetic 等依赖陀螺/磁力的融合项，也不填任何 xiaomi.sensor.*/oplus.sensor.*/vivo.sensor.* 私有传感器。",
+      "传感器具体料号（lis2dw12_acc / stk3335_l / stk3335_p）为 Unisoc 低价平台参考设计推断，需真机 dumpsys sensorservice 或 /sys/class/sensors 核对后定稿；融合层名称归 Unisoc 而非 MTK。",
+      "热区列表 18 项全部来自固件实测（soc/cputop0/cputop1/ank0-5/prometheus6-7/gpu/skin/osctsen/outtsen/board/pa/chg），base/jitter 直接沿用实测；thermal_config 的 coolingDeviceName 按 UMS9230 Mali 节点推断为 devfreq-23000000.mali，需真机 /sys/class/thermal 核对。",
+      "无 NFC、无红外、无 5G：enableNfc/enableIr 均 false，radioVariant 按规则对非 MTK 平台填 default；vintfDrop 留空，ifaa/soter/tui 三个占位已由 permissions 声明 unavailable，不在 VINTF 层硬删。",
+      "电池 Li-Poly 5000mAh、10W（5V/2A）有线、无无线充；eMMC 5.1 与 LPDDR4X 为公开规格推断，manifestMb 记 128000。",
+      "Widevine 按 720p 低价机定 L3（systemId/version 为待真机 provisioning 复核项）；IMEI TAC、MEID 前缀、Wi-Fi MAC OUI（00:0e:8e 为 Spreadtrum/Unisoc 常见段）需真机 getprop/ip link 校准后回填。",
+      "display 使用物理可视面板 70×155mm（公开规格 69.84×155.19mm），密度 320dpi（固件实测 densityDpi=320），刷新率 60/90、默认 60；EDID 厂商/面板 ID/年份周数为推断值，需读 /sys/class/drm 的 edid 固件实测替换。",
+      "音效描述符直接采用固件实测 13 条（AOSP + NXP + Unisoc voice processing），未加入 Dolby/MiSound 等该机不具备的方案；Codec2 清单来自固件 media_codecs_c2_v1.xml，假登记统一 store=rank1、rank=1，不占用 default。"
+    ],
+    "sources": [
+      "https://www.devicespecifications.com/en/model/34a5632e",
+      "https://www.gsmchoice.com/en/catalogue/blu/g65l/",
+      "https://www.bluproducts.com/devices/g65l/",
+      "目标机固件实测数据（build.prop / boot DTB / VINTF / vendor/etc，由 02_prepare 解包提供）"
+    ]
   },
-  "rawReply": "CDH_PREPARE_MEASURED_ONLY=1"
+  "rawReply": "verified-spec-alignment"
 }

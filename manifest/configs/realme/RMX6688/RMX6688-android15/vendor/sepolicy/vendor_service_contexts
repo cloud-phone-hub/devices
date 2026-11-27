@@ -1,0 +1,5 @@
+# RMX6688 (realme GT7) NXP/TMS NFC AIDL 扩展占位服务上下文
+vendor.nxp.nxpnfc_aidl.INxpNfc/default u:object_r:hal_oplus_nfc_service:s0
+vendor.nxp.nxpnfc_pnaidl.INxpNfc/default u:object_r:hal_oplus_nfc_service:s0
+vendor.tms.tmsnfc_aidl.ITmsNfc/default u:object_r:hal_oplus_nfc_service:s0
+vendor.tms.tmsese_aidl.ITmsEse/default u:object_r:hal_oplus_nfc_service:s0

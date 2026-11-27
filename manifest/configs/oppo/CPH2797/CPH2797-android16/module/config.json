@@ -139,11 +139,6 @@
       "from": "/system/bin/update_verifier",
       "to": "/mnt/vendorpatch/system/bin/update_verifier",
       "type": "file"
-    },
-    {
-      "from": "/system/priv-app/NfcNci",
-      "to": "/mnt/vendorpatch/system/priv-app/NfcNci",
-      "type": "dir"
     }
   ],
   "input": {

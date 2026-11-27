@@ -1,7 +1,7 @@
 # CDH：Nothing 首启向导与工程诊断服务在云机上没有对应硬件/HAL，
 # 会压住 launcher（introduction*）或持续崩溃弹窗（engineerservice）。
 # 新实例每次都是全新加密 /data，无法预先烤入禁用状态，因此在每次开机后幂等处理。
-service cph_nothing_setup /system/bin/sh -c "sleep 5; for pkg in com.nothing.introduction com.nothing.introduction15 com.nothing.introduction16 com.nothing.engineerservice vendor.qti.iwlan; do pm disable-user --user 0 \$pkg >/dev/null 2>&1; am force-stop \$pkg >/dev/null 2>&1; done; locksettings set-disabled true; input keyevent 3"
+service cph_nothing_setup /system/bin/sh -c "sleep 5; settings put global device_provisioned 1 >/dev/null 2>&1; settings put secure user_setup_complete 1 >/dev/null 2>&1; pm disable-user --user 0 com.google.android.setupwizard >/dev/null 2>&1; pm disable-user --user 0 com.android.setupwizard.overlay >/dev/null 2>&1; pm disable-user --user 0 com.nothing.setupwizard >/dev/null 2>&1; pm disable-user --user 0 com.nothing.introduction >/dev/null 2>&1; pm disable-user --user 0 com.nothing.introduction15 >/dev/null 2>&1; pm disable-user --user 0 com.nothing.introduction16 >/dev/null 2>&1; pm disable-user --user 0 com.nothing.engineerservice >/dev/null 2>&1; pm disable-user --user 0 vendor.qti.iwlan >/dev/null 2>&1; locksettings set-disabled true >/dev/null 2>&1; input keyevent 3"
     class late_start
     user root
     group root system

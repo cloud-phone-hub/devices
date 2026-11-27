@@ -15,25 +15,30 @@
 | 分组 | 机型 / 厂商 | 条目数 | 编号 | 索引 |
 | :--- | :--- | :--- | :--- | :--- |
 | `gold/` | Xiaomi Redmi Note 13 5G（MT6833），含同一物理机的 CN 变体 `note13-5G-15` | 52 | #2~#41、#72、#96~#100、#123、#146、#195、#222、#227、#246 | [gold/README.md](gold/README.md) |
-| `m22/` | MEIZU 22（Flyme 12.5.0.0A / QTI `sun` / Android 16） | 34 | #42~#71、#73~#75、#— | [m22/README.md](m22/README.md) |
+| `m22/` | MEIZU 22（Flyme 12.5.0.0A / QTI `sun` / Android 16） | 35 | #42~#71、#73~#75、#—、#349 | [m22/README.md](m22/README.md) |
 | `ss9380/` | Samsung Galaxy S25 Ultra（SM-S9380 / OneUI 16，国行 CHC） | 15 | #83~#87、#89~#95、#338、#339、#341 | [ss9380/README.md](ss9380/README.md) |
-| `cph2797/` | OPPO Find X9（ColorOS 16.0.8.301 / MT6993） | 9 | #76~#82、#153、#165 | [cph2797/README.md](cph2797/README.md) |
+| `cph2797/` | OPPO Find X9（ColorOS 16.0.8.301 / MT6993） | 10 | #76~#82、#153、#165、#355 | [cph2797/README.md](cph2797/README.md) |
+| `pme110/` | OPPO Find X9s Pro（ColorOS 17.0 / MT6993 / Android 17，lineage-23.2 + kernel 6.12.69） | 1 | #356 | [pme110/README.md](pme110/README.md) |
 | `oriole/` | Google Pixel 6（lineage-21 / Android 14） | 18 | #101、#103~#106、#149、#150、#155、#159~#162、#164、#197、#198、#200、#201、#256 | [oriole/README.md](oriole/README.md) |
 | `popsicle/` | Xiaomi 17 Pro Max（HyperOS 3 & 4 / Android 16，lineage-23.2 + kernel 6.12.81） | 10 | #125、#126、#135、#136、#139、#140、#166、#169、#247、#248 | [popsicle/README.md](popsicle/README.md) |
-| `15r/` | OnePlus 15R（ColorOS 16.0.10.500_EX01 / 骁龙 SM8750 `canoe`，lineage-23.2 + kernel 6.12.81） | 9 | #127、#128、#129、#130、#131、#132、#133、#151、#158 | [15r/README.md](15r/README.md) |
+| `15r/` | OnePlus 15R（ColorOS 16.0.10.500_EX01 / 骁龙 SM8750 `canoe`，lineage-23.2 + kernel 6.12.81） | 10 | #127、#128、#129、#130、#131、#132、#133、#151、#158、#353 | [15r/README.md](15r/README.md) |
+| `pje110/` | OnePlus Ace 3（`oneplus/PJE110` / ColorOS 15.0 / 骁龙 8 Gen 2 `SM8550` / GRF vendor=13，system=15，lineage-20.0 + kernel 5.15） | 1 | #354 | [pje110/README.md](pje110/README.md) |
 | `sun/` | Honor Magic7 RSR Porsche Design（MagicOS 9 / 骁龙 SM8750 `sun` / Android 15，lineage-22.2 + kernel 6.6） | 2 | #171、#259 | [sun/README.md](sun/README.md) |
 | `g1170/` | BLU G75（MT6768 / Helio G81 / Coosea ODM Android 15，lineage-22.2 + kernel 6.6） | 1 | #185 | [g1170/README.md](g1170/README.md) |
-| `rmx6688/` | realme GT7（真我 GT7 国行 / MT6991 天玑 9400+ / ColorOS 15.0.2 Realme UI 6.0 / Android 15，lineage-22.2 + kernel 6.6） | 1 | #194 | [rmx6688/README.md](rmx6688/README.md) |
+| `rmx6688/` | realme GT7（真我 GT7 国行 / MT6991 天玑 9400+ / ColorOS 15.0.2 Realme UI 6.0 / Android 15，lineage-22.2 + kernel 6.6） | 2 | #194、#359 | [rmx6688/README.md](rmx6688/README.md) |
+| `rmx3823/` | realme GT5 240W（`realme/RMX3823` / realme UI 6.0 / 骁龙 8 Gen 2 `SM8550-AB` / GRF vendor=13，system=15，lineage-20.0 + kernel 5.15） | 1 | #357 | [rmx3823/README.md](rmx3823/README.md) |
+| `rmx5112/` | realme 15T（`realme/RMX5112` / realme UI 6.0 / 联发科天玑 6400 Max `MT6835` / GRF vendor=13，system=15，lineage-20.0 + kernel 5.15） | 1 | #358 | [rmx5112/README.md](rmx5112/README.md) |
 | `asusai2501/` | ASUS Zenfone 12 Ultra / ASUSAI2501（`ZWWAI2501` / 骁龙 SM8750 `sun` / Android 15，lineage-22.2 + kernel 6.6） | 2 | #260、#293 | [asusai2501/README.md](asusai2501/README.md) |
 | `pd2454/` | vivo X200 Ultra（`vivo/PD2454` / OriginOS 5 / 骁龙 SM8750 `sun` / Android 15，lineage-22.2 + kernel 6.6） | 1 | #262 | [pd2454/README.md](pd2454/README.md) |
 | `nx809j/` | REDMAGIC 11 Pro（`redmagic/NX809J` / 骁龙 SM8850 `canoe` / Android 16，lineage-23.2 + kernel 6.12.81） | 1 | #267 | [nx809j/README.md](nx809j/README.md) |
-| `asteroids/` | Nothing Phone (3a)（`nothing/Asteroids` / 骁龙 SM7635 `volcano` / GRF vendor=14，system=15/16，kernel 6.1） | 2 | #268、#270 | [asteroids/README.md](asteroids/README.md) |
-| `aito/` | Motorola Razr 2024（`motorola/aito` / MediaTek `mt6878` / GRF vendor=14，system=16，kernel 6.1） | 1 | #271 | [aito/README.md](aito/README.md) |
+| `asteroids/` | Nothing Phone (3a)（`nothing/Asteroids` / 骁龙 SM7635 `volcano` / GRF vendor=14，system=15/16，kernel 6.1） | 3 | #268、#270、#351 | [asteroids/README.md](asteroids/README.md) |
+| `aito/` | Motorola Razr 2024（`motorola/aito` / MediaTek `mt6878` / GRF vendor=14，system=16，kernel 6.1） | 2 | #271、#350 | [aito/README.md](aito/README.md) |
 | `x6876/` | Infinix X6876（`infinix/Infinix-X6876` / MediaTek `mt6878` / GRF vendor=14，system=16，kernel 6.1） | 3 | #273、#345、#346 | [x6876/README.md](x6876/README.md) |
 | `xplore-x1/` | Blackview XPLORE X1（`blackview/XPLORE_X1` / Doke OS 5 / MT6877 / Android 15，lineage-22.2 + kernel 6.6） | 1 | #296 | [xplore-x1/README.md](xplore-x1/README.md) |
 | `g1130/` | BLU G65L（`blu/G1130` / Unisoc UMS9230T / GRF vendor=13，system=14，lineage-20.0 + kernel 5.15） | 3 | #297、#336、#337 | [g1130/README.md](g1130/README.md) |
 | `arw/` | HMD Crest Max（`hmd/ARW` / Unisoc UMS9620 / GRF vendor=13，system=14，lineage-20.0 + kernel 5.15） | 2 | #304、#339 | [arw/README.md](arw/README.md) |
 | `a6612l/` | itel A300C / A6612L（`itel/itel-A6612L` / Unisoc SC9863A `sp9863a` / GRF vendor=13，system=16，lineage-20.0 + kernel 5.15） | 1 | #348 | [a6612l/README.md](a6612l/README.md) |
+| `p616f05/` | ZTE Blade V70 / Z2459（`nubia/P616F05` / Unisoc UMS9230T `ums9230` / GRF vendor=13，system=14，lineage-20.0 + kernel 5.15） | 1 | #352 | [p616f05/README.md](p616f05/README.md) |
 | `common/` | 引擎级 / 跨机型（构建流水线、选核、vendor 装配口径、内核与模块机制、运行侧验收工具、选核口径、QEMU 触控与 VNC 推流、设备侧目录迁移、ROM 根迁移、repo manifest 收口、devices 仓库声明、agent 产物根迁移、节点 ROM 根配置修复、消灭 engine 目录与统一 out/devices 产物根、Host Radio/Wi-Fi SOCKS5 VPN 与 Camera/Bluetooth/NFC 全栈模拟、实例停机全后端同步回收、硬件风控特征对齐与传感器防聚类、VirGL YV12 步幅与动态壁纸硬解、蜂窝双 PDN 网卡与 IMS IPv6/Connectivity 全栈对齐、SwiftShader `VK_KHR_external_fence_fd` 与 HWC3/IWlan 运行态收敛、独立 ODM 分区 NFC 识别回填与 `/dev/nq-nci` 探针兜底、TEE 证书证明链三态隔离与真实 AVB/RKP V3 改造、相机按需休眠 `CDCM_PAUSE` 与 `sun` 指纹/体感死循环卡顿根治、荣耀 `opkey`/APN 双 PDN 打通与全仓 `prepare` 对齐及轮询掉帧根治、荣耀 `HnStartupGuide` 引导自动跳过与独立 `ueventd.rc` V4L2 节点授权、荣耀 `dload`/`cust` 真机规格对齐与虚拟电池 `sysfs_power` 及 `nfc_sysfs` 门控、MTK 板级子目录原厂 Mali Mapper 穿透根治与 Allocator V1 兜底及荣耀 `IHwCameraResourceService` 打通） | 169 | #102、#107、#108、#116、#117、#119~#122、#124、#134、#137、#138、#139、#141~#145、#147、#148、#152、#154、#156、#157、#163、#167、#168、#170、#172~#184、#186~#193、#196、#199、#202~#221、#223~#226、#228~#245、#250、#251、#252、#253、#254、#255、#257、#258、#261、#263、#264、#265、#266、#269、#272、#274~#292、#294、#295、#298~#301、#305~#335、#340、#341、#342、#343 | [common/README.md](common/README.md) |
 
 **分组判据**：条目 `solution.md` 首部的「设备/机型」行指向哪台机就进哪个目录；同一条改动

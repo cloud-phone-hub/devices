@@ -157,10 +157,6 @@
       },
       {
         "from": "official",
-        "source": "lib64/libOpenCL.so"
-      },
-      {
-        "from": "official",
         "source": "lib64/mt6878/libdpframework.so"
       },
       {

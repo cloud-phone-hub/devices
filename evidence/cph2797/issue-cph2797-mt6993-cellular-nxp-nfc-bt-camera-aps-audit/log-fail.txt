@@ -1,0 +1,83 @@
+=== CPH2797 BEFORE AUDIT ===
+CPH2797
+vsoc_arm64
+
+mt6993
+6.12.23-android16-5-g82efd98459a2-ab14457512-4k
+Physical size: 1256x2760
+Physical density: 560
+Enforcing
+restarting=0
+		total        used        free      shared     buffers
+Mem:             7578        5943        1634         301          12
+-/+ buffers/cache:           5931        1647
+Swap:            3789           0        3789
+Filename				Type		Size		Used		Priority
+/dev/block/zram0                        partition	3880356		0		-2
+  AC powered: true
+  USB powered: false
+  status: 2
+  level: 100
+  scale: 100
+  Capacity level: 5
+  enabled: false
+  state: OFF
+  name: null
+  time since enabled: 00:00:01.716
+Bluetooth crashed 0 times
+16: wlan0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default qlen 1000
+  Phone Id=0
+    mServiceState={mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE), mChannelNumber=1650, duplexMode()=1, mCellBandwidths=[20000], mOperatorAlphaLong=中国联通, mOperatorAlphaShort=中国联通, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=14(LTE), getRilDataRadioTechnology=14(LTE), mCssIndicator=unsupported, mNetworkId=-1, mSystemId=-1, mCdmaRoamingIndicator=-1, mCdmaDefaultRoamingIndicator=-1, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=NOT_REG_OR_SEARCHING networkRegistrationState=NOT_REG_OR_SEARCHING roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 0 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 LteVopsSupportInfo :  mVopsSupport = 1 mEmcBearerSupport = 1 } nrState=**** rRplmn=null isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[VOICE,SMS,VIDEO] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=VoiceSpecificRegistrationInfo { mCssSupported=false mRoamingIndicator=0 mSystemIsInPrl=0 mDefaultRoamingIndicator=0} dataSpecificInfo=null nrState=**** rRplmn=46001 isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[DATA,MMS] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 16 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 null } nrState=**** rRplmn=46001 isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=中国联通, mOperatorAlphaShortRaw=中国联通, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false, mIsUsingNonTerrestrialNetwork=false}
+    mDataConnectionState=1
+    mServiceState={mVoiceRegState=1(OUT_OF_SERVICE), mDataRegState=1(OUT_OF_SERVICE), mChannelNumber=1650, duplexMode()=0, mCellBandwidths=[20000], mOperatorAlphaLong=null, mOperatorAlphaShort=null, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=0(Unknown), getRilDataRadioTechnology=0(Unknown), mCssIndicator=unsupported, mNetworkId=-1, mSystemId=-1, mCdmaRoamingIndicator=-1, mCdmaDefaultRoamingIndicator=-1, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=NOT_REG_OR_SEARCHING networkRegistrationState=NOT_REG_OR_SEARCHING roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 0 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 LteVopsSupportInfo :  mVopsSupport = 1 mEmcBearerSupport = 1 } nrState=**** rRplmn=null isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=null mMnc=null mAlphaLong=null mAlphaShort=null mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=VoiceSpecificRegistrationInfo { mCssSupported=false mRoamingIndicator=0 mSystemIsInPrl=0 mDefaultRoamingIndicator=0} dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=null mMnc=null mAlphaLong=null mAlphaShort=null mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 16 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 null } nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=, mOperatorAlphaShortRaw=, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false, mIsUsingNonTerrestrialNetwork=false}
+20: ccmni1: <BROADCAST,NOARP,UP,LOWER_UP> mtu 1400 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+package:com.oplus.nfcengineertest
+package:com.google.android.apps.walletnfcrel
+ls: /odm/etc/camera/: No such file or directory
+ls: /vendor/lib64/libAlgoProcess.so: No such file or directory
+Tasks: 473 total,   9 running, 462 sleeping,   0 stopped,   2 zombie
+  Mem:  7760724K total,  6262616K used,  1498108K free,    13264K buffers
+ Swap:  6291452K total,  2411096K used,  3880356K free,  7711728K cached
+800%cpu 179%user  64%nice 268%sys 150%idle   7%iow 132%irq   0%sirq   0%host
+%CPU
+82.1
+64.2
+50.0
+42.8
+39.2
+32.1
+25.0
+17.8
+14.2
+14.2
+01-01 13:01:45.652  8972  9099 D ApsAdapter, CameraPerformance: setThreadValue, when key thread feature open, do not set thread priority by oplus manager.
+01-01 13:01:45.652  8972  9099 E OplusCameraManagerGlobal: setCallInfo
+01-01 13:01:45.652  8972  9101 D ApsAdapter, CameraPerformance: setThreadValue, when key thread feature open, do not set thread priority by oplus manager.
+01-01 13:01:45.653  8972  9096 D ApsAdapter, CameraPerformance: setThreadValue, when key thread feature open, do not set thread priority by oplus manager.
+01-01 13:01:45.653  8972  9097 D ApsAdapter, CameraPerformance: setThreadValue, when key thread feature open, do not set thread priority by oplus manager.
+01-01 13:01:45.653  8972  9090 D ApsAdapter, CameraPerformance: setThreadValue, when key thread feature open, do not set thread priority by oplus manager.
+01-01 13:01:45.687  8972  9052 D nativeloader: Load /product/app/OplusCamera/OplusCamera.apk!/lib/arm64-v8a/libFormatConverter.so using class loader ns product-clns-10 (caller=/my_product/app/OplusCamera/OplusCamera.apk!classes12.dex): ok
+01-01 13:01:45.689  8972  9099 I OplusCameraManager: saveOpPackageName, mOpPackageName: com.oplus.camera
+01-01 13:01:45.694  8972  9084 I OplusCameraManagerGlobal: setClientInfo, packageName: com.oplus.camera, uid: 10234, pid: 8972
+01-01 13:01:45.733  8972  9084 I OplusCameraManagerGlobal: setClientInfo, packageName: com.oplus.camera, uid: 10234, pid: 8972
+01-01 13:01:45.737  8972  9084 I OplusCameraManagerGlobal: setClientInfo, packageName: com.oplus.camera, uid: 10234, pid: 8972
+01-01 13:01:45.747  8972  9084 I OplusCameraManagerGlobal: setClientInfo, packageName: com.oplus.camera, uid: 10234, pid: 8972
+01-01 13:01:45.752  8972  9084 I OplusCameraManagerGlobal: setClientInfo, packageName: com.oplus.camera, uid: 10234, pid: 8972
+01-01 13:01:45.758  8972  9084 I OplusCameraManagerGlobal: setClientInfo, packageName: com.oplus.camera, uid: 10234, pid: 8972
+01-01 13:01:45.759  8972  9084 I OplusCameraManagerGlobal: setClientInfo, packageName: com.oplus.camera, uid: 10234, pid: 8972
+01-01 13:01:45.761  8972  9084 I OplusCameraManagerGlobal: setClientInfo, packageName: com.oplus.camera, uid: 10234, pid: 8972
+01-01 13:01:45.762  8972  9084 I OplusCameraManagerGlobal: setClientInfo, packageName: com.oplus.camera, uid: 10234, pid: 8972
+01-01 13:01:45.770  8972  9084 I OplusCameraManagerGlobal: setClientInfo, packageName: com.oplus.camera, uid: 10234, pid: 8972
+01-01 13:01:45.775  8972  9099 E ApsAdapter, UpdateHelper: getValidConfigData, do decode error:do native decode error: 
+01-01 13:01:45.775  8972  9099 D ApsAdapter, UpdateHelper: getValidConfigData, no rus, use ota, path: /odm/etc/camera/config/oplus_camera_algo_switch_config
+01-01 13:01:45.775  8972  9099 E ApsAdapter, AlgoSwitchConfig: parseConfigData, e: Value g of type java.lang.String cannot be converted to JSONObject
+01-01 13:01:45.776  8972  9101 E ApsAdapter, OsenseResClientHelper: disableKeyThreadValue, tid: 9101
+01-01 13:01:45.781  8972  9099 I ApsAdapter, Util: getThreadId, getTid err
+01-01 13:01:45.781  8972  9110 D ApsAdapter, CameraPerformance: setUxThreadValue, pid is: 8972, tid is 9110, value is 129, keyThreadTag: PictureMetaArriveThread
+01-01 13:01:45.781  8972  9110 E ApsAdapter, OsenseResClientHelper: setKeyThreadValue, tid: 9110, keyThreadTag: PictureMetaArriveThread
+01-01 13:01:45.782  8972  9110 D ApsAdapter, CameraPerformance: setThreadValue, when key thread feature open, do not set thread priority by oplus manager.
+01-01 13:01:45.782  8972  9099 V ApsAdapter, ApsAdapterImpl: createProcessThread, thread id: 9110
+01-01 13:01:45.792  8972  9052 W ApsAdapter, UnitFluencyMonitor: setSampling: false, threadName: CameraThreadExector
+01-01 13:01:45.806  8972  9099 E ApsAdapter, OsenseResClientHelper: disableKeyThreadValue, tid: 9099
+01-01 13:01:46.154  9137  9137 D nativeloader: Configuring clns-shared-9 for other apk /system_ext/framework/nfcvendorlib.jar. target_sdk_version=36, uses_libraries=ALL, library_path=/system_ext/priv-app/WirelessSettings/lib/arm64:/system_ext/priv-app/WirelessSettings/WirelessSettings.apk!/lib/arm64-v8a:/system/lib64:/system_ext/lib64, permitted_path=/data:/mnt/expand:/data/user_de/0/com.oplus.wirelesssettings:/system_ext/priv-app/WirelessSettings:/system/lib64:/system_ext/lib64

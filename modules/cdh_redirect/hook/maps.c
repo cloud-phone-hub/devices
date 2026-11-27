@@ -131,6 +131,8 @@ static const char * const cdh_maps_prewarm_libs[] = {
 	"/vendor/lib64/liblzma.so",
 	"/vendor/lib64/libOpenCL.so",
 	"/vendor/lib64/libOpenCL-pixel.so",
+	"/vendor/lib64/libAlgoProcess.so",
+	"/odm/lib64/libAlgoProcess.so",
 	"/vendor/lib64/libpng.so",
 	"/vendor/lib64/libunwindstack.so",
 	"/vendor/lib64/libutils.so",
@@ -374,6 +376,8 @@ static unsigned int cdh_probe_carrier_opencl_mask(void)
 		  CDH_CARRIER_OPENCL_32 },
 		{ CDH_CARRIER_MOUNT_POINT "/vendor/lib/libOpenCL-pixel.so",
 		  CDH_CARRIER_OPENCL_PIXEL_32 },
+		{ CDH_CARRIER_MOUNT_POINT "/vendor/lib64/libAlgoProcess.so",
+		  CDH_CARRIER_ALGO_PROCESS_64 },
 	};
 	unsigned int mask = 0;
 	struct path p;

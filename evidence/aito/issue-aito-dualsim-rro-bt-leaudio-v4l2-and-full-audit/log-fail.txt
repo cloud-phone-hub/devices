@@ -1,0 +1,219 @@
+=== 1. PROPS & HARDWARE SPECS ===
+Enforcing
+Physical size: 1080x2640
+Physical density: 420
+motorola razr 50
+MT6878_NR17.RC.MP.V40.2.P247.01.339R
+
+MemTotal:        7760724 kB
+MemAvailable:    8072536 kB
+SwapTotal:       6291452 kB
+SwapFree:              0 kB
+total 0
+drwxr-xr-x  2 root root 0 1970-01-01 07:30 .
+drwxr-xr-x 80 root root 0 1970-01-01 07:30 ..
+NO_BATTERY_SYSFS
+NO_BOOTPROF
+2000000 1900000 1800000 1700000 1600000 1500000 1400000 1300000 1275000 1250000 1205000 1160000 1092000 1024000 956000 888000 820000 753000 686000 620000 553000 485000 
+2500000 2400000 2300000 2200000 2100000 2000000 1900000 1800000 1700000 1600000 1500000 1400000 1300000 1200000 1100000 1000000 900000 800000 700000 600000 
+sensors_count=30
+=== 2. SERVICES & IDLE CPU ===
+[init.svc.adbd]: [stopped]
+[init.svc.art_boot]: [stopped]
+[init.svc.cppreopts]: [stopped]
+[init.svc.data-mmi-carrier-sh]: [stopped]
+[init.svc.derive_classpath]: [stopped]
+[init.svc.derive_sdk]: [stopped]
+[init.svc.dmesgd]: [stopped]
+[init.svc.heapprofd]: [stopped]
+[init.svc.idmap2d]: [stopped]
+[init.svc.logd-auditctl]: [stopped]
+[init.svc.logd-reinit]: [stopped]
+[init.svc.mainline_aconfigd_init]: [stopped]
+[init.svc.mainline_aconfigd_socket_service]: [stopped]
+[init.svc.misctrl]: [stopped]
+[init.svc.mmi-carrier-language-sh]: [stopped]
+[init.svc.mmi-carrier-sh]: [stopped]
+[init.svc.move_elabel_data]: [stopped]
+[init.svc.mtk.plpath.utils.link]: [stopped]
+[init.svc.perfetto_persistent_sysui_tracing_for_bugreport]: [stopped]
+[init.svc.post-mmi-carrier-sh]: [stopped]
+[init.svc.system_aconfigd_mainline_init]: [stopped]
+[init.svc.system_aconfigd_platform_init]: [stopped]
+[init.svc.system_aconfigd_socket_service]: [stopped]
+[init.svc.terservice]: [stopped]
+[init.svc.traced_perf]: [stopped]
+[init.svc.traced_relay]: [stopped]
+[init.svc.usbd]: [stopped]
+[init.svc.vendor.auto_provision]: [stopped]
+[init.svc.vendor.cdh_system_props]: [stopped]
+[init.svc.vendor.dlkm_loader]: [stopped]
+Tasks: 434 total,   3 running, 431 sleeping,   0 stopped,   0 zombie
+  Mem:  7760724K total,  7454748K used,   305976K free,     9624K buffers
+ Swap:  6291452K total,  6291452K used,        0K free,  8560952K cached
+800%cpu 280%user  87%nice 273%sys  90%idle   7%iow  60%irq   3%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+10230 u0_a339      20   0  18G 318M 221M S  130   4.2   0:40.47 com.android.vending
+ 8878 u0_a236      20   0  18G 263M 113M S  113   3.4   0:38.51 com.motorola.aicore
+  816 system       18  -2  23G 541M 373M S  113   7.1   1:08.07 system_server
+ 8701 u0_a363      10 -10  35G 427M 322M S 90.0   5.6   0:42.50 com.google.android.googlequicksearchbox:googleapp
+ 7588 u0_a292      20   0  19G 356M 250M S 50.0   4.6   0:14.89 com.google.android.gms
+ 8176 u0_a361      20   0  17G 469M 363M S 36.6   6.1   0:06.52 com.google.android.apps.wellbeing
+ 7202 u0_a292      20   0  18G 282M 189M S 23.3   3.7   0:21.35 com.google.android.gms.persistent
+   10 root         20   0    0    0    0 I 16.6   0.0   0:00.98 [kworker/u16:1-phy0]
+  788 root         20   0    0    0    0 I 10.0   0.0   0:02.60 [kworker/u16:4-events_unbound]
+  602 system       20   0  10G 7.1M 5.0M S 10.0   0.0   0:05.58 android.hardware.camera-service
+  303 root         20   0    0    0    0 R 10.0   0.0   0:07.45 [khvcd]
+  250 logd         30  10  10G 7.7M 4.8M S 10.0   0.1   0:24.38 logd
+   78 root         20   0    0    0    0 S 10.0   0.0   0:01.79 [kswapd0]
+=== 3. WIFI / BT / NFC / RADIO ===
+Wifi is enabled
+Wifi scanning is only available when wifi is enabled
+==== Primary ClientModeManager instance ====
+Wifi is connected to "Campus-B2-511"
+WifiInfo: SSID: "Campus-B2-511", BSSID: 78:8a:20:d2:6c:38, MAC: <none>, IP: /192.168.10.100, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -36, Link speed: 54Mbps, Tx Link speed: 54Mbps, Max Supported Tx Link speed: 54Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: 54Mbps, Frequency: 5180MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"Campus-B2-511"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+successfulTxPackets: 26151
+successfulTxPacketsPerSecond: 408.18163438633246
+retriedTxPackets: 0
+retriedTxPacketsPerSecond: 0.0
+lostTxPackets: 0
+PING 223.5.5.5 (223.5.5.5) from 192.168.10.100 wlan0: 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=10.3 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=1.00 ms
+
+--- 223.5.5.5 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 1.007/5.674/10.342/4.668 ms
+Bluetooth Status
+  enabled: false
+  state: OFF
+  address: XX:XX:XX:XX:00:00
+  name: motorola razr 50
+
+Enable log:
+  08-01 00:03:00.138	Package [android] requested to [Enable].	Reason is SYSTEM_BOOT
+  08-01 00:03:00.629	Package [android] requested to [Enable].	Reason is APPLICATION_REQUEST
+  08-01 00:03:08.079	Package [android] requested to [Disable].	Reason is APPLICATION_REQUEST
+  08-01 00:03:09.004	Package [android] requested to [Disable].	Reason is CRASH
+  08-01 00:03:13.008	Package [android] requested to [Enable].	Reason is RESTARTED
+BluetoothShellCommand: Exec enable
+enable: Success
+Bluetooth Status
+  enabled: true
+  state: ON
+  address: XX:XX:XX:XX:00:00
+  name: motorola razr 50
+  time since enabled: 00:00:03.114
+
+Enable log:
+  08-01 00:03:00.138	Package [android] requested to [Enable].	Reason is SYSTEM_BOOT
+  08-01 00:03:00.629	Package [android] requested to [Enable].	Reason is APPLICATION_REQUEST
+mState=on
+ccmni2           DOWN           
+wlan0            UP             192.168.10.100/24 fe80::50dc:42ff:fe36:2ced/64 
+ccmni0           DOWN           
+ccmni1           DOWN           
+ccmni3           DOWN           
+ccmni4           DOWN           
+ccmni5           DOWN           
+ccmni6           DOWN           
+ccmni7           DOWN           
+ccmni8           DOWN           
+ccmni9           DOWN           
+ccmni10          DOWN           
+ccmni11          DOWN           
+ccmni12          DOWN           
+ccmni13          DOWN           
+ccmni14          DOWN           
+ccmni15          DOWN           
+ccmni16          DOWN           
+ccmni17          DOWN           
+ccmni18          DOWN           
+ccmni19          DOWN           
+ccmni20          DOWN           
+CELLULAR_PING_FAIL
+=== 4. CODEC2 & CAMERA & CRASHES & LOG SPAM ===
+package:com.google.android.apps.photos
+package:com.motorola.android.providers.settings.overlay.dppcamera
+package:com.motorola.motcameradesktop
+package:com.motorola.camera.ai.colortone
+package:com.android.cameraextensions
+package:com.google.android.overlay.gmsconfig.photos
+package:com.motorola.camera5
+11-27 01:17:51.209 14653 14653 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+11-27 01:17:51.209 14653 14653 F DEBUG   : Build fingerprint: 'motorola/aito_g_sys/aito:16/W1UCS36H.96-35-8-9/4907d6-43c152:user/release-keys'
+11-27 01:17:51.209 14653 14653 F DEBUG   : Revision: '0'
+11-27 01:17:51.209 14653 14653 F DEBUG   : ABI: 'arm64'
+11-27 01:17:51.209 14653 14653 F DEBUG   : Timestamp: 2026-11-27 01:17:50.629260275+0800
+11-27 01:17:51.209 14653 14653 F DEBUG   : Process uptime: 0s
+11-27 01:17:51.209 14653 14653 F DEBUG   : Cmdline: com.android.bluetooth
+11-27 01:17:51.209 14653 14653 F DEBUG   : pid: 14555, tid: 14574, name: bt_main_thread  >>> com.android.bluetooth <<<
+11-27 01:17:51.209 14653 14653 F DEBUG   : uid: 1002
+11-27 01:17:51.209 14653 14653 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+11-27 01:17:51.209 14653 14653 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+11-27 01:17:51.209 14653 14653 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+11-27 01:17:51.209 14653 14653 F DEBUG   : Abort message: '[FATAL:client.cc(8082)] Assert failed: std::move(hal_2_1_verifier).Run(). Initialize, LE Audio Client requires Bluetooth Audio HAL V2.1 at least. Either disable LE Audio Profile, or update your HAL
+11-27 01:17:51.209 14653 14653 F DEBUG   : #00 0x00000071e66e4d67 /apex/com.android.bt/lib64/libbluetooth_jni.so+0x0000000000d56d67
+11-27 01:17:51.209 14653 14653 F DEBUG   : #01 0x00000071e602949f /apex/com.android.bt/lib64/libbluetooth_jni.so+0x000000000069b49f
+11-27 01:17:51.209 14653 14653 F DEBUG   : #02 0x00000071e61bd6b3 /apex/com.android.bt/lib64/libbluetooth_jni.so+0x000000000082f6b3
+11-27 01:17:51.209 14653 14653 F DEBUG   : #03 0x00000071e66e7a6b /apex/com.android.bt/lib64/libbluetooth_jni.so+0x0000000000d59a6b
+11-27 01:17:51.209 14653 14653 F DEBUG   : #04 0x00000071e66e6f4b /apex/com.android.bt/lib64/libbluetooth_jni.so+0x0000000000d58f4b
+11-27 01:17:51.209 14653 14653 F DEBUG   : #05 0x00000071e66e7297 /apex/com.android.bt/lib64/libbluetooth_jni.so+0x0000000000d59297
+11-27 01:17:51.209 14653 14653 F DEBUG   : #06 0x00000071e66e95ef /apex/com.android.bt/lib64/libbluetooth_jni.so+0x0000000000d5b5ef
+11-27 01:17:51.209 14653 14653 F DEBUG   : #07 0x00000071e66f8eff /apex/com.android.bt/lib64/libbluetooth_jni.so+0x0000000000d6aeff
+11-27 01:17:51.209 14653 14653 F DEBUG   : #08 0x00000071e64d004b /apex/com.android.bt/lib64/libbluetooth_jni.so+0x0000000000b4204b
+11-27 01:17:51.209 14653 14653 F DEBUG   : #09 0x00000071e64d0b57 /apex/com.android.bt/lib64/libbluetooth_jni.so+0x0000000000b42b57
+11-27 01:17:51.209 14653 14653 F DEBUG   : #10 0x000000752aa9bc9f /apex/com.android.runtime/lib64/bionic/libc.so+0x0000000000083c9f
+11-27 01:17:51.209 14653 14653 F DEBUG   : #11 0x000000752aa8e1a3 /apex/com.android.runtime/lib64/bionic/libc.so+0x00000000000761a3'
+11-27 01:17:51.209 14653 14653 F DEBUG   :     x0  0000000000000000  x1  00000000000038ee  x2  0000000000000006  x3  00000071e15155c0
+11-27 01:17:51.209 14653 14653 F DEBUG   :     x4  651f737164727240  x5  651f737164727240  x6  651f737164727240  x7  7f7f7f7f7f7f7f7f
+11-27 01:17:51.209 14653 14653 F DEBUG   :     x8  00000000000000f0  x9  32e9cff2f6d0298b  x10 0000000000000001  x11 000000752aaa11f0
+11-27 01:17:51.209 14653 14653 F DEBUG   :     x12 00000071e1515638  x13 00000071e151562e  x14 00000071e5a02250  x15 0000000000000054
+11-27 01:17:51.209 14653 14653 F DEBUG   :     x16 000000752ab0f0f8  x17 000000752aaf4c40  x18 00000071e110c058  x19 00000000000038db
+11-27 01:17:51.209 14653 14653 F DEBUG   :     x20 00000000000038ee  x21 00000000ffffffff  x22 000000752ab10280  x23 00000071e6741000
+11-27 01:17:51.209 14653 14653 F DEBUG   :     x24 00000071e15156a8  x25 00000000000004f8  x26 00000071e1516880  x27 b4000073fd5683b8
+11-27 01:17:51.209 14653 14653 F DEBUG   :     x28 0000000000104000  x29 00000071e1515640
+11-27 01:17:51.209 14653 14653 F DEBUG   :     lr  000000752aa8a9d8  sp  00000071e15155c0  pc  000000752aa8a9fc  pst 0000000000000000
+11-27 01:17:51.209 14653 14653 F DEBUG   : 14 total frames
+11-27 01:17:51.209 14653 14653 F DEBUG   : backtrace:
+11-27 01:17:51.209 14653 14653 F DEBUG   :       #00 pc 00000000000729fc  /apex/com.android.runtime/lib64/bionic/libc.so (abort+156) (BuildId: 4740301183e36162080bd774fc515f34)
+11-27 01:17:51.209 14653 14653 F DEBUG   :       #01 pc 0000000000d575c0  /apex/com.android.bt/lib64/libbluetooth_jni.so (base::debug::BreakDebugger()+48) (BuildId: e32ed62191988c72beb4451eca36992b)
+11-27 01:17:51.209 14653 14653 F DEBUG   :       #02 pc 0000000000d57070  /apex/com.android.bt/lib64/libbluetooth_jni.so (logging::LogMessage::~LogMessage()+1008) (BuildId: e32ed62191988c72beb4451eca36992b)
+11-27 01:17:51.209 14653 14653 F DEBUG   :       #03 pc 000000000069b49c  /apex/com.android.bt/lib64/libbluetooth_jni.so (LeAudioClient::Initialize(bluetooth::le_audio::LeAudioClientCallbacks*, base::RepeatingCallback<void ()>, base::RepeatingCallback<bool ()>, std::__1::vector<bluetooth::le_audio::btle_audio_codec_config, std::__1::allocator<bluetooth::le_audio::btle_audio_codec_config>> const&)+332) (BuildId: e32ed62191988c72beb4451eca36992b)
+11-27 01:17:51.210 14653 14653 F DEBUG   :       #04 pc 000000000082f6b0  /apex/com.android.bt/lib64/libbluetooth_jni.so (base::internal::Invoker<base::internal::BindState<void (*)(bluetooth::le_audio::LeAudioClientCallbacks*, base::RepeatingCallback<void ()>, base::RepeatingCallback<bool ()>, std::__1::vector<bluetooth::le_audio::btle_audio_codec_config, std::__1::allocator<bluetooth::le_audio::btle_audio_codec_config>> const&), (anonymous namespace)::LeAudioClientInterfaceImpl*, base::RepeatingCallback<void ()>, base::RepeatingCallback<bool ()>, std::__1::vector<bluetooth::le_audio::btle_audio_codec_config, std::__1::allocator<bluetooth::le_audio::btle_audio_codec_config>>>, void ()>::Run(base::internal::BindStateBase*)+96) (BuildId: e32ed62191988c72beb4451eca36992b)
+11-27 01:17:51.210 14653 14653 F DEBUG   :       #05 pc 0000000000d59a68  /apex/com.android.bt/lib64/libbluetooth_jni.so (base::debug::TaskAnnotator::RunTask(char const*, base::PendingTask*)+168) (BuildId: e32ed62191988c72beb4451eca36992b)
+11-27 01:17:51.210 14653 14653 F DEBUG   :       #06 pc 0000000000d58f48  /apex/com.android.bt/lib64/libbluetooth_jni.so (base::MessageLoop::RunTask(base::PendingTask*)+328) (BuildId: e32ed62191988c72beb4451eca36992b)
+11-27 01:17:51.210 14653 14653 F DEBUG   :       #07 pc 0000000000d59294  /apex/com.android.bt/lib64/libbluetooth_jni.so (base::MessageLoop::DoWork()+516) (BuildId: e32ed62191988c72beb4451eca36992b)
+11-27 01:17:51.210 14653 14653 F DEBUG   :       #08 pc 0000000000d5b5ec  /apex/com.android.bt/lib64/libbluetooth_jni.so (base::MessagePumpDefault::Run(base::MessagePump::Delegate*)+76) (BuildId: e32ed62191988c72beb4451eca36992b)
+11-27 01:17:51.210 14653 14653 F DEBUG   :       #09 pc 0000000000d6aefc  /apex/com.android.bt/lib64/libbluetooth_jni.so (base::RunLoop::Run()+572) (BuildId: e32ed62191988c72beb4451eca36992b)
+11-27 01:17:51.210 14653 14653 F DEBUG   :       #10 pc 0000000000b42048  /apex/com.android.bt/lib64/libbluetooth_jni.so (bluetooth::common::MessageLoopThread::RunThread(bluetooth::common::MessageLoopThread*, std::__1::promise<void>)+344) (BuildId: e32ed62191988c72beb4451eca36992b)
+11-27 01:17:51.210 14653 14653 F DEBUG   :       #11 pc 0000000000b42b54  /apex/com.android.bt/lib64/libbluetooth_jni.so (void* std::__1::__thread_proxy[abi:nn200000]<std::__1::tuple<std::__1::unique_ptr<std::__1::__thread_struct, std::__1::default_delete<std::__1::__thread_struct>>, void (*)(bluetooth::common::MessageLoopThread*, std::__1::promise<void>), bluetooth::common::MessageLoopThread*, std::__1::promise<void>>>(void*)+84) (BuildId: e32ed62191988c72beb4451eca36992b)
+11-27 01:17:51.210 14653 14653 F DEBUG   :       #12 pc 0000000000083c9c  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+236) (BuildId: 4740301183e36162080bd774fc515f34)
+11-27 01:17:51.210 14653 14653 F DEBUG   :       #13 pc 00000000000761a0  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: 4740301183e36162080bd774fc515f34)
+bootprof_err=0
+avc_denied=1575
+[   99.543396] [  T252] SELinux: avc:  denied  { find } for pid=14555 uid=1002 name=vendor.mediatek.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default scontext=u:r:bluetooth:s0 tcontext=u:object_r:mtk_hal_audio_service:s0 tclass=service_manager permissive=0
+[   99.567998] [  T252] SELinux: avc:  denied  { find } for pid=14555 uid=1002 name=vendor.mediatek.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default scontext=u:r:bluetooth:s0 tcontext=u:object_r:mtk_hal_audio_service:s0 tclass=service_manager permissive=0
+[   99.594230] [  T252] SELinux: avc:  denied  { find } for pid=14555 uid=1002 name=vendor.mediatek.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default scontext=u:r:bluetooth:s0 tcontext=u:object_r:mtk_hal_audio_service:s0 tclass=service_manager permissive=0
+[   99.611209] [  T252] SELinux: avc:  denied  { find } for pid=14555 uid=1002 name=vendor.mediatek.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default scontext=u:r:bluetooth:s0 tcontext=u:object_r:mtk_hal_audio_service:s0 tclass=service_manager permissive=0
+[   99.632201] [  T252] SELinux: avc:  denied  { find } for pid=14555 uid=1002 name=vendor.mediatek.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default scontext=u:r:bluetooth:s0 tcontext=u:object_r:mtk_hal_audio_service:s0 tclass=service_manager permissive=0
+[   99.701897] [  T252] SELinux: avc:  denied  { find } for pid=14555 uid=1002 name=vendor.mediatek.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default scontext=u:r:bluetooth:s0 tcontext=u:object_r:mtk_hal_audio_service:s0 tclass=service_manager permissive=0
+[   99.719175] [  T252] SELinux: avc:  denied  { find } for pid=14555 uid=1002 name=vendor.mediatek.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default scontext=u:r:bluetooth:s0 tcontext=u:object_r:mtk_hal_audio_service:s0 tclass=service_manager permissive=0
+[   99.742575] [  T252] SELinux: avc:  denied  { find } for pid=14555 uid=1002 name=vendor.mediatek.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default scontext=u:r:bluetooth:s0 tcontext=u:object_r:mtk_hal_audio_service:s0 tclass=service_manager permissive=0
+[   99.761351] [  T261] type=1400 audit(1795713470.095:29343): avc:  denied  { read } for  comm="binder:695_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[   99.784505] [  T261] type=1400 audit(1795713470.095:29344): avc:  denied  { read } for  comm="binder:695_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[   99.812213] [  T261] type=1400 audit(1795713470.095:29345): avc:  denied  { read } for  comm="binder:695_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[   99.831070] [  T261] type=1400 audit(1795713470.127:29346): avc:  denied  { read } for  comm="binder:695_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[   99.892249] [  T252] SELinux: avc:  denied  { find } for pid=14555 uid=1002 name=vendor.mediatek.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default scontext=u:r:bluetooth:s0 tcontext=u:object_r:mtk_hal_audio_service:s0 tclass=service_manager permissive=0
+[  101.852482] [  T261] type=1400 audit(1795713472.099:29588): avc:  denied  { read } for  comm="binder:695_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[  101.955184] [  T261] type=1400 audit(1795713472.103:29589): avc:  denied  { read } for  comm="binder:695_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[  101.965926] [  T261] type=1400 audit(1795713472.103:29590): avc:  denied  { read } for  comm="binder:695_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[  102.786563] [  T261] type=1400 audit(1795713473.123:29643): avc:  denied  { read } for  comm="binder:695_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[  102.797985] [  T261] type=1400 audit(1795713473.123:29644): avc:  denied  { read } for  comm="binder:695_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[  102.798007] [  T261] type=1400 audit(1795713473.123:29645): avc:  denied  { read } for  comm="binder:695_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[  103.779316] [  T261] type=1400 audit(1795713474.127:29713): avc:  denied  { read } for  comm="binder:695_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[  103.791553] [  T261] type=1400 audit(1795713474.127:29714): avc:  denied  { read } for  comm="binder:695_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[  103.809472] [  T261] type=1400 audit(1795713474.127:29715): avc:  denied  { read } for  comm="binder:695_2" name="u:object_r:hwservicemanager_prop:s0" dev="tmpfs" ino=248 scontext=u:r:lbs_dbg_ext:s0 tcontext=u:object_r:hwservicemanager_prop:s0 tclass=file permissive=0
+[  104.839355] [  T261] type=1400 audit(1795713475.187:29756): avc:  denied  { read } for  comm="to.perf.freezer" name="13120" dev="binder" ino=1048868 scontext=u:r:system_server:s0 tcontext=u:object_r:binderfs_logs_proc:s0 tclass=file permissive=0
+[  104.885084] [  T261] type=1400 audit(1795713475.207:29757): avc:  denied  { read } for  comm="to.perf.freezer" name="12402" dev="binder" ino=1048862 scontext=u:r:system_server:s0 tcontext=u:object_r:binderfs_logs_proc:s0 tclass=file permissive=0
+[  104.900449] [  T261] type=1400 audit(1795713475.211:29758): avc:  denied  { read } for  comm="to.perf.freezer" name="11936" dev="binder" ino=1048854 scontext=u:r:system_server:s0 tcontext=u:object_r:binderfs_logs_proc:s0 tclass=file permissive=0

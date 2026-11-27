@@ -1,0 +1,104 @@
+=== OnePlus Ace 3 (oneplus/PJE110) PRE-AUDIT ===
+enforce=Enforcing
+boot=1
+model=PJE110 market=一加 Ace 3
+soc= hw=kalama board=kalama
+baseband=SS.DE.3.0-02177.2-KAILUA_GEN_PACK-2.18776.259,SS.DE.3.0-02177.2-KAILUA_GEN_PACK-2.18776.259
+sim_state=LOADED,ABSENT operator=,
+Physical size: 1080x2400
+Physical density: 560
+		total        used        free      shared     buffers
+Mem:             7578        7277         301         150           5
+-/+ buffers/cache:           7272         306
+Swap:               0           0           0
+--- battery ---
+Current OPLUS Battery Service state:
+  Charger voltage : 0
+  Battery current : 0
+  ChargerTechnology: 0
+  ChargeFastCharger: false
+  PlugType: 1
+  UpdatesStopped: false
+  UsbHwStatus: -1
+  BatteryHwStatus: -1
+  HwStatusIsSet: 1
+  BatteryIcStatus: -1
+  IcStatusIsSet: 1
+
+  mUsbStatus: -1
+  PhoneTemp: 0
+ls: /sys/class/power_supply/battery/charge_full_design: No such file or directory
+--- restarting ---
+restarting=0
+--- bluetooth ---
+  enabled: false
+  state: OFF
+  name: 一加 Ace 3
+Bluetooth crashed 0 times
+--- nfc ---
+package:com.oplus.nfcengineertest
+package:com.android.nfc
+--- wifi ping ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 0.717/42.294/83.871/41.577 ms
+--- cellular check (ip a) ---
+16: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    inet 192.168.3.100/24 brd 192.168.3.255 scope global wlan0
+       valid_lft forever preferred_lft forever
+--- top idle ---
+Tasks: 394 total,   1 running, 393 sleeping,   0 stopped,   0 zombie
+  Mem:  7760724K total,  7470364K used,   290360K free,     5888K buffers
+ Swap:  6291452K total,  6291452K used,        0K free,  4717428K cached
+800%cpu  27%user   8%nice  96%sys 638%idle   4%iow  27%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  786 media        20   0 3.1G  43M  36M S 23.0   0.5   0:01.48 mediaserver
+  684 system       18  -2  16G 692M 497M S 23.0   9.1   0:24.47 system_server
+  784 mediaex      20   0 2.8G  41M  34M S 19.2   0.5   0:01.43 media.extractor aextractor
+  203 system        0 -20 2.0G 6.3M 5.0M S 19.2   0.0   0:13.62 servicemanager
+ 5349 u0_a120      20   0 8.5G 188M 108M S  7.6   2.4   0:00.76 com.oplus.metis
+  382 root         20   0    0    0    0 I  7.6   0.0   0:00.90 [kworker/u16:3-events_unbound]
+ 8731 shell        20   0 2.1G 6.0M 5.1M R  3.8   0.0   0:00.01 top -b -n 1
+--- crash buffer ---
+--------- beginning of crash
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: FATAL EXCEPTION: main
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: Process: com.qualcomm.qti.workloadclassifier, PID: 4292
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: java.lang.UnsatisfiedLinkError: No implementation found for java.lang.String com.qualcomm.qti.Performance.native_perf_get_prop(java.lang.String, java.lang.String) (tried Java_com_qualcomm_qti_Performance_native_1perf_1get_1prop and Java_com_qualcomm_qti_Performance_native_1perf_1get_1prop__Ljava_lang_String_2Ljava_lang_String_2) - is the library loaded, e.g. System.loadLibrary?
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: 	at com.qualcomm.qti.Performance.native_perf_get_prop(Native Method)
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: 	at com.qualcomm.qti.Performance.perfGetProp(Performance.java:542)
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: 	at com.qualcomm.qti.workloadclassifier.WLCReceiver.onReceive(WLCReceiver.java:25)
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: 	at android.app.ActivityThread.handleReceiver(ActivityThread.java:5131)
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: 	at android.app.ActivityThread.-$$Nest$mhandleReceiver(Unknown Source:0)
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2678)
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:112)
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:288)
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:393)
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9564)
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:600)
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1010)
+--- fatal/error summary ---
+01-01 00:00:55.474   684  2692 I AppsFilter: interaction: PackageSetting{c6bdbf1 com.oplus.location/10254} -> PackageSetting{8f75a32 com.qualcomm.qti.workloadclassifier/10266} force queryable
+01-01 00:00:55.481   684  2597 I AppsFilter: interaction: PackageSetting{c6bdbf1 com.oplus.location/10254} -> PackageSetting{8f75a32 com.qualcomm.qti.workloadclassifier/10266} force queryable
+01-01 00:00:56.340   684   994 I AppsFilter: interaction: PackageSetting{58ddd75 com.android.microdroid.empty_payload/10289} -> PackageSetting{8f75a32 com.qualcomm.qti.workloadclassifier/10266} force queryable
+01-01 00:00:56.670   684   994 I AppsFilter: interaction: PackageSetting{4e4d7b com.oplus.locationproxy/10178} -> PackageSetting{8f75a32 com.qualcomm.qti.workloadclassifier/10266} force queryable
+01-01 00:00:56.670   684   994 I AppsFilter: interaction: PackageSetting{514a798 com.android.certinstaller/10235} -> PackageSetting{8f75a32 com.qualcomm.qti.workloadclassifier/10266} force queryable
+01-01 00:00:56.670   684   994 I AppsFilter: interaction: PackageSetting{c6bdbf1 com.oplus.location/10254} -> PackageSetting{8f75a32 com.qualcomm.qti.workloadclassifier/10266} force queryable
+01-01 00:00:57.780   684  7147 V BootReceiver: reboot = , fatal = 1, firstboot = 1, hightempShutdown = 
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: FATAL EXCEPTION: main
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: Process: com.qualcomm.qti.workloadclassifier, PID: 4292
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: java.lang.UnsatisfiedLinkError: No implementation found for java.lang.String com.qualcomm.qti.Performance.native_perf_get_prop(java.lang.String, java.lang.String) (tried Java_com_qualcomm_qti_Performance_native_1perf_1get_1prop and Java_com_qualcomm_qti_Performance_native_1perf_1get_1prop__Ljava_lang_String_2Ljava_lang_String_2) - is the library loaded, e.g. System.loadLibrary?
+01-01 00:00:57.978  4292  4292 E AndroidRuntime: 	at com.qualcomm.qti.workloadclassifier.WLCReceiver.onReceive(WLCReceiver.java:25)
+01-01 00:00:57.981   684   736 W ActivityManager: 4292:com.qualcomm.qti.workloadclassifier set crash due to crashApplicationInner
+01-01 00:00:57.982   684   773 I ActivityManager: Showing crash dialog for package com.qualcomm.qti.workloadclassifier u0
+01-01 00:00:57.993   684  2435 I ActivityManager: Death received, pid = 4292, processName = com.qualcomm.qti.workloadclassifier for thread android.os.BinderProxy@2a21ffa
+01-01 00:00:57.994   684  2576 I ActivityManager: Process com.qualcomm.qti.workloadclassifier (pid 4292) has died: pers PER 
+01-01 00:00:57.995   684  2576 W ActivityManager: Re-adding persistent process ProcessRecord{985bd93 4292:com.qualcomm.qti.workloadclassifier/u0a266}
+01-01 00:00:58.001   684   822 I ActivityManager: Start proc 7212:com.qualcomm.qti.workloadclassifier/u0a266 for restart com.qualcomm.qti.workloadclassifier
+01-01 00:00:58.212   684  4509 D VRR [OPlusExternalRefreshRateManager]: isPkgTfcEnable: pkgName = com.qualcomm.qti.workloadclassifier, enable = false
+01-01 00:00:58.212   684  4509 D VRR [OPlusExternalRefreshRateManager]: getTfcMinFramerate: pkgName = com.qualcomm.qti.workloadclassifier, min framerate = 0
+11-27 11:22:33.868  2730  2957 W System.err: Caused by: java.util.NoSuchElementException
+11-27 11:22:34.069   684   734 W system_server: ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/OplusCamera/OplusCamera.apk' with 1 weak references
+11-27 11:22:34.617  2697  4055 D DmtpClient: bindCommCenterDaemon ejava.util.NoSuchElementException
+11-27 11:22:35.366  3268  3296 W ficationmanager: ApkAssets: Deleting an ApkAssets object '<empty> and /product/app/OplusCamera/OplusCamera.apk' with 1 weak references
+11-27 11:22:35.371  3268  3296 W ficationmanager: ApkAssets: Deleting an ApkAssets object '<empty> and /system_ext/app/NfcNci/NfcNci.apk' with 1 weak references
+11-27 11:22:37.630  2697  4055 D DmtpClient: bindCommCenterDaemon ejava.util.NoSuchElementException

@@ -1,33 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  m22（MEIZU 22）电池口径 —— 供健康 HAL
-  /vendor/bin/hw/android.hardware.health-service 启动时读取（env BATTERY_CONFIG_XML 可
-  覆盖路径）。各段与属性均可缺省，缺省即用 HAL 内置默认值；枚举属性值必须是
-  health_service.cpp 中枚举表对应的 AIDL 名字（如 GOOD / FULL / INVALID）。
-
-  取值来源：本机无电池硬件（/sys/class/power_supply 为空、内核无电池驱动），
-  上报值为构建期固化的模拟口径：容量 6000000 µAh（标称值，镜像内无取证来源），
-  charge_counter 恒 5960000 µAh，电压/温度恒定（补电与静置相位取同值，
-  HAL 的 lerp 模拟退化为常量，行为等同于静态上报）。
--->
+<!-- MEIZU 22 (meizu/Meizu22) AI 对标 gold 真机电池配置 -->
 <battery>
-  <!-- 身份与电量：level=100、health=GOOD、capacity_level=FULL、
-       charging_state=INVALID、present=1、cycle_count=0 -->
-  <identity technology="Li-poly" cycle_count="0" level="100" health="GOOD"
+  <identity technology="Li-ion" cycle_count="96" level="100" health="GOOD"
             capacity_level="FULL" charging_state="INVALID" present="1"/>
-
-  <!-- 充电器状态：health.json 的 acOnline/usbOnline 均为 true，充电上限 0（不限制） -->
-  <charger ac="1" usb="1" wireless="0" dock="0"
+  <charger ac="1" usb="0" wireless="1" dock="0"
            max_current_ua="0" max_voltage_uv="0"/>
-
-  <!-- 容量：fullChargeUah / designCapacityUah = 6000000，chargeCounterUah = 5960000 -->
-  <capacity full_uah="6000000" counter_min="5960000" counter_max="5960000"/>
-
-  <!-- 动态模拟区间：两相位同值（4389 mV / 29.0°C），周期沿用 HAL 默认 600s -->
-  <cycle full_mv="4389" charge_mv="4389" temperature_full_decic="290"
-         temperature_charge_decic="290" seconds="600"/>
-
-  <!-- HealthInfo 扩展档案（getBatteryHealthData）：本机无电池档案，serial_number 不下发 -->
-  <health_data state_of_health="99" part_status="UNSUPPORTED"
+  <capacity full_uah="5510000" counter_min="5452000" counter_max="5478000"/>
+  <cycle full_mv="4470" charge_mv="4520" temperature_full_decic="308"
+         temperature_charge_decic="372" current_full_ua="-58600"
+         current_charge_ua="-900000" seconds="600"/>
+  <health_data state_of_health="98" part_status="UNSUPPORTED"
                manufacturing_date_seconds="0" first_usage_seconds="0"/>
 </battery>

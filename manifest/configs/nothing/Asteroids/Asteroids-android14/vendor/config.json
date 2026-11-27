@@ -1,6 +1,7 @@
 {
   "build-prop-sets": {
     "gsm.version.baseband": "MPSS.DE.3.1.4-00560.1-MILOS_GEN_PACK-1",
+    "media.c2.hal.selection": "aidl",
     "persist.radio.multisim.config": "dsds",
     "ro.hardware.egl": "mesa",
     "ro.hardware.vulkan": "adreno",
@@ -62,7 +63,9 @@
     "ro.vendor.soc.model": "SM7635",
     "ro.vendor.soc.model.external_name": "SM7635-AC",
     "ro.vendor.soc.model.part_name": "SM7635-AC",
-    "ro.vendor.soc.model_ready": "1"
+    "ro.vendor.soc.model_ready": "1",
+    "vendor.audio.c2.preferred": "true",
+    "vendor.audio.hw.aac.encoder": "false"
   },
   "build-prop-unsets": [],
   "files": [

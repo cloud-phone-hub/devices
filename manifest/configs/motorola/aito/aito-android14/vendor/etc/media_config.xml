@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Motorola Razr 2024 (motorola/aito) Codec2 Store 实例与组件登记（rank=1 确保软解优先，且保证每个 store 非空） -->
+<!-- Motorola Razr 2024 (motorola/aito) Codec2 Store 实例与组件登记（rank=512/1024 确保 v4l2 硬解硬编与 AOSP 软解优先，且保证每个 store 非空） -->
 <media-c2-config>
     <instance binary="android.hardware.media.c2-mediatek" store="default1"/>
     <instance binary="vendor.dolby.media.c2-default-service-dax" store="default9"/>
-    <component store="default9" name="c2.dolby.ac4.decoder" kind="decoder" domain="audio" media-type="audio/ac4" rank="1" aliases="OMX.dolby.ac4.decoder" profiles="" levels=""/>
-    <component store="default1" name="c2.mtk.avc.decoder" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="OMX.MTK.VIDEO.DECODER.AVC" profiles="20480,20481,20482,20484,20487" levels="20495"/>
-    <component store="default1" name="c2.mtk.avc.decoder.secure" kind="decoder" domain="video" media-type="video/avc" rank="1" aliases="OMX.MTK.VIDEO.DECODER.AVC.secure" profiles="20480,20481,20482,20484,20487" levels="20495"/>
-    <component store="default1" name="c2.mtk.hevc.decoder" kind="decoder" domain="video" media-type="video/hevc" rank="1" aliases="OMX.MTK.VIDEO.DECODER.HEVC" profiles="24576,24578,24577" levels="24835"/>
-    <component store="default1" name="c2.mtk.hevc.decoder.secure" kind="decoder" domain="video" media-type="video/hevc" rank="1" aliases="OMX.MTK.VIDEO.DECODER.HEVC.secure" profiles="24576,24578,24577" levels="24835"/>
-    <component store="default1" name="c2.mtk.heif.decoder" kind="decoder" domain="video" media-type="image/vnd.android.heic" rank="1" aliases="OMX.MTK.VIDEO.DECODER.HEIF" profiles="" levels=""/>
-    <component store="default1" name="c2.mtk.vp9.decoder" kind="decoder" domain="video" media-type="video/x-vnd.on2.vp9" rank="1" aliases="OMX.MTK.VIDEO.DECODER.VP9" profiles="28672,28673,28674" levels="28680"/>
-    <component store="default1" name="c2.mtk.vp9.decoder.secure" kind="decoder" domain="video" media-type="video/x-vnd.on2.vp9" rank="1" aliases="OMX.MTK.VIDEO.DECODER.VP9.secure" profiles="28672,28673,28674" levels="28680"/>
-    <component store="default1" name="c2.mtk.avc.encoder" kind="encoder" domain="video" media-type="video/avc" rank="1" aliases="OMX.MTK.VIDEO.ENCODER.AVC" profiles="20480,20482,20484" levels="20494"/>
-    <component store="default1" name="c2.mtk.avc.encoder.secure" kind="encoder" domain="video" media-type="video/avc" rank="1" aliases="" profiles="20480,20482,20484" levels="20494"/>
-    <component store="default1" name="c2.mtk.hevc.encoder" kind="encoder" domain="video" media-type="video/hevc" rank="1" aliases="OMX.MTK.VIDEO.ENCODER.HEVC" profiles="24576" levels="24834"/>
-    <component store="default1" name="c2.mtk.hevc.encoder.secure" kind="encoder" domain="video" media-type="video/hevc" rank="1" aliases="" profiles="24576" levels="24834"/>
-    <component store="default1" name="c2.mtk.heif.encoder" kind="encoder" domain="video" media-type="image/vnd.android.heic" rank="1" aliases="OMX.MTK.VIDEO.ENCODER.HEIF" profiles="" levels=""/>
+    <component store="default9" name="c2.dolby.ac4.decoder" kind="decoder" domain="audio" media-type="audio/ac4" rank="1024" aliases="OMX.dolby.ac4.decoder" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.avc.decoder" kind="decoder" domain="video" media-type="video/avc" rank="512" aliases="OMX.MTK.VIDEO.DECODER.AVC" profiles="20480,20481,20482,20484,20487" levels="20495"/>
+    <component store="default1" name="c2.mtk.avc.decoder.secure" kind="decoder" domain="video" media-type="video/avc" rank="1024" aliases="OMX.MTK.VIDEO.DECODER.AVC.secure" profiles="20480,20481,20482,20484,20487" levels="20495"/>
+    <component store="default1" name="c2.mtk.hevc.decoder" kind="decoder" domain="video" media-type="video/hevc" rank="512" aliases="OMX.MTK.VIDEO.DECODER.HEVC" profiles="24576,24578,24577" levels="24835"/>
+    <component store="default1" name="c2.mtk.hevc.decoder.secure" kind="decoder" domain="video" media-type="video/hevc" rank="1024" aliases="OMX.MTK.VIDEO.DECODER.HEVC.secure" profiles="24576,24578,24577" levels="24835"/>
+    <component store="default1" name="c2.mtk.heif.decoder" kind="decoder" domain="video" media-type="image/vnd.android.heic" rank="1024" aliases="OMX.MTK.VIDEO.DECODER.HEIF" profiles="" levels=""/>
+    <component store="default1" name="c2.mtk.vp9.decoder" kind="decoder" domain="video" media-type="video/x-vnd.on2.vp9" rank="512" aliases="OMX.MTK.VIDEO.DECODER.VP9" profiles="28672,28673,28674" levels="28680"/>
+    <component store="default1" name="c2.mtk.vp9.decoder.secure" kind="decoder" domain="video" media-type="video/x-vnd.on2.vp9" rank="1024" aliases="OMX.MTK.VIDEO.DECODER.VP9.secure" profiles="28672,28673,28674" levels="28680"/>
+    <component store="default1" name="c2.mtk.avc.encoder" kind="encoder" domain="video" media-type="video/avc" rank="512" aliases="OMX.MTK.VIDEO.ENCODER.AVC" profiles="20480,20482,20484" levels="20494"/>
+    <component store="default1" name="c2.mtk.avc.encoder.secure" kind="encoder" domain="video" media-type="video/avc" rank="1024" aliases="" profiles="20480,20482,20484" levels="20494"/>
+    <component store="default1" name="c2.mtk.hevc.encoder" kind="encoder" domain="video" media-type="video/hevc" rank="1024" aliases="OMX.MTK.VIDEO.ENCODER.HEVC" profiles="24576" levels="24834"/>
+    <component store="default1" name="c2.mtk.hevc.encoder.secure" kind="encoder" domain="video" media-type="video/hevc" rank="1024" aliases="" profiles="24576" levels="24834"/>
+    <component store="default1" name="c2.mtk.heif.encoder" kind="encoder" domain="video" media-type="image/vnd.android.heic" rank="1024" aliases="OMX.MTK.VIDEO.ENCODER.HEIF" profiles="" levels=""/>
 </media-c2-config>

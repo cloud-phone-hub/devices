@@ -5,8 +5,8 @@
   "model": "MEIZU 22",
   "device": "Meizu22",
   "platform": "qcom",
-  "resolution": "1080x2400",
-  "inch": "65x145",
+  "resolution": "1200x2670",
+  "inch": "66x146",
   "density": 480,
   "smp": 8,
   "memory": [
@@ -23,12 +23,16 @@
     "board": "qcom",
     "hasReadme": true,
     "hostHvc": {
+      "host-hvc-adbkey": "hvc2",
       "host-hvc-bluetooth": "hvc5",
+      "host-hvc-camera": "hvc12",
       "host-hvc-daemon": "hvc7",
       "host-hvc-haptic": "hvc6",
       "host-hvc-keymint": "hvc3",
+      "host-hvc-nfc": "hvc11",
       "host-hvc-radio": "hvc4",
-      "host-hvc-wifi": "hvc9"
+      "host-hvc-wifi": "hvc9",
+      "host-hvc-wifi-data": "hvc10"
     },
     "skuCombinations": [
       "12GB+256GB",

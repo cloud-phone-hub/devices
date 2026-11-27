@@ -1,0 +1,21 @@
+# CDH setup for realme 15T (RMX5112):
+# 1. 创建 /data/vendor/nfc 与 /data/nfc 目录；
+# 2. 启用 6 GiB zram0 交换分区（补足 MTK fstab.enableswap 未执行）；
+# 3. 写入解密后的 ODM 相机明文配置到 com.oplus.camera 沙盒。
+on post-fs-data
+    mkdir /data/vendor/nfc 0770 nfc nfc
+    mkdir /data/nfc 0770 nfc nfc
+
+service cph_rmx5112_setup /system/bin/sh /vendor/bin/cph_rmx5112_setup.sh
+    class late_start
+    user root
+    group root system
+    seclabel u:r:pioneer:s0
+    oneshot
+    disabled
+
+on property:sys.user.0.ce_available=true
+    start cph_rmx5112_setup
+
+on property:sys.boot_completed=1
+    start cph_rmx5112_setup

@@ -1,0 +1,156 @@
+===== CPH2797 (OPPO Find X9) Final Pass Verification =====
+Timestamp: 2026-11-27T14:29:23+08:00
+patch.img sha256: 8dc2f202766677ce043b8e8fdeecd61e9881a33c9942ed8b3c798dde3b6683ad  out/devices/dist/oppo/CPH2797/16-BP2A.250605.015-20260529/patch.img
+
+=== [1] Host Camera CDCM_PAUSE Freeze ===
+{"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":592,"framesDropped":0}
+
+{"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":592,"framesDropped":0}
+
+
+=== [2] System Health, Specs, Battery, ZRAM, Modules ===
+getenforce=Enforcing
+sys.boot_completed=1
+restarting_count=0
+ro.product.model=CPH2797 market=OPPO Find X9
+ro.soc.model=MT6993 hardware=mt6993 baseband=M_V3_P10,M_V3_P10
+uname=Linux localhost 6.12.23-android16-5-g82efd98459a2-ab14457512-4k #1 SMP PREEMPT Tue Nov 18 18:08:47 UTC 2025 aarch64 Toybox
+Physical size: 1256x2760
+Physical density: 560
+		total        used        free      shared     buffers
+Mem:            11376        9729        1646         508          10
+-/+ buffers/cache:           9718        1657
+Swap:            6143           0        6143
+Filename				Type		Size		Used		Priority
+/dev/block/zram0                        partition	6291452		0		-2
+Module                  Size  Used by
+zram                   73728  1 
+zsmalloc               40960  1 zram
+virtio_console         45056  0 
+mac80211_hwsim        110592  0 
+mac80211             1056768  1 mac80211_hwsim
+libarc4                16384  1 mac80211
+cfg80211             1093632  2 mac80211_hwsim,mac80211
+rfkill                 40960  1 cfg80211
+cdh_media              49152  0 
+cdh_input_identity     32768  0 
+cdh_device_info        86016  1 
+cdh_redirect          159744  0 
+--- Battery ---
+battery/status=Full
+battery/capacity=100
+battery/charge_full_design=7025000
+battery/charge_full=7025000
+battery/voltage_now=4480000
+ac/online= usb/online=
+--- DCIM/Camera ---
+total 1055
+drwxrws--- 2 u0_a186 media_rw   3452 2026-11-27 13:37 .RENAME_TMP
+-rwxrwx--- 1 u0_a186 media_rw 279828 2026-11-27 14:12 IMG20261127141238.jpg
+-rwxrwx--- 1 u0_a186 media_rw 112419 2026-11-27 14:12 IMG20261127141246.jpg
+-rwxrwx--- 2 u0_a186 media_rw 677679 2026-11-27 14:28 VID20261127142811.mp4
+--- Crash buffer ---
+--- Bluetooth ---
+  enabled: false
+  state: OFF
+  name: OPPO Find X9
+Bluetooth crashed 0 times
+--- Wi-Fi ping ---
+16: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    inet 192.168.20.100/24 brd 192.168.20.255 scope global dynamic wlan0
+       valid_lft 3524sec preferred_lft 3524sec
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=1.00 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=0.434 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=0.344 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2008ms
+rtt min/avg/max/mdev = 0.344/0.592/1.000/0.291 ms
+--- Cellular only (Wi-Fi OFF) ---
+6: ccmni1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc pfifo_fast state UP group default qlen 1000
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+       valid_lft forever preferred_lft forever
+../../../virtio7
+PING 223.5.5.5 (223.5.5.5) from 100.64.155.15 ccmni1: 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=0.258 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=0.224 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=0.186 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2047ms
+rtt min/avg/max/mdev = 0.186/0.222/0.258/0.034 ms
+--- NFC dumpsys ---
+mState=on
+mScreenState=ON_UNLOCKED
+--- Idle top ---
+Tasks: 530 total,   1 running, 528 sleeping,   0 stopped,   1 zombie
+  Mem:    11376M total,     9585M used,     1790M free,       10M buffers
+ Swap:     6143M total,        0M used,     6143M free,     5813M cached
+800%cpu   4%user   0%nice  11%sys 781%idle   0%iow   4%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  287 system        0 -20 2.1G 7.5M 6.2M S  7.4   0.0   0:26.57 servicemanager
+11369 shell        20   0 2.0G 5.9M 4.9M R  3.7   0.0   0:00.02 top -n 1 -b
+  858 system       18  -2  15G 639M 382M S  3.7   5.6   0:34.41 system_server
+    1 root         20   0 2.2G  16M  12M S  3.7   0.1   0:19.17 init second_stage
+11370 shell        20   0 2.0G 5.5M 4.9M S  0.0   0.0   0:00.00 head -n 12
+11364 root         20   0 2.0G 5.4M 4.9M S  0.0   0.0   0:00.00 sleep 2
+11339 wifi         20   0 2.2G  12M  11M S  0.0   0.1   0:00.01 wpa_supplicant -O/data/vendor/wifi/wpa/sockets -dd -g@android:wpa_wlan0
+
+=== [3] Host NFC Tap API ===
+{"ok":true,"status":{"connected":true,"initialized":true,"discovering":true,"cardPresent":true,"cardUid":"04112233445566","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":99,"txResponses":118,"apduCount":0,"recentCmds":["mt=1,gid=01,oid=01,len=7","mt=1,gid=01,oid=03,len=7","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=03,len=7","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=03,len=15","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4"]}}
+
+BluetoothShellCommand: Exec enable
+enable: Success
+=== [4] Bluetooth ON Verification ===
+  enabled: true
+  state: ON
+  name: OPPO Find X9
+  time since enabled: 00:00:04.014
+Bluetooth crashed 0 times
+connection_manager state:
+shim::legacy::bta::dm  current bta_dm_discovery_state:BTA_DM_DISCOVER_IDLE
+shim::legacy::bta::dm  current bta_dm_search_state:BTA_DM_SEARCH_IDLE
+        manufacturer_name: 224
+    le_connectability_state: "ConnectabilityState::DISARMED"
+=== [5] Battery Service ===
+Current OPLUS Battery Service state:
+  Charger voltage : 0
+  Battery current : 0
+  ChargerTechnology: 0
+  ChargeFastCharger: false
+  PlugType: 0
+  UpdatesStopped: false
+  UsbHwStatus: 0
+  BatteryHwStatus: 1
+  HwStatusIsSet: 1
+  BatteryIcStatus: 0
+  IcStatusIsSet: 1
+
+  mUsbStatus: 0
+  PhoneTemp: 0
+  ThermalFeatureOn: true
+Current Battery Service state:
+  AC powered: false
+  USB powered: false
+  Wireless powered: false
+  Dock powered: false
+  Max charging current: 0
+ Time when the latest updated value of the Max charging current was sent via battery changed broadcast: +40s55ms
+  Max charging voltage: 0
+  Charge counter: 5984833
+  status: 3
+  health: 2
+  present: true
+  level: 85
+  scale: 100
+  voltage: 4481
+ Time when the latest updated value of the voltage was sent via battery changed broadcast: +40s55ms
+ The last voltage value sent via the battery changed broadcast: 4481
+  temperature: 305
+  technology: Li-ion
+  Charging state: 0
+  Charging policy: 0
+  Capacity level: 4
+=== [6] Video Decoder Log ===
+c2.v4l2.avc.decoder [1920*1080] verified above

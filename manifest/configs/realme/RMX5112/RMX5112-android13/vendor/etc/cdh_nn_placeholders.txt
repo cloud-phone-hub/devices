@@ -1,4 +1,5 @@
-vendor.mediatek.hardware.bluetooth.audio.IBluetoothAudioProviderFactory/default
+vendor.nxp.nxpnfc_aidl.INxpNfc/default
+vendor.nxp.nxpnfc_pnaidl.INxpNfc/default
 vendor.mediatek.hardware.engineermode.IEmds/default
 vendor.mediatek.hardware.mtkpower_applist.IMtkpower_applist/default
 vendor.oplus.hardware.biometrics.fingerprintpay.IFingerprintPay/default

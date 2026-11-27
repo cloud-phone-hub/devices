@@ -1,0 +1,16 @@
+{
+"PinLibs": [
+    "/vendor/lib64/mt6835/libcam.hal3a.v3.platform.so",
+    "/vendor/lib64/mt6835/libcam.halsensor.so",
+    "/vendor/lib64/mt6835/libcam.iopipe.so",
+    "/vendor/lib64/mt6835/libimageio_plat_drv.so",
+    "/vendor/lib64/mt6835/libmtkcam_streamutils.so",
+    "/vendor/lib64/mt6835/libcamalgo.lsc.so",
+    "/vendor/lib64/mt6835/libmtkcam_pipelinemodel_isp.so",
+    "/vendor/lib64/hw/mt6835/vendor.mediatek.hardware.camera.isphal@1.1-impl.so",
+    "/system/lib64/android.hardware.camera.device@3.2.so",
+    "/vendor/lib64/mt6835/libmtkcam_streamutils.so",
+    "/vendor/lib64/mt6835/libmtkcam_device3_app.so"
+]
+
+}

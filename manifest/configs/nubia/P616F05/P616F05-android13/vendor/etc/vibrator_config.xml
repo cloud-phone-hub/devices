@@ -8,6 +8,4 @@
     <effect name="CLICK"/>
     <effect name="DOUBLE_CLICK"/>
     <effect name="TICK"/>
-    <effect name="HEAVY_CLICK"/>
-    <effect name="TEXTURE_TICK"/>
 </vibrator-config>

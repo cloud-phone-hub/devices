@@ -1,2 +1,6 @@
-# CPH2797 (ColorOS 16) 对声明但无真实实现的 oplus/mtk 占位 HAL 零容错（触发 system_server 65s Watchdog 崩溃重启），
-# 此处留空，仅保留 android.hardware.neuralnetworks.IDevice/default 自身真服务声明。
+# CPH2797 (OPPO Find X9 / ColorOS 16) 仅声明 NXP SN220 与 Oplus NFC AIDL 占位，
+# 满足 com.android.nfc 启动链并避开 ColorOS 对其它无关 oplus/mtk 占位 HAL 的零容错探测。
+vendor.nxp.nxpnfc_aidl.INxpNfc/default
+vendor.nxp.nxpnfc_pnaidl.INxpNfc/default
+vendor.oplus.hardware.nfc.IOplusNfc/default
+vendor.oplus.hardware.nfcExtns.INfcExtns/default

@@ -1,3 +1,5 @@
+vendor.nxp.nxpnfc_aidl.INxpNfc/default
+vendor.nxp.nxpnfc_pnaidl.INxpNfc/default
 vendor.mediatek.hardware.aee.IAee/AEE
 vendor.mediatek.hardware.apmonitor.IApmService/default
 vendor.mediatek.hardware.apuware.apusys.INeuronApusys/default

@@ -9,6 +9,8 @@
 namespace cdh::camera {
 namespace {
 
+#include "cdh_oplus_vendor_tags.inc"
+
 static constexpr uint32_t kOplusSupportedCameraIdTypeTag = 0x81170003;
 static const uint8_t kOplusBackPhysicalIds[] = {'3', '\0', '2', '\0'};
 
@@ -56,6 +58,9 @@ const std::vector<Note13CameraTarget> &GetOplusTargets(
 void AppendVendorTagDescs(std::vector<Note13VendorTagDesc> *out) {
   out->push_back({kOplusSupportedCameraIdTypeTag, "com.oplus",
                   "supported.cameraid.type", TYPE_BYTE});
+  for (const auto &desc : kOplusExtraVendorTagDescs) {
+    out->push_back(desc);
+  }
 }
 
 bool CollectExposedCameraTargets(const CameraTargetDefaults &defaults,

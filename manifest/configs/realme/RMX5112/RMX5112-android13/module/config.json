@@ -3,7 +3,6 @@
     "cdh_redirect",
     "device_info",
     "input_identity",
-    "kernelsu",
     "virtio_media"
   ],
   "input": {
@@ -312,6 +311,13 @@
         "jitter-mc": 140,
         "type": "consys"
       }
+    ]
+  },
+  "display": {
+    "refresh-rates": [
+      60,
+      90,
+      120
     ]
   }
 }

@@ -42,7 +42,7 @@
         kind="decoder"
         domain="video"
         media-type="video/avc"
-        rank="1"
+        rank="1024"
         aliases="OMX.MTK.VIDEO.DECODER.AVC"
         profiles="1,2,8"
         levels="4096"/>
@@ -52,7 +52,7 @@
         kind="decoder"
         domain="audio"
         media-type="audio/eac3"
-        rank="1"
+        rank="1024"
         aliases=""
         profiles=""
         levels=""/>
@@ -62,7 +62,7 @@
         kind="decoder"
         domain="audio"
         media-type="audio/ac4"
-        rank="1"
+        rank="1024"
         aliases="OMX.dolby.ac4.decoder"
         profiles=""
         levels=""/>

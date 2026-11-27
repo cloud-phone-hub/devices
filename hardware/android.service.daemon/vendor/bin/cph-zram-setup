@@ -9,6 +9,33 @@ set -u
 
 log() { /system/bin/log -t cph-zram-setup "$@"; }
 
+# 抑制部分厂商 product/build.prop（晚于 vendor/build.prop 加载）强开的私有内核 SmartSwap 轮询与 SF TE 帧率刷屏
+if [ "$(/system/bin/getprop persist.vendor.meizu.smart_zram 2>/dev/null)" = "true" ]; then
+    /system/bin/setprop persist.vendor.meizu.smart_zram false 2>/dev/null || true
+fi
+if [ "$(/system/bin/getprop debug.sf.show_refresh_rate_overlay_te_fps 2>/dev/null)" = "1" ]; then
+    /system/bin/setprop debug.sf.show_refresh_rate_overlay_te_fps 0 2>/dev/null || true
+fi
+# 云机蓝牙音频走 IModule/bluetooth（未部署 LE Audio Offload V2.1+ HAL），当 product/build.prop
+# 开启 bluetooth.profile.bap.unicast.client.enabled=true 时会导致 com.android.bluetooth 在
+# LeAudioClient::Initialize 触发断言 SIGABRT 循环崩溃；在 on boot 阶段幂等关闭 LE Audio profile。
+if [ "$(/system/bin/getprop bluetooth.profile.bap.unicast.client.enabled 2>/dev/null)" = "true" ]; then
+    for bt_le_prop in \
+        bluetooth.profile.bap.unicast.client.enabled \
+        bluetooth.profile.bap.broadcast.assist.enabled \
+        bluetooth.profile.bap.broadcast.source.enabled \
+        bluetooth.profile.bass.client.enabled \
+        bluetooth.profile.csip.set_coordinator.enabled \
+        bluetooth.profile.hap.client.enabled \
+        bluetooth.profile.mcp.server.enabled \
+        bluetooth.profile.ccp.server.enabled \
+        bluetooth.profile.vcp.controller.enabled; do
+        /system/bin/setprop "${bt_le_prop}" false 2>/dev/null || true
+    done
+fi
+/system/bin/setprop persist.bluetooth.leaudio_offload.disabled true 2>/dev/null || true
+/system/bin/setprop persist.bluetooth.a2dp_offload.disabled true 2>/dev/null || true
+
 if /system/bin/grep -q '/zram0' /proc/swaps 2>/dev/null; then
     log "zram0 已激活，跳过"
     exit 0

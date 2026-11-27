@@ -1,0 +1,234 @@
+=== RMX6688 全维度最终验收日志 (2026-11-27 17:49:36) ===
+--- 1. 后摄拍照 ---
+total 275
+drwxrws--- 2 u0_a285 media_rw   3452 2025-01-01 00:00 .RENAME_TMP
+-rwxrwx--- 1 u0_a285 media_rw 275699 2026-11-27 17:49 IMG20261127174938.jpg
+11-27 17:49:38.198  6349 12015 I CDH_APS : beforeCapture
+11-27 17:49:38.199  6349  6821 I CDH_APS : startCapture
+11-27 17:49:38.290  6349  6821 E ApsAdapter, APSClient: addFrameBuff, objInfo: [imagebufferobj, imageobj, hardwarebufferobj, logicmetaobj, phymetaobj], objects: [{ImageReader: android.media.ImageReader@2ca1411, Image: android.media.ImageReader$SurfaceImage@84de976,HardwareBuffer: android.hardware.HardwareBuffer@d928b77, TimeStamp: 316773428066, Reference: 1}, android.media.ImageReader$SurfaceImage@84de976, android.hardware.HardwareBuffer@d928b77, android.hardware.camera2.TotalCaptureResult@2edd3e4, android.hardware.camera2.TotalCaptureResult@c2ae04d], newParameters: [filter_lut_intp_factor, 0.0, capture_scene, 0, raw_value, none, dispatch_capture_type, 0, master_mode_cold_warm, 0, is_capture_bypass_crop, false, global_ev_value, 0, force_start, 1, master_mode_saturation, 0, auto_transmit_by_unit, , current_burst_capture_type, 0, output_format, 0, master_mode_cyan_magenta, 0, captureStreamNumber, 1, display_metrics_height, 2800, capture_mfnr_num, 1, rec_burst_number, -1, defer_job_all_quick_visible, false, mirror_enable, 0, exposure_composition_from_app, 0, preview_height, 1440, caller_package, com.android.shell, picture_title, IMG20261127174938, blacksoft_type, -1, dcip3_enable, 1, night_se_enable, 1, heif_enable, 0, lens_facing, 1, master_effect_after_filter, false, zoom_display_ratio, 1.0, crop_width, 4096, ultra_hdr_enable, 0, capture_thermal_level, -1, capture_job_type, 1, master_mode_contrast, 0, gps_time, 1795772929541, input_ev_list:, [0], macro_closeup_enable, 0, pre_evlist_enable, true, capture_mode, common, logic_camera_id, 0, crop_height, 3072, portrait_hdr_type, 0, iso_value_from_app, -1, previewdecision_request_mixed_format, false, face_beauty_version, 6, picture_exif_flag, 32, skip_rotate, 0, identity, 316773428066, global_ev_enable, false, burst_capture_state, 0, reprocessMetadata, false, 10bits_enable, 0, is_ai_shutter, false, quick_jpeg, false, dolby_enable, false, is_portrait_fallback, false, full_bining_qbc_open, 0, super_text_enable, 0, shutter_button_click_time, 0, super_raw_enable, 0, pipeline, pipeline_capture, zoom_ratio, 1.0, thermal_algo_mask, 0, caputre_resolution_format, , face_beauty_type, 0, master_mode_vignette, true, aiHd_sdsr_enable, 0, process_aidl_bpc, 0, motion_capture_enable, 0, burst_shot_flag_id, -1, is_from_camera_extension, false, touch_ev_value, 0, burst_capture_type, 0, livephoto_enable, 0, ai_cut_enable, 0, is_tuning_data, false, capture_request_num, 1, cshot_path, , hal_base_frame_index, 0, multi_frame_burst_shot_cluster_support, true, blacksoft_enable, 0, display_metrics_width, 1280, avai_memory, 8163467264, output_height, 3072, picture_date_time, 1795772978155, jpeg_callback_hardware_buf, true, decision_bracket_mode, 0, ai_high_pixel_enable, false, auto_composition_enable, false, rtb_enable, 0, depth_of_field_fusion_enable, false, watermark_enable, 0, blur_show, 1.7, defer_job_group_id, -1, size_mode, 0, meta_index, 0, mono_portrait, 0, preview_callback_type, 0, group_photo_support, 1, quick_jpeg_watermark_process_in_aps, false, capture_feature_type, 0, auto_composition_open, false, burst_shot, false, ais_state, 0, preview_width, 1920, microscope_capture_preview_state, 0, sat_open, 1, zoom_focal_length, 24, group_photo_on_off, 0, burst_capture_is_flicker, 0, tilt_shift, 0, filter_intensity, 100, output_width, 4096, rawsr_enable, 0, custom_beauty_param, [0, 0, 0, 0, 0, 0, 30, 30, 0, 0, 0, 0, 0], zsl_frame_cnt, 0, pi_enable, 0, picture_offset_time, +08:00, portrait_support_zoom_crop, false, orientation, 0, support_makeup, false, otest_force_defer_job, false, camera_id, 0, operation_mode, 32769, multi_frame_burst_shot_support, true, nightpro_mode, 0, capture_for_video, false, has_floating_window, false, asd_moving_object, 0, ais_bracket, 0, exposure_time_from_app, -1, face_beauty_enable, 0, super_night_scene, 0, cShotRequestNum, 0, turbo_raw_sence, 0, retention_enable, 0, ultra_resolution, 0, decision_feature_type, 0, hdr_type, 0, capture_algo_list,  none , watermark_refwidth, 0, watermark_background_path, null, has_imagereader, true, frameNumber, 1520, watermark_element_num_array, 
+11-27 17:49:38.290  6349 12017 E OCAM_LivePhotoPresenter: onCaptureStageChanged,  at least one of [mediaCodec audioRecorder audioEncoder] is not prepare, stage: 7
+11-27 17:49:38.338  6349  6821 I CDH_APS : addFrameBuff: captured I420 4096x3072 identity=316773428066 frame=0 rot=0 mirror=0
+11-27 17:49:38.343  6349  6821 I CDH_APS : processImages kv: id=316773428066 title=IMG20261127174938 jobType=1 deferGrp=-1 hwBufCb=true deferSup= heif= pipe=pipeline_capture ori=0 cam=0 mode=common totalKv=160
+11-27 17:49:38.356  6349 12030 E OCAM_Storage: newImage, jpeg
+11-27 17:49:38.381  6349 12030 E OCAM_ThumbnailProcessor: updateThumbnail, thumbnail: {mDate: 1795772978155, uri: content://************/1000000023, mBitmap: android.graphics.Bitmap@13d7c03, mQuickBitmap: null}, thumbnailInfo: mUri: content://************/1000000023, mResolver: android.app.ContextImpl$ApplicationContentResolver@314fbac, mPictureFormat: jpeg, mJpegName: IMG20261127174938, mThumbBitmap: null, mOrientation: 0, mTimeStamp: 316773428066, mIdentity: 316773428066, mbBurstShot: false, mbAiCutShot: false, mProductProcessor: null, mDate: 1795772978155, mThumbnailWidth: 0, mbLockScreen: false, mCameraUiUpdateThumbnail: null, mStickerCaptureTime: 0, mCaptureId: 1, mCaptureCompleteCallbackNum: 1, mbCaptureDefer: true, mbHasHeifFileFD: false, mMultiBurstShotIndex: 0, mApsService: com.oplus.camera.aps.service.ApsService@bbdbf1a, isNeedAPSProcess: true
+11-27 17:49:38.381  6349 12030 W OCAM_ThumbnailCategory: setThumbnailItem, this: ThumbnailCategory is invalid! thumbnail.identity: 316773428066, meta.mergeIdentity: -1, meta.timeStamp: -1, image.timeStamp: -1, thumbnail.mbBurstShot: false, pictureResult burst shot: false, mThumbnailItem: mUri: content://************/1000000023, mResolver: android.app.ContextImpl$ApplicationContentResolver@314fbac, mPictureFormat: jpeg, mJpegName: IMG20261127174938, mThumbBitmap: null, mOrientation: 0, mTimeStamp: 316773428066, mIdentity: 316773428066, mbBurstShot: false, mbAiCutShot: false, mProductProcessor: com.oplus.camera.module.processor.captureprocessor.CaptureProcessor$i@7a5c075, mDate: 1795772978155, mThumbnailWidth: 0, mbLockScreen: false, mCameraUiUpdateThumbnail: null, mStickerCaptureTime: 0, mCaptureId: 1, mCaptureCompleteCallbackNum: 1, mbCaptureDefer: true, mbHasHeifFileFD: false, mMultiBurstShotIndex: 0
+11-27 17:49:38.414  6349 12031 I WriteIccProfile: writeJpegIccProfileFd, close fd: 299 
+11-27 17:49:38.436  6349  6821 I CDH_APS : processImages: encoded JPEG 4096x3072 (275509 bytes) identity=316773428066 rot=0 mirror=0
+11-27 17:49:38.438  6349  6821 I CDH_APS : processImages: transactCb(3) rc=0 hwBuf=1 jByteArrRef=17926
+11-27 17:49:38.439  6349  6821 E CameraUnit, ConsumerImpl: onApsJpegArrived, image orientation: 90
+11-27 17:49:38.614  4189 13528 W libc    : Access denied finding property "ro.vendor.jpeg_decode_sw_opt"
+11-27 17:49:41.661  6349  6831 I CDH_APS : addPreviewFrameBuff[1680]: 1920x1440 cam=0 mode=common pipe=pipeline_preview id=320181771818
+--- 2. 切换前摄预览与前摄拍照 ---
+total 275
+drwxrws--- 2 u0_a285 media_rw   3452 2025-01-01 00:00 .RENAME_TMP
+-rwxrwx--- 1 u0_a285 media_rw 275699 2026-11-27 17:49 IMG20261127174938.jpg
+--- 3. 切回后摄 -> 切「视频」录像 4 秒并停止 ---
+total 1319
+drwxrws--- 2 u0_a285 media_rw    3452 2025-01-01 00:00 .RENAME_TMP
+-rwxrwx--- 1 u0_a285 media_rw  275699 2026-11-27 17:49 IMG20261127174938.jpg
+-rwxrwx--- 2 u0_a285 media_rw 1067383 2026-11-27 17:50 VID20261127174957.mp4
+11-27 17:50:01.239  6349 13653 D MediaRecorder: release+ 0xb400007d631a9540
+11-27 17:50:01.239  6349 13653 D MediaRecorder: release- 0xb400007d631a9540
+11-27 17:50:01.239  6349 13653 D MediaRecorder: destructor+ 0xb400007d631a9540
+11-27 17:50:01.240  6349 13653 D MediaRecorder: destructor- 0xb400007d631a9540
+11-27 17:50:01.392  1022 13865 D CCodecConfig: read media type: video/avc
+11-27 17:50:01.392  1022 13865 D CCodecConfig: read media type: video/avc
+11-27 17:50:01.400  4112  4144 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_video_monitor_network_switch info:START,1022,Key,-5476376663188235520,Component,c2.v4l2.avc.decoder,Width,1920,Height,1080,IsMediaPlayer,1
+11-27 17:50:01.400  4112  4437 V OplusAtlasVideo: callback success event:atlas_event_video_monitor_network_switch eventInfo:START,1022,Key,-5476376663188235520,Component,c2.v4l2.avc.decoder,Width,1920,Height,1080,IsMediaPlayer,1
+11-27 17:50:01.852  1022 13878 D CCodecConfig: read media type: video/avc
+11-27 17:50:01.852  1022 13878 D CCodecConfig: read media type: video/avc
+11-27 17:50:01.858  4112  4144 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_video_monitor_network_switch info:START,1022,Key,-5476376663316326144,Component,c2.v4l2.avc.decoder,Width,1920,Height,1080,IsMediaPlayer,1
+11-27 17:50:01.858  4112  4437 V OplusAtlasVideo: callback success event:atlas_event_video_monitor_network_switch eventInfo:START,1022,Key,-5476376663316326144,Component,c2.v4l2.avc.decoder,Width,1920,Height,1080,IsMediaPlayer,1
+11-27 17:50:02.055  1022 13884 D CCodecConfig: read media type: video/avc
+11-27 17:50:02.055  1022 13884 D CCodecConfig: read media type: video/avc
+11-27 17:50:02.062  4112  4144 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_video_monitor_network_switch info:START,1022,Key,-5476376663316326144,Component,c2.v4l2.avc.decoder,Width,1920,Height,1080,IsMediaPlayer,1
+11-27 17:50:02.062  4112  4437 V OplusAtlasVideo: callback success event:atlas_event_video_monitor_network_switch eventInfo:START,1022,Key,-5476376663316326144,Component,c2.v4l2.avc.decoder,Width,1920,Height,1080,IsMediaPlayer,1
+11-27 17:50:02.997   215   215 E SELinux : avc:  denied  { find } for interface=vendor.mediatek.hardware.mtkradioex::IMtkRadioEx sid=u:r:radio:s0 pid=3057 scontext=u:r:radio:s0 tcontext=u:object_r:default_android_hwservice:s0 tclass=hwservice_manager permissive=0
+11-27 17:50:03.001   215   215 E SELinux : avc:  denied  { find } for interface=vendor.mediatek.hardware.mtkradioex::IMtkRadioEx sid=u:r:radio:s0 pid=3057 scontext=u:r:radio:s0 tcontext=u:object_r:default_android_hwservice:s0 tclass=hwservice_manager permissive=0
+11-27 17:50:03.891   215   215 E SELinux : avc:  denied  { find } for interface=vendor.oplus.hardware.communicationcenter_compat::IDmtpService sid=u:r:radio:s0 pid=3057 scontext=u:r:radio:s0 tcontext=u:object_r:default_android_hwservice:s0 tclass=hwservice_manager permissive=0
+11-27 17:50:03.891   215   215 E SELinux : avc:  denied  { find } for interface=vendor.oplus.hardware.communicationcenter_compat::IDmtpService sid=u:r:radio:s0 pid=3057 scontext=u:r:radio:s0 tcontext=u:object_r:default_android_hwservice:s0 tclass=hwservice_manager permissive=0
+--- 4. 退桌面验证 CDCM_PAUSE 宿主冻结 ---
+Home frames t0: {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":638,"framesDropped":0}
+Home frames t+3s: {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":638,"framesDropped":0}
+[    8.904660] [  T239] dlkm_loader: Loading module /vendor_dlkm/lib/modules/cdh_media.ko with args 'allow_userptr=1'
+[    8.915669] [  T239] dlkm_loader: Loaded kernel module /vendor_dlkm/lib/modules/cdh_media.ko
+--- 5. 拉取实拍原图与录像文件校验 ---
+DCIM files:
+IMG20261127174938.jpg
+VID20261127174957.mp4
+--- 补拍前摄 (先开相机切照片切前摄再拍) ---
+total 1411
+drwxrws--- 2 u0_a285 media_rw    3452 2025-01-01 00:00 .RENAME_TMP
+-rwxrwx--- 2 u0_a285 media_rw   89513 2026-11-27 17:50 .pending-1796377844-VID20261127175044.mp4
+-rwxrwx--- 1 u0_a285 media_rw  275699 2026-11-27 17:49 IMG20261127174938.jpg
+-rwxrwx--- 2 u0_a285 media_rw 1067383 2026-11-27 17:50 VID20261127174957.mp4
+--- 5. 拉取实拍原图与录像文件校验 ---
+IMG20261127174938.jpg
+VID20261127174957.mp4
+VID20261127175044.mp4
+out/agent/tmp/rmx6688-audit/IMG20261127174938.jpg: JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 4096x3072, components 3
+-rw-r--r--@ 1 cuimingqiang  staff   269K Nov 27 17:50 out/agent/tmp/rmx6688-audit/IMG20261127174938.jpg
+out/agent/tmp/rmx6688-audit/VID20261127174957.mp4: ISO Media, MP4 v2 [ISO 14496-14]
+-rw-r--r--@ 1 cuimingqiang  staff   1.0M Nov 27 17:50 out/agent/tmp/rmx6688-audit/VID20261127174957.mp4
+out/agent/tmp/rmx6688-audit/VID20261127175044.mp4: ISO Media, MP4 v2 [ISO 14496-14]
+-rw-r--r--@ 1 cuimingqiang  staff   691K Nov 27 17:50 out/agent/tmp/rmx6688-audit/VID20261127175044.mp4
+--- 6. 用原生相册查图并播放录像 (验证解码器) ---
+MP4_ID= (VID20261127174957.mp4)
+--- 7. 系统健康、蓝牙、Wi-Fi、纯蜂窝 ccmni1、NFC 与静置 top ---
+getenforce=Enforcing
+restarting=0
+lsmod_ksu=none
+model=RMX6688 market=真我GT7 soc=MT6991
+wm_size=Physical size: 1280x2800  wm_density=Physical density: 560 
+--- meminfo ---
+MemTotal:       11661120 kB
+MemFree:          460500 kB
+MemAvailable:    7787244 kB
+--- swaps ---
+Filename				Type		Size		Used		Priority
+/dev/block/zram0                        partition	6291452		54272		-2
+--- battery ---
+  AC powered: false
+  USB powered: false
+  Wireless powered: false
+  Max charging current: 0
+  Max charging voltage: 0
+  Charge counter: 5613633
+  status: 3
+  level: 78
+--- bluetooth ---
+  enabled: false
+  state: OFF
+Bluetooth crashed 0 times
+--- wifi scan ---
+    BSSID              Frequency      RSSI           Age(sec)     SSID                                 Flags
+  d4:76:ea:53:28:0c       2462        -88            334.419    ChinaUnicom-280C                  [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  24:de:c6:4b:dd:10       2437        -50            334.419    Station-POS-3A-6FC                [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  34:14:5f:3f:aa:a8       2412        -58            334.419    Zhao's iPhone (15)                [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  98:da:c4:18:20:cc       2437        -66            334.419    TP-LINK_20CC                      [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  64:09:80:8c:f0:a0       2412        -66            334.419    AndroidAP_8059                    [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  cc:81:da:44:38:d8       2462        -45            334.419    CMCC-Free-djsz                    [ESS]
+  34:14:5f:17:8b:2a       5200        -56            334.419    FindX7_1379                       [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  78:8a:20:5f:c5:cc       5785        -58            334.419    Starbucks-T3-C47                  [ESS]
+  c8:d1:5e:95:bd:2a       2437        -77            334.419    HUAWEI-vz79jN                     [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+--- nfc ---
+mState=off
+mScreenState=ON_UNLOCKED
+--- NFC /api/nfc/tap ---
+{"ok":true,"status":{"connected":true,"initialized":true,"discovering":false,"cardPresent":true,"cardUid":"04112233445566","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":22,"txResponses":31,"apduCount":0,"recentCmds":["mt=1,gid=00,oid=00,len=1","mt=1,gid=00,oid=01,len=2","mt=1,gid=01,oid=00,len=10","mt=1,gid=02,oid=00,len=0","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=4","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=11","mt=0,gid=01,oid=00,len=6","mt=0,gid=01,oid=00,len=5","mt=1,gid=02,oid=03,len=2","mt=1,gid=00,oid=03,len=2","mt=1,gid=00,oid=02,len=4","mt=1,gid=0f,oid=21,len=0","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=16","mt=1,gid=00,oid=02,len=5","mt=1,gid=01,oid=03,len=15","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=03,len=15","mt=1,gid=01,oid=06,len=1"]}}
+
+--- 纯蜂窝移动数据 ccmni1 (关 Wi-Fi ping 223.5.5.5) ---
+6: ccmni1    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1\       valid_lft forever preferred_lft forever
+PING 223.5.5.5 (223.5.5.5) from 100.64.155.15 ccmni1: 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=0.319 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=0.210 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=0.184 ms
+64 bytes from 223.5.5.5: icmp_seq=4 ttl=64 time=0.222 ms
+
+--- 223.5.5.5 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3054ms
+rtt min/avg/max/mdev = 0.184/0.233/0.319/0.054 ms
+--- 静置 10 秒后 top ---
+Tasks: 429 total,   2 running, 427 sleeping,   0 stopped,   0 zombie
+  Mem:    11387M total,    10988M used,      399M free,       10M buffers
+ Swap:     6143M total,       50M used,     6093M free,     7910M cached
+800%cpu   7%user   0%nice  22%sys 744%idle   0%iow  22%irq   4%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+ 7664 root         20   0    0    0    0 S  7.4   0.0   0:10.39 [cdh-wifi-tx]
+14976 shell        20   0 2.2G 6.2M 5.2M R  3.7   0.0   0:00.02 top -b -n 1 -m 10
+ 8175 u0_a152      20   0  10G 191M 109M S  3.7   1.6   0:21.49 com.oplus.aiunit
+  716 system       18  -2  16G 793M 485M S  3.7   6.9   0:43.88 system_server
+  383 root         20   0    0    0    0 I  3.7   0.0   0:01.45 [kworker/u16:3-events_unbound]
+  248 root         20   0    0    0    0 S  3.7   0.0   0:04.60 [khvcd]
+14977 shell        20   0 2.0G 5.8M 5.2M S  0.0   0.0   0:00.00 head -n 18
+14974 shell        20   0 2.0G 3.7M 3.2M S  0.0   0.0   0:00.00 sh -c top -b -n 1 -m 10 | head -n 18
+14972 root         20   0 2.1G 5.7M 5.1M S  0.0   0.0   0:00.00 sleep 2
+14900 root         20   0 2.0G 4.1M 3.3M S  0.0   0.0   0:00.00 iptables-restore --noflush -w -v
+--- 8. 开启蓝牙与 NFC 实测 ---
+=== BT ===
+  enabled: true
+  state: ON
+  time since enabled: 00:00:06.181
+Bluetooth crashed 0 times
+  ConnectionState: STATE_DISCONNECTED
+  State: ON
+AdapterState:
+  mState: 0
+    mActiveMediaPlayerState: 0
+AVRCP Native State:
+=== NFC ===
+mState=on
+mScreenState=ON_UNLOCKED
+{"ok":true,"status":{"connected":true,"initialized":true,"discovering":true,"cardPresent":true,"cardUid":"04112233445566","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":48,"txResponses":73,"apduCount":0,"recentCmds":["mt=1,gid=01,oid=00,len=10","mt=1,gid=02,oid=00,len=0","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=4","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=11","mt=0,gid=01,oid=00,len=6","mt=0,gid=01,oid=00,len=5","mt=1,gid=02,oid=03,len=2","mt=1,gid=00,oid=03,len=2","mt=1,gid=00,oid=02,len=4","mt=1,gid=0f,oid=21,len=0","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=16","mt=1,gid=00,oid=02,len=5","mt=1,gid=01,oid=03,len=15","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=03,len=15","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=01,len=7","mt=1,gid=01,oid=03,len=15","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=03,len=15"]}}
+
+--- 9. 切回照片模式补拍一张前摄 .jpg ---
+total 2455
+drwxrws--- 2 u0_a285 media_rw    3452 2025-01-01 00:00 .RENAME_TMP
+-rwxrwx--- 2 u0_a285 media_rw  450282 2026-11-27 17:52 .pending-1796377925-VID20261127175205.mp4
+-rwxrwx--- 1 u0_a285 media_rw  275699 2026-11-27 17:49 IMG20261127174938.jpg
+-rwxrwx--- 2 u0_a285 media_rw 1067383 2026-11-27 17:50 VID20261127174957.mp4
+-rwxrwx--- 2 u0_a285 media_rw  707119 2026-11-27 17:50 VID20261127175044.mp4
+FRONT_JPG=/sdcard/DCIM/Camera/IMG20261127174938.jpg
+out/agent/tmp/rmx6688-audit/front-capture.jpg: JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 4096x3072, components 3
+-rw-r--r--@ 1 cuimingqiang  staff   269K Nov 27 17:52 out/agent/tmp/rmx6688-audit/front-capture.jpg
+--- 10. 验证媒体扫描 + 播放录像解码器 ---
+Playing /sdcard/DCIM/Camera/VID20261127174957.mp4
+Starting: Intent { act=android.intent.action.VIEW dat=content://media/... typ=video/mp4 }
+--- 11. 强制照片模式拍前摄 .jpg ---
+total 3331
+drwxrws--- 2 u0_a285 media_rw    3452 2025-01-01 00:00 .RENAME_TMP
+-rwxrwx--- 1 u0_a285 media_rw  275699 2026-11-27 17:49 IMG20261127174938.jpg
+-rwxrwx--- 1 u0_a285 media_rw  279627 2026-11-27 17:52 IMG20261127175248.jpg
+-rwxrwx--- 2 u0_a285 media_rw 1067383 2026-11-27 17:50 VID20261127174957.mp4
+-rwxrwx--- 2 u0_a285 media_rw  707119 2026-11-27 17:50 VID20261127175044.mp4
+-rwxrwx--- 2 u0_a285 media_rw 1068433 2026-11-27 17:52 VID20261127175205.mp4
+NEW_JPG=/sdcard/DCIM/Camera/IMG20261127175248.jpg
+out/agent/tmp/rmx6688-audit/front-capture.jpg: data
+-rw-r--r--@ 1 cuimingqiang  staff   273K Nov 27 17:52 out/agent/tmp/rmx6688-audit/front-capture.jpg
+--- 12. 同意相册协议 -> 查看照片与播放录像 (解码器日志) ---
+MP4_ID=
+--- 13. 验证关相机后蓝牙稳定运行 0 crashes ---
+  enabled: true
+  state: ON
+  time since enabled: 00:01:25.067
+Bluetooth crashed 0 times
+connection_manager state:
+shim::legacy::bta::dm  current bta_dm_discovery_state:BTA_DM_DISCOVER_IDLE
+shim::legacy::bta::dm  current bta_dm_search_state:BTA_DM_SEARCH_IDLE
+    le_connectability_state: "ConnectabilityState::DISARMED",
+--- 14. 复查 IMG20261127175248.jpg 头部并确保前摄实拍有效 JPEG ---
+out/agent/tmp/rmx6688-audit/front-capture.jpg: data
+00000000: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+前摄重拍...
+total 3607
+drwxrws--- 2 u0_a285 media_rw    3452 2025-01-01 00:00 .RENAME_TMP
+-rwxrwx--- 1 u0_a285 media_rw  275699 2026-11-27 17:49 IMG20261127174938.jpg
+-rwxrwx--- 1 u0_a285 media_rw  279627 2026-11-27 17:52 IMG20261127175248.jpg
+-rwxrwx--- 1 u0_a285 media_rw  279731 2026-11-27 17:54 IMG20261127175411.jpg
+-rwxrwx--- 2 u0_a285 media_rw 1067383 2026-11-27 17:50 VID20261127174957.mp4
+-rwxrwx--- 2 u0_a285 media_rw  707119 2026-11-27 17:50 VID20261127175044.mp4
+-rwxrwx--- 2 u0_a285 media_rw 1068433 2026-11-27 17:52 VID20261127175205.mp4
+out/agent/tmp/rmx6688-audit/front-capture.jpg: JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 4096x3072, components 3
+--- 15. 进入相册网格截 gallery-view.png 并播放录像截 video-play.png ---
+VID_ID=
+--- 16. 相册内置播放器解码日志 ---
+11-27 17:55:02.438 12729 18168 D CCodecConfig: read media type: video/avc
+11-27 17:55:02.444 12729 18167 D CCodecConfig: ignoring local param raw.size (0xd2001800) as it is already supported
+11-27 17:55:02.444 12729 18167 D CCodecConfig: ignoring local param default.color (0x5200180b) as it is already supported
+11-27 17:55:02.444 12729 18168 D CCodecConfig: ignoring local param raw.size (0xd2001800) as it is already supported
+11-27 17:55:02.444 12729 18168 D CCodecConfig: ignoring local param default.color (0x5200180b) as it is already supported
+11-27 17:55:02.444 12729 18167 I CCodecConfig: query failed after returning 10 values (BAD_INDEX)
+11-27 17:55:02.445 12729 18168 I CCodecConfig: query failed after returning 10 values (BAD_INDEX)
+11-27 17:55:02.447  4112  4155 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_video_monitor_network_switch info:START,12729,Key,-5476376605526957568,Component,c2.v4l2.avc.decoder,Width,1080,Height,1920,IsMediaPlayer,0
+11-27 17:55:02.447  4112  4155 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_video_monitor_network_switch info:START,12729,Key,-5476376608208810240,Component,c2.v4l2.avc.decoder,Width,1920,Height,1080,IsMediaPlayer,0
+11-27 17:55:02.448  4112  4437 V OplusAtlasVideo: callback success event:atlas_event_video_monitor_network_switch eventInfo:START,12729,Key,-5476376605526957568,Component,c2.v4l2.avc.decoder,Width,1080,Height,1920,IsMediaPlayer,0
+11-27 17:55:02.449  4112  4437 V OplusAtlasVideo: callback success event:atlas_event_video_monitor_network_switch eventInfo:START,12729,Key,-5476376608208810240,Component,c2.v4l2.avc.decoder,Width,1920,Height,1080,IsMediaPlayer,0
+11-27 17:55:02.458 12729 18167 W CCodec  : This behavior is subject to change. It is recommended that app developers double check whether the requested max input size is in reasonable range.
+11-27 17:55:02.458 12729 18168 W CCodec  : This behavior is subject to change. It is recommended that app developers double check whether the requested max input size is in reasonable range.
+11-27 17:55:02.458 12729 18167 I CCodecConfig: query failed after returning 10 values (BAD_INDEX)
+11-27 17:55:02.458 12729 18168 I CCodecConfig: query failed after returning 10 values (BAD_INDEX)
+11-27 17:55:03.139 12729 18160 D MediaCodecVideoRenderer_ins_259: lastBufferPresentationTimeUs:292855,elapsedSinceLastRenderUs:108000
+11-27 17:55:03.258 12729 18160 D MediaCodecVideoRenderer_ins_259: lastBufferPresentationTimeUs:451977,elapsedSinceLastRenderUs:119000
+11-27 17:55:03.360 12729 18160 D MediaCodecVideoRenderer_ins_259: lastBufferPresentationTimeUs:560522,elapsedSinceLastRenderUs:102000
+11-27 17:55:03.468 12729 18160 D MediaCodecVideoRenderer_ins_259: lastBufferPresentationTimeUs:696300,elapsedSinceLastRenderUs:107000
+11-27 17:55:04.144 12729 18160 D MediaCodecVideoRenderer_ins_259: lastBufferPresentationTimeUs:1379144,elapsedSinceLastRenderUs:115000

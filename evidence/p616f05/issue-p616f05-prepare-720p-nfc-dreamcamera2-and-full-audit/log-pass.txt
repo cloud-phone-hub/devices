@@ -1,0 +1,500 @@
+Command exited with code 0.
+
+Command output:
+Target image: idx=21 specId=P616F05_14-TP1A.220624.014-20260324 res=720x1600
+Created spec=P616F05_14-TP1A.220624.014-20260324 idx=1 adb=127.0.0.1:5911 vnc=5912 sku=8GB+256GB
+READY in 42.8s on 127.0.0.1:5911
+=== Waiting 12s for post-boot services to settle ===
+=== 1. DEVICE IDENTITY & DISPLAY & MEMORY & BATTERY & CPUFREQ ===
+enforce=Enforcing
+boot=1
+uptime=46.60 148.18
+model=Z2459
+market=ZTE Blade V70
+ddr=8192M
+baseband=4G_MODEM_22B_W25.24.3_P5,4G_MODEM_22B_W25.24.3_P5
+ril=sprd-ril
+c2input=-1
+sim_state=LOADED,ABSENT
+operator=中国联通,
+net_type=LTE,Unknown
+Physical size: 720x1600
+Physical density: 320
+MemTotal:        7760724 kB
+MemAvailable:    4929228 kB
+SwapTotal:       6291452 kB
+SwapFree:        6291452 kB
+5000000
+100
+Full
+1820000 1728000 1632000 1536000 1416000 1320000 1228800 1120000 1024000 921600 819200 691200 614400 
+2028000 1920000 1820000 1728000 1632000 1536000 1416000 1320000 1228800 1120000 1024000 921600 
+=== RESTARTING SERVICES ===
+restarting=0
+=== MEDIA PLAYER SERVICE ===
+Service media.player: found
+=== SENSORS ===
+Total 14 h/w sensors, 14 running 0 disabled clients:
+0x00000005) active-count = 1; sampling_period(ms) = {200.0}, selected = 200.00 ms; batching_period(ms) = {0.0}, selected = 0.00 ms
+0x0000001b) active-count = 2; sampling_period(ms) = {66.7, 66.7}, selected = 66.67 ms; batching_period(ms) = {0.0, 0.0}, selected = 0.00 ms
+0x00000001) lsm6dso_acc               | STMicroelectronics | ver: 1 | type: android.sensor.accelerometer(1) | perm: n/a | flags: 0x00000000
+0x00000002) mmc5603                   | Memsic          | ver: 1 | type: android.sensor.magnetic_field(2) | perm: n/a | flags: 0x00000000
+0x00000003) ORIENTATION               | UNISOC          | ver: 1 | type: android.sensor.orientation(3) | perm: n/a | flags: 0x00000000
+0x00000005) tcs3701_l                 | AMS             | ver: 1 | type: android.sensor.light(5) | perm: n/a | flags: 0x00000002
+0x00000008) tcs3701_p                 | AMS             | ver: 1 | type: android.sensor.proximity(8) | perm: n/a | flags: 0x00000003
+0x0000000e) UNCALI_MAG                | UNISOC          | ver: 1 | type: android.sensor.magnetic_field_uncalibrated(14) | perm: n/a | flags: 0x00000000
+0x00000011) SIGNIFICANT_MOTION        | UNISOC          | ver: 1 | type: android.sensor.significant_motion(17) | perm: n/a | flags: 0x00000005
+0x00000012) STEP_DETECTOR             | UNISOC          | ver: 1 | type: android.sensor.step_detector(18) | perm: android.permission.ACTIVITY_RECOGNITION | flags: 0x00000006
+0x00000013) STEP_COUNTER              | UNISOC          | ver: 1 | type: android.sensor.step_counter(19) | perm: android.permission.ACTIVITY_RECOGNITION | flags: 0x00000002
+0x00000014) GEOMAGNETIC_ROTATION_VECTOR | UNISOC          | ver: 1 | type: android.sensor.geomagnetic_rotation_vector(20) | perm: n/a | flags: 0x00000000
+0x00000016) TILT_DETECTOR             | UNISOC          | ver: 1 | type: android.sensor.tilt_detector(22) | perm: n/a | flags: 0x00000007
+0x0000001b) DEVICE_ORIENTATION        | UNISOC          | ver: 1 | type: android.sensor.device_orientation(27) | perm: n/a | flags: 0x00000002
+0x00000023) UNCALI_ACC                | UNISOC          | ver: 1 | type: android.sensor.accelerometer_uncalibrated(35) | perm: n/a | flags: 0x00000000
+0x000000da) STEP_DETECTOR_WAKEUP      | UNISOC          | ver: 1 | type: android.sensor.step_detector(18) | perm: android.permission.ACTIVITY_RECOGNITION | flags: 0x00000007
+0x5f67656f) GeoMag Rotation Vector Sensor | AOSP            | ver: 3 | type: android.sensor.geomagnetic_rotation_vector(20) | perm: n/a | flags: 0x00000000
+tcs3701_l (handle=0x00000005, connections=1)
+DEVICE_ORIENTATION (handle=0x0000001b, connections=2)
+=== 2. BLUETOOTH / WIFI / RADIO / NFC ===
+Bluetooth Status
+  enabled: true
+  state: ON
+  address: DA:4C:10:DE:00:00
+  name: nubia V70
+  time since enabled: 00:00:03.041
+
+Enable log:
+  03-25 01:54:17.198  Enabled  due to APPLICATION_REQUEST by android
+
+Bluetooth crashed 0 times
+
+0 BLE apps registered
+
+BluetoothManagerService:
+  mEnable:true
+  mQuietEnable:false
+  mEnableExternal:true
+  mQuietEnableExternal:false
+
+Failed to write while dumping service bluetooth_manager: Broken pipe
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+6: ccmni1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc pfifo_fast state UP group default qlen 1000
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+       valid_lft forever preferred_lft forever
+16: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    inet 192.168.20.100/24 brd 192.168.20.255 scope global wlan0
+       valid_lft forever preferred_lft forever
+Wi-Fi is enabled
+mWifiInfo SSID: "MStand-Guest-6262", BSSID: 70:f9:6d:6b:4d:d2, MAC: <none>, IP: /192.168.20.100, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -38, Link speed: 54Mbps, Tx Link speed: 54Mbps, Max Supported Tx Link speed: 54Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: 54Mbps, Frequency: 5745MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"MStand-Guest-6262"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=123 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=1.66 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=1.39 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 1.396/42.324/123.910/57.690 ms
+--- Pure Cellular Data Test (svc wifi disable) ---
+100.64.155.0/24 dev ccmni1 proto kernel scope link src 100.64.155.15 
+PING 223.5.5.5 (223.5.5.5) from 100.64.155.15 ccmni1: 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=3.58 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=1.14 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=0.361 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2037ms
+rtt min/avg/max/mdev = 0.361/1.696/3.581/1.370 ms
+--- NFC Status & Tap Test ---
+{"connected":true,"initialized":true,"discovering":true,"cardPresent":false,"rxCommands":22,"txResponses":31,"apduCount":0,"recentCmds":["mt=1,gid=00,oid=00,len=1","mt=1,gid=00,oid=01,len=2","mt=1,gid=01,oid=00,len=10","mt=1,gid=02,oid=00,len=0","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=4","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=11","mt=0,gid=01,oid=00,len=6","mt=0,gid=01,oid=00,len=5","mt=1,gid=02,oid=03,len=2","mt=1,gid=00,oid=03,len=2","mt=1,gid=00,oid=02,len=4","mt=1,gid=0f,oid=21,len=0","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=16","mt=1,gid=00,oid=02,len=5","mt=1,gid=01,oid=03,len=15","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=01,len=7","mt=1,gid=01,oid=03,len=15"]}
+
+{"ok":true,"status":{"connected":true,"initialized":true,"discovering":true,"cardPresent":true,"cardUid":"04112233445566","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":22,"txResponses":32,"apduCount":0,"recentCmds":["mt=1,gid=00,oid=00,len=1","mt=1,gid=00,oid=01,len=2","mt=1,gid=01,oid=00,len=10","mt=1,gid=02,oid=00,len=0","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=4","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=11","mt=0,gid=01,oid=00,len=6","mt=0,gid=01,oid=00,len=5","mt=1,gid=02,oid=03,len=2","mt=1,gid=00,oid=03,len=2","mt=1,gid=00,oid=02,len=4","mt=1,gid=0f,oid=21,len=0","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=16","mt=1,gid=00,oid=02,len=5","mt=1,gid=01,oid=03,len=15","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=01,len=7","mt=1,gid=01,oid=03,len=15"]}}
+
+{"connected":true,"initialized":true,"discovering":true,"cardPresent":true,"cardUid":"04112233445566","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":22,"txResponses":32,"apduCount":0,"recentCmds":["mt=1,gid=00,oid=00,len=1","mt=1,gid=00,oid=01,len=2","mt=1,gid=01,oid=00,len=10","mt=1,gid=02,oid=00,len=0","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=4","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=11","mt=0,gid=01,oid=00,len=6","mt=0,gid=01,oid=00,len=5","mt=1,gid=02,oid=03,len=2","mt=1,gid=00,oid=03,len=2","mt=1,gid=00,oid=02,len=4","mt=1,gid=0f,oid=21,len=0","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=16","mt=1,gid=00,oid=02,len=5","mt=1,gid=01,oid=03,len=15","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=01,len=7","mt=1,gid=01,oid=03,len=15"]}
+
+mState=on
+mScreenState=ON_UNLOCKED
+mIsSecureNfcEnabled=false
+mIsAlwaysOnSupported=false
+SnoopLogMode=FILTERED
+VendorDebugEnabled=false
+mTechMask: default
+mEnableLPD: true
+mEnableReader: false
+mEnableHostRouting: true
+mEnableP2p: false
+Registered HCE services for current user: 
+User 机主 : 
+    ComponentInfo{com.google.android.gms/com.google.android.gms.nearby.mediums.nearfieldcommunication.NfcAdvertisingService} (Description: Nearby) (UID: 10294)
+    On Host Service
+    Static AID groups:
+        Category: other
+            AID: F00000FE2C
+    Dynamic AID groups:
+    Settings Activity: null
+    Requires Device Unlock: false
+    Requires Device ScreenOn: true
+
+    ComponentInfo{com.google.android.apps.walletnfcrel/com.google.commerce.tapandpay.android.transit.tap.service.TransitHceService} (Description: Google Pay) (UID: 10261)
+    On Host Service
+Failed to write while dumping service nfc: Broken pipe
+=== 3. CRASH & TOP & SELINUX ===
+Tasks: 337 total,   3 running, 334 sleeping,   0 stopped,   0 zombie
+  Mem:  7760724K total,  7447460K used,   313264K free,    95496K buffers
+ Swap:  6291452K total,      768K used,  6290684K free,  5185980K cached
+800%cpu  93%user  82%nice 268%sys 254%idle  39%iow  61%irq   4%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  660 system       18  -2  23G 484M 316M S 67.8   6.3   0:39.66 system_server
+ 4944 u0_a297       0 -20  19G 340M 238M S 64.2   4.4   0:04.14 com.google.android.googlequicksearchbox:search
+ 4402 u0_a294      20   0  18G 410M 303M S 57.1   5.4   0:12.09 com.google.android.gms.persistent
+ 5534 u0_a293      20   0  18G 266M 183M S 42.8   3.5   0:03.38 com.google.android.apps.messaging
+  457 system       -3  -8  11G 123M  28M R 42.8   1.6   0:11.23 surfaceflinger
+ 3860 u0_a305       0 -20  17G 252M 165M S 39.2   3.3   0:02.16 com.google.android.inputmethod.latin
+ 6502 root         20   0    0    0    0 S 32.1   0.0   0:01.58 [cdh-wifi-tx]
+ 3646 u0_a329       0 -20  17G 257M 152M S 21.4   3.3   0:07.50 com.zte.mifavor.launcher
+  193 logd         30  10  10G 7.2M 4.4M S 17.8   0.0   0:05.10 logd
+10817 shell        20   0  10G 4.9M 4.1M R 14.2   0.0   0:00.02 top -b -n 1
+ 4443 u0_a294      20   0  18G 291M 202M S 14.2   3.8   0:06.97 com.google.android.gms
+  450 system       -3 -20  11G  12M  10M S 10.7   0.1   0:02.48 android.hardware.graphics.composer@2.4-service
+  224 root         20   0    0    0    0 R 10.7   0.0   0:00.08 [khvcd]
+10271 u0_a321      20   0  19G 272M 190M S  3.5   3.5   0:00.68 com.google.android.youtube
+10082 u0_a311      20   0  18G 247M 174M S  3.5   3.2   0:00.46 com.google.android.apps.tachyon
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: FATAL EXCEPTION: Thread-2
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: Process: com.android.chrome, PID: 9762
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: java.lang.RuntimeException: Starting in 64-bit mode requires the 64-bit native library. If the device is 64-bit only, see alternatives here: https://crbug.com/1303857#c7.
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: 	at TU3.onResult(chromium-TrichromeChromeGoogle.aab-stable-677826031:47)
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: 	at org.chromium.base.library_loader.b.f(chromium-TrichromeChromeGoogle.aab-stable-677826031:174)
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: 	at org.chromium.base.library_loader.b.b(chromium-TrichromeChromeGoogle.aab-stable-677826031:10)
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: 	at org.chromium.base.library_loader.b.a(chromium-TrichromeChromeGoogle.aab-stable-677826031:8)
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: 	at xX.run(chromium-TrichromeChromeGoogle.aab-stable-677826031:3)
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:1012)
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: Caused by: java.lang.UnsatisfiedLinkError: Failed at System.loadLibrary()
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: 	at org.chromium.base.library_loader.d.b(chromium-TrichromeChromeGoogle.aab-stable-677826031:133)
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: 	at org.chromium.base.library_loader.b.g(chromium-TrichromeChromeGoogle.aab-stable-677826031:68)
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: 	at org.chromium.base.library_loader.b.f(chromium-TrichromeChromeGoogle.aab-stable-677826031:38)
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: 	... 4 more
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: Caused by: java.lang.UnsatisfiedLinkError: dlopen failed: library "libmonochrome.so" not found
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: 	at java.lang.Runtime.loadLibrary0(Runtime.java:1081)
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: 	at java.lang.Runtime.loadLibrary0(Runtime.java:1003)
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: 	at java.lang.System.loadLibrary(System.java:1765)
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: 	at org.chromium.base.library_loader.d.b(chromium-TrichromeChromeGoogle.aab-stable-677826031:98)
+03-25 01:54:26.865  9762  9802 E AndroidRuntime: 	... 6 more
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: FATAL EXCEPTION: Thread-2
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: Process: com.android.chrome, PID: 10130
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: java.lang.RuntimeException: Starting in 64-bit mode requires the 64-bit native library. If the device is 64-bit only, see alternatives here: https://crbug.com/1303857#c7.
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: 	at TU3.onResult(chromium-TrichromeChromeGoogle.aab-stable-677826031:47)
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: 	at org.chromium.base.library_loader.b.f(chromium-TrichromeChromeGoogle.aab-stable-677826031:174)
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: 	at org.chromium.base.library_loader.b.b(chromium-TrichromeChromeGoogle.aab-stable-677826031:10)
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: 	at org.chromium.base.library_loader.b.a(chromium-TrichromeChromeGoogle.aab-stable-677826031:8)
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: 	at xX.run(chromium-TrichromeChromeGoogle.aab-stable-677826031:3)
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:1012)
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: Caused by: java.lang.UnsatisfiedLinkError: Failed at System.loadLibrary()
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: 	at org.chromium.base.library_loader.d.b(chromium-TrichromeChromeGoogle.aab-stable-677826031:133)
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: 	at org.chromium.base.library_loader.b.g(chromium-TrichromeChromeGoogle.aab-stable-677826031:68)
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: 	at org.chromium.base.library_loader.b.f(chromium-TrichromeChromeGoogle.aab-stable-677826031:38)
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: 	... 4 more
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: Caused by: java.lang.UnsatisfiedLinkError: dlopen failed: library "libmonochrome.so" not found
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: 	at java.lang.Runtime.loadLibrary0(Runtime.java:1081)
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: 	at java.lang.Runtime.loadLibrary0(Runtime.java:1003)
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: 	at java.lang.System.loadLibrary(System.java:1765)
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: 	at org.chromium.base.library_loader.d.b(chromium-TrichromeChromeGoogle.aab-stable-677826031:98)
+11-27 03:20:29.235 10130 10164 E AndroidRuntime: 	... 6 more
+Command exited with code 0.
+
+Command output:
+=== 1. GRANT READ_PHONE_STATE & DISMISS HOME TIP & OPEN CAMERA ===
+Starting: Intent { cmp=com.android.camera2/com.android.camera.CameraLauncher }
+Status: ok
+LaunchState: WARM
+Activity: com.android.camera2/com.android.camera.CameraActivity
+TotalTime: 342
+WaitTime: 357
+Complete
+--- Rear Camera Status ---
+{"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":36,"framesDropped":0}
+
+=== 2. REAR PHOTO + FRONT PHOTO + VIDEO RECORD ===
+total 0
+total 16
+-rwxrwx--- 1 u0_a368 media_rw 12405 2026-11-27 03:22 IMG_20261127_032232.jpg
+total 44
+-rwxrwx--- 1 u0_a368 media_rw 12405 2026-11-27 03:22 IMG_20261127_032232.jpg
+-rwxrwx--- 1 u0_a368 media_rw 16194 2026-11-27 03:22 IMG_20261127_032242.jpg
+-rwxrwx--- 1 u0_a368 media_rw  8470 2026-11-27 03:22 IMG_20261127_032247.jpg
+=== 3. PULL MP4/JPG & TEST V4L2 HW DECODER & ENCODER ===
+Recorded MP4: 
+=== 4. RETURN HOME & VERIFY CDCM_PAUSE & LAUNCHER GFXINFO & IDLE CPU ===
+--- Camera status sample 1 (after Home) ---
+{"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":242,"framesDropped":0}
+
+--- Camera status sample 2 (3s later, framesSent should match) ---
+{"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":242,"framesDropped":0}
+
+Total frames rendered: 547
+Janky frames: 168 (30.71%)
+Janky frames (legacy): 368 (67.28%)
+50th percentile: 16ms
+90th percentile: 26ms
+95th percentile: 28ms
+99th percentile: 29ms
+50th gpu percentile: 4ms
+90th gpu percentile: 12ms
+95th gpu percentile: 12ms
+99th gpu percentile: 13ms
+=== STEADY IDLE TOP ===
+Tasks: 322 total,   2 running, 320 sleeping,   0 stopped,   0 zombie
+  Mem:  7760724K total,  7376428K used,   384296K free,   112084K buffers
+ Swap:  6291452K total,      768K used,  6290684K free,  5345388K cached
+800%cpu  19%user   0%nice  27%sys 746%idle   0%iow   4%irq   4%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  457 system       -3  -8  11G 125M  29M S 11.5   1.6   0:21.49 surfaceflinger
+  450 system       -3  -3  11G  12M  10M S 11.5   0.1   0:08.69 android.hardware.graphics.composer@2.4-service
+ 3646 u0_a329       0 -20  17G 282M 167M S  7.6   3.7   0:14.35 com.zte.mifavor.launcher
+  225 root         20   0    0    0    0 I  3.8   0.0   0:00.32 [kworker/0:2-events]
+  193 logd         30  10  10G 7.2M 4.4M S  3.8   0.0   0:06.74 logd
+13126 shell        20   0  10G 3.5M 2.8M S  0.0   0.0   0:00.00 head -n 18
+13125 shell        20   0  10G 5.1M 4.3M R  0.0   0.0   0:00.02 top -b -n 1
+13123 root         20   0  10G 3.4M 2.7M S  0.0   0.0   0:00.00 sleep 2
+13115 root         20   0  10G 3.5M 2.8M S  0.0   0.0   0:00.00 sleep 30
+13027 shell        20   0  10G 3.3M 2.6M S  0.0   0.0   0:00.01 sh -c ?dumpsys gfxinfo com.zte.mifavor.launcher reset >/dev/null 2>&1?for i in 1 2 3 4 5; do?  input swipe 550 800 150 800 250?  sleep 0.5?  input swipe 150 800 550 800 250?  sleep 0.5?done?dumpsys gfxinfo com.zte.mifavor.launcher | grep -E "Total frames|Janky frames|50th|90th|95th|99th"?sleep 5?echo "=== STEADY IDLE TOP ==="?top -b -n 1 | head -n 18?echo "=== LMKD & CRASH CHECK ==="?logcat -d -b all | grep -c "lowmemorykiller: swap is fatal" || true?logcat -d -b crash | grep -v "com.android.chrome" | tail -n 30
+12891 u0_a208      20   0  16G 105M  54M S  0.0   1.3   0:00.02 com.android.providers.calendar
+12851 u0_a299      20   0  17G 144M  85M S  0.0   1.8   0:00.18 com.google.android.calendar
+12549 u0_a286      20   0  16G 103M  52M S  0.0   1.3   0:00.05 com.android.imsserviceentitlement
+=== LMKD & CRASH CHECK ===
+0
+11-27 03:20:34.232 10820 10842 E AndroidRuntime: Caused by: java.lang.UnsatisfiedLinkError: Failed at System.loadLibrary()
+11-27 03:20:34.232 10820 10842 E AndroidRuntime: 	at org.chromium.base.library_loader.d.b(chromium-TrichromeChromeGoogle.aab-stable-677826031:133)
+11-27 03:20:34.232 10820 10842 E AndroidRuntime: 	at org.chromium.base.library_loader.b.g(chromium-TrichromeChromeGoogle.aab-stable-677826031:68)
+11-27 03:20:34.232 10820 10842 E AndroidRuntime: 	at org.chromium.base.library_loader.b.f(chromium-TrichromeChromeGoogle.aab-stable-677826031:38)
+11-27 03:20:34.232 10820 10842 E AndroidRuntime: 	... 4 more
+11-27 03:20:34.232 10820 10842 E AndroidRuntime: Caused by: java.lang.UnsatisfiedLinkError: dlopen failed: library "libmonochrome.so" not found
+11-27 03:20:34.232 10820 10842 E AndroidRuntime: 	at java.lang.Runtime.loadLibrary0(Runtime.java:1081)
+11-27 03:20:34.232 10820 10842 E AndroidRuntime: 	at java.lang.Runtime.loadLibrary0(Runtime.java:1003)
+11-27 03:20:34.232 10820 10842 E AndroidRuntime: 	at java.lang.System.loadLibrary(System.java:1765)
+11-27 03:20:34.232 10820 10842 E AndroidRuntime: 	at org.chromium.base.library_loader.d.b(chromium-TrichromeChromeGoogle.aab-stable-677826031:98)
+11-27 03:20:34.232 10820 10842 E AndroidRuntime: 	... 6 more
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: FATAL EXCEPTION: Thread-2
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: java.lang.RuntimeException: Starting in 64-bit mode requires the 64-bit native library. If the device is 64-bit only, see alternatives here: https://crbug.com/1303857#c7.
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: 	at TU3.onResult(chromium-TrichromeChromeGoogle.aab-stable-677826031:47)
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: 	at org.chromium.base.library_loader.b.f(chromium-TrichromeChromeGoogle.aab-stable-677826031:174)
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: 	at org.chromium.base.library_loader.b.b(chromium-TrichromeChromeGoogle.aab-stable-677826031:10)
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: 	at org.chromium.base.library_loader.b.a(chromium-TrichromeChromeGoogle.aab-stable-677826031:8)
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: 	at xX.run(chromium-TrichromeChromeGoogle.aab-stable-677826031:3)
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: 	at java.lang.Thread.run(Thread.java:1012)
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: Caused by: java.lang.UnsatisfiedLinkError: Failed at System.loadLibrary()
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: 	at org.chromium.base.library_loader.d.b(chromium-TrichromeChromeGoogle.aab-stable-677826031:133)
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: 	at org.chromium.base.library_loader.b.g(chromium-TrichromeChromeGoogle.aab-stable-677826031:68)
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: 	at org.chromium.base.library_loader.b.f(chromium-TrichromeChromeGoogle.aab-stable-677826031:38)
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: 	... 4 more
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: Caused by: java.lang.UnsatisfiedLinkError: dlopen failed: library "libmonochrome.so" not found
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: 	at java.lang.Runtime.loadLibrary0(Runtime.java:1081)
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: 	at java.lang.Runtime.loadLibrary0(Runtime.java:1003)
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: 	at java.lang.System.loadLibrary(System.java:1765)
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: 	at org.chromium.base.library_loader.d.b(chromium-TrichromeChromeGoogle.aab-stable-677826031:98)
+11-27 03:20:39.145 10963 10979 E AndroidRuntime: 	... 6 more
+Command exited with code 0.
+
+Command output:
+=== 1. SWIPE RIGHT TO VIDEO MODE & RECORD MP4 ===
+total 72
+-rwxrwx--- 1 u0_a368 media_rw 12405 2026-11-27 03:22 IMG_20261127_032232.jpg
+-rwxrwx--- 1 u0_a368 media_rw 16194 2026-11-27 03:22 IMG_20261127_032242.jpg
+-rwxrwx--- 1 u0_a368 media_rw  8470 2026-11-27 03:22 IMG_20261127_032247.jpg
+-rwxrwx--- 1 u0_a368 media_rw  8490 2026-11-27 03:24 IMG_20261127_032444.jpg
+-rwxrwx--- 1 u0_a368 media_rw 16181 2026-11-27 03:24 IMG_20261127_032449.jpg
+Recorded MP4: 
+=== 3. CHECK V4L2 SERVICE & DEVICES & QEMU.LOG AVC ===
+crw-rw---- 1 media camera 81,   0 1970-01-01 08:00 /dev/video0
+crw-rw---- 1 media camera 81,   1 1970-01-01 08:00 /dev/video1
+wifi           380     1 0 03:19:39 ?     00:00:00 android.hardware.wifi@1.0-service
+bluetooth      431     1 0 03:19:39 ?     00:00:00 android.hardware.bluetooth@1.1-service.btlinux
+system         432     1 7 03:19:39 ?     00:00:23 android.hardware.camera-service
+media          440     1 0 03:19:39 ?     00:00:00 android.hardware.media.c2@1.2-service-v4l2-64
+nfc            442     1 0 03:19:39 ?     00:00:00 android.hardware.nfc-service
+radio          445     1 0 03:19:40 ?     00:00:00 android.hardware.radio-service
+cameraserver   517     1 1 03:19:40 ?     00:00:03 cameraserver
+media          531     1 0 03:19:40 ?     00:00:00 mediaserver
+wifi           534     1 0 03:19:40 ?     00:00:00 wificond
+radio         3239   420 0 03:19:59 ?     00:00:00 com.spreadtrum.ims
+radio         4290   420 1 03:20:03 ?     00:00:03 com.android.phone
+nfc           4575   420 0 03:20:05 ?     00:00:00 com.android.nfc
+root          6502     2 2 03:20:08 ?     00:00:05 [cdh-wifi-tx]
+root          6505     2 1 03:20:08 ?     00:00:01 [cdh-wifi-rx]
+bluetooth     8025   420 0 03:20:15 ?     00:00:00 com.android.bluetooth
+wifi          9967     1 0 03:20:25 ?     00:00:00 wpa_supplicant -O/data/vendor/wifi/wpa/sockets -dd -g@android:wpa_wlan0
+u0_a261      11109   420 0 03:20:52 ?     00:00:00 com.google.android.apps.walletnfcrel
+u0_a282      12040   420 0 03:21:51 ?     00:00:00 com.google.android.apps.carrier.carrierwifi
+u0_a343      12410   420 5 03:22:19 ?     00:00:08 com.android.camera2
+Camera pause check 1: {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":906,"framesDropped":0}
+Camera pause check 2: {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":906,"framesDropped":0}
+qemu.log=/Volumes/work/cloud-phone-hub/out/core/daemon/runtime/P616F05_14-TP1A.220624.014-20260324/1/qemu.log
+tool_service_avc=0
+sprd_networkcontrol_avc=0
+Command exited with code 0.
+
+Command output:
+=== 1. OPEN DREAMCAMERA2 IN VIDEO MODE & RECORD MP4 ===
+Starting: Intent { act=android.media.action.VIDEO_CAMERA pkg=com.android.camera2 }
+Status: ok
+LaunchState: COLD
+Activity: com.android.camera2/com.android.camera.CaptureActivity
+TotalTime: 253
+WaitTime: 254
+Complete
+total 440
+-rwxrwx--- 1 u0_a368 media_rw  12405 2026-11-27 03:22 IMG_20261127_032232.jpg
+-rwxrwx--- 1 u0_a368 media_rw  16194 2026-11-27 03:22 IMG_20261127_032242.jpg
+-rwxrwx--- 1 u0_a368 media_rw   8470 2026-11-27 03:22 IMG_20261127_032247.jpg
+-rwxrwx--- 1 u0_a368 media_rw   8490 2026-11-27 03:24 IMG_20261127_032444.jpg
+-rwxrwx--- 1 u0_a368 media_rw  16181 2026-11-27 03:24 IMG_20261127_032449.jpg
+-rwxrwx--- 2 u0_a368 media_rw 371789 2026-11-27 03:26 VID_20261127_032644.mp4
+11-27 03:26:39.343 14819 14819 I CAM_VideoModule: MediaRecorder start
+11-27 03:26:39.347   531   539 I cdh-mediaserver: recorder started (codecStarted=1 muxer=0xb40000711178e350)
+11-27 03:26:40.347 14819 14819 I CAM_VideoModule: HandleMessage5
+11-27 03:26:41.348 14819 14819 I CAM_VideoModule: HandleMessage5
+11-27 03:26:42.350 14819 14819 I CAM_VideoModule: HandleMessage10
+11-27 03:26:42.350 14819 14819 I CAM_VideoModule: HandleMessage5
+11-27 03:26:43.350 14819 14819 I CAM_VideoModule: HandleMessage5
+11-27 03:26:44.348 14819 14819 I CAM_VideoModule: HandleMessage5
+11-27 03:26:44.423 14819 14819 I CAM_VideoModule: onShutterButtonClick
+11-27 03:26:44.423 14819 14819 I CAM_VideoModule: stopVideoRecording
+11-27 03:26:44.429 14819 14819 I CAM_VideoModule: MediaRecorder.stop ......    starttime = 435356
+11-27 03:26:44.459   531   539 I cdh-mediaserver: recorder stopped cleanly
+11-27 03:26:44.459 14819 14819 I CAM_VideoModule: MediaRecorder.stop ......    endtime = 30
+11-27 03:26:44.459 14819 14819 I CAM_VideoModule: saveOrShowCaptureResult
+11-27 03:26:44.459 14819 14819 I CAM_VideoModule: saveVideo
+11-27 03:26:44.460 14819 14819 I CAM_VideoModule: data name is /storage/emulated/0/DCIM/Camera/VID_20261127_032644.mp4
+11-27 03:26:44.460 14819 14819 I CAM_VideoModule: update is_pending to 0
+11-27 03:26:44.460 14819 14819 I CAM_VideoModule: Releasing media recorder.
+11-27 03:26:44.461 14819 14904 I CAM_VideoModule: get current battery is 100
+11-27 03:26:44.462 14819 14904 I CAM_VideoModule: setDataSource
+11-27 03:26:44.469 14819 14904 I CAM_VideoModule: beforStopTime: 435397
+11-27 03:26:44.469 14819 14904 I CAM_VideoModule: get video thumbnail cost:0
+11-27 03:26:44.470 14819 14904 I CAM_VideoModule: updateUri
+11-27 03:26:44.479 14819 14904 I CAM_VideoModule: readAndWriteVideoDebugInfo
+11-27 03:26:45.346 14819 14819 I CAM_VideoModule: HandleMessage5
+Recorded MP4: /sdcard/DCIM/Camera/VID_20261127_032644.mp4
+/sdcard/DCIM/Camera/VID_20261127_032644.mp4: 1 file pulled, 0 skipped. 87.2 MB/s (371789 bytes in 0.004s)
+codec_name=h264
+width=1920
+height=1080
+coded_width=1920
+coded_height=1080
+nal_length_size=4
+avg_frame_rate=13680000/455431
+duration_ts=455431
+duration=5.060344
+bit_rate=582659
+max_bit_rate=N/A
+extradata_size=36
+duration=5.060344
+size=371789
+bit_rate=587768
+=== 2. TEST c2.v4l2.avc.encoder VIA SCREENRECORD & c2.v4l2.avc.decoder VIA PHOTOS ===
+Aborted 
+-rw-r--r-- 1 shell shell 0 2026-11-27 03:26 /data/local/tmp/v4l2_enc_test.mp4
+Created At: 2026-11-27T03:27:11+08:00
+Completed At: 2026-11-27T03:27:13+08:00
+Command exited with code 0.
+
+Command output:
+--------- beginning of crash
+11-27 03:26:47.718 15476 15480 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 15480 (CodecLooper), pid 15476 (screenrecord)
+11-27 03:26:47.780 15484 15484 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+11-27 03:26:47.780 15484 15484 F DEBUG   : Build fingerprint: 'nubia/P616F05_1/P616F05:14/UP1A.231005.007/20260325.014551:user/release-keys'
+11-27 03:26:47.780 15484 15484 F DEBUG   : Revision: '0'
+11-27 03:26:47.780 15484 15484 F DEBUG   : ABI: 'arm64'
+11-27 03:26:47.780 15484 15484 F DEBUG   : Timestamp: 2026-11-27 03:26:47.733834014+0800
+11-27 03:26:47.780 15484 15484 F DEBUG   : Process uptime: 1s
+11-27 03:26:47.780 15484 15484 F DEBUG   : Cmdline: screenrecord --size 720x1280 --time-limit 3 /data/local/tmp/v4l2_enc_test.mp4
+11-27 03:26:47.780 15484 15484 F DEBUG   : pid: 15476, tid: 15480, name: CodecLooper  >>> screenrecord <<<
+11-27 03:26:47.780 15484 15484 F DEBUG   : uid: 2000
+11-27 03:26:47.780 15484 15484 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+11-27 03:26:47.780 15484 15484 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+11-27 03:26:47.780 15484 15484 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+11-27 03:26:47.780 15484 15484 F DEBUG   : Abort message: 'Check failed: serviceManager Hardware service manager is not running.'
+11-27 03:26:47.780 15484 15484 F DEBUG   :     x0  0000000000000000  x1  0000000000003c78  x2  0000000000000006  x3  0000007a7e9cc400
+11-27 03:26:47.781 15484 15484 F DEBUG   :     x4  7160471f71646660  x5  7160471f71646660  x6  7160471f71646660  x7  7f7f7f7f7f7f7f7f
+11-27 03:26:47.781 15484 15484 F DEBUG   :     x8  00000000000000f0  x9  0000007d322310c0  x10 0000000000000001  x11 0000007d32287b90
+11-27 03:26:47.781 15484 15484 F DEBUG   :     x12 0000007a7e9cc380  x13 0000000000000046  x14 b400007b71ccd390  x15 000000027bf8e576
+11-27 03:26:47.781 15484 15484 F DEBUG   :     x16 0000007d32301cf8  x17 0000007d322d0610  x18 0000007a7e4ba000  x19 0000000000003c74
+11-27 03:26:47.781 15484 15484 F DEBUG   :     x20 0000000000003c78  x21 00000000ffffffff  x22 0000007a7e9cd000  x23 000000001a252787
+11-27 03:26:47.781 15484 15484 F DEBUG   :     x24 0000007d28516000  x25 0000007d284de28f  x26 0000007d284de4ea  x27 0000007a7e9cd000
+11-27 03:26:47.781 15484 15484 F DEBUG   :     x28 0000007a7e9cc6f0  x29 0000007a7e9cc480
+11-27 03:26:47.781 15484 15484 F DEBUG   :     lr  0000007d32278178  sp  0000007a7e9cc3e0  pc  0000007d322781a4  pst 0000000000000000
+11-27 03:26:47.781 15484 15484 F DEBUG   : 13 total frames
+11-27 03:26:47.781 15484 15484 F DEBUG   : backtrace:
+11-27 03:26:47.781 15484 15484 F DEBUG   :       #00 pc 00000000000691a4  /apex/com.android.runtime/lib64/bionic/libc.so (abort+164) (BuildId: 8fd815aa2d0fa4a346df2b7c9cfde8d7)
+11-27 03:26:47.781 15484 15484 F DEBUG   :       #01 pc 00000000000113ec  /system/lib64/liblog.so (__android_log_default_aborter+12) (BuildId: 1a9a380dea52dd8121889333bf71178a)
+11-27 03:26:47.781 15484 15484 F DEBUG   :       #02 pc 00000000000d0450  /system/lib64/libbinder.so (android::base::LogMessage::~LogMessage()+352) (BuildId: f956dea5b5026ff8e56d33fa169c20ec)
+11-27 03:26:47.781 15484 15484 F DEBUG   :       #03 pc 0000000000014088  /system/lib64/libcodec2_client.so (android::Codec2Client::GetServiceNames()::$_0::operator()() const+1752) (BuildId: f44a234c1db4bba4a27b876e87de21a4)
+11-27 03:26:47.781 15484 15484 F DEBUG   :       #04 pc 000000000001ed00  /system/lib64/libcodec2_client.so (android::Codec2Client::CreateFromService(char const*, bool) (.cfi)+800) (BuildId: f44a234c1db4bba4a27b876e87de21a4)
+11-27 03:26:47.781 15484 15484 F DEBUG   :       #05 pc 000000000004f7c4  /system/lib64/libsfplugin_ccodec.so (android::CCodec::allocate(android::sp<android::MediaCodecInfo> const&)+404) (BuildId: 74c152198a301bcbb10c22ccd78fa092)
+11-27 03:26:47.781 15484 15484 F DEBUG   :       #06 pc 0000000000049df0  /system/lib64/libsfplugin_ccodec.so (android::CCodec::onMessageReceived(android::sp<android::AMessage> const&)+6304) (BuildId: 74c152198a301bcbb10c22ccd78fa092)
+11-27 03:26:47.781 15484 15484 F DEBUG   :       #07 pc 0000000000024738  /system/lib64/libstagefright_foundation.so (android::AHandler::deliverMessage(android::sp<android::AMessage> const&)+200) (BuildId: 37831b27169d40b8f205a42cba6a21bc)
+11-27 03:26:47.781 15484 15484 F DEBUG   :       #08 pc 000000000002bb1c  /system/lib64/libstagefright_foundation.so (android::AMessage::deliver()+172) (BuildId: 37831b27169d40b8f205a42cba6a21bc)
+11-27 03:26:47.781 15484 15484 F DEBUG   :       #09 pc 0000000000025df4  /system/lib64/libstagefright_foundation.so (android::ALooper::loop()+676) (BuildId: 37831b27169d40b8f205a42cba6a21bc)
+11-27 03:26:47.781 15484 15484 F DEBUG   :       #10 pc 000000000001530c  /system/lib64/libutils.so (android::Thread::_threadLoop(void*)+284) (BuildId: e1aa88e73f8cbe876b1da77e01ae24a5)
+11-27 03:26:47.781 15484 15484 F DEBUG   :       #11 pc 00000000000d6e6c  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+204) (BuildId: 8fd815aa2d0fa4a346df2b7c9cfde8d7)
+11-27 03:26:47.781 15484 15484 F DEBUG   :       #12 pc 000000000006ab00  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: 8fd815aa2d0fa4a346df2b7c9cfde8d7)
+=== C2 / V4L2 / SCREENRECORD LOGS ===
+11-27 03:27:13.856   440 15551 I V4L2Decoder: QBUF to input queue, bitstreamId=805
+11-27 03:27:13.861   440 15551 I V4L2Decoder: QBUF to input queue, bitstreamId=806
+11-27 03:27:13.866   440 15551 I V4L2Decoder: QBUF to input queue, bitstreamId=807
+11-27 03:27:13.869   440 15551 I V4L2Decoder: QBUF to input queue, bitstreamId=808
+11-27 03:27:13.872   440 15551 I V4L2Decoder: QBUF to input queue, bitstreamId=809
+11-27 03:27:13.875   440 15551 I V4L2Decoder: QBUF to input queue, bitstreamId=810
+11-27 03:27:13.877   440 15551 I V4L2Decoder: QBUF to input queue, bitstreamId=811
+11-27 03:27:13.880   440 15551 I V4L2Decoder: DQBUF from input queue, v4l2Id=0 bitstreamId=805
+11-27 03:27:13.882   440 15551 I V4L2Decoder: DQBUF from input queue, v4l2Id=1 bitstreamId=806
+11-27 03:27:13.882   440 15551 I V4L2Decoder: DQBUF from input queue, v4l2Id=2 bitstreamId=807
+11-27 03:27:13.882   440 15551 I V4L2Decoder: DQBUF from input queue, v4l2Id=3 bitstreamId=808
+11-27 03:27:13.883   440 15551 I V4L2Decoder: DQBUF from input queue, v4l2Id=4 bitstreamId=809
+11-27 03:27:13.883   440 15551 I V4L2Decoder: DQBUF from input queue, v4l2Id=5 bitstreamId=810
+11-27 03:27:13.883   440 15551 I V4L2Decoder: DQBUF from input queue, v4l2Id=6 bitstreamId=811
+11-27 03:27:13.883   440 15551 I V4L2Decoder: QBUF to output queue, blockId=671, V4L2Id=10
+11-27 03:27:13.885   440 15551 I V4L2Decoder: DQBUF from output queue, bufferId=10, bitstreamId=783, bytesused=3110400, isLast=0
+11-27 03:27:13.889   440 15551 I V4L2Decoder: Copied USERPTR CAPTURE staging to YV12 graphic 1920x1080 format=NV12
+11-27 03:27:13.889   440 15551 I V4L2Decoder: Send output frame(bitstreamId=783) to client
+11-27 03:27:13.889   440 15551 I V4L2Decoder: Calling mOutputCb for bitstreamId=783
+11-27 03:27:13.894   440 15551 I V4L2Decoder: Returned from mOutputCb for bitstreamId=783
+11-27 03:27:13.902   440 15551 I V4L2Decoder: QBUF to output queue, blockId=665, V4L2Id=7
+11-27 03:27:13.905   440 15551 I V4L2Decoder: DQBUF from output queue, bufferId=7, bitstreamId=784, bytesused=3110400, isLast=0
+11-27 03:27:13.911   440 15551 I V4L2Decoder: Copied USERPTR CAPTURE staging to YV12 graphic 1920x1080 format=NV12
+11-27 03:27:13.911   440 15551 I V4L2Decoder: Send output frame(bitstreamId=784) to client
+11-27 03:27:13.911   440 15551 I V4L2Decoder: Calling mOutputCb for bitstreamId=784
+11-27 03:27:13.915   440 15551 I V4L2Decoder: Returned from mOutputCb for bitstreamId=784
+11-27 03:27:13.950   440 15551 I V4L2Decoder: QBUF to output queue, blockId=677, V4L2Id=13
+11-27 03:27:13.952   440 15551 I V4L2Decoder: DQBUF from output queue, bufferId=13, bitstreamId=785, bytesused=3110400, isLast=0
+11-27 03:27:13.956   440 15551 I V4L2Decoder: Copied USERPTR CAPTURE staging to YV12 graphic 1920x1080 format=NV12
+11-27 03:27:13.956   440 15551 I V4L2Decoder: Send output frame(bitstreamId=785) to client
+11-27 03:27:13.956   440 15551 I V4L2Decoder: Calling mOutputCb for bitstreamId=785
+11-27 03:27:13.962   440 15551 I V4L2Decoder: Returned from mOutputCb for bitstreamId=785
+11-27 03:27:13.988   440 15551 I V4L2Decoder: QBUF to output queue, blockId=695, V4L2Id=22
+11-27 03:27:13.990   440 15551 I V4L2Decoder: DQBUF from output queue, bufferId=22, bitstreamId=786, bytesused=3110400, isLast=0
+11-27 03:27:13.995   440 15551 I V4L2Decoder: Copied USERPTR CAPTURE staging to YV12 graphic 1920x1080 format=NV12
+11-27 03:27:13.995   440 15551 I V4L2Decoder: Send output frame(bitstreamId=786) to client
+11-27 03:27:13.995   440 15551 I V4L2Decoder: Calling mOutputCb for bitstreamId=786
+11-27 03:27:13.999   440 15551 I V4L2Decoder: Returned from mOutputCb for bitstreamId=786
+11-27 03:27:14.038   440 15551 I V4L2Decoder: QBUF to output queue, blockId=667, V4L2Id=8
+11-27 03:27:14.040   440 15551 I V4L2Decoder: DQBUF from output queue, bufferId=8, bitstreamId=787, bytesused=3110400, isLast=0
+11-27 03:27:14.045   440 15551 I V4L2Decoder: Copied USERPTR CAPTURE staging to YV12 graphic 1920x1080 format=NV12
+11-27 03:27:14.045   440 15551 I V4L2Decoder: Send output frame(bitstreamId=787) to client
+11-27 03:27:14.045   440 15551 I V4L2Decoder: Calling mOutputCb for bitstreamId=787
+11-27 03:27:14.053   440 15551 I V4L2Decoder: Returned from mOutputCb for bitstreamId=787
+11-27 03:27:14.083   440 15551 I V4L2Decoder: QBUF to output queue, blockId=661, V4L2Id=5
+11-27 03:27:14.085   440 15551 I V4L2Decoder: DQBUF from output queue, bufferId=5, bitstreamId=788, bytesused=3110400, isLast=0
+11-27 03:27:14.089   440 15551 I V4L2Decoder: Copied USERPTR CAPTURE staging to YV12 graphic 1920x1080 format=NV12
+11-27 03:27:14.089   440 15551 I V4L2Decoder: Send output frame(bitstreamId=788) to client
+11-27 03:27:14.089   440 15551 I V4L2Decoder: Calling mOutputCb for bitstreamId=788
+11-27 03:27:14.095   440 15551 I V4L2Decoder: Returned from mOutputCb for bitstreamId=788
+11-27 03:27:14.132   440 15551 I V4L2Decoder: QBUF to output queue, blockId=687, V4L2Id=18
+11-27 03:27:14.134   440 15551 I V4L2Decoder: DQBUF from output queue, bufferId=18, bitstreamId=789, bytesused=3110400, isLast=0
+11-27 03:27:14.138   440 15551 I V4L2Decoder: Copied USERPTR CAPTURE staging to YV12 graphic 1920x1080 format=NV12
+11-27 03:27:14.138   440 15551 I V4L2Decoder: Send output frame(bitstreamId=789) to client
+11-27 03:27:14.138   440 15551 I V4L2Decoder: Calling mOutputCb for bitstreamId=789
+11-27 03:27:14.143   440 15551 I V4L2Decoder: Returned from mOutputCb for bitstreamId=789
+11-27 03:27:14.148   440 15551 I V4L2Decoder: QBUF to input queue, bitstreamId=812
+11-27 03:27:14.151   440 15551 I V4L2Decoder: QBUF to input queue, bitstreamId=813
+11-27 03:27:14.154   440 15551 I V4L2Decoder: QBUF to input queue, bitstreamId=814
+11-27 03:27:14.156   440 15551 I V4L2Decoder: QBUF to input queue, bitstreamId=815

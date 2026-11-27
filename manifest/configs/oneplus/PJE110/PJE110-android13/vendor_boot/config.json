@@ -5,5 +5,5 @@
     "androidboot.slot=a",
     "androidboot.veritymode.managed=yes"
   ],
-  "fstab": "kalama"
+  "fstab": "qcom"
 }

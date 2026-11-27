@@ -7,6 +7,7 @@
 (typeattributeset hal_charger_server (hal_health_default))
 (typeattributeset hal_charger_client ({{pick_list:system_server,system_app,platform_app}}))
 (allow hal_charger_server hal_charger_service (service_manager (add find)))
+(allow hal_health_default hal_charger_service (service_manager (add find)))
 (allow hal_charger_client hal_charger_server (binder (call transfer)))
 (allow hal_charger_server hal_charger_client (binder (transfer)))
 (allow hal_charger_client hal_charger_server (fd (use)))

@@ -30,3 +30,12 @@
 (allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_configs_file}} (file (read getattr map open)))
 (allow {{pick:audio_vendor_parameter_parser}} {{pick:vendor_configs_file}} (lnk_file (read getattr open)))
 ;; @end
+
+;; 静默 MTK lbs_dbg_ext / Moto perf.freezer / radio 无硬件高频探测产生的 SELinux 审计风暴
+(dontaudit {{pick:lbs_dbg_ext}} {{pick:hwservicemanager_prop}} (file (ioctl read getattr lock map open)))
+(dontaudit {{pick:system_server}} {{pick:binderfs_logs_proc}} (file (ioctl read getattr lock map open)))
+(dontaudit {{pick:hal_radio_default}} {{pick:serialno_prop}} (file (ioctl read getattr lock map open)))
+(dontaudit {{pick:zygote}} {{pick:vendor_default_prop}} (file (ioctl read getattr lock map open)))
+(dontaudit {{pick:audioserver}} {{pick:vendor_default_prop}} (file (ioctl read getattr lock map open)))
+(dontaudit {{pick:mediaserver}} {{pick:vendor_default_prop}} (file (ioctl read getattr lock map open)))
+

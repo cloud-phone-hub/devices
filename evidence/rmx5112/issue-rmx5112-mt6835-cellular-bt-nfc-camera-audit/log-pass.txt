@@ -1,0 +1,127 @@
+================ PART 1: CORE / NET / BT / NFC ================
+--- CORE HEALTH ---
+getenforce: Enforcing
+restarting_count: 0
+kernelsu_lsmod: NONE
+MemTotal:        7760724 kB
+MemAvailable:    4947992 kB
+SwapTotal:       6291452 kB
+SwapFree:        6290684 kB
+Filename				Type		Size		Used		Priority
+/dev/block/zram0                        partition	6291452		768		-2
+  AC powered: false
+  USB powered: false
+  Wireless powered: false
+  Max charging voltage: 0
+  Charge counter: 5975000
+  level: 85
+  voltage: 4480
+  temperature: 295
+charge_full_design=7000000
+--- BLUETOOTH ---
+BluetoothShellCommand: Exec enable
+enable: Success
+  enabled: false
+  state: OFF
+  name: RMX5112
+Bluetooth crashed 0 times
+connection_manager state:
+shim::legacy::bta::dm  current bta_dm_discovery_state:BTA_DM_DISCOVER_IDLE
+shim::legacy::bta::dm  current bta_dm_search_state:BTA_DM_SEARCH_IDLE
+    le_connectability_state: "ConnectabilityState::DISARMED",
+      manufacturer_name: 224,
+--- CELLULAR (Wi-Fi OFF) ---
+6: ccmni1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc pfifo_fast state UP group default qlen 1000
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+       valid_lft forever preferred_lft forever
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=0.347 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=0.232 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=0.248 ms
+64 bytes from 223.5.5.5: icmp_seq=4 ttl=64 time=1.81 ms
+
+--- 223.5.5.5 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3055ms
+rtt min/avg/max/mdev = 0.232/0.660/1.816/0.669 ms
+--- NFC ---
+mState=on
+mScreenState=ON_UNLOCKED
+--- NFC TAP API ---
+{"ok":true,"status":{"connected":true,"initialized":true,"discovering":true,"cardPresent":true,"cardUid":"04112233445566","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":53,"txResponses":72,"apduCount":0,"recentCmds":["mt=1,gid=01,oid=00,len=10","mt=1,gid=02,oid=00,len=0","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=4","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=11","mt=0,gid=01,oid=00,len=6","mt=0,gid=01,oid=00,len=5","mt=1,gid=02,oid=03,len=2","mt=1,gid=00,oid=03,len=2","mt=1,gid=00,oid=02,len=4","mt=1,gid=0f,oid=21,len=0","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=16","mt=1,gid=00,oid=02,len=5","mt=1,gid=01,oid=03,len=15","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=03,len=15","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=01,len=7","mt=1,gid=01,oid=03,len=15","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=03,len=15"]}}
+
+--- CRASH CHECK ---
+--------- beginning of crash
+11-27 17:02:39.541   808   808 I libimsma_adapt: mtk-brm-commit-id:8783a29bae0ae84a456239f3212f27bdafa94c91
+11-27 17:02:39.541   808   808 I libimsma_adapt: mtk-brm-change-id:Iee598bb542f5de895a4b71649fbc79b2d93bc3de
+11-27 17:02:39.541   808   808 I libimsma_adapt: mtk-brm-merge-id:none
+11-27 17:02:40.351   877   877 I emdlogger: mtk-brm-commit-id:04ab5bd912477cf2320dee54df9ac8b535476f2d
+11-27 17:02:40.351   877   877 I emdlogger: mtk-brm-change-id:Ib405363e450403587f3a66bbe5b353966c086aba
+11-27 17:02:40.351   877   877 I emdlogger: mtk-brm-merge-id:none
+
+================ PART 2: CAMERA / VIDEO / GALLERY / CDCM_PAUSE / TOP ================
+=== 1. Switch to PHOTO mode & take rear photo ===
+total 280
+-rwxrwx--- 1 u0_a253 media_rw 286006 2026-11-27 17:07 IMG20261127170709.jpg
+=== 2. Switch to front camera, capture preview & front photo ===
+total 392
+-rwxrwx--- 1 u0_a253 media_rw 286006 2026-11-27 17:07 IMG20261127170709.jpg
+-rwxrwx--- 1 u0_a253 media_rw 112635 2026-11-27 17:07 IMG20261127170718.jpg
+=== 3. Switch back to rear, switch to VIDEO mode & record 7s ===
+total 1828
+-rwxrwx--- 1 u0_a253 media_rw  286006 2026-11-27 17:07 IMG20261127170709.jpg
+-rwxrwx--- 1 u0_a253 media_rw  112635 2026-11-27 17:07 IMG20261127170718.jpg
+-rwxrwx--- 2 u0_a253 media_rw 1468105 2026-11-27 17:07 VID20261127170730.mp4
+=== 4. Pull photos & video and probe ===
+JPGs: /sdcard/DCIM/Camera/IMG20261127170718.jpg
+/sdcard/DCIM/Camera/IMG20261127170709.jpg
+MP4: /sdcard/DCIM/Camera/VID20261127170730.mp4
+[STREAM]
+codec_name=h264
+width=1920
+height=1080
+r_frame_rate=90000/1
+[SIDE_DATA]
+[/SIDE_DATA]
+[/STREAM]
+[FORMAT]
+duration=7.100333
+size=1468105
+[/FORMAT]
+=== 5. Gallery welcome dismiss -> view photo -> play video ===
+Starting: Intent { cmp=com.coloros.gallery3d/.app.MainActivity }
+--- media.metrics codec entries ---
+  332: {codec, (11-27 17:05:39.155), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.bitrate=3939840, android.media.mediacodec.bitrate_mode=VBR, android.media.mediacodec.codec=c2.android.avc.encoder, android.media.mediacodec.codec-max-input-size=0, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.component-color-format=2130708361, android.media.mediacodec.config-color-range=0, android.media.mediacodec.config-color-standard=0, android.media.mediacodec.config-color-transfer=0, android.media.mediacodec.encoder=1, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=7117681135064186880, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=44, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operating-rate=3.000000e+01, android.media.mediacodec.operation-mode=1, android.media.mediacodec.original.bitrate=192000, android.media.mediacodec.output-surface=1, android.media.mediacodec.priority=0, android.media.mediacodec.profile=65536, android.media.mediacodec.resolution-change-count=0, android.media.mediacodec.rotation-degrees=0, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.shaped=6, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=0, android.media.mediacodec.video-qp-b-max=51, android.media.mediacodec.video-qp-i-max=45, android.media.mediacodec.video-qp-p-max=48, android.media.mediacodec.width=1920)}
+  339: {codec, (11-27 17:05:46.052), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.bitrate=3939840, android.media.mediacodec.bitrate_mode=VBR, android.media.mediacodec.codec=c2.android.avc.encoder, android.media.mediacodec.codec-max-input-size=0, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.component-color-format=2130708361, android.media.mediacodec.config-color-range=0, android.media.mediacodec.config-color-standard=0, android.media.mediacodec.config-color-transfer=0, android.media.mediacodec.encoder=1, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=7117681135064186881, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=30, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operating-rate=3.000000e+01, android.media.mediacodec.operation-mode=1, android.media.mediacodec.original.bitrate=192000, android.media.mediacodec.output-surface=1, android.media.mediacodec.priority=0, android.media.mediacodec.profile=65536, android.media.mediacodec.resolution-change-count=0, android.media.mediacodec.rotation-degrees=0, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.shaped=6, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=0, android.media.mediacodec.video-qp-b-max=51, android.media.mediacodec.video-qp-i-max=45, android.media.mediacodec.video-qp-p-max=48, android.media.mediacodec.width=1920)}
+  348: {codec, (11-27 17:07:27.097), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.bitrate=3939840, android.media.mediacodec.bitrate_mode=VBR, android.media.mediacodec.codec=c2.android.avc.encoder, android.media.mediacodec.codec-max-input-size=0, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.component-color-format=2130708361, android.media.mediacodec.config-color-range=0, android.media.mediacodec.config-color-standard=0, android.media.mediacodec.config-color-transfer=0, android.media.mediacodec.encoder=1, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=7117681135064186882, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=76, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operating-rate=3.000000e+01, android.media.mediacodec.operation-mode=1, android.media.mediacodec.original.bitrate=192000, android.media.mediacodec.output-surface=1, android.media.mediacodec.priority=0, android.media.mediacodec.profile=65536, android.media.mediacodec.resolution-change-count=0, android.media.mediacodec.rotation-degrees=0, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.shaped=6, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=0, android.media.mediacodec.video-qp-b-max=51, android.media.mediacodec.video-qp-i-max=45, android.media.mediacodec.video-qp-p-max=48, android.media.mediacodec.width=1920)}
+  360: {codec, (11-27 17:07:37.380), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.bitrate=20000000, android.media.mediacodec.bitrate_mode=VBR, android.media.mediacodec.codec=c2.android.avc.encoder, android.media.mediacodec.codec-max-input-size=0, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.component-color-format=2130708361, android.media.mediacodec.config-color-range=0, android.media.mediacodec.config-color-standard=0, android.media.mediacodec.config-color-transfer=0, android.media.mediacodec.encoder=1, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=7117681135064186883, android.media.mediacodec.latency.unknown=216, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=7237, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operating-rate=3.000000e+01, android.media.mediacodec.operation-mode=1, android.media.mediacodec.original.bitrate=20000000, android.media.mediacodec.output-surface=1, android.media.mediacodec.parsed-color-range=1, android.media.mediacodec.parsed-color-standard=1, android.media.mediacodec.parsed-color-transfer=2, android.media.mediacodec.pixel-format=1, android.media.mediacodec.priority=0, android.media.mediacodec.profile=65536, android.media.mediacodec.resolution-change-count=1, android.media.mediacodec.rotation-degrees=0, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.shaped=1, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=0, android.media.mediacodec.vencode.bytes=445016, android.media.mediacodec.vencode.durationUs=7069705, android.media.mediacodec.vencode.frames=214, android.media.mediacodec.video.input.bytes=0, android.media.mediacodec.video.input.frames=0, android.media.mediacodec.width=1920)}
+  365: {codec, (11-27 17:07:37.500), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.codec=c2.android.avc.decoder, android.media.mediacodec.codec-max-input-size=2097152, android.media.mediacodec.color-format=2135033992, android.media.mediacodec.component-color-format=2135033992, android.media.mediacodec.config-color-range=2, android.media.mediacodec.config-color-standard=1, android.media.mediacodec.config-color-transfer=2, android.media.mediacodec.encoder=0, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=7117681135064186884, android.media.mediacodec.latency.unknown=1, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=58, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.output-surface=1, android.media.mediacodec.parsed-color-range=1, android.media.mediacodec.parsed-color-standard=1, android.media.mediacodec.parsed-color-transfer=2, android.media.mediacodec.pixel-format=842094169, android.media.mediacodec.profile=65536, android.media.mediacodec.resolution-change-count=1, android.media.mediacodec.rotation-degrees=90, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=15466, android.media.mediacodec.width=1920)}
+  371: {codec, (11-27 17:07:37.708), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.codec=c2.android.avc.decoder, android.media.mediacodec.codec-max-input-size=2097152, android.media.mediacodec.color-format=2135033992, android.media.mediacodec.component-color-format=2135033992, android.media.mediacodec.config-color-range=2, android.media.mediacodec.config-color-standard=1, android.media.mediacodec.config-color-transfer=2, android.media.mediacodec.encoder=0, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=7117681135064186885, android.media.mediacodec.latency.unknown=1, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=50, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.output-surface=1, android.media.mediacodec.parsed-color-range=1, android.media.mediacodec.parsed-color-standard=1, android.media.mediacodec.parsed-color-transfer=2, android.media.mediacodec.pixel-format=842094169, android.media.mediacodec.profile=65536, android.media.mediacodec.resolution-change-count=1, android.media.mediacodec.rotation-degrees=90, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=15466, android.media.mediacodec.width=1920)}
+=== 6. Return HOME -> verify CDCM_PAUSE & host framesSent freeze ===
+camera/status T1: {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":1052,"framesDropped":0}
+camera/status T2: {"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":1052,"framesDropped":0}
+=== 7. Final BT uptime, top idle, restarting=0, crash check ===
+restarting_count: 0
+  enabled: true
+  state: ON
+  name: RMX5112
+  time since enabled: 00:03:18.328
+Bluetooth crashed 0 times
+connection_manager state:
+shim::legacy::bta::dm  current bta_dm_discovery_state:BTA_DM_DISCOVER_IDLE
+shim::legacy::bta::dm  current bta_dm_search_state:BTA_DM_SEARCH_IDLE
+Tasks: 370 total,   2 running, 368 sleeping,   0 stopped,   0 zombie
+  Mem:  7760724K total,  7242096K used,   518628K free,    11168K buffers
+ Swap:  6291452K total,     4352K used,  6287100K free,  4908424K cached
+800%cpu   0%user   0%nice   4%sys 792%idle   0%iow   4%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+13770 shell        20   0 2.0G 6.3M 5.3M R  3.8   0.0   0:00.00 top -n 1 -b
+  712 system       -3  -8 3.9G 161M  63M S  3.8   2.1   0:34.36 surfaceflinger
+13769 shell        20   0 2.0G 5.6M 4.8M S  0.0   0.0   0:00.00 head -n 15
+13768 shell        20   0 2.1G 5.7M 4.9M S  0.0   0.0   0:00.00 timeout 8 top -n 1 -b
+13758 shell        20   0 2.0G 3.9M 3.2M S  0.0   0.0   0:00.00 sh -c ?    echo "restarting_count: $(getprop | grep "init\.svc\." | grep -c restarting)"?    timeout 5 dumpsys bluetooth_manager | grep -E "enabled:|state:|name:|time since enabled:|Bluetooth crashed" | head -n 8?    timeout 8 top -n 1 -b | head -n 15?    echo "crash_log:"?    timeout 5 logcat -d -b crash 2>/dev/null | tail -n 20
+13757 root         20   0 2.1G 5.5M 4.7M S  0.0   0.0   0:00.00 sleep 2
+13673 root         20   0 2.1G 5.6M 4.8M S  0.0   0.0   0:00.00 sleep 30
+13419 artd         20   0 2.2G  16M  14M S  0.0   0.2   0:00.00 artd
+13310 root         20   0    0    0    0 I  0.0   0.0   0:00.00 [kworker/1:1]
+12372 u0_a112      20   0 7.7G 154M  95M S  0.0   2.0   0:00.09 com.oplus.account
+crash_log:

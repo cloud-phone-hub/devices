@@ -1,0 +1,466 @@
+=== Nothing Phone (3a) A15 & A16 Full Pass Log ===
+>>> Final Cold-Boot Zero-Crash & Direct Launcher & Settled Idle <<<
+[A15 crash count]: 0
+  mCurrentFocus=Window{b983cc5 u0 com.nothing.launcher/com.android.searchlauncher.SearchLauncher}
+  mFocusedApp=ActivityRecord{91739ac u0 com.nothing.launcher/com.android.searchlauncher.SearchLauncher t6}
+Tasks: 446 total,   2 running, 444 sleeping,   0 stopped,   0 zombie
+  Mem:    11388M total,     8019M used,     3369M free,        5M buffers
+ Swap:     6143M total,        0M used,     6143M free,     5548M cached
+800%cpu   2%user   2%nice   4%sys 791%idle   0%iow   2%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  731 system       18  -2  22G 627M 486M S  3.5   5.5   1:07.02 system_server
+ 8434 shell        20   0  10G 5.2M 4.2M R  1.7   0.0   0:00.34 top -b -n 1
+ 1532 u0_a171      20   0  16G 128M  69M S  1.7   1.1   0:00.46 com.qti.phone
+  200 system       20   0  10G 5.8M 4.5M S  1.7   0.0   0:06.78 servicemanager
+    8 root         20   0    0    0    0 I  1.7   0.0   0:03.84 [kworker/u16:0-phy0]
+ 8436 root         20   0  10G 4.1M 3.4M S  0.0   0.0   0:00.00 sleep 2
+ 8435 shell        20   0  10G 3.7M 3.0M S  0.0   0.0   0:00.01 head -n 12
+[A16 crash count]: 0
+  mCurrentFocus=Window{f126b3c u0 com.nothing.launcher/com.android.searchlauncher.SearchLauncher}
+  mFocusedApp=ActivityRecord{90283996 u0 com.nothing.launcher/com.android.searchlauncher.SearchLauncher t6}
+Tasks: 467 total,   2 running, 465 sleeping,   0 stopped,   0 zombie
+  Mem:    11388M total,    11099M used,      289M free,        8M buffers
+ Swap:     6143M total,        0M used,     6143M free,     7510M cached
+800%cpu   3%user 363%nice  43%sys 338%idle  20%iow  35%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+ 9185 artd         30  10  13G 793M 477M R  407   6.9   0:52.27 dex2oat64 --zip-fd=5 --zip-location=/data/app/~~U4gthprYc9shFb6IirzSww==/com.google.android.gms-ZO8qcfIUf-YIAVRFxi2Qcw==/GmsCore.apk --oat-fd=6 --oat-location=/data/app/~~U4gthprYc9shFb6IirzSww==/com.google.android.gms-ZO8qcfIUf-YIAVRFxi2Qcw==/oat/arm64/GmsCore.odex --output-vdex-fd=7 --swap-fd=8 --class-loader-context-fds=9:10:11:12:13 --class-loader-context=PCL[]{PCL[/system/framework/org.apache.http.legacy.jar]#PCL[/system/framework/com.android.media.remotedisplay.jar]#PCL[/system/framework/com.android.location.provider.jar]#PCL[/system_ext/framework/androidx.window.extensions.jar]#PCL[/system_ext/framework/androidx.window.sidecar.jar]} --classpath-dir=/data/app/~~U4gthprYc9shFb6IirzSww==/com.google.android.gms-ZO8qcfIUf-YIAVRFxi2Qcw== --instruction-set=arm64 --instruction-set-features=default --instruction-set-variant=kryo300 --compiler-filter=speed --compilation-reason=install --max-image-block-size=524288 --resolve-startup-const-strings=true --generate-mini-debug-info --runtime-arg -Xtarget-sdk-version:36 --runtime-arg -Xhidden-api-policy:enabled --assume-value=Landroid/os/Build$VERSION;->SDK_INT:36 --no-allow-profile-code --runtime-arg -Xms64m --runtime-arg -Xmx512m --comments=app-name:com.google.android.gms,app-version-name:25.38.30 (260400-807569344),app-version-code:253830035,art-version:361501120
+  234 logd         30  10  10G 7.7M 4.4M S 10.0   0.0   0:07.51 logd
+ 9672 shell        20   0  10G 5.3M 4.3M R  5.0   0.0   0:00.14 top -b -n 1
+  808 system       18  -2  24G 851M 619M S  5.0   7.4   1:51.82 system_server
+   99 root         20   0    0    0    0 I  2.5   0.0   0:00.42 [kworker/0:2-events]
+ 9673 shell        20   0  10G 3.6M 2.9M S  0.0   0.0   0:00.00 head -n 12
+ 9667 shell        20   0  10G 3.6M 2.8M S  0.0   0.0   0:00.00 sh -c dumpsys window | grep -E 'mCurrentFocus|mFocusedApp'; top -b -n 1 | head -n 12
+[A16 Shutter Tag Check]: 0
+total 0
+============================================================
+=== [a15] 1. HEALTH, PROPS, SPECS, MEM, ZRAM, BATTERY ===
+enforce=Enforcing
+boot=1
+model=A059
+market=Nothing Phone (3a)
+ddr=
+baseband=MPSS.DE.3.1.4-00560.1-MILOS_GEN_PACK-1
+c2_sel=aidl
+audio_c2=true
+sim_state=LOADED,ABSENT
+restarting=0
+Physical size: 1080x2392
+Physical density: 388
+MemTotal:       11662204 kB
+MemAvailable:    7806844 kB
+SwapTotal:       6291452 kB
+SwapFree:        6291452 kB
+-r--r--r-- 1 root root 4096 2026-11-27 02:22 /sys/class/power_supply/battery/charge_full_design
+5000000
+100
+cpufreq_count=48
+Total 21 h/w sensors, 21 running 0 disabled clients:
+0x00000001) active-count = 2; sampling_period(ms) = {80.0, 20.0}, selected = 20.00 ms; batching_period(ms) = {2000.0, 2147483.8}, selected = 2000.00 ms
+0x00000005) active-count = 1; sampling_period(ms) = {250.0}, selected = 250.00 ms; batching_period(ms) = {0.0}, selected = 0.00 ms
+0x0000001b) active-count = 1; sampling_period(ms) = {66.7}, selected = 66.67 ms; batching_period(ms) = {0.0}, selected = 0.00 ms
+Sensor List:
+0x00000001) lsm6dsv_acc               | STMicroelectronics | ver: 1 | type: android.sensor.accelerometer(1) | perm: n/a | flags: 0x00000000
+	continuous | minRate=12.50Hz | maxRate=400.00Hz | FIFO (max,reserved) = (4500, 3000) events | non-wakeUp | 
+0x00000002) mmc56x3x                  | Memsic          | ver: 1 | type: android.sensor.magnetic_field(2) | perm: n/a | flags: 0x00000000
+	continuous | minRate=5.00Hz | maxRate=100.00Hz | FIFO (max,reserved) = (4500, 600) events | non-wakeUp | 
+--------- beginning of crash
+10-13 14:07:02.068  2665  2665 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 2665 (init), pid 2665 (init)
+10-13 14:07:02.198  2704  2704 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+10-13 14:07:02.198  2704  2704 F DEBUG   : Build fingerprint: 'Nothing/Asteroids/Asteroids:15/AQ3A.241015.001/2510131406:user/release-keys'
+10-13 14:07:02.198  2704  2704 F DEBUG   : Revision: '0'
+10-13 14:07:02.198  2704  2704 F DEBUG   : ABI: 'arm64'
+10-13 14:07:02.198  2704  2704 F DEBUG   : Timestamp: 2025-10-13 14:07:02.123124920+0800
+10-13 14:07:02.198  2704  2704 F DEBUG   : Process uptime: 0s
+10-13 14:07:02.198  2704  2704 F DEBUG   : Cmdline: /system/bin/init second_stage
+10-13 14:07:02.198  2704  2704 F DEBUG   : pid: 2665, tid: 2665, name: init  >>> /system/bin/init <<<
+10-13 14:07:02.198  2704  2704 F DEBUG   : uid: 0
+10-13 14:07:02.198  2704  2704 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+10-13 14:07:02.198  2704  2704 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+10-13 14:07:02.198  2704  2704 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+10-13 14:07:02.198  2704  2704 F DEBUG   :     x0  0000000000000000  x1  0000000000000a69  x2  0000000000000006  x3  0000007feb3c75e0
+10-13 14:07:02.198  2704  2704 F DEBUG   :     x4  000000000000000a  x5  000000000000000a  x6  000000000000000a  x7  7f7f7f7f7f7f7f7f
+10-13 14:07:02.198  2704  2704 F DEBUG   :     x8  00000000000000f0  x9  0000007f7cb23468  x10 ffffff80ffffffdf  x11 0000000000000001
+10-13 14:07:02.198  2704  2704 F DEBUG   :     x12 0000000000000074  x13 0000000000000004  x14 0000000000000000  x15 0000000000000000
+10-13 14:07:02.198  2704  2704 F DEBUG   :     x16 0000007f7cbdaff8  x17 0000007f7cbc4e40  x18 0000007f7ff18000  x19 0000000000000a69
+10-13 14:07:02.198  2704  2704 F DEBUG   :     x20 0000000000000a69  x21 00000000ffffffff  x22 b400007dec35ba50  x23 0000007f7fde2ec0
+10-13 14:07:02.198  2704  2704 F DEBUG   :     x24 00000000000000ef  x25 aaaaaaaaaaaaaaab  x26 0000000000000008  x27 0000000000000002
+10-13 14:07:02.198  2704  2704 F DEBUG   :     x28 b400007eac370cc9  x29 0000007feb3c7660
+10-13 14:07:02.198  2704  2704 F DEBUG   :     lr  0000007f7cb60128  sp  0000007feb3c75c0  pc  0000007f7cb60158  pst 0000000000000000
+10-13 14:07:02.198  2704  2704 F DEBUG   : 13 total frames
+10-13 14:07:02.198  2704  2704 F DEBUG   : backtrace:
+10-13 14:07:02.198  2704  2704 F DEBUG   :       #00 pc 0000000000060158  /system/lib64/bootstrap/libc.so (abort+172) (BuildId: f98650a65aa2ec2d87236752af90aa7e)
+10-13 14:07:02.198  2704  2704 F DEBUG   :       #01 pc 00000000000144bc  /system/lib64/libbase.so (android::base::DefaultAborter(char const*)+16) (BuildId: 873a11b5320faf1e625be9b2fd433116)
+10-13 14:07:02.198  2704  2704 F DEBUG   :       #02 pc 0000000000016358  /system/lib64/libbase.so (android::base::SetAborter(std::__1::function<void (char const*)>&&)::$_0::__invoke(char const*)+84) (BuildId: 873a11b5320faf1e625be9b2fd433116)
+10-13 14:07:02.198  2704  2704 F DEBUG   :       #03 pc 00000000000158c8  /system/lib64/libbase.so (android::base::LogMessage::~LogMessage()+520) (BuildId: 873a11b5320faf1e625be9b2fd433116)
+10-13 14:07:02.198  2704  2704 F DEBUG   :       #04 pc 00000000001096b0  /system/bin/init (android::init::Service::RunService(std::__1::vector<android::init::Descriptor, std::__1::allocator<android::init::Descriptor>> const&, android::init::InterprocessFifo, android::init::InterprocessFifo)+2708) (BuildId: 451d3fab29e73b6adaf892f494b9f101)
+10-13 14:07:02.198  2704  2704 F DEBUG   :       #05 pc 0000000000108950  /system/bin/init (android::init::Service::Start()+5324) (BuildId: 451d3fab29e73b6adaf892f494b9f101)
+10-13 14:07:02.198  2704  2704 F DEBUG   :       #06 pc 00000000000f7e48  /system/bin/init (android::init::do_start(android::init::BuiltinArguments const&)+336) (BuildId: 451d3fab29e73b6adaf892f494b9f101)
+10-13 14:07:02.198  2704  2704 F DEBUG   :       #07 pc 00000000000da16c  /system/bin/init (android::init::RunBuiltinFunction(std::__1::function<android::base::expected<void, android::base::ResultError<android::base::Errno, true>> (android::init::BuiltinArguments const&)> const&, std::__1::vector<std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>, std::__1::allocator<std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>>> const&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)+516) (BuildId: 451d3fab29e73b6adaf892f494b9f101)
+10-13 14:07:02.198  2704  2704 F DEBUG   :       #08 pc 00000000000db59c  /system/bin/init (android::init::Action::ExecuteCommand(android::init::Command const&) const+268) (BuildId: 451d3fab29e73b6adaf892f494b9f101)
+10-13 14:07:02.198  2704  2704 F DEBUG   :       #09 pc 00000000000db3d4  /system/bin/init (android::init::Action::ExecuteOneCommand(unsigned long) const+336) (BuildId: 451d3fab29e73b6adaf892f494b9f101)
+=== [a15] 2. DESKTOP & ABOUT PHONE SCREENSHOT ===
+  mCurrentFocus=Window{a5c5d1f u0 com.android.setupwizard.overlay/com.android.setupwizard.overlay.hello.HelloActivity}
+  mFocusedApp=ActivityRecord{eb028e1 u0 com.android.setupwizard.overlay/.hello.HelloActivity t5}
+Starting: Intent { act=android.settings.DEVICE_INFO_SETTINGS }
+=== [a15] 3. BLUETOOTH ===
+BluetoothShellCommand: Exec enable
+enable: Success
+Bluetooth Status
+  enabled: true
+  state: ON
+  address: XX:XX:XX:XX:00:00
+  name: Nothing Phone (3a)
+  time since enabled: 00:00:04.342
+
+Enable log:
+  10-13 14:06:58.104 	Package [android] requested to [Enable]. 	Reason is SYSTEM_BOOT
+  11-27 02:22:25.553 	Package [android] requested to [Enable]. 	Reason is APPLICATION_REQUEST
+
+Bluetooth crashed 0 times
+
+0 BLE apps registered
+
+BluetoothManagerService:
+  mEnable:true
+  mQuietEnable:false
+  mEnableExternal:true
+  mQuietEnableExternal:false
+
+🚩Flag dump:
+bluetooth      459     1   10817580   4152 0                   0 S android.hardware.bluetooth-service
+bluetooth     1475   499   17712448 155192 0                   0 S com.android.bluetooth
+=== [a15] 4. WIFI & DUAL-PDN PURE CELLULAR ===
+Wifi is enabled
+Wifi scanning is only available when wifi is enabled
+==== Primary ClientModeManager instance ====
+Wifi is connected to "ASUS_5B1C_5G"
+WifiInfo: SSID: "ASUS_5B1C_5G", BSSID: 3c:7c:3f:34:5b:1d, MAC: <none>, IP: /192.168.50.100, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -40, Link speed: 54Mbps, Tx Link speed: 54Mbps, Max Supported Tx Link speed: 54Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: 54Mbps, Frequency: 5200MHz, Net ID: 0, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"ASUS_5B1C_5G"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+successfulTxPackets: 38136
+successfulTxPacketsPerSecond: 2.862261655173773
+retriedTxPackets: 0
+6: ccmni1    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1\       valid_lft forever preferred_lft forever
+6: ccmni1    inet6 2408:8456:2adc:9031:21d3:790b:f2f4:bb69/64 scope global nodad \       valid_lft forever preferred_lft forever
+6: ccmni1    inet6 fe80::21d3:790b:f2f4:bb69/64 scope link nodad \       valid_lft forever preferred_lft forever
+16: wlan0    inet 192.168.50.100/24 brd 192.168.50.255 scope global wlan0\       valid_lft forever preferred_lft forever
+16: wlan0    inet6 fe80::fcba:aaff:fe00:e85b/64 scope link \       valid_lft forever preferred_lft forever
+19: ccmni0    inet6 2408:8456:2adc:9030:21d3:780b:f2f4:b9b6/64 scope global nodad \       valid_lft forever preferred_lft forever
+19: ccmni0    inet6 fe80::21d3:780b:f2f4:b9b6/64 scope link nodad \       valid_lft forever preferred_lft forever
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=18.0 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=1.83 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=5.17 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2005ms
+rtt min/avg/max/mdev = 1.837/8.366/18.085/7.006 ms
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=11.5 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=0.889 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=3.25 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+rtt min/avg/max/mdev = 0.889/5.223/11.530/4.562 ms
+=== [a15] 5. NFC FEATURE & TAP ===
+feature:android.hardware.nfc
+feature:android.hardware.nfc.any
+feature:android.hardware.nfc.hce
+feature:android.hardware.nfc.hcef
+{"ok":true,"status":{"connected":true,"initialized":true,"discovering":true,"cardPresent":true,"cardUid":"04112233445566","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":22,"txResponses":34,"apduCount":0,"recentCmds":["mt=1,gid=00,oid=00,len=1","mt=1,gid=00,oid=01,len=2","mt=1,gid=01,oid=00,len=4","mt=1,gid=02,oid=00,len=0","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=3","mt=0,gid=01,oid=00,len=6","mt=0,gid=01,oid=00,len=3","mt=1,gid=0f,oid=02,len=5","mt=1,gid=00,oid=03,len=2","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=4","mt=1,gid=0f,oid=0c,len=1","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=02,oid=01,len=2","mt=0,gid=01,oid=00,len=3","mt=0,gid=01,oid=00,len=3","mt=1,gid=01,oid=01,len=32","mt=1,gid=00,oid=02,len=16","mt=1,gid=00,oid=02,len=5","mt=1,gid=01,oid=03,len=13"]}}
+
+{"connected":true,"initialized":true,"discovering":true,"cardPresent":true,"cardUid":"04112233445566","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":22,"txResponses":34,"apduCount":0,"recentCmds":["mt=1,gid=00,oid=00,len=1","mt=1,gid=00,oid=01,len=2","mt=1,gid=01,oid=00,len=4","mt=1,gid=02,oid=00,len=0","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=3","mt=0,gid=01,oid=00,len=6","mt=0,gid=01,oid=00,len=3","mt=1,gid=0f,oid=02,len=5","mt=1,gid=00,oid=03,len=2","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=4","mt=1,gid=0f,oid=0c,len=1","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=02,oid=01,len=2","mt=0,gid=01,oid=00,len=3","mt=0,gid=01,oid=00,len=3","mt=1,gid=01,oid=01,len=32","mt=1,gid=00,oid=02,len=16","mt=1,gid=00,oid=02,len=5","mt=1,gid=01,oid=03,len=13"]}
+
+11-27 02:20:33.643  2369  4506 D NfcService: convertPrefRouteToNfceeIdType() - route Id: default_aid_route, prefRoute: Default, route: 0xFF
+11-27 02:20:33.643  2369  4506 D NfcService: getConnectedNfceeId() -  requested id: 0x00, corresponding connected nfceeId: 0x00
+11-27 02:20:33.643  2369  4506 D NfcService: getDefaultIsoDepRoute()
+11-27 02:20:33.643  2369  4506 D NfcService: convertPrefRouteToNfceeIdType() - route Id: default_iso_dep_route, prefRoute: Default, route: 0xFF
+11-27 02:20:33.643  2369  4506 D NfcService: getConnectedNfceeId() -  requested id: 0x00, corresponding connected nfceeId: 0x00
+11-27 02:20:33.643  2369  2369 D NfcService: NfcServiceHandler - handleMessage(MSG_PREFERRED_PAYMENT_CHANGED)
+11-27 02:20:33.643  2369  2369 D NfcService: NfcServiceHandler - sendPreferredPaymentChangedEvent()
+11-27 02:20:33.648  2369  2369 D NfcService: NfcServiceHandler - handleMessage(MSG_PREFERRED_PAYMENT_CHANGED)
+11-27 02:20:33.648  2369  2369 D NfcService: NfcServiceHandler - sendPreferredPaymentChangedEvent()
+11-27 02:20:33.748  2369  2369 I RegisteredComponentCache: ComponentInfo: ResolveInfo{cd8b7d com.google.android.tag/com.android.apps.tag.TagViewer m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef, 
+11-27 02:20:33.748  2369  2369 I RegisteredComponentCache: ComponentInfo: ResolveInfo{6b4450d com.google.android.tag/com.android.apps.tag.TagViewer m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef, 
+11-27 02:22:16.064  8093  8148 E Finsky  : [68] ItemStore: getItems RPC failed for item com.android.nfcservices
+11-27 02:22:50.554  2369  2369 E libnfc_nci: nativeNfcTag_doConnect; tag already deactivated
+11-27 02:22:50.554  2369  2369 E libnfc_nci: nativeNfcTag_doConnect; tag already deactivated
+11-27 02:22:50.554  2369  2369 E libnfc_nci: nativeNfcTag_doReconnect; Current connected target protocol unknown
+============================================================
+=== [a15] 1. DISMISS OVERLAY TO NOTHING LAUNCHER ===
+  mCurrentFocus=Window{5248416 u0 com.nothing.introduction/com.nothing.introduction.MainActivity}
+  mFocusedApp=ActivityRecord{4bcc965 u0 com.nothing.introduction/.MainActivity t7}
+=== [a15] 2. NOTHING CAMERA PHOTO (REAR & FRONT) + VIDEO RECORD ===
+Starting: Intent { act=android.media.action.STILL_IMAGE_CAMERA pkg=com.nothing.camera }
+Starting: Intent { act=android.media.action.STILL_IMAGE_CAMERA pkg=com.nothing.camera (has extras) }
+--- [a15] Switch to Video Mode & Record MP4 ---
+Starting: Intent { act=android.media.action.VIDEO_CAMERA pkg=com.nothing.camera }
+total 576K
+-rwxrwx--- 2 u0_a248 media_rw 574K 2026-11-27 02:24 VID_20261127_022433897.mp4
+[a15] MP4=/sdcard/DCIM/Camera/VID_20261127_022433897.mp4
+codec_name=h264
+width=1920
+height=1080
+duration=5.665478
+bit_rate=189864
+codec_name=aac
+duration=4.010667
+bit_rate=96001
+11-27 02:24:42.915 10670 11508 E AndroidRuntime: FATAL EXCEPTION: Camera Setting Handler Thread
+=== [a15] 3. PLAY VIDEO IN PHOTOS TO VERIFY V4L2 DECODER ===
+Starting: Intent { cmp=com.google.android.apps.photos/.home.HomeActivity }
+   75: {codec, (11-27 02:24:33.254), (com.nothing.camera, 0, 10221), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.bitrate=20000000, android.media.mediacodec.bitrate_mode=CBR, android.media.mediacodec.codec=c2.v4l2.avc.encoder, android.media.mediacodec.codec-max-input-size=0, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.component-color-format=2130708361, android.media.mediacodec.config-color-range=0, android.media.mediacodec.config-color-standard=0, android.media.mediacodec.config-color-transfer=0, android.media.mediacodec.encoder=1, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=8917815792695771144, android.media.mediacodec.level=4096, android.media.mediacodec.lifetimeMs=106, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.original.bitrate=20000000, android.media.mediacodec.output-surface=1, android.media.mediacodec.priority=0, android.media.mediacodec.profile=1, android.media.mediacodec.resolution-change-count=0, android.media.mediacodec.rotation-degrees=0, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.shaped=1, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=0, android.media.mediacodec.width=1920)}
+  119: {codec, (11-27 02:24:42.473), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.bitrate=17000000, android.media.mediacodec.bitrate_mode=VBR, android.media.mediacodec.codec=c2.v4l2.avc.encoder, android.media.mediacodec.codec-max-input-size=0, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.component-color-format=2130708361, android.media.mediacodec.config-color-range=0, android.media.mediacodec.config-color-standard=0, android.media.mediacodec.config-color-transfer=0, android.media.mediacodec.encoder=1, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=2196675153981603840, android.media.mediacodec.latency.unknown=86, android.media.mediacodec.level=4096, android.media.mediacodec.lifetimeMs=8334, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.original.bitrate=17000000, android.media.mediacodec.output-surface=1, android.media.mediacodec.parsed-color-range=1, android.media.mediacodec.parsed-color-standard=1, android.media.mediacodec.parsed-color-transfer=2, android.media.mediacodec.pixel-format=1, android.media.mediacodec.priority=0, android.media.mediacodec.profile=1, android.media.mediacodec.resolution-change-count=1, android.media.mediacodec.rotation-degrees=0, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.shaped=1, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=0, android.media.mediacodec.vencode.bytes=134459, android.media.mediacodec.vencode.durationUs=5595742, android.media.mediacodec.vencode.frames=85, android.media.mediacodec.video.input.bytes=0, android.media.mediacodec.video.input.frames=0, android.media.mediacodec.width=1920)}
+  130: {codec, (11-27 02:24:42.881), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.bitrate=17000000, android.media.mediacodec.bitrate_mode=VBR, android.media.mediacodec.codec=c2.v4l2.avc.encoder, android.media.mediacodec.codec-max-input-size=0, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.component-color-format=2130708361, android.media.mediacodec.config-color-range=0, android.media.mediacodec.config-color-standard=0, android.media.mediacodec.config-color-transfer=0, android.media.mediacodec.encoder=1, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=2196675153981603842, android.media.mediacodec.level=4096, android.media.mediacodec.lifetimeMs=129, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.original.bitrate=17000000, android.media.mediacodec.output-surface=1, android.media.mediacodec.priority=0, android.media.mediacodec.profile=1, android.media.mediacodec.resolution-change-count=0, android.media.mediacodec.rotation-degrees=0, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.shaped=1, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=0, android.media.mediacodec.width=1920)}
+  141: {codec, (11-27 02:24:46.237), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.codec=c2.v4l2.avc.decoder, android.media.mediacodec.codec-max-input-size=3110401, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.config-color-range=2, android.media.mediacodec.config-color-standard=1, android.media.mediacodec.config-color-transfer=2, android.media.mediacodec.encoder=0, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=2196675153981603843, android.media.mediacodec.latency.avg=1283967, android.media.mediacodec.latency.max=1283967, android.media.mediacodec.latency.min=1283967, android.media.mediacodec.latency.n=1, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=2121, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.output-surface=1, android.media.mediacodec.parsed-color-range=2, android.media.mediacodec.parsed-color-standard=1, android.media.mediacodec.parsed-color-transfer=2, android.media.mediacodec.pixel-format=842094169, android.media.mediacodec.profile=1, android.media.mediacodec.resolution-change-count=1, android.media.mediacodec.rotation-degrees=90, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=8750, android.media.mediacodec.width=1920)}
+  146: {codec, (11-27 02:24:51.678), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.codec=c2.v4l2.avc.decoder, android.media.mediacodec.codec-max-input-size=3110401, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.config-color-range=2, android.media.mediacodec.config-color-standard=1, android.media.mediacodec.config-color-transfer=2, android.media.mediacodec.encoder=0, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=2196675153981603844, android.media.mediacodec.latency.avg=225922, android.media.mediacodec.latency.max=225922, android.media.mediacodec.latency.min=225922, android.media.mediacodec.latency.n=1, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=436, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.output-surface=1, android.media.mediacodec.parsed-color-range=2, android.media.mediacodec.parsed-color-standard=1, android.media.mediacodec.parsed-color-transfer=2, android.media.mediacodec.pixel-format=842094169, android.media.mediacodec.profile=1, android.media.mediacodec.resolution-change-count=1, android.media.mediacodec.rotation-degrees=90, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=8750, android.media.mediacodec.width=1920)}
+  156: {codec, (11-27 02:24:52.666), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.codec=c2.v4l2.avc.decoder, android.media.mediacodec.codec-max-input-size=3110401, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.config-color-range=2, android.media.mediacodec.config-color-standard=1, android.media.mediacodec.config-color-transfer=2, android.media.mediacodec.encoder=0, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=2196675153981603845, android.media.mediacodec.latency.avg=589478, android.media.mediacodec.latency.max=589478, android.media.mediacodec.latency.min=589478, android.media.mediacodec.latency.n=1, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=950, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.output-surface=1, android.media.mediacodec.parsed-color-range=2, android.media.mediacodec.parsed-color-standard=1, android.media.mediacodec.parsed-color-transfer=2, android.media.mediacodec.pixel-format=842094169, android.media.mediacodec.profile=1, android.media.mediacodec.resolution-change-count=1, android.media.mediacodec.rotation-degrees=90, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=8750, android.media.mediacodec.width=1920)}
+  11-27 02:24:52.666 result:220 { mediametrics_codec_reported:195 timestamp_nanos:1795717493000000000 package_name: package_version_code:0 media_apex_version:0 codec:c2.v4l2.avc.decoder mime:video/avc mode:video encoder:0 secure:-1 width:1920 height:1080 rotation:90 crypto:-1 profile:1 level:2048 max_width:-1 max_height:-1 error_code:-1 error_state: latency_max:589478 latency_min:589478 latency_avg:589478 latency_count:1 latency_unknown:-1 queue_input_buffer_error:-1 queue_secure_input_buffer_error:-1 bitrate_mode: bitrate:-1 original_bitrate:-1 lifetime_millis:1000 playback_duration_seconds:-1 log_session_id: channel_count:-1 sample_rate:-1 encode_bytes:-1 encode_frames:-1 encode_duration_us:-1 color_format:2130708361 frame_rate:-1 capture_rate:-1 operating_rate:-1 priority:-1 shaping_enhanced:-1 qp_i_min:-1 qp_i_max:-1 qp_p_min:-1 qp_p_max:-1 qp_b_min:-1 qp_b_max:-1 original_qp_i_min:-1 original_qp_i_max:-1 original_qp_p_min:-1 original_qp_p_max:-1 original_qp_b_min:-1 original_qp_b_max:-1 app_uid:1013 }
+=== [a15] 4. HOME -> CDCM_PAUSE & SETTLED IDLE TOP & GFXINFO ===
+{"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":212,"framesDropped":0}
+
+{"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":212,"framesDropped":0}
+
+Tasks: 442 total,   1 running, 441 sleeping,   0 stopped,   0 zombie
+  Mem:    11388M total,     9284M used,     2104M free,        7M buffers
+ Swap:     6143M total,        0M used,     6143M free,     6530M cached
+800%cpu   2%user   0%nice   5%sys 793%idle   0%iow   0%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+12385 shell        20   0  10G 5.5M 4.5M R  4.7   0.0   0:00.18 top -b -n 1
+  194 logd         30  10  10G 7.1M 4.5M S  2.3   0.0   0:07.85 logd
+   92 root         20   0    0    0    0 I  2.3   0.0   0:01.25 [kworker/0:2-events_power_efficient]
+12386 shell        20   0  10G 3.7M 3.1M S  0.0   0.0   0:00.01 head -n 16
+12383 shell        20   0  10G 3.6M 2.9M S  0.0   0.0   0:00.00 sh -c top -b -n 1 | head -n 16
+12332 u0_a149      20   0  17G 161M  98M S  0.0   1.4   0:00.81 com.google.android.apps.nbu.files
+12331 root         20   0  10G 3.6M 3.0M S  0.0   0.0   0:00.00 sleep 2
+12175 u0_a192      20   0  17G 163M 100M S  0.0   1.4   0:00.42 com.google.android.apps.photos:mediametadataservice
+12148 u0_a221      20   0  17G 157M  90M S  0.0   1.3   0:00.44 com.nothing.camera
+12147 root         20   0  10G 8.4M 7.2M S  0.0   0.0   0:00.74 apexd
+12086 root         20   0  10G 3.7M 3.0M S  0.0   0.0   0:00.02 sleep 30
+Total frames rendered: 0
+Janky frames: 0 (0.00%)
+Janky frames (legacy): 0 (0.00%)
+50th percentile: 4950ms
+90th percentile: 4950ms
+95th percentile: 4950ms
+99th percentile: 4950ms
+Number Missed Vsync: 0
+50th gpu percentile: 4950ms
+90th gpu percentile: 4950ms
+95th gpu percentile: 4950ms
+99th gpu percentile: 4950ms
+============================================================
+=== [a16] 1. HEALTH, PROPS, SPECS, MEM, ZRAM, BATTERY ===
+enforce=Enforcing
+boot=1
+model=A059
+market=Nothing Phone (3a)
+ddr=
+baseband=MPSS.DE.3.1.4.c4-00099-MILOS_GEN_PACK-1.159820.2.170951.4
+c2_sel=aidl
+audio_c2=true
+sim_state=LOADED,ABSENT
+restarting=0
+Physical size: 1080x2392
+Physical density: 388
+MemTotal:       11662204 kB
+MemAvailable:    7563960 kB
+SwapTotal:       6291452 kB
+SwapFree:        6291452 kB
+-r--r--r-- 1 root root 4096 2026-11-27 02:22 /sys/class/power_supply/battery/charge_full_design
+5000000
+100
+cpufreq_count=48
+Total 21 h/w sensors, 21 running 0 disabled clients:
+0x00000001) active-count = 2; sampling_period(ms) = {20.0, 80.0}, selected = 20.00 ms; batching_period(ms) = {2147483.8, 2000.0}, selected = 2000.00 ms
+0x00000005) active-count = 1; sampling_period(ms) = {250.0}, selected = 250.00 ms; batching_period(ms) = {0.0}, selected = 0.00 ms
+0x0000001b) active-count = 1; sampling_period(ms) = {66.7}, selected = 66.67 ms; batching_period(ms) = {0.0}, selected = 0.00 ms
+Sensor List:
+0x00000001) lsm6dsv_acc               | STMicroelectronics | ver: 1 | type: android.sensor.accelerometer(1) | perm: n/a | flags: 0x00000000
+	continuous | minRate=12.50Hz | maxRate=400.00Hz | FIFO (max,reserved) = (4500, 3000) events | non-wakeUp | 
+0x00000002) mmc56x3x                  | Memsic          | ver: 1 | type: android.sensor.magnetic_field(2) | perm: n/a | flags: 0x00000000
+	continuous | minRate=5.00Hz | maxRate=100.00Hz | FIFO (max,reserved) = (4500, 600) events | non-wakeUp | 
+--------- beginning of crash
+08-10 11:54:08.356  2948  2948 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 2948 (init), pid 2948 (init)
+08-10 11:54:08.644  2969  2969 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+08-10 11:54:08.644  2969  2969 F DEBUG   : Build fingerprint: 'Nothing/Asteroids/Asteroids:16/BQ2A.250721.001-BP2A.250605.031.A3/2608101153:user/release-keys'
+08-10 11:54:08.644  2969  2969 F DEBUG   : Revision: '0'
+08-10 11:54:08.644  2969  2969 F DEBUG   : ABI: 'arm64'
+08-10 11:54:08.644  2969  2969 F DEBUG   : Timestamp: 2026-08-10 11:54:08.560643758+0800
+08-10 11:54:08.644  2969  2969 F DEBUG   : Process uptime: 0s
+08-10 11:54:08.644  2969  2969 F DEBUG   : Cmdline: /system/bin/init second_stage
+08-10 11:54:08.644  2969  2969 F DEBUG   : pid: 2948, tid: 2948, name: init  >>> /system/bin/init <<<
+08-10 11:54:08.644  2969  2969 F DEBUG   : uid: 0
+08-10 11:54:08.644  2969  2969 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+08-10 11:54:08.644  2969  2969 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+08-10 11:54:08.644  2969  2969 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+08-10 11:54:08.644  2969  2969 F DEBUG   :     x0  0000000000000000  x1  0000000000000b84  x2  0000000000000006  x3  0000007fe905a920
+08-10 11:54:08.644  2969  2969 F DEBUG   :     x4  000000000000000a  x5  000000000000000a  x6  000000000000000a  x7  7f7f7f7f7f7f7f7f
+08-10 11:54:08.644  2969  2969 F DEBUG   :     x8  00000000000000f0  x9  a20b1dccab088078  x10 000000ff00000020  x11 0000007f9e2ea62c
+08-10 11:54:08.644  2969  2969 F DEBUG   :     x12 0000007fe905a0c4  x13 0000000000000000  x14 0000000000000000  x15 0000000000000011
+08-10 11:54:08.644  2969  2969 F DEBUG   :     x16 0000007f9e3b20f8  x17 0000007f9e398dc0  x18 0000007f9e6ac000  x19 0000000000000b84
+08-10 11:54:08.644  2969  2969 F DEBUG   :     x20 0000000000000b84  x21 00000000ffffffff  x22 b400007ec832ceb0  x23 00000000000000e8
+08-10 11:54:08.644  2969  2969 F DEBUG   :     x24 0000007f9e573ec0  x25 aaaaaaaaaaaaaaab  x26 b400007e483152c0  x27 0000000000000030
+08-10 11:54:08.644  2969  2969 F DEBUG   :     x28 b400007e483152c0  x29 0000007fe905a9a0
+08-10 11:54:08.644  2969  2969 F DEBUG   :     lr  0000007f9e334268  sp  0000007fe905a920  pc  0000007f9e33428c  pst 0000000000000000
+08-10 11:54:08.645  2969  2969 F DEBUG   : 13 total frames
+08-10 11:54:08.646  2969  2969 F DEBUG   : backtrace:
+08-10 11:54:08.646  2969  2969 F DEBUG   :       #00 pc 000000000007128c  /system/lib64/bootstrap/libc.so (abort+160) (BuildId: 85a1677149dd58c9bc79f641cb77adea)
+08-10 11:54:08.646  2969  2969 F DEBUG   :       #01 pc 00000000000144b8  /system/lib64/libbase.so (android::base::DefaultAborter(char const*)+16) (BuildId: 9c966375eb876a2ba44c10c3b9a43bce)
+08-10 11:54:08.646  2969  2969 F DEBUG   :       #02 pc 00000000000163c4  /system/lib64/libbase.so (android::base::SetAborter(std::__1::function<void (char const*)>&&)::$_0::__invoke(char const*)+84) (BuildId: 9c966375eb876a2ba44c10c3b9a43bce)
+08-10 11:54:08.646  2969  2969 F DEBUG   :       #03 pc 0000000000015904  /system/lib64/libbase.so (android::base::LogMessage::~LogMessage()+548) (BuildId: 9c966375eb876a2ba44c10c3b9a43bce)
+08-10 11:54:08.646  2969  2969 F DEBUG   :       #04 pc 0000000000118598  /system/bin/init (android::init::Service::RunService(std::__1::vector<android::init::Descriptor, std::__1::allocator<android::init::Descriptor>> const&, android::init::InterprocessFifo, android::init::InterprocessFifo)+1880) (BuildId: 6ecf84e8b48ed77fd90c754363f59477)
+08-10 11:54:08.646  2969  2969 F DEBUG   :       #05 pc 0000000000117b74  /system/bin/init (android::init::Service::Start()+5592) (BuildId: 6ecf84e8b48ed77fd90c754363f59477)
+08-10 11:54:08.646  2969  2969 F DEBUG   :       #06 pc 00000000001056e4  /system/bin/init (android::init::do_start(android::init::BuiltinArguments const&)+304) (BuildId: 6ecf84e8b48ed77fd90c754363f59477)
+08-10 11:54:08.646  2969  2969 F DEBUG   :       #07 pc 00000000000e7ae4  /system/bin/init (android::init::RunBuiltinFunction(std::__1::function<android::base::expected<void, android::base::ResultError<android::base::Errno, true>> (android::init::BuiltinArguments const&)> const&, std::__1::vector<std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>, std::__1::allocator<std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>>> const&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)+524) (BuildId: 6ecf84e8b48ed77fd90c754363f59477)
+08-10 11:54:08.647  2969  2969 F DEBUG   :       #08 pc 00000000000e8c78  /system/bin/init (android::init::Action::ExecuteCommand(android::init::Command const&) const+280) (BuildId: 6ecf84e8b48ed77fd90c754363f59477)
+08-10 11:54:08.647  2969  2969 F DEBUG   :       #09 pc 00000000000e8a98  /system/bin/init (android::init::Action::ExecuteOneCommand(unsigned long) const+312) (BuildId: 6ecf84e8b48ed77fd90c754363f59477)
+=== [a16] 2. DESKTOP & ABOUT PHONE SCREENSHOT ===
+  mCurrentFocus=Window{efa10b1 u0 ImmersiveModeConfirmation}
+  mFocusedApp=ActivityRecord{64760858 u0 com.android.setupwizard.overlay/.hello.HelloActivity t5}
+Starting: Intent { act=android.settings.DEVICE_INFO_SETTINGS }
+=== [a16] 3. BLUETOOTH ===
+BluetoothShellCommand: Exec enable
+enable: Success
+Bluetooth Status
+  enabled: true
+  state: ON
+  address: XX:XX:XX:XX:00:00
+  name: Nothing Phone (3a)
+  time since enabled: 00:00:04.207
+
+Enable log:
+  08-10 11:54:00.835 	Package [android] requested to [Enable]. 	Reason is SYSTEM_BOOT
+  11-27 02:23:05.911 	Package [android] requested to [Enable]. 	Reason is APPLICATION_REQUEST
+
+Bluetooth crashed 0 times
+
+Number of Ble app registered: 0
+
+BluetoothManagerService:
+  mEnable:true
+  mQuietEnable:false
+  mEnableExternal:true
+  mQuietEnableExternal:false
+
+🚩Flag dump:
+bluetooth      516     1   10817668   4176 0                   0 S android.hardware.bluetooth-service
+bluetooth     1842   560   18159252 158432 0                   0 S com.android.bluetooth
+=== [a16] 4. WIFI & DUAL-PDN PURE CELLULAR ===
+Wifi is enabled
+Wifi scanning is only available when wifi is enabled
+==== Primary ClientModeManager instance ====
+Wifi is connected to "OptimumWiFi_0764"
+WifiInfo: SSID: "OptimumWiFi_0764", BSSID: c0:56:27:18:07:64, MAC: <none>, IP: /192.168.1.100, Security type: 0, Supplicant state: COMPLETED, Wi-Fi standard: legacy, RSSI: -37, Link speed: 54Mbps, Tx Link speed: 54Mbps, Max Supported Tx Link speed: 54Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: 54Mbps, Frequency: 5200MHz, Net ID: 0, Metered hint: false, score: 100, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none>"OptimumWiFi_0764"openMLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+successfulTxPackets: 16997
+successfulTxPacketsPerSecond: 54.96416298002345
+retriedTxPackets: 0
+6: ccmni1    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1\       valid_lft forever preferred_lft forever
+6: ccmni1    inet6 2408:8456:30:b52a:c31d:615:ed74:5e2c/64 scope global nodad \       valid_lft forever preferred_lft forever
+6: ccmni1    inet6 fe80::c31d:615:ed74:5e2c/64 scope link nodad \       valid_lft forever preferred_lft forever
+16: wlan0    inet 192.168.1.100/24 brd 192.168.1.255 scope global dynamic wlan0\       valid_lft 3495sec preferred_lft 3495sec
+16: wlan0    inet6 fe80::6c00:9fff:feed:4f9e/64 scope link \       valid_lft forever preferred_lft forever
+19: ccmni0    inet6 2408:8456:30:b52b:c31d:715:ed74:5fdf/64 scope global nodad \       valid_lft forever preferred_lft forever
+19: ccmni0    inet6 fe80::c31d:715:ed74:5fdf/64 scope link nodad \       valid_lft forever preferred_lft forever
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=6.59 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=5.95 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=2.81 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+rtt min/avg/max/mdev = 2.814/5.119/6.595/1.653 ms
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=8.06 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=2.26 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=3.45 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2005ms
+rtt min/avg/max/mdev = 2.263/4.595/8.069/2.504 ms
+=== [a16] 5. NFC FEATURE & TAP ===
+feature:android.hardware.nfc
+feature:android.hardware.nfc.any
+feature:android.hardware.nfc.hce
+feature:android.hardware.nfc.hcef
+{"ok":true,"status":{"connected":true,"initialized":true,"discovering":true,"cardPresent":true,"cardUid":"04112233445566","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":27,"txResponses":41,"apduCount":0,"recentCmds":["mt=1,gid=02,oid=00,len=0","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=4","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=11","mt=0,gid=01,oid=00,len=6","mt=1,gid=02,oid=01,len=2","mt=1,gid=02,oid=01,len=2","mt=0,gid=01,oid=00,len=3","mt=1,gid=00,oid=03,len=2","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=01,oid=01,len=27","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=16","mt=1,gid=00,oid=02,len=5","mt=1,gid=01,oid=03,len=13","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=01,len=27","mt=1,gid=01,oid=03,len=13","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=01,len=27","mt=1,gid=01,oid=03,len=13"]}}
+
+{"connected":true,"initialized":true,"discovering":true,"cardPresent":true,"cardUid":"04112233445566","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":27,"txResponses":41,"apduCount":0,"recentCmds":["mt=1,gid=02,oid=00,len=0","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=4","mt=0,gid=01,oid=00,len=2","mt=0,gid=01,oid=00,len=11","mt=0,gid=01,oid=00,len=6","mt=1,gid=02,oid=01,len=2","mt=1,gid=02,oid=01,len=2","mt=0,gid=01,oid=00,len=3","mt=1,gid=00,oid=03,len=2","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=01,oid=01,len=27","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=16","mt=1,gid=00,oid=02,len=5","mt=1,gid=01,oid=03,len=13","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=01,len=27","mt=1,gid=01,oid=03,len=13","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=01,len=27","mt=1,gid=01,oid=03,len=13"]}
+
+11-27 02:22:08.430  1859  1859 I RegisteredComponentCache: ComponentInfo: ResolveInfo{be17c40 com.google.android.tag/com.android.apps.tag.TagViewer m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef, 
+11-27 02:22:08.436  1859  1859 D NfcService: handleMessage: MSG_PREFERRED_PAYMENT_CHANGED
+11-27 02:22:09.920  1859  1859 I RegisteredComponentCache: ComponentInfo: ResolveInfo{55c40cc com.google.android.tag/com.android.apps.tag.TagViewer m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef, 
+11-27 02:22:09.920  1859  1859 I RegisteredComponentCache: ComponentInfo: ResolveInfo{508f15d com.google.android.tag/com.android.apps.tag.TagViewer m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef, 
+11-27 02:22:10.098  1859  1859 D NfcService: handleMessage: MSG_PREFERRED_PAYMENT_CHANGED
+11-27 02:22:11.777  1859  1859 I RegisteredComponentCache: ComponentInfo: ResolveInfo{586277e com.google.android.tag/com.android.apps.tag.TagViewer m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef, 
+11-27 02:22:11.777  1859  1859 I RegisteredComponentCache: ComponentInfo: ResolveInfo{55c40cc com.google.android.tag/com.android.apps.tag.TagViewer m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef, 
+11-27 02:22:12.140  1859  1859 I RegisteredComponentCache: ComponentInfo: ResolveInfo{5ea8f63 com.google.android.tag/com.android.apps.tag.TagViewer m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef, 
+11-27 02:22:12.140  1859  1859 I RegisteredComponentCache: ComponentInfo: ResolveInfo{586277e com.google.android.tag/com.android.apps.tag.TagViewer m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef, 
+11-27 02:22:12.148  1859  1859 D NfcService: handleMessage: MSG_PREFERRED_PAYMENT_CHANGED
+11-27 02:22:12.930  1859  1859 I RegisteredComponentCache: ComponentInfo: ResolveInfo{93e48ea com.google.android.tag/com.android.apps.tag.TagViewer m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef, 
+11-27 02:22:12.930  1859  1859 I RegisteredComponentCache: ComponentInfo: ResolveInfo{5ea8f63 com.google.android.tag/com.android.apps.tag.TagViewer m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef, 
+11-27 02:22:14.604  1859  1859 I RegisteredComponentCache: ComponentInfo: ResolveInfo{1938e24 com.google.android.tag/com.android.apps.tag.TagViewer m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef, 
+11-27 02:22:14.604  1859  1859 I RegisteredComponentCache: ComponentInfo: ResolveInfo{93e48ea com.google.android.tag/com.android.apps.tag.TagViewer m=0x108000 userHandle=UserHandle{0}}, techs: android.nfc.tech.Ndef, 
+11-27 02:22:17.581  1859  1859 D NfcService: android.intent.action.BOOT_COMPLETED received
+============================================================
+=== [a16] 1. DISMISS OVERLAY TO NOTHING LAUNCHER ===
+  mCurrentFocus=Window{4b1bc01 u0 com.nothing.introduction16/com.nothing.introduction.MainActivity}
+  mFocusedApp=ActivityRecord{158428332 u0 com.nothing.introduction16/com.nothing.introduction.MainActivity t8}
+=== [a16] 2. NOTHING CAMERA PHOTO (REAR & FRONT) + VIDEO RECORD ===
+Starting: Intent { act=android.media.action.STILL_IMAGE_CAMERA pkg=com.nothing.camera }
+Starting: Intent { act=android.media.action.STILL_IMAGE_CAMERA pkg=com.nothing.camera (has extras) }
+--- [a16] Switch to Video Mode & Record MP4 ---
+Starting: Intent { act=android.media.action.VIDEO_CAMERA pkg=com.nothing.camera }
+total 596K
+-rwxrwx--- 2 u0_a265 media_rw 594K 2026-11-27 02:25 VID_20261127_022530767.mp4
+[a16] MP4=/sdcard/DCIM/Camera/VID_20261127_022530767.mp4
+codec_name=h264
+width=1920
+height=1080
+duration=5.149478
+bit_rate=236314
+codec_name=aac
+duration=4.224000
+bit_rate=96001
+11-27 02:25:39.901 11427 12360 E AndroidRuntime: FATAL EXCEPTION: Camera Setting Handler Thread
+=== [a16] 3. PLAY VIDEO IN PHOTOS TO VERIFY V4L2 DECODER ===
+Starting: Intent { cmp=com.google.android.apps.photos/.home.HomeActivity }
+   74: {codec, (11-27 02:25:30.531), (com.nothing.camera, 0, 10227), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.bitrate=20000000, android.media.mediacodec.bitrate_mode=CBR, android.media.mediacodec.codec=c2.v4l2.avc.encoder, android.media.mediacodec.codec-max-input-size=0, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.component-color-format=2130708361, android.media.mediacodec.config-color-range=0, android.media.mediacodec.config-color-standard=0, android.media.mediacodec.config-color-transfer=0, android.media.mediacodec.encoder=1, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=-7270366466522742776, android.media.mediacodec.level=4096, android.media.mediacodec.lifetimeMs=103, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.original.bitrate=20000000, android.media.mediacodec.output-surface=1, android.media.mediacodec.priority=0, android.media.mediacodec.profile=1, android.media.mediacodec.resolution-change-count=0, android.media.mediacodec.rotation-degrees=0, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.shaped=1, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=0, android.media.mediacodec.width=1920)}
+  117: {codec, (11-27 02:25:39.781), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.bitrate=17000000, android.media.mediacodec.bitrate_mode=VBR, android.media.mediacodec.codec=c2.v4l2.avc.encoder, android.media.mediacodec.codec-max-input-size=0, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.component-color-format=2130708361, android.media.mediacodec.config-color-range=0, android.media.mediacodec.config-color-standard=0, android.media.mediacodec.config-color-transfer=0, android.media.mediacodec.encoder=1, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=-67662244766285824, android.media.mediacodec.latency.unknown=111, android.media.mediacodec.level=4096, android.media.mediacodec.lifetimeMs=8844, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.original.bitrate=17000000, android.media.mediacodec.output-surface=1, android.media.mediacodec.parsed-color-range=1, android.media.mediacodec.parsed-color-standard=1, android.media.mediacodec.parsed-color-transfer=2, android.media.mediacodec.pixel-format=1, android.media.mediacodec.priority=0, android.media.mediacodec.profile=1, android.media.mediacodec.resolution-change-count=1, android.media.mediacodec.rotation-degrees=0, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.shaped=1, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=0, android.media.mediacodec.vencode.bytes=152112, android.media.mediacodec.vencode.durationUs=5110707, android.media.mediacodec.vencode.frames=110, android.media.mediacodec.video.input.bytes=0, android.media.mediacodec.video.input.frames=0, android.media.mediacodec.width=1920)}
+  128: {codec, (11-27 02:25:39.885), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.bitrate=17000000, android.media.mediacodec.bitrate_mode=VBR, android.media.mediacodec.codec=c2.v4l2.avc.encoder, android.media.mediacodec.codec-max-input-size=0, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.component-color-format=2130708361, android.media.mediacodec.config-color-range=0, android.media.mediacodec.config-color-standard=0, android.media.mediacodec.config-color-transfer=0, android.media.mediacodec.encoder=1, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=-67662244766285822, android.media.mediacodec.level=4096, android.media.mediacodec.lifetimeMs=25, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.original.bitrate=17000000, android.media.mediacodec.output-surface=1, android.media.mediacodec.priority=0, android.media.mediacodec.profile=1, android.media.mediacodec.resolution-change-count=0, android.media.mediacodec.rotation-degrees=0, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.shaped=1, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=0, android.media.mediacodec.width=1920)}
+  138: {codec, (11-27 02:25:40.454), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.codec=c2.v4l2.avc.decoder, android.media.mediacodec.codec-max-input-size=3110401, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.config-color-range=2, android.media.mediacodec.config-color-standard=1, android.media.mediacodec.config-color-transfer=2, android.media.mediacodec.encoder=0, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=-67662244766285821, android.media.mediacodec.latency.avg=219752, android.media.mediacodec.latency.max=219752, android.media.mediacodec.latency.min=219752, android.media.mediacodec.latency.n=1, android.media.mediacodec.latency.unknown=1, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=397, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.output-surface=1, android.media.mediacodec.parsed-color-range=2, android.media.mediacodec.parsed-color-standard=1, android.media.mediacodec.parsed-color-transfer=2, android.media.mediacodec.pixel-format=842094169, android.media.mediacodec.profile=1, android.media.mediacodec.resolution-change-count=1, android.media.mediacodec.rotation-degrees=90, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=1, android.media.mediacodec.vencode.bytes=1, android.media.mediacodec.vencode.durationUs=0, android.media.mediacodec.vencode.frames=1, android.media.mediacodec.video.input.bytes=1, android.media.mediacodec.video.input.frames=1, android.media.mediacodec.width=1920)}
+  140: {codec, (11-27 02:25:40.787), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.codec=c2.v4l2.avc.decoder, android.media.mediacodec.codec-max-input-size=3110401, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.config-color-range=2, android.media.mediacodec.config-color-standard=1, android.media.mediacodec.config-color-transfer=2, android.media.mediacodec.encoder=0, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=-67662244766285820, android.media.mediacodec.latency.avg=173031, android.media.mediacodec.latency.max=173031, android.media.mediacodec.latency.min=173031, android.media.mediacodec.latency.n=1, android.media.mediacodec.latency.unknown=1, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=305, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.output-surface=1, android.media.mediacodec.parsed-color-range=2, android.media.mediacodec.parsed-color-standard=1, android.media.mediacodec.parsed-color-transfer=2, android.media.mediacodec.pixel-format=842094169, android.media.mediacodec.profile=1, android.media.mediacodec.resolution-change-count=1, android.media.mediacodec.rotation-degrees=90, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=1, android.media.mediacodec.vencode.bytes=1, android.media.mediacodec.vencode.durationUs=0, android.media.mediacodec.vencode.frames=1, android.media.mediacodec.video.input.bytes=1, android.media.mediacodec.video.input.frames=1, android.media.mediacodec.width=1920)}
+  145: {codec, (11-27 02:25:47.430), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.codec=c2.v4l2.avc.decoder, android.media.mediacodec.codec-max-input-size=3110401, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.config-color-range=2, android.media.mediacodec.config-color-standard=1, android.media.mediacodec.config-color-transfer=2, android.media.mediacodec.encoder=0, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=-67662244766285819, android.media.mediacodec.latency.avg=105302, android.media.mediacodec.latency.max=105302, android.media.mediacodec.latency.min=105302, android.media.mediacodec.latency.n=1, android.media.mediacodec.latency.unknown=1, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=238, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.output-surface=1, android.media.mediacodec.parsed-color-range=2, android.media.mediacodec.parsed-color-standard=1, android.media.mediacodec.parsed-color-transfer=2, android.media.mediacodec.pixel-format=842094169, android.media.mediacodec.profile=1, android.media.mediacodec.resolution-change-count=1, android.media.mediacodec.rotation-degrees=90, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=1, android.media.mediacodec.vencode.bytes=1, android.media.mediacodec.vencode.durationUs=0, android.media.mediacodec.vencode.frames=1, android.media.mediacodec.video.input.bytes=1, android.media.mediacodec.video.input.frames=1, android.media.mediacodec.width=1920)}
+  147: {codec, (11-27 02:25:47.679), (media, 0, 1013), (android.media.mediacodec.app-max-input-size=0, android.media.mediacodec.array-mode=0, android.media.mediacodec.codec=c2.v4l2.avc.decoder, android.media.mediacodec.codec-max-input-size=3110401, android.media.mediacodec.color-format=2130708361, android.media.mediacodec.config-color-range=2, android.media.mediacodec.config-color-standard=1, android.media.mediacodec.config-color-transfer=2, android.media.mediacodec.encoder=0, android.media.mediacodec.flush-count=0, android.media.mediacodec.hdr-format=0, android.media.mediacodec.hdr-static-info=0, android.media.mediacodec.hdr10-plus-info=0, android.media.mediacodec.height=1080, android.media.mediacodec.id=-67662244766285818, android.media.mediacodec.latency.avg=86855, android.media.mediacodec.latency.max=86855, android.media.mediacodec.latency.min=86855, android.media.mediacodec.latency.n=1, android.media.mediacodec.latency.unknown=1, android.media.mediacodec.level=2048, android.media.mediacodec.lifetimeMs=219, android.media.mediacodec.low-latency.first-frame=-1, android.media.mediacodec.low-latency.off=0, android.media.mediacodec.low-latency.on=0, android.media.mediacodec.mime=video/avc, android.media.mediacodec.mode=video, android.media.mediacodec.operation-mode=1, android.media.mediacodec.output-surface=1, android.media.mediacodec.parsed-color-range=2, android.media.mediacodec.parsed-color-standard=1, android.media.mediacodec.parsed-color-transfer=2, android.media.mediacodec.pixel-format=842094169, android.media.mediacodec.profile=1, android.media.mediacodec.resolution-change-count=1, android.media.mediacodec.rotation-degrees=90, android.media.mediacodec.set-surface-count=0, android.media.mediacodec.tunneled=0, android.media.mediacodec.used-max-input-size=1, android.media.mediacodec.vencode.bytes=1, android.media.mediacodec.vencode.durationUs=0, android.media.mediacodec.vencode.frames=1, android.media.mediacodec.video.input.bytes=1, android.media.mediacodec.video.input.frames=1, android.media.mediacodec.width=1920)}
+=== [a16] 4. HOME -> CDCM_PAUSE & SETTLED IDLE TOP & GFXINFO ===
+{"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":210,"framesDropped":0}
+
+{"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":210,"framesDropped":0}
+
+Tasks: 477 total,   2 running, 475 sleeping,   0 stopped,   0 zombie
+  Mem:    11388M total,    10218M used,     1170M free,        7M buffers
+ Swap:     6143M total,        0M used,     6143M free,     6983M cached
+800%cpu  32%user   8%nice  34%sys 692%idle   0%iow  34%irq   0%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  609 media        20   0  11G  25M  12M S 21.0   0.2   0:04.56 android.hardware.media.c2@1.2-service-v4l2-64
+ 3919 u0_a164      20   0  21G 198M 107M S 18.4   1.7   0:39.61 com.nothing.user.center
+  822 system       18  -2  24G 771M 588M S  5.2   6.7   3:48.34 system_server
+  625 system       -3  -8  11G 205M  31M S  5.2   1.7   0:24.80 surfaceflinger
+13685 shell        20   0  10G 5.2M 4.1M R  2.6   0.0   0:00.13 top -b -n 1
+12558 u0_a167      20   0  17G 337M 249M S  2.6   2.9   0:05.19 com.google.android.gms
+12464 u0_a167      20   0  17G 204M 131M S  2.6   1.7   0:06.53 com.google.android.gms.persistent
+ 8108 system       20   0  16G 113M  53M S  2.6   0.9   0:00.53 com.android.dynsystem
+ 8025 system       20   0  16G 119M  59M S  2.6   1.0   0:00.78 com.nt.grantpermission
+ 5855 u0_a208      10 -10  19G 378M 258M S  2.6   3.3   0:09.87 com.google.android.apps.photos
+ 2900 system       20   0  16G 121M  61M S  2.6   1.0   0:00.59 com.android.keychain
+Total frames rendered: 0
+Janky frames: 0 (0.00%)
+Janky frames (legacy): 0 (0.00%)
+50th percentile: 4950ms
+90th percentile: 4950ms
+95th percentile: 4950ms
+99th percentile: 4950ms
+Number Missed Vsync: 0
+50th gpu percentile: 4950ms
+90th gpu percentile: 4950ms
+95th gpu percentile: 4950ms
+99th gpu percentile: 4950ms

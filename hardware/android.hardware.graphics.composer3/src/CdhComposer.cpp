@@ -35,6 +35,16 @@ bool IsSupportedWideColorMode(ColorMode mode) {
          mode == ColorMode::DISPLAY_P3;
 }
 
+bool IsSupportedRenderIntent(RenderIntent intent) {
+  if (intent == RenderIntent::COLORIMETRIC || intent == RenderIntent::ENHANCE ||
+      intent == RenderIntent::TONE_MAP_COLORIMETRIC ||
+      intent == RenderIntent::TONE_MAP_ENHANCE) {
+    return true;
+  }
+  const int32_t raw = static_cast<int32_t>(intent);
+  return raw >= 0x100 && raw <= 0x1ff;
+}
+
 const DisplayConfiguration* FindDisplayConfigById(
     const std::vector<DisplayConfiguration>& configs, int32_t config_id) {
   for (const auto& item : configs) {
@@ -538,7 +548,17 @@ ndk::ScopedAStatus CdhComposerClient::getRenderIntents(
     return ndk::ScopedAStatus::fromServiceSpecificError(
         IComposerClient::EX_BAD_PARAMETER);
   }
-  *intents = {RenderIntent::COLORIMETRIC};
+  intents->clear();
+  intents->reserve(20);
+  intents->push_back(RenderIntent::COLORIMETRIC);
+  intents->push_back(RenderIntent::ENHANCE);
+  intents->push_back(RenderIntent::TONE_MAP_COLORIMETRIC);
+  intents->push_back(RenderIntent::TONE_MAP_ENHANCE);
+  // 覆盖高通 QDCM / Flyme (265) / MIUI / ColorOS 等厂商 persist.sys.sf.native_mode 自定义色彩意图段，
+  // 消除 SurfaceFlinger CompositionEngine 每帧 "map unknown .../Unknown RenderIntent to default color mode" 刷屏。
+  for (int32_t oem = 0x100; oem <= 0x110; ++oem) {
+    intents->push_back(static_cast<RenderIntent>(oem));
+  }
   return ndk::ScopedAStatus::ok();
 }
 
@@ -704,12 +724,12 @@ ndk::ScopedAStatus CdhComposerClient::setColorMode(int64_t display,
   if (!st.isOk()) {
     return st;
   }
-  if (!IsSupportedWideColorMode(mode) || intent != RenderIntent::COLORIMETRIC) {
+  if (!IsSupportedWideColorMode(mode) || !IsSupportedRenderIntent(intent)) {
     return ndk::ScopedAStatus::fromServiceSpecificError(
         IComposerClient::EX_BAD_PARAMETER);
   }
   if (mode == ColorMode::NATIVE) {
-    return inner_->setColorMode(display, mode, intent);
+    return inner_->setColorMode(display, mode, RenderIntent::COLORIMETRIC);
   }
   return ndk::ScopedAStatus::ok();
 }

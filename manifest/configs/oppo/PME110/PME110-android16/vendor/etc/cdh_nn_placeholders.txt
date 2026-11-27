@@ -56,6 +56,7 @@ vendor.mediatek.hardware.nvram.INvram/default
 vendor.mediatek.hardware.nwk_opt_new.INwkOptNew/default
 vendor.mediatek.hardware.videotelephony.IVideoTelephony/default
 vendor.nxp.nxpnfc_aidl.INxpNfc/default
+vendor.nxp.nxpnfc_pnaidl.INxpNfc/default
 vendor.oplus.hardware.binaural_record.IBinauralRecordProviderFactory/default
 vendor.oplus.hardware.biometrics.fingerprintpay.IFingerprintPay/default
 vendor.oplus.hardware.camera.aon.IAONService/default

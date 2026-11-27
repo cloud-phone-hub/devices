@@ -1,0 +1,151 @@
+=== OnePlus 15R (oneplus/CPH2767) PRE-AUDIT ===
+enforce=Enforcing
+boot=1
+model=CPH2769
+market=
+baseband=MPSS.DE.9.0-02004.5-KAANAPALI_GEN_PACK-1,MPSS.DE.9.0-02004.5-KAANAPALI_GEN_PACK-1
+sim_state=LOADED,ABSENT
+operator=中国联通,
+net_type=LTE,Unknown
+Physical size: 1272x2800
+Physical density: 560
+MemTotal:        7760724 kB
+MemAvailable:    8474244 kB
+SwapTotal:       6291452 kB
+SwapFree:        3880356 kB
+cat: /sys/class/power_supply/battery/charge_full_design: No such file or directory
+cat: /sys/class/power_supply/battery/capacity: No such file or directory
+total 0
+drwxr-xr-x  4 root root 0 1970-01-01 08:00 .
+drwxr-xr-x 16 root root 0 1970-01-01 08:00 ..
+drwxr-xr-x  4 root root 0 1970-01-01 08:00 policy0
+drwxr-xr-x  4 root root 0 1970-01-01 08:00 policy6
+restarting=0
+Total 26 h/w sensors, 26 running 0 disabled clients:
+Bluetooth Status
+  enabled: false
+  state: BLE_TURNING_ON
+  address: [address is null]
+  name: null
+  time since enabled: 00:00:03.173
+
+Enable log:
+  01-01 13:01:14.944 	Package [android] requested to [Enable]. 	Reason is APPLICATION_REQUEST
+  01-01 13:01:21.015 	Package [android] requested to [Enable]. 	Reason is APPLICATION_REQUEST
+
+Bluetooth crashed 0 times
+
+Number of Ble app registered: 0
+
+BluetoothManagerService:
+  mEnable:true
+  mQuietEnable:false
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+Wi-Fi is enabled
+mWifiInfo SSID: <unknown ssid>, BSSID: <none>, MAC: 02:00:00:00:00:00, IP: null, Security type: -1, Supplicant state: DISCONNECTED, Wi-Fi standard: legacy, RSSI: -127, Link speed: -1Mbps, Tx Link speed: -1Mbps, Max Supported Tx Link speed: -1Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: -1Mbps, Frequency: -1MHz, Net ID: -1, Metered hint: false, score: 0, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 0, Trusted: false, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none><none>MLO Information: , Is TID-To-Link negotiation supported by the AP: false, AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>, Vendor Data: <none>
+Tasks: 479 total,  10 running, 468 sleeping,   0 stopped,   1 zombie
+  Mem:  7760724K total,  6586424K used,  1174300K free,    12228K buffers
+ Swap:  6291452K total,  2411096K used,  3880356K free,  7291760K cached
+800%cpu 143%user  25%nice 218%sys 339%idle   2%iow  70%irq   2%sirq   0%host
+  PID USER         PR  NI VIRT  RES  SHR S[%CPU] %MEM     TIME+ ARGS
+  787 system       18  -2  16G 799M 493M S 81.8  10.5   0:41.80 system_server
+ 3887 u0_a180      10 -10  12G 698M 486M S 54.5   9.2   0:03.70 com.android.launcher
+  255 system       20   0 2.1G 7.3M 5.9M R 47.7   0.0   0:22.84 servicemanager
+  698 system       -3  -8 4.0G 196M  87M R 34.0   2.5   0:14.20 surfaceflinger
+   12 root         20   0    0    0    0 R 31.8   0.0   0:03.66 [kworker/u32:0+events_unbound]
+ 9250 u0_a134      10 -10 8.5G 176M  99M S 18.1   2.3   0:00.12 com.google.android.googlequicksearchbox:googleapp
+ 3329 u0_a190      20   0  12G 445M 234M R 15.9   5.8   0:10.92 com.android.systemui
+  659 system       20   0 2.1G 7.1M 5.8M S 15.9   0.0   0:05.77 android.hardware.camera-service
+  618 root         20   0 8.0G 269M 198M R 13.6   3.5   0:02.33 zygote64
+   14 root         20   0    0    0    0 I 13.6   0.0   0:02.59 [kworker/u32:1-events_unbound]
+ 9290 u0_a132      20   0 8.3G 141M  68M R 11.3   1.8   0:00.05 com.android.vending:quick_launch
+  281 root         20   0    0    0    0 S 11.3   0.0   0:02.15 [khvcd]
+ 9299 shell        20   0 2.1G 5.5M 4.6M R  6.8   0.0   0:00.10 top -b -n 1
+01-01 13:01:27.548  8111  8427 E AndroidRuntime: 	at vendor.qti.iwlan.IWlanProxy.getDataRegistrationState(IWlanProxy.java:491)
+01-01 13:01:27.548  8111  8427 E AndroidRuntime: 	at vendor.qti.iwlan.IWlanNetworkService$IWlanNetworkServiceProvider.requestNetworkRegistrationInfo(IWlanNetworkService.java:235)
+01-01 13:01:27.548  8111  8427 E AndroidRuntime: 	at android.telephony.NetworkService$NetworkServiceHandler.handleMessage(NetworkService.java:199)
+01-01 13:01:27.548  8111  8427 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:116)
+01-01 13:01:27.548  8111  8427 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:306)
+01-01 13:01:27.548  8111  8427 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:416)
+01-01 13:01:27.548  8111  8427 E AndroidRuntime: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+01-01 13:01:29.223  8610  8760 E AndroidRuntime: FATAL EXCEPTION: NetworkService
+01-01 13:01:29.223  8610  8760 E AndroidRuntime: Process: .qtidataservices, PID: 8610
+01-01 13:01:29.223  8610  8760 E AndroidRuntime: java.lang.UnsatisfiedLinkError: No implementation found for void vendor.qti.iwlan.JniHelper.getDataRegistrationState(int, int) (tried Java_vendor_qti_iwlan_JniHelper_getDataRegistrationState and Java_vendor_qti_iwlan_JniHelper_getDataRegistrationState__II) - is the library loaded, e.g. System.loadLibrary?
+01-01 13:01:29.223  8610  8760 E AndroidRuntime: 	at vendor.qti.iwlan.JniHelper.getDataRegistrationState(Native Method)
+01-01 13:01:29.223  8610  8760 E AndroidRuntime: 	at vendor.qti.iwlan.IWlanProxy.getDataRegistrationState(IWlanProxy.java:491)
+01-01 13:01:29.223  8610  8760 E AndroidRuntime: 	at vendor.qti.iwlan.IWlanNetworkService$IWlanNetworkServiceProvider.requestNetworkRegistrationInfo(IWlanNetworkService.java:235)
+01-01 13:01:29.223  8610  8760 E AndroidRuntime: 	at android.telephony.NetworkService$NetworkServiceHandler.handleMessage(NetworkService.java:199)
+01-01 13:01:29.223  8610  8760 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:116)
+01-01 13:01:29.223  8610  8760 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:306)
+01-01 13:01:29.223  8610  8760 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:416)
+01-01 13:01:29.223  8610  8760 E AndroidRuntime: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+01-01 13:01:30.363  8875  9041 E AndroidRuntime: FATAL EXCEPTION: NetworkService
+01-01 13:01:30.363  8875  9041 E AndroidRuntime: Process: .qtidataservices, PID: 8875
+01-01 13:01:30.363  8875  9041 E AndroidRuntime: java.lang.UnsatisfiedLinkError: No implementation found for void vendor.qti.iwlan.JniHelper.getDataRegistrationState(int, int) (tried Java_vendor_qti_iwlan_JniHelper_getDataRegistrationState and Java_vendor_qti_iwlan_JniHelper_getDataRegistrationState__II) - is the library loaded, e.g. System.loadLibrary?
+01-01 13:01:30.363  8875  9041 E AndroidRuntime: 	at vendor.qti.iwlan.JniHelper.getDataRegistrationState(Native Method)
+01-01 13:01:30.363  8875  9041 E AndroidRuntime: 	at vendor.qti.iwlan.IWlanProxy.getDataRegistrationState(IWlanProxy.java:491)
+01-01 13:01:30.363  8875  9041 E AndroidRuntime: 	at vendor.qti.iwlan.IWlanNetworkService$IWlanNetworkServiceProvider.requestNetworkRegistrationInfo(IWlanNetworkService.java:235)
+01-01 13:01:30.363  8875  9041 E AndroidRuntime: 	at android.telephony.NetworkService$NetworkServiceHandler.handleMessage(NetworkService.java:199)
+01-01 13:01:30.363  8875  9041 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:116)
+01-01 13:01:30.363  8875  9041 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:306)
+01-01 13:01:30.363  8875  9041 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:416)
+01-01 13:01:30.363  8875  9041 E AndroidRuntime: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+01-01 13:01:33.601  9134  9329 E AndroidRuntime: FATAL EXCEPTION: NetworkService
+01-01 13:01:33.601  9134  9329 E AndroidRuntime: Process: .qtidataservices, PID: 9134
+01-01 13:01:33.601  9134  9329 E AndroidRuntime: java.lang.UnsatisfiedLinkError: No implementation found for void vendor.qti.iwlan.JniHelper.getDataRegistrationState(int, int) (tried Java_vendor_qti_iwlan_JniHelper_getDataRegistrationState and Java_vendor_qti_iwlan_JniHelper_getDataRegistrationState__II) - is the library loaded, e.g. System.loadLibrary?
+01-01 13:01:33.601  9134  9329 E AndroidRuntime: 	at vendor.qti.iwlan.JniHelper.getDataRegistrationState(Native Method)
+01-01 13:01:33.601  9134  9329 E AndroidRuntime: 	at vendor.qti.iwlan.IWlanProxy.getDataRegistrationState(IWlanProxy.java:491)
+01-01 13:01:33.601  9134  9329 E AndroidRuntime: 	at vendor.qti.iwlan.IWlanNetworkService$IWlanNetworkServiceProvider.requestNetworkRegistrationInfo(IWlanNetworkService.java:235)
+01-01 13:01:33.601  9134  9329 E AndroidRuntime: 	at android.telephony.NetworkService$NetworkServiceHandler.handleMessage(NetworkService.java:199)
+01-01 13:01:33.601  9134  9329 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:116)
+01-01 13:01:33.601  9134  9329 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:306)
+01-01 13:01:33.601  9134  9329 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:416)
+01-01 13:01:33.601  9134  9329 E AndroidRuntime: 	at android.os.HandlerThread.run(HandlerThread.java:85)
+package:com.oplus.nfcengineertest
+package:com.google.android.apps.walletnfcrel
+package:com.android.cameraextensions
+package:com.oplus.engineercamera
+package:com.oplus.camera
+{"connected":true,"initialized":false,"discovering":false,"cardPresent":false,"rxCommands":0,"txResponses":0,"apduCount":0}
+
+{"ok":true,"status":{"connected":true,"initialized":false,"discovering":false,"cardPresent":true,"cardUid":"04112233445566","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":0,"txResponses":0,"apduCount":0}}
+
+Starting: Intent { act=android.media.action.STILL_IMAGE_CAMERA pkg=com.oplus.camera }
+Status: ok
+LaunchState: WARM
+Activity: com.google.android.permissioncontroller/com.android.permissioncontroller.permission.ui.GrantPermissionsActivity
+TotalTime: 4005
+WaitTime: 4032
+Complete
+11-27 03:32:31.706 13905 13905 F DEBUG   : Process uptime: 1s
+11-27 03:32:31.706 13905 13905 F DEBUG   : Cmdline: webview_zygote
+11-27 03:32:31.706 13905 13905 F DEBUG   : pid: 13905, tid: 13905, name: Shutdown thread  >>> webview_zygote <<<
+11-27 03:32:31.706 13905 13905 F DEBUG   : uid: 1053
+11-27 03:32:31.706 13905 13905 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+11-27 03:32:31.706 13905 13905 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+11-27 03:32:31.706 13905 13905 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+11-27 03:32:31.706 13905 13905 F DEBUG   : Abort message: 'stack corruption detected (-fstack-protector)'
+11-27 03:32:31.706 13905 13905 F DEBUG   :     x0  0000000000000000  x1  0000000000003651  x2  0000000000000006  x3  0000007fddafbad0
+11-27 03:32:31.706 13905 13905 F DEBUG   :     x4  607372652c271f63  x5  607372652c271f63  x6  607372652c271f63  x7  7f7f7f7f7f7f7f7f
+11-27 03:32:31.706 13905 13905 F DEBUG   :     x8  00000000000000f0  x9  83a5fcb22c96b479  x10 000000ff00000020  x11 000000003b9ac9ff
+11-27 03:32:31.706 13905 13905 F DEBUG   :     x12 000000007fffffff  x13 000000000000e9ee  x14 00000000e089e946  x15 0000000029aaaaab
+11-27 03:32:31.706 13905 13905 F DEBUG   :     x16 00000071173e0828  x17 00000071173c5900  x18 000000713b3c0000  x19 0000000000003651
+11-27 03:32:31.706 13905 13905 F DEBUG   :     x20 0000000000003651  x21 00000000ffffffff  x22 000000713a096005  x23 000000713a096019
+11-27 03:32:31.706 13905 13905 F DEBUG   :     x24 000000712ade38d0  x25 000000712ad9c6c0  x26 000000712ab5e2dd  x27 0000000000000001
+11-27 03:32:31.706 13905 13905 F DEBUG   :     x28 431bde82d7b634db  x29 0000007fddafbb50
+11-27 03:32:31.706 13905 13905 F DEBUG   :     lr  000000711735f668  sp  0000007fddafbad0  pc  000000711735f68c  pst 0000000000000000
+11-27 03:32:31.706 13905 13905 F DEBUG   : 5 total frames
+11-27 03:32:31.706 13905 13905 F DEBUG   : backtrace:
+11-27 03:32:31.706 13905 13905 F DEBUG   :   NOTE: Function names and BuildId information is missing for some frames due
+11-27 03:32:31.706 13905 13905 F DEBUG   :   NOTE: to unreadable libraries. For unwinds of apps, only shared libraries
+11-27 03:32:31.706 13905 13905 F DEBUG   :   NOTE: found under the lib/ directory are readable.
+11-27 03:32:31.706 13905 13905 F DEBUG   :   NOTE: On this device, run setenforce 0 to make the libraries readable.
+11-27 03:32:31.706 13905 13905 F DEBUG   :   NOTE: Unreadable libraries:
+11-27 03:32:31.706 13905 13905 F DEBUG   :   NOTE:   /system/bin/app_process64
+11-27 03:32:31.706 13905 13905 F DEBUG   :       #00 pc 000000000008a68c  /apex/com.android.runtime/lib64/bionic/libc.so (abort+160) (BuildId: 724d61dbc91284bfe4c5a68902c16928)
+11-27 03:32:31.706 13905 13905 F DEBUG   :       #01 pc 00000000000b208c  /apex/com.android.runtime/lib64/bionic/libc.so (__stack_chk_fail+24) (BuildId: 724d61dbc91284bfe4c5a68902c16928)
+11-27 03:32:31.706 13905 13905 F DEBUG   :       #02 pc 000000000013c40c  /system/lib64/libandroid_runtime.so (android::AndroidRuntime::start(char const*, android::Vector<android::String8> const&, bool)+1400) (BuildId: f9634fe3b9315eecd509a77ee0a4115b)
+11-27 03:32:31.706 13905 13905 F DEBUG   :       #03 pc 0000000000004718  /system/bin/app_process64
+11-27 03:32:31.706 13905 13905 F DEBUG   :       #04 pc 0000000000083b04  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+124) (BuildId: 724d61dbc91284bfe4c5a68902c16928)

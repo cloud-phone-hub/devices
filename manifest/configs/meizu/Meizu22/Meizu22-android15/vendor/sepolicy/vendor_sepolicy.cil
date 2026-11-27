@@ -140,3 +140,8 @@
 (allow hal_drm_widevine debugfs_tracing_{{vers}} (file (write)))
 (allow hal_drm_widevine mnt_vendor_file_{{vers}} (dir (search)))
 (allow hal_drm_widevine block_device_{{vers}} (dir (search)))
+
+;; ---- 6) Flyme 显示挖孔属性读取与 SystemUI 开机动画属性探测收敛 ----
+(allow system_server_{{vers}} vendor_display_notch_prop_{{vers}} (file (getattr map open read)))
+(dontaudit platform_app_{{vers}} bootanim_system_prop_{{vers}} (file (getattr map open read)))
+

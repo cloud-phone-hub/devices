@@ -179,6 +179,9 @@ static const Note13VendorTagDesc kNothingVendorTagDescs[] = {
     {0x820c0014u, "org.quic", "camera2.statsconfigs.AWBFrameControlGGain", TYPE_FLOAT},
     {0x820c0015u, "org.quic", "camera2.statsconfigs.AWBFrameControlRGain", TYPE_FLOAT},
     {0x820c0016u, "org.quic", "camera2.statsconfigs.MultiCamera3ASyncType", TYPE_INT32},
+    {0x820c0017u, "org.quic", "camera2.statsconfigs.AWBFrameControlCCT", TYPE_FLOAT},
     {0x820d0001u, "single.snapshot", "brightlevel", TYPE_FLOAT},
     {0x820d0002u, "single.snapshot", "logicalcameraid", TYPE_INT32},
+    {0x820e0001u, "org.codeaurora.qcamera3.ae_bracket", "mode", TYPE_BYTE},
+    {0x820f0001u, "com.nothing.available", "jpeg.flip", TYPE_INT32},
 };

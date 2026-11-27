@@ -1,0 +1,160 @@
+=== PJE110 (OnePlus Ace 3) FINAL PASS AUDIT 2026-11-27 12:22:29 ===
+patch.img sha256: 0a44022ecaadb6675822264d52fba4d599ebf33b63833b85001b42cf89c8073d
+--- IDENTITY & SPECS ---
+PJE110
+
+SM8550
+meow
+qcom
+15
+13
+5.15.167-android13-8-o-01144-gdc8278c1c5f9
+Physical size: 1264x2780
+Physical density: 560
+--- SELINUX & SERVICES ---
+Enforcing
+restarting_count=0
+[init.svc.cph_pje110_setup]: [stopped]
+[init.svc.vendor.camera-vhal]: [running]
+[init.svc.vendor.health-default]: [running]
+[init.svc.vendor.nfc-default]: [running]
+[init.svc.vendor.radio-vhal]: [running]
+[init.svc.vendor.soundtrigger3-hal]: [running]
+--- MEMORY & ZRAM & BATTERY ---
+		total        used        free      shared     buffers
+Mem:            11385        7102        4282         405           9
+-/+ buffers/cache:           7092        4292
+Swap:            6143           0        6143
+Filename				Type		Size		Used		Priority
+/dev/block/zram0                        partition	6291452		0		-2
+  AC powered: false
+  USB powered: false
+  status: 3
+  level: 85
+  scale: 100
+  temperature: 310
+--- BLUETOOTH ---
+  enabled: true
+  state: ON
+  name: 一加 Ace 3
+  time since enabled: 00:05:13.805
+Bluetooth crashed 0 times
+connection_manager state:
+shim::legacy::bta::dm  current bta_dm_discovery_state:BTA_DM_DISCOVER_IDLE
+shim::legacy::bta::dm  current bta_dm_search_state:BTA_DM_SEARCH_IDLE
+    le_connectability_state: "ConnectabilityState::DISARMED",
+      manufacturer_name: 224,
+--- WIFI ---
+16: wlan0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc mq state DOWN group default qlen 1000
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=0.238 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=0.263 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=0.232 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2033ms
+rtt min/avg/max/mdev = 0.232/0.244/0.263/0.018 ms
+--- CELLULAR ONLY (WIFI OFF) ---
+  Phone Id=0
+    mServiceState={mVoiceRegState=0(IN_SERVICE), mDataRegState=0(IN_SERVICE), mChannelNumber=1650, duplexMode()=1, mCellBandwidths=[20000], mOperatorAlphaLong=中国联通, mOperatorAlphaShort=中国联通, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=14(LTE), getRilDataRadioTechnology=14(LTE), mCssIndicator=unsupported, mNetworkId=-1, mSystemId=-1, mCdmaRoamingIndicator=-1, mCdmaDefaultRoamingIndicator=-1, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[VOICE,SMS,VIDEO] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=VoiceSpecificRegistrationInfo { mCssSupported=false mRoamingIndicator=0 mSystemIsInPrl=0 mDefaultRoamingIndicator=0} dataSpecificInfo=null nrState=**** rRplmn=46001 isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=HOME networkRegistrationState=HOME roamingType=NOT_ROAMING accessNetworkTechnology=LTE rejectCause=0 emergencyEnabled=false availableServices=[DATA,MMS] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=460 mMnc=01 mAlphaLong=中国联通 mAlphaShort=中国联通 mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 16 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 null } nrState=**** rRplmn=46001 isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=中国联通, mOperatorAlphaShortRaw=中国联通, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataConnectionState=2
+    mServiceState={mVoiceRegState=1(OUT_OF_SERVICE), mDataRegState=1(OUT_OF_SERVICE), mChannelNumber=1650, duplexMode()=0, mCellBandwidths=[20000], mOperatorAlphaLong=, mOperatorAlphaShort=, isManualNetworkSelection=false(automatic), getRilVoiceRadioTechnology=0(Unknown), getRilDataRadioTechnology=0(Unknown), mCssIndicator=unsupported, mNetworkId=-1, mSystemId=-1, mCdmaRoamingIndicator=-1, mCdmaDefaultRoamingIndicator=-1, mIsEmergencyOnly=false, isUsingCarrierAggregation=false, mArfcnRsrpBoost=0, mNetworkRegistrationInfos=[NetworkRegistrationInfo{ domain=PS transportType=WLAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=null voiceSpecificInfo=null dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=CS transportType=WWAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=null mMnc=null mAlphaLong= mAlphaShort= mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=VoiceSpecificRegistrationInfo { mCssSupported=false mRoamingIndicator=0 mSystemIsInPrl=0 mDefaultRoamingIndicator=0} dataSpecificInfo=null nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}, NetworkRegistrationInfo{ domain=PS transportType=WWAN registrationState=UNKNOWN networkRegistrationState=UNKNOWN roamingType=NOT_ROAMING accessNetworkTechnology=UNKNOWN rejectCause=0 emergencyEnabled=false availableServices=[] cellIdentity=CellIdentityLte:{ mCi=22369792 mPci=100 mTac=1000 mEarfcn=1650 mBands=[] mBandwidth=20000 mMcc=null mMnc=null mAlphaLong= mAlphaShort= mAdditionalPlmns={} mCsgInfo=null} voiceSpecificInfo=null dataSpecificInfo=android.telephony.DataSpecificRegistrationInfo :{ maxDataCalls = 16 isDcNrRestricted = false isNrAvailable = false isEnDcAvailable = false mLteAttachResultType = 0 mLteAttachExtraInfo = 0 null } nrState=**** rRplmn= isUsingCarrierAggregation=false isNonTerrestrialNetwork=TERRESTRIAL}], mNrFrequencyRange=0, mOperatorAlphaLongRaw=, mOperatorAlphaShortRaw=, mIsDataRoamingFromRegistration=false, mIsIwlanPreferred=false}
+    mDataConnectionState=-1
+6: ccmni1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1400 qdisc pfifo_fast state UP group default qlen 1000
+    inet 100.64.155.15/24 brd 100.64.155.255 scope global ccmni1
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=0.200 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=0.224 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=0.336 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2032ms
+rtt min/avg/max/mdev = 0.200/0.253/0.336/0.060 ms
+--- NFC ---
+mState=on
+mScreenState=ON_UNLOCKED
+--- CODEC & CAMERA MEDIA ---
+total 1.7K
+-rwxrwx--- 1 u0_a288 media_rw 252K 2026-11-27 12:18 IMG20261127121843.jpg
+-rwxrwx--- 1 u0_a288 media_rw 110K 2026-11-27 12:18 IMG20261127121850.jpg
+-rwxrwx--- 2 u0_a288 media_rw 1.3M 2026-11-27 12:19 VID20261127121901.mp4
+Media type 'video/avc':
+  Decoder "c2.android.avc.decoder" supports
+Media type 'video/avc':
+  Encoder "c2.android.avc.encoder" supports
+--- IDLE CPU TOP ---
+Tasks: 372 total,   2 running, 370 sleeping,   0 stopped,   0 zombie
+  Mem:    11385M total,     7107M used,     4277M free,        9M buffers
+ Swap:     6143M total,        0M used,     6143M free,     4613M cached
+800%cpu   4%user   0%nice  20%sys 768%idle   4%iow   4%irq   0%sirq   0%host
+%CPU
+ 8.0
+ 4.0
+ 4.0
+ 4.0
+ 4.0
+ 4.0
+ 4.0
+ 4.0
+ 4.0
+ 4.0
+--- NFC TAP API ---
+{"ok":true,"status":{"connected":true,"initialized":true,"discovering":true,"cardPresent":true,"cardUid":"04112233445566","cardPayload":"cloud-phone-hub-nfc-ok","rxCommands":48,"txResponses":60,"apduCount":0,"recentCmds":["mt=1,gid=01,oid=01,len=7","mt=1,gid=01,oid=03,len=15","mt=1,gid=01,oid=06,len=1","mt=1,gid=01,oid=03,len=15","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=02,len=4","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=09,len=1","mt=1,gid=00,oid=02,len=4"]}}
+
+--- CAMERA STATUS FROZEN CHECK ---
+{"connected":true,"sourceKind":"testpattern","width":640,"height":480,"fps":8,"framesSent":729,"framesDropped":0}
+
+Connecting to 2.4GHz AP: 
+16: wlan0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc mq state DOWN group default qlen 1000
+PING 223.5.5.5 (223.5.5.5) from 100.64.155.15 wlan0: 56(84) bytes of data.
+From 100.64.155.15: icmp_seq=1 Destination Host Unreachable
+From 100.64.155.15: icmp_seq=2 Destination Host Unreachable
+From 100.64.155.15: icmp_seq=3 Destination Host Unreachable
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2026ms
+pipe 3
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=64 time=0.187 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=64 time=0.331 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=64 time=0.199 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2045ms
+rtt min/avg/max/mdev = 0.187/0.239/0.331/0.065 ms
+=== GALLERY VIDEO PLAYBACK DECODER ===
+=== GALLERY PLAYBACK DECODER ===
+11-27 12:24:24.168 12805 14144 I MediaCodec: [0xb400006fcabe2000] [c2.android.avc.decoder] configure, format : AMessage(what = 0x00000000) = {
+11-27 12:24:24.168 12805 14147 D MediaCodec: [0xb400006fcabe2000] [c2.android.avc.decoder] connectToSurface: surface 0xb400006fcabec800, mSurface 0x0
+11-27 12:24:24.172  3223  6389 D OplusAtlas.OplusAtlasEventDispatch: setEvent:atlas_event_video_monitor_network_switch info:START,12805,Key,-5476376665843491840,Component,c2.android.avc.decoder,Width,1920,Height,1080,IsMediaPlayer,0
+11-27 12:24:24.173  3223  3837 D OplusAtlas.OplusAtlasEventDispatch: handleMessage:atlas_event_video_monitor_network_switch info:START,12805,Key,-5476376665843491840,Component,c2.android.avc.decoder,Width,1920,Height,1080,IsMediaPlayer,0
+11-27 12:24:24.173  3223  3837 V OplusAtlasVideo: callback success event:atlas_event_video_monitor_network_switch eventInfo:START,12805,Key,-5476376665843491840,Component,c2.android.avc.decoder,Width,1920,Height,1080,IsMediaPlayer,0
+11-27 12:24:24.175 12805 14148 D CCodec  : [c2.android.avc.decoder] buffers are bound to CCodec for this session
+11-27 12:24:24.180 12805 14148 D CCodecBufferChannel: [c2.android.avc.decoder#821] Created input block pool with allocatorID 16 => poolID 18 - OK (0)
+11-27 12:24:24.180 12805 14148 D CCodecBufferChannel: [c2.android.avc.decoder#821] start: max output delay 19
+11-27 12:24:24.181 12805 14148 D CCodecBufferChannel: [c2.android.avc.decoder#821] Query output surface allocator returned 0 params => BAD_INDEX (6)
+11-27 12:24:24.183 12805 14148 I CCodecBufferChannel: [c2.android.avc.decoder#821] Created output block pool with allocatorID 18 => poolID 92 - OK
+11-27 12:24:24.183 12805 14148 D CCodecBufferChannel: [c2.android.avc.decoder#821] Configured output block pool ids 92 => OK
+11-27 12:24:24.183 12805 14148 D CCodecBufferChannel: [0xb400006fef860b18] [c2.android.avc.decoder#821] start: output->outputDelay 8, output->numSlots 12
+11-27 12:24:24.183 12805 14148 D CCodecBufferChannel: [c2.android.avc.decoder#821] start: updating output delay 8
+11-27 12:24:24.205 12805 14148 D CCodecBufferChannel: [c2.android.avc.decoder#821] onWorkDone: updating output delay 3
+11-27 12:24:24.205 12805 14148 I CCodecBufferChannel: [c2.android.avc.decoder#821] onWorkDone: updating max output delay 15
+11-27 12:24:24.261 12805 14147 D CCodecBufferChannel: [c2.android.avc.decoder#821] first render dataSpace=513
+11-27 12:24:25.186 12805 14148 I OplusFeedbackInfo: 0xb400007000291c00 c2.android.avc.decoder codec[0xb400006fcabe2000] 1920x1080 inputFps=48 outputFps=42 renderFps=27, discardFps=0
+11-27 12:24:26.188 12805 14148 I OplusFeedbackInfo: 0xb400007000291c00 c2.android.avc.decoder codec[0xb400006fcabe2000] 1920x1080 inputFps=30 outputFps=30 renderFps=31, discardFps=0
+11-27 12:24:27.189 12805 14148 I OplusFeedbackInfo: 0xb400007000291c00 c2.android.avc.decoder codec[0xb400006fcabe2000] 1920x1080 inputFps=30 outputFps=30 renderFps=30, discardFps=0
+11-27 12:24:28.190 12805 14148 I OplusFeedbackInfo: 0xb400007000291c00 c2.android.avc.decoder codec[0xb400006fcabe2000] 1920x1080 inputFps=30 outputFps=30 renderFps=30, discardFps=0
+=== WIFI 2.4GHZ CONNECT ===
+  70:a8:e3:c6:52:4a       2437        -80             14.301    ChinaNet-x7tV                     [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  70:f9:6d:17:0a:52       2437        -54             14.301    Room-601-BF                       [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  f8:72:ea:1c:eb:4c       2437        -72             14.301    Room-607-BF                       [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+  94:b4:0f:d3:b9:99       2437        -82             14.301    CrystalOrange-Staff-BF            [WPA2-PSK-CCMP][RSN-PSK-CCMP][ESS]
+16: wlan0: <NO-CARRIER,BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state DORMANT group default qlen 1000
+PING 223.5.5.5 (223.5.5.5) from 100.64.155.15 wlan0: 56(84) bytes of data.
+From 100.64.155.15: icmp_seq=1 Destination Host Unreachable
+From 100.64.155.15: icmp_seq=2 Destination Host Unreachable
+From 100.64.155.15: icmp_seq=3 Destination Host Unreachable
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2028ms
+pipe 3
